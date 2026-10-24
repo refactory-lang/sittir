@@ -11,3 +11,14 @@ describe('a runtime engine holds an options slot to what its storage takes', () 
 		expect(ts.render(ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement))).toString().replace(/\s+/g, ' ')).toContain('static { x; }');
 	});
 });
+
+describe('a runtime engine holds a separated list\'s elements to what their storage takes', () => {
+	it('refuses a boolean or a function element, through the list builder and through its forwarding owner', async () => {
+		const ts = await createEngine(typescript, { verifyStructure: 'runtime' });
+		const loose = (builder: unknown) => builder as (...args: unknown[]) => unknown;
+		for (const builder of [ts.build.types.strict, ts.build.typeArguments.strict]) {
+			expect(() => loose(builder)(false)).toThrow('a strict factory takes a built node, not a boolean');
+			expect(() => loose(builder)(() => 1)).toThrow('a strict factory takes a built node, not a function');
+		}
+	});
+});

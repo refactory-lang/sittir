@@ -2513,11 +2513,24 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['typeParameters', 'parameters', 'returnType']
 	},
-	382: { kind: 'export_specifiers', nonEmpty: [['_item', 'export_specifiers.elements']], lists: [['items', false, 0]] },
-	383: { kind: 'import_specifiers', nonEmpty: [['_item', 'import_specifiers.elements']], lists: [['items', false, 0]] },
+	382: {
+		kind: 'export_specifiers',
+		nonEmpty: [['_item', 'export_specifiers.elements']],
+		nodeOnly: [['_item', 'ExportSpecifiers.items', 'a built ExportSpecifier', [192]]],
+		lists: [['items', false, 0]]
+	},
+	383: {
+		kind: 'import_specifiers',
+		nonEmpty: [['_item', 'import_specifiers.elements']],
+		nodeOnly: [['_item', 'ImportSpecifiers.items', 'a built ImportSpecifier', [201]]],
+		lists: [['items', false, 0]]
+	},
 	385: {
 		kind: 'formal_parameters_elements',
 		nonEmpty: [['_item', 'formal_parameters_elements.elements']],
+		nodeOnly: [
+			['_item', 'FormalParametersElements.items', 'a built RequiredParameter / OptionalParameter', [326, 327]]
+		],
 		lists: [['items', false, 0]]
 	},
 	386: {
@@ -2535,17 +2548,32 @@ export const structure: StructureTable = Object.freeze({
 	388: {
 		kind: 'enum_body_elements',
 		nonEmpty: [['_item', 'enum_body_elements.elements']],
+		nodeOnly: [['_item', 'EnumBodyElements.items', 'a built EnumBodyElement', [387]]],
 		lists: [['items', false, 0]]
 	},
-	389: { kind: 'types', nonEmpty: [['_item', 'types.elements']], lists: [['items', false, 0]] },
+	389: {
+		kind: 'types',
+		nonEmpty: [['_item', 'types.elements']],
+		nodeOnly: [['_item', 'Types.items', 'a built Type', [337]]],
+		lists: [['items', false, 0]]
+	},
 	390: {
 		kind: 'type_parameters_elements',
 		nonEmpty: [['_item', 'type_parameters_elements.elements']],
+		nodeOnly: [['_item', 'TypeParametersElements.items', 'a built TypeParameter', [371]]],
 		lists: [['items', false, 0]]
 	},
 	391: {
 		kind: 'tuple_type_members',
 		nonEmpty: [['_item', 'tuple_type_members.elements']],
+		nodeOnly: [
+			[
+				'_item',
+				'TupleTypeMembers.items',
+				'a built TupleParameter / OptionalTupleParameter / OptionalType / RestType / Type',
+				[337, 338, 339, 340, 341]
+			]
+		],
 		lists: [['items', false, 0]]
 	},
 	392: {
@@ -2595,6 +2623,14 @@ export const structure: StructureTable = Object.freeze({
 	399: {
 		kind: 'object_type_content',
 		nonEmpty: [['_item', 'object_type_content.elements']],
+		nodeOnly: [
+			[
+				'_item',
+				'ObjectTypeContent.items',
+				'a built ExportStatement / PropertySignature / CallSignature / ConstructSignature / IndexSignature / MethodSignature',
+				[189, 299, 368, 369, 374, 375]
+			]
+		],
 		lists: [['items', false, 0]]
 	},
 	401: {

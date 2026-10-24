@@ -65,12 +65,13 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		});
 	});
 
-	it('rows a non-empty separated list by its elements', () => {
+	it('rows a non-empty separated list by its elements, each held to what its storage takes', () => {
 		const list = node('expression_list');
 		expect(list).toBeInstanceOf(AssembledList);
-		expect(listStructureRow(list as AssembledList)).toEqual({
+		expect(listStructureRow(list as AssembledList, nodeMap)).toEqual({
 			kind: 'expression_list',
 			nonEmpty: [['_item', 'expression_list.elements']],
+			nodeOnly: [['_item', 'ExpressionList.items', 'a built Expression', [node('expression').kindId!]]],
 			lists: [['items', false, 0]]
 		});
 	});

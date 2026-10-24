@@ -2020,66 +2020,119 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'block_comment',
 		nodeOnly: [['_content', 'BlockComment.content', 'buildBlockCommentRegular(…)', [402, 403, 404]]]
 	},
-	342: { kind: 'macro_rules', nonEmpty: [['_item', 'macro_rules.elements']], lists: [['items', false, 0]] },
+	342: {
+		kind: 'macro_rules',
+		nonEmpty: [['_item', 'macro_rules.elements']],
+		nodeOnly: [['_item', 'MacroRules.items', 'a built MacroRule', [181]]],
+		lists: [['items', false, 0]]
+	},
 	343: {
 		kind: 'enum_variant_list_elements',
 		nonEmpty: [['_item', 'enum_variant_list_elements.elements']],
+		nodeOnly: [['_item', 'EnumVariantListElements.items', 'a built AttributedEnumVariant', [428]]],
 		lists: [['items', false, 0]]
 	},
 	344: {
 		kind: 'field_declaration_list_elements',
 		nonEmpty: [['_item', 'field_declaration_list_elements.elements']],
+		nodeOnly: [['_item', 'FieldDeclarationListElements.items', 'a built AttributedFieldDeclaration', [427]]],
 		lists: [['items', false, 0]]
 	},
 	345: {
 		kind: 'ordered_field_declaration_list_elements',
 		nonEmpty: [['_item', 'ordered_field_declaration_list_elements.elements']],
+		nodeOnly: [['_item', 'OrderedFieldDeclarationListElements.items', 'a built AttributedOrderedField', [432]]],
 		lists: [['items', false, 0]]
 	},
-	346: { kind: 'where_predicates', nonEmpty: [['_item', 'where_predicates.elements']], lists: [['items', false, 0]] },
+	346: {
+		kind: 'where_predicates',
+		nonEmpty: [['_item', 'where_predicates.elements']],
+		nodeOnly: [['_item', 'WherePredicates.items', 'a built WherePredicate', [212]]],
+		lists: [['items', false, 0]]
+	},
 	347: {
 		kind: 'type_parameters_elements',
 		nonEmpty: [['_item', 'type_parameters_elements.elements']],
+		nodeOnly: [['_item', 'TypeParametersElements.items', 'a built AttributedTypeParameter', [430]]],
 		lists: [['items', false, 0]]
 	},
-	348: { kind: 'use_clauses', nonEmpty: [['_item', 'use_clauses.elements']], lists: [['items', false, 0]] },
+	348: {
+		kind: 'use_clauses',
+		nonEmpty: [['_item', 'use_clauses.elements']],
+		nodeOnly: [['_item', 'UseClauses.items', 'buildIdentifier(…)']],
+		lists: [['items', false, 0]]
+	},
 	349: {
 		kind: 'parameters_elements',
 		nonEmpty: [['_item', 'parameters_elements.elements']],
+		nodeOnly: [['_item', 'ParametersElements.items', 'a built AttributedParameter', [429]]],
 		lists: [['items', false, 0]]
 	},
-	350: { kind: 'lifetimes', nonEmpty: [['_item', 'lifetimes.elements']], lists: [['items', false, 0]] },
-	351: { kind: 'types', nonEmpty: [['_item', 'types.elements']], lists: [['items', false, 0]] },
+	350: {
+		kind: 'lifetimes',
+		nonEmpty: [['_item', 'lifetimes.elements']],
+		nodeOnly: [['_item', 'Lifetimes.items', 'a built Lifetime', [239]]],
+		lists: [['items', false, 0]]
+	},
+	351: {
+		kind: 'types',
+		nonEmpty: [['_item', 'types.elements']],
+		nodeOnly: [['_item', 'Types.items', 'a built Type', [236]]],
+		lists: [['items', false, 0]]
+	},
 	352: {
 		kind: 'use_bounds_elements',
 		nonEmpty: [['_item', 'use_bounds_elements.elements']],
+		nodeOnly: [['_item', 'UseBoundsElements.items', 'a built Lifetime / TypeIdentifier', [239, 473]]],
 		lists: [['items', false, 0]]
 	},
 	353: {
 		kind: 'type_arguments_elements',
 		nonEmpty: [['_item', 'type_arguments_elements.elements']],
+		nodeOnly: [['_item', 'TypeArgumentsElements.items', 'a built TypeArgument', [433]]],
 		lists: [['items', false, 0]]
 	},
 	354: {
 		kind: 'arguments_elements',
 		nonEmpty: [['_item', 'arguments_elements.elements']],
+		nodeOnly: [['_item', 'ArgumentsElements.items', 'a built AttributedArgument', [431]]],
 		lists: [['items', false, 0]]
 	},
-	355: { kind: 'expressions', nonEmpty: [['_item', 'expressions.elements']], lists: [['items', false, 0]] },
+	355: {
+		kind: 'expressions',
+		nonEmpty: [['_item', 'expressions.elements']],
+		nodeOnly: [['_item', 'Expressions.items', 'a built Expression', [258]]],
+		lists: [['items', false, 0]]
+	},
 	356: {
 		kind: 'field_initializer_list_elements',
 		nonEmpty: [['_item', 'field_initializer_list_elements.elements']],
+		nodeOnly: [
+			[
+				'_item',
+				'FieldInitializerListElements.items',
+				'a built ShorthandFieldInitializer / FieldInitializer / BaseFieldInitializer',
+				[284, 285, 286]
+			]
+		],
 		lists: [['items', false, 0]]
 	},
 	357: {
 		kind: 'tuple_pattern_elements',
 		nonEmpty: [['_item', 'tuple_pattern_elements.elements']],
+		nodeOnly: [['_item', 'TuplePatternElements.items', 'a built Pattern / ClosureExpression', [301, 314]]],
 		lists: [['items', false, 0]]
 	},
-	358: { kind: 'patterns', nonEmpty: [['_item', 'patterns.elements']], lists: [['items', false, 0]] },
+	358: {
+		kind: 'patterns',
+		nonEmpty: [['_item', 'patterns.elements']],
+		nodeOnly: [['_item', 'Patterns.items', 'a built Pattern', [314]]],
+		lists: [['items', false, 0]]
+	},
 	359: {
 		kind: 'struct_pattern_elements',
 		nonEmpty: [['_item', 'struct_pattern_elements.elements']],
+		nodeOnly: [['_item', 'StructPatternElements.items', 'a built FieldPattern']],
 		lists: [['items', false, 0]]
 	},
 	360: { kind: 'use_wildcard_group', nodeOnly: [['_path', 'UseWildcardGroup.path', 'buildIdentifier(…)']] },

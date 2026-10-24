@@ -590,7 +590,12 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['moduleName', 'content']
 	},
-	135: { kind: 'import_list', nonEmpty: [['_name', 'import_list.elements']], lists: [['names', false, 0]] },
+	135: {
+		kind: 'import_list',
+		nonEmpty: [['_name', 'import_list.elements']],
+		nodeOnly: [['_name', 'ImportList.names', 'a built DottedName / AliasedImport', [136, 181]]],
+		lists: [['names', false, 0]]
+	},
 	136: {
 		kind: 'aliased_import',
 		required: [
@@ -914,7 +919,12 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [['_statements', 'Block.statements', 'a built Statement', [128]]],
 		lists: [['statements', false, 0]]
 	},
-	180: { kind: 'expression_list', nonEmpty: [['_item', 'expression_list.elements']], lists: [['items', false, 0]] },
+	180: {
+		kind: 'expression_list',
+		nonEmpty: [['_item', 'expression_list.elements']],
+		nodeOnly: [['_item', 'ExpressionList.items', 'a built Expression', [204]]],
+		lists: [['items', false, 0]]
+	},
 	181: {
 		kind: 'dotted_name',
 		nonEmpty: [['_names', 'dotted_name.children']],
@@ -1036,9 +1046,15 @@ export const structure: StructureTable = Object.freeze({
 	192: {
 		kind: 'parameters_elements',
 		nonEmpty: [['_item', 'parameters_elements.elements']],
+		nodeOnly: [['_item', 'ParametersElements.items', 'a built Parameter', [194]]],
 		lists: [['items', false, 0]]
 	},
-	193: { kind: 'patterns', nonEmpty: [['_item', 'patterns.elements']], lists: [['items', false, 0]] },
+	193: {
+		kind: 'patterns',
+		nonEmpty: [['_item', 'patterns.elements']],
+		nodeOnly: [['_item', 'Patterns.items', 'a built Pattern', [195]]],
+		lists: [['items', false, 0]]
+	},
 	196: {
 		kind: 'tuple_pattern',
 		nodeOnly: [['_elements', 'TuplePattern.elements', 'a built TuplePatternElements', [270]]]
@@ -1183,7 +1199,12 @@ export const structure: StructureTable = Object.freeze({
 		kindIds: [['_operator', 'AugmentedAssignment.operator', [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88]]],
 		config: ['left', 'operator', 'right']
 	},
-	217: { kind: 'pattern_list', nonEmpty: [['_item', 'pattern_list.elements']], lists: [['items', false, 0]] },
+	217: {
+		kind: 'pattern_list',
+		nonEmpty: [['_item', 'pattern_list.elements']],
+		nodeOnly: [['_item', 'PatternList.items', 'a built Pattern', [195]]],
+		lists: [['items', false, 0]]
+	},
 	219: {
 		kind: 'yield',
 		nodeOnly: [['_content', 'Yield.content', 'a built YieldFromClause / Expression / ExpressionList', [180, 204, 298]]]
@@ -1403,6 +1424,14 @@ export const structure: StructureTable = Object.freeze({
 	242: {
 		kind: 'collection_elements',
 		nonEmpty: [['_item', 'collection_elements.elements']],
+		nodeOnly: [
+			[
+				'_item',
+				'CollectionElements.items',
+				'a built Expression / Yield / ListSplat / ParenthesizedListSplat',
+				[167, 175, 204, 219]
+			]
+		],
 		lists: [['items', false, 0]]
 	},
 	243: {
@@ -1492,44 +1521,90 @@ export const structure: StructureTable = Object.freeze({
 	259: {
 		kind: 'simple_statements_elements',
 		nonEmpty: [['_item', 'simple_statements_elements.elements']],
+		nodeOnly: [['_item', 'SimpleStatementsElements.items', 'a built SimpleStatement']],
 		lists: [['items', false, 0]]
 	},
-	260: { kind: 'subjects', nonEmpty: [['_subject', 'subjects.elements']], lists: [['subjects', false, 0]] },
-	261: { kind: 'case_patterns', nonEmpty: [['_item', 'case_patterns.elements']], lists: [['items', false, 0]] },
+	260: {
+		kind: 'subjects',
+		nonEmpty: [['_subject', 'subjects.elements']],
+		nodeOnly: [['_subject', 'Subjects.subjects', 'a built Expression', [204]]],
+		lists: [['subjects', false, 0]]
+	},
+	261: {
+		kind: 'case_patterns',
+		nonEmpty: [['_item', 'case_patterns.elements']],
+		nodeOnly: [['_item', 'CasePatterns.items', 'a built CasePattern', [182]]],
+		lists: [['items', false, 0]]
+	},
 	262: {
 		kind: 'with_clause_with_items',
 		nonEmpty: [['_item', 'with_clause_with_items.elements']],
+		nodeOnly: [['_item', 'WithClauseWithItems.items', 'a built WithItem', [163]]],
 		lists: [['items', false, 0]]
 	},
-	263: { kind: 'types', nonEmpty: [['_item', 'types.elements']], lists: [['items', false, 0]] },
+	263: {
+		kind: 'types',
+		nonEmpty: [['_item', 'types.elements']],
+		nodeOnly: [['_item', 'Types.items', 'a built Type', [225]]],
+		lists: [['items', false, 0]]
+	},
 	264: {
 		kind: 'argument_list_elements',
 		nonEmpty: [['_item', 'argument_list_elements.elements']],
+		nodeOnly: [
+			[
+				'_item',
+				'ArgumentListElements.items',
+				'a built Expression / ListSplat / DictionarySplat / ParenthesizedListSplat / KeywordArgument',
+				[167, 168, 175, 204, 231]
+			]
+		],
 		lists: [['items', false, 0]]
 	},
 	265: {
 		kind: 'list_pattern_case_patterns',
 		nonEmpty: [['_item', 'list_pattern_case_patterns.elements']],
+		nodeOnly: [['_item', 'ListPatternCasePatterns.items', 'a built CasePattern', [182]]],
 		lists: [['items', false, 0]]
 	},
 	266: {
 		kind: 'dict_pattern_elements',
 		nonEmpty: [['_item', 'dict_pattern_elements.elements']],
+		nodeOnly: [['_item', 'DictPatternElements.items', 'a built KeyValuePattern / SplatPattern', [187, 189]]],
 		lists: [['items', false, 0]]
 	},
-	267: { kind: 'subscripts', nonEmpty: [['_subscript', 'subscripts.elements']], lists: [['subscripts', false, 0]] },
+	267: {
+		kind: 'subscripts',
+		nonEmpty: [['_subscript', 'subscripts.elements']],
+		nodeOnly: [['_subscript', 'Subscripts.subscripts', 'a built Expression / Slice', [204, 222]]],
+		lists: [['subscripts', false, 0]]
+	},
 	268: {
 		kind: 'dictionary_elements',
 		nonEmpty: [['_item', 'dictionary_elements.elements']],
+		nodeOnly: [['_item', 'DictionaryElements.items', 'a built Pair / DictionarySplat', [168, 236]]],
 		lists: [['items', false, 0]]
 	},
 	269: { kind: 'slice_group', nodeOnly: [['_expression', 'SliceGroup.expression', 'a built Expression', [204]]] },
 	270: {
 		kind: 'tuple_pattern_elements',
 		nonEmpty: [['_item', 'tuple_pattern_elements.elements']],
+		nodeOnly: [['_item', 'TuplePatternElements.items', 'a built Pattern', [195]]],
 		lists: [['items', false, 0]]
 	},
-	271: { kind: 'tuple_elements', nonEmpty: [['_item', 'tuple_elements.elements']], lists: [['items', false, 0]] },
+	271: {
+		kind: 'tuple_elements',
+		nonEmpty: [['_item', 'tuple_elements.elements']],
+		nodeOnly: [
+			[
+				'_item',
+				'TupleElements.items',
+				'a built Expression / Yield / ListSplat / ParenthesizedListSplat',
+				[167, 175, 204, 219]
+			]
+		],
+		lists: [['items', false, 0]]
+	},
 	272: {
 		kind: 'except_clause_exception_as',
 		required: [['_value', 'value']],
@@ -1547,10 +1622,16 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'case_list_pattern',
 		nodeOnly: [['_elements', 'CaseListPattern.elements', 'a built ListPatternCasePatterns', [265]]]
 	},
-	275: { kind: 'print_arguments', nonEmpty: [['_item', 'print_arguments.elements']], lists: [['items', false, 0]] },
+	275: {
+		kind: 'print_arguments',
+		nonEmpty: [['_item', 'print_arguments.elements']],
+		nodeOnly: [['_item', 'PrintArguments.items', 'a built Expression', [204]]],
+		lists: [['items', false, 0]]
+	},
 	276: {
 		kind: 'print_chevron_arguments',
 		nonEmpty: [['_item', 'print_chevron_arguments.elements']],
+		nodeOnly: [['_item', 'PrintChevronArguments.items', 'a built Expression', [204]]],
 		lists: [['items', false, 0]]
 	},
 	277: {
@@ -1654,9 +1735,15 @@ export const structure: StructureTable = Object.freeze({
 	289: {
 		kind: 'expression_statement_tuple',
 		nonEmpty: [['_item', 'expression_statement_tuple.elements']],
+		nodeOnly: [['_item', 'ExpressionStatementTuple.items', 'a built Expression', [204]]],
 		lists: [['items', false, 0]]
 	},
-	290: { kind: 'with_clause_bare', nonEmpty: [['_items', 'with_clause_bare.elements']], lists: [['items', false, 0]] },
+	290: {
+		kind: 'with_clause_bare',
+		nonEmpty: [['_items', 'with_clause_bare.elements']],
+		nodeOnly: [['_items', 'WithClauseBare.items', 'a built WithItem', [163]]],
+		lists: [['items', false, 0]]
+	},
 	291: {
 		kind: 'with_clause_paren',
 		required: [['_items', 'items']],
