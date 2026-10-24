@@ -217,6 +217,128 @@ pub trait SourceTable {
         let _ = tree;
         None
     }
+
+    /// Renders the built record `record`, which the store `held` answered,
+    /// into `w` as a trivia entry in the side that holds it: from the arena
+    /// that wrote it, its own sides left to that side (they are its
+    /// neighbours there), under `options`. A table that reaches no arena
+    /// refuses.
+    ///
+    /// # Errors
+    ///
+    /// What the record's render refuses, and `RenderError::Record` when no
+    /// arena is reachable from here.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (record, held, options, w);
+        Err(RenderError::Record(NO_ARENA))
+    }
+}
+
+/// The refusal of a record entry rendered where no arena is reachable.
+#[cfg(feature = "arena")]
+pub(crate) const NO_ARENA: crate::arena::ArenaError = crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable");
+
+/// What renders the built records one call's trivia entries name: each
+/// from the arena of the store that answered it, borrowed for the call.
+#[cfg(feature = "arena")]
+pub trait EntryRecords {
+    /// Writes the built record `record`, which the store `held` answered,
+    /// into `w` as a trivia entry, under `ctx`.
+    ///
+    /// # Errors
+    ///
+    /// What the record's render refuses, and `RenderError::Record` for a
+    /// store of another grammar or an arena that was released.
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, ctx: &crate::prepare::RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult;
+}
+
+/// The records of a call that reaches no built arena: each entry refuses.
+#[cfg(feature = "arena")]
+pub struct NoArena;
+
+#[cfg(feature = "arena")]
+impl EntryRecords for NoArena {
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, ctx: &crate::prepare::RenderContext<'_>, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (record, held, ctx, w);
+        Err(RenderError::Record(NO_ARENA))
+    }
+}
+
+/// A tree table that also renders built record entries (`EntryRecords`):
+/// every lookup is `sources`', and an entry renders through `records` with
+/// this table as its context's, so the entries inside it render here too.
+#[cfg(feature = "arena")]
+pub struct WithRecords<'a> {
+    pub sources: &'a dyn SourceTable,
+    pub records: &'a dyn EntryRecords,
+}
+
+#[cfg(feature = "arena")]
+impl SourceTable for WithRecords<'_> {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>> {
+        self.sources.source_of(tree_id)
+    }
+
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        self.sources.kind_of(coord)
+    }
+
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
+        self.sources.line_starts_inside_tokens(coord)
+    }
+
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: KindId) -> Option<KindId> {
+        self.sources.last_list_child_kind(tree, span, kind)
+    }
+
+    fn for_each_kind_ending_with(&self, coord: &crate::slot::NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+        self.sources.for_each_kind_ending_with(coord, f);
+    }
+
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        self.sources.depth_move(coord)
+    }
+
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.sources.sides(coord)
+    }
+
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
+        self.sources.frames(coord)
+    }
+
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        self.sources.slot_layouts(coord)
+    }
+
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<KindId> {
+        self.sources.separator_before(coord)
+    }
+
+    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
+        self.sources.framed_span(coord)
+    }
+
+    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        self.sources.edited_within(coord)
+    }
+
+    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        self.sources.renders_as_source(coord)
+    }
+
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+        self.sources.seat_through(coord, wrappers, seat)
+    }
+
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+        self.sources.read_ctx(tree)
+    }
+
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
+        self.records.render_record_entry(record, held, &crate::prepare::RenderContext { options, sources: self }, w)
+    }
 }
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
@@ -397,6 +519,21 @@ pub trait RenderSink {
     /// a sink that holds no table or no options.
     fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
         None
+    }
+    /// Writes the built record `record`, which the store `held` (whose
+    /// identity is `store`) answered, as a trivia entry here, through this
+    /// sink's tree table (`SourceTable::render_record_entry`). Refuses a
+    /// record the entries it is being written inside already hold, and a
+    /// sink that holds no table or no options.
+    ///
+    /// # Errors
+    ///
+    /// `RenderError::Record` for a record inside its own entry, and what the
+    /// table refuses.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, store: usize, held: &dyn std::any::Any) -> RenderResult {
+        let _ = (record, store, held);
+        Err(RenderError::Record(crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable")))
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.

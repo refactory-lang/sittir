@@ -344,7 +344,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const built = nativeBuiltRecords(native);
 	if (built !== undefined) {
 		recordConstruction.set(frozen, (records) => {
-			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle);
+			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, hooks.querySlots, handle);
 			handle.records = records;
 		});
 	}

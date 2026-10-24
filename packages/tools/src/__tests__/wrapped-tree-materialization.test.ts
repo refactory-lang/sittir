@@ -10,11 +10,10 @@ import {
 	slotAccessorOf,
 	walkWrappedTree,
 	type AccessorThrowRecord,
-	type LoadedNodeModel,
 	type TypedNode
 } from '../validate/common.ts';
 
-const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} }, listDefaults: {}, listSeparators: {} } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
+const accessorOf = slotAccessorOf({ 1: [['value', 0, undefined, '_value'], ['items', 1, undefined, '_items'], ['statements', 2, undefined, '_statements']] }, { listSeparators: {} }, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(type: number, text: string): TypedNode {
 	return { $type: type, $named: true, $text: text };

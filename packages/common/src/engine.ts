@@ -20,7 +20,7 @@ import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { builtEntries, NO_CHUNKS, type BuiltRecords, type BuiltText } from './built-arena.ts';
+import { builtEntries, type BuiltRecords, type BuiltText } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
 import { treeBuiltArena } from './engine-scope.ts';
 
@@ -131,12 +131,11 @@ export interface NativeEngineLike<TNode = unknown> {
 	triviaSide(treeId: number, index: number, side: TriviaSideName): unknown[];
 	/**
 	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`. A built record among them
-	 * (`{ $type, $record }`) is stamped with the text it renders, read from the engine's built arena, whose `words` and
-	 * `bytes` chunks are borrowed for the call, as {@link renderBuilt} borrows them.
+	 * (`{ $type, $record }`) renders from the engine's built arena ({@link holdBuiltArena}) wherever the side renders.
 	 *
-	 * @throws as {@link triviaSide} does, and for a built record {@link renderBuilt} refuses.
+	 * @throws as {@link triviaSide} does.
 	 */
-	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[], words: readonly Uint32Array[], bytes: readonly Uint8Array[]): void;
+	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -200,19 +199,17 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
 	/**
-	 * The built node at `address` of a built arena rendered as a render root whose `leading` and `trailing` edges have
-	 * no neighbour, under this engine's options, with the sides `owner` holds: the engine that built the arena, which its
-	 * records' side writes went to. A leaf passes the `text` its cells hold; a compound record passes `null`. The
-	 * arena's `words` and `bytes` chunks are borrowed for the call, never copied. Present when the addon carries the
-	 * record codec.
+	 * The built node at `address` of the built arena `owner` holds ({@link holdBuiltArena}) rendered as a render root
+	 * whose `leading` and `trailing` edges have no neighbour, under this engine's options, with the sides `owner` holds:
+	 * the engine that built the arena, which its records' side writes went to. A leaf passes the `text` its cells hold;
+	 * a compound record passes `null`. The arena's chunks are borrowed for the call, never copied. Present when the
+	 * addon carries the record codec.
 	 *
-	 * @throws when a chunk is not a typed array of its kind over an ordinary `ArrayBuffer`, the words at `address` are no
-	 * record the arena admits, a parsed tree a record links is not live, or the record's render refuses.
+	 * @throws when `owner` no longer holds its arena, the words at `address` are no record the arena admits, a parsed
+	 * tree a record links is not live, or the record's render refuses.
 	 */
 	renderBuilt?(
 		owner: object,
-		words: readonly Uint32Array[],
-		bytes: readonly Uint8Array[],
 		address: number,
 		text: BuiltText | null,
 		leading: boolean,
@@ -228,11 +225,18 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
 	/**
 	 * Replaces `side` of the built record at `address` with `entries`, which {@link renderBuilt} then writes; a built
-	 * record among them is stamped as {@link writeTriviaSide} stamps one. Present when the addon carries the record codec.
+	 * record among them renders as {@link writeTriviaSide} says. Present when the addon carries the record codec.
 	 *
-	 * @throws as {@link builtTriviaSide} and {@link writeTriviaSide} do.
+	 * @throws as {@link builtTriviaSide} does.
 	 */
-	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[], words: readonly Uint32Array[], bytes: readonly Uint8Array[]): void;
+	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/**
+	 * Holds the chunks of the built arena whose records this engine's builders write, in place of the ones it held:
+	 * `words` and `bytes`, and `writtenWords` and `writtenBytes`, how much of each chunk is written, which the arena
+	 * keeps current. Each is held weakly. A trivia entry this engine's sides hold renders from them, until
+	 * {@link dispose}. Present when the addon carries the record codec.
+	 */
+	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
 	/**
@@ -503,10 +507,7 @@ export function createNativeEngine<
 				const changed = rootEdges(node as object);
 				const renderBuilt = engine.renderBuilt;
 				if (renderBuilt === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
-				return createRenderHandle(() => {
-					const { words, bytes } = built.arena.chunks();
-					return renderBuilt.call(engine, built.arena.owner, words, bytes, built.at, built.text ?? null, changed.leading, changed.trailing, perCall);
-				});
+				return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, built.text ?? null, changed.leading, changed.trailing, perCall));
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
@@ -617,10 +618,7 @@ export function createNativeEngine<
 								holdReadTree(entries, liveToken);
 								return entries;
 							},
-							writeTriviaSide: (index, side, entries) => {
-								const { words, bytes } = treeBuiltArena(tree)?.chunks() ?? NO_CHUNKS;
-								engine.writeTriviaSide(parsed.treeId, index, side, entries, words, bytes);
-							},
+							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							unitSides: (index) => {
 								const units = engine.unitSides(parsed.treeId, index);
 								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
@@ -672,14 +670,16 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide } = engine;
-	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+	const { builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = engine;
+	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined || holdBuiltArena === undefined)
+		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	return {
 		format,
 		owner: engine,
+		hold: (words, bytes, writtenWords, writtenBytes) => holdBuiltArena.call(engine, words, bytes, writtenWords, writtenBytes),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
-			writeTriviaSide: (at, side, entries, { words, bytes }) => writeBuiltTriviaSide.call(engine, at, side, entries, words, bytes)
+			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries)
 		}
 	};
 }

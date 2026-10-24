@@ -44,19 +44,50 @@ export function asTextNode<T>(value: T): T {
 	return typeof text === 'string' ? Object.assign(value, { $text: () => text }) : value;
 }
 
-/**
- * A trivia entry as native reads it: each `$text` method in it, its own and its slots', as the string it returns. Every other key crosses as the entry holds it. A coordinate crosses as it is.
- */
-function entryData(value: unknown): unknown {
-	if (Array.isArray(value)) return value.map(entryData);
-	if (!isRecord(value) || isCoordinate(value)) return value;
-	const out: Record<string, unknown> = {};
-	for (const key of Object.keys(value)) out[key] = key === '$text' ? nodeText(value) : isStorageKey(key) ? entryData(value[key]) : value[key];
-	return out;
+export function withinSides<T>(value: object, within: Set<object>, read: () => T): T {
+	if (within.has(value)) throw new Error('a side that reaches its own node');
+	within.add(value);
+	try {
+		return read();
+	} finally {
+		within.delete(value);
+	}
 }
 
-function entriesData<S extends TriviaSides<unknown>>(sides: S): S {
-	return mapTriviaEntries(sides, (entries) => entries.map(entryData)) as S;
+/**
+ * A trivia entry as native reads it: each `$text` method in it, its own, its slots' and its sides', as the string it returns. Every other key crosses as the entry holds it. A coordinate crosses as it is.
+ *
+ * @throws when the entry is among its own slots or sides, at any depth.
+ */
+function entryData(value: unknown, within: Set<object>): unknown {
+	if (Array.isArray(value)) return value.map((entry) => entryData(entry, within));
+	if (!isRecord(value) || isCoordinate(value)) return value;
+	return withinSides(value, within, () => {
+		const out: Record<string, unknown> = {};
+		for (const key of Object.keys(value)) {
+			const raw = value[key];
+			out[key] = key === '$text' ? nodeText(value) : key === '$_layout' ? layoutData(raw, within) : isStorageKey(key) ? entryData(raw, within) : raw;
+		}
+		return out;
+	});
+}
+
+function layoutData(layout: unknown, within: Set<object>): unknown {
+	if (!isRecord(layout)) return layout;
+	const { trivia, units } = layout as NodeDataLayout;
+	return {
+		...layout,
+		...(trivia == null ? {} : { trivia: entriesData(trivia as TriviaSides<unknown>, within) }),
+		...(units == null ? {} : { units: unitsData(units, within) })
+	};
+}
+
+function entriesData<S extends TriviaSides<unknown>>(sides: S, within = new Set<object>()): S {
+	return mapTriviaEntries(sides, (entries) => entries.map((entry) => entryData(entry, within))) as S;
+}
+
+function unitsData(units: readonly unknown[], within = new Set<object>()): unknown[] {
+	return units.map((unit) => ({ ...(unit as object), ...entriesData(unit as TriviaSides<unknown>, within) }));
 }
 
 /**
@@ -752,7 +783,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		setLayout(out, 'trivia', entriesData(trivia as TriviaSides<unknown>));
 	}
 	const units = fold || sided ? unitSidesOf(value) : undefined;
-	if (units !== undefined && units.length > 0) setLayout(out, 'units', units.map((unit) => ({ ...(unit as object), ...entriesData(unit as TriviaSides<unknown>) })));
+	if (units !== undefined && units.length > 0) setLayout(out, 'units', unitsData(units));
 	const source = fold ? placeOf(value) : undefined;
 	if (source !== undefined && sourceTree(source) !== undefined) {
 		setLayout(out, 'sides', plainCoordinate({ $treeHandle: source.treeHandle, $end: source.end, $span: source.span, $type: source.kind }));

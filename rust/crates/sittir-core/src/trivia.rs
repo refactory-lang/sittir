@@ -12,28 +12,37 @@ use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
 use crate::slot::SlotValue;
 
-/// One trivia entry: the node, or the coordinate of one. An entry a side
-/// write was given as a built record holds the text that record renders,
-/// stamped at the write (`Engine::stamp_side`), and names the record, which a
-/// read of the side answers with. Read from a store, it holds that store,
-/// which holds the record's own sides, as a coordinate names its tree.
+/// One trivia entry: the node, the coordinate of one, or a record of an
+/// engine's built arena, which renders from that arena where the side that
+/// holds it renders, as a coordinate renders from its tree.
 #[derive(Debug, Clone, PartialEq)]
-pub struct TriviaEntry<T> {
-    pub value: SlotValue<T>,
+pub enum TriviaEntry<T> {
+    Value(SlotValue<T>),
     #[cfg(feature = "arena")]
-    pub record: Option<BuiltEntry>,
-    #[cfg(feature = "arena")]
-    pub store: Option<crate::trivia_store::TriviaStore<T>>,
+    Record(RecordEntry<T>),
 }
 
 impl<T> TriviaEntry<T> {
     pub fn new(value: SlotValue<T>) -> Self {
-        Self {
-            value,
+        Self::Value(value)
+    }
+
+    /// The node or coordinate the entry holds; `None` for a record.
+    #[must_use]
+    pub fn value(&self) -> Option<&SlotValue<T>> {
+        match self {
+            Self::Value(value) => Some(value),
             #[cfg(feature = "arena")]
-            record: None,
+            Self::Record(_) => None,
+        }
+    }
+
+    #[cfg_attr(not(feature = "arena"), allow(clippy::unnecessary_wraps, reason = "an entry is a built record only in the arena build"))]
+    fn value_mut(&mut self) -> Option<&mut SlotValue<T>> {
+        match self {
+            Self::Value(value) => Some(value),
             #[cfg(feature = "arena")]
-            store: None,
+            Self::Record(_) => None,
         }
     }
 }
@@ -47,18 +56,25 @@ pub struct BuiltEntry {
     pub at: crate::arena::Address,
 }
 
-/// One entry of a side write: an entry as it is, or a built record, which
-/// the write stamps with the text it renders (`Engine::stamp_side`).
+/// A built record a side holds. Read from a store, it holds that store,
+/// which holds the record's own sides and reaches the arena that wrote it.
+#[cfg(feature = "arena")]
 #[derive(Debug, Clone, PartialEq)]
-pub enum SideWrite<T> {
-    Entry(TriviaEntry<T>),
-    #[cfg(feature = "arena")]
-    Built(BuiltEntry),
+pub struct RecordEntry<T> {
+    pub record: BuiltEntry,
+    pub store: Option<crate::trivia_store::TriviaStore<T>>,
 }
 
-impl<T: Render> Render for TriviaEntry<T> {
+impl<T: Render + 'static> Render for TriviaEntry<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-        self.value.render(w)
+        match self {
+            Self::Value(value) => value.render(w),
+            #[cfg(feature = "arena")]
+            Self::Record(entry) => {
+                let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ArenaError::Unwritable("a record entry no store answered")))?;
+                w.render_record_entry(entry.record, store.identity(), store)
+            }
+        }
     }
 }
 
@@ -102,7 +118,7 @@ impl<T> TriviaEntry<T> {
     /// that store holds.
     #[cfg(feature = "arena")]
     fn held_record(&self) -> bool {
-        self.record.is_some() && self.store.is_some()
+        matches!(self, Self::Record(RecordEntry { store: Some(_), .. }))
     }
 
     #[cfg(not(feature = "arena"))]
@@ -116,25 +132,25 @@ impl<T: TriviaSeam> TriviaEntry<T> {
     /// Whether the entry holds a leading or trailing side of its own.
     fn has_sides(&self) -> bool {
         let held = |side: &Option<Vec<TriviaEntry<T>>>| side.as_ref().is_some_and(|entries| !entries.is_empty());
-        match &self.value {
-            SlotValue::Node(value) => value.sides().is_some_and(|sides| held(&sides.leading) || held(&sides.trailing)),
-            SlotValue::Coord(_) => false,
+        match self.value() {
+            Some(SlotValue::Node(value)) => value.sides().is_some_and(|sides| held(&sides.leading) || held(&sides.trailing)),
+            Some(SlotValue::Coord(_)) | None => false,
         }
     }
 
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
-        match &self.value {
-            SlotValue::Node(value) => value.seam_gap(),
-            SlotValue::Coord(_) => None,
+        match self.value() {
+            Some(SlotValue::Node(value)) => value.seam_gap(),
+            Some(SlotValue::Coord(_)) | None => None,
         }
     }
 
     /// The change a depth member makes to the excess indentation; 0 for any
     /// other entry.
     pub fn depth(&self) -> i32 {
-        match &self.value {
-            SlotValue::Node(value) => value.depth(),
-            SlotValue::Coord(_) => 0,
+        match self.value() {
+            Some(SlotValue::Node(value)) => value.depth(),
+            Some(SlotValue::Coord(_)) | None => 0,
         }
     }
 
@@ -192,8 +208,8 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for NodeTrivia<T> {
     /// kind's edges, as a coordinate in a slot does.
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
-        for entry in sides.chain(self.inner.iter_mut()).flatten() {
-            entry.value.prepare(ctx)?;
+        for value in sides.chain(self.inner.iter_mut()).flatten().filter_map(TriviaEntry::value_mut) {
+            value.prepare(ctx)?;
         }
         Ok(())
     }
@@ -544,7 +560,7 @@ impl<T: TriviaSeam> RunItem for Spliced<T> {
     }
 }
 
-impl<T: Render> Render for Spliced<T> {
+impl<T: Render + 'static> Render for Spliced<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match self {
             Spliced::Entry(entry) => entry.render(w),
@@ -593,38 +609,62 @@ fn defer_run<I: RunItem + Render>(run: &[I], w: &mut dyn RenderSink) -> RenderRe
 /// `None` when no entry is a coordinate, a built record or holds sides: the
 /// side renders as it is.
 fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], w: &dyn RenderSink) -> Result<Option<Vec<Spliced<T>>>, crate::render::CoordinateError> {
-    if !entries.iter().any(|entry| entry.has_sides() || entry.held_record() || matches!(entry.value, SlotValue::Coord(_))) {
+    if !entries.iter().any(|entry| entry.has_sides() || entry.held_record() || matches!(entry.value(), Some(SlotValue::Coord(_)))) {
         return Ok(None);
     }
-    let mut run = Vec::with_capacity(entries.len());
+    let (mut run, mut within) = (Vec::with_capacity(entries.len()), Within::default());
     for entry in entries {
-        splice_into(entry.clone(), w, &mut run)?;
+        splice_into(entry.clone(), w, &mut run, &mut within)?;
     }
     Ok(Some(run))
 }
 
+/// The built records a splice is inside, by the store that answered each and
+/// its address: one already among them refuses.
+#[cfg(feature = "arena")]
+type Within = Vec<(usize, crate::arena::Address)>;
+
+#[cfg(not(feature = "arena"))]
+type Within = ();
+
+/// The refusal of a built record that a side reaches from its own sides.
+#[cfg(feature = "arena")]
+pub(crate) const SIDE_CYCLE: crate::arena::ArenaError = crate::arena::ArenaError::Unwritable("a side that reaches its own record");
+
 /// A side's leading and trailing entries, as `NodeTrivia` holds them.
 type Outer<T> = (Option<Vec<TriviaEntry<T>>>, Option<Vec<TriviaEntry<T>>>);
 
-/// The own sides of the built record `entry` names, as the store it was read
-/// from holds them, prepared as the sink prepares a coordinate's frames;
-/// `None` when the entry is no record a store answered.
+/// The own sides of the built record `entry` holds, as the store that
+/// answered it holds them, prepared as the sink prepares a coordinate's
+/// frames.
 #[cfg(feature = "arena")]
-fn record_sides<T: TriviaSeam>(entry: &TriviaEntry<T>, w: &dyn RenderSink) -> Result<Option<Outer<T>>, crate::render::CoordinateError> {
-    let (Some(record), Some(store)) = (entry.record, entry.store.as_ref()) else { return Ok(None) };
-    let Some(mut sides) = store.sides(crate::trivia_store::Place::Record(record.at)) else { return Ok(Some((None, None))) };
+fn record_sides<T: TriviaSeam>(entry: &RecordEntry<T>, w: &dyn RenderSink) -> Result<Outer<T>, crate::render::CoordinateError> {
+    let Some(mut sides) = entry.store.as_ref().and_then(|store| store.sides(crate::trivia_store::Place::Record(entry.record.at))) else { return Ok((None, None)) };
     if let Some(ctx) = w.render_context() {
         crate::prepare::Prepare::prepare(&mut sides, &ctx)?;
     }
-    Ok(Some((sides.leading, sides.trailing)))
+    Ok((sides.leading, sides.trailing))
 }
 
-fn splice_into<T: TriviaSeam>(mut entry: TriviaEntry<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>) -> Result<(), crate::render::CoordinateError> {
-    #[cfg(feature = "arena")]
-    if let Some(outer) = record_sides(&entry, w)? {
-        return splice_around(outer, Spliced::Entry(entry), w, run);
-    }
-    let (outer, item) = match &mut entry.value {
+#[cfg_attr(not(feature = "arena"), allow(clippy::infallible_destructuring_match, reason = "an entry is a built record only in the arena build"))]
+fn splice_into<T: TriviaSeam>(mut entry: TriviaEntry<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>, within: &mut Within) -> Result<(), crate::render::CoordinateError> {
+    let value = match &mut entry {
+        TriviaEntry::Value(value) => value,
+        #[cfg(feature = "arena")]
+        TriviaEntry::Record(record) => {
+            let key = record.store.as_ref().map(|store| (store.identity(), record.record.at));
+            if key.is_some_and(|key| within.contains(&key)) {
+                return Err(crate::render::CoordinateError::Record(SIDE_CYCLE));
+            }
+            let outer = record_sides(record, w)?;
+            let Some(key) = key else { return splice_around(outer, Spliced::Entry(entry), w, run, within) };
+            within.push(key);
+            let spliced = splice_around(outer, Spliced::Entry(entry), w, run, within);
+            within.pop();
+            return spliced;
+        }
+    };
+    let (outer, item) = match value {
         SlotValue::Node(value) => {
             let outer = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
             (outer, Spliced::Entry(entry))
@@ -638,18 +678,18 @@ fn splice_into<T: TriviaSeam>(mut entry: TriviaEntry<T>, w: &dyn RenderSink, run
             }
         }
     };
-    splice_around(outer, item, w, run)
+    splice_around(outer, item, w, run, within)
 }
 
 /// `item` in the run between its own leading and trailing entries, each
 /// spliced in turn.
-fn splice_around<T: TriviaSeam>((leading, trailing): Outer<T>, item: Spliced<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>) -> Result<(), crate::render::CoordinateError> {
+fn splice_around<T: TriviaSeam>((leading, trailing): Outer<T>, item: Spliced<T>, w: &dyn RenderSink, run: &mut Vec<Spliced<T>>, within: &mut Within) -> Result<(), crate::render::CoordinateError> {
     for side in leading.into_iter().flatten() {
-        splice_into(side, w, run)?;
+        splice_into(side, w, run, within)?;
     }
     run.push(item);
     for side in trailing.into_iter().flatten() {
-        splice_into(side, w, run)?;
+        splice_into(side, w, run, within)?;
     }
     Ok(())
 }
@@ -763,13 +803,24 @@ pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>, w: &
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
     for TriviaEntry<T>
 {
-    /// A trivia entry is a slot value: a node, a coordinate, bare text, a
+    /// A built record is `{ $type, $record }`, its kind and its address.
+    /// Any other entry is a slot value: a node, a coordinate, bare text, a
     /// whitespace member's kind id, or text with its stamped kind (`{ $type,
     /// $text }`, which the entry type decodes).
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        #[cfg(feature = "arena")]
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
+        if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::Object {
+            // SAFETY: `napi_val` is a live object in `env`.
+            if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "TriviaEntry")? } {
+                // SAFETY: `napi_val` is a live object in `env`.
+                let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "TriviaEntry")? };
+                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None }));
+            }
+        }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         Ok(Self::new(unsafe { SlotValue::from_napi_value(env, napi_val)? }))
     }
@@ -812,43 +863,19 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
-    for SideWrite<T>
-{
-    /// A built record is `{ $type, $record }`, its kind and its address;
-    /// any other value is a trivia entry.
-    unsafe fn from_napi_value(
-        env: ::napi::sys::napi_env,
-        napi_val: ::napi::sys::napi_value,
-    ) -> ::napi::Result<Self> {
-        #[cfg(feature = "arena")]
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::Object {
-            // SAFETY: `napi_val` is a live object in `env`.
-            if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "SideWrite")? } {
-                // SAFETY: `napi_val` is a live object in `env`.
-                let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "SideWrite")? };
-                return Ok(Self::Built(BuiltEntry { kind, at: crate::arena::Address(at) }));
+impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
+    /// The value's own form; a built record, its `{ $type, $record }`.
+    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
+        match val {
+            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+            Self::Value(value) => unsafe { SlotValue::to_napi_value(env, value) },
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, .. }) => {
+                use crate::boundary::{object_with_present, present};
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+                unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?]) }
             }
         }
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        Ok(Self::Entry(unsafe { TriviaEntry::from_napi_value(env, napi_val)? }))
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
-    /// The value's own form; an entry written as a built record, that
-    /// record's `{ $type, $record }`.
-    unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        #[cfg(feature = "arena")]
-        if let Some(BuiltEntry { kind, at }) = val.record {
-            use crate::boundary::{object_with_present, present};
-            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            return unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?]) };
-        }
-        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-        unsafe { SlotValue::to_napi_value(env, val.value) }
     }
 }
 
@@ -949,11 +976,14 @@ mod tests {
         super::TriviaEntry::new(crate::slot::SlotValue::Node(Sided(name, super::NodeTrivia { leading: Some(leading), trailing: Some(trailing), inner: None })))
     }
 
-    /// Each item's name, and whether it still holds sides of its own.
+    /// Each item's name, `'#'` for a built record, and whether it still
+    /// holds sides of its own.
     fn names(run: &[super::Spliced<Sided>]) -> Vec<(char, bool)> {
         run.iter()
             .map(|item| match item {
-                super::Spliced::Entry(entry @ super::TriviaEntry { value: crate::slot::SlotValue::Node(Sided(name, _)), .. }) => (*name, entry.has_sides()),
+                super::Spliced::Entry(entry @ super::TriviaEntry::Value(crate::slot::SlotValue::Node(Sided(name, _)))) => (*name, entry.has_sides()),
+                #[cfg(feature = "arena")]
+                super::Spliced::Entry(entry @ super::TriviaEntry::Record(_)) => ('#', entry.has_sides()),
                 _ => ('?', false),
             })
             .collect()
@@ -980,15 +1010,36 @@ mod tests {
         let mut out = String::new();
         let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
         let at = crate::arena::Address(5);
-        let built = |name| super::TriviaEntry { record: Some(super::BuiltEntry { kind: crate::types::KindId(1), at }), ..sided(name, vec![], vec![]) };
+        let built = || super::TriviaEntry::Record(super::RecordEntry { record: super::BuiltEntry { kind: crate::types::KindId(1), at }, store: None });
         let store = TriviaStore::<Sided>::new();
         store.write_side(Place::Record(at), crate::trivia_table::TriviaSide::Leading, vec![sided('a', vec![], vec![])]);
         store.write_side(Place::Record(at), crate::trivia_table::TriviaSide::Trailing, vec![sided('c', vec![], vec![])]);
         let holder = Place::Row { tree: crate::types::TreeId(1), row: crate::types::NodeIndex::ROOT };
-        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![built('b')]);
+        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![built()]);
         let side = store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written");
         let run = super::spliced(&side, &w).expect("a run").expect("spliced");
-        assert_eq!(names(&run), [('a', false), ('b', false), ('c', false)], "the record between the sides its store holds for it");
-        assert!(matches!(super::spliced(&[built('b')], &w), Ok(None)), "a record no store answered holds no sides of its own");
+        assert_eq!(names(&run), [('a', false), ('#', false), ('c', false)], "the record between the sides its store holds for it");
+        assert!(matches!(super::spliced(&[built()], &w), Ok(None)), "a record no store answered holds no sides of its own");
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_built_record_its_own_sides_reach_refuses_by_name() {
+        use crate::trivia_store::{Place, TriviaStore};
+        let mut out = String::new();
+        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+        let record = |at| super::TriviaEntry::Record(super::RecordEntry { record: super::BuiltEntry { kind: crate::types::KindId(1), at: crate::arena::Address(at) }, store: None });
+        let refused = |entries: &[super::TriviaEntry<Sided>]| matches!(super::spliced(entries, &w), Err(crate::render::CoordinateError::Record(refusal)) if refusal == super::SIDE_CYCLE);
+        let store = TriviaStore::<Sided>::new();
+        let holder = Place::Row { tree: crate::types::TreeId(1), row: crate::types::NodeIndex::ROOT };
+        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![record(5)]);
+        store.write_side(Place::Record(crate::arena::Address(5)), crate::trivia_table::TriviaSide::Leading, vec![record(5)]);
+        assert!(refused(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written")), "a record in its own side");
+        store.write_side(Place::Record(crate::arena::Address(5)), crate::trivia_table::TriviaSide::Leading, vec![record(6)]);
+        store.write_side(Place::Record(crate::arena::Address(6)), crate::trivia_table::TriviaSide::Trailing, vec![sided('a', vec![], vec![]), record(5)]);
+        assert!(refused(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written")), "two records in each other's sides");
+        store.write_side(Place::Record(crate::arena::Address(6)), crate::trivia_table::TriviaSide::Trailing, vec![record(7), record(7)]);
+        let run = super::spliced(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written"), &w).expect("a run").expect("spliced");
+        assert_eq!(names(&run), [('#', false), ('#', false), ('#', false), ('#', false)], "a record twice in one side is no cycle");
     }
 }

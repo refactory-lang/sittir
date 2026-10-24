@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { materializeDetached, slotAccessorOf, type LoadedNodeModel, type TypedNode } from '../../src/validate/common.ts';
+import { materializeDetached, slotAccessorOf, type TypedNode } from '../../src/validate/common.ts';
 import { probeTrace, resolveNativeTraceUntypedNode } from '../../src/probe/kind.ts';
 
-const accessorOf = slotAccessorOf({ slotAccessors: { node: { _value: 'value', _items: 'items', _statements: 'statements' }, leaf: {} }, listDefaults: {}, listSeparators: {} } as unknown as LoadedNodeModel, (id) => (id === 1 ? 'node' : 'leaf'));
+const accessorOf = slotAccessorOf({ 1: [['value', 0, undefined, '_value'], ['items', 1, undefined, '_items'], ['statements', 2, undefined, '_statements']] }, { listSeparators: {} }, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(kind: number, text: string): TypedNode {
 	return { $type: kind, $text: text };

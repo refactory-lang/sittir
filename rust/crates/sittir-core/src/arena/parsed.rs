@@ -11,7 +11,7 @@ use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
 use crate::read::{Depth, ReadNode};
 use crate::record::HEADER_WORDS;
-use crate::render::{RenderError, SourceTable};
+use crate::render::{EntryRecords, RenderError, SourceTable, WithRecords};
 use crate::slot::{ChangedEdges, NodeCoordinate};
 use crate::trivia_store::TriviaStore;
 use crate::types::{KindId, NodeIndex};
@@ -28,14 +28,20 @@ pub trait RecordGrammar: EngineGrammar {
     /// What the record's prepare or render refuses.
     fn render_record(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
 
-    /// Renders the built record `root` names as the text of a trivia entry:
-    /// as `render_record` renders it, its end holding no line break, since
-    /// the entry writes its kind's line end after the text.
+    /// Writes the built record `root` names into `w` as a trivia entry in
+    /// the side that holds it: prepared into a fresh overlay of its own over
+    /// the same arenas and store, under `ctx`, without its own leading and
+    /// trailing sides, which are its neighbours in that side, and written
+    /// where `w` stands, at its depth.
     ///
     /// # Errors
     ///
     /// As `render_record`.
-    fn render_entry(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>) -> Result<String, RenderError>;
+    fn render_entry(self, root: CellAt, trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<Self::Trivia>, ctx: &RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult;
+
+    /// The record a node of `kind` is written as, `None` for a kind that has
+    /// no record (`RecordCells::shape` of the grammar's node).
+    fn shape(kind: KindId) -> Option<super::RecordShape>;
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {
@@ -208,19 +214,21 @@ impl<G: RecordGrammar> ParsedTree<G> {
 
     /// The record at `at` of the tree's arena, rendered as a render root
     /// whose `changed` edges have no neighbour (the edges a node crossing as
-    /// its coordinate marks), under `options`, its line endings unspelled.
+    /// its coordinate marks), under `options`, its line endings unspelled,
+    /// each trivia entry's built record through `records`.
     ///
     /// # Errors
     ///
     /// `RenderError::Record` for an address that names no record of the
     /// arena: none, past what it wrote, or a header naming no kind the
     /// grammar writes a record of; else what the record's render refuses.
-    pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions) -> Result<String, RenderError> {
-        self.render_cell(self.record_root(at, changed)?, options, self)
+    pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions, records: &dyn EntryRecords) -> Result<String, RenderError> {
+        self.render_cell(self.record_root(at, changed)?, options, &WithRecords { sources: self, records })
     }
 
     /// Renders a parsed candidate without its outer trivia. Its record stays
     /// native; a recordless leaf uses the same coordinate cell as a slot does.
+    /// Each trivia entry's built record renders through `records`.
     ///
     /// # Errors
     ///
@@ -230,6 +238,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
         index: NodeIndex,
         at: Option<Address>,
         options: &ResolvedOptions,
+        records: &dyn EntryRecords,
     ) -> Result<String, RenderError> {
         let refused = || {
             RenderError::Record(super::ArenaError::Malformed {
@@ -255,7 +264,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                 site: None,
             }
         };
-        self.render_cell(root, options, &CandidateSources { tree: self, index })
+        self.render_cell(root, options, &WithRecords { sources: &CandidateSources { tree: self, index }, records })
     }
 
     fn candidate_record(&self, at: Address) -> Result<(CellAt, Row), RenderError> {

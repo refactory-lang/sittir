@@ -50,11 +50,19 @@ type Sides<T> = BTreeMap<(Place, TriviaSide), Vec<TriviaEntry<T>>>;
 #[derive(Debug)]
 pub struct TriviaStore<T> {
     sides: Arc<RwLock<Sides<T>>>,
+    /// The chunks of the arena the engine's builders write, which a record
+    /// entry this store answers renders from.
+    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+    built: Arc<RwLock<crate::napi_engine::BuiltChunks>>,
 }
 
 impl<T> Clone for TriviaStore<T> {
     fn clone(&self) -> Self {
-        Self { sides: Arc::clone(&self.sides) }
+        Self {
+            sides: Arc::clone(&self.sides),
+            #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+            built: Arc::clone(&self.built),
+        }
     }
 }
 
@@ -68,7 +76,31 @@ impl<T> PartialEq for TriviaStore<T> {
 
 impl<T> Default for TriviaStore<T> {
     fn default() -> Self {
-        Self { sides: Arc::new(RwLock::new(BTreeMap::new())) }
+        Self {
+            sides: Arc::new(RwLock::new(BTreeMap::new())),
+            #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+            built: Arc::default(),
+        }
+    }
+}
+
+impl<T> TriviaStore<T> {
+    /// What every handle of one store shares, and no other store has.
+    #[must_use]
+    pub fn identity(&self) -> usize {
+        Arc::as_ptr(&self.sides).cast::<()>().addr()
+    }
+
+    /// The chunks of the engine's built arena this store holds.
+    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+    pub fn built(&self) -> std::sync::RwLockReadGuard<'_, crate::napi_engine::BuiltChunks> {
+        self.built.read().unwrap_or_else(PoisonError::into_inner)
+    }
+
+    /// The chunks of the engine's built arena this store holds, to replace.
+    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+    pub fn built_mut(&self) -> std::sync::RwLockWriteGuard<'_, crate::napi_engine::BuiltChunks> {
+        self.built.write().unwrap_or_else(PoisonError::into_inner)
     }
 }
 
@@ -99,12 +131,9 @@ impl<T: Clone> TriviaStore<T> {
         {
             entries
                 .iter()
-                .map(|entry| {
-                    let mut entry = entry.clone();
-                    if entry.record.is_some() {
-                        entry.store = Some(self.clone());
-                    }
-                    entry
+                .map(|entry| match entry {
+                    TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: Some(self.clone()), ..record.clone() }),
+                    entry @ TriviaEntry::Value(_) => entry.clone(),
                 })
                 .collect()
         }
@@ -160,33 +189,14 @@ impl<T: Clone> TriviaStore<T> {
     /// No entry holds a store here.
     pub fn write_side(&self, place: Place, side: TriviaSide, entries: Vec<TriviaEntry<T>>) {
         #[cfg(feature = "arena")]
-        let entries: Vec<_> = entries.into_iter().map(|entry| TriviaEntry { store: None, ..entry }).collect();
+        let entries: Vec<_> = entries
+            .into_iter()
+            .map(|entry| match entry {
+                TriviaEntry::Record(record) => TriviaEntry::Record(crate::trivia::RecordEntry { store: None, ..record }),
+                entry @ TriviaEntry::Value(_) => entry,
+            })
+            .collect();
         self.write().insert((place, side), entries);
-    }
-
-    /// Whether the built record `holder` is among `entries`' records or the
-    /// records their own sides hold, at any depth, as this store holds them.
-    #[cfg(feature = "arena")]
-    #[must_use]
-    pub fn reaches(&self, holder: crate::arena::Address, entries: &[TriviaEntry<T>]) -> bool {
-        let sides = self.read();
-        let records = |entries: &[TriviaEntry<T>]| entries.iter().filter_map(|entry| entry.record.map(|record| record.at)).collect::<Vec<_>>();
-        let mut pending = records(entries);
-        let mut seen = std::collections::BTreeSet::new();
-        while let Some(at) = pending.pop() {
-            if at == holder {
-                return true;
-            }
-            if !seen.insert(at) {
-                continue;
-            }
-            for side in [TriviaSide::Leading, TriviaSide::Trailing, TriviaSide::Inner] {
-                if let Some(held) = sides.get(&(Place::Record(at), side)) {
-                    pending.extend(records(held));
-                }
-            }
-        }
-        false
     }
 
     /// Whether a write set a side of a node in rows `[index, end)` of `tree`:
@@ -316,40 +326,34 @@ mod tests {
     }
 
     #[cfg(feature = "arena")]
-    fn record(at: u32) -> TriviaEntry<TriviaText> {
-        let mut entry = entry("/* c */");
-        entry.record = Some(crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(at) });
-        entry
+    fn record(at: u32, store: Option<TriviaStore<TriviaText>>) -> TriviaEntry<TriviaText> {
+        TriviaEntry::Record(crate::trivia::RecordEntry { record: crate::trivia::BuiltEntry { kind: KindId(1), at: crate::arena::Address(at) }, store })
+    }
+
+    #[cfg(feature = "arena")]
+    fn store_of(entry: &TriviaEntry<TriviaText>) -> Option<&TriviaStore<TriviaText>> {
+        match entry {
+            TriviaEntry::Record(record) => record.store.as_ref(),
+            TriviaEntry::Value(_) => None,
+        }
     }
 
     #[cfg(feature = "arena")]
     #[test]
     fn a_record_entry_holds_the_store_that_answered_it_and_no_store_holds_itself() {
         let (one, two) = (TriviaStore::<TriviaText>::new(), TriviaStore::<TriviaText>::new());
-        assert!(one == one.clone() && one != two, "a handle equals another only when they share one store");
-        one.write_side(row(1, 0), TriviaSide::Leading, vec![TriviaEntry { store: Some(two.clone()), ..record(5) }, entry("// x")]);
+        let handle = one.clone();
+        assert!(one == handle && one != two, "a handle equals another only when they share one store");
+        assert!(one.identity() == handle.identity() && one.identity() != two.identity(), "an identity is a store's, shared by its handles");
+        one.write_side(row(1, 0), TriviaSide::Leading, vec![record(5, Some(two.clone())), entry("// x")]);
         let read = one.side(row(1, 0), TriviaSide::Leading).expect("written");
-        assert_eq!(read[0].store.as_ref(), Some(&one), "the record entry holds the store it was read from, not the one it was written with");
-        assert_eq!(read[1].store, None, "an entry that names no record holds no store");
-        two.write_side(row(1, 0), TriviaSide::Leading, vec![record(5)]);
+        assert_eq!(store_of(&read[0]), Some(&one), "the record entry holds the store it was read from, not the one it was written with");
+        assert_eq!(store_of(&read[1]), None, "an entry that names no record holds no store");
+        two.write_side(row(1, 0), TriviaSide::Leading, vec![record(5, None)]);
         assert_ne!(two.side(row(1, 0), TriviaSide::Leading), Some(read[..1].to_vec()), "the same record address read from two stores is two records");
         assert_eq!(one.sides(Place::Record(Address(5))), None);
-        one.write_side(Place::Record(Address(5)), TriviaSide::Trailing, vec![record(6)]);
+        one.write_side(Place::Record(Address(5)), TriviaSide::Trailing, vec![record(6, None)]);
         let sides = one.sides(Place::Record(Address(5))).expect("written");
-        assert_eq!(sides.trailing.expect("written")[0].store.as_ref(), Some(&one), "a record's own sides answer with their store too");
-    }
-
-    #[cfg(feature = "arena")]
-    #[test]
-    fn a_record_reaches_itself_through_its_entries_own_sides_at_any_depth() {
-        let store = TriviaStore::<TriviaText>::new();
-        store.write_side(Place::Record(Address(6)), TriviaSide::Leading, vec![record(7)]);
-        store.write_side(Place::Record(Address(7)), TriviaSide::Inner, vec![record(5)]);
-        assert!(store.reaches(Address(5), &[record(5)]), "an entry that is the record");
-        assert!(store.reaches(Address(5), &[entry("// x"), record(6)]), "through two records' sides");
-        assert!(!store.reaches(Address(8), &[record(6)]));
-        assert!(!store.reaches(Address(5), &[entry("// x")]), "an entry that names no record reaches none");
-        store.write_side(Place::Record(Address(7)), TriviaSide::Inner, vec![record(6)]);
-        assert!(!store.reaches(Address(5), &[record(6)]), "a loop that does not hold the record ends");
+        assert_eq!(store_of(&sides.trailing.expect("written")[0]), Some(&one), "a record's own sides answer with their store too");
     }
 }

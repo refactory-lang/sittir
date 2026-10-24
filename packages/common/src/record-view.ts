@@ -1,5 +1,7 @@
-import type { ByteSpan, NodeCoordinate } from '@sittir/types';
+import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
+import { builtRefOf } from './built-ref.ts';
+import { treeOf } from './tree-token.ts';
 import {
 	decodeCell,
 	decodeListCell,
@@ -10,7 +12,7 @@ import {
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
-import { aliasContentOf, carryReadTree, coordinateOf } from './node-data.ts';
+import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './node-data.ts';
 
 /** The own key of a record stub and of the view made from it: the record's address. */
 export const RECORD = Symbol.for('sittir.record');
@@ -282,4 +284,54 @@ export function recordFlag(holder: object, tree: TreeHandle, word: number, bit: 
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const { words, start } = wordsAt(recordsOf(tree), at, word + 1);
 	return ((words[start + word]! >>> bit) & 1) === 1;
+}
+
+export function chosenSeparatorOf(node: object): unknown {
+	const built = builtRefOf(node);
+	return (node as Record<string, unknown>)._separator ?? (built === undefined ? undefined : recordSeparator(node, built.arena.tree));
+}
+
+function chosenDelimiterOf(node: object): unknown {
+	const own = (node as Record<string, unknown>)._delimiter;
+	if (own !== undefined || recordOf(node) === undefined) return own;
+	const tree = builtRefOf(node)?.arena.tree ?? treeOf(node);
+	return tree === undefined ? undefined : recordDelimiter(node, tree);
+}
+
+export interface RefusedSlot {
+	readonly storageKey: string;
+	readonly accessor: string;
+	readonly error: Error;
+}
+
+export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refused?: (slot: RefusedSlot) => void): [storageKey: string, value: unknown][] {
+	const members = node as Record<string, unknown>;
+	const values = rows.flatMap(([accessor, , , storageKey]): [string, unknown][] => {
+		const read = members[accessor];
+		if (typeof read !== 'function' || read.length !== 0) {
+			if (Object.hasOwn(node, storageKey)) throw new Error(`a node of kind ${String(members.$type)} stores ${storageKey}, but has no reader ${accessor}()`);
+			return [];
+		}
+		if (refused === undefined) return [[storageKey, (read as () => unknown).call(node)]];
+		try {
+			return [[storageKey, (read as () => unknown).call(node)]];
+		} catch (error) {
+			refused({ storageKey, accessor, error: error as Error });
+			return [];
+		}
+	});
+	const delimiter = chosenDelimiterOf(node);
+	if (typeof delimiter === 'number') values.push(['_delimiter', delimiter]);
+	const chosen = chosenSeparatorOf(node);
+	if (typeof chosen === 'number') values.push(['_separator', chosen]);
+	return values;
+}
+
+export function storedSlotValues(
+	node: object,
+	slotsOf: (kind: number) => readonly QuerySlotEntry[],
+	refused?: (slot: RefusedSlot) => void
+): [storageKey: string, value: unknown][] {
+	if (recordOf(node) !== undefined) return slotValuesOf(node, slotsOf((node as { readonly $type: number }).$type), refused);
+	return Object.entries(node).filter(([key]) => isStorageKey(key));
 }

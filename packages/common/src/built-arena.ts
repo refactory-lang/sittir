@@ -1,3 +1,4 @@
+import type { QuerySlots } from '@sittir/types';
 import { bindTree, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead } from './node-data.ts';
@@ -29,19 +30,19 @@ export interface BuiltChunks {
 	readonly bytes: readonly Uint8Array[];
 }
 
-export const NO_CHUNKS: BuiltChunks = { words: [], bytes: [] };
-
 /**
  * What an engine that reads trees as records gives its built arena: the cell format, the trivia table its records'
- * sides are written to, by record address, and the native engine that holds that table, whose sides a render of one of
- * the arena's records takes through whichever engine of the language renders it.
+ * sides are written to, by record address, the native engine that holds that table, whose sides a render of one of
+ * the arena's records takes through whichever engine of the language renders it, and `hold`, which gives that engine
+ * the arena's chunks and how much of each is written, so a record written into a side renders from them.
  */
 export interface BuiltRecords {
 	readonly format: CellFormat;
 	readonly owner: object;
+	hold(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
-		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[], chunks: BuiltChunks): void;
+		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	};
 }
 
@@ -53,18 +54,21 @@ const decoder = new TextDecoder('utf-8', { fatal: true });
 
 class Chunks<A extends Uint32Array | Uint8Array> {
 	readonly #make: (length: number) => A;
+	readonly #pushed: () => void;
 	readonly #first: number;
 	readonly #limit: number;
 	readonly #most: number;
 	readonly chunks: A[] = [];
-	readonly used: number[] = [];
+	readonly used: Uint32Array;
 	#open = -1;
 
-	constructor(make: (length: number) => A, first: number, format: CellFormat) {
+	constructor(make: (length: number) => A, first: number, format: CellFormat, pushed: () => void) {
 		this.#make = make;
+		this.#pushed = pushed;
 		this.#limit = 2 ** format.chunkShift;
 		this.#most = 2 ** (32 - format.chunkShift);
 		this.#first = Math.min(first, this.#limit);
+		this.used = new Uint32Array(this.#most);
 	}
 
 	/** `size` units in one chunk: the open shared chunk while it has room, else a new one twice its size up to the address limit, or a chunk of their own when larger than that. */
@@ -90,7 +94,7 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 		const chunk = this.chunks.length;
 		if (chunk >= this.#most) throw new Error('a built arena holds as many chunks as an address can name');
 		this.chunks.push(this.#make(length));
-		this.used.push(0);
+		this.#pushed();
 		return chunk;
 	}
 
@@ -101,8 +105,7 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 
 	/** Whether `length` units from `unit` of `chunk` are written. */
 	holds(chunk: number, unit: number, length: number): boolean {
-		const used = this.used[chunk];
-		return used !== undefined && unit + length <= used;
+		return chunk < this.chunks.length && unit + length <= this.used[chunk]!;
 	}
 }
 
@@ -117,6 +120,7 @@ export class BuiltArena {
 	readonly format: CellFormat;
 	/** The native engine that holds this arena's records' written sides ({@link BuiltRecords.owner}). */
 	readonly owner: object;
+	readonly slots: QuerySlots;
 	/** The tree a built record's view reads through: its records are this arena's, and its trivia table is keyed by their addresses. */
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly #wrap: Wrap;
@@ -130,9 +134,10 @@ export class BuiltArena {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
 
-	constructor({ format, owner, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
+	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, slots: QuerySlots, handle: TreeEngineHandle) {
 		this.format = format;
 		this.owner = owner;
+		this.slots = slots;
 		this.#wrap = wrap;
 		this.tree = {
 			built: this,
@@ -140,11 +145,12 @@ export class BuiltArena {
 				const entries = trivia.triviaSide(at, side);
 				return entries === undefined ? undefined : builtEntries(this, entries);
 			},
-			writeTriviaSide: (at, side, entries) => trivia.writeTriviaSide(at, side, entries, this.chunks())
+			writeTriviaSide: (at, side, entries) => trivia.writeTriviaSide(at, side, entries)
 		};
 		bindTree(this.tree, handle);
-		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format);
-		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format);
+		const pushed = () => hold(this.#words.chunks, this.#bytes.chunks, this.#words.used, this.#bytes.used);
+		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format, pushed);
+		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format, pushed);
 		this.#words.alloc(1);
 	}
 
@@ -277,12 +283,12 @@ export class BuiltArena {
 	}
 }
 
-interface BuiltEntry {
+export interface BuiltEntry {
 	readonly $type: number;
 	readonly $record: number;
 }
 
-function isBuiltEntry(entry: unknown): entry is BuiltEntry {
+export function isBuiltEntry(entry: unknown): entry is BuiltEntry {
 	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<BuiltEntry>).$record === 'number';
 }
 

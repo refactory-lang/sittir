@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { RECORD } from '../../../common/src/record-view.ts';
+import { createEngine } from '@sittir/common';
+import { useRecordConstruction } from '@sittir/common/engine';
+import { Delimiter, recordOf } from '@sittir/common/utils';
+import rust from '../../../rust/src/index.ts';
 import { separatedListFactoryOptions, type SlotAccessorOf } from '../../src/validate/common.ts';
 
-const list: SlotAccessorOf = () => ({ kind: 'list', accessors: {}, delimiter: true, separator: true });
-const unseparated: SlotAccessorOf = () => ({ kind: 'list', accessors: {}, delimiter: true, separator: false });
+const list: SlotAccessorOf = () => ({ kind: 'list', slots: [], accessors: {}, separator: true });
+const unseparated: SlotAccessorOf = () => ({ kind: 'list', slots: [], accessors: {}, separator: false });
 const withOption = { item: { propertyName: 'item', required: true, multiple: true, nonEmpty: true, separator: { default: 7 } } };
 
 describe('separatedListFactoryOptions', () => {
@@ -32,7 +35,14 @@ describe('separatedListFactoryOptions', () => {
 		expect(separatedListFactoryOptions({ $type: 1 }, list)).toBeUndefined();
 	});
 
-	it("reads a record view's delimiter through its reader", () => {
-		expect(separatedListFactoryOptions({ $type: 1, [RECORD]: 8, delimiter: 2 }, list)).toEqual({ delimiter: 2 });
+	it("reads a built record view's delimiter from the record its builder wrote", async () => {
+		const records = await createEngine(rust, { nodeStorage: 'arena' });
+		useRecordConstruction(records, await import('../../../rust/src/factories/records.ts'));
+		const b = records.build;
+		const lifetimes = b.lifetimes({ delimiter: Delimiter.Trailing }, b.lifetime(b.identifier('a')));
+		expect(recordOf(lifetimes)).toBeTypeOf('number');
+		expect(separatedListFactoryOptions(lifetimes as never, list)).toEqual({ delimiter: Delimiter.Trailing });
+		expect(separatedListFactoryOptions(b.lifetimes(b.lifetime(b.identifier('a'))) as never, list)).toBeUndefined();
+		records.dispose();
 	});
 });

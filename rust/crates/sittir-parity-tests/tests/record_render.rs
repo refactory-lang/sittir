@@ -15,7 +15,7 @@ use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
 use sittir_core::read::{read_at, Depth, ReadNode};
-use sittir_core::render::RenderError;
+use sittir_core::render::{NoArena, RenderError};
 use sittir_core::slot::ChangedEdges;
 use sittir_core::trivia_store::TriviaStore;
 use sittir_core::types::NodeIndex;
@@ -77,7 +77,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
     /// The record at `at` of `tree`'s arena rendered twice by its entry point
     /// (`ParsedTree::render_record`): both renders, which must agree.
     fn parsed(tree: &ParsedTree<G>, at: Address, options: &ResolvedOptions) -> Result<String, String> {
-        twice(|| tree.render_record(at, ChangedEdges::default(), options).map_err(|e| format!("record: {e}")))
+        twice(|| tree.render_record(at, ChangedEdges::default(), options, &NoArena).map_err(|e| format!("record: {e}")))
     }
 
     /// The record of `tree`'s root, its first read `depth` levels down
@@ -657,7 +657,8 @@ fn native_hydration_keeps_envelope_content_unindexed_and_writes_it_once() {
         tree.render_record(
             root.expect("a record"),
             ChangedEdges::default(),
-            engine.options()
+            engine.options(),
+            &NoArena
         )
         .expect("render"),
         source
@@ -683,13 +684,13 @@ fn an_address_that_names_no_record_of_the_arena_is_refused() {
     let options = engine.options().clone();
     let tree = RustRenders::parse(&mut engine, &EDITED.repeat(40));
     RustRenders::first_read(&tree, Depth::All).expect("every record written");
-    assert!(matches!(tree.render_record(Address::NONE, ChangedEdges::default(), &options), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
+    assert!(matches!(tree.render_record(Address::NONE, ChangedEdges::default(), &options, &NoArena), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
     let past = Address::new(sittir_core::arena::MAX_CHUNKS - 1, 0).expect("an address");
-    assert!(matches!(tree.render_record(past, ChangedEdges::default(), &options), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
+    assert!(matches!(tree.render_record(past, ChangedEdges::default(), &options, &NoArena), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
     let chunk = tree.record_chunk(1).expect("a source this long fills a second chunk");
     let word = chunk.iter().take(chunk.len() - 1).position(|&word| word > u32::from(u16::MAX)).expect("a word past every kind id");
     let at = Address::new(1, u32::try_from(word).expect("a chunk's word")).expect("an address");
-    assert!(matches!(tree.render_record(at, ChangedEdges::default(), &options), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
+    assert!(matches!(tree.render_record(at, ChangedEdges::default(), &options, &NoArena), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
 }
 
 #[test]
@@ -709,7 +710,7 @@ fn an_address_inside_a_side_record_is_refused_before_source_folding() {
     };
     assert!(
         matches!(
-            tree.render_record(at, ChangedEdges::default(), &options),
+            tree.render_record(at, ChangedEdges::default(), &options, &NoArena),
             Err(RenderError::Record(_))
         ),
         "a side record's row is never a node record header"
@@ -740,7 +741,7 @@ fn payload_words_never_render_as_node_records() {
                     continue;
                 }
                 assert!(
-                    tree.render_record(at, ChangedEdges::default(), &options)
+                    tree.render_record(at, ChangedEdges::default(), &options, &NoArena)
                         .is_err(),
                     "word {at:?} is not a node record"
                 );
@@ -772,9 +773,9 @@ fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
     let both = ChangedEdges { leading: true, trailing: true };
     let record = |kind, nth| tree.tree_arena().record(index_of(&tree, kind, nth)).expect("its record");
     let call = record(rust_kinds::CALL_EXPRESSION, 0);
-    assert_eq!(tree.render_record(call, both, &options).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
-    assert_eq!(tree.render_record(call, ChangedEdges::default(), &options).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
-    assert_eq!(tree.render_record(record(rust_kinds::FUNCTION_ITEM, 1), both, &options).expect("a render"), "fn b() { Ok(None) }");
+    assert_eq!(tree.render_record(call, both, &options, &NoArena).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
+    assert_eq!(tree.render_record(call, ChangedEdges::default(), &options, &NoArena).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
+    assert_eq!(tree.render_record(record(rust_kinds::FUNCTION_ITEM, 1), both, &options, &NoArena).expect("a render"), "fn b() { Ok(None) }");
 }
 
 #[test]
@@ -794,15 +795,15 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         .expect("a deep read");
     let record = at.expect("a statement record");
     let ordinary = tree
-        .render_record(record, ChangedEdges::default(), &options)
+        .render_record(record, ChangedEdges::default(), &options, &NoArena)
         .expect("the ordinary render");
     assert_eq!(
-        tree.render_candidate(statement, at, &options)
+        tree.render_candidate(statement, at, &options, &NoArena)
             .expect("the candidate render"),
         "call(/* inside */ arg);"
     );
     assert_eq!(
-        tree.render_record(record, ChangedEdges::default(), &options)
+        tree.render_record(record, ChangedEdges::default(), &options, &NoArena)
             .expect("the ordinary render after the candidate"),
         ordinary
     );
@@ -813,12 +814,12 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         .expect("a leaf read");
     assert_eq!(at, None);
     assert_eq!(
-        tree.render_candidate(leaf, at, &options)
+        tree.render_candidate(leaf, at, &options, &NoArena)
             .expect("a recordless candidate"),
         "arg"
     );
     assert!(
-        tree.render_candidate(NodeIndex::ROOT, Some(record), &options)
+        tree.render_candidate(NodeIndex::ROOT, Some(record), &options, &NoArena)
             .is_err(),
         "another row's record is refused"
     );
@@ -848,7 +849,7 @@ fn native_candidate_enumeration_keeps_same_row_content_and_its_own_address() {
     assert_eq!(candidates[inner].0.index, row);
     assert_ne!(candidates[outer].0.kind, candidates[inner].0.kind);
     assert_eq!(
-        tree.render_candidate(row, Some(content), &options)
+        tree.render_candidate(row, Some(content), &options, &NoArena)
             .expect("content renders at its own address"),
         "{ x: number }"
     );

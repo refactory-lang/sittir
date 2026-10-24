@@ -2,6 +2,22 @@
 //! Serde `rename` / `skip_if_none` attrs live alongside the structs in
 //! `types`; reading a wire object's properties lives here.
 
+/// A choice a wire value decodes into, by the kind its `$type` names: the
+/// variants its derived codec reads.
+pub trait DecodesKind {
+    /// The choice's name, as its codec's refusals name it.
+    const OWNER: &'static str;
+    /// Whether the codec decodes a node object of kind `id` into a variant.
+    fn decodes(id: crate::types::KindId) -> bool;
+}
+
+/// The refusal of a value of kind `id` that the choice `owner` decodes into
+/// no variant.
+#[must_use]
+pub fn unknown_kind(id: crate::types::KindId, owner: &str) -> String {
+    format!("unknown kind id {id} in {owner}")
+}
+
 /// Reads the property `key` of the wire object `obj`: `None` when it is
 /// undefined, otherwise its value decoded as `V`. The key is a static C
 /// string, which napi resolves to V8's interned string the way a derived

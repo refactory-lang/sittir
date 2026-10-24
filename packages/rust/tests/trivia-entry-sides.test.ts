@@ -99,12 +99,129 @@ describe('a built record entry takes its own sides from the store that holds it'
 		expect(heldBy(nested)).toBe('fn g() {\n    x;\n    /* c */\n}');
 	});
 
-	it("refuses a write that would make a record reachable from its own sides", () => {
-		const { comment } = helpers(records);
-		const [a, b] = [comment(), comment()];
-		expect(() => withSide(a, 'leading', [a])).toThrow(/a side that reaches its own record/);
-		withSide(a, 'leading', [b]);
-		expect(() => withSide(b, 'trailing', [a])).toThrow(/a side that reaches its own record/);
+});
+
+describe('a node that a side reaches from its own sides', () => {
+	type Rendered = Sided & { $render(): string };
+	const refusalOf = (label: string) => (label === 'records' ? /a side that reaches its own record/ : /a side that reaches its own node/);
+
+	it.each(constructions)('refuses at the render, by name, and the engine renders on after it (%s)', (label, rs) => {
+		const { comment, statement, rendered } = helpers(rs);
+		const refusal = refusalOf(label);
+		const held = (entry: unknown) => rendered(withSide(statement('x'), 'trailing', [entry]));
+		const own = comment() as unknown as Rendered;
+		withSide(own, 'leading', [own]);
+		expect(() => own.$render()).toThrow(refusal);
+		expect(() => held(own)).toThrow(refusal);
+		const [a, b] = [comment(), comment()] as unknown as Rendered[];
+		withSide(a!, 'leading', [b]);
+		withSide(b!, 'trailing', [a]);
+		expect(() => held(a)).toThrow(refusal);
+		const content = rs.build.blockCommentRegular(' k ') as unknown as Sided;
+		const holder = rs.build.blockComment(content as never);
+		withSide(content, 'leading', [holder]);
+		expect(() => (holder as unknown as Rendered).$render()).toThrow(refusal);
+		expect(() => held(holder)).toThrow(refusal);
+		expect((statement('y') as unknown as Rendered).$render()).toBe('y;');
+	});
+
+	it.each(constructions)("refuses the comment's snapshot once a parsed comment's side holds it, and renders on after it (%s)", (_, rs) => {
+		const content = rs.build.blockCommentRegular(' k ') as unknown as Sided;
+		const holder = rs.build.blockComment(content as never);
+		withSide(content, 'leading', [holder]);
+		const parsed = parsedComment(rs);
+		expect(() => {
+			withSide(parsed, 'leading', [holder]);
+			parsed.$snapshot();
+		}).toThrow(/a side that reaches its own node/);
+		expect((rs.build.expressionStatement(rs.build.identifier('y')) as unknown as Rendered).$render()).toBe('y;');
+	});
+});
+
+type Parsed = { statements(): unknown[] };
+type ParsedSided = Sided & { $snapshot(): unknown };
+
+const parsedComment = (rs: Engine) => {
+	const root = rs.parse('fn f() {\n    x; /* parsed */\n}\n') as unknown as Parsed;
+	const item = root.statements()[0] as { body(): Parsed };
+	const x = item.body().statements()[0] as unknown as Sided;
+	const [parsed] = (x.$trivia as unknown as { trailing(): ParsedSided[] }).trailing();
+	if (parsed === undefined) throw new Error('expected a trailing comment');
+	return parsed;
+};
+
+const brokenComment = (rs: Engine) => {
+	const b = rs.build;
+	const content = b.blockCommentRegular(' c ') as unknown as Sided;
+	withSide(content, 'leading', [b.layout.newline]);
+	return b.blockComment(content as never);
+};
+
+const inBody = (rs: Engine, held: unknown) => {
+	const b = rs.build;
+	return b.functionItem({ name: b.identifier('g'), parameters: b.parameters(), body: b.block({ statements: [held as never] }) }) as unknown as { $render(options?: unknown): string };
+};
+
+const entryCases: readonly [string, (rs: Engine) => string, string][] = [
+	[
+		"a built comment in a parsed comment's side, the parsed comment written into a built statement's side",
+		(rs) => {
+			const b = rs.build;
+			const parsed = parsedComment(rs);
+			withSide(parsed, 'leading', [b.blockComment(b.blockCommentRegular(' nested '))]);
+			const y = b.expressionStatement(b.identifier('y')) as unknown as Sided & { $render(): string };
+			withSide(y, 'trailing', [parsed]);
+			return y.$render();
+		},
+		'y; /* nested */ /* parsed */'
+	],
+	[
+		"a comment's content given a side after the comment was written into a side",
+		(rs) => {
+			const b = rs.build;
+			const content = b.blockCommentRegular(' c ') as unknown as Sided;
+			const z = b.expressionStatement(b.identifier('z')) as unknown as Sided & { $render(): string };
+			withSide(z, 'trailing', [b.blockComment(content as never)]);
+			withSide(content, 'leading', [b.layout.newline]);
+			return z.$render();
+		},
+		'z; /*\n c */'
+	],
+	[
+		"a comment whose content's side breaks the line, written into a nested statement's side",
+		(rs) => {
+			const z = rs.build.expressionStatement(rs.build.identifier('z')) as unknown as Sided;
+			withSide(z, 'trailing', [brokenComment(rs)]);
+			return inBody(rs, z).$render();
+		},
+		'fn g() {\n    z; /*\n     c */\n}'
+	],
+	[
+		'the same comment rendered under per-call options',
+		(rs) => {
+			const z = rs.build.expressionStatement(rs.build.identifier('z')) as unknown as Sided;
+			withSide(z, 'trailing', [brokenComment(rs)]);
+			return rs.render(inBody(rs, z) as never, { layout: { indent: '\t' } } as never).toString();
+		},
+		'fn g() {\n\tz; /*\n\t c */\n}'
+	],
+	[
+		"a parsed comment holding that comment, written into an indented holder's side, which takes it as its snapshot",
+		(rs) => {
+			const parsed = parsedComment(rs);
+			withSide(parsed, 'leading', [brokenComment(rs)]);
+			const z = rs.build.expressionStatement(rs.build.identifier('z')) as unknown as Sided;
+			withSide(z, 'trailing', [parsed]);
+			return inBody(rs, z).$render();
+		},
+		'fn g() {\n    z; /*\n     c */ /* parsed */\n}'
+	]
+];
+
+describe('a record in a side renders as objects render it', () => {
+	it.each(entryCases)('%s', (_, render, expected) => {
+		expect(render(objects)).toBe(expected);
+		for (const [, rs] of constructions) expect(render(rs)).toBe(expected);
 	});
 });
 

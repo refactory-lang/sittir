@@ -11,7 +11,7 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { recordOf, recordSeparator } from './record-view.ts';
+import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
 import { builtEntryOf, isBuiltNode } from './built-arena.ts';
 
@@ -402,11 +402,6 @@ const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
 
 const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
 
-export function chosenSeparatorOf(node: object): unknown {
-	const built = builtRefOf(node);
-	return (node as Record<string, unknown>)._separator ?? (built === undefined ? undefined : recordSeparator(node, built.arena.tree));
-}
-
 export function listSeparatorOf(node: object): unknown {
 	return chosenSeparatorOf(node) ?? slotSeparatorOf(node);
 }
@@ -736,7 +731,11 @@ export {
 	rowTrivia,
 	rowWith,
 	bindRow,
-	type RecordStub
+	chosenSeparatorOf,
+	slotValuesOf,
+	storedSlotValues,
+	type RecordStub,
+	type RefusedSlot
 } from './record-view.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltPlace, type BuiltText } from './built-arena.ts';

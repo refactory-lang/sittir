@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
+import type { QuerySlotEntry } from '@sittir/types';
 import { RECORD } from '../../../common/src/record-view.ts';
 import { buildFactoryNodeFromReference, type FactoryDispatchArtifacts, type FactoryEntry, type SlotAccessorOf } from '../validate/common.ts';
 
 const KINDS = ['envelope', 'word'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
+const slots: Readonly<Record<string, readonly QuerySlotEntry[]>> = { envelope: [['content', 0, undefined, '_content']] };
 const accessors: Readonly<Record<string, Readonly<Record<string, string>>>> = { envelope: { _content: 'content' } };
 const accessorOf: SlotAccessorOf = (typeId) => {
 	const kind = kindNameFromId(typeId) ?? String(typeId);
-	return { kind, accessors: accessors[kind] ?? {}, delimiter: false, separator: false };
+	return { kind, slots: slots[kind] ?? [], accessors: accessors[kind] ?? {}, separator: false };
 };
 const artifacts = (factoryMap: Record<string, FactoryEntry>): FactoryDispatchArtifacts => ({
 	factoryMap,

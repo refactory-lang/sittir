@@ -101,12 +101,10 @@ export declare class SittirEngine {
   /**
    * Replace `side` of the node at `index` of the live tree `treeId`
    * with `entries`. A built record among them (`{ $type, $record }`)
-   * is stamped with the text it renders, read from the engine's built
-   * arena, its `words` and `bytes` chunks borrowed for this call as
-   * `renderBuilt` borrows them. Refuses as `triviaSide` does, and a
-   * record `renderBuilt` refuses.
+   * renders from the engine's built arena wherever the side renders.
+   * Refuses as `triviaSide` does.
    */
-  writeTriviaSide(treeId: number, index: number, side: string, entries: object[], words: Uint32Array[], bytes: Uint8Array[]): void
+  writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
   /**
    * Whether a write replaced a side of a node under the node at
    * `index` of the live tree `treeId`, its own `inner` included, and
@@ -198,9 +196,10 @@ planHolds(addresses: string, plan: string): Array<boolean>
 render(node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
 renderToFile(node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
 /**
- * Release the engine. It holds no state of its own past its
- * options: the trees it parsed stay in the addon's table, since
- * they belong to whoever still names them.
+ * Release the engine: it lets go of its built arena's chunks
+ * (`holdBuiltArena`), so a record they hold no longer renders as
+ * a trivia entry. The trees it parsed stay in the addon's table,
+ * since they belong to whoever still names them.
  */
 dispose(): void
 /**
@@ -240,27 +239,38 @@ readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | 
  * r" `render` renders a node read from the tree: a render root
  * r" whose `leading` and `trailing` edges have no neighbour, as
  * r" the node crossing as its coordinate marks them, under
- * r" `options` over the tree's layer over the engine's. Refuses a
- * r" tree that is not live, an address naming no record of its
+ * r" `options` over the tree's layer over the engine's, each
+ * r" trivia entry's built record from its store's arena. Refuses
+ * r" a tree that is not live, an address naming no record of its
  * r" arena, and a record whose render refuses.
  */
 renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
- * r" The built node at `address` of a built arena rendered as
- * r" a render root whose `leading` and `trailing` edges have no
- * r" neighbour, under `options` over this engine's, with the
- * r" sides `owner` holds: the engine that built the arena, which
- * r" its records' side writes went to. A leaf passes the `text`
- * r" its cells hold; a compound record passes none. The arena's `words` and
- * r" `bytes` chunks are borrowed for this call; the records the
- * r" root reaches are admitted, and the parsed trees they link
- * r" held for the render (`Engine::render_built`). Refuses a
- * r" chunk that is not a typed array of its kind over an
- * r" ordinary `ArrayBuffer`, an address naming no record the
- * r" words admit, a linked tree that is not live, and a record
- * r" whose render refuses.
+ * r" The built node at `address` of the built arena `owner`
+ * r" holds (`holdBuiltArena`) rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, under
+ * r" `options` over this engine's, with the sides `owner` holds:
+ * r" the engine that built the arena, which its records' side
+ * r" writes went to. A leaf passes the `text` its cells hold; a
+ * r" compound record passes none. The arena's chunks are
+ * r" borrowed for this call; the records the root reaches are
+ * r" admitted, and the parsed trees they link held for the
+ * r" render (`Engine::render_built`). Refuses an arena `owner`
+ * r" no longer holds, an address naming no record its words
+ * r" admit, a linked tree that is not live, and a record whose
+ * r" render refuses.
  */
-renderBuilt(owner: SittirEngine, words: Uint32Array[], bytes: Uint8Array[], address: number, text: BuiltText | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+renderBuilt(owner: SittirEngine, address: number, text: BuiltText | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" Holds the chunks of the built arena whose records this
+ * r" engine's builders write, in place of the ones it held:
+ * r" `words` and `bytes`, and `written`, the words written of
+ * r" each words chunk and the bytes of each bytes chunk, which
+ * r" the arena keeps current. Each is held weakly; the arena
+ * r" owns them. A trivia entry this engine's store answers
+ * r" renders from them.
+ */
+holdBuiltArena(words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void
 /**
  * r" The entries a write gave `side` (`leading`, `trailing` or
  * r" `inner`) of the built record at `address`, or `null` when
@@ -270,10 +280,10 @@ builtTriviaSide(address: number, side: string): object[] | null
 /**
  * r" Replace `side` of the built record at `address` with
  * r" `entries`, which `renderBuilt` then writes; a built record
- * r" among them is stamped as `writeTriviaSide` stamps one.
- * r" Refuses as `builtTriviaSide` and `writeTriviaSide` do.
+ * r" among them renders as `writeTriviaSide` says. Refuses as
+ * r" `builtTriviaSide` does.
  */
-writeBuiltTriviaSide(address: number, side: string, entries: object[], words: Uint32Array[], bytes: Uint8Array[]): void
+writeBuiltTriviaSide(address: number, side: string, entries: object[]): void
 /**
  * r" Renders a parsed candidate without exporting its data or its
  * r" outer trivia. A record address must belong to its row; a

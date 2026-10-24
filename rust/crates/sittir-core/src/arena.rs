@@ -29,7 +29,7 @@ use std::fmt;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
-pub use built::BuiltRoot;
+pub use built::{render_record_entry, BuiltRoot};
 pub use cell::{Cell, ListCell};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_entry_root, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
@@ -165,6 +165,9 @@ pub enum ArenaError {
     UnknownSlot(Box<str>),
     /// A value no record holds: `what` names it.
     Unwritable(&'static str),
+    /// A record of kind `kind` read where a value of the choice `owner` is
+    /// read, which decodes no node of that kind.
+    UnknownKind { kind: crate::types::KindId, owner: &'static str },
 }
 
 impl fmt::Display for ArenaError {
@@ -180,6 +183,7 @@ impl fmt::Display for ArenaError {
             ArenaError::Malformed { what, word } => write!(f, "{what} {word} is not one a record writer writes"),
             ArenaError::UnknownSlot(key) => write!(f, "the layout names slot `{key}`, which has no stamped cell in its record"),
             ArenaError::Unwritable(what) => write!(f, "a record writer does not write {what}"),
+            ArenaError::UnknownKind { kind, owner } => f.write_str(&crate::boundary::unknown_kind(*kind, owner)),
         }
     }
 }

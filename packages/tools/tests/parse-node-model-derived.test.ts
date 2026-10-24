@@ -13,6 +13,7 @@ const MODEL = JSON.stringify({
 			slots: [
 				{
 					name: 'function',
+					accessor: 'function',
 					required: true,
 					multiple: false,
 					nonEmpty: false,
@@ -21,6 +22,7 @@ const MODEL = JSON.stringify({
 				},
 				{
 					name: 'argument',
+					accessor: 'arguments',
 					required: false,
 					multiple: true,
 					nonEmpty: false,
@@ -38,7 +40,7 @@ const MODEL = JSON.stringify({
 			kind: '_hidden_envelope',
 			modelType: 'envelope',
 			typeName: 'HiddenEnvelope',
-			slots: [{ name: 'identifier', required: true, multiple: false, nonEmpty: false, storage: 'verbatim', values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'identifier' }] }]
+			slots: [{ name: 'identifier', accessor: 'identifier', required: true, multiple: false, nonEmpty: false, storage: 'verbatim', values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'identifier' }] }]
 		}
 	]
 });

@@ -404,7 +404,7 @@ pub fn snapshot_edge<T: Prepare>(span: Option<crate::points::PointSpan>, trivia:
     use crate::prepare::TriviaReach;
     let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
         None => TriviaReach::Bare,
-        Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+        Some(entry) => entry.value().and_then(crate::slot::SlotValue::snapshot_edge).map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
     };
     Some(crate::prepare::SnapshotEdge {
         span: span?,
@@ -419,17 +419,17 @@ pub fn inner_item<T: Prepare + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> Op
     use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
     let entries: Vec<_> = trivia?.inner.as_ref()?.iter().filter(|entry| !entry.is_layout()).collect();
     let first = entries.first()?;
-    if let Some(coord) = first.value.coord() {
+    if let Some(coord) = first.value().and_then(crate::slot::SlotValue::coord) {
         let mut span = coord.span;
         for entry in &entries {
-            let Some(next) = entry.value.coord().filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
+            let Some(next) = entry.value().and_then(crate::slot::SlotValue::coord).filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
             span = crate::types::Span { start: span.start.min(next.span.start), end: span.end.max(next.span.end) };
         }
         return Some(EdgeItem::Bytes { tree: coord.tree, span });
     }
     let mut extent: Option<crate::points::PointSpan> = None;
     for entry in entries {
-        let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+        let Some(edge) = entry.value().and_then(crate::slot::SlotValue::snapshot_edge) else { return Some(EdgeItem::Rebuilt) };
         extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
             start: span.start.min(edge.span.start),
             end: span.end.max(edge.span.end),

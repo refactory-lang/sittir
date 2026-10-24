@@ -242,6 +242,10 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// Set on a recording render (`with_recording`): the line breaks written
     /// at each gap, by the source bytes around them.
     recorder: Option<crate::baseline::Recorder<'a>>,
+    /// The built records whose entries are being written, outermost first,
+    /// each by the store that answered it and its address.
+    #[cfg(feature = "arena")]
+    entries: Vec<(usize, crate::arena::Address)>,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -332,6 +336,8 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             tail: None,
             open_before: 0,
             recorder: None,
+            #[cfg(feature = "arena")]
+            entries: Vec::new(),
         }
     }
 
@@ -1063,6 +1069,20 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
         Some(crate::prepare::RenderContext { options: self.options?, sources: self.sources? })
+    }
+
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, store: usize, held: &dyn std::any::Any) -> crate::render::RenderResult {
+        let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
+        let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
+        let key = (store, record.at);
+        if self.entries.contains(&key) {
+            return Err(crate::render::RenderError::Record(crate::trivia::SIDE_CYCLE));
+        }
+        self.entries.push(key);
+        let rendered = sources.render_record_entry(record, held, options, self);
+        self.entries.pop();
+        rendered
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {

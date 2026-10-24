@@ -544,10 +544,10 @@ describe('the typed sink replaces the mark-based Display path', () => {
 			'::sittir_core::spacing::SpacingWriter::new(&mut s, &GRAMMAR_WORD_MATCHER).with_table(&options::WHITESPACE).with_indent(&ctx.options.indent).with_sources(ctx.sources).with_options(ctx.options)'
 		);
 		expect(nodeRs).toContain('render_root(ctx, recording, |w| ::sittir_core::view::KindTest::kind_in(node, w, kind::ROOT_KINDS), |w| node.render(w))');
-		expect(nodeRs).toContain('    render_record_as(root, trees, built, store, ctx, false)\n');
-		expect(nodeRs).toContain('        Some(at) if kind::STAMPED_TRIVIA_KINDS.contains(&at) => render_record_as(root, trees, built, store, ctx, true),\n');
+		expect(nodeRs).toContain('    with_record_node(root, trees, built, store, ctx, false, |node| render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))\n');
+		expect(nodeRs).toContain('    with_record_node(root, trees, built, store, ctx, true, |node| node.render(w))\n');
 		expect(nodeRs).toContain('let prepared = if entry { ::sittir_core::arena::prepare_entry_root::<');
-		expect(nodeRs).toContain('render_root(ctx, None, |_| entry || ::sittir_core::view::KindOf::kind_in(&node, kind::ROOT_KINDS), |w| node.render(w))');
+		expect(nodeRs).not.toContain('STAMPED_TRIVIA_KINDS');
 	});
 
 	it('admits verbatim text only where a slot admits a pattern kind', async () => {
