@@ -40,6 +40,7 @@ import {
 	emitValidatorMetrics,
 	loadNodeModel,
 	dedupeMismatchesByContainment,
+	findSpanNode,
 	type TSNode,
 	type TSTree,
 	type TypedNode,
@@ -75,37 +76,6 @@ export type FactorySurface = 'raw' | 'ir';
 
 export interface ValidateFactoryStorageOptions {
 	readonly surface?: FactorySurface;
-}
-
-/**
- * Find a node anywhere in the tree by its exact byte span, preferring the
- * deepest node whose `.type` matches `kind` over an enclosing same-span
- * wrapper (e.g. `tuple_struct_pattern` over an enclosing `match_pattern`).
- * Falls back to the deepest same-span node of any type.
- */
-function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number, kind: string): TSNode | null {
-	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i);
-		if (!c) continue;
-		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
-		const hit = findNodeBySpanOfKind(c, startIndex, endIndex, kind);
-		if (hit) return hit;
-	}
-	if (node.startIndex === startIndex && node.endIndex === endIndex && node.type === kind) return node;
-	return null;
-}
-
-/** Find a node anywhere in the tree by its exact byte span (any type). */
-function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSNode | null {
-	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i);
-		if (!c) continue;
-		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
-		const hit = findNodeBySpan(c, startIndex, endIndex);
-		if (hit) return hit;
-	}
-	if (node.startIndex === startIndex && node.endIndex === endIndex) return node;
-	return null;
 }
 
 /** Return the named tree-sitter child kinds for a parsed CST node, in source order. */
@@ -572,9 +542,7 @@ export async function validateFactoryStorage(
 				cases.add(kind);
 
 				const indices = spans.toIndices(cand);
-				const node1 =
-					findNodeBySpanOfKind(tree1.rootNode, indices.start, indices.end, kind) ??
-					findNodeBySpan(tree1.rootNode, indices.start, indices.end);
+				const node1 = findSpanNode(tree1.rootNode, indices.start, indices.end, kind);
 				const inputSource = node1 ? node1.text : spans.slice(cand);
 
 				// Canonical reference: what a real parse+read produces for

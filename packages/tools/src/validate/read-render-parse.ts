@@ -51,6 +51,7 @@ import {
 	loadNodeModel,
 	loadIsLeafKind,
 	dedupeMismatchesByContainment,
+	findSpanNode,
 	type TSNode,
 	type TSTree,
 	type TypedNode,
@@ -103,55 +104,6 @@ export async function loadVariantAdoptedKinds(grammar: string): Promise<Readonly
  * inside an outer `fn_item`'s block, so plain `findFirst(tree, 'block')`
  * returns the wrapper's body rather than the rendered one.
  */
-
-/**
- * Find a tree-sitter node by its exact byte span (start + end).
- * Using both start and end eliminates the collision that arises from
- * start-only lookup: when a parent node and its first child share the same
- * startIndex (e.g. `parameter` and its child `identifier` both start at
- * the same offset), start-only lookup returns the outer parent first in DFS
- * order, producing the wrong node. Requiring both bounds to match pins to
- * exactly the intended node.
- */
-function findNodeBySpan(node: TSNode, startIndex: number, endIndex: number): TSNode | null {
-	if (node.startIndex === startIndex && node.endIndex === endIndex) return node;
-	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i);
-		if (!c) continue;
-		// Prune: the target span must be contained within this child's range.
-		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
-		const hit = findNodeBySpan(c, startIndex, endIndex);
-		if (hit) return hit;
-	}
-	return null;
-}
-
-/**
- * Find the same-span wasm node whose `type` equals `kind`, preferring it over
- * the outermost same-span node.
- *
- * @remarks
- * A wrapped source-kind candidate frequently shares its EXACT span with an
- * enclosing wasm node (e.g. `match_pattern` wraps the inner `tuple_struct_pattern`
- * at the identical span in no-guard arms). Anchoring the AST compare on the
- * outermost same-span node (plain {@link findNodeBySpan}) then reports a kind-name
- * mismatch (`match_pattern ≠ tuple_struct_pattern`) even when the render is
- * byte-identical. Preferring the same-span node whose type matches the
- * candidate's kind anchors the compare on the right node. Falls back to the
- * outermost node when no same-span descendant matches (e.g. alias-source kinds
- * whose wasm display name differs).
- */
-function findNodeBySpanOfKind(node: TSNode, startIndex: number, endIndex: number, kind: string): TSNode | null {
-	if (node.startIndex === startIndex && node.endIndex === endIndex && node.type === kind) return node;
-	for (let i = 0; i < node.childCount; i++) {
-		const c = node.child(i);
-		if (!c) continue;
-		if (c.startIndex > startIndex || c.endIndex < endIndex) continue;
-		const hit = findNodeBySpanOfKind(c, startIndex, endIndex, kind);
-		if (hit) return hit;
-	}
-	return null;
-}
 
 /**
  * Locate the first parse defect (MISSING or ERROR node) in a re-parsed
@@ -1112,16 +1064,7 @@ export async function validateReadRenderParse(
 					if (shouldStop) break;
 					const inputSource = spans.slice(cand);
 					const indices = spans.toIndices(cand);
-					// WASM node at this span: the AST-compare target and the parser
-					// DISPLAY kind (targetKind) used for post-reparse node lookup.
-					// Prefer the same-span node whose type matches the candidate's
-					// DISPLAY kind — WASM `.type` speaks display names, so the
-					// canonical bucket kind can never match here (so the compare
-					// anchors on `tuple_struct_pattern`, not the enclosing same-span
-					// `match_pattern`); fall back to the outermost.
-					const node1ForAst =
-						findNodeBySpanOfKind(tree1.rootNode, indices.start, indices.end, cand.displayKind) ??
-						findNodeBySpan(tree1.rootNode, indices.start, indices.end);
+					const node1ForAst = findSpanNode(tree1.rootNode, indices.start, indices.end, cand.displayKind);
 					const tsVisibleKind = node1ForAst?.type;
 
 					// Materialize the wrapped node directly — it already IS its source
