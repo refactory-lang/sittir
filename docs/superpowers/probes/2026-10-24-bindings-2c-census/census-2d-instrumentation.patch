@@ -1,0 +1,19 @@
+diff --git a/packages/codegen/src/bindings/routes.ts b/packages/codegen/src/bindings/routes.ts
+index 8ea3688e0..410223002 100644
+--- a/packages/codegen/src/bindings/routes.ts
++++ b/packages/codegen/src/bindings/routes.ts
+@@ -125,12 +125,14 @@ export function slotAnchor(model: SlotModel, holder: string, selector: SlotSelec
+ }
+ 
+ export function modelNode(model: SlotModel, kind: string): ModelNode | undefined {
++	if (!model.has(kind) && model.has(`_${kind}`)) (globalThis as { __fallback?: Set<string> }).__fallback?.add(kind);
+ 	return model.get(kind) ?? model.get(`_${kind}`);
+ }
+ 
+ export type SlotNames = ReadonlyMap<string, string | null>;
+ 
+ export function memberNameOf(renames: SlotNames, slotName: string, propertyName: string): string {
++	if (renames.get(slotName) == null && /Modifier$/.test(propertyName.replace(/_$/, ''))) (globalThis as { __strip?: Set<string> }).__strip?.add(`${slotName}:${propertyName}`);
+ 	return camel(renames.get(slotName) ?? propertyName.replace(/_$/, '').replace(/Modifier$/, ''));
+ }
+ 

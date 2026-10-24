@@ -909,6 +909,7 @@ export function choiceArmsOf<R extends AnyRule>(content: R): readonly R[] | unde
 export function terminalContentOf(content: AnyRule, isTerminalSymbol: (name: string) => boolean): boolean {
 	if (content.type === SYMBOL) return isTerminalSymbol(content.name);
 	if (content.type === STRING || content.type === PATTERN || content.type === TOKEN) return true;
+	if (content.type === ALIAS) return terminalContentOf(content.content, isTerminalSymbol);
 	const arms = choiceArmsOf(content);
 	return arms !== undefined && arms.every((arm) => terminalContentOf(arm, isTerminalSymbol));
 }

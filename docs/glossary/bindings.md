@@ -1749,3 +1749,35 @@ The state a pinned typescript read needs: the kinds, the engine over the typescr
 ### `packages/codegen/src/bindings/pinned-typescript.ts::Span`
 
 A readonly range in the typescript source, given by its `start` and `end` offsets. It is the span type a pinned typescript read reports for a region of the source.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::Kinds`
+
+The kinds of the pinned typescript engine.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::Span::end`
+
+The end offset of the span.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::Span::start`
+
+The start offset of the span.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::Statement`
+
+A statement node of the parsed typescript program.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::TypescriptSource::K`
+
+The kind table of the pinned typescript source.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::TypescriptSource::engine`
+
+The engine over the typescript API.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::TypescriptSource::span`
+
+The span of an item in the source, or `undefined` when it has none.
+
+### `packages/codegen/src/bindings/pinned-typescript.ts::TypescriptSource::spelled`
+
+The source text an item spells.

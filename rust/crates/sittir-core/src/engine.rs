@@ -335,7 +335,8 @@ pub fn node_at_span(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Optio
     search(tree.root_node(), span, kind)
 }
 
-/// The last child that is not an extra of the list spanning `start..end`: of
+/// The last child that is neither an extra nor a zero-width token (which spells no
+/// delimiter) of the list spanning `start..end`: of
 /// the node the read stamped `kind` at that span (`node_at_span`), or, for a
 /// list the tree holds no node of its own for, of the node holding the list's
 /// children, among the children that lie within the span. That node is the
@@ -353,7 +354,7 @@ pub fn last_list_child(tree: &tree_sitter::Tree, span: Span, kind: KindId) -> Op
     let mut cursor = holder.walk();
     let last = holder
         .children(&mut cursor)
-        .filter(|child| !child.is_extra() && Span::of(child).start >= span.start && Span::of(child).end <= span.end)
+        .filter(|child| !child.is_extra() && !Span::of(child).range().is_empty() && Span::of(child).start >= span.start && Span::of(child).end <= span.end)
         .last();
     last
 }
@@ -1421,6 +1422,12 @@ fn framed<T: crate::trivia::TriviaItem>(levels: impl IntoIterator<Item = [Vec<Si
         .collect()
 }
 
+/// The frames of `levels`, the first the node's own (`framed`).
+fn frames_of<T: crate::trivia::TriviaItem>(levels: Vec<[Vec<SideEntry<T>>; 3]>) -> crate::trivia::Frames {
+    let mut levels = levels.into_iter();
+    crate::trivia::Frames { own: framed(levels.next()).pop(), items: framed(levels) }
+}
+
 /// A tree's sides as its source has them, without their layout runs or any
 /// write: what its baseline renders.
 struct WithoutLayout<'t, G: EngineGrammar>(&'t ParsedTree<G>);
@@ -1461,11 +1468,11 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         framed(self.0.frame_levels(coord.index, |at, side| self.entries(at, side)).into_iter().take(1)).pop()
     }
 
-    fn frames(&self, coord: &NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
         if self.0.own(coord.tree).is_none() {
-            return Vec::new();
+            return crate::trivia::Frames::default();
         }
-        framed(self.0.frame_levels(coord.index, |at, side| self.entries(at, side)))
+        frames_of(self.0.frame_levels(coord.index, |at, side| self.entries(at, side)))
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {
@@ -1720,9 +1727,9 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         framed(tree.frame_levels(coord.index, |at, side| tree.side_entries(at, side, coord.changed().on(side))).into_iter().take(1)).pop()
     }
 
-    fn frames(&self, coord: &NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
-        let Some(tree) = self.own(coord.tree) else { return Vec::new() };
-        framed(tree.frame_levels(coord.index, |at, side| tree.side_entries(at, side, coord.changed().on(side))))
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
+        let Some(tree) = self.own(coord.tree) else { return crate::trivia::Frames::default() };
+        frames_of(tree.frame_levels(coord.index, |at, side| tree.side_entries(at, side, coord.changed().on(side))))
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {
@@ -1846,8 +1853,8 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
         self.get(&coord.tree)?.sides(coord)
     }
 
-    fn frames(&self, coord: &NodeCoordinate) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
-        self.get(&coord.tree).map_or_else(Vec::new, |tree| tree.frames(coord))
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
+        self.get(&coord.tree).map_or_else(crate::trivia::Frames::default, |tree| tree.frames(coord))
     }
 
     fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {

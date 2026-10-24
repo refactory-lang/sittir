@@ -35,14 +35,14 @@
 (while_statement) @statement.loop.while
 (return_statement (_)? @expression) @statement.return
 (try_statement (except_clause)* @handlers (else_clause)? @alternative (finally_clause)? @finalizer) @statement.try
-(raise_statement (_)? @expression) @statement.throw
+(raise_statement (_)? @expression) @statement.raise
 (import_statement) @statement.import
 (import_from_statement) @statement.import.from
 (match_statement (subjects subject: (_)+ @subject)) @statement.match
 (with_statement) @statement.resource
 (assert_statement) @statement.assert
 (delete_statement) @statement.delete
-(pass_statement) @statement.empty
+(pass_statement) @statement.pass
 (break_statement) @statement.break
 (continue_statement) @statement.continue
 (global_statement) @statement.global
@@ -55,9 +55,9 @@
 (exec_statement) @statement.exec
 
 ; ── clause ─────────────────────────────────────────────────────────────────────
-(elif_clause) @clause.else_if
+(elif_clause) @clause.elif
 (else_clause) @clause.else
-(except_clause) @clause.catch
+(except_clause) @clause.except
 (except_clause (except_clause_exception (except_clause_exception_as value: (_) @type)))
 (except_clause (except_clause_exception (except_clause_exception_as alias: (_) @name)))
 (except_clause (except_clause_exception (except_clause_exception_list) @type))
@@ -80,17 +80,17 @@
 (lambda_within_for_in_clause) @expression.lambda
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
-(keyword_argument) @argument.named
+(keyword_argument) @argument.keyword
 
 ; ── element (pieces of a composite expression that are not expressions) ────────
 (pair) @element.pair
-(list_splat) @element.spread
-(dictionary_splat) @element.spread.map
-(parenthesized_list_splat) @element.spread.parenthesized
+(list_splat) @element.splat
+(dictionary_splat) @element.splat.dictionary
+(parenthesized_list_splat) @element.splat.parenthesized
 
 ; ── expression ─────────────────────────────────────────────────────────────────
 (call) @expression.call
-(call function: (attribute) @function) @expression.call.member
+(call function: (attribute) @function) @expression.call.attribute
 (binary_operator) @expression.binary
 (binary_operator operator: "+") @expression.binary.arithmetic.add
 (binary_operator operator: "-") @expression.binary.arithmetic.subtract
@@ -140,23 +140,23 @@
 (unary_operator operator: "+") @expression.unary.plus
 (unary_operator operator: "~") @expression.unary.bitwise_not
 (not_operator) @expression.unary.not
-(augmented_assignment) @expression.assignment.compound
-(augmented_assignment operator: "+=") @expression.assignment.compound.add
-(augmented_assignment operator: "-=") @expression.assignment.compound.subtract
-(augmented_assignment operator: "*=") @expression.assignment.compound.multiply
-(augmented_assignment operator: "/=") @expression.assignment.compound.divide
-(augmented_assignment operator: "//=") @expression.assignment.compound.floor_divide
-(augmented_assignment operator: "%=") @expression.assignment.compound.modulo
-(augmented_assignment operator: "**=") @expression.assignment.compound.exponent
-(augmented_assignment operator: "@=") @expression.assignment.compound.matrix_multiply
-(augmented_assignment operator: "&=") @expression.assignment.compound.bitwise_and
-(augmented_assignment operator: "|=") @expression.assignment.compound.bitwise_or
-(augmented_assignment operator: "^=") @expression.assignment.compound.bitwise_xor
-(augmented_assignment operator: "<<=") @expression.assignment.compound.shift_left
-(augmented_assignment operator: ">>=") @expression.assignment.compound.shift_right
+(augmented_assignment) @expression.assignment.augmented
+(augmented_assignment operator: "+=") @expression.assignment.augmented.add
+(augmented_assignment operator: "-=") @expression.assignment.augmented.subtract
+(augmented_assignment operator: "*=") @expression.assignment.augmented.multiply
+(augmented_assignment operator: "/=") @expression.assignment.augmented.divide
+(augmented_assignment operator: "//=") @expression.assignment.augmented.floor_divide
+(augmented_assignment operator: "%=") @expression.assignment.augmented.modulo
+(augmented_assignment operator: "**=") @expression.assignment.augmented.exponent
+(augmented_assignment operator: "@=") @expression.assignment.augmented.matrix_multiply
+(augmented_assignment operator: "&=") @expression.assignment.augmented.bitwise_and
+(augmented_assignment operator: "|=") @expression.assignment.augmented.bitwise_or
+(augmented_assignment operator: "^=") @expression.assignment.augmented.bitwise_xor
+(augmented_assignment operator: "<<=") @expression.assignment.augmented.shift_left
+(augmented_assignment operator: ">>=") @expression.assignment.augmented.shift_right
 (named_expression name: (_) @left value: (_) @right) @expression.assignment
 (conditional_expression body: (_)? @consequence) @expression.conditional
-(attribute attribute: (_) @property) @expression.member
+(attribute attribute: (_) @property) @expression.attribute
 (subscript value: (_) @object (subscripts subscript: (_)+ @index)) @expression.subscript
 (slice) @expression.slice
 (lambda) @expression.lambda
@@ -166,14 +166,14 @@
 (interpolation) @expression.interpolation
 (list_comprehension) @expression.comprehension.list
 (set_comprehension) @expression.comprehension.set
-(dictionary_comprehension) @expression.comprehension.map
+(dictionary_comprehension) @expression.comprehension.dictionary
 (generator_expression) @expression.comprehension.generator
 (parenthesized_expression) @expression.parenthesized
 (list (collection_elements)? @elements) @expression.collection.list
 (tuple) @expression.collection.tuple
 (expression_list) @expression.collection.tuple.bare
 (set (collection_elements) @elements) @expression.collection.set
-(dictionary) @expression.collection.map
+(dictionary) @expression.collection.dictionary
 (ellipsis) @literal.ellipsis
 (format_specifier) @expression.interpolation.format
 (type_conversion) @expression.interpolation.conversion
@@ -182,9 +182,9 @@
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
-(list_splat_pattern) @pattern.rest
+(list_splat_pattern) @pattern.splat
 (list_splat_pattern target: (_) @pattern)
-(dictionary_splat_pattern) @pattern.rest.map
+(dictionary_splat_pattern) @pattern.splat.dictionary
 (dictionary_splat_pattern target: (_) @pattern)
 (case_pattern) @pattern.case
 (union_pattern) @pattern.case.or
@@ -205,9 +205,9 @@
 (union_type) @type.union
 (constrained_type) @type.constrained
 (member_type) @type.path
-(splat_type) @type.rest
+(splat_type) @type.splat
 (splat_type name: (_) @type)
-(splat_type operator: "**") @type.rest.map
+(splat_type operator: "**") @type.splat.map
 ((splat_type operator: ["*" "**"] @dropped) (#set! reason "the rest kind and its map refinement determine the marker"))
 
 ; ── literal ────────────────────────────────────────────────────────────────────
@@ -238,7 +238,7 @@
 (float_scientific) @literal.number.float.scientific
 (true) @literal.boolean.true
 (false) @literal.boolean.false
-(none) @literal.null
+(none) @literal.none
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier

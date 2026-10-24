@@ -517,3 +517,43 @@ Engine plumbing for the JSON writer and reviver, not part of the caller's surfac
 ### `packages/types/src/engine-api.ts::StructureRow`
 
 One kind's structure facts, as the generated types prove them, keyed by slot storage key. The two checks read different fields. On a built node, `verifyStructure` checks `required` (the slot holds a value), `nonEmpty` (the list holds an item) and `nodeOnly` (the slot holds a built node, never bare text). On a builder's input, `checkInput` checks `config` (the keys the kind declares) and `lists` (each list's `holes` and `arrival`). A kind with nothing to check has no row.
+
+### `packages/types/src/engine-api.ts::NodeJSON::$text`
+
+The node's text, for a leaf.
+
+### `packages/types/src/engine-api.ts::NodeJSON::$type`
+
+The node's kind name.
+
+### `packages/types/src/engine-api.ts::NodeMethods::$render`
+
+The node's rendered text.
+
+### `packages/types/src/engine-api.ts::NodeMethods::$trivia`
+
+The trivia attached to the node.
+
+### `packages/types/src/engine-api.ts::ParsedRoot::$errors`
+
+Every ERROR and MISSING region of the source, in source order; empty when the source parsed cleanly.
+
+### `packages/types/src/engine-api.ts::PortableEngineOptions`
+
+The options a portable engine takes.
+
+### `packages/types/src/engine-api.ts::SpelledTrivia`
+
+The trivia of a node as its spelled text.
+
+### `packages/types/src/engine-api.ts::StructureRow::booleans`
+
+`[storageKey, label]`: the slot holds a boolean, or nothing.
+
+### `packages/types/src/engine-api.ts::StructureRow::kindIds`
+
+The kind ids a slot may hold.
+
+### `packages/types/src/engine-api.ts::StructureRow::texts`
+
+The text a slot must hold.

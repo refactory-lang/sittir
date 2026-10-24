@@ -1,0 +1,103 @@
+diff --git a/packages/codegen/src/dsl/verbs/effects.ts b/packages/codegen/src/dsl/verbs/effects.ts
+index 260ed8d9e..09a9254f9 100644
+--- a/packages/codegen/src/dsl/verbs/effects.ts
++++ b/packages/codegen/src/dsl/verbs/effects.ts
+@@ -275,7 +275,16 @@ export function inheritSplitOptions(grammar: GrammarRecord, splitFrom: Readonly<
+ 	if (!isRecord(grammar.options)) return grammar.options;
+ 	const out = { ...grammar.options };
+ 	const fields = fieldNames(grammar.rules);
+-	for (const [to, from] of Object.entries(splitFrom)) {
++	const shownAs = new Map<string, string>();
++	const scan = (rule: unknown): void => {
++		if (Array.isArray(rule)) return rule.forEach(scan);
++		if (!isRecord(rule)) return;
++		if (rule.type === 'ALIAS' && rule.named === true && isRecord(rule.content) && rule.content.type === 'SYMBOL' && typeof rule.content.name === 'string' && typeof rule.value === 'string') shownAs.set(rule.content.name, rule.value);
++		Object.values(rule).forEach(scan);
++	};
++	scan(grammar.rules);
++	for (const [copy, from] of Object.entries(splitFrom)) {
++		const to = shownAs.get(copy) ?? copy;
+ 		const projected = renameOptionPaths(ownerOptions(grammar.options, from), (name) => name === from ? to : name, true, fields);
+ 		if (!isRecord(projected)) continue;
+ 		for (const [key, value] of Object.entries(projected)) {
+@@ -381,7 +390,16 @@ export function rewriteInherited(records: LayerRecords, ctx: EffectCtx): LayerRe
+ 	let out: GrammarRecord = { ...records };
+ 	if (out.options !== undefined) {
+ 		if (segments.length > 0) out.options = rewriteOwnedSegments(out.options, segments);
+-		if (aliases.size > 0) out.options = renameOptionPaths(out.options, (name) => aliases.get(name) ?? name, false, fields, false);
++		const bare = new Set<string>();
++		const scanBare = (rule: unknown, inAlias: boolean): void => {
++			if (Array.isArray(rule)) return rule.forEach((r) => scanBare(r, inAlias));
++			if (!isRecord(rule)) return;
++			if (rule.type === 'SYMBOL' && typeof rule.name === 'string' && !inAlias) bare.add(rule.name);
++			for (const v of Object.values(rule)) scanBare(v, inAlias || rule.type === 'ALIAS');
++		};
++		scanBare(ctx.rules, false);
++		const global = new Map([...aliases].filter(([from]) => !bare.has(from)));
++		if (global.size > 0) out.options = renameOptionPaths(out.options, (name) => global.get(name) ?? name, false, fields, false);
+ 	}
+ 	if (renames.size > 0) out = renameRecords(out, (name) => renames.get(name) ?? name, fields);
+ 	if (out.options !== undefined && Object.keys(splitFrom).length > 0) out.options = inheritSplitOptions({ options: out.options, rules: ctx.rules }, splitFrom);
+diff --git a/packages/python/grammar.bindings.ts b/packages/python/grammar.bindings.ts
+index 203e4c4cc..0c4d68368 100644
+--- a/packages/python/grammar.bindings.ts
++++ b/packages/python/grammar.bindings.ts
+@@ -110,7 +110,7 @@ export default grammar(
+ 			assignment_typed: { "0": field("name"), "1/3": field("value") },
+ 			attribute: { "2": field("property") },
+ 			case_clause: { "1": field("case_patterns") },
+-			class_definition: { "3": field("bases") },
++			class_definition: { "3": field("bases"), "body:/(suite_block)/(block)/(function_definition)": alias("method_declaration"), "body:/(suite_block)/(block)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": alias("method_declaration") },
+ 			conditional_expression: { "0": field("consequence") },
+ 			default_parameter: { "2": field("default") },
+ 			dictionary_splat_pattern: { "1": field("pattern") },
+diff --git a/packages/rust/grammar.bindings.ts b/packages/rust/grammar.bindings.ts
+index 30d5865d6..343bea8ec 100644
+--- a/packages/rust/grammar.bindings.ts
++++ b/packages/rust/grammar.bindings.ts
+@@ -1,7 +1,7 @@
+ // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
+ /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+ import sittir from './grammar.sittir.ts';
+-import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
++import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+ 
+ export const hash = "b9ef7df68804d65437db3c26fcd77c72be123d56c3fb1629717092e57e60081b";
+ 
+@@ -130,6 +130,7 @@ export default grammar(
+ 			field_pattern_shorthand: { "0/0": field("by_reference") },
+ 			for_expression: { "2": field("left"), "4": field("right") },
+ 			for_lifetimes: { "2": field("lifetimes") },
++			impl_item_body: { "body:/(declaration_list as extension_declaration_body)/(function_item)": alias("method_declaration") },
+ 			inner_attribute_item: { "3": field("content") },
+ 			last_match_arm: { "1": field("match") },
+ 			let_declaration: { "2": field("name") },
+@@ -149,6 +150,7 @@ export default grammar(
+ 			static_item: { "2/0": field("by_reference") },
+ 			struct_item_brace: { "4/0/0": field("where_clause") },
+ 			struct_item_tuple: { "4/1/0": field("where_clause") },
++			trait_item: { "body:/(declaration_list as trait_interface_declaration_body)/(function_item)": alias("method_declaration"), "body:/(declaration_list as trait_interface_declaration_body)/(function_signature_item)": alias("signature_method_declaration") },
+ 			try_expression: { "0": field("argument") },
+ 			tuple_expression: { "2": field("elements") },
+ 			tuple_struct_pattern: { "2/0": field("patterns") },
+diff --git a/packages/typescript/grammar.bindings.ts b/packages/typescript/grammar.bindings.ts
+index b5e2f514c..36599e542 100644
+--- a/packages/typescript/grammar.bindings.ts
++++ b/packages/typescript/grammar.bindings.ts
+@@ -1,7 +1,7 @@
+ // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
+ /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
+ import sittir from './grammar.sittir.ts';
+-import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
++import { alias, copy, enrich, field, lead, match, replace, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+ 
+ export const hash = "f7252d5ccbde3aa3d5f506a6d39e8649f359f7621a4a269b6dfb6bc81992b38a";
+ 
+@@ -124,6 +124,7 @@ export default grammar(
+ 	wire({
+ 		generated: true,
+ 		edits: {
++			class_body_member_method: { "(method_definition)/(method_definition_plain)": ($, member) => choice(member, alias(replace(copy("method_definition_plain"), "name:", alias("constructor", $.property_identifier)), $.constructor_declaration)) },
+ 			_call_signature_get_accessor_signature: { "2": field("type") },
+ 			_number: { "1": field("value") },
+ 			_parameter_name: { "4": field("name") },

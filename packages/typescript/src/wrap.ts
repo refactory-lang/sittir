@@ -7284,7 +7284,7 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 			separator: (
 				v: NonNullable<
 					{
-						separator?: TSKindId.Comma | TSKindId.Semi;
+						separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 						delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 					}['separator']
 				>
@@ -7292,7 +7292,7 @@ export function wrapObjectTypeContent(data: T.ObjectTypeContent, tree: TreeHandl
 			delimiter: (
 				v: NonNullable<
 					{
-						separator?: TSKindId.Comma | TSKindId.Semi;
+						separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 						delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 					}['delimiter']
 				>

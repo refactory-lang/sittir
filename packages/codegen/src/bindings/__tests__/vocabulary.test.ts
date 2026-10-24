@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { type BindingFacts, type ClaimFact, type Vocabulary, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
+import { type BindingFacts, type ClaimFact, type MemberFact, type ModelNode, type Vocabulary, canonicalFacts, canonicalPaths, flagSegment, readVocabulary, resolveFlags } from '../index.ts';
 
 const vocabularyIn = async (...lines: readonly string[]) => {
 	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
@@ -193,6 +193,167 @@ describe('resolveFlags', () => {
 		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
 			['declaration.method', 'static'],
 			['declaration.method', undefined]
+		]);
+	});
+});
+
+const vocabularyFiles = async (files: Readonly<Record<string, readonly string[]>>): Promise<Vocabulary> => {
+	const dir = mkdtempSync(join(tmpdir(), 'vocabulary-'));
+	for (const [file, lines] of Object.entries(files)) writeFileSync(join(dir, file), [...lines, ''].join('\n'));
+	try {
+		return await readVocabulary(dir);
+	} finally {
+		rmSync(dir, { recursive: true, force: true });
+	}
+};
+
+const SYNONYM_KINDS = [
+	'export interface Declaration<G> {',
+	"\treadonly $kind: 'declaration';",
+	'}',
+	'export namespace Declaration {',
+	'\texport interface Parameter<G> extends SubKindOf<V.Declaration<G>> {',
+	"\t\treadonly $kind: 'declaration.parameter';",
+	'\t\treadonly name?: string;',
+	'\t\treadonly mutable?: Flag;',
+	'\t}',
+	'\texport namespace Parameter {',
+	'\t\texport interface Receiver<G> extends SubKindOf<V.Declaration.Parameter<G>> {',
+	"\t\t\treadonly $kind: 'declaration.parameter.receiver';",
+	'\t\t}',
+	'\t}',
+	'\texport interface Self<G> extends SubKindOf<V.Declaration<G>> {',
+	"\t\treadonly $kind: 'declaration.self';",
+	'\t}',
+	'\texport interface Method<G> extends SubKindOf<V.Declaration<G>> {',
+	"\t\treadonly $kind: 'declaration.method';",
+	'\t}',
+	'}'
+];
+
+const synonymVocabulary = (table: readonly string[] = ["\treadonly receiver: 'self' | 'this';"], flags: readonly string[] = ["\treadonly mutable: 'mut';"]) =>
+	vocabularyFiles({
+		'declaration.ts': [...SYNONYM_KINDS, 'export interface DeclarationSynonyms {', ...table, '}'],
+		'utils.ts': ['export interface FlagSynonyms {', ...flags, '}']
+	});
+
+describe('synonym tables', () => {
+	it("reads each level's table beside its level kind, and the flags' table beside Flag", async () => {
+		const vocabulary = await vocabularyFiles({
+			'declaration.ts': [
+				...SYNONYM_KINDS,
+				'export interface DeclarationSynonyms {',
+				"\treadonly receiver: 'self' | \"this\";",
+				"\treadonly null: 'none';",
+				'}',
+				"export interface ExpressionSynonyms { readonly member: 'field'; }"
+			],
+			'utils.ts': ["export interface FlagSynonyms { readonly mutable: 'mut'; }"]
+		});
+		expect([...vocabulary.synonyms.levels].map(([level, table]) => [level, [...table]])).toEqual([
+			[
+				'declaration',
+				[
+					['receiver', ['self', 'this']],
+					['null', ['none']]
+				]
+			]
+		]);
+		expect([...vocabulary.synonyms.flags]).toEqual([['mutable', ['mut']]]);
+		expect(vocabulary.kinds.has('declaration_synonyms')).toBe(false);
+	});
+
+	it('refuses a table entry that is not a union of string literals', async () => {
+		await expect(synonymVocabulary(['\treadonly receiver: string;'])).rejects.toThrow(/DeclarationSynonyms\.receiver lists its synonyms as a union of string literals/);
+		await expect(synonymVocabulary(["\treadonly receiver: 'self' | number;"])).rejects.toThrow(/DeclarationSynonyms\.receiver/);
+	});
+
+	it('refuses a second table for a level, which interface merging would otherwise fold into one', async () => {
+		await expect(
+			vocabularyFiles({
+				'declaration.ts': [...SYNONYM_KINDS, "export interface DeclarationSynonyms { readonly receiver: 'self'; }", "export interface DeclarationSynonyms { readonly method: 'fn'; }"]
+			})
+		).rejects.toThrow(/DeclarationSynonyms is declared more than once/);
+	});
+
+	it("refuses a second flags' table", async () => {
+		await expect(
+			vocabularyFiles({ 'declaration.ts': [...SYNONYM_KINDS, 'export interface FlagSynonyms {}'], 'utils.ts': ['export interface FlagSynonyms {}'] })
+		).rejects.toThrow(/FlagSynonyms is declared 2 times/);
+	});
+});
+
+describe('canonicalPaths', () => {
+	it('reads a synonym as the canonical segment at its position, canonical names first', async () => {
+		const canonical = canonicalPaths(await synonymVocabulary());
+		expect(canonical('declaration.parameter.receiver')).toBe('declaration.parameter.receiver');
+		expect(canonical('declaration.parameter.self')).toBe('declaration.parameter.receiver');
+		expect(canonical('declaration.parameter.this')).toBe('declaration.parameter.receiver');
+		expect(canonical('declaration.self')).toBe('declaration.self');
+	});
+
+	it('reads a synonym only where its canonical segment has a position, and keeps what it cannot resolve as written', async () => {
+		const canonical = canonicalPaths(await synonymVocabulary());
+		expect(canonical('declaration.method.this')).toBe('declaration.method.this');
+		expect(canonical('declaration.unknown.this')).toBe('declaration.unknown.this');
+		expect(canonical('expression.this')).toBe('expression.this');
+	});
+
+	it("reads a flag's synonym in a path's last segment as the flag, and nowhere else", async () => {
+		const canonical = canonicalPaths(await synonymVocabulary());
+		expect(canonical('declaration.parameter.mut')).toBe('declaration.parameter.mutable');
+		expect(canonical('declaration.parameter.mut.receiver')).toBe('declaration.parameter.mut.receiver');
+		expect(canonical('declaration.method.mut')).toBe('declaration.method.mut');
+	});
+
+	it('reads a segment that only prefixes kinds as a canonical name at its position', async () => {
+		const canonical = canonicalPaths(
+			await vocabularyFiles({
+				'declaration.ts': [
+					"export interface Declaration<G> { readonly $kind: 'declaration'; }",
+					"export namespace Declaration { export namespace Slot { export interface Receiver<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.slot.receiver'; } } }",
+					"export namespace Declaration { export namespace Port { export interface Receiver<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.port.receiver'; } } }",
+					"export interface DeclarationSynonyms { readonly port: 'slot' | 'socket'; }"
+				]
+			})
+		);
+		expect(canonical('declaration.slot.receiver')).toBe('declaration.slot.receiver');
+		expect(canonical('declaration.socket.receiver')).toBe('declaration.port.receiver');
+	});
+
+	it('refuses a word that is a synonym of two segments at one position', async () => {
+		const canonical = canonicalPaths(await synonymVocabulary(["\treadonly receiver: 'self';", "\treadonly parameter: 'param';", "\treadonly self: 'param';"]));
+		expect(() => canonical('declaration.param')).toThrow(/declaration\.param spells declaration\.parameter and declaration\.self/);
+	});
+});
+
+const member = (name: string): MemberFact => ({ route: 'rename', owner: 'parameter', name, field: null, kind: null, after: null, anchor: null });
+
+describe('canonicalFacts', () => {
+	it("hands on canonical claim paths, template paths and flag captures, so resolveFlags reads canonical names", async () => {
+		const vocabulary = await synonymVocabulary();
+		const facts: BindingFacts = {
+			claims: [{ ...claim('declaration.parameter.self'), kind: 'parameter' }, { ...claim('declaration.parameter.mut'), kind: 'parameter' }],
+			members: [member('mut'), member('name'), member('other')],
+			containers: [],
+			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
+			unclaimed: []
+		};
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, shownAs: [] };
+		const model = new Map([['parameter', parameter]]);
+		const canonical = canonicalFacts(facts, vocabulary, model);
+		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);
+		expect(canonical.templates.map((t) => t.vocabs)).toEqual([['declaration.parameter.receiver']]);
+		expect(canonical.members.map((m) => (m.route === 'dropped' ? null : m.name))).toEqual(['mutable', 'name', 'other']);
+		const resolved = resolveFlags(canonical, vocabulary, model);
+		expect(resolved.claims.map((c) => [c.vocab, c.flag])).toEqual([
+			['declaration.parameter.receiver', undefined],
+			['declaration.parameter', 'mutable']
+		]);
+		expect(resolved.members.map((m) => [m.route === 'dropped' ? null : m.name, m.flag])).toEqual([
+			['mutable', true],
+			['name', undefined],
+			['other', undefined]
 		]);
 	});
 });

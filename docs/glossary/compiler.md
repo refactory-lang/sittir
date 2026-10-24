@@ -2535,38 +2535,6 @@ tree has.
  */
 ```
 
-### `packages/codegen/src/compiler/link.ts::assignRepeatSeparator`
-
-```text
-/**
- * Try to set `separator: '\n'` on the repeat reachable from `rule`.
- * Returns true if a repeat was found and updated. Follows symbol refs
- * (into the referenced rule) and descends through structural wrappers
- * (seq/optional/group/field). `visited` guards against recursive hidden
- * chains so a left-recursive helper doesn't stack-overflow. Idempotent.
- */
-```
-
-### `packages/codegen/src/compiler/link.ts::computeHiddenBearerSet`
-
-```text
-/**
- * Compute the set of hidden grammar kind names that are "block-bearers".
- *
- * @param rules - Full resolved rules map.
- * @returns A set of kind names (all underscore-prefixed) whose rule trees
- *   directly contain or transitively reference an `indent` node through
- *   other hidden rules only.
- * @remarks
- *   A bearer is a hidden rule whose content directly contains an `indent`
- *   node OR transitively references another bearer via symbols that only
- *   pass through hidden rules. Visible intermediate rules break the chain —
- *   e.g. `else_clause` transitively reaches indent through its body, but
- *   it's visible, so consumers of `else_clause` are NOT block-bearers
- *   themselves (the `else_clause` renders flush-left).
- */
-```
-
 ### `packages/codegen/src/compiler/link.ts::liftSeq`
 
 Lifts a seq: every run of members that is a separated list becomes one repeat,
@@ -3664,35 +3632,6 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::recordSlotGroupingDiagnostic`
-
-```text
-/**
- * Push a record if its (ownerKind, shape) hasn't been seen this run. Returns
- * true when newly added (so the caller can log only first occurrences).
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::resetSlotGroupingDiagnostics`
-
-```text
-/**
- * Clear the accumulator. Called once at the start of each `normalizeGrammar()` run so
- * diagnostics from one grammar never leak into the next (the multiple
- * `computeSimplifiedRules` calls within a run still accumulate into one batch).
- */
-```
-
-### `packages/codegen/src/compiler/simplify.ts::drainSlotGroupingDiagnostics`
-
-```text
-/**
- * Return + clear the slot-grouping diagnostics accumulated during the current
- * `normalizeGrammar()` run. The codegen CLI calls this after regen to print
- * propose-promotion suggestions; tests call it to verify the wiring.
- */
-```
-
 ### `packages/codegen/src/compiler/simplify.ts::makeDefaultCtx`
 
 ```text
@@ -3878,18 +3817,6 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
 // Also emit into ctx.diagnostics so the DiagnosticSink carries them. Only
 // new (first-seen) records are emitted to avoid double-counting the
 // module-level dedup's effect on the sink.
-```
-
-### `packages/codegen/src/compiler/simplify.ts::normalizeToFixpoint`
-
-```text
-/**
- * Run `inlineRefs` + `simplifyRule` to fixpoint. The two passes enable each
- * other (an inline can expose a nested seq for simplifyRule to flatten, a
- * stripped branch can let a sibling choice merge), and each is non-increasing on
- * structural size (member count / nesting depth), so the loop converges — real
- * grammars in 2-3 iters; the 16-iter cap guards a non-converging shape.
- */
 ```
 
 ### `packages/codegen/src/compiler/simplify.ts::isAllTextRender`
@@ -4137,12 +4064,6 @@ The literal test joins a fixed SEQ with the grammar's own word matcher
 (`flattenRules` hands `linked.wordMatcher` through), so a grammar whose word
 token admits a character `\w` does not (typescript's `$`) joins two word
 parts with the space its parser needs.
-
-### `packages/codegen/src/compiler/flatten.ts::shapeKey`
-
-```text
-/** Structural identity of a rule for arm comparison — ids excluded. */
-```
 
 ### `packages/codegen/src/compiler/flatten.ts::factorChoiceArms`
 
@@ -4400,17 +4321,6 @@ The source kind a rule id was minted under, decoded; the other inverse of `creat
 
 ```text
 /** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine. Native-only; no JS-engine fallback (see emitters/engine.ts). */
-```
-
-### `packages/codegen/src/compiler/generate.ts::jinjaTemplates`
-
-```text
-/** Per-rule `.jinja` files. `EmittedTemplates.bodies`
-	 *  is keyed by rule kind with the full file contents (incl.
-	 *  `@generated` header). Separator / flank metadata lives INLINE
-	 *  in each body via `| join("<sep>")` and
-	 *  `| joinWithTrailing(...)` filters; no sidecar. CLI writes each
-	 *  body to `packages/<grammar>/templates/<kind>.jinja`. */
 ```
 
 ### `packages/codegen/src/compiler/generate.ts::is`
@@ -4921,40 +4831,16 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 /** Name of the field to wrap the reference in. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::targetSymbol`
-
-```text
-/** Symbol being wrapped (the `to` in `field('name', $.to)`). */
-```
-
-### `packages/codegen/src/compiler/types.ts::confidence`
-
-```text
-/** Confidence tier based on cross-parent agreement ratio. */
-```
-
 ### `packages/codegen/src/compiler/types.ts::agreement`
 
 ```text
 /** Numeric agreement — e.g. 10/10 → 1.0, 6/7 → ~0.857. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::sampleSize`
-
-```text
-/** Total named refs that the inference was measured against. */
-```
-
 ### `packages/codegen/src/compiler/types.ts::applied`
 
 ```text
 /** True if Link mutated the rule tree; false if held back by `include`. */
-```
-
-### `packages/codegen/src/compiler/types.ts::suggestedName`
-
-```text
-/** Suggested name for the shared supertype/group (readable stub). */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::kinds`
@@ -4991,20 +4877,6 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 
 ```text
 /** True if Link kept the promotion; false if held back by `include`. */
-```
-
-### `packages/codegen/src/compiler/types.ts::polymorphCandidates`
-
-```text
-/**
-	 * For `polymorph` classifications: pre-Normalize candidates suitable
-	 * for emitting a copy-pasteable `variant()` snippet. Computed at
-	 * Link time because Normalize's `fanOutSeqChoices` pass flattens
-	 * nested `seq(_, seq(choice, _))` shapes — post-Normalize the choice
-	 * moves up a level, so paths computed then don't match what
-	 * `transform()`'s `applyPath` sees at evaluate time on the base
-	 * grammar. Captured here once, referenced by the suggester.
-	 */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar::topLevelAliasBodies`
@@ -5444,27 +5316,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/inline-sets.ts::NON_INLINABLE_MODEL_TYPES`
-
-```text
-/**
- * Inline-DECISION set for the simplify pass: which grammar.inline kinds
- * inlineRefs should substitute. The gate is "in grammar.inline AND modelType
- * is NOT a supertype / keyword / token / pattern / enum". Supertypes are typed
- * unions referenced by name (inlining them explodes a clean union into its
- * alternatives at a seq position → non-canonical choice-at-seq); keyword /
- * token helpers are leaf lexemes that must stay as scalar slot refs. The
- * remaining inline kinds — auto-synthesized group-lift helpers (`branch`) and
- * the hidden structural helpers tree-sitter expands at parse time — ARE
- * inlined so sittir's derivation matches the flat parser output.
- *
- * NOTE: this is a SEPARATE set from the raw grammar.json inline list, which
- * the emitters use as the "skip emitting this inlined kind" list
- * (emitters/shared.ts). Filtering that list would un-skip supertypes/keywords
- * and emit phantom concrete kinds — so the decision set is kept distinct.
- */
-```
-
 ### `packages/codegen/src/compiler/link.ts::ROLE_TO_RULE_TYPE`
 
 ```text
@@ -5574,16 +5425,6 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  * What sittir can do with a kind. Behavior-based; complements
  * `KindPresenceFlag`'s file-based / existence-based view.
  */
-```
-
-### `packages/codegen/src/compiler/link.ts::stampLiteral`
-
-```text
-/** Link's own mints — a catalog literal at a symbol position, a blank for a
- *  vaporized kind, the optional that a blank-bearing choice becomes — are
- *  link-phase literals written as such. The structural builder is the
- *  evaluate phase's (`RuleBuilder<'evaluate'>`); a link node built through
- *  it could only become `Rule<'link'>` by assertion. */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::KindIdStampMisses`
@@ -7480,21 +7321,6 @@ A sequence of one member collapses into it (`dsl/builders.ts::collapsedInto`); `
 
 ```text
 // Only stamp when non-default (single → undefined per combineMultiplicity).
-```
-
-### `packages/codegen/src/compiler/simplify.ts::_slotGroupingDiagnostics`
-
-```text
-// ---------------------------------------------------------------------------
-// Slot-grouping diagnostic accumulator (propose-promotion only).
-//
-// `computeSimplifiedRules` is invoked multiple times per grammar (main rules,
-// alias bodies, polymorph forms — see normalize.ts), so records are deduped by
-// (ownerKind, shape) as they accumulate, and the whole accumulator is reset
-// once per `normalizeGrammar()` run via `resetSlotGroupingDiagnostics()`. That keeps
-// `drain` honest (one run's unique records) and bounds memory in long-lived
-// processes. They NEVER drive codegen behavior (feedback_metadata_not_behavior).
-// ---------------------------------------------------------------------------
 ```
 
 ### `packages/codegen/src/compiler/simplify.ts::simplifyChoiceRule`

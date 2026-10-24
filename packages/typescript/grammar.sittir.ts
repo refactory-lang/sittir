@@ -122,6 +122,13 @@ export default grammar(enrich(base), wire({
 			'statements:/(export_statement_default_declaration)/after': preference('blankline')
 		},
 		property_signature: { 'optional:/before': preference('tight') },
+		method_signature_plain: { 'optional:/before': preference('tight') },
+		abstract_method_signature_plain: { 'optional:/before': preference('tight') },
+		method_definition_plain: { 'optional:/before': preference('tight') },
+		public_field_definition_plain: { 'optionality:/before': preference('tight') },
+		variable_declarator_definite: { '"!"/before': preference('tight') },
+		optional_tuple_parameter: { '"?"/before': preference('tight') },
+		optional_type: { '"?"/before': preference('tight') },
 
 		_: {
 			'decorator:/separator': preference('tight'),
@@ -809,7 +816,8 @@ export default grammar(enrich(base), wire({
 		),
 
 		object_type_content: vocabulary(($) => {
-			const SEP = () => choice(',', ';');
+			const LEAD = () => choice(',', ';');
+			const SEP = () => choice(',', ';', $._automatic_semicolon);
 			const member = choice(
 				$.export_statement,
 				$.property_signature,
@@ -818,7 +826,7 @@ export default grammar(enrich(base), wire({
 				$.index_signature,
 				$.method_signature
 			);
-			return seq(optional(SEP()), field('item', member), repeat(seq(SEP(), field('item', member))), optional(SEP()));
+			return seq(optional(LEAD()), field('item', member), repeat(seq(SEP(), field('item', member))), optional(SEP()));
 		})
 	},
 	renderAs: (_$) => ({

@@ -8271,7 +8271,7 @@ export function coerceToObjectTypeContent(
 		!('$type' in (input[0] as object)) &&
 		Object.keys(input[0] as object).every((k) => ['separator', 'delimiter'].includes(k));
 	const options = (_optsFirst ? (input[0] as unknown) : {}) as {
-		separator?: TSKindId.Comma | TSKindId.Semi;
+		separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
 		delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
 	};
 	const _rest = (_optsFirst ? input.slice(1) : input) as unknown as readonly unknown[];

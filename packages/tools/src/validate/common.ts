@@ -12,7 +12,7 @@ import {
 	type HostedText,
 	type ReparseHosts
 } from '@sittir/common';
-import { chosenSeparatorOf, coordinateOf, hydrateTriviaEntry, writeTrivia, writtenSides } from '@sittir/common/utils';
+import { chosenSeparatorOf, coordinateOf, hydrateTriviaEntry, listSeparatorOf, writeTrivia, writtenSides } from '@sittir/common/utils';
 import { scopeBuilders, useRecordConstruction } from '@sittir/common/engine';
 import {
 	carryRead,
@@ -477,6 +477,7 @@ export interface LoadedNodeModel {
 	readonly bareAccepts: Record<string, readonly string[]>;
 	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
+	readonly forwardsArguments: ReadonlySet<string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
 	/** Each list kind whose separator is chosen per instance, with the separators it may hold. */
@@ -531,6 +532,7 @@ interface ParsedNodeModel {
 			storage?: string;
 			registered?: boolean;
 			optionDefault?: number | string;
+			separator?: { readonly default?: number };
 			values?: ReadonlyArray<ParsedSlotValue>;
 		}>;
 		elementSeats?: readonly Seat[];
@@ -542,6 +544,7 @@ interface ParsedNodeModel {
 		bareAccepts?: readonly string[];
 		textLeavesThrough?: readonly string[];
 		forwardsTo?: string;
+	forwardsArguments?: true;
 		defaultDelimiter?: string;
 		separatorCandidates?: readonly string[];
 		leafPattern?: string;
@@ -590,6 +593,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	bareAccepts: {},
 	textLeavesThrough: {},
 	forwardsTo: {},
+	forwardsArguments: new Set(),
 	listDefaults: {},
 	listElementKinds: {},
 	listSeparators: {},
@@ -650,6 +654,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const bareAccepts: Record<string, readonly string[]> = {};
 	const textLeavesThrough: Record<string, readonly string[]> = {};
 	const forwardsTo: Record<string, string> = {};
+	const forwardsArguments = new Set<string>();
 	const listDefaults: Record<string, string> = {};
 	const listElementKinds: Record<string, readonly string[]> = {};
 	const listSeparators: Record<string, readonly string[]> = {};
@@ -699,9 +704,8 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.bareAccepts !== undefined) bareAccepts[node.kind] = node.bareAccepts;
 		if (node.textLeavesThrough !== undefined) textLeavesThrough[node.kind] = node.textLeavesThrough;
 		if (node.forwardsTo !== undefined) forwardsTo[node.kind] = node.forwardsTo;
-		if (node.defaultDelimiter !== undefined) {
-			listDefaults[node.kind] = node.defaultDelimiter;
-		}
+		if (node.forwardsArguments === true) forwardsArguments.add(node.kind);
+		if (node.defaultDelimiter !== undefined) listDefaults[node.kind] = node.defaultDelimiter;
 		if (node.elementKinds !== undefined) listElementKinds[node.kind] = node.elementKinds;
 		if (node.separatorCandidates !== undefined) listSeparators[node.kind] = node.separatorCandidates;
 		if (node.fullForm !== undefined) fullForms[node.kind] = node.fullForm;
@@ -736,6 +740,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		bareAccepts,
 		textLeavesThrough,
 		forwardsTo,
+		forwardsArguments,
 		listDefaults,
 		listElementKinds,
 		listSeparators,
@@ -1428,7 +1433,7 @@ function factoryArgs(
 	const route = armRouteOf(config);
 	if (shape === 'config') {
 		const { base, registered } = splitRegisteredSlots(kind, config, opts);
-		const listOptions = separatedListFactoryOptions(referenceData, opts.accessorOf);
+		const listOptions = separatedListFactoryOptions(referenceData, opts.accessorOf, opts.factorySlots?.[kind], opts.omitOptionDefaults === true);
 		const options = {
 			...(listOptions?.separator !== undefined && !('separator' in base) ? { separator: listOptions.separator } : {}),
 			...(listOptions?.delimiter !== undefined && !('delimiter' in base) ? { delimiter: listOptions.delimiter } : {}),
@@ -1448,7 +1453,7 @@ function factoryArgs(
 	}
 	const { base, registered } = splitRegisteredSlots(kind, config, opts);
 	const elements = getChildFactoryArgs(kind, base, opts.factorySlots, opts.factoryFields);
-	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData, opts.accessorOf) : registered;
+	const options = shape === 'elements' ? separatedListFactoryOptions(referenceData, opts.accessorOf, opts.factorySlots?.[kind], opts.omitOptionDefaults === true) : registered;
 	return options !== undefined ? [options, ...elements] : elements;
 }
 
@@ -1826,18 +1831,19 @@ export function dedupeMismatchesByContainment<T extends { entry?: string; start:
 
 export function separatedListFactoryOptions(
 	data: unknown,
-	accessorOf: SlotAccessorOf
+	accessorOf: SlotAccessorOf,
+	slots?: Record<string, FactorySlotMeta>,
+	omitDefault = false
 ): { separator?: number; delimiter?: number } | undefined {
 	if (data === null || typeof data !== 'object') return undefined;
 	const stored = new Map(storedSlotValues(data, accessorOf));
-	const held = (key: string): number | undefined => {
-		const value = stored.get(storageKeyOf(key));
-		return typeof value === 'number' ? value : undefined;
-	};
-	const delimiter = held('delimiter');
-	const separator = held('separator');
+	const delimiterValue = stored.get(storageKeyOf('delimiter'));
+	const delimiter = typeof delimiterValue === 'number' ? delimiterValue : undefined;
+	const option = Object.values(slots ?? {}).find((meta) => meta.separator !== undefined)?.separator;
+	const read = option !== undefined && hasNumericType(data) && accessorOf(data.$type).separator ? listSeparatorOf(data) : undefined;
+	const separator = typeof read === 'number' ? read : undefined;
 	const options: { separator?: number; delimiter?: number } = {};
-	if (separator !== undefined) options.separator = separator;
+	if (separator !== undefined && !(omitDefault && separator === option?.default)) options.separator = separator;
 	if (delimiter !== undefined) options.delimiter = delimiter;
 	return Object.keys(options).length > 0 ? options : undefined;
 }

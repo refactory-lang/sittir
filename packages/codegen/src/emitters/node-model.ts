@@ -57,6 +57,7 @@ interface SerializedSlot {
 	storage: string;
 	registered?: true;
 	optionDefault?: number | string;
+	separator?: { default?: number };
 	values: SerializedValue[];
 }
 
@@ -74,6 +75,7 @@ interface SerializedNodeBase {
 	oneSurface?: true;
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
+	forwardsArguments?: true;
 	factoryFields?: string[];
 	bareAccepts?: string[];
 	textLeavesThrough?: string[];
@@ -167,6 +169,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
+		if (factoryData.forwardsArguments.has(kind)) serialized.forwardsArguments = true;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
 		const accepts = bareAccepts.get(kind);
@@ -306,6 +309,7 @@ function serializeSlot(
 		storage: resolveFieldStorageInfo(slot, nodeMap).kind,
 		...(meta?.registered === true ? { registered: true } : {}),
 		...(meta?.optionDefault === undefined ? {} : { optionDefault: meta.optionDefault }),
+		...(meta?.separator === undefined ? {} : { separator: meta.separator }),
 		values: slot.values.map((v) =>
 			serializeValue(v, spelledSeat(parent.kind, seatOf(parent, slot, v, nodeMap, wires.byKind.get(parent.kind)), wires))
 		)

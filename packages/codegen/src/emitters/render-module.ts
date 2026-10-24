@@ -4,7 +4,7 @@ import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import { isDepthText, INDENT_TEXT, DEPTH_BREAK } from '../dsl/primitives/spacing.ts';
 import type { SpacingAddress } from '../types/spacing.ts';
-import { isFixedTextLeaf, isTerminalNode } from '../compiler/model/node-map.ts';
+import { isFixedTextLeaf, isTerminalNode, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import { CONTINUATION_KINDS, NEWLINE_KINDS, PREFERRED_NEWLINE, breakingKindsOfText, TIGHT_KINDS, layoutKindsOfText, leafEdgesOf } from '../compiler/model/layout-kinds.ts';
 import { STRING } from '../types/rule-types.ts'; // @rule-type-consts
 import { wordCharAsciiTable } from '../util/word-matcher.ts';
@@ -791,15 +791,15 @@ function renderTypedBranchFn(
 }
 
 function separatorTextFn(
-	candidateKindNames: readonly string[],
+	candidates: readonly { readonly name: string; readonly text: string }[],
 	fallbackSeparator: string,
 	kindIdByKind: ReadonlyMap<string, number>
 ): string | undefined {
 	const arms: string[] = [];
-	for (const name of candidateKindNames) {
+	for (const { name, text } of candidates) {
 		const id = kindIdByKind.get(name);
 		if (id === undefined) continue;
-		arms.push(`KindId(${id}) => ${JSON.stringify(name)}`);
+		arms.push(`KindId(${id}) => ${JSON.stringify(text)}`);
 	}
 	if (arms.length === 0) return undefined;
 	return `|kind| match kind { ${[...arms, `_ => ${fallbackSeparator}`].join(', ')} }`;
@@ -875,7 +875,7 @@ function buildTypedTemplateBody(
 				separatorSite?.defaultText === undefined ? fieldSepLiteral : JSON.stringify(separatorSite.defaultText);
 			const separatorText =
 				separatedList?.separatorRule !== undefined
-					? separatorTextFn(separatedList.separatorCandidateKindNames, fallback, kindIdByKind)
+					? separatorTextFn(separatorCandidateTexts(separatedList, nodeMap), fallback, kindIdByKind)
 					: undefined;
 			const wireKey = JSON.stringify(slotWireKey(f.storageName));
 			const spacing = spacingFieldExprs(plan, node, f.name);
@@ -2580,6 +2580,17 @@ function renderTriviaNodeSupport(
 	lines.push('            _ => None,');
 	lines.push('        }');
 	lines.push('    }');
+	const sided = extrasNodes.filter((node) => unitOf(node) === undefined && !continuationKinds.has(node.kind)).map(rustNodeVariantName);
+	if (sided.length > 0) {
+		for (const [name, ref, layout, trivia] of [
+			['sides', '&', 'as_deref', 'as_ref'],
+			['sides_mut', '&mut ', 'as_deref_mut', 'as_mut']
+		] as const) {
+			lines.push('', `    fn ${name}(${ref}self) -> Option<${ref}::sittir_core::trivia::NodeTrivia<Self>> {`, '        match self {');
+			for (const variant of sided) lines.push(`            TriviaNode::${variant}(t) => t.layout.${layout}()?.trivia.${trivia}(),`);
+			lines.push('            _ => None,', '        }', '    }');
+		}
+	}
 	if (depthVariants.length > 0) {
 		lines.push('', '    fn depth(&self) -> i32 {', '        match self {');
 		for (const { variant, delta } of depthVariants) lines.push(`            TriviaNode::${variant} => ${delta},`);
@@ -3462,8 +3473,8 @@ function collectFixedLiterals(
 			ownId: entryOf(node.kind)?.id,
 			acceptedIds: [
 				...new Set([
-					...resolveAcceptedNodeIds({ kind: node.kind, node, nodeMap, kindIdByKind, kindEntries }),
-					...(projection.wireIds.get(node.kind) ?? [])
+					...(projection.wireIds.get(node.kind) ?? []),
+					...resolveAcceptedNodeIds({ kind: node.kind, node, nodeMap, kindIdByKind, kindEntries })
 				])
 			],
 			owner: ownsTrivia(kindEntries, node.kind),

@@ -51,6 +51,7 @@ export interface ModelFacts {
 	readonly bareAccepts: Record<string, readonly string[]>;
 	readonly textLeavesThrough: Record<string, readonly string[]>;
 	readonly forwardsTo: Record<string, string>;
+	readonly forwardsArguments: ReadonlySet<string>;
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
 	readonly hoistedKinds: ReadonlySet<string>;
@@ -588,7 +589,7 @@ function callSpelling(path: string, ctx: PrintContext, kind?: string): string {
 function ownedListArgs(owner: string, value: unknown, ctx: PrintContext): string | undefined {
 	if (!(value instanceof Printed) || value.kind === undefined || value.$_layout?.trivia !== undefined) return undefined;
 	const elements = value.facts?.elements;
-	if (elements === undefined || ctx.facts.forwardsTo[owner] !== value.kind) return undefined;
+	if (elements === undefined || ctx.facts.forwardsTo[owner] !== value.kind || !ctx.facts.forwardsArguments.has(owner)) return undefined;
 	return value.argsSource;
 }
 
@@ -1079,6 +1080,7 @@ export async function emitFactorySourceText(
 			bareAccepts: model.bareAccepts,
 			textLeavesThrough: model.textLeavesThrough,
 			forwardsTo: model.forwardsTo,
+		forwardsArguments: model.forwardsArguments,
 			listDefaults: model.listDefaults,
 			listElementKinds: model.listElementKinds,
 			hoistedKinds: model.hoistedKinds,
