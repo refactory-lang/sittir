@@ -27,8 +27,13 @@ describe('the structure table: what a built node of each kind must hold', () => 
 			required: [['_definition', 'definition']],
 			nonEmpty: [['_decorator', 'decorated_definition.decorators']],
 			nodeOnly: [
-				['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator'],
-				['_definition', 'DecoratedDefinition.definition', 'a built ClassDefinition / FunctionDefinition']
+				['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator', [node('decorator').kindId!]],
+				[
+					'_definition',
+					'DecoratedDefinition.definition',
+					'a built ClassDefinition / FunctionDefinition',
+					[node('class_definition').kindId!, node('function_definition').kindId!].sort((a, b) => a - b)
+				]
 			],
 			config: ['decorators', 'definition'],
 			lists: [['decorators', false, 'key']]
