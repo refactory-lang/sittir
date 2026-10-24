@@ -129,6 +129,7 @@ export async function readVocabularySource(dir: string): Promise<VocabularySourc
 		}
 		for (const d of all) {
 			const level = levelOf.get(d.qname);
+			if (level !== undefined && levels.has(level)) throw new Error(`vocabulary: ${d.qname} is declared more than once; a level has one table`);
 			if (level !== undefined) levels.set(level, synonymTable(d));
 			if (d.qname === `${FLAG}${SYNONYMS}`) flags.push(d);
 		}
@@ -175,6 +176,36 @@ async function readFeature(dir: string, at: string, sources: readonly string[]):
 	};
 }
 
+export function lineageOf(
+	path: string,
+	kindOf: (path: string) => { readonly parent: string | undefined; readonly refines: string | undefined } | undefined
+): string[] {
+	const out: string[] = [];
+	const line = (from: string | undefined): void => {
+		for (let at = from; at !== undefined; ) {
+			const kind = kindOf(at);
+			if (kind === undefined) return;
+			out.push(at);
+			line(kind.refines);
+			at = kind.parent;
+		}
+	};
+	line(path);
+	return out;
+}
+
+export function pathChildren(paths: Iterable<string>): ReadonlyMap<string, ReadonlySet<string>> {
+	const children = new Map<string, Set<string>>();
+	for (const path of paths) {
+		const segments = path.split('.');
+		for (let i = 1; i < segments.length; i++) {
+			const parent = segments.slice(0, i).join('.');
+			(children.get(parent) ?? children.set(parent, new Set()).get(parent))?.add(segments[i]!);
+		}
+	}
+	return children;
+}
+
 export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	const source = await readVocabularySource(dir);
 	const stubs = source.features.flatMap((feature) => feature.stubs);
@@ -193,13 +224,7 @@ export async function readVocabulary(dir: string): Promise<Vocabulary> {
 	}
 	const members = (path: string): ReadonlyMap<string, VocabularyMember> => {
 		const all = new Map<string, VocabularyMember>();
-		const line = (from: string | undefined): void => {
-			for (let kind = from === undefined ? undefined : kinds.get(from); kind !== undefined; kind = kind.parent === undefined ? undefined : kinds.get(kind.parent)) {
-				for (const [name, member] of kind.own) if (!all.has(name)) all.set(name, member);
-				line(kind.refines);
-			}
-		};
-		line(path);
+		for (const at of lineageOf(path, (line) => kinds.get(line))) for (const [name, member] of kinds.get(at)?.own ?? []) if (!all.has(name)) all.set(name, member);
 		return all;
 	};
 	const flags = new Set([...kinds.values()].flatMap((kind) => [...kind.own].flatMap(([name, member]) => (member.flag ? [name] : []))));
@@ -222,17 +247,13 @@ const flagsSpelledBy = (vocabulary: Vocabulary, path: string, written: string): 
 	);
 
 export function canonicalPaths(vocabulary: Vocabulary): (path: string) => string {
-	const children = new Map<string, string[]>();
-	for (const path of vocabulary.kinds.keys()) {
-		const cut = path.lastIndexOf('.');
-		if (cut >= 0) children.set(path.slice(0, cut), [...(children.get(path.slice(0, cut)) ?? []), path.slice(cut + 1)]);
-	}
+	const children = pathChildren(vocabulary.kinds.keys());
 	const segmentAt = (level: string, at: string, segment: string, last: boolean): string | undefined => {
 		const path = `${at}.${segment}`;
-		if (vocabulary.kinds.has(path) || (last && flagSegment(vocabulary, path) !== undefined)) return segment;
+		if (children.get(at)?.has(segment) === true || (last && flagSegment(vocabulary, path) !== undefined)) return segment;
 		const table = vocabulary.synonyms.levels.get(level);
 		const spelled = [
-			...(children.get(at) ?? []).filter((child) => table?.get(child)?.includes(segment) === true),
+			...[...(children.get(at) ?? [])].filter((child) => table?.get(child)?.includes(segment) === true),
 			...(last && vocabulary.kinds.has(at) ? flagsSpelledBy(vocabulary, at, segment).map(snake) : [])
 		];
 		if (spelled.length > 1) throw new Error(`bindings: ${path} spells ${spelled.map((name) => `${at}.${name}`).join(' and ')}; a synonym spells one name at its position`);
@@ -251,7 +272,8 @@ export function canonicalPaths(vocabulary: Vocabulary): (path: string) => string
 }
 
 const claimedPaths = (member: NamedMemberFact, claims: readonly ClaimFact[], model: SlotModel): string[] => {
-	const owns = (kind: string | null): boolean => kind !== null && (kind === member.owner || formsOf(model, kind).includes(member.owner));
+	const owned = new Set(formsOf(model, member.owner));
+	const owns = (kind: string | null): boolean => kind !== null && formsOf(model, kind).some((form) => owned.has(form));
 	return [...new Set(claims.filter((claim, index) => owns(claim.kind) && (member.claims === undefined || member.claims.includes(index))).map((claim) => claim.vocab))];
 };
 

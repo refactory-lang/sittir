@@ -268,6 +268,14 @@ describe('synonym tables', () => {
 		await expect(synonymVocabulary(["\treadonly receiver: 'self' | number;"])).rejects.toThrow(/DeclarationSynonyms\.receiver/);
 	});
 
+	it('refuses a second table for a level, which interface merging would otherwise fold into one', async () => {
+		await expect(
+			vocabularyFiles({
+				'declaration.ts': [...SYNONYM_KINDS, "export interface DeclarationSynonyms { readonly receiver: 'self'; }", "export interface DeclarationSynonyms { readonly method: 'fn'; }"]
+			})
+		).rejects.toThrow(/DeclarationSynonyms is declared more than once/);
+	});
+
 	it("refuses a second flags' table", async () => {
 		await expect(
 			vocabularyFiles({ 'declaration.ts': [...SYNONYM_KINDS, 'export interface FlagSynonyms {}'], 'utils.ts': ['export interface FlagSynonyms {}'] })
@@ -296,6 +304,21 @@ describe('canonicalPaths', () => {
 		expect(canonical('declaration.parameter.mut')).toBe('declaration.parameter.mutable');
 		expect(canonical('declaration.parameter.mut.receiver')).toBe('declaration.parameter.mut.receiver');
 		expect(canonical('declaration.method.mut')).toBe('declaration.method.mut');
+	});
+
+	it('reads a segment that only prefixes kinds as a canonical name at its position', async () => {
+		const canonical = canonicalPaths(
+			await vocabularyFiles({
+				'declaration.ts': [
+					"export interface Declaration<G> { readonly $kind: 'declaration'; }",
+					"export namespace Declaration { export namespace Slot { export interface Receiver<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.slot.receiver'; } } }",
+					"export namespace Declaration { export namespace Port { export interface Receiver<G> extends SubKindOf<V.Declaration<G>> { readonly $kind: 'declaration.port.receiver'; } } }",
+					"export interface DeclarationSynonyms { readonly port: 'slot' | 'socket'; }"
+				]
+			})
+		);
+		expect(canonical('declaration.slot.receiver')).toBe('declaration.slot.receiver');
+		expect(canonical('declaration.socket.receiver')).toBe('declaration.port.receiver');
 	});
 
 	it('refuses a word that is a synonym of two segments at one position', async () => {

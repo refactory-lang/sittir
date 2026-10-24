@@ -1,10 +1,11 @@
 import { posix } from 'node:path';
-import { type DeclaredKind, type Feature, type Member, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, snake } from '@sittir/codegen/bindings';
+import { type DeclaredKind, type Feature, type Member, type Synonyms, type VocabularySource, byCodepoint, camel, isKind, lineageOf, pathChildren, snake } from '@sittir/codegen/bindings';
 
 export interface Kind {
 	readonly qname: string;
 	readonly path: string;
 	readonly parent: string | undefined;
+	readonly refines: string | undefined;
 	readonly feature: Feature | undefined;
 }
 
@@ -82,7 +83,7 @@ export function plan(source: VocabularySource): Plan {
 		if (d.parent !== undefined && parent === undefined) issues.push(`${d.path} extends ${d.parent}, which is not a kind`);
 		if (d.refines !== undefined && !pathOf.has(d.refines)) issues.push(`${d.path} is refined by ${d.refines}, which is not a kind`);
 		if (parent !== undefined && (parent === d.path || !under(d.path, parent))) issues.push(`${d.path} extends ${parent}, which is not a level above it`);
-		const kind: Kind = { qname: d.qname, path: d.path, parent, feature };
+		const kind: Kind = { qname: d.qname, path: d.path, parent, refines: d.refines === undefined ? undefined : pathOf.get(d.refines)?.path, feature };
 		kinds.set(d.path, kind);
 		byQname.set(d.qname, kind);
 		for (const member of d.members) declare(d.path, { gated: false, by: feature, member });
@@ -105,12 +106,7 @@ export function plan(source: VocabularySource): Plan {
 	}
 
 	const { owned, restated } = ownership(declarations, features, issues);
-	const lineage = (path: string): string[] => {
-		const out: string[] = [];
-		for (let k = kinds.get(path); k !== undefined; k = k.parent === undefined ? undefined : kinds.get(k.parent)) out.push(k.path);
-		return out;
-	};
-	const lines = new Map([...kinds.keys()].map((path) => [path, lineage(path)]));
+	const lines = new Map([...kinds.keys()].map((path) => [path, lineageOf(path, (at) => kinds.get(at))]));
 	const flagsAt = flagLookup(kinds, declarations, lines);
 	issues.push(...flagSegments(kinds, flagsAt));
 	issues.push(...synonymCollisions(source.synonyms, kinds, declarations, lines, flagsAt));
@@ -258,11 +254,9 @@ function synonymCollisions(
 	flagsAt: (prefix: string) => ReadonlySet<string>
 ): string[] {
 	const out: string[] = [];
-	const children = new Map<string, string[]>();
-	for (const path of kinds.keys()) {
-		const cut = path.lastIndexOf('.');
-		if (cut >= 0) children.set(path.slice(0, cut), [...(children.get(path.slice(0, cut)) ?? []), path.slice(cut + 1)]);
-	}
+	const children = pathChildren(kinds.keys());
+	const positionsOf = (level: string, canonical: string): string[] =>
+		[...children].flatMap(([parent, segments]) => (topSegment(parent) === level && segments.has(canonical) ? [`${parent}.${canonical}`] : []));
 	const spelling = (owner: string, word: string): void => {
 		if (!SEGMENT.test(word)) out.push(`${owner}: the synonym ${word} is not spelled as a segment, in lower case with its words joined by _`);
 	};
@@ -270,11 +264,11 @@ function synonymCollisions(
 	for (const [level, table] of synonyms.levels) {
 		for (const [canonical, words] of table) {
 			for (const word of words) spelling(`${level}.${canonical}`, word);
-			const positions = [...kinds.keys()].filter((path) => topSegment(path) === level && path.endsWith(`.${canonical}`));
+			const positions = positionsOf(level, canonical);
 			if (positions.length === 0) out.push(`${level}: the synonyms of ${canonical} have no position, since ${canonical} is no segment of the level`);
 			for (const position of positions) {
 				const parent = position.slice(0, position.lastIndexOf('.'));
-				const siblings = (children.get(parent) ?? []).filter((sibling) => sibling !== canonical);
+				const siblings = [...(children.get(parent) ?? [])].filter((sibling) => sibling !== canonical);
 				const flags = [...flagsAt(parent)];
 				for (const word of words) {
 					if (siblings.includes(word)) out.push(`${position}: the synonym ${word} is the sibling segment ${parent}.${word}`);
@@ -301,7 +295,7 @@ function synonymCollisions(
 			);
 			if (members.length > 0) out.push(`#${flag}: the synonym ${word} is a member of ${members.join(', ')}, which have the flag`);
 			const beneath = holders.flatMap((holder) =>
-				(children.get(holder) ?? []).filter((child) => child === word || synonyms.levels.get(topSegment(holder))?.get(child)?.includes(word) === true).map((child) => `${holder}.${child}`)
+				[...(children.get(holder) ?? [])].filter((child) => child === word || synonyms.levels.get(topSegment(holder))?.get(child)?.includes(word) === true).map((child) => `${holder}.${child}`)
 			);
 			if (beneath.length > 0) out.push(`#${flag}: the synonym ${word} spells ${beneath.join(', ')}, beneath kinds that have the flag`);
 		}

@@ -323,6 +323,59 @@ describe('the synonym collision rule', () => {
 		]);
 	});
 
+	it('takes every prefix of a kind path as a position, so a segment that only prefixes kinds has siblings and synonyms', async () => {
+		const prefixes = DECLARATION.replace(
+			'\t}\n}\n',
+			`\t}
+	export namespace Slot {
+		export interface Receiver<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+			readonly $kind: 'declaration.slot.receiver';
+		}
+	}
+	export namespace Port {
+		export interface Receiver<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+			readonly $kind: 'declaration.port.receiver';
+		}
+	}
+}
+export interface DeclarationSynonyms {
+	readonly port: 'slot';
+}
+`
+		);
+		expect(await issues({ ...CLEAN, 'declaration.ts': prefixes })).toEqual(['declaration.port: the synonym slot is the sibling segment declaration.slot']);
+	});
+
+	it('counts a flag a refinement inherits through RefinedBy as a flag the refinement has', async () => {
+		const refined = DECLARATION.replace(
+			'\t}\n}\n',
+			`\t}
+	export interface Marker<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
+		readonly $kind: 'declaration.marker';
+		readonly sealed?: Flag;
+	}
+	export namespace Function {
+		export interface Marked<G extends GrammarContext<G>> extends RefinedBy<V.Declaration.Function<G>, V.Declaration.Marker<G>> {
+			readonly $kind: 'declaration.function.marked';
+		}
+		export namespace Marked {
+			export interface Inner<G extends GrammarContext<G>> extends SubKindOf<V.Declaration.Function.Marked<G>> {
+				readonly $kind: 'declaration.function.marked.inner';
+			}
+		}
+	}
+}
+export interface DeclarationSynonyms {
+	readonly inner: 'sealed';
+}
+`
+		);
+		expect(await issues({ ...CLEAN, 'declaration.ts': refined, 'utils.ts': "export interface FlagSynonyms {\n\treadonly sealed: 'inner';\n}\n" })).toEqual([
+			'declaration.function.marked.inner: the synonym sealed is the flag sealed, which declaration.function.marked has',
+			'#sealed: the synonym inner spells declaration.function.marked.inner, beneath kinds that have the flag'
+		]);
+	});
+
 	it('reports a table entry with no position: a segment the level does not have, or a flag no kind has', async () => {
 		expect(await synonyms("\treadonly closure: 'lambda';\n", "\treadonly shared: 'common';\n")).toEqual([
 			'declaration: the synonyms of closure have no position, since closure is no segment of the level',

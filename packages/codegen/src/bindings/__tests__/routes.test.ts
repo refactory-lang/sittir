@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -1017,6 +1017,34 @@ describe('flag captures', () => {
 	it('marks a flag captured on a form of a claimed supertype as the supertype\'s flag', async () => {
 		const members = await membersOf(['(ref_expr) @expression.reference', '(ref_expr_raw "raw" @raw)'].join('\n'), 'ref_expr_raw');
 		expect(members?.find((r) => r.name === 'raw')).toEqual({ route: 'presence', name: 'raw', via: [], token: 'raw', path: undefined, flag: true, spelled: true });
+	});
+
+	it('routes a flag spelled by its synonym as the canonical flag, on whichever side of a supertype the capture and the claim sit', async () => {
+		const model = new Map(
+			[
+				...FLAGGED_MODEL.values(),
+				node('binding', [], { modelType: 'supertype' }),
+				node('binding_plain', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })], { variantOf: 'binding' })
+			].map((n) => [n.kind, n])
+		);
+		const synonymous: Vocabulary = { ...VOCABULARY, synonyms: { levels: new Map(), flags: new Map([['mutable', ['mut']]]) } };
+		const routed = async (bindings: string) =>
+			resolveRoutes({
+				grammar: 'g',
+				bindings: resolveFlags(canonicalFacts(await readBindings(bindings), synonymous, model), synonymous, model),
+				model,
+				textTokens: new Set(),
+				layoutSlots: []
+			}).members.get('binding_plain');
+		for (const [claim, capture] of [
+			['(binding)', '(binding_plain (mutable_specifier) @NAME)'],
+			['(binding_plain)', '(binding (mutable_specifier) @NAME)']
+		] as const) {
+			const of = (name: string) => routed([`${claim} @declaration.parameter`, capture.replace('NAME', name)].join('\n'));
+			const canonical = await of('mutable');
+			expect(canonical?.find((r) => r.name === 'mutable'), claim).toMatchObject({ name: 'mutable', flag: true });
+			expect(await of('mut'), claim).toEqual(canonical);
+		}
 	});
 
 	it('marks a flag a variant form spells, captured as a node no slot of the form holds', async () => {
