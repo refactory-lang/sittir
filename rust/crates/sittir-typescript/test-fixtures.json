@@ -43083,14 +43083,7 @@
               "$type": 437,
               "_name": {
                 "$type": 1,
-                "$text": "a",
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                "$text": "a"
               },
               "_type": {
                 "$type": 332,
@@ -43114,14 +43107,7 @@
               "$type": 437,
               "_name": {
                 "$type": 1,
-                "$text": "a",
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                "$text": "a"
               },
               "_type": {
                 "$type": 332,
@@ -43169,14 +43155,7 @@
           "$type": 437,
           "_name": {
             "$type": 1,
-            "$text": "a",
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  180
-                ]
-              }
-            }
+            "$text": "a"
           },
           "_type": {
             "$type": 332,
@@ -43218,14 +43197,7 @@
       "$type": 437,
       "_name": {
         "$type": 1,
-        "$text": "a",
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        "$text": "a"
       },
       "_type": {
         "$type": 332,
@@ -43264,14 +43236,7 @@
       "$type": 437,
       "_name": {
         "$type": 1,
-        "$text": "a",
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        "$text": "a"
       },
       "_type": {
         "$type": 332,
@@ -43436,14 +43401,7 @@
           "$type": 437,
           "_name": {
             "$type": 1,
-            "$text": "a",
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  180
-                ]
-              }
-            }
+            "$text": "a"
           },
           "_type": {
             "$type": 332,
@@ -118142,14 +118100,7 @@
                   "$type": 339,
                   "_name": {
                     "$type": 1,
-                    "$text": "b",
-                    "$_layout": {
-                      "trivia": {
-                        "trailing": [
-                          180
-                        ]
-                      }
-                    }
+                    "$text": "b"
                   },
                   "_type": {
                     "$type": 332,
@@ -118205,7 +118156,7 @@
       ],
       "$errors": []
     },
-    "expectedOutput": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
+    "expectedOutput": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "options": {
       "program": {
         "before": 183
@@ -118218,9 +118169,9 @@
     "sourceIn": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "pattern": "program",
     "edits": [],
-    "expectedSourceOut": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
+    "expectedSourceOut": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (tuple_type) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (union_type left: (type_identifier) right: (type_identifier)) item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier))))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (optional_tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (tuple_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon)))",
-    "wrappedText": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string ?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
+    "wrappedText": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "wrappedOffset": 0
   },
   {
@@ -118495,7 +118446,7 @@
       },
       "_terminator": 173
     },
-    "expectedOutput": "type t = [string ?, ...B]\n",
+    "expectedOutput": "type t = [string?, ...B]\n",
     "options": {
       "program": {
         "before": 183
@@ -118508,9 +118459,9 @@
     "sourceIn": "type t = [string?, ...B]",
     "pattern": "type_alias_declaration",
     "edits": [],
-    "expectedSourceOut": "type t = [string ?, ...B]\n",
+    "expectedSourceOut": "type t = [string?, ...B]\n",
     "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))) terminator: (automatic_semicolon))",
-    "wrappedText": "type t = [string ?, ...B]\n",
+    "wrappedText": "type t = [string?, ...B]\n",
     "wrappedOffset": 0
   },
   {
@@ -118552,14 +118503,7 @@
               "$type": 339,
               "_name": {
                 "$type": 1,
-                "$text": "b",
-                "$_layout": {
-                  "trivia": {
-                    "trailing": [
-                      180
-                    ]
-                  }
-                }
+                "$text": "b"
               },
               "_type": {
                 "$type": 332,
@@ -119297,7 +119241,7 @@
         "_delimiter": 0
       }
     },
-    "expectedOutput": "[string ?, ...B]",
+    "expectedOutput": "[string?, ...B]",
     "options": {
       "program": {
         "before": 183
@@ -119310,9 +119254,9 @@
     "sourceIn": "[string?, ...B]",
     "pattern": "tuple_type",
     "edits": [],
-    "expectedSourceOut": "[string ?, ...B]",
+    "expectedSourceOut": "[string?, ...B]",
     "expectedReparseTree": "(tuple_type tuple_type_members: (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier))))",
-    "wrappedText": "type _X = [string ?, ...B];",
+    "wrappedText": "type _X = [string?, ...B];",
     "wrappedOffset": 10
   },
   {
@@ -119345,14 +119289,7 @@
             "$type": 339,
             "_name": {
               "$type": 1,
-              "$text": "b",
-              "$_layout": {
-                "trivia": {
-                  "trailing": [
-                    180
-                  ]
-                }
-              }
+              "$text": "b"
             },
             "_type": {
               "$type": 332,
@@ -119587,7 +119524,7 @@
       ],
       "_delimiter": 0
     },
-    "expectedOutput": "string ?, ...B",
+    "expectedOutput": "string?, ...B",
     "options": {
       "program": {
         "before": 183
@@ -119600,9 +119537,9 @@
     "sourceIn": "string?, ...B",
     "pattern": "tuple_type_members",
     "edits": [],
-    "expectedSourceOut": "string ?, ...B",
+    "expectedSourceOut": "string?, ...B",
     "expectedReparseTree": "(tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))",
-    "wrappedText": "type _X = [string ?, ...B];",
+    "wrappedText": "type _X = [string?, ...B];",
     "wrappedOffset": 11
   },
   {
@@ -119633,14 +119570,7 @@
           "$type": 339,
           "_name": {
             "$type": 1,
-            "$text": "b",
-            "$_layout": {
-              "trivia": {
-                "trailing": [
-                  180
-                ]
-              }
-            }
+            "$text": "b"
           },
           "_type": {
             "$type": 332,
@@ -119916,7 +119846,7 @@
       "$type": 340,
       "_type": 43
     },
-    "expectedOutput": "string ?",
+    "expectedOutput": "string?",
     "options": {
       "program": {
         "before": 183
@@ -119929,9 +119859,9 @@
     "sourceIn": "string?",
     "pattern": "optional_type",
     "edits": [],
-    "expectedSourceOut": "string ?",
+    "expectedSourceOut": "string?",
     "expectedReparseTree": "(optional_type type: (predefined_type))",
-    "wrappedText": "type _X = [string ?, ...B];",
+    "wrappedText": "type _X = [string?, ...B];",
     "wrappedOffset": 11
   },
   {
@@ -120157,14 +120087,7 @@
       "$type": 339,
       "_name": {
         "$type": 1,
-        "$text": "b",
-        "$_layout": {
-          "trivia": {
-            "trailing": [
-              180
-            ]
-          }
-        }
+        "$text": "b"
       },
       "_type": {
         "$type": 332,
