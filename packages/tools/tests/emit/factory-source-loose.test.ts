@@ -89,6 +89,7 @@ const facts: ModelFacts = {
 	},
 	textLeavesThrough: {},
 	forwardsTo: { wrapper: 'identifier', other: 'identifier' },
+	forwardsArguments: new Set(['wrapper', 'other']),
 	listDefaults: { arguments: 'Delimiter.None', elements: 'Delimiter.None', args: 'Delimiter.None' },
 	listElementKinds: { arguments: ['identifier'], elements: ['identifier'], args: ['attributed'] },
 	hoistedKinds: new Set(),

@@ -103,13 +103,6 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 // Ignore k/n unused warning — bareCounts only cares about collisions.
 ```
 
-### `packages/codegen/src/emitters/consts.ts::fieldsOfNode`
-
-```text
-/** Yield the fields of a node — branch, group, or (TEMPORARY, see
- * isSlotBearingCompound's doc comment, shared.ts) separatedList. */
-```
-
 ### `packages/codegen/src/emitters/emit.ts::emitAll`
 
 ```text
@@ -155,34 +148,6 @@ The grammar's `api.ts`: the implementation a language descriptor loads. It decla
 ```
 
 `hooks` is frozen, and so is the trivia hook it carries (the grammar's facts, joined by the comment coercer when there is one), so every engine of the language shares facts that none can change.
-
-### `packages/codegen/src/emitters/factories.ts::collectUsesNonEmptyArray`
-
-```text
-/**
- * Detect whether any field across all nodes uses `nonEmpty: true`.
- *
- * @param nodeMap - The assembled node map for the grammar.
- * @returns `true` when at least one field carries `nonEmpty`, triggering the
- *   `NonEmptyArray` import in the generated file.
- * @remarks
- *   `NonEmptyArray` is conditional on any field having `nonEmpty: true`
- *   (rust has none; typescript + python do). `Edit` was previously
- *   imported but no emitted body references it — dropped.
- *
- *   Also checks `AssembledList.nonEmpty` directly (a REPEAT1
- *   source rule) rather than through `.slots` — the
- *   generic slot surface can misderive a kind's real elements arity (see
- *   `emitSeparatedListFactory`'s doc comment), so it can't be trusted for
- *   this detection either.
- */
-```
-
-```text
-// ---------------------------------------------------------------------------
-// FactoryEmitter helpers
-// ---------------------------------------------------------------------------
-```
 
 ### `packages/codegen/src/emitters/factories.ts::emitFluentSetterHelpers`
 
@@ -960,23 +925,6 @@ A read of `config` is looked for only after the implementation's signature: the 
  * Per-form equivalent of `resolveConfigOptional` — factors the narrowed
  * fields out of the "required" check (those are stamped by this form and
  * never come from Config input).
- */
-```
-
-### `packages/codegen/src/emitters/factories.ts::resolveConfigOptional`
-
-```text
-/**
- * Determine whether the `config` parameter should be optional (`?`).
- *
- * @param fields - The assembled field descriptors for the node.
- * @param nodeMap - The assembled node map (used for auto-stamp detection).
- * @returns The option marker — `'?'` when every non-auto-stamped field is
- *   optional, `''` otherwise.
- * @remarks
- *   Auto-stamp-eligible fields are excluded from the "required" check because
- *   they are never present in Config — the factory stamps them directly.
- *   Only fields that remain in Config can make config required.
  */
 ```
 
@@ -1914,19 +1862,6 @@ same key list the strict factory accepts, so the options object passes
 through untouched and only the elements resolve.
 
 `_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. It reads the tag against `tagKinds` (the wrapper and the element slot's leaf and branch kinds). A list that seats a wrapper also passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
-
-### `packages/codegen/src/emitters/from.ts::resolveFieldFromTypedInput`
-
-```text
-/**
- * Build a field-resolver call that reads a single camelCase property
- * directly off a typed FromInput bag (`input?.fieldName`). Typed
- * access flows the FromInput's per-field type into the resolver's
- * generic slot — no `_f` normalize, no index-signature widening. Used
- * by branch `fromX` bodies after the top-level kind discriminator has
- * already handed back any pre-built node.
- */
-```
 
 ### `packages/codegen/src/emitters/from.ts::expandAndDedupeContentTypes`
 
@@ -3190,25 +3125,6 @@ as variants.
 `AnyNode`'s `Prepare` arms: a payload arm per node that is not a fixed
 literal, a unit arm per fixed-literal kind, and `Verbatim`.
 
-### `packages/codegen/src/emitters/render-module.ts::renderNodeValueTypeHelper`
-
-```text
-/**
- * Emit the `node_value_type` helper — a plain `napi_typeof` probe used
- * by every hand-emitted `FromNapiValue` impl in this module.
- *
- * Dispatching on the JS value's type FIRST (instead of probing typed reads
- * `u16` → `String` → `Object` in sequence) is load-bearing: napi-rs's
- * `String::from_napi_value` failure path JSON.stringify's Object inputs for
- * diagnostics — a JS callback re-entered from deep native recursion that
- * overflows the V8 stack on recursive AST shapes
- * (block→statement→expression→block) and aborts the process
- * (`Check failed: IsOnCentralStack()`, exit 133). `napi_typeof` is a plain
- * C call with no JS re-entry and no diagnostic error construction, so a
- * mismatched shape never pays that cost.
- */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::emitSupertypeRenderHelper`
 
 Emits `render_<supertype>(t: &<Supertype>Node, w: &mut dyn RenderSink) -> RenderResult`
@@ -3217,45 +3133,6 @@ subtype payload's `.render(w)` so its own trivia-wrapped impl fires; a
 fixed-literal subtype's unit arm calls its kind's render function. A boxed
 payload (`boxedInEnum`, given the emission's pins) is reached through `.as_ref()`. Arm count
 is bounded by the supertype's subtype count, not the grammar.
-
-### `packages/codegen/src/emitters/render-module.ts::admitsVerbatimCollapse`
-
-```text
-/**
- * Whether a node enum spanning `kinds` (supertype subtypes, or a
- * per-slot enum's candidate child kinds) must admit bare-string input via a
- * `Verbatim(VerbatimNode)` variant.
- *
- * Two ways a candidate kind can surface as bare text at read time:
- *
- * 1. It (or a supertype subtype reachable from it) IS a `pattern`-modelType
- *    leaf (`identifier`, `integer_literal`, etc.) — these always render
- *    their raw `text` verbatim, so the node layer sends them as bare
- *    strings rather than tagged objects.
- * 2. It's a concrete branch/group kind whose ONLY user-facing field is a
- *    repeated choice (`classifyBranchSlots` singleSlot/multiple) that
- *    includes a GRAMMAR-HIDDEN (leading-underscore) `pattern`-modelType
- *    alternative. Tree-sitter elides hidden rules entirely rather than
- *    nesting them as child nodes, so when the repeat is satisfied purely by
- *    that hidden leaf (typically an external-scanner symbol), the enclosing
- *    node ends up with zero named children in the real parse — the read
- *    side then has nothing to represent but the node's raw text. The
- *    alternative must be hidden, not merely `pattern`-modelType: a VISIBLE
- *    pattern alternative (e.g. `identifier` in `dotted_name`) still produces
- *    its own real child node, so the enclosing node never collapses.
- *    Concretely: python's `string_content` is `repeat1(choice(
- *    escape_interpolation | escape_sequence | string_content_group1 |
- *    _string_content))`; a plain string body matches purely via the hidden
- *    external-scanner `_string_content` (modelType `pattern`) and reads as
- *    bare text, so `StringContentNodeSlot` (string's `content` field,
- *    kinds `[interpolation, string_content]`) must admit `Verbatim` even
- *    though `string_content` itself is `modelType: 'branch'`.
- *
- * Checked over the fully recursively-flattened kind set (via
- * `collectConcreteNodeKinds`), not a shallow membership test — see the
- * call sites for concrete "missed it" cases confirmed in this codebase.
- */
-```
 
 ### `packages/codegen/src/emitters/render-module.ts::hasAnyConcreteChildKind`
 
@@ -3565,28 +3442,6 @@ same for every grammar.
 It also emits a `Text` variant (`sittir_core::trivia::TriviaText`): a detached read entry that carries its stamped kind and captured text. `TriviaNode` implements `FromTriviaText` as that variant, so a snapshot read builds each extra it places as its text and span. Its `from_layout` takes the member's read text (`TriviaText`) and builds the variant its kind names, one line per whitespace or continuation trivia kind, the same kinds `TriviaSeam` names: a whitespace kind's unit variant, whatever the text, and a continuation kind's variant holding the text with its adjacency. A parsed tree's trivia table reads each stored run of line layout as the member it classifies into. It writes that kind's edges around the text, like a rendered node of the kind. It is decoded from an object with `$text` whose kind is a compound trivia kind; a leaf trivia kind stores `$text` itself and keeps its own native node. A trivia entry needs no line-end handling of its own: each variant's render tells the sink its kind (`NodeLayout::render` for a typed variant, the kind's render function for a unit, `TriviaText`'s own render for `Text`), and the sink holds the line end from the grammar's `KIND_FLAGS` table (`renderOptionsRs`), as it does for any node.
 
 The grammar's depth pair (`depthMembersOf`) takes its own unit variants, `Indent` and `Dedent`, kept out of the per-kind variants: each renders as a change to the writer's excess indentation (`RenderSink::layout_depth`) rather than as the template's depth mark, decodes from its kind id, is built by `from_layout`, and answers `TriviaSeam::depth`; `TriviaSeam::depth_member` builds the variant a change's sign names.
-
-### `packages/codegen/src/emitters/render-module.ts::renderVerbatimNodeStruct`
-
-```text
-/**
- * Emit the `VerbatimNode` struct — a synthetic carrier for bare-string
- * inputs that have no `$type` annotation. Used by per-slot and supertype
- * enums that admit at least one AssembledPattern variant (kinds whose render
- * template emits the text verbatim — `identifier`, `integer_literal`, etc.).
- *
- * The struct itself has no kind_id, no factory or from-side production —
- * it ONLY appears via the `FromNapiValue` bare-string fast-path. The render
- * arm in the enclosing enum writes `self.text` directly to the destination.
- *
- * Rationale: AssembledPattern variants are interchangeable at the render
- * boundary (they all emit `{{ text }}`). On the recursive deep-read path,
- * leaf positions sometimes send text without a `$type` annotation; previously
- * the variant-trial fallback silently matched whatever variant's FromNapiValue
- * happened to accept the input first (e.g., StringLiteralNode matched
- * bare strings and rendered as `""`). Verbatim removes the ambiguity.
- */
-```
 
 ### `packages/codegen/src/emitters/render-module.ts::FixedLiteral`
 
@@ -4074,36 +3929,6 @@ machines.
  * JSON-quoted form — suitable for emission inside union / indexed-access
  * type positions where a non-identifier key would otherwise be a syntax
  * error. */
-```
-
-### `packages/codegen/src/emitters/shared.ts::resolveEffectiveLiteral`
-
-```text
-/**
- * Resolve a field's effective single-literal value, if any.
- *
- * A field qualifies for auto-stamp when ALL of the following hold:
- *   - It is **required** — no values are `optional`.
- *   - It is **not repeated** — no values are `array` / `nonEmptyArray`.
- *   - Its *effective* resolved type is exactly one string literal.
- *
- * Two sources of "single string literal" are recognised:
- *
- * - **Source A — inline literal**: exactly one TerminalValue in `values`.
- *
- * - **Source B — referenced keyword kind**: exactly one NodeRef in `values`
- *   pointing to a hidden AssembledKeyword (a hidden rule whose body is a
- *   single word-like string, such as `_kw_async: $ => 'async'`).
- *
- * Returns `undefined` when the field is optional, is repeated, has
- * multiple possible values, or the referenced kind is not a single-
- * literal terminal.
- *
- * @remarks Omit auto-stamp-eligible fields from Config input and
- * stamp the constant directly in factory output. The field stays in the
- * `$fields` block of the concrete TypeScript interface so UntypedNode output
- * shape is unchanged and round-trips with readUntypedNode remain identical.
- */
 ```
 
 ### `packages/codegen/src/emitters/shared.ts::fieldTypeComponents`
@@ -4963,30 +4788,6 @@ no escaping — a literal brace is just a byte in the string.
 
 A view template from a slot's flanks: the escaped prefix, `{}` for the
 slot, the escaped suffix; `"{}"` when the slot has no flanks.
-
-### `packages/codegen/src/emitters/shared.ts::unnamedChildSlotFacts`
-
-```text
-/**
- * Resolve the real multiplicity/requiredness/non-emptiness of a
- * container-shape branch's single unnamed child slot (`fields[0]`).
- *
- * @remarks
- * The single canonical source for these facts. `classifyFactoryShape`'s
- * 'direct'/'spread' label only says which calling convention applies — it
- * doesn't carry the shape's multiplicity/requiredness/non-emptiness, and
- * every call site that needs those (factories.ts, from.ts, test.ts) used to
- * re-derive them independently, which is how a hidden kind's required
- * singular unnamed slot (e.g. a polymorph's hoisted child, `_match_block`)
- * once got mislabeled 'spread' in one of those derivations despite its real
- * arity being singular. Read the facts from here instead of re-deriving them.
- *
- * Takes `fields` directly (not a full `AssembledNode`) since every call site
- * has already gated on container-shape-ness (typically via
- * `classifyChildFactorySurface(...) !== null`) before reaching for the slot
- * itself. Returns `null` when there's no field (not a container shape).
- */
-```
 
 ### `packages/codegen/src/emitters/shared.ts::registeredSlots`
 
@@ -7395,12 +7196,6 @@ other; `elementKinds` stays the kinds the items admit.
 /** Rust struct-field storage for a `classifyPrimitiveField` verdict. */
 ```
 
-### `packages/codegen/src/emitters/shared.ts::UnnamedChildSlotFacts`
-
-```text
-/** Real facts about a container-shape branch's single unnamed child slot. */
-```
-
 ### `packages/codegen/src/emitters/templates.ts::EmitCtx::isWordChar`
 
 The grammar's word-class test for a single char (`wordCharPredicate`), used for compile-time static seam spaces; dynamic seams belong to the runtime SpacingWriter with the same class.
@@ -7565,19 +7360,6 @@ seat the child into a config or tuple take the value arguments only.
  * char-code-based fallback below, which generates a unique name per
  * literal (prefixed `Op_<codepoints>`) so duplicates never collide.
  */
-```
-
-### `packages/codegen/src/emitters/from.ts::optChain`
-
-```text
-/**
-	 * Single-access camelCase read on the bag
-	 * branch. After the isNode identity quick-return at resolver entry,
-	 * the resolver body runs only for loose-bag input, which carries the
-	 * camelCase property directly. No cast — if the typed input union
-	 * doesn't expose the camelCase property at this position that is a
-	 * real type error, not something to paper over.
-	 */
 ```
 
 ### `packages/codegen/src/emitters/is.ts::RESERVED_GUARD_NAMES`
@@ -7780,24 +7562,6 @@ prints through it.
 /** TypeScript identifier pattern — starts with letter/underscore/dollar,
  * continues with word chars or dollar. Used by emitters to decide whether
  * a kind name can be emitted as a bare identifier vs. a quoted literal. */
-```
-
-### `packages/codegen/src/emitters/templates.ts::JINJA_COND_FULL_RE`
-
-```text
-/** Full Jinja conditional: `{% if ... %}...{% endif %}` (incl. whitespace-strip variants). */
-```
-
-### `packages/codegen/src/emitters/templates.ts::SLOT_WORDLIKE_CHAR`
-
-```text
-/**
- * A virtual word-like character used to stand in for slot emissions
- * (`{{ name }}`) and other dynamic content whose runtime first/last char
- * is unknown but typically an identifier / literal head. Using a real
- * word character lets the grammar's wordMatcher decide consistently
- * (matches `\w`, `[a-zA-Z_]`, identifier-shaped patterns).
- */
 ```
 
 ### `packages/codegen/src/emitters/test.ts::MAX_DUMMY_DEPTH`
@@ -8151,19 +7915,6 @@ The keyword an alias envelope displays, as its content reference and text: the a
 ```text
 // A hop target's surface alone loses an earlier optional slot's
 // optionality — see glossary.
-```
-
-### `packages/codegen/src/emitters/types.ts::fieldFromInputHintTypeExpr`
-
-```text
-/**
- * from()/loose-only input widening — never reaches the strict Config
- * surface (strict factories store config values directly, so a widened
- * strict input would leak literals into Built storage). Keyword-
- * constructible widening: a sole-ref-kind field whose target builds from
- * a bare keyword string accepts those literals — mirrors _resolveOne's
- * string routes exactly (same stringConstructibleTexts derivation).
- */
 ```
 
 ### `packages/codegen/src/emitters/config.ts::EmitConfigConfig`
@@ -9202,17 +8953,6 @@ literal-default and fallback counts.
 // these instead of unknown element edges. Optional for hand-built ctx.
 ```
 
-### `packages/codegen/src/emitters/templates.ts::GENERATED_HEADER`
-
-```text
-// Nunjucks whitespace control (`{#- ... -#}`) strips whitespace
-// flanking the comment — crucial when a template is rendered as a
-// nested child, where the outer `.trim()` doesn't apply. Without the
-// trim, every nested render picks up a leading `\n` from the line
-// break between this header and the body. See core/render.ts for the
-// top-level `.trim()` that handles the outermost render.
-```
-
 ### `packages/codegen/src/emitters/templates.ts::TemplateEmitter.slotSeamNames`
 
 The seam names a slot owns on a node: the slot's own name, plus the token of
@@ -9384,15 +9124,6 @@ the edge of what the seam sits beside.
 
 ```text
 For a lexed kind the top rule is recorded on the context (`lexedTop`) so `emitRule` glues its members.
-```
-
-### `packages/codegen/src/emitters/templates.ts::emitGroupTemplate`
-
-#### body
-
-```text
-// Consume renderRule (RenderRule, wrapper-free).
-// Populate ownerSlots for the same reason as emitBranchTemplate.
 ```
 
 ### `packages/codegen/src/emitters/templates.ts::emitRule`
@@ -10982,10 +10713,6 @@ The construction surface of a separated list. Its `BuildArgs` / `LooseArgs` are 
  *  `T.<Kind>.<Form>.Bound`, and the form's own `config` tuple. */
 ```
 
-### `packages/codegen/src/emitters/factories.ts::setterTypeMember`
-
-Prints one `SlotSetter` as its `$with` type member: a rest signature when the setter takes rest arguments, else a single `value` (optional when the slot is). It only prints; `slotSetter` decides what the setter takes.
-
 ### `packages/codegen/src/emitters/factories.ts::slotSetter`
 
 What one slot's `$with` setter takes, as parts. Every multi-valued slot takes rest arguments (`restSetterType`); any other slot takes one value, typed through `setterElemType`. The factory `$with`, the form `$with` and the wrap `$with` all ask this one derivation whether a setter is rest, so a list setter has the same call shape in every grammar and on parsed and built nodes alike.
@@ -11932,14 +11659,6 @@ authoring error and throws here rather than emitting an arbitrary winner.
 
 With no default of its own, a slot takes the default of a supertype it holds, when exactly one such supertype
 declares one.
-
-### `packages/codegen/src/emitters/from.ts::emitPickArmHelper`
-
-Emits `_pickArm`, the one rule both of `_resolveOne`'s routes use to choose
-among candidate arms: one candidate wins outright, several are decided by the
-declared default, and no default leaves the caller to report the ambiguity.
-The kind route and the string route differ only in how they build the
-candidate list.
 
 ### `packages/codegen/src/emitters/from.ts::emitBareRoutingTables`
 
@@ -13369,10 +13088,6 @@ The `BuildArgs` / `LooseArgs` rows of a kind with seats, from the same wire set 
 
 The seated pair is spread onto the entry through `bundle`, stamped with `seatedArity`, so it replaces the bundle's own stamp together with its flavors. A public entry whose seated pair has no coerce flavor keeps a bare `strict` line instead: the bundle's coercer stays the hoisted target, and the bundle's stamp is its bound.
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedParent`
-
-The strict and coerce entry points of a parent whose arms are seated into it: the parent's builder composed with each seat, typed to accept the parent's own input or a seated child's. When the parent has an empty form, each entry point is emitted as an overloaded function through `withEmptyOverload`, so `ir.<kind>()` keeps its `Empty<TypeName>` type through the overlay. Otherwise it stays a typed `const`. Called with no argument, the composed builder calls the parent with none, so the runtime realizes the same empty node.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::nestingArmOf`
 
 Where a nested arm sits: under the direct arm reaching the same child, at
@@ -14094,14 +13809,6 @@ The render inputs a grammar's real emission passes: the caller's facts plus the 
 
 The structural indentation regions come from the same render rules (`depthRegionsOf`).
 
-### `packages/codegen/src/emitters/render-module.ts::whitespaceTextFromVisibleExternals`
-
-```text
-/** Whitespace kind → render text, read from the same `visibleExternals`
- *  bodies the kinds' own templates render, so `_tight`, `_space` and
- *  `_newline` have one spelling. */
-```
-
 ### `packages/codegen/src/emitters/render-module.ts::prepareEnumImpl`
 
 A `Prepare` impl for a generated enum: payload variants delegate to the
@@ -14794,10 +14501,6 @@ The slots of a node that hold a list: each single-valued slot whose one kind rea
 
 The facts of each slot `listSlotTargets` names: the slot's accessor name, the kind it holds, and that kind's `listViewHint`. `emitSlotHints` stamps them as `$listSlots`, which gives the slot's setter the kind's builder arguments.
 
-### `packages/codegen/src/emitters/factories.ts::listSlotsRuntimeSpec`
-
-The entries a node's builder and wrap pass to `listSlotWith`, one per list slot: per slot `listSlotTargets` names, the setter's name, the held kind's id, whether the slot is optional, and the held kind's raw factory (`make`, prefixed by `factoryScope` where the caller reaches it through a namespace import).
-
 ### `packages/codegen/src/emitters/factories.ts::ListViewFacts`
 
 The facts `listViewHint` returns: the item type, the options type, the list's raw factory and the names the view must not collide with.
@@ -15367,11 +15070,3 @@ Each kind id that has registered slots, mapped to the slot property names its bu
 ### `packages/codegen/src/emitters/client-utils.ts::spreadKindIds`
 
 The sorted kind ids whose factory shape is `elements` or `spread`, the kinds whose builder takes their repeated items as rest arguments after its options. The emitted JSON facts list these as the `spread` set.
-
-### `packages/typescript/grammar.sittir.ts::AccessorPositions`
-
-The positions, within a method form's edit paths, of the slots an accessor arm writes: the `override` slot, the `dropped` slots that an accessor blanks, the `kind` slot that names `get` or `set`, the `optional` slot, and the `signature` slot. `accessorArms` takes them as data, so the same arm builder serves each method form.
-
-### `packages/typescript/grammar.sittir.ts::accessorArms`
-
-Builds the three variants of an accessor-capable method form: `plain`, `getter` and `setter`. Plain keeps the original, with `override` set and the `*` and optional slots filled. The getter and setter blank the dropped and optional slots, name their accessor kind, and replace the signature with the matching accessor signature rule. Why: the ECMAScript accessor productions take no `?`, `*`, `async` or type parameters, and a setter takes exactly one parameter, so each accessor is a separate arm of the form.

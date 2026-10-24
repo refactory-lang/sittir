@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { grammarPackage, type GrammarName } from '../../grammars.ts';
 import { sourceChain } from '../../dsl/conflict-resolutions.ts';
 import { canonical, evaluateForDerivation, grammarHash, type GrammarDerivationInputs } from '../evaluate-for-derivation.ts';
@@ -133,7 +134,7 @@ describe('evaluateForDerivation', () => {
 	let python: GrammarDerivationInputs;
 	beforeAll(() => {
 		python = evaluateForDerivation(grammarPackage('python')).base;
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('hashes with the version of the tree-sitter CLI that generates', () => {
 		expect(treeSitterCliVersion()).toMatch(/^\d+\.\d+\.\d+/);
@@ -141,7 +142,7 @@ describe('evaluateForDerivation', () => {
 
 	it('hashes the same grammar identically in two fresh processes', () => {
 		expect(evaluateForDerivation(grammarPackage('python')).base.grammarHash).toBe(python.grammarHash);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it("carries upstream's own declared conflicts", () => {
 		expect(python.upstreamConflicts).toEqual(upstreamGrammarJson('python', 'tree-sitter-python/src/grammar.json').conflicts);
@@ -160,7 +161,7 @@ describe('evaluateForDerivation', () => {
 			'export_statement_default',
 			'export_statement'
 		]);
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it("evaluates rust's layer 1 and top layer to the hashes its resolutions file keeps for them", () => {
 		const resolutions = JSON.parse(readFileSync(join(grammarPackage('rust').dir, '.sittir', 'resolutions.json'), 'utf8')) as {
@@ -170,7 +171,7 @@ describe('evaluateForDerivation', () => {
 		const rust = evaluateForDerivation(grammarPackage('rust'));
 		expect(rust.base.grammarHash).toBe(resolutions.grammarHash);
 		expect(rust.bound.grammarHash).toBe(resolutions.bound.grammarHash);
-	}, 120_000);
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('never gives an upstream rule or external an edge', () => {
 		const upstream = upstreamGrammarJson('python', 'tree-sitter-python/src/grammar.json');
