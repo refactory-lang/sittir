@@ -1543,6 +1543,16 @@ export function fixedTextOfKind(node: AssembledNodeBase | undefined): string | u
 	return isFixedTextLeaf(assembled) ? assembled.text : undefined;
 }
 
+export interface SeparatorTextCtx {
+	readonly nodes: ReadonlyMap<string, AssembledNodeBase>;
+}
+
+export function separatorCandidateTexts(list: AssembledList, ctx: SeparatorTextCtx): readonly { readonly name: string; readonly text: string }[] {
+	return list.separatorTokenArms.map((arm) =>
+		arm.type === STRING ? { name: arm.value, text: arm.value } : { name: arm.name, text: fixedTextOfKind(ctx.nodes.get(arm.name)) ?? arm.name }
+	);
+}
+
 export function isDepthLeaf(node: AssembledNode): boolean {
 	return isFixedTextLeaf(node) && node.text !== undefined && isDepthText(node.text);
 }

@@ -236,7 +236,7 @@ function separatorArmKinds(node: AssembledList, config: SitePreferencesConfig): 
 			if (name === undefined) throw new Error(`defaults: separator token '${arm.value}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
 			return name;
 		}
-		const entry = findOwnKindEntry(config.kindEntries, arm.name);
+		const entry = findOwnKindEntry(config.kindEntries, arm.name) ?? (arm.aliasedTo === undefined ? undefined : findOwnKindEntry(config.kindEntries, arm.aliasedTo));
 		if (entry === undefined) throw new Error(`defaults: separator token '${arm.name}' of ${displayNameOf(node.kind, config.nodeMap)} has no kind in the catalog`);
 		return displayNameOfEntry(entry, config.kindEntries);
 	});

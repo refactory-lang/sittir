@@ -1256,7 +1256,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
 	[15, ','],
 	[22, ';'],
-	[173, '_automatic_semicolon']
+	[173, '\n']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {

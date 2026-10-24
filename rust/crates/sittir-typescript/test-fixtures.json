@@ -82042,6 +82042,250 @@
   {
     "kind": "render",
     "grammar": "typescript",
+    "pattern": "program",
+    "input": {
+      "$type": 188,
+      "_statements": [
+        {
+          "$type": 323,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "Something"
+            }
+          },
+          "_value": {
+            "$type": 367,
+            "_opening": 5,
+            "_members": {
+              "$type": 399,
+              "_item": [
+                {
+                  "$type": 369,
+                  "_static": false,
+                  "_override": false,
+                  "_readonly": false,
+                  "_name": {
+                    "$type": 495,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "length"
+                    }
+                  },
+                  "_optional": false,
+                  "_type": {
+                    "$type": 332,
+                    "_type": 41
+                  }
+                },
+                {
+                  "$type": 368,
+                  "_parameters": {
+                    "$type": 287,
+                    "_elements": {
+                      "$type": 385,
+                      "_item": [
+                        {
+                          "$type": 326,
+                          "_decorator": [],
+                          "_override": false,
+                          "_readonly": false,
+                          "_name": {
+                            "$type": 259,
+                            "_content": {
+                              "$type": 1,
+                              "$text": "string"
+                            }
+                          }
+                        }
+                      ],
+                      "_delimiter": 0
+                    }
+                  },
+                  "_return_type": {
+                    "$type": 332,
+                    "_type": 43
+                  }
+                },
+                {
+                  "$type": 410,
+                  "_readonly": false,
+                  "_name": {
+                    "$type": 1,
+                    "$text": "index"
+                  },
+                  "_index_type": 43,
+                  "_type": {
+                    "$type": 332,
+                    "_type": 41,
+                    "$_layout": {
+                      "trivia": {
+                        "leading": [
+                          181
+                        ]
+                      }
+                    }
+                  }
+                }
+              ],
+              "_delimiter": 0,
+              "$_layout": {
+                "slots": [
+                  {
+                    "slot": "_item",
+                    "separator": 173
+                  }
+                ]
+              }
+            },
+            "_closing": 6
+          },
+          "_terminator": 173
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "\ntype Something = {\n  length: number\n  (string): string\n  [index: string] : number\n}\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\ntype Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}\n",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "\ntype Something = {\n  length: number\n  (string): string\n  [index: string] : number\n}\n",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (call_signature parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))) return_type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) (automatic_semicolon))) terminator: (automatic_semicolon)))",
+    "wrappedText": "\ntype Something = {\n  length: number\n  (string): string\n  [index: string] : number\n}\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "type_alias_declaration",
+    "input": {
+      "$type": 323,
+      "_name": {
+        "$type": 500,
+        "_content": {
+          "$type": 1,
+          "$text": "Something"
+        }
+      },
+      "_value": {
+        "$type": 367,
+        "_opening": 5,
+        "_members": {
+          "$type": 399,
+          "_item": [
+            {
+              "$type": 369,
+              "_static": false,
+              "_override": false,
+              "_readonly": false,
+              "_name": {
+                "$type": 495,
+                "_content": {
+                  "$type": 1,
+                  "$text": "length"
+                }
+              },
+              "_optional": false,
+              "_type": {
+                "$type": 332,
+                "_type": 41
+              }
+            },
+            {
+              "$type": 368,
+              "_parameters": {
+                "$type": 287,
+                "_elements": {
+                  "$type": 385,
+                  "_item": [
+                    {
+                      "$type": 326,
+                      "_decorator": [],
+                      "_override": false,
+                      "_readonly": false,
+                      "_name": {
+                        "$type": 259,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "string"
+                        }
+                      }
+                    }
+                  ],
+                  "_delimiter": 0
+                }
+              },
+              "_return_type": {
+                "$type": 332,
+                "_type": 43
+              }
+            },
+            {
+              "$type": 410,
+              "_readonly": false,
+              "_name": {
+                "$type": 1,
+                "$text": "index"
+              },
+              "_index_type": 43,
+              "_type": {
+                "$type": 332,
+                "_type": 41,
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      181
+                    ]
+                  }
+                }
+              }
+            }
+          ],
+          "_delimiter": 0,
+          "$_layout": {
+            "slots": [
+              {
+                "slot": "_item",
+                "separator": 173
+              }
+            ]
+          }
+        },
+        "_closing": 6
+      },
+      "_terminator": 173
+    },
+    "expectedOutput": "type Something = {\n  length: number\n  (string): string\n  [index: string] : number\n}\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "type Something = {\n  length: number\n  (string): string\n  [index:string] : number\n}",
+    "pattern": "type_alias_declaration",
+    "edits": [],
+    "expectedSourceOut": "type Something = {\n  length: number\n  (string): string\n  [index: string] : number\n}\n",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (call_signature parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))) return_type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) (automatic_semicolon))) terminator: (automatic_semicolon))",
+    "wrappedText": "type Something = {\n  length: number\n  (string): string\n  [index: string] : number\n}\n",
+    "wrappedOffset": 0
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
     "pattern": "type_identifier",
     "input": {
       "$type": 500,
@@ -82067,6 +82311,217 @@
     "expectedReparseTree": "(type_identifier)",
     "wrappedText": "type _X = Something;",
     "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "object_type",
+    "input": {
+      "$type": 367,
+      "_opening": 5,
+      "_members": {
+        "$type": 399,
+        "_item": [
+          {
+            "$type": 369,
+            "_static": false,
+            "_override": false,
+            "_readonly": false,
+            "_name": {
+              "$type": 495,
+              "_content": {
+                "$type": 1,
+                "$text": "length"
+              }
+            },
+            "_optional": false,
+            "_type": {
+              "$type": 332,
+              "_type": 41
+            }
+          },
+          {
+            "$type": 368,
+            "_parameters": {
+              "$type": 287,
+              "_elements": {
+                "$type": 385,
+                "_item": [
+                  {
+                    "$type": 326,
+                    "_decorator": [],
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 259,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "string"
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 0
+              }
+            },
+            "_return_type": {
+              "$type": 332,
+              "_type": 43
+            }
+          },
+          {
+            "$type": 410,
+            "_readonly": false,
+            "_name": {
+              "$type": 1,
+              "$text": "index"
+            },
+            "_index_type": 43,
+            "_type": {
+              "$type": 332,
+              "_type": 41,
+              "$_layout": {
+                "trivia": {
+                  "leading": [
+                    181
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "_delimiter": 0,
+        "$_layout": {
+          "slots": [
+            {
+              "slot": "_item",
+              "separator": 173
+            }
+          ]
+        }
+      },
+      "_closing": 6
+    },
+    "expectedOutput": "{\n  length: number\n  (string): string\n  [index: string] : number\n}",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "{\n  length: number\n  (string): string\n  [index:string] : number\n}",
+    "pattern": "object_type",
+    "edits": [],
+    "expectedSourceOut": "{\n  length: number\n  (string): string\n  [index: string] : number\n}",
+    "expectedReparseTree": "(object_type members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (call_signature parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))) return_type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) (automatic_semicolon)))",
+    "wrappedText": "type _X = {\n  length: number\n  (string): string\n  [index: string] : number\n};",
+    "wrappedOffset": 10
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "object_type_content",
+    "input": {
+      "$type": 399,
+      "_item": [
+        {
+          "$type": 369,
+          "_static": false,
+          "_override": false,
+          "_readonly": false,
+          "_name": {
+            "$type": 495,
+            "_content": {
+              "$type": 1,
+              "$text": "length"
+            }
+          },
+          "_optional": false,
+          "_type": {
+            "$type": 332,
+            "_type": 41
+          }
+        },
+        {
+          "$type": 368,
+          "_parameters": {
+            "$type": 287,
+            "_elements": {
+              "$type": 385,
+              "_item": [
+                {
+                  "$type": 326,
+                  "_decorator": [],
+                  "_override": false,
+                  "_readonly": false,
+                  "_name": {
+                    "$type": 259,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "string"
+                    }
+                  }
+                }
+              ],
+              "_delimiter": 0
+            }
+          },
+          "_return_type": {
+            "$type": 332,
+            "_type": 43
+          }
+        },
+        {
+          "$type": 410,
+          "_readonly": false,
+          "_name": {
+            "$type": 1,
+            "$text": "index"
+          },
+          "_index_type": 43,
+          "_type": {
+            "$type": 332,
+            "_type": 41,
+            "$_layout": {
+              "trivia": {
+                "leading": [
+                  181
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "_delimiter": 0,
+      "$_layout": {
+        "slots": [
+          {
+            "slot": "_item",
+            "separator": 173
+          }
+        ]
+      }
+    },
+    "expectedOutput": "length: number\n(string): string\n[index: string] : number",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "length: number\n  (string): string\n  [index:string] : number",
+    "pattern": "object_type_content",
+    "edits": [],
+    "expectedSourceOut": "length: number\n(string): string\n[index: string] : number",
+    "expectedReparseTree": "(object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (call_signature parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier))))) return_type: (type_annotation type: (predefined_type))) (automatic_semicolon) item: (index_signature_colon name: (identifier) index_type: (predefined_type) type: (type_annotation type: (predefined_type))) (automatic_semicolon))",
+    "wrappedText": "type _X = {length: number\n(string): string\n[index: string] : number};",
+    "wrappedOffset": 11
   },
   {
     "kind": "render",
@@ -99996,6 +100451,561 @@
     "expectedReparseTree": "(binary_expression left: (identifier) right: (identifier))",
     "wrappedText": "let _ = Bold | Underline;",
     "wrappedOffset": 8
+  },
+  {
+    "kind": "render",
+    "grammar": "typescript",
+    "pattern": "program",
+    "input": {
+      "$type": 188,
+      "_statements": [
+        {
+          "$type": 318,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "A"
+            }
+          },
+          "_body": {
+            "$type": 493,
+            "_content": {
+              "$type": 367,
+              "_opening": 5,
+              "_members": {
+                "$type": 399,
+                "_item": [
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "a"
+                      }
+                    },
+                    "_optional": false,
+                    "_type": {
+                      "$type": 332,
+                      "_type": 43
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      181
+                    ],
+                    "trailing": [
+                      181
+                    ]
+                  }
+                }
+              },
+              "_closing": 6
+            }
+          }
+        },
+        {
+          "$type": 318,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "B"
+            }
+          },
+          "_extends_type_clause": {
+            "$type": 319,
+            "_type": [
+              {
+                "$type": 500,
+                "_content": {
+                  "$type": 1,
+                  "$text": "A"
+                }
+              }
+            ]
+          },
+          "_body": {
+            "$type": 493,
+            "_content": {
+              "$type": 367,
+              "_opening": 5,
+              "_members": {
+                "$type": 399,
+                "_item": [
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "b"
+                      }
+                    },
+                    "_optional": false,
+                    "_type": {
+                      "$type": 332,
+                      "_type": 43
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "trivia": {
+                    "leading": [
+                      181
+                    ],
+                    "trailing": [
+                      181
+                    ]
+                  }
+                }
+              },
+              "_closing": 6
+            }
+          }
+        },
+        {
+          "$type": 318,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "Friend"
+            }
+          },
+          "_body": {
+            "$type": 493,
+            "_content": {
+              "$type": 367,
+              "_opening": 5,
+              "_members": {
+                "$type": 399,
+                "_item": [
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "name"
+                      }
+                    },
+                    "_optional": false,
+                    "_type": {
+                      "$type": 332,
+                      "_type": 43
+                    }
+                  },
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "favoriteColor"
+                      }
+                    },
+                    "_optional": true,
+                    "_type": {
+                      "$type": 332,
+                      "_type": 43
+                    }
+                  }
+                ],
+                "_delimiter": 2
+              },
+              "_closing": 6
+            }
+          }
+        },
+        {
+          "$type": 318,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "G"
+            }
+          },
+          "_type_parameters": {
+            "$type": 370,
+            "_elements": {
+              "$type": 390,
+              "_item": [
+                {
+                  "$type": 371,
+                  "_const": false,
+                  "_name": {
+                    "$type": 500,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "T"
+                    }
+                  }
+                },
+                {
+                  "$type": 371,
+                  "_const": false,
+                  "_name": {
+                    "$type": 500,
+                    "_content": {
+                      "$type": 1,
+                      "$text": "U"
+                    }
+                  },
+                  "_constraint": {
+                    "$type": 373,
+                    "_content": 69,
+                    "_bounds": {
+                      "$type": 500,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "B"
+                      }
+                    }
+                  }
+                }
+              ],
+              "_delimiter": 0
+            }
+          },
+          "_body": {
+            "$type": 493,
+            "_content": {
+              "$type": 367,
+              "_opening": 5,
+              "_members": {
+                "$type": 399,
+                "_item": [
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "x"
+                      }
+                    },
+                    "_optional": false,
+                    "_type": {
+                      "$type": 332,
+                      "_type": {
+                        "$type": 500,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "T"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "y"
+                      }
+                    },
+                    "_optional": false,
+                    "_type": {
+                      "$type": 332,
+                      "_type": {
+                        "$type": 500,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "U"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2
+              },
+              "_closing": 6
+            }
+          }
+        },
+        {
+          "$type": 318,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "X"
+            }
+          },
+          "_body": {
+            "$type": 493,
+            "_content": {
+              "$type": 367,
+              "_opening": 5,
+              "_members": {
+                "$type": 399,
+                "_item": [
+                  {
+                    "$type": 369,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "hook"
+                      }
+                    },
+                    "_optional": false,
+                    "_type": {
+                      "$type": 332,
+                      "_type": {
+                        "$type": 367,
+                        "_opening": 5,
+                        "_closing": 6,
+                        "$_layout": {
+                          "trivia": {
+                            "inner": [
+                              183
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "$type": 454,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_async": false,
+                    "_generator": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "get"
+                      }
+                    },
+                    "_optional": false,
+                    "_parameters": {
+                      "$type": 287,
+                      "_elements": {
+                        "$type": 385,
+                        "_item": [
+                          {
+                            "$type": 326,
+                            "_decorator": [],
+                            "_override": false,
+                            "_readonly": false,
+                            "_name": {
+                              "$type": 259,
+                              "_content": {
+                                "$type": 1,
+                                "$text": "key"
+                              }
+                            },
+                            "_type": {
+                              "$type": 332,
+                              "_type": {
+                                "$type": 500,
+                                "_content": {
+                                  "$type": 1,
+                                  "$text": "Key"
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "_delimiter": 0
+                      }
+                    },
+                    "_return_type": {
+                      "$type": 332,
+                      "_type": {
+                        "$type": 349,
+                        "_name": {
+                          "$type": 500,
+                          "_content": {
+                            "$type": 1,
+                            "$text": "Promise"
+                          }
+                        },
+                        "_type_arguments": {
+                          "$type": 366,
+                          "_types": {
+                            "$type": 389,
+                            "_item": [
+                              {
+                                "$type": 500,
+                                "_content": {
+                                  "$type": 1,
+                                  "$text": "T"
+                                }
+                              }
+                            ],
+                            "_delimiter": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2,
+                "$_layout": {
+                  "slots": [
+                    {
+                      "slot": "_item",
+                      "separator": 173
+                    }
+                  ]
+                }
+              },
+              "_closing": 6
+            }
+          }
+        },
+        {
+          "$type": 318,
+          "_name": {
+            "$type": 500,
+            "_content": {
+              "$type": 1,
+              "$text": "Enum"
+            }
+          },
+          "_extends_type_clause": {
+            "$type": 319,
+            "_type": [
+              {
+                "$type": 500,
+                "_content": {
+                  "$type": 1,
+                  "$text": "Bar"
+                }
+              },
+              {
+                "$type": 500,
+                "_content": {
+                  "$type": 1,
+                  "$text": "Baz"
+                }
+              },
+              {
+                "$type": 349,
+                "_name": {
+                  "$type": 500,
+                  "_content": {
+                    "$type": 1,
+                    "$text": "Foo"
+                  }
+                },
+                "_type_arguments": {
+                  "$type": 366,
+                  "_types": {
+                    "$type": 389,
+                    "_item": [
+                      {
+                        "$type": 500,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "A"
+                        }
+                      }
+                    ],
+                    "_delimiter": 0
+                  }
+                }
+              }
+            ]
+          },
+          "_body": {
+            "$type": 493,
+            "_content": {
+              "$type": 367,
+              "_opening": 5,
+              "_members": {
+                "$type": 399,
+                "_item": [
+                  {
+                    "$type": 454,
+                    "_accessibility_modifier": 34,
+                    "_static": false,
+                    "_override": false,
+                    "_readonly": false,
+                    "_async": false,
+                    "_generator": false,
+                    "_name": {
+                      "$type": 495,
+                      "_content": {
+                        "$type": 1,
+                        "$text": "toEnum"
+                      }
+                    },
+                    "_optional": false,
+                    "_parameters": {
+                      "$type": 287
+                    },
+                    "_return_type": {
+                      "$type": 332,
+                      "_type": {
+                        "$type": 500,
+                        "_content": {
+                          "$type": 1,
+                          "$text": "Int"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "_delimiter": 2
+              },
+              "_closing": 6
+            }
+          }
+        }
+      ],
+      "$errors": []
+    },
+    "expectedOutput": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n  name: string;\n  favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n  x: T;\n  y: U;\n}\n\ninterface X {\n  hook: {}\n  get(key: Key): Promise<T>\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
+    "options": {
+      "program": {
+        "before": 183
+      }
+    }
+  },
+  {
+    "kind": "roundtrip",
+    "grammar": "typescript",
+    "sourceIn": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
+    "pattern": "program",
+    "edits": [],
+    "expectedSourceOut": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n  name: string;\n  favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n  x: T;\n  y: U;\n}\n\ninterface X {\n  hook: {}\n  get(key: Key): Promise<T>\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
+    "expectedReparseTree": "(program statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) extends_type_clause: (extends_type_clause type: (type_identifier)) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier) constraint: (constraint bounds: (type_identifier))))) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier))) item: (property_signature name: (property_identifier) type: (type_annotation type: (type_identifier)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (object_type))) (automatic_semicolon) item: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (type_identifier))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) (automatic_semicolon)))) statements: (interface_declaration name: (type_identifier) extends_type_clause: (extends_type_clause type: (type_identifier) type: (type_identifier) type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier))))) body: (interface_body members: (object_type_content item: (method_signature_plain accessibility_modifier: (accessibility_modifier) name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (type_identifier)))))))",
+    "wrappedText": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n  name: string;\n  favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n  x: T;\n  y: U;\n}\n\ninterface X {\n  hook: {}\n  get(key: Key): Promise<T>\n}\n\ninterface Enum extends Bar, Baz, Foo<A> {\n  public toEnum(): Int;\n}\n",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",

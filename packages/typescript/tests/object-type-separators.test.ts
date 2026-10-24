@@ -20,4 +20,12 @@ describe('object type and interface members separated by a line break', () => {
 		const tree = ts.parse('type T = {\n  a: number\n  b: number\n}\n');
 		expect(JSON.stringify(tree)).toContain('automatic_semicolon');
 	});
+
+	it('renders a snapshot of a line-separated list with the line break, not the token name', () => {
+		const statement = ts.parse('type T = {\n  a: string\n  b: number\n};\n').statements()[0];
+		if (statement === undefined || typeof statement === 'number' || !ts.is.typeAliasDeclaration(statement)) throw new Error('expected a type alias');
+		const value = statement.value();
+		if (!ts.is.objectType(value)) throw new Error('expected an object type');
+		expect(ts.render(value.$snapshot()).toString()).toBe('{\n  a: string\n  b: number\n}');
+	});
 });

@@ -41803,7 +41803,7 @@ fn render_ambient_declaration_module(node: &AmbientDeclarationModuleNode, w: &mu
 }
 
 fn render_object_type_content(node: &ObjectTypeContentNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(15) => ",", KindId(22) => ";", KindId(173) => "_automatic_semicolon", _ => ";" };
+    let item_separator: fn(KindId) -> &'static str = |kind| match kind { KindId(15) => ",", KindId(22) => ";", KindId(173) => "\n", _ => ";" };
     let item = ListView {
         items: &node.item,
         template: "{}",
