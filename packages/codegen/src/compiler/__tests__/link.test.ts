@@ -16,6 +16,7 @@ import { describe, it, expect } from 'vitest';
 import { stampLabelProvenance } from '../variant-structural.ts';
 import { link, enrichPositions, computeParentSets, applyOverridePolymorphs, liftSeparators, LinkCtx, canonicalizeRuleLiterals, reportKindIdStampMisses, type KindIdStampMisses } from '../link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import type { Rule, SymbolRef, SymbolRule, StringRule, PatternRule } from '../../types/rule.ts';
 import type { RawGrammar } from '../types.ts';
 import { makeRuleMetadata, readRuleMetadata } from '../../dsl/rule-metadata.ts';
@@ -1350,7 +1351,7 @@ describe('reportKindIdStampMisses — VAPORIZED classification', () => {
 		]) {
 			expect(vaporized).not.toContain(kind);
 		}
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 });
 
 describe('link — variantChildren is stamped on the linked grammar', () => {

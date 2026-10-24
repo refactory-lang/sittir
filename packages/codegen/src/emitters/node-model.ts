@@ -74,6 +74,7 @@ interface SerializedNodeBase {
 	oneSurface?: true;
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
+	forwardsArguments?: true;
 	factoryFields?: string[];
 	bareAccepts?: string[];
 	textLeavesThrough?: string[];
@@ -167,6 +168,7 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
 		if (forwardsTo !== undefined) serialized.forwardsTo = forwardsTo;
+		if (factoryData.forwardsArguments.has(kind)) serialized.forwardsArguments = true;
 		const factoryFields = factoryData.factoryFields[kind];
 		if (factoryFields !== undefined) serialized.factoryFields = [...factoryFields];
 		const accepts = bareAccepts.get(kind);

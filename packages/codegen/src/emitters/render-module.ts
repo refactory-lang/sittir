@@ -3286,8 +3286,8 @@ function collectFixedLiterals(
 			ownId: entryOf(node.kind)?.id,
 			acceptedIds: [
 				...new Set([
-					...resolveAcceptedNodeIds({ kind: node.kind, node, nodeMap, kindIdByKind, kindEntries }),
-					...(projection.wireIds.get(node.kind) ?? [])
+					...(projection.wireIds.get(node.kind) ?? []),
+					...resolveAcceptedNodeIds({ kind: node.kind, node, nodeMap, kindIdByKind, kindEntries })
 				])
 			],
 			owner: ownsTrivia(kindEntries, node.kind),

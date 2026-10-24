@@ -40,6 +40,12 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 		expect(rendered).toContain('x.class');
 	});
 
+	it('typescript: an owner forwarding to a list with options of its own is printed with the list built as its value, its options second', async () => {
+		const { source, rendered } = await rebuildAndRender('typescript', 'class A {\n  static {\n    x = 1;\n  }\n}\n');
+		expect(source).toContain('ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(');
+		expect(rendered.replace(/\s+/g, ' ')).toContain('static { x = 1; }');
+	});
+
 	it('rust: a comment with extra slashes is built from its text by the variant', async () => {
 		const { source, rendered } = await rebuildAndRender('rust', '//// - Only a comment\nfn f() {}\n');
 		expect(source).toContain('extraSlashes.strict("// - Only a comment")');
