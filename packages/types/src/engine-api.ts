@@ -334,6 +334,15 @@ export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M exte
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
 
+/** The empty form a language's `empty` map pairs with exactly `N`, each member of a union `N` looked up on its own. */
+export type EmptyFormOf<Entries, N> = N extends unknown
+	? Entries extends { readonly node: infer Node; readonly empty: infer Empty }
+		? (<X>() => X extends N ? 1 : 2) extends <X>() => X extends Node ? 1 : 2
+			? Empty
+			: never
+		: never
+	: never;
+
 export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'>
 	extends EngineIdentity<API>, Disposable {
 	readonly build: BuildSurface<API, M>;
@@ -364,11 +373,10 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 * not an extra or `ERROR`, and with width. A built node answers from what it stores inside the
 	 * gap: a stored node, text, or token of a named kind (a real `;`) holds sides; an anonymous
 	 * token does not, nor does a slot outside the gap, such as typescript's automatic-semicolon
-	 * terminator after `}`, which still renders.
+	 * terminator after `}`, which still renders. A `true` answer narrows `node` to the empty
+	 * form of its own type: a plain, built or parsed node to that form's empty counterpart only.
 	 */
-	readonly isEmptyNode: <N extends API['empty']['node']>(
-		node: N
-	) => node is N & Extract<API['empty'], { readonly node: N }>['empty'];
+	readonly isEmptyNode: <N extends API['empty']['node']>(node: N) => node is N & EmptyFormOf<API['empty'], N>;
 	/**
 	 * Parses `source` and returns its root. The root's `$errors` lists every
 	 * region of the source that did not parse, and is empty for a clean parse.

@@ -20,6 +20,12 @@ interface FakeNode {
 interface EmptyFake extends FakeNode {
 	readonly empty: true;
 }
+interface ParsedFake extends FakeNode {
+	readonly parsed: true;
+}
+interface EmptyParsedFake extends ParsedFake {
+	readonly emptyParsed: true;
+}
 interface NoEmptyForm {
 	readonly $type: 2;
 }
@@ -38,7 +44,7 @@ interface FakeAPI extends LanguageAPI {
 	readonly root: FakeNode & ParsedRoot;
 	readonly node: FakeNode;
 	readonly options: { readonly indent?: string };
-	readonly empty: { readonly node: FakeNode; readonly empty: EmptyFake };
+	readonly empty: { readonly node: FakeNode; readonly empty: EmptyFake } | { readonly node: ParsedFake; readonly empty: EmptyParsedFake };
 }
 
 type API = ApiOf<Language<FakeAPI>>;
@@ -123,6 +129,17 @@ if (guardEngine.isErrorNode(unknownValue)) unknownValue satisfies ErrorNode;
 
 declare const fakeNode: FakeNode;
 if (guardEngine.isEmptyNode(fakeNode)) fakeNode satisfies EmptyFake;
+
+// A parsed form assignable to the plain form leaves the plain node's narrowing to the plain empty form.
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+if (guardEngine.isEmptyNode(fakeNode)) {
+	const plainOnly: Equals<typeof fakeNode, FakeNode & EmptyFake> = true;
+	void plainOnly;
+}
+declare const parsedFake: ParsedFake;
+if (guardEngine.isEmptyNode(parsedFake)) parsedFake satisfies EmptyParsedFake;
+declare const eitherFake: FakeNode | ParsedFake;
+if (guardEngine.isEmptyNode(eitherFake)) eitherFake satisfies EmptyFake | EmptyParsedFake;
 
 declare const noEmptyForm: NoEmptyForm;
 // @ts-expect-error a kind the language's empty map does not name has no empty form
