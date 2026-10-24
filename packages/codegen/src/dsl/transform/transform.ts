@@ -1018,7 +1018,9 @@ function resolveFieldPlaceholder(
 	enclosing?: readonly RuntimeRule[]
 ): RuntimeRule {
 	let content: unknown = originalMember;
+	let carried: RuleAnnotations | undefined;
 	if (isFieldLike(content)) {
+		carried = (content as { annotations?: RuleAnnotations }).annotations;
 		const overrideName = patch.name;
 		const existingName = (content as { name?: string }).name ?? '(unknown)';
 		const isEnrichShaped = isEnrichShapedFieldWrapper(content);
@@ -1065,7 +1067,8 @@ function resolveFieldPlaceholder(
 		);
 	}
 	const result = native(patch.name, content) as object;
-	return { ...result, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
+	const renamed = { ...result, metadata: makeRuleMetadata({ fieldSource: 'override' }) } as unknown as RuntimeRule;
+	return carried === undefined ? renamed : withAnnotations(renamed, carried);
 }
 
 function resolveAliasPlaceholder(

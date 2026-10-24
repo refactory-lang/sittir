@@ -6684,6 +6684,36 @@ export const exportStatementDefaultDeclaration = Object.freeze({
 	};
 };
 
+const formalParametersSetAccessorSignature$elements =
+	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
+	(...args: ArgsOf<CF>): ReturnType<PF> =>
+		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+const formalParametersSetAccessorSignature$elements$strict = formalParametersSetAccessorSignature$elements(
+	F.buildFormalParametersSetAccessorSignature,
+	F.buildFormalParametersElementsSetAccessorSignature
+);
+const formalParametersSetAccessorSignature$elements$coerce = formalParametersSetAccessorSignature$elements(
+	F.buildFormalParametersSetAccessorSignature,
+	C.coerceToFormalParametersElementsSetAccessorSignature
+);
+export const formalParametersSetAccessorSignature = Object.freeze({
+	...B.formalParametersSetAccessorSignature,
+	elements: bundle(
+		formalParametersSetAccessorSignature$elements$strict,
+		formalParametersSetAccessorSignature$elements$coerce,
+		{ key: 'formalParametersSetAccessorSignature.elements', max: 1 }
+	)
+}) as unknown as typeof B.formalParametersSetAccessorSignature & {
+	elements: {
+		strict: <const A extends ArgsOf<typeof F.buildFormalParametersElementsSetAccessorSignature>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildFormalParametersElementsSetAccessorSignature>>
+		) => ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+		coerce: <const A extends ArgsOf<typeof C.coerceToFormalParametersElementsSetAccessorSignature>>(
+			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToFormalParametersElementsSetAccessorSignature>>
+		) => ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+	};
+};
+
 const formalParametersElementsReceiver$formalParametersElementsReceiverGroup = <
 	PF extends (config: never) => unknown,
 	CF extends (...args: never[]) => unknown

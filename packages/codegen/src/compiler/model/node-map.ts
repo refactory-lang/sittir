@@ -1193,6 +1193,8 @@ export class AssembledNonterminal {
 	optionDefaultArm?: string;
 	optionDefaultKind?: string;
 	registeredOption?: 'spelling' | 'choice';
+	effectiveWordsets?: readonly string[];
+	checksReserved?: boolean;
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;

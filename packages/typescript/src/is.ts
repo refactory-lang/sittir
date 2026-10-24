@@ -1016,9 +1016,14 @@ export interface IsGuards {
 	forHeaderUsingKind<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ForHeaderUsingKind };
-	formalParametersSetAccessorSignature<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
+	readonly formalParametersSetAccessorSignature: {
+		<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
+		elements<T extends { readonly $type: number }>(
+			v: T
+		): v is T & { readonly $type: TSKindId.FormalParametersSetAccessorSignature };
+	};
 	formalParametersElementsSetAccessorSignature<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & {
@@ -1923,10 +1928,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_CatchClauseGroup_guard = _g(TSKindId.CatchClauseGroup);
 	const _kind_GetAccessorSignature_guard = _g(TSKindId.GetAccessorSignature);
 	const _kind_ObjectTypeContent_guard = _g(TSKindId.ObjectTypeContent);
-	const _kind_FormalParametersSetAccessorSignature_guard = _g(TSKindId.FormalParametersSetAccessorSignature);
 	const _kind_FormalParametersElementsSetAccessorSignature_guard = _g(
 		TSKindId.FormalParametersElementsSetAccessorSignature
 	);
+	const _kind_FormalParametersSetAccessorSignature_guard = _g(TSKindId.FormalParametersSetAccessorSignature);
 	const _kind_SetterParameter_guard = _g(TSKindId.SetterParameter);
 	const _kind_ReceiverParameterDeclaration_guard = _g(TSKindId.ReceiverParameterDeclaration);
 	const _kind_FormalParametersElementsReceiver_guard = _g(TSKindId.FormalParametersElementsReceiver);
@@ -2028,6 +2033,13 @@ export function guardsWith(test: KindTest): IsGuards {
 		false: _at(_kind_LiteralType_guard, 'content', _kind_False_guard),
 		null: _at(_kind_LiteralType_guard, 'content', _kind_Null_guard),
 		undefined: _at(_kind_LiteralType_guard, 'content', _kind_Undefined_guard)
+	});
+	const _form_FormalParametersSetAccessorSignature_guard = _vg(_g(TSKindId.FormalParametersSetAccessorSignature), {
+		elements: _at(
+			_kind_FormalParametersSetAccessorSignature_guard,
+			'elements',
+			_kind_FormalParametersElementsSetAccessorSignature_guard
+		)
 	});
 	const _supertype_declaration_guard = _vg(_mg(194), {
 		function: _kind_FunctionDeclaration_guard,
@@ -2379,7 +2391,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		forHeaderVarKind: _kind_ForHeaderVarKind_guard,
 		forHeaderLetConstKind: _kind_ForHeaderLetConstKind_guard,
 		forHeaderUsingKind: _kind_ForHeaderUsingKind_guard,
-		formalParametersSetAccessorSignature: _kind_FormalParametersSetAccessorSignature_guard,
+		formalParametersSetAccessorSignature: _form_FormalParametersSetAccessorSignature_guard,
 		formalParametersElementsSetAccessorSignature: _kind_FormalParametersElementsSetAccessorSignature_guard,
 		setterParameter: _kind_SetterParameter_guard,
 		methodDefinitionPlain: _kind_MethodDefinitionPlain_guard,

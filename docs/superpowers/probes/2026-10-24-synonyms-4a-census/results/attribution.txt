@@ -1,0 +1,165 @@
+== python
+  argument.named                                   -> argument.keyword                             [named: keyword; claim line] lines 83
+  clause.catch                                     -> clause.except                                [catch: except; claim line] lines 60
+  clause.else_if                                   -> clause.elif                                  [else_if: elif; claim line] lines 58
+  element.spread                                   -> element.splat                                [spread: splat; claim line] lines 87
+  element.spread.map                               -> element.splat.map                            [spread: splat; claim line] lines 88
+  element.spread.map                               -> element.spread.dict                          [map: dict; grammar] lines 88
+  element.spread.map                               -> element.spread.dictionary                    [map: dictionary; claim line] lines 88
+  element.spread.parenthesized                     -> element.splat.parenthesized                  [spread: splat; claim line] lines 89
+  expression.assignment.compound                   -> expression.assignment.augmented              [compound: augmented; claim line] lines 143
+  expression.assignment.compound.add               -> expression.assignment.augmented.add          [compound: augmented; claim line] lines 144
+  expression.assignment.compound.bitwise_and       -> expression.assignment.augmented.bitwise_and  [compound: augmented; claim line] lines 152
+  expression.assignment.compound.bitwise_or        -> expression.assignment.augmented.bitwise_or   [compound: augmented; claim line] lines 153
+  expression.assignment.compound.bitwise_xor       -> expression.assignment.augmented.bitwise_xor  [compound: augmented; claim line] lines 154
+  expression.assignment.compound.divide            -> expression.assignment.augmented.divide       [compound: augmented; claim line] lines 147
+  expression.assignment.compound.exponent          -> expression.assignment.augmented.exponent     [compound: augmented; claim line] lines 150
+  expression.assignment.compound.floor_divide      -> expression.assignment.augmented.floor_divide [compound: augmented; claim line] lines 148
+  expression.assignment.compound.matrix_multiply   -> expression.assignment.augmented.matrix_multiply [compound: augmented; claim line] lines 151
+  expression.assignment.compound.modulo            -> expression.assignment.augmented.modulo       [compound: augmented; claim line] lines 149
+  expression.assignment.compound.multiply          -> expression.assignment.augmented.multiply     [compound: augmented; claim line] lines 146
+  expression.assignment.compound.shift_left        -> expression.assignment.augmented.shift_left   [compound: augmented; claim line] lines 155
+  expression.assignment.compound.shift_right       -> expression.assignment.augmented.shift_right  [compound: augmented; claim line] lines 156
+  expression.assignment.compound.subtract          -> expression.assignment.augmented.subtract     [compound: augmented; claim line] lines 145
+  expression.call.member                           -> expression.call.attribute                    [member: attribute; claim line] lines 93
+  expression.collection.map                        -> expression.collection.dict                   [map: dict; grammar] lines 176
+  expression.collection.map                        -> expression.collection.dictionary             [map: dictionary; claim line] lines 176
+  expression.comprehension.map                     -> expression.comprehension.dict                [map: dict; grammar] lines 169
+  expression.comprehension.map                     -> expression.comprehension.dictionary          [map: dictionary; claim line] lines 169
+  expression.member                                -> expression.attribute                         [member: attribute; claim line] lines 159
+  literal.null                                     -> literal.none                                 [null: none; claim line] lines 241
+  literal.string.interpolated                      -> literal.string.f                             [interpolated: f; grammar] lines 226
+  literal.string.interpolated.multiline            -> literal.string.f.multiline                   [interpolated: f; grammar] lines 222
+  literal.string.interpolated.raw                  -> literal.string.f.raw                         [interpolated: f; grammar] lines 221
+  literal.string.interpolated.raw.multiline        -> literal.string.f.raw.multiline               [interpolated: f; grammar] lines 219
+  pattern.case.list                                -> pattern.case.slice                           [list: slice; grammar] lines 197
+  pattern.list                                     -> pattern.slice                                [list: slice; grammar] lines 184
+  pattern.rest                                     -> pattern.splat                                [rest: splat; claim line] lines 185
+  pattern.rest.map                                 -> pattern.splat.map                            [rest: splat; claim line] lines 187
+  pattern.rest.map                                 -> pattern.rest.dict                            [map: dict; grammar] lines 187
+  pattern.rest.map                                 -> pattern.rest.dictionary                      [map: dictionary; claim line] lines 187
+  statement.empty                                  -> statement.pass                               [empty: pass; claim line] lines 45
+  statement.throw                                  -> statement.raise                              [throw: raise; claim line] lines 38
+  type.rest                                        -> type.splat                                   [rest: splat; claim line] lines 208
+  type.rest.map                                    -> type.splat.map                               [rest: splat; claim line] lines 210
+== rust
+  declaration.constant.public.internal             -> declaration.constant.public.crate            [internal: crate; claim line] lines 135,136
+  declaration.enum.public.internal                 -> declaration.enum.public.crate                [internal: crate; claim line] lines 76,77
+  declaration.enum_member                          -> declaration.variant                          [enum_member: variant; claim line] lines 79
+  declaration.enum_member.private                  -> declaration.variant.private                  [enum_member: variant; claim line] lines 80
+  declaration.enum_member.public                   -> declaration.variant.public                   [enum_member: variant; claim line] lines 81
+  declaration.enum_member.public.internal          -> declaration.variant.public.internal          [enum_member: variant; claim line] lines 82,83
+  declaration.enum_member.public.internal          -> declaration.enum_member.public.crate         [internal: crate; claim line] lines 82,83
+  declaration.enum_member.public.restricted        -> declaration.variant.public.restricted        [enum_member: variant; claim line] lines 84
+  declaration.enum_member.struct                   -> declaration.variant.struct                   [enum_member: variant; claim line] lines 91
+  declaration.enum_member.struct.private           -> declaration.variant.struct.private           [enum_member: variant; claim line] lines 92
+  declaration.enum_member.struct.public            -> declaration.variant.struct.public            [enum_member: variant; claim line] lines 93
+  declaration.enum_member.struct.public.internal   -> declaration.variant.struct.public.internal   [enum_member: variant; claim line] lines 94,95
+  declaration.enum_member.struct.public.internal   -> declaration.enum_member.struct.public.crate  [internal: crate; claim line] lines 94,95
+  declaration.enum_member.struct.public.restricted -> declaration.variant.struct.public.restricted [enum_member: variant; claim line] lines 96
+  declaration.enum_member.tuple                    -> declaration.variant.tuple                    [enum_member: variant; claim line] lines 85
+  declaration.enum_member.tuple.private            -> declaration.variant.tuple.private            [enum_member: variant; claim line] lines 86
+  declaration.enum_member.tuple.public             -> declaration.variant.tuple.public             [enum_member: variant; claim line] lines 87
+  declaration.enum_member.tuple.public.internal    -> declaration.variant.tuple.public.internal    [enum_member: variant; claim line] lines 88,89
+  declaration.enum_member.tuple.public.internal    -> declaration.enum_member.tuple.public.crate   [internal: crate; claim line] lines 88,89
+  declaration.enum_member.tuple.public.restricted  -> declaration.variant.tuple.public.restricted  [enum_member: variant; claim line] lines 90
+  declaration.extension                            -> declaration.impl                             [extension: impl; claim line] lines 39,40
+  declaration.extension.conformance                -> declaration.impl.conformance                 [extension: impl; claim line] lines 41
+  declaration.field.public.internal                -> declaration.field.public.crate               [internal: crate; claim line] lines 149,150,155,156
+  declaration.function.public.internal             -> declaration.function.public.crate            [internal: crate; claim line] lines 17,18
+  declaration.function.signature.public.internal   -> declaration.function.signature.public.crate  [internal: crate; claim line] lines 23,24
+  declaration.interface.trait.public.internal      -> declaration.interface.trait.public.crate     [internal: crate; claim line] lines 47,48
+  declaration.method.public.internal               -> declaration.method.public.crate              [internal: crate; claim line] lines 35,36,52,53
+  declaration.method.signature.public.internal     -> declaration.method.signature.public.crate    [internal: crate; claim line] lines 29,30
+  declaration.module                               -> declaration.mod                              [module: mod; claim line] lines 112
+  declaration.module.foreign                       -> declaration.mod.foreign                      [module: mod; claim line] lines 123
+  declaration.module.foreign                       -> declaration.module.extern                    [foreign: extern; grammar] lines 123
+  declaration.module.private                       -> declaration.mod.private                      [module: mod; claim line] lines 113,118
+  declaration.module.public                        -> declaration.mod.public                       [module: mod; claim line] lines 114,119
+  declaration.module.public.internal               -> declaration.mod.public.internal              [module: mod; claim line] lines 115,116,120,121
+  declaration.module.public.internal               -> declaration.module.public.crate              [internal: crate; claim line] lines 115,116,120,121
+  declaration.module.public.restricted             -> declaration.mod.public.restricted            [module: mod; claim line] lines 117,122
+  declaration.parameter.receiver                   -> declaration.parameter.self                   [receiver: self; claim line] lines 162,163
+  declaration.struct.public.internal               -> declaration.struct.public.crate              [internal: crate; claim line] lines 58,59
+  declaration.struct.tuple.public.internal         -> declaration.struct.tuple.public.crate        [internal: crate; claim line] lines 64,65
+  declaration.struct.unit.public.internal          -> declaration.struct.unit.public.crate         [internal: crate; claim line] lines 70,71
+  declaration.type_alias.public.internal           -> declaration.type_alias.public.crate          [internal: crate; claim line] lines 107,108
+  declaration.union.public.internal                -> declaration.union.public.crate               [internal: crate; claim line] lines 101,102
+  declaration.variable.public.internal             -> declaration.variable.public.crate            [internal: crate; claim line] lines 143,144
+  expression.block.generator                       -> expression.block.gen                         [generator: gen; claim line] lines 315
+  expression.call.member                           -> expression.call.attribute                    [member: attribute; grammar] lines 247
+  expression.call.member                           -> expression.call.field                        [member: field; claim line] lines 247
+  expression.call.qualified                        -> expression.call.path                         [qualified: path; grammar] lines 248
+  expression.call.qualified                        -> expression.call.scoped                       [qualified: scoped; claim line] lines 248
+  expression.collection.list                       -> expression.collection.array                  [list: array; claim line] lines 307
+  expression.collection.list.repeat                -> expression.collection.array.repeat           [list: array; claim line] lines 308
+  expression.lambda                                -> expression.closure                           [lambda: closure; claim line] lines 293
+  expression.member                                -> expression.attribute                         [member: attribute; grammar] lines 291
+  expression.member                                -> expression.field                             [member: field; claim line] lines 291
+  expression.propagate                             -> expression.try                               [propagate: try; claim line] lines 278
+  expression.subscript                             -> expression.index                             [subscript: index; claim line] lines 292
+  identifier.receiver                              -> identifier.self                              [receiver: self; claim line] lines 413
+  identifier.super                                 -> identifier.base                              [super: base; grammar] lines 414
+  literal.character                                -> literal.char                                 [character: char; claim line] lines 392
+  modifier.visibility.public.internal              -> modifier.visibility.public.crate             [internal: crate; claim line] lines 421,424
+  pattern.list                                     -> pattern.array                                [list: array; grammar] lines 326
+  pattern.list                                     -> pattern.slice                                [list: slice; claim line] lines 326
+  statement.import                                 -> statement.use                                [import: use; claim line] lines 194
+  statement.import.package                         -> statement.use.package                        [import: use; grammar] lines 126
+  statement.import.package                         -> statement.import.crate                       [package: crate; claim line] lines 126
+  statement.import.package.private                 -> statement.use.package.private                [import: use; grammar] lines 127
+  statement.import.package.private                 -> statement.import.crate.private               [package: crate; claim line] lines 127
+  statement.import.package.public                  -> statement.use.package.public                 [import: use; grammar] lines 128
+  statement.import.package.public                  -> statement.import.crate.public                [package: crate; claim line] lines 128
+  statement.import.package.public.internal         -> statement.use.package.public.internal        [import: use; grammar] lines 129,130
+  statement.import.package.public.internal         -> statement.import.crate.public.internal       [package: crate; claim line] lines 129,130
+  statement.import.package.public.restricted       -> statement.use.package.public.restricted      [import: use; grammar] lines 131
+  statement.import.package.public.restricted       -> statement.import.crate.public.restricted     [package: crate; claim line] lines 131
+  statement.import.private                         -> statement.use.private                        [import: use; claim line] lines 195
+  statement.import.public                          -> statement.use.public                         [import: use; claim line] lines 196
+  statement.import.public.internal                 -> statement.use.public.internal                [import: use; claim line] lines 197,198
+  statement.import.public.restricted               -> statement.use.public.restricted              [import: use; claim line] lines 199
+  type.primitive.boolean                           -> type.primitive.bool                          [boolean: bool; claim line] lines 360
+  type.primitive.character                         -> type.primitive.char                          [character: char; claim line] lines 361
+  type.primitive.string                            -> type.primitive.str                           [string: str; claim line] lines 362
+== typescript
+  clause.bounds                                    -> clause.constraint                            [bounds: constraint; claim line] lines 246
+  clause.case.default                              -> clause.arm.default                           [case: arm; grammar] lines 223
+  clause.case.switch                               -> clause.arm.switch                            [case: arm; grammar] lines 222
+  declaration.constructor                          -> declaration.initializer                      [constructor: initializer; grammar] lines 45
+  declaration.constructor.private                  -> declaration.initializer.private              [constructor: initializer; grammar] lines 46
+  declaration.constructor.protected                -> declaration.initializer.protected            [constructor: initializer; grammar] lines 47
+  declaration.constructor.public                   -> declaration.initializer.public               [constructor: initializer; grammar] lines 48
+  declaration.parameter.receiver                   -> declaration.parameter.self                   [receiver: self; grammar] lines 122
+  declaration.parameter.receiver                   -> declaration.parameter.this                   [receiver: this; claim line] lines 122
+  expression.assignment.compound                   -> expression.assignment.augmented              [compound: augmented; claim line] lines 308
+  expression.assignment.compound.add               -> expression.assignment.augmented.add          [compound: augmented; claim line] lines 309
+  expression.assignment.compound.and               -> expression.assignment.augmented.and          [compound: augmented; claim line] lines 321
+  expression.assignment.compound.bitwise_and       -> expression.assignment.augmented.bitwise_and  [compound: augmented; claim line] lines 315
+  expression.assignment.compound.bitwise_or        -> expression.assignment.augmented.bitwise_or   [compound: augmented; claim line] lines 316
+  expression.assignment.compound.bitwise_xor       -> expression.assignment.augmented.bitwise_xor  [compound: augmented; claim line] lines 317
+  expression.assignment.compound.coalesce          -> expression.assignment.augmented.coalesce     [compound: augmented; claim line] lines 323
+  expression.assignment.compound.divide            -> expression.assignment.augmented.divide       [compound: augmented; claim line] lines 312
+  expression.assignment.compound.exponent          -> expression.assignment.augmented.exponent     [compound: augmented; claim line] lines 314
+  expression.assignment.compound.modulo            -> expression.assignment.augmented.modulo       [compound: augmented; claim line] lines 313
+  expression.assignment.compound.multiply          -> expression.assignment.augmented.multiply     [compound: augmented; claim line] lines 311
+  expression.assignment.compound.or                -> expression.assignment.augmented.or           [compound: augmented; claim line] lines 322
+  expression.assignment.compound.shift_left        -> expression.assignment.augmented.shift_left   [compound: augmented; claim line] lines 318
+  expression.assignment.compound.shift_right       -> expression.assignment.augmented.shift_right  [compound: augmented; claim line] lines 319
+  expression.assignment.compound.subtract          -> expression.assignment.augmented.subtract     [compound: augmented; claim line] lines 310
+  expression.call.construct                        -> expression.call.new                          [construct: new; claim line] lines 267
+  expression.call.member                           -> expression.call.attribute                    [member: attribute; grammar] lines 265
+  expression.call.member                           -> expression.call.field                        [member: field; grammar] lines 265
+  expression.call.member                           -> expression.call.property                     [member: property; grammar] lines 265
+  expression.collection.list                       -> expression.collection.array                  [list: array; claim line] lines 345
+  expression.conditional                           -> expression.ternary                           [conditional: ternary; claim line] lines 326
+  expression.lambda                                -> expression.arrow                             [lambda: arrow; claim line] lines 332
+  expression.member                                -> expression.attribute                         [member: attribute; grammar] lines 327
+  expression.member                                -> expression.field                             [member: field; grammar] lines 327
+  expression.member                                -> expression.property                          [member: property; grammar] lines 327
+  expression.subscript                             -> expression.index                             [subscript: index; grammar] lines 331
+  identifier.receiver                              -> identifier.self                              [receiver: self; grammar] lines 445
+  identifier.receiver                              -> identifier.this                              [receiver: this; claim line] lines 445
+  literal.string.interpolated                      -> literal.string.template                      [interpolated: template; claim line] lines 413
+  pattern.list                                     -> pattern.array                                [list: array; claim line] lines 368
+  type.nullable                                    -> type.maybe                                   [nullable: maybe; claim line] lines 407

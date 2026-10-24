@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "7f59643ce0bff2fd305bae4b0c0ecf251a3bc76a7aac125dd9f6d6d6201c984b";
+export const hash = "438168f03206371c402c4514c4fae44ca2fbbb1b3562ab2d6b30b41ba4d85abe";
 
 export const renames = {
 	module: "file",
@@ -125,7 +125,9 @@ export default grammar(
 			subscript: { "0": field("object") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
 			type_parameter: { "1": field("types") },
-			typed_default_parameter: { "4": field("default") }
+			typed_default_parameter: { "4": field("default") },
+			with_clause_bare: { "0": field("items"), "1/0/1": field("items") },
+			with_clause_paren: { "1": field("items") }
 		}
 	})
 );

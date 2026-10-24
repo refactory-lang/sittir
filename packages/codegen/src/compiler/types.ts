@@ -312,4 +312,6 @@ export interface NodeMap {
 	readonly refineForms?: ReadonlyMap<string, readonly LinkedRefineForm[]>;
 	scc?: SCCAnalysis;
 	irSurface?: IrSurface;
+	wordLeafReserved?: readonly string[];
+	unbound?: true;
 }

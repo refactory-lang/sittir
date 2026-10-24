@@ -13,12 +13,20 @@ import type {
 	TriviaSetter,
 	Types
 } from '../src/index.ts';
+import type { HoldsSource, HoldsTree } from '../src/node-surface.ts';
+import type { IsExactly } from '../src/type-utils.ts';
 
 interface FakeNode {
 	readonly $type: 1;
 }
 interface EmptyFake extends FakeNode {
 	readonly empty: true;
+}
+interface ParsedFake extends FakeNode, HoldsSource, HoldsTree {
+	readonly parsed: true;
+}
+interface EmptyParsedFake extends ParsedFake {
+	readonly emptyParsed: true;
 }
 interface NoEmptyForm {
 	readonly $type: 2;
@@ -38,7 +46,7 @@ interface FakeAPI extends LanguageAPI {
 	readonly root: FakeNode & ParsedRoot;
 	readonly node: FakeNode;
 	readonly options: { readonly indent?: string };
-	readonly empty: { readonly node: FakeNode; readonly empty: EmptyFake };
+	readonly empty: { readonly node: FakeNode; readonly empty: EmptyFake } | { readonly node: ParsedFake; readonly empty: EmptyParsedFake };
 }
 
 type API = ApiOf<Language<FakeAPI>>;
@@ -123,6 +131,31 @@ if (guardEngine.isErrorNode(unknownValue)) unknownValue satisfies ErrorNode;
 
 declare const fakeNode: FakeNode;
 if (guardEngine.isEmptyNode(fakeNode)) fakeNode satisfies EmptyFake;
+
+// A parsed form assignable to the plain form leaves the plain node's narrowing to the plain empty form.
+if (guardEngine.isEmptyNode(fakeNode)) {
+	const plainOnly: IsExactly<typeof fakeNode, FakeNode & EmptyFake> = true;
+	void plainOnly;
+}
+declare const parsedFake: ParsedFake;
+if (guardEngine.isEmptyNode(parsedFake)) parsedFake satisfies EmptyParsedFake;
+declare const eitherFake: FakeNode | ParsedFake;
+if (guardEngine.isEmptyNode(eitherFake)) eitherFake satisfies EmptyFake | EmptyParsedFake;
+declare const narrowedFake: ParsedFake & { readonly $type: 1 };
+if (guardEngine.isEmptyNode(narrowedFake)) {
+	const emptyParsed: true = narrowedFake.emptyParsed;
+	void emptyParsed;
+}
+declare const plainNarrowedFake: FakeNode & { readonly $type: 1 };
+if (guardEngine.isEmptyNode(plainNarrowedFake)) {
+	const plainEmpty: true = plainNarrowedFake.empty;
+	void plainEmpty;
+}
+declare const taggedFake: (FakeNode | ParsedFake) & { readonly reviewTag: 'tracked' };
+if (guardEngine.isEmptyNode(taggedFake)) {
+	const tag: 'tracked' = taggedFake.reviewTag;
+	void tag;
+}
 
 declare const noEmptyForm: NoEmptyForm;
 // @ts-expect-error a kind the language's empty map does not name has no empty form
