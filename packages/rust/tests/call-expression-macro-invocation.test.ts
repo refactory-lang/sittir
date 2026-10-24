@@ -10,7 +10,7 @@ const rs = await createEngine(rust);
 describe('a call whose function is a macro invocation', () => {
 	it('keeps each `arguments` on its own owner', () => {
 		const node = rs.build.callExpression({
-			function: rs.build.macroInvocation({ macro: rs.build.identifier('m'), arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier('x'))) }),
+			function: rs.build.macroInvocation({ function: rs.build.identifier('m'), arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier('x'))) }),
 			arguments: rs.build.arguments(rs.build.identifier('y'))
 		});
 		expect(node.$type).toBe(rs.kinds.CallExpression);

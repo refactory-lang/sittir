@@ -1,46 +1,35 @@
 import type { Rule } from '../../types/rule.ts';
 import type { FieldLike } from '../../types/runtime-shapes.ts';
-import { wireRegisterSyntheticInline, wireRegisterSyntheticRule } from '../wire/wire.ts';
+import { wireMintKeyword } from '../wire/wire.ts';
 import { isStringType } from '../../types/runtime-shapes.ts';
 import { optionalContentOf, withOptionalContent } from '../rule-patterns.ts';
 import type { RuntimeRule } from '../../types/runtime-shapes.ts';
 import { makeRuleMetadata } from '../rule-metadata.ts';
 
-export function maybeKeywordSymbol(
-	fieldName: string,
-	content: unknown,
-	wrapSyntheticBody?: (body: RuntimeRule) => RuntimeRule
-): unknown {
+export function maybeKeywordSymbol(fieldName: string, content: unknown): unknown {
 	const c = content as { type?: string; value?: string };
 	if (!c || typeof c.type !== 'string') return content;
 
 	if (isStringType(c.type)) {
-		return synthesizeKwSymbol(fieldName, content, wrapSyntheticBody);
+		return synthesizeKwSymbol(fieldName, String(c.value), content as RuntimeRule);
 	}
 
 	const optional = optionalContentOf(c as { type: string });
 	if (optional !== undefined) {
-		const rewritten = maybeKeywordSymbol(fieldName, optional, wrapSyntheticBody);
+		const rewritten = maybeKeywordSymbol(fieldName, optional);
 		return rewritten === optional ? content : withOptionalContent(c as { type: string }, rewritten as { type: string });
 	}
 
 	return content;
 }
 
-function synthesizeKwSymbol(
-	fieldName: string,
-	content: unknown,
-	wrapSyntheticBody: ((body: RuntimeRule) => RuntimeRule) | undefined
-): unknown {
-	const hiddenName = `_kw_${fieldName}`;
-	let body = content as RuntimeRule;
-	if (wrapSyntheticBody) body = wrapSyntheticBody(body);
-	if (!wireRegisterSyntheticRule(hiddenName, body)) {
+function synthesizeKwSymbol(fieldName: string, text: string, body: RuntimeRule): unknown {
+	const hiddenName = wireMintKeyword(fieldName, text, body);
+	if (hiddenName === undefined) {
 		throw new Error(
 			`field('${fieldName}', <STRING>): no active wire() context — call must occur inside a rule callback wrapped by wire()`
 		);
 	}
-	wireRegisterSyntheticInline(hiddenName);
 	return {
 		type: 'SYMBOL',
 		name: hiddenName

@@ -550,12 +550,14 @@ function membersOf(
 			unrouted(slot, 'is counted by a member anchored as its only node');
 			continue;
 		}
-		const except = slot.kinds.filter((k) => via.has(k));
+		const kept = keptKinds(input.model, slot, capturesOf(slot));
+		const except = slot.kinds.filter((k) => via.has(k) || !kept.has(k));
 		if (except.length > 0 && except.length === slot.kinds.length) {
 			unrouted(slot, 'is the path of a deeper member');
 			continue;
 		}
-		const rest = except.length === 0 ? slot : { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)), required: false };
+		const read = except.length === 0 ? slot : { ...slot, kinds: slot.kinds.filter((k) => !except.includes(k)) };
+		const rest = except.length === 0 ? slot : { ...read, required: false };
 		const captured = capturesOf(slot).length > 0;
 		if (toldByRead(input.model, rest, told.get(slot.name) ?? new Set<string>())) {
 			unrouted(slot, 'is told by the read');
@@ -569,11 +571,7 @@ function membersOf(
 		const name = memberNameOf(names, slot.name, slot.propertyName);
 		const path = [{ owner: kind, slot: slot.name }];
 		const flag = entries.some((entry) => input.bindings.flagsByPath?.get(entry.vocab)?.has(name) === true) ? { flag: true as const } : {};
-		routes.push(
-			except.length === 0
-				? { route: 'slot', name, slot, path, ...flag }
-				: { route: 'slot', name, slot: { ...slot, kinds: slot.kinds.filter((k) => !via.has(k)) }, except, path, ...flag }
-		);
+		routes.push(except.length === 0 ? { route: 'slot', name, slot, path, ...flag } : { route: 'slot', name, slot: read, except, path, ...flag });
 	}
 	for (const [member, slot] of flagSlots) routes.push(flagRouteOf(kind, member, slot));
 	routes.push(...spelledFlags);
@@ -627,6 +625,14 @@ function concreteKindsOf(model: SlotModel, kind: string, seen: Set<string>): str
 function concreteKinds(model: SlotModel, kinds: readonly string[]): string[] {
 	const seen = new Set<string>();
 	return [...new Set(kinds.flatMap((kind) => concreteKindsOf(model, kind, seen)))].sort();
+}
+
+function keptKinds(model: SlotModel, slot: ModelSlot, captures: readonly Extract<MemberFact, { readonly route: 'rename' }>[]): ReadonlySet<string> {
+	const members = captures.filter((m) => m.flag !== true);
+	const named = members.flatMap((m) => (m.field === null && m.kind !== null && m.kind !== WILDCARD ? [m.kind] : []));
+	if (slot.kinds.length < 2 || members.length === 0 || named.length < members.length) return new Set(slot.kinds);
+	const concrete = new Set(concreteKinds(model, named));
+	return new Set(slot.kinds.filter((k) => named.includes(k) || concreteKinds(model, [k]).some((c) => concrete.has(c))));
 }
 
 function admittedKinds(model: SlotModel, claim: ClaimFact): string[] {

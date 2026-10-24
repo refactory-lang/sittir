@@ -4,7 +4,7 @@ import { deriveAddressTables, kindIdArmType } from '../options.ts';
 import { parseSpacingAddress } from '../../dsl/primitives/spacing.ts';
 import type { SitePreference } from '../../compiler/model/site-preferences.ts';
 import { makeSiteKindsNodeMap, displayFamilyNodeMap } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { collectCatalogKinds, collectKindEntries } from '../kind-discriminant.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 
 const SPACING = ['tight', 'space', 'newline'].map((k) => ({ value: k, kind: k }));
 const kindEntries = [
@@ -211,14 +211,14 @@ describe('renderOptionsRs', () => {
 		expect(tables).toHaveLength(1);
 		expect(tables[0]!.name).toBe(seatTableName('arguments', 'elements'));
 		expect(tables[0]!.rows.map((r) => r.kindId)).toEqual([200, 300]);
-		const src = renderOptionsRs(plan, deriveAddressTables([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')]), kindIdArmType(entries as never), (() => []) as never), entries);
+		const src = renderOptionsRs(plan, deriveAddressTables([...sites, seat('zeta'), seat('alpha')], entries, makeSiteKindsNodeMap([...sites, seat('zeta'), seat('alpha')], entries as never), kindIdArmType(entries as never), (() => []) as never), entries);
 		const dense = src.slice(src.indexOf(`pub static ${tables[0]!.name}: &[Option<SiteId>] = &[`));
 		const cells = dense.slice(dense.indexOf('\n') + 1, dense.indexOf('];')).split(',').map((c) => c.trim()).filter(Boolean);
 		expect(cells).toHaveLength(301);
 		expect(cells[200]).toBe(`Some(SiteId(${tables[0]!.rows[0]!.site}))`);
 		expect(cells[300]).toBe(`Some(SiteId(${tables[0]!.rows[1]!.site}))`);
 		expect(cells[250]).toBe('None');
-		const missing = planRenderOptions([...sites, seat('nokind')], entries, makeSiteKindsNodeMap([...sites, seat('nokind')]), whitespaceText, undefined, 'rust');
+		const missing = planRenderOptions([...sites, seat('nokind')], entries, makeSiteKindsNodeMap([...sites, seat('nokind')], entries as never), whitespaceText, undefined, 'rust');
 		expect(() => seatTablesOf(missing)).toThrow(/nokind/);
 	});
 
@@ -271,8 +271,8 @@ describe('an address that names one canonical path', () => {
 			defaultArm: 'newline',
 			source: 'spacing'
 		}));
-		const plan = planRenderOptions(twins, kindEntries, makeSiteKindsNodeMap(twins), whitespaceText, undefined, 'rust');
-		const addresses = deriveAddressTables(twins, kindEntries, makeSiteKindsNodeMap(twins), kindIdArmType(kindEntries as never), (() => []) as never);
+		const plan = planRenderOptions(twins, kindEntries, makeSiteKindsNodeMap(twins, kindEntries as never), whitespaceText, undefined, 'rust');
+		const addresses = deriveAddressTables(twins, kindEntries, makeSiteKindsNodeMap(twins, kindEntries as never), kindIdArmType(kindEntries as never), (() => []) as never);
 		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
 	});
 });
@@ -338,7 +338,7 @@ describe('an address shared by an alias-site family', () => {
 			'block',
 			declared
 		);
-		const kindEntries = collectKindEntries(collectCatalogKinds(generatedIdTables), nodeMap, generatedIdTables);
+		const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 		const plan = planRenderOptions(sites, kindEntries, nodeMap, whitespaceText, undefined, 'rust');
 		const addresses = deriveAddressTables(sites, kindEntries, nodeMap, kindIdArmType(kindEntries), new Map());
 		return { plan, addresses, kindEntries };

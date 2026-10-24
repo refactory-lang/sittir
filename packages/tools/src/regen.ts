@@ -171,7 +171,7 @@ export async function regenerateGrammars(grammars: readonly string[], cwd: strin
 	}
 	for (const grammar of [...stale, ...reextract]) {
 		const record = await recordAfter(grammar, cwd, before.get(grammar)!);
-		if (record !== undefined) writeRegenRecord(cwd, grammar, record);
+		if (record !== undefined) await writeRegenRecord(cwd, grammar, record);
 	}
 	for (const [grammar, outcome] of outcomes) {
 		process.stdout.write(`[${grammar}] ${outcome} · diagnostics: ${severitySummary(readGrammarDiagnostics(grammar as GrammarName).entries)}\n`);

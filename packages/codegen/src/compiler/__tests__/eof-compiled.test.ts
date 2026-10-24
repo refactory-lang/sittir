@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { evaluateTempGrammar } from '../../__tests__/helpers/temp-grammar.ts';
-import { link } from '../link.ts';
+import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
 import { assemble, AssembleCtx } from '../assemble.ts';
 import { runTreeSitterCliCapturing } from '../../transpile/tree-sitter-cli.ts';
@@ -13,7 +13,7 @@ import type { NodeMap } from '../types.ts';
 
 const evaluated = (rules: string) => evaluateTempGrammar({ extras: '', rules }, '');
 
-const compiled = async (rules: string): Promise<NodeMap> => assemble(AssembleCtx.from(normalizeGrammar(link(await evaluated(rules)))));
+const compiled = async (rules: string): Promise<NodeMap> => assemble(AssembleCtx.from(normalizeGrammar(linkPredicted(await evaluated(rules)))));
 
 describe('eof() through the compiler', () => {
 	it('gives seq($.x, eof()) the same node keys, node class and value count as seq($.x)', async () => {

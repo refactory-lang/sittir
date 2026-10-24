@@ -504,6 +504,8 @@ export const ir: {
 	readonly structItemBrace: typeof F.structItemBrace;
 	readonly structItemTuple: typeof F.structItemTuple;
 	readonly structItemUnit: typeof F.structItemUnit;
+	readonly receiverParameterDeclaration: typeof F.receiverParameterDeclaration;
+	readonly parametersElementsReceiver: typeof F.parametersElementsReceiver;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
 	readonly tokenTree: typeof F.tokenTree;
@@ -764,6 +766,8 @@ export const ir: {
 	structItemBrace: F.structItemBrace,
 	structItemTuple: F.structItemTuple,
 	structItemUnit: F.structItemUnit,
+	receiverParameterDeclaration: F.receiverParameterDeclaration,
+	parametersElementsReceiver: F.parametersElementsReceiver,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
 	tokenTree: F.tokenTree,

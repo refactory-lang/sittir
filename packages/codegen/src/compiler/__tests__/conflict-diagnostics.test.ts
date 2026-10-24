@@ -1,3 +1,4 @@
+import { predictedIdTablesOf } from '../../dsl/symbol-table.ts';
 import { createRequire } from 'node:module';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
@@ -54,7 +55,7 @@ describe('conflicts authored in a sittir grammar', () => {
 	it('block the grammar with conflict-authored', async () => {
 		const authored = await evaluateSittirGrammar(go, 'go', 'conflicts: ($) => [[$.call_expression]],');
 		expect(codesOf(authored)).toContain('conflict-authored');
-		const diagnosis = diagnoseGrammar({ grammar: 'go', evaluated: authored });
+		const diagnosis = diagnoseGrammar({ grammar: 'go', evaluated: authored , generatedIdTables: predictedIdTablesOf(authored) });
 		expect(diagnosis.passed).toBe(false);
 		expect(diagnosis.blocked.map((record) => record.code)).toEqual(['conflict-authored']);
 	});
@@ -76,7 +77,8 @@ describe('conflicts authored in a sittir grammar', () => {
 				}
 			]
 		};
-		const diagnosis = diagnoseGrammar({ grammar: 'go', evaluated: await evaluateSittirGrammar(go, 'go', '', resolutions) });
+		const evaluated = await evaluateSittirGrammar(go, 'go', '', resolutions);
+		const diagnosis = diagnoseGrammar({ grammar: 'go', evaluated, generatedIdTables: predictedIdTablesOf(evaluated) });
 		expect(diagnosis.grammarDiagnostics.filter((record) => record.code === 'conflict-resolution')).toHaveLength(1);
 	});
 });

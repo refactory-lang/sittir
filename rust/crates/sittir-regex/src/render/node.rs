@@ -6507,7 +6507,6 @@ fn render_named_capturing_group<N: NamedCapturingGroupFields + ?Sized>(node: &N,
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;

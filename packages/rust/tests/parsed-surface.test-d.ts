@@ -70,11 +70,19 @@ export function listsReadAsReadonlyArrays(): string {
 	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
 	const params = item.parameters();
-	type Item = ItemOf<typeof params>;
-	const owner: ReadonlyArray<Item> = params;
-	const list: ReadonlyArray<Item> | undefined = params.elements();
-	const rendered = params.map((param) => (typeof param === 'number' ? '' : rs.render(param).toString()));
-	const first: Item | undefined = params[0];
+	expectTrue<
+		Equals<
+			ReturnType<typeof params.elements>,
+			T.ParametersElements.Parsed | T.ParametersElementsReceiver.Parsed | undefined
+		>
+	>();
+	const elements = params.elements();
+	if (elements === undefined || !rs.is.parametersElements(elements)) return '';
+	type Item = ItemOf<typeof elements>;
+	const owner: ReadonlyArray<Item> = elements;
+	const list: ReadonlyArray<Item> = elements;
+	const rendered = elements.map((param) => (typeof param === 'number' ? '' : rs.render(param).toString()));
+	const first: Item | undefined = elements[0];
 	return [owner.length, list?.length, rendered.join(','), String(first)].join('');
 }
 
@@ -82,9 +90,13 @@ export function aListSlotTakesItsBuilderArguments(): string {
 	const item = rs.parse('fn f(a: i32) {}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
 	const params = item.parameters();
-	const fromItems = item.$with.parameters(...params);
+	const elements = params.elements();
+	if (elements === undefined || !rs.is.parametersElements(elements)) return '';
+	const [first, ...rest] = elements;
+	if (first === undefined) return '';
+	const fromItems = item.$with.parameters(rs.build.parameters(rs.build.parametersElements(first, ...rest)));
 	const fromNode = item.$with.parameters(params);
-	const inner = params.$with.elements(...params);
+	const inner = params.$with.elements(rs.build.parametersElements(first, ...rest));
 	return fromItems.$render() + fromNode.$render() + inner.$render();
 }
 
@@ -92,8 +104,12 @@ export function anEditedChildGoesIntoItsParentsSlot(): string {
 	const item = rs.parse('fn f(a: u8) {\n    a;\n}\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) return '';
 	const parameters = item.parameters();
+	const elements = parameters.elements();
+	if (elements === undefined || !rs.is.parametersElements(elements)) return '';
 	const body = item.body();
-	const withParameters = item.$with.parameters(parameters.$with.elements(...parameters));
+	const [first, ...rest] = elements;
+	if (first === undefined) return '';
+	const withParameters = item.$with.parameters(parameters.$with.elements(rs.build.parametersElements(first, ...rest)));
 	const withBody = item.$with.body(body.$with.statements(...body.statements()));
 	return withParameters.$render() + withBody.$render();
 }

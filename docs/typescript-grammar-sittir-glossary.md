@@ -20,14 +20,20 @@ wasm. Pointing it at `tsx/grammar.js` is harmless for a non-JSX corpus but a
 latent mismatch: anything JSX-shaped would reparse-fail. One grammar,
 end-to-end.
 
-### `sittirGrammar(base, …)` (`packages/typescript/grammar.sittir.ts:25`)
+### `grammar(enrich(base), wire({…}))` (`packages/typescript/grammar.sittir.ts:30`)
 
-`export default sittirGrammar(base, {…})` composes the grammar in one call:
-enrich runs over the upstream base with the config's authored `groups:`
-patterns visible, so it declines any group a pattern covers; wire runs over
-that enriched base; `grammar()` receives both. There is no separate enriched
-binding to hand to two places, so the base wire sees and the base tree-sitter
-compiles cannot drift apart.
+`export default grammar(enrich(base), wire({…}))` is typescript's layer 1, the
+authored layer. `enrich(base)` is the layer's base half: the upstream grammar,
+pending until the layer pass completes it. `wire({…})` is its options half:
+tree-sitter's `grammar()`, or sittir's own when sittir evaluates the file,
+calls the options' `externals` entry first, and there the layer pass enriches
+the base with the config's authored `groups:` patterns visible, so enrich
+declines any group a pattern covers, and wires the config over that enriched
+base. The base wire sees and the base tree-sitter compiles are the one
+completed object, so they cannot drift apart.
+
+The generated layer above this one, `grammar.bindings.ts`, imports this file;
+nothing here imports it, so layer 1 evaluates without the grammar bindings.
 
 ### `inline` (`packages/typescript/grammar.sittir.ts:232`)
 
@@ -76,8 +82,8 @@ polymorph helpers need to appear explicitly.
 				// once a NESTED cascade level's config replaces that raw mint's
 				// alias content with the properly-split polymorph body (transform.ts's
 				// ALIAS-rename deposit + repoint), the ORIGINAL raw mint becomes a
-				// provably-unreachable orphan. `sittirGrammar`'s dead-mint pass
-				// (`blankDeadEnrichMints`) blanks every enrich mint the final
+				// provably-unreachable orphan. the layer pass's dead-mint pass
+				// (`dsl/layer.ts::completeLayer`) blanks every enrich mint the final
 				// grammar does not reach, so the orphan is pruned before codegen.
 				// Folding the ENTIRE `_export_statement_default`
 				// cascade into ONE patches entry with deep, multi-level string
@@ -162,23 +168,6 @@ them once each, in canonical flat order. The former per-arm kinds and their
 
 ```text
 					// Position 2: a four-arm modifier choice (heterogeneous).
-```
-
-### `jsx_opening_element_content` (`packages/typescript/grammar.sittir.ts:425`)
-
-```text
-				// __jsx_start_opening_element_optional1 is the inline two-slot helper for
-				// JSX element head content: choice(name / name+type_args) + repeat(attribute).
-				// The two-slot seq causes the template to flatten both slots, losing the
-				// name–attribute distinction. Registering as a visible group collapses the
-				// parent's optional to a single `jsx_opening_element_content` slot so each
-				// field renders from its own slot.
-				// The name+type_arguments arm is NOT written out inline: enrich's group
-				// lift has already hoisted it into `_jsx_start_opening_element_group1`
-				// (aliased visible) by the time pattern replacement compares bodies, so
-				// the post-enrich sub-tree this pattern must equal holds that alias ref.
-				// The old inline-seq form silently matched nothing (caught by
-				// `body-pattern-zero-match`).
 ```
 
 ### `class_body` (`packages/typescript/grammar.sittir.ts:471`)
@@ -535,7 +524,7 @@ them once each, in canonical flat order. The former per-arm kinds and their
 				// throw_statement: seq('throw', _expressions, _semicolon).
 ```
 
-### `function_signature` (`packages/typescript/grammar.sittir.ts`, `patches`)
+### `function_signature` (`packages/typescript/grammar.sittir.ts`, `edits`)
 
 `function_signature: { 4: field('semicolon') }`. The base rule is
 `seq(optional('async'), 'function', field('name'), _call_signature,
@@ -549,7 +538,7 @@ land in one slot.
 `generator_function_declaration` all start with `optional('async')` at
 position 0. Enrich's optional-keyword pass fields it as `async`, the
 same as `arrow_function`, so render preserves `async function …` /
-`async function* …` shapes; no `patches:` entry names it.
+`async function* …` shapes; no `edits:` entry names it.
 
 The promotion only works because `_kw_async` is inlined at every
 reference site (see `inline:`). Un-inlined, the synthesized hidden rule's
@@ -793,7 +782,7 @@ takes one patch per set.
 				// base grammar's conflict resolution carries through.
 ```
 
-### `string` (`packages/typescript/grammar.sittir.ts`, `patches`)
+### `string` (`packages/typescript/grammar.sittir.ts`, `edits`)
 
 `string: [{ '0/2': token.immediate('"'), '1/2': token.immediate("'") }, { 0: variant('double'), 1: variant('single') }]`.
 The base rule is `choice(seq('"', …, '"'), seq("'", …, "'"))`. The first set
@@ -805,7 +794,7 @@ quote style its own template; it comes second so the paths in the first set
 still address the unsplit arms. Keeping the quote literal and its fragment
 token inside one arm leaves no cross-arm lexical ambiguity.
 
-### Template delimiters (`packages/typescript/grammar.sittir.ts`, `patches`)
+### Template delimiters (`packages/typescript/grammar.sittir.ts`, `edits`)
 
 `template_string: { 2: token.immediate('`') }`,
 `template_literal_type: { 2: token.immediate('`') }`,
@@ -833,7 +822,7 @@ The sign of a negative-number literal type binds tight to its number
 upstream `_number` rule is hidden and spliced into the variant, so its
 operator field is addressed there.
 
-### `patches` — `_number` (`packages/typescript/grammar.sittir.ts`)
+### `edits` — `_number` (`packages/typescript/grammar.sittir.ts`)
 
 TypeScript admits no `+` literal type: a numeric literal type takes only a
 `-` sign (`-1`). The patch narrows the operator of the upstream `_number`
@@ -899,7 +888,7 @@ without its entry):
 
 - `unclassifiable-shape` on `binary_expression` and `public_field_definition`:
   a choice with structured arms beside leaves. Resolve with `rule(name, body)`
-  in `patches:` naming the structured arm as its own rule.
+  in `edits:` naming the structured arm as its own rule.
 - `union-slot-mixed-row` on `binary_expression`: a singular row with a
   structured named arm beside union arms. Resolve with `variant(name)`
   splitting the row, until the structured-arm enrich mint gives each

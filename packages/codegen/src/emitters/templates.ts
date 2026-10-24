@@ -80,7 +80,7 @@ export interface EmitTemplatesConfig {
 	nodeMap: NodeMap;
 	renderRules?: RenderRules;
 	grammarSha?: string;
-	kindEntries?: readonly KindEntryLike[];
+	kindEntries: readonly KindEntryLike[];
 	diagnostics?: DiagnosticSink;
 }
 
@@ -160,7 +160,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				this.#paddingFields.set(site.kind, fields);
 			}
 		}
-		this.#kindEntries = config.kindEntries ?? [];
+		this.#kindEntries = config.kindEntries;
 		this.#ctx = {
 			nodeMap: config.nodeMap,
 			wordMatcher: this.#wordMatcher,
@@ -169,7 +169,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const pairs = new Set(
 					literalMergePairs(
 						getNodeProjection(config.nodeMap).literals,
-						config.kindEntries ?? [],
+						config.kindEntries,
 						config.nodeMap.normalizedRules
 					).map(
 						([a, b]) => a * 128 + b
@@ -186,7 +186,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				const rights = new Set<string>();
 				for (const [a, b] of literalMergePairs(
 					getNodeProjection(config.nodeMap).literals,
-					config.kindEntries ?? [],
+					config.kindEntries,
 					config.nodeMap.normalizedRules
 				)) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
@@ -1547,6 +1547,11 @@ export function runTemplateEmitter(config: EmitTemplatesConfig): EmittedTemplate
 	return te.finalize();
 }
 
-export function stampStaticSpacing(nodeMap: NodeMap, grammar: string, renderRules: RenderRules | undefined): void {
-	runTemplateEmitter({ grammar, nodeMap, renderRules });
+export function stampStaticSpacing(
+	nodeMap: NodeMap,
+	grammar: string,
+	renderRules: RenderRules | undefined,
+	kindEntries: readonly KindEntryLike[]
+): void {
+	runTemplateEmitter({ grammar, nodeMap, renderRules, kindEntries });
 }

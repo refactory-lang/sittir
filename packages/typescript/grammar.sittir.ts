@@ -10,6 +10,7 @@
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import base from './base.ts';
 import resolutions from './.sittir/resolutions.json' with { type: 'json' };
+import type { AuthoringRule, ChoiceRule, GrammarRule, SymbolRule } from '../codegen/src/grammar-shapes/grammar-json.ts';
 import {
 	field,
 	alias,
@@ -22,20 +23,77 @@ import {
 	token,
 	reauthored,
 	vocabulary,
-	sittirGrammar
+	copy,
+	edit,
+	replace,
+	enrich,
+	wire
 } from '../codegen/src/dsl/dsl-authoring.ts';
 
 
-export default sittirGrammar(base, {
+const AUTO_ACCESSOR_RULING = 'An auto-accessor takes no declare, readonly or ?: its arm admits an accessibility modifier, static, abstract and override, then accessor.';
+
+const PUBLIC_FIELD_DEFINITION_ACCEPTED = [
+	{ text: 'export abstract class A { abstract accessor x: number; }\n', form: ['abstract', 'accessor', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition' },
+	{ text: 'export class A { static accessor y: number; }\n', form: ['static', 'accessor', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition' }
+] as const;
+
+const PUBLIC_FIELD_DEFINITION_NARROWED = [
+	{ text: 'export class A { declare accessor x: number; }\n', form: ['declare', 'accessor', { symbol: 'identifier' }, { symbol: 'type_annotation' }], kind: 'public_field_definition', ruling: AUTO_ACCESSOR_RULING },
+	{ text: 'export class A { accessor x?: number; }\n', form: ['accessor', { symbol: 'identifier' }, '?', { symbol: 'type_annotation' }], kind: 'public_field_definition', ruling: AUTO_ACCESSOR_RULING }
+] as const;
+
+const METHOD_DEFINITION_WITNESSES = [
+	{ text: 'export class A { get x(a: number): number { return a; } }\n', form: ['get', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'type_annotation' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 MethodDefinition: get ClassElementName ( )' },
+	{ text: 'export class A { set y() {} }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 MethodDefinition: set ClassElementName ( PropertySetParameterList ), one FormalParameter' },
+	{ text: 'export class A { set y(a: number, b: number) {} }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter' },
+	{ text: 'export class A { set y(...a: number[]) {} }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, not FunctionRestParameter' },
+	{ text: 'export class A { set y(a?: number) {} }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 4.5 SetAccessor: set PropertyName ( BindingIdentifierOrPattern TypeAnnotation? )' },
+	{ text: 'export class A { set y(a = 1) {} }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 4.5 SetAccessor has no Initializer (ECMAScript allows one)' },
+	{ text: 'export const o = { get x(a: number) { return a; } };\n', form: ['get', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 MethodDefinition: get ClassElementName ( )' },
+	{ text: 'export const o = { set y() {} };\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter' },
+	{ text: 'export class A { get x<T>(): number { return 1; } }\n', form: ['get', { symbol: 'identifier' }, { symbol: 'type_parameters' }, { symbol: 'formal_parameters' }, { symbol: 'type_annotation' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 4.5 GetAccessor: get PropertyName ( ) TypeAnnotation?' },
+	{ text: 'export class A { set x(v: number): void {} }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'type_annotation' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 4.5 SetAccessor has no TypeAnnotation after the parameters' },
+	{ text: 'export class A { async get x() { return 1; } }\n', form: ['async', 'get', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'ECMAScript 15.4 and 15.8 AsyncMethod: no production joins async and get' },
+	{ text: 'export class A { get x?() { return 1; } }\n', form: ['get', { symbol: 'identifier' }, '?', { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 4.5 GetAccessor: get PropertyName ( ), no ? after the name' },
+	{ text: 'export class A { readonly get x() { return 1; } }\n', form: ['readonly', 'get', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 8.4.3 MemberAccessorDeclaration: AccessibilityModifier? static? GetAccessor' },
+	{ text: 'export class A { set x?(v) {} }\n', form: ['set', { symbol: 'identifier' }, '?', { symbol: 'formal_parameters' }, { symbol: 'statement_block' }], kind: 'method_definition', production: 'TypeScript 1.8 spec 4.5 SetAccessor: set PropertyName ( ... ), no ? after the name' }
+] as const;
+const METHOD_SIGNATURE_WITNESSES = [
+	{ text: 'export interface I { get x(a: number): number }\n', form: ['get', { symbol: 'identifier' }, { symbol: 'formal_parameters' }, { symbol: 'type_annotation' }], kind: 'method_signature', production: "the class form's production (ECMAScript 15.4) in a signature" },
+	{ text: 'export interface I { set x(...a: number[]); }\n', form: ['set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }], kind: 'method_signature', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, not FunctionRestParameter, in a signature' }
+] as const;
+const ABSTRACT_METHOD_SIGNATURE_WITNESSES = [
+	{ text: 'export abstract class A { abstract set x(a, b); }\n', form: ['abstract', 'set', { symbol: 'identifier' }, { symbol: 'formal_parameters' }], kind: 'abstract_method_signature', production: 'ECMAScript 15.4 PropertySetParameterList: FormalParameter, in an abstract signature' }
+] as const;
+
+interface AccessorPositions {
+	readonly override: number;
+	readonly dropped: readonly number[];
+	readonly kind: number;
+	readonly optional: number;
+	readonly signature: number;
+}
+
+function accessorArms($: Readonly<Record<string, SymbolRule<string>>>, original: GrammarRule, at: AccessorPositions) {
+	const accessor = (kind: string, signature: AuthoringRule) =>
+		edit(original, {
+			[`${at.override}/0`]: field('override'),
+			...Object.fromEntries(at.dropped.map((i) => [i, blank()])),
+			[at.kind]: field('accessor_kind', kind),
+			[at.optional]: blank(),
+			[at.signature]: signature
+		});
+	return choice(
+		variant('plain', edit(original, { [`${at.override}/0`]: field('override'), [`${at.kind}/0`]: field('accessor_kind', '*'), [`${at.optional}/0`]: field('optional') })),
+		variant('getter', accessor('get', $._get_accessor_signature)),
+		variant('setter', accessor('set', $._set_accessor_signature))
+	);
+}
+
+export default grammar(enrich(base), wire({
 	resolutions,
 	name: 'typescript',
-	groups: {
-		jsx_opening_element_content: ($) =>
-			seq(
-				choice(field('name', choice($._jsx_identifier, $.jsx_namespace_name)), $.jsx_start_opening_element_arm),
-				repeat(field('attribute', $._jsx_attribute))
-			)
-	},
 	options: {
 		indent: preference('  '),
 		body: { before: preference('indent'), after: preference('dedent') },
@@ -181,7 +239,7 @@ export default sittirGrammar(base, {
 		}
 	},
 
-	patches: {
+	edits: {
 		decorator: { 1: field('expression') },
 		decorator_parenthesized_expression: { 1: field('expression') },
 		asserts: { 1: field('value') },
@@ -262,12 +320,6 @@ export default sittirGrammar(base, {
 				'1/members:/0/3': variant('declaration')
 			}
 		],
-
-		abstract_method_signature: {
-			'2/0': field('override'),
-			'3/0': field('accessor_kind'),
-			'5/0': field('optional')
-		},
 
 		ambient_declaration: {
 			'1/0': variant('declaration'),
@@ -354,18 +406,6 @@ export default sittirGrammar(base, {
 			1: field('separator')
 		},
 
-		method_definition: {
-			'2/0': field('override'),
-			'5/0': field('accessor_kind'),
-			'7/0': field('optional')
-		},
-
-		method_signature: {
-			'2/0': field('override'),
-			'5/0': field('accessor_kind'),
-			'7/0': field('optional')
-		},
-
 		property_signature: {
 			'2/0': field('override'),
 			'5/0': field('optional')
@@ -444,17 +484,6 @@ export default sittirGrammar(base, {
 
 		import_specifier: [{ '0/0': field('import_kind') }, { '1/0': variant('name'), '1/1': variant('as') }],
 
-		public_field_definition: {
-			// Both spellings of the accessibility position (declare-first
-			// and access-first modifier orders) carry ONE shared field so
-			// the exclusive occurrences merge into a single slot, same as
-			// the enrich-promoted keyword fields merge across the
-			// permutation arms.
-			'1/0/0/1/0': field('accessibility_modifier'),
-			'1/0/1/0': field('accessibility_modifier'),
-			'2/0/1/0': field('override'),
-			'4/0': field('optionality')
-		},
 		_parameter_name: { '2/0': field('override') },
 
 		parenthesized_expression: {
@@ -574,11 +603,70 @@ export default sittirGrammar(base, {
 	}),
 
 	expectDiagnostics: {
-		'unclassifiable-shape': ['binary_expression', 'public_field_definition'],
+		'unclassifiable-shape': ['binary_expression', 'public_field_definition_plain'],
 		'union-slot-mixed-row': ['binary_expression'],
 		'rule-reauthored-without-cause': ['object_type']
 	},
 	rules: {
+		_get_accessor_signature: vocabulary(() => edit(copy('_call_signature'), { 0: blank(), 'parameters:': replace(copy('formal_parameters'), '1', blank()) })),
+		_set_accessor_signature: vocabulary(($) =>
+			field(
+				'parameters',
+				replace(
+					copy('formal_parameters'),
+					'1',
+					field(
+						'elements',
+						edit(copy('formal_parameters_elements'), {
+							1: blank(),
+							2: blank(),
+							'item:': alias(
+								edit(copy('required_parameter'), { 0: replace(copy('_parameter_name'), 'pattern:/0', copy('pattern', '0')), 2: blank() }),
+								$.setter_parameter
+							)
+						})
+					)
+				)
+			)
+		),
+		method_definition: reauthored('accepts-invalid-syntax', METHOD_DEFINITION_WITNESSES, ($, original) =>
+			accessorArms($, original, { override: 2, dropped: [3, 4], kind: 5, optional: 7, signature: 8 })
+		),
+		method_signature: reauthored('accepts-invalid-syntax', METHOD_SIGNATURE_WITNESSES, ($, original) =>
+			accessorArms($, original, { override: 2, dropped: [3, 4], kind: 5, optional: 7, signature: 8 })
+		),
+		abstract_method_signature: reauthored('accepts-invalid-syntax', ABSTRACT_METHOD_SIGNATURE_WITNESSES, ($, original) =>
+			accessorArms($, original, { override: 2, dropped: [], kind: 3, optional: 5, signature: 6 })
+		),
+		public_field_definition: reauthored(
+			[
+				['rejects-valid-syntax', PUBLIC_FIELD_DEFINITION_ACCEPTED],
+				['ruled-narrowing', PUBLIC_FIELD_DEFINITION_NARROWED]
+			],
+			($, original) =>
+				choice(
+					// Both spellings of the accessibility position (declare-first and
+					// access-first) carry one field, so they merge into one slot.
+					variant(
+						'plain',
+						edit(
+							original,
+							{ '1/0/0/1/0': field('accessibility_modifier'), '1/0/1/0': field('accessibility_modifier'), '2/0/1/0': field('override'), '4/0': field('optionality') },
+							{ 2: (_$: unknown, member: ChoiceRule) => choice(...(member.members.slice(0, 3) as [GrammarRule, ...GrammarRule[]])) }
+						)
+					),
+					// static and abstract are independent flags, as in the plain arm;
+					// a builder type rejects the two together.
+					variant(
+						'accessor',
+						edit(original, {
+							1: optional(field('accessibility_modifier', $.accessibility_modifier)),
+							2: seq(optional(field('static', 'static')), optional(field('abstract', 'abstract')), optional(field('override', $.override_modifier)), field('accessor', 'accessor')),
+							4: blank()
+						})
+					)
+				)
+		),
 		// `template_substitution` sits only in string-interior contexts
 		// (template_string / template_literal_type elements), where any
 		// preceding characters are absorbed into a fragment token — no
@@ -762,4 +850,4 @@ export default sittirGrammar(base, {
 			lhs_expression: '($r = null);'
 		}
 	},
-});
+}));

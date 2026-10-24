@@ -30,7 +30,6 @@ export interface PrintContext {
 	readonly delimiterArmOfId: (id: number) => string | undefined;
 	readonly seats?: SeatTable;
 	readonly slotNameOf: (kind: string, slot: string) => string;
-	readonly absorbedKinds?: ReadonlySet<string>;
 	readonly slotKinds?: Record<string, Record<string, readonly string[]>>;
 	readonly textLeafKinds?: ReadonlySet<string>;
 	readonly leafPatterns?: Record<string, RegExp>;
@@ -640,23 +639,10 @@ export function printingFactoryMap(
 					const placed = placeDirectArg(kind, args[0], ctx);
 					const value = placed.loose;
 					const ownedList = ownedListArgs(kind, value, ctx);
-					const absorbed =
-						ownedList === undefined &&
-						value instanceof Printed &&
-						value.kind !== undefined &&
-						ctx.absorbedKinds?.has(value.kind)
-							? value.argsSource
-							: undefined;
 					const valueSource =
 						ownedList !== undefined
 							? ownedList
-							: absorbed !== undefined
-								? isLoose(ctx)
-									? `[${absorbed}]`
-									: absorbed
-								: value === undefined
-									? ''
-									: printValue(value, ctx, 0);
+							: value === undefined ? '' : printValue(value, ctx, 0);
 					const optionsSource = isPlainObject(args[1]) ? printValue(args[1], ctx, 0) : undefined;
 					const argSource =
 						optionsSource === undefined
@@ -800,7 +786,7 @@ export function printFactorySource(
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, resolve } from 'node:path';
-import { importGrammarModule, requireGrammarModule } from '../grammar-internals.ts';
+import { requireGrammarModule } from '../grammar-internals.ts';
 import {
 	buildReadHandle,
 	loadKindNameFromId,
@@ -828,22 +814,6 @@ function withPublicNames<T>(record: Record<string, T>): Record<string, T> {
 	for (const [kind, value] of Object.entries(record)) {
 		const publicName = kind.replace(/^_+/, '');
 		if (!(publicName in out)) out[publicName] = value;
-	}
-	return out;
-}
-
-function absorbedKindsOf(model: {
-	hoistedKinds: ReadonlySet<string>;
-	factoryShapes: Record<string, FactoryShape>;
-	seats: SeatTable;
-}): ReadonlySet<string> {
-	const out = new Set<string>();
-	for (const kind of model.hoistedKinds) {
-		const shape = model.factoryShapes[kind];
-		if (shape !== 'spread' && shape !== 'elements') continue;
-		if (model.seats[kind] !== undefined) continue;
-		out.add(kind);
-		out.add(kind.replace(/^_+/, ''));
 	}
 	return out;
 }
@@ -1038,13 +1008,11 @@ export async function emitFactorySourceText(
 	if (!tree || tree.rootNode.hasError) throw new Error(`emit-factory-source: the ${grammar} parse has errors`);
 	const readNode = await readNodeOf(grammar);
 	const hydrate = await hydrateOf(grammar);
-	if (!readNode || !hydrate) throw new Error(`emit-factory-source: no wrap module for ${grammar}`);
 	const handle = await buildReadHandle(grammar, source);
 	const model = await loadNodeModel(grammar);
-	const types = await importGrammarModule(grammar, 'types.ts');
-	if (!types) throw new Error(`emit-factory-source: no types module for ${grammar}`);
+	const types = await requireGrammarModule(grammar, 'types.ts');
 	const displayNameFromId = await loadKindNameFromId(grammar);
-	const kindNameFromId = (id: number): string | undefined => types.KIND_NAMES.get(id) ?? displayNameFromId?.(id);
+	const kindNameFromId = (id: number): string => types.KIND_NAMES.get(id) ?? displayNameFromId(id);
 	const idOfName = new Map<string, number>();
 	for (const [id, name] of types.KIND_NAMES) {
 		if (!idOfName.has(name)) idOfName.set(name, id);
@@ -1089,7 +1057,6 @@ export async function emitFactorySourceText(
 		leafFindings,
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
 		aliasKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'alias')),
-		absorbedKinds: absorbedKindsOf(model),
 		slotStorage: withPublicNames(model.slotStorage),
 		keywordKinds: new Set(
 			Object.keys(model.modelTypes).filter(

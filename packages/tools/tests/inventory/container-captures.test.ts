@@ -159,3 +159,36 @@ describe('derive: wildcard claims and members', () => {
 		expect(d.wildcardUnrouted).toEqual(['g: shaped as declaration.d has no route for content']);
 	});
 });
+
+describe('container captures through variant forms', () => {
+	const withNodes = async (bindings: string, extra: readonly ModelNode[]): Promise<GrammarInput> => {
+		const input = await grammar(bindings);
+		const model = new Map(input.model);
+		for (const n of extra) model.set(n.kind, n);
+		return { ...input, model };
+	};
+	const wrap = (body: string): ModelNode => node('wrap', [slot('decorators', ['decorator'], true), slot('body', [body])]);
+
+	it('places the capture on the direct claim of each variant of an element kind split into variants', async () => {
+		const split: ModelNode = { ...node('split', [], ['split_a', 'split_b']), modelType: 'supertype' };
+		const input = await withNodes(
+			[...CLAIMS, '(split_a) @declaration.a', '(split_b) @declaration.b', '(wrap (decorator)* @decorators body: (_) @element)'].join('\n'),
+			[
+				split,
+				{ ...node('split_a'), variantOf: 'split' },
+				{ ...node('split_b'), variantOf: 'split' },
+				wrap('split')
+			]
+		);
+		const d = derive([input]);
+		expect(d.members.get('declaration.a')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
+		expect(d.members.get('declaration.b')?.get('decorators')?.kinds).toEqual(new Set(['attribute.decorator']));
+		expect(d.untargeted).toEqual([]);
+	});
+
+	it('still reports the container untargeted when the element slot names an ordinary supertype', async () => {
+		const plain: ModelNode = { ...node('plain', [], ['leaf_a']), modelType: 'supertype' };
+		const d = derive([await withNodes([...CLAIMS, '(wrap (decorator)* @decorators body: (_) @element)'].join('\n'), [plain, wrap('plain')])]);
+		expect(d.untargeted).toEqual(['g: wrap (decorators)']);
+	});
+});

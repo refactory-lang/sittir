@@ -1,45 +1,19 @@
-import { pathToFileURL } from 'node:url';
-import type { OptionsConfig } from './wire/options-block.ts';
-import {
-	ALIAS,
-	CHOICE,
-	EOF,
-	FIELD,
-	OPTIONAL,
-	PATTERN,
-	REPEAT,
-	REPEAT1,
-	SEQ,
-	STRING,
-	SYMBOL
-} from '../types/rule-types.ts'; // @rule-type-consts
+import { EOF, FIELD, PATTERN, STRING, SYMBOL } from '../types/rule-types.ts'; // @rule-type-consts
 import { sym } from '../types/rule.ts';
-import type {
-	AliasRule,
-	ChoiceRule,
-	FieldRule,
-	OptionalRule,
-	PatternRule,
-	Repeat1Rule,
-	RepeatRule,
-	Rule,
-	SeqRule,
-	StringRule,
-	SymbolRule,
-	TokenRule
-} from '../types/rule.ts';
+import type { AliasRule, FieldRule, PatternRule, Rule, StringRule, SymbolRule, TokenRule } from '../types/rule.ts';
 import { structuralBuilder } from './builders.ts';
-import type { RawGrammar, DesugarDivergenceEvent, EvaluatedGrammar, EvaluationStages, StageEvaluation } from '../compiler/types.ts';
+import type { RawGrammar, EvaluatedGrammar, EvaluationStages, StageEvaluation } from '../compiler/types.ts';
 import { canonicalGrammar } from '../compiler/canonical-rules.ts';
-import { isComplexBody, onlyAliasedSymbols, optionalContentOf, ruleListEntryOf, type RuleListEntry } from './rule-patterns.ts';
-import { withRoleScope } from './primitives/role.ts';
+import { isRecord, optionalContentOf, ruleListEntryOf, type RuleListEntry } from './rule-patterns.ts';
 import { baseRulesOf } from './shared.ts';
-import { protectedWireRuleNames, wireWithoutConfig, type PatchSite, type WireContext, type RefineForm, type WiredOpts } from './wire/wire.ts';
-import { getDeadEnrichMints } from './wire/dead-mints.ts';
-import { getDerivationRecords } from './wire/derivation-records.ts';
-import { UNBOUND_ENV } from './sittir-grammar.ts';
-import { getTextTokens } from './enrich.ts';
+import { wireWithoutConfig, type WiredOpts } from './wire/wire.ts';
+import { ownRecordsOf } from './layer.ts';
+import { layerRecordOf, mergedRecords, synthesizedOf, type LayerRecords, type StageBases, type SynthesizedRules } from './layer-record.ts';
+import { pathToFileURL } from 'node:url';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
+import { sha256File } from '../util/content-hash.ts';
 import type { GrammarResult } from './enrich.ts';
+import type { ProjectedGrammar } from './verbs/effects.ts';
 
 type Input = string | RegExp | Rule<'evaluate'>;
 
@@ -47,6 +21,8 @@ function coerceToRule(input: unknown): Rule<'evaluate'> {
 	if (input === undefined || input === null) {
 		throw new Error('Undefined symbol');
 	}
+
+	if (input instanceof ReferenceError) throw input;
 
 	if (typeof input === 'string') {
 		return { type: STRING, value: input } satisfies StringRule<'evaluate'>;
@@ -147,16 +123,21 @@ const prec: PrecFn = Object.assign(
 	}
 );
 
-function alias(rule: Input, value: string | Rule<'evaluate'>): AliasRule<'evaluate'> {
+function undefinedSymbolOf(value: ReferenceError): unknown {
+	return (value as ReferenceError & { readonly symbol?: unknown }).symbol;
+}
+
+function alias(rule: Input, value: string | Rule<'evaluate'> | ReferenceError): AliasRule<'evaluate'> {
 	const content = coerceToRule(rule);
-	if (typeof value === 'string' || (value !== null && typeof value === 'object' && value.type === SYMBOL)) {
-		return structuralBuilder.alias(content, value);
+	const target = value instanceof ReferenceError ? undefinedSymbolOf(value) : value;
+	if (typeof target === 'string' || (isRecord(target) && target.type === SYMBOL)) {
+		return structuralBuilder.alias(content, target as string | SymbolRule<'evaluate'>);
 	}
 	throw new Error(`Invalid alias value: ${value}`);
 }
 
 function blank(): Rule<'evaluate'> {
-	return { type: CHOICE, members: [] };
+	return structuralBuilder.blank();
 }
 
 function eof(): Rule<'evaluate'> {
@@ -181,23 +162,18 @@ interface MetadataSinks {
 }
 
 export interface EvaluateCtx {
-	readonly rules: Record<string, Rule<'evaluate'>>;
-	readonly evaluateSynthesized: Set<string>;
 	readonly opts: GrammarOptions;
 	readonly baseRules: Record<string, Rule<'evaluate'>>;
 	readonly baseGrammar: unknown;
-	readonly externals: readonly RuleListEntry[];
-	readonly isExtension: boolean;
 	readonly sinks: MetadataSinks;
 	readonly setWord: (w: string) => void;
-	readonly bodyPatternZeroMatches: string[];
-	readonly desugarDivergences: DesugarDivergenceEvent[];
 }
 
-function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: GrammarOptions): { grammar: EvaluatedGrammar } {
-	let baseRules: Record<string, Rule<'evaluate'>> = {};
+function grammarFn(
+	optionsOrBase: GrammarOptions | GrammarResult,
+	options?: GrammarOptions
+): { grammar: EvaluatedGrammar } {
 	let baseGrammar: any = null;
-	let base: GrammarResult | undefined;
 	let opts: GrammarOptions;
 
 	if (options === undefined) {
@@ -205,14 +181,9 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		opts = optionsOrBase;
 	} else {
 		if (!('grammar' in optionsOrBase)) throw new Error(`grammar(base, options): '${options.name}' extends a base that is not a grammar() result`);
-		base = optionsOrBase;
-		baseGrammar = base.grammar;
-		baseRules = { ...baseRulesOf<Rule<'evaluate'>>(baseGrammar) };
+		baseGrammar = optionsOrBase.grammar;
 		opts = options;
 	}
-
-	const rules: Record<string, Rule<'evaluate'>> = { ...baseRules };
-	const evaluateSynthesized = new Set<string>();
 
 	const extras: RuleListEntry[] = [];
 	const externals: RuleListEntry[] = [];
@@ -234,48 +205,26 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		precedences,
 		reserved
 	};
+	evaluateExternalsCallback(opts, { baseGrammar, sinks });
+	const baseRules = { ...baseRulesOf<Rule<'evaluate'>>(baseGrammar) };
 	const ctx: EvaluateCtx = {
-		rules,
-		evaluateSynthesized,
 		opts,
 		baseRules,
 		baseGrammar,
-		externals,
-		isExtension: baseGrammar !== null,
 		sinks,
 		setWord: (w) => {
 			word = w;
-		},
-		bodyPatternZeroMatches: [],
-		desugarDivergences: []
+		}
 	};
-
-	const { roles: collectedRoles } = withRoleScope(() => {
-		evaluateExternalsCallback(opts, ctx);
-		evaluateRulesAndInjectSynthetics(rules, ctx);
-		evaluateMetadataCallbacksInScope(opts, ctx);
-	});
-
+	const rules = { ...baseRules };
+	evaluateRuleFunctions(rules, ctx);
+	evaluateMetadataCallbacks(opts, ctx);
 	inheritBaseGrammarMetadata(opts, ctx);
-	const wireCtx = getWireContext(opts);
-
-	const refineForms = drainRefineMetadata(opts);
-	const groups = drainGroupsMetadata(opts);
-	const expectDiagnostics = drainExpectDiagnosticsMetadata(opts);
-	const expectTestFailures = drainExpectTestFailuresMetadata(opts);
-	const renderAs = drainRenderAsMetadata(opts, ctx);
-	const visibleExternals = drainVisibleExternalsMetadata(opts, ctx);
-	const optionsBlock = drainOptionsMetadata(opts);
-	const reparseHosts = getWireContext(opts)?.reparseHosts;
-	const { ruleCauses, undeclaredRules } = drainRuleCausesMetadata(opts);
-	const patchSites = drainPatchSitesMetadata(opts);
-	const stages = base !== undefined && departsFromBase(ctx) ? evaluateStages(base, ctx) : undefined;
 
 	const grammarResult = {
 		name: opts.name,
 		rules,
-		evaluateSynthesized,
-		protectedRuleNames: wireCtx ? [...protectedWireRuleNames(opts), ...supertypes] : undefined,
+		evaluateSynthesized: new Set<string>(),
 		extras,
 		externals,
 		supertypes,
@@ -284,434 +233,47 @@ function grammarFn(optionsOrBase: GrammarOptions | GrammarResult, options?: Gram
 		conflicts,
 		precedences,
 		word,
-		reserved,
-		externalRoles: collectedRoles.size > 0 ? collectedRoles : undefined,
-		refineForms,
-		groups,
-		renderAs,
-		visibleExternals,
-		whitespaceCollisions: wireCtx?.whitespaceCollisions?.length ? wireCtx.whitespaceCollisions : undefined,
-		options: optionsBlock,
-		expectDiagnostics,
-		expectTestFailures,
-		reparseHosts,
-		ruleCauses,
-		undeclaredRules,
-		patchSites,
-		stages,
-		automaticVariants: wireCtx?.automaticVariants,
-		bodyPatternZeroMatches: ctx.bodyPatternZeroMatches.length > 0 ? [...ctx.bodyPatternZeroMatches] : undefined,
-		desugarDivergences: ctx.desugarDivergences.length > 0 ? [...ctx.desugarDivergences] : undefined
+		reserved
 	} satisfies EvaluatedGrammar;
 	return { grammar: grammarResult };
 }
 
-function getWireContext(opts: GrammarOptions): WireContext | undefined {
-	return (opts as unknown as { __wireContext__?: WireContext }).__wireContext__;
+function withRecords(grammar: EvaluatedGrammar, records: LayerRecords, synthesized: readonly SynthesizedRules[]): EvaluatedGrammar {
+	const bodies: Readonly<Record<string, Rule<'evaluate'>>> = { ...records.renderAs, ...records.visibleExternals };
+	return { ...grammar, ...records, rules: withSynthesizedRules(grammar.rules, synthesized, bodies), evaluateSynthesized: new Set(Object.keys(bodies)) };
 }
 
-function drainRefineMetadata(opts: GrammarOptions): Map<string, RefineForm[]> | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || wireCtx.refineForms.size === 0) return undefined;
-	return new Map(wireCtx.refineForms);
-}
-
-function drainGroupsMetadata(opts: GrammarOptions): Record<string, Record<string, string> | undefined> | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || !wireCtx.groups) return undefined;
-	const raw = wireCtx.groups as Record<string, unknown>;
-	const g: Record<string, Record<string, string> | undefined> = {};
-	for (const [k, v] of Object.entries(raw)) {
-		if (v === undefined || typeof v === 'function') continue;
-		g[k] = v as Record<string, string>;
+function withSynthesizedRules(
+	rules: Readonly<Record<string, Rule<'evaluate'>>>,
+	synthesized: readonly SynthesizedRules[],
+	bodies: Readonly<Record<string, Rule<'evaluate'>>>
+): Record<string, Rule<'evaluate'>> {
+	const names = Object.keys(rules);
+	let inserted = 0;
+	for (const { after, names: own } of synthesized) {
+		const fresh = own.filter((name) => !names.includes(name));
+		names.splice(after + inserted, 0, ...fresh);
+		inserted += fresh.length;
 	}
-	if (Object.keys(g).length === 0) return undefined;
-	return g;
+	return Object.fromEntries(names.map((name) => [name, bodies[name] ?? rules[name]!]));
 }
 
-function drainExpectDiagnosticsMetadata(opts: GrammarOptions): Record<string, readonly string[]> | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || !wireCtx.expectDiagnostics) return undefined;
-	const e: Record<string, readonly string[]> = {};
-	for (const [code, kinds] of Object.entries(wireCtx.expectDiagnostics)) {
-		if (kinds !== undefined) e[code] = kinds;
-	}
-	if (Object.keys(e).length === 0) return undefined;
-	return e;
+function evaluatedStages(bases: StageBases): EvaluationStages<EvaluatedGrammar> {
+	return { raw: evaluatedStage(bases.raw, bases), enriched: evaluatedStage(bases.enriched, bases) };
 }
 
-function drainRuleCausesMetadata(opts: GrammarOptions): Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules'> {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx) return {};
-	const undeclaredRules = [...wireCtx.undeclaredRules].sort();
-	return {
-		ruleCauses: wireCtx.ruleCauses.size > 0 ? Object.fromEntries(wireCtx.ruleCauses) : undefined,
-		undeclaredRules: undeclaredRules.length > 0 ? undeclaredRules : undefined
-	};
-}
-
-function drainPatchSitesMetadata(opts: GrammarOptions): readonly PatchSite[] | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || wireCtx.patchSites.size === 0) return undefined;
-	const sites = [...wireCtx.patchSites].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-	return sites.map(([key, site]) => {
-		const lifts = wireCtx.liftClaims.get(key);
-		return lifts === undefined ? site : { ...site, lifts: [...lifts].sort() };
-	});
-}
-
-function departsFromBase(ctx: EvaluateCtx): boolean {
-	const wireCtx = getWireContext(ctx.opts);
-	if (!ctx.isExtension || !wireCtx) return false;
-	const patches = (ctx.opts as { patches?: Record<string, unknown> }).patches;
-	return wireCtx.authoredRuleNames.size > 0 || Object.keys(patches ?? {}).length > 0;
-}
-
-function evaluateStages(enriched: GrammarResult, ctx: EvaluateCtx): EvaluationStages<EvaluatedGrammar> {
-	const wireCtx = getWireContext(ctx.opts);
-	if (!wireCtx) throw new Error(`evaluateStages('${ctx.opts.name}'): the grammar departs from its base but carries no wire context`);
-	return { raw: evaluateStage(wireCtx.source as GrammarResult, ctx), enriched: evaluateStage(enriched, ctx) };
-}
-
-function evaluateStage(base: GrammarResult, ctx: EvaluateCtx): StageEvaluation<EvaluatedGrammar> {
-	const stageOpts = wireWithoutConfig(ctx.opts.name, base);
+function evaluatedStage(base: GrammarResult, bases: StageBases): StageEvaluation<EvaluatedGrammar> {
+	const stageOpts = wireWithoutConfig(bases.name, base);
+	const wire = stageOpts.__wireContext__!;
 	const { grammar } = grammarFn(base, stageOpts);
-	const baseRules = ('grammar' in base ? baseRulesOf<Rule<'evaluate'>>(base.grammar) : undefined) ?? {};
+	const own = ownRecordsOf(wire, { supertypes: grammar.supertypes, roles: new Map(), unmatchedGroups: [] });
+	const synthesized = [...(bases.inherited?.synthesized ?? []), ...synthesizedOf(Object.keys(grammar.rules).length, own)];
+	const baseRules = baseRulesOf<Rule<'evaluate'>>(base.grammar) ?? {};
 	const ruleNames = [...new Set([...Object.keys(baseRules), ...Object.keys(stageOpts.rules)])].sort();
-	return { grammar, ruleNames };
-}
-
-function drainOptionsMetadata(opts: GrammarOptions): OptionsConfig | undefined {
-	const declared = getWireContext(opts)?.options;
-	return declared === undefined || Object.keys(declared).length === 0 ? undefined : declared;
-}
-
-function drainExpectTestFailuresMetadata(opts: GrammarOptions): Record<string, string> | undefined {
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || !wireCtx.expectTestFailures) return undefined;
-	const e: Record<string, string> = {};
-	for (const [kind, reason] of Object.entries(wireCtx.expectTestFailures)) {
-		if (reason !== undefined) e[kind] = reason;
-	}
-	if (Object.keys(e).length === 0) return undefined;
-	return e;
-}
-
-function drainRenderAsMetadata(opts: GrammarOptions, ctx: EvaluateCtx): Record<string, Rule<'evaluate'>> | undefined {
-	const { rules, evaluateSynthesized } = ctx;
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || !wireCtx.renderAs) return undefined;
-
-	const $ = createProxy();
-	const rawEntries = wireCtx.renderAs($);
-	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
-
-	const result: Record<string, Rule<'evaluate'>> = {};
-	for (const [name, rawBody] of Object.entries(rawEntries)) {
-		const rule = coerceToRule(rawBody as Input);
-		result[name] = rule;
-		rules[name] = rule;
-		evaluateSynthesized.add(name);
-	}
-	return result;
-}
-
-function drainVisibleExternalsMetadata(
-	opts: GrammarOptions,
-	ctx: EvaluateCtx
-): Record<string, Rule<'evaluate'>> | undefined {
-	const { rules, evaluateSynthesized } = ctx;
-	const wireCtx = getWireContext(opts);
-	if (!wireCtx || !wireCtx.visibleExternals) return undefined;
-
-	const $ = createProxy();
-	const rawEntries = wireCtx.visibleExternals($);
-	if (!rawEntries || Object.keys(rawEntries).length === 0) return undefined;
-
-	const result: Record<string, Rule<'evaluate'>> = {};
-	for (const [name, rawBody] of Object.entries(rawEntries)) {
-		const rule = coerceToRule(rawBody as Input);
-		result[name] = rule;
-		rules[name] = rule;
-		evaluateSynthesized.add(name);
-	}
-	return result;
-}
-
-function evaluateRulesAndInjectSynthetics(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
-	const { opts, evaluateSynthesized } = ctx;
-	evaluateRuleFunctions(rules, ctx);
-	const wireCtx = getWireContext(opts);
-	if (wireCtx) {
-		injectSyntheticRules(rules, ctx, wireCtx.deposits);
-		if (wireCtx.groups) {
-			for (const [key, value] of Object.entries(wireCtx.groups)) {
-				if (typeof value !== 'function') continue;
-				const hiddenName = `_${key}`;
-				if (hiddenName in rules) continue;
-				const $ = createProxy();
-				try {
-					const result = (value as ($: unknown, previous: unknown) => unknown).call($, $, undefined);
-					if (result && typeof result === 'object' && typeof (result as { type?: unknown }).type === 'string') {
-						rules[hiddenName] = coerceToRule(result as Input);
-						evaluateSynthesized.add(hiddenName);
-						ctx.desugarDivergences.push({ site: 'body-pattern-group', name: hiddenName });
-					}
-				} catch {}
-			}
-		}
-		applyPatternReplacement(rules, ctx, wireCtx);
-		applyVisibleExternalsRewrite(rules, { wireCtx });
-	}
-}
-
-
-interface PatternCandidate {
-	readonly name: string;
-	readonly body: Rule<'evaluate'>;
-	readonly aliasAs?: string;
-}
-
-function applyPatternReplacement(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: EvaluateCtx,
-	wireCtx: WireContext
-): void {
-	const { baseRules } = ctx;
-	const candidates: PatternCandidate[] = [];
-	for (const name of wireCtx.authoredRuleNames) {
-		if (!name.startsWith('_')) continue;
-		if (name in baseRules) continue;
-		const body = rules[name];
-		if (!body) continue;
-		if (!isComplexBody(body)) continue;
-		candidates.push({ name, body });
-	}
-	if (wireCtx.groups) {
-		for (const [key, value] of Object.entries(wireCtx.groups)) {
-			if (typeof value !== 'function') continue;
-			const hiddenName = `_${key}`;
-			const body = rules[hiddenName];
-			if (!body) continue;
-			if (!isComplexBody(body)) continue;
-			candidates.push({ name: hiddenName, body, aliasAs: key });
-		}
-	}
-	if (candidates.length === 0) return;
-
-	const candidateNames = new Set(candidates.map((c) => c.name));
-	const aliasOnly = onlyAliasedSymbols(Object.values(rules));
-	const folding = candidates.filter((c) => c.aliasAs !== undefined || !aliasOnly.has(c.name));
-	for (const [name, body] of Object.entries(rules)) {
-		if (candidateNames.has(name)) continue;
-		const rewritten = replacePatterns(body, folding);
-		if (rewritten !== body) {
-			rules[name] = rewritten;
-		}
-	}
-	const pathBNames = candidates.filter((c) => c.aliasAs !== undefined).map((c) => c.name);
-	if (pathBNames.length > 0) {
-		const referenced = new Set<string>();
-		const collect = (rule: Rule<'evaluate'>): void => {
-			if (rule.type === SYMBOL) {
-				referenced.add((rule as SymbolRule<'evaluate'>).name);
-				return;
-			}
-			const r = rule as { members?: Rule<'evaluate'>[]; content?: Rule<'evaluate'> };
-			if (Array.isArray(r.members)) r.members.forEach(collect);
-			if (r.content) collect(r.content);
-		};
-		for (const [ruleName, body] of Object.entries(rules)) {
-			if (candidateNames.has(ruleName)) continue;
-			collect(body);
-		}
-		for (const name of pathBNames) {
-			if (!referenced.has(name)) ctx.bodyPatternZeroMatches.push(name);
-		}
-	}
-}
-
-function replacePatterns(rule: Rule<'evaluate'>, candidates: PatternCandidate[]): Rule<'evaluate'> {
-	for (const c of candidates) {
-		if (patternRulesEqual(rule, c.body)) {
-			const symRef = sym(c.name);
-			return c.aliasAs !== undefined ? structuralBuilder.alias(symRef, sym(c.aliasAs)) : symRef;
-		}
-	}
-	switch (rule.type) {
-		case SEQ: {
-			const r = rule as SeqRule<'evaluate'>;
-			const members = replaceInArray(r.members, candidates);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
-		}
-		case CHOICE: {
-			const r = rule as ChoiceRule<'evaluate'>;
-			const members = replaceInArray(r.members, candidates);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
-		}
-		case OPTIONAL: {
-			const r = rule as OptionalRule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT: {
-			const r = rule as RepeatRule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT1: {
-			const r = rule as Repeat1Rule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case FIELD: {
-			const r = rule as FieldRule<'evaluate'>;
-			const content = replacePatterns(r.content, candidates);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		default:
-			return rule;
-	}
-}
-
-function replaceInArray(members: Rule<'evaluate'>[], candidates: PatternCandidate[]): Rule<'evaluate'>[] {
-	let changed = false;
-	const out: Rule<'evaluate'>[] = members.map((m) => {
-		const r = replacePatterns(m, candidates);
-		if (r !== m) changed = true;
-		return r;
-	});
-	return changed ? out : members;
-}
-
-function patternRulesEqual(a: Rule<'evaluate'>, b: Rule<'evaluate'>): boolean {
-	if (a.type !== b.type) return false;
-	switch (a.type) {
-		case STRING:
-			return a.value === (b as StringRule<'evaluate'>).value;
-		case PATTERN:
-			return a.value === (b as PatternRule<'evaluate'>).value;
-		case SYMBOL:
-			return a.name === (b as SymbolRule<'evaluate'>).name;
-		case SEQ: {
-			const bSeq = b as SeqRule<'evaluate'>;
-			return (
-				a.members.length === bSeq.members.length && a.members.every((m, i) => patternRulesEqual(m, bSeq.members[i]!))
-			);
-		}
-		case CHOICE: {
-			const bCh = b as ChoiceRule<'evaluate'>;
-			return (
-				a.members.length === bCh.members.length && a.members.every((m, i) => patternRulesEqual(m, bCh.members[i]!))
-			);
-		}
-		case OPTIONAL:
-			return patternRulesEqual(a.content, (b as OptionalRule<'evaluate'>).content);
-		case REPEAT: {
-			const bRep = b as RepeatRule<'evaluate'>;
-			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
-		}
-		case REPEAT1: {
-			const bRep = b as Repeat1Rule<'evaluate'>;
-			return a.separator === bRep.separator && patternRulesEqual(a.content, bRep.content);
-		}
-		case FIELD: {
-			const bFld = b as FieldRule<'evaluate'>;
-			return a.name === bFld.name && patternRulesEqual(a.content, bFld.content);
-		}
-		case ALIAS: {
-			const bAl = b as AliasRule<'evaluate'>;
-			return a.named === bAl.named && a.value === bAl.value && patternRulesEqual(a.content, bAl.content);
-		}
-		default:
-			return false;
-	}
-}
-
-interface VisibleExternalsRewriteCtx {
-	readonly hiddenToVisible: ReadonlyMap<string, string>;
-}
-
-function rewriteVisibleExternalRefs(rule: Rule<'evaluate'>, ctx: VisibleExternalsRewriteCtx): Rule<'evaluate'> {
-	const { hiddenToVisible } = ctx;
-	if (rule.type === SYMBOL) {
-		const visibleName = hiddenToVisible.get((rule as SymbolRule<'evaluate'>).name);
-		if (visibleName === undefined) return rule;
-		return structuralBuilder.alias(rule, sym(visibleName));
-	}
-	switch (rule.type) {
-		case SEQ: {
-			const r = rule;
-			const members = rewriteVisibleExternalRefsInArray(rule.members, ctx);
-			return members === r.members ? rule : { ...rule, members };
-		}
-		case CHOICE: {
-			const r = rule as ChoiceRule<'evaluate'>;
-			const members = rewriteVisibleExternalRefsInArray(r.members, ctx);
-			return members === r.members ? rule : ({ ...r, members } as Rule<'evaluate'>);
-		}
-		case OPTIONAL: {
-			const r = rule as OptionalRule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT: {
-			const r = rule as RepeatRule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case REPEAT1: {
-			const r = rule as Repeat1Rule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		case FIELD: {
-			const r = rule as FieldRule<'evaluate'>;
-			const content = rewriteVisibleExternalRefs(r.content, ctx);
-			return content === r.content ? rule : ({ ...r, content } as Rule<'evaluate'>);
-		}
-		default:
-			return rule;
-	}
-}
-
-function rewriteVisibleExternalRefsInArray(
-	members: Rule<'evaluate'>[],
-	ctx: VisibleExternalsRewriteCtx
-): Rule<'evaluate'>[] {
-	let changed = false;
-	const out: Rule<'evaluate'>[] = members.map((m) => {
-		const r = rewriteVisibleExternalRefs(m, ctx);
-		if (r !== m) changed = true;
-		return r;
-	});
-	return changed ? out : members;
-}
-
-interface ApplyVisibleExternalsCtx {
-	readonly wireCtx: WireContext;
-}
-
-function applyVisibleExternalsRewrite(rules: Record<string, Rule<'evaluate'>>, ctx: ApplyVisibleExternalsCtx): void {
-	const { wireCtx } = ctx;
-	if (!wireCtx.visibleExternals) return;
-	const $ = createProxy();
-	const rawEntries = wireCtx.visibleExternals($);
-	if (!rawEntries) return;
-	const hiddenToVisible = new Map<string, string>();
-	for (const hiddenName of Object.keys(rawEntries)) {
-		hiddenToVisible.set(hiddenName, hiddenName.replace(/^_+/, ''));
-	}
-	if (hiddenToVisible.size === 0) return;
-	const rewriteCtx: VisibleExternalsRewriteCtx = { hiddenToVisible };
-	for (const [name, body] of Object.entries(rules)) {
-		const rewritten = rewriteVisibleExternalRefs(body, rewriteCtx);
-		if (rewritten !== body) rules[name] = rewritten;
-	}
-}
-
-function evaluateMetadataCallbacksInScope(opts: GrammarOptions, ctx: EvaluateCtx): void {
-	evaluateMetadataCallbacks(opts, ctx);
+	return {
+		grammar: { ...withRecords(grammar, mergedRecords(bases.inherited?.records, own), synthesized), automaticVariants: wire.automaticVariants },
+		ruleNames
+	};
 }
 
 function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: EvaluateCtx): void {
@@ -721,18 +283,6 @@ function evaluateRuleFunctions(rules: Record<string, Rule<'evaluate'>>, ctx: Eva
 		const baseRule = baseRules[name];
 		const result = ruleFn.call($, $, baseRule);
 		rules[name] = coerceToRule(result);
-	}
-}
-
-function injectSyntheticRules(
-	rules: Record<string, Rule<'evaluate'>>,
-	ctx: EvaluateCtx,
-	syntheticRules: Map<string, unknown>
-): void {
-	for (const [name, content] of syntheticRules) {
-		if (name in rules) continue;
-		rules[name] = content as Rule<'evaluate'>;
-		ctx.evaluateSynthesized.add(name);
 	}
 }
 
@@ -806,7 +356,7 @@ function appendCallbackMetadataNames(sink: string[], result: unknown): void {
 	}
 }
 
-function evaluateExternalsCallback(opts: GrammarOptions, ctx: EvaluateCtx): void {
+function evaluateExternalsCallback(opts: GrammarOptions, ctx: Pick<EvaluateCtx, 'baseGrammar' | 'sinks'>): void {
 	if (!opts.externals) return;
 	const $ = createProxy();
 	const baseExternals = (ctx.baseGrammar as { externals?: RuleListEntry[] } | null)?.externals ?? [];
@@ -915,20 +465,21 @@ function evaluateMetadataCallbacks(opts: GrammarOptions, ctx: EvaluateCtx): void
 
 let evaluateMutex: Promise<void> = Promise.resolve();
 
-export interface EvaluateOptions {
-	readonly unbound?: boolean;
+export async function evaluate(entryPath: string, fileTypes: readonly string[]): Promise<ProjectedGrammar<RawGrammar>> {
+	const evaluated = await evaluateDsl(entryPath);
+	const { leadFrom, bindingEffects } = evaluated;
+	return { ...canonicalGrammar(evaluated, fileTypes), ...(leadFrom === undefined ? {} : { leadFrom }), ...(bindingEffects === undefined ? {} : { bindingEffects }) };
 }
 
-export async function evaluate(entryPath: string, fileTypes: readonly string[], options: EvaluateOptions = {}): Promise<RawGrammar> {
-	return canonicalGrammar(await (options.unbound === true ? evaluateUnboundDsl(entryPath) : evaluateDsl(entryPath)), fileTypes);
+export async function evaluateDsl(entryPath: string): Promise<ProjectedGrammar<EvaluatedGrammar>> {
+	return withDslGlobals(() => importAndExtractGrammar(entryPath));
 }
 
-export async function evaluateDsl(entryPath: string): Promise<EvaluatedGrammar> {
-	return withDslGlobals(() => importAndExtractGrammar(() => import(entryPath)));
-}
-
-export async function evaluateUnboundDsl(entryPath: string): Promise<EvaluatedGrammar> {
-	return withDslGlobals(() => importAndExtractGrammar(() => importUnbound(entryPath)));
+export function generatedLayerDiagnostics(entryPath: string): Promise<readonly GrammarDiagnostic[]> {
+	return withDslGlobals(async () => {
+		const record = layerRecordOf(await importedGrammar(entryPath));
+		return record?.generated === true ? record.fixpoint().diagnostics : [];
+	});
 }
 
 export async function withDslGlobals<T>(run: () => Promise<T>): Promise<T> {
@@ -979,32 +530,37 @@ function saveAndInjectDslGlobals(g: Record<string, unknown>): Record<string, unk
 	return savedGlobals;
 }
 
-async function importUnbound(entryPath: string): Promise<unknown> {
-	const prior = process.env[UNBOUND_ENV];
-	process.env[UNBOUND_ENV] = '1';
-	try {
-		return await import(`${pathToFileURL(entryPath).href}?unbound`);
-	} finally {
-		if (prior === undefined) delete process.env[UNBOUND_ENV];
-		else process.env[UNBOUND_ENV] = prior;
-	}
-}
-
-async function importAndExtractGrammar(load: () => Promise<unknown>): Promise<EvaluatedGrammar> {
-	const mod = (await load()) as {
+async function importedGrammar(entryPath: string): Promise<unknown> {
+	const queryAt = entryPath.indexOf('?');
+	const file = queryAt < 0 ? entryPath : entryPath.slice(0, queryAt);
+	const url = pathToFileURL(file);
+	url.search = queryAt < 0 ? '' : entryPath.slice(queryAt);
+	url.searchParams.set('content', sha256File(file));
+	const mod = (await import(url.href)) as {
 		default?: unknown;
 		grammar?: unknown;
 	};
-	const result = (mod.default ?? mod) as { grammar?: unknown };
-	const grammarObj = (result.grammar ?? result) as EvaluatedGrammar;
-	const deadMints = getDeadEnrichMints(grammarObj);
-	const derivationRecords = getDerivationRecords(grammarObj);
-	const textTokens = getTextTokens(grammarObj);
+	return mod.default ?? mod;
+}
+
+async function importAndExtractGrammar(entryPath: string): Promise<ProjectedGrammar<EvaluatedGrammar>> {
+	return evaluatedGrammarOf(await importedGrammar(entryPath));
+}
+
+export function evaluatedGrammarOf(result: unknown): ProjectedGrammar<EvaluatedGrammar> {
+	const grammarObj = ((result as { grammar?: unknown }).grammar ?? result) as EvaluatedGrammar;
+	const record = layerRecordOf(result);
+	if (record === undefined) return { ...grammarObj };
+	const { deadMints, derivationRecords, textTokens, diagnostics } = record;
 	return {
-		...grammarObj,
+		...withRecords(grammarObj, record.records, record.synthesized),
+		automaticVariants: record.automaticVariants,
+		...(record.stageBases === undefined ? {} : { stages: evaluatedStages(record.stageBases) }),
+		...record.projections,
 		...(deadMints.size === 0 ? {} : { orphanedSyntheticGroups: [...deadMints] }),
-		...(derivationRecords === undefined ? {} : { derivationRecords }),
-		...(textTokens.length === 0 ? {} : { textTokens })
+		derivationRecords,
+		...(textTokens.length === 0 ? {} : { textTokens }),
+		...(diagnostics.length === 0 ? {} : { layerDiagnostics: diagnostics })
 	};
 }
 

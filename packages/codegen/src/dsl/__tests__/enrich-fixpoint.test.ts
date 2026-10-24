@@ -138,6 +138,39 @@ describe('enrich is a fixpoint of its own output', () => {
 		expect(again(grammarWith(rules))).toEqual({ names: [], minted: [] });
 	});
 
+	it('keeps a bare separated-list item unfielded in the first pass, and mints nothing on a second', () => {
+		const generic = seq(
+			S('_Generic'),
+			S('('),
+			sym('expression'),
+			S(','),
+			seq(seq(sym('type_descriptor'), S(':'), sym('expression')), repeat(seq(S(','), seq(sym('type_descriptor'), S(':'), sym('expression'))))),
+			S(')')
+		);
+		const grammar = grammarWith({ generic_expression: generic, expression: P('[a-z]+'), type_descriptor: P('[a-z]+') });
+		const first = rulesOf(enrich(structuredClone(grammar) as never, {}));
+		expect((first.generic_expression as { members: unknown[] }).members[2]).toMatchObject({ type: 'SYMBOL', name: 'expression' });
+		expect(again(grammar)).toEqual({ names: [], minted: [] });
+	});
+
+	it('mints no arm for keyword repeats in a choice arm, and mints nothing on a second', () => {
+		const kw = choice(S('signed'), S('unsigned'), S('long'), S('short'));
+		const type = optional(choice(sym('type_identifier'), sym('primitive_type')));
+		const sized = choice(
+			seq(repeat(kw), field('type', type), repeat1(kw)),
+			seq(repeat1(kw), repeat(sym('type_qualifier')), field('type', type), repeat(kw))
+		);
+		const grammar = grammarWith({
+			sized_type_specifier: sized,
+			type_identifier: P('[A-Za-z_]+'),
+			primitive_type: P('int|char'),
+			type_qualifier: P('const')
+		});
+		const first = rulesOf(enrich(structuredClone(grammar) as never, {}));
+		expect(Object.keys(first)).not.toContain('sized_type_specifier_arm');
+		expect(again(grammar)).toEqual({ names: [], minted: [] });
+	});
+
 	it('carries the automatic-label provenance through a second pass', () => {
 		const grammar = grammarWith({ source: choice(sym('word'), sym('num')), word: P('[a-z]+'), num: P('[0-9]+') });
 		const first = enrich(structuredClone(grammar) as never, {});

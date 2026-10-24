@@ -892,6 +892,7 @@ type WidenValue<
 			| WidenLeafMembers<T, Scalars, Strings>
 			| WidenKindId<BareKindId<T>, NsMap>
 			| WidenScalarKindId<BareKindId<T>, Scalars>
+			| WidenStringKindId<BareKindId<T>, Strings>
 			| WidenBranches<BranchMembers<T>, Scalars, Strings, Depth, NsMap, Visited>
 			| OtherMembers<T>;
 
@@ -1002,6 +1003,7 @@ type WidenKindId<I, NsMap> = I extends keyof NsMap ? (NsMap[I] extends { readonl
  *  its scalar through `WidenLeafMembers`; the coercer resolves the scalar to
  *  the kind id the slot stores. */
 type WidenScalarKindId<I, Scalars> = I extends keyof Scalars ? Scalars[I] : never;
+type WidenStringKindId<I, Strings> = I extends keyof Strings ? Strings[I] : never;
 
 /** Widen a child slot type for the loose-config surface (applies WidenValue to arrays and single values). */
 type WidenChildSlot<

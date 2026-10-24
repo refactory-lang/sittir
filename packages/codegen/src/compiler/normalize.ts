@@ -350,7 +350,8 @@ export function normalizeGrammar(linked: LinkedGrammar, ctx?: NormalizeCtx): Sim
 		refineForms: linked.refineForms,
 		parentAliasedKinds: linked.parentAliasedKinds,
 		visibleAliasTargets: linked.visibleAliasTargets,
-		variantChildren: linked.variantChildren
+		variantChildren: linked.variantChildren,
+		generatedIdTables: linked.generatedIdTables
 	};
 }
 

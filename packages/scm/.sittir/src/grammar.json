@@ -805,6 +805,9 @@
             }
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "named_node_expression_arm": {
@@ -840,6 +843,9 @@
             }
           }
         ]
+      },
+      "annotations": {
+        "hoisted": true
       }
     },
     "grouping_group": {

@@ -16,9 +16,9 @@ export interface PortableOutputs {
 	readonly surface: string;
 }
 
-export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): PortableOutputs {
+export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): PortableOutputs {
 	const routes = resolveRoutes(input);
-	const typeOf = (kind: string) => (kindEntries === undefined ? undefined : findKindEntry(kindEntries, kind)?.id);
+	const typeOf = (kind: string) => findKindEntry(kindEntries, kind)?.id;
 	const readTest = (entry: ReadEntry) => readTestOf(entry, input.model, slotSubjectOf(nodeMap), presenceKeywordOf(nodeMap), typeOf);
 	const kindIdOf = (kind: string) => kindDiscriminantExpr(kind, nodeMap, kindEntries);
 	const typesOf = (kind: string): readonly number[] => [...new Set(membershipKindsOf([kind], nodeMap).flatMap((member) => typeOf(member) ?? []))];

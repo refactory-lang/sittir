@@ -1,7 +1,7 @@
 use sittir_core::read::{read_at, Depth, ReadCtx, ReadError, ReadRoot};
 use sittir_core::SlotValue;
 use sittir_rust::render::kind_ids;
-use sittir_rust::render::node::{FunctionItemNode, ParametersNode, SourceFileNode, StatementNode};
+use sittir_rust::render::node::{ArgumentsNode, FunctionItemNode, ParametersElementsNodeSlot, ParametersNode, SourceFileNode, StatementNode};
 use sittir_rust::render::{AnyNode, RenderRoot};
 
 fn parse(source: &str) -> tree_sitter::Tree {
@@ -74,13 +74,27 @@ fn every_read_node_names_its_own_node() {
 
 #[test]
 fn a_list_owner_read_at_one_level_brings_its_list() {
+    let source = "fn f() { g(a, b); }";
+    let tree = parse(source);
+    let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
+    let index = first_of(&tree, kind_ids::ARGUMENTS);
+    let arguments: ArgumentsNode = read_at::<_>(&mut tree.walk(), &mut ctx, index, Depth::ONE).unwrap();
+    let list = arguments.elements.unwrap();
+    let list = list.node().expect("min_depth reads the list");
+    assert_eq!(list.item.len(), 2);
+}
+
+#[test]
+fn a_parameter_branch_reads_its_ordinary_list_variant() {
     let source = "fn f(a: u8, b: u8) {}";
     let tree = parse(source);
     let mut ctx = ReadCtx::new(source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
     let index = first_of(&tree, kind_ids::PARAMETERS);
-    let parameters: ParametersNode = read_at::<_>(&mut tree.walk(), &mut ctx, index, Depth::ONE).unwrap();
+    let parameters: ParametersNode = read_at::<_>(&mut tree.walk(), &mut ctx, index, Depth::All).unwrap();
     let list = parameters.elements.unwrap();
-    let list = list.node().expect("min_depth reads the list");
+    let ParametersElementsNodeSlot::ParametersElements(list) = list.node().expect("the whole read brings the list").as_ref() else {
+        panic!("expected the ordinary parameter list");
+    };
     assert_eq!(list.item.len(), 2);
 }
 

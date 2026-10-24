@@ -1,3 +1,4 @@
+import type { GeneratedKindEntry } from '../../dsl/symbol-table.ts';
 import { CHOICE, PATTERN, STRING, SYMBOL } from '../../types/rule-types.ts'; // @rule-type-consts
 import { describe, expect, it } from 'vitest';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
@@ -11,7 +12,7 @@ import {
 } from '../../compiler/model/node-map.ts';
 import type { RenderRule, SimplifiedRule } from '../../types/rule.ts';
 import { flatten } from '../../compiler/flatten.ts';
-import { makeNodeMapWith } from '../../__tests__/helpers/node-map-fixtures.ts';
+import {kindIdTablesOf, makeNodeMapWith, withIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import type { KindEnumEntry } from '../kind-discriminant.ts';
 
 /**
@@ -45,27 +46,28 @@ const KIND_ENTRIES: KindEnumEntry[] = [
 	{ id: 4, lexicalRank: 4, kind: 'identifier', member: 'Identifier' },
 	{ id: 5, lexicalRank: 5, kind: 'comma', member: 'Comma', symbolName: ',', literalText: ',', anon: true }
 ];
+const ID_TABLES = kindIdTablesOf(KIND_ENTRIES);
 
-function makeNodeMap() {
+function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 	const contentRule = flatten({ type: SYMBOL, name: 'identifier' });
 	const nodes = new Map<string, AssembledNode>();
 	nodes.set(
 		'_struct_pattern_elements',
-		new AssembledList('_struct_pattern_elements', LIST_RULE, undefined, {
+		new AssembledList('_struct_pattern_elements', LIST_RULE, { kindEntries }, {
 			separatorRule: undefined,
 			simplifiedRule: ELEMENT_SIMPLIFIED_RULE,
 			renderRule: ELEMENT_RENDER_RULE,
 			kindEntries: KIND_ENTRIES
 		})
 	);
-	nodes.set('field_pattern', new AssembledBranch('field_pattern', contentRule, contentRule));
-	nodes.set('remaining_field_pattern', new AssembledPunctuation('remaining_field_pattern', { type: STRING, value: '..' }));
-	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }));
+	nodes.set('field_pattern', new AssembledBranch('field_pattern', contentRule, contentRule, { kindEntries }));
+	nodes.set('remaining_field_pattern', new AssembledPunctuation('remaining_field_pattern', { type: STRING, value: '..' }, { kindEntries }));
+	nodes.set('identifier', new AssembledPattern('identifier', { type: PATTERN, value: '[a-z]+' }, { kindEntries }));
 	return makeNodeMapWith(nodes);
 }
 
 describe('from() auto-wrapped array elements', () => {
-	const emitted = emitFrom({ grammar: 'synth', nodeMap: makeNodeMap(), kindEntries: KIND_ENTRIES });
+	const emitted = emitFrom({ grammar: 'synth', nodeMap: withIdTables((kindEntries) => makeNodeMap(kindEntries), ID_TABLES).nodeMap, generatedIdTables: ID_TABLES });
 
 	it('resolves a bare element against the element kind, never the container kind', () => {
 		expect(emitted).toContain('"_struct_pattern_elements": "field_pattern",');

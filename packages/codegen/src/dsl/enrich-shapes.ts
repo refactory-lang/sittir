@@ -1,4 +1,7 @@
-interface EnrichShapeInfo {
+import type { Rule } from '../types/rule.ts';
+import type { GrammarDiagnostic } from '../types/diagnostics.ts';
+
+export interface EnrichShapeInfo {
 	readonly pass: string;
 	readonly shape: string;
 }
@@ -36,3 +39,64 @@ export const ENRICH_SHAPES = {
 	'inline-text-token': { pass: 'text-token mint', shape: 'an inline pattern or token with no rule of its own' },
 	'missing-layout-supertype': { pass: 'whitespace', shape: 'a grammar with no layout supertype' }
 } as const satisfies Record<string, EnrichShapeInfo>;
+
+export type EnrichShapeCode = keyof typeof ENRICH_SHAPES;
+
+export interface EnrichShape {
+	readonly code: EnrichShapeCode;
+	readonly ruleName: string;
+}
+
+export const ENRICH_SHAPES_KEY = '__enrichedShapes__' as const;
+
+export function isEnrichShapeCode(code: string): code is EnrichShapeCode {
+	return Object.hasOwn(ENRICH_SHAPES, code);
+}
+
+function sameRule(before: Rule, after: Rule): boolean {
+	return before === after || JSON.stringify(before) === JSON.stringify(after);
+}
+
+export class EnrichShapeLog {
+	private readonly keys = new Set<string>();
+	private readonly found: EnrichShape[] = [];
+
+	record(code: EnrichShapeCode, ruleName: string): void {
+		const key = `${code}\u0000${ruleName}`;
+		if (this.keys.has(key)) return;
+		this.keys.add(key);
+		this.found.push({ code, ruleName });
+	}
+
+	noted(code: EnrichShapeCode, ruleName: string, before: Rule, after: Rule): Rule {
+		if (!sameRule(before, after)) this.record(code, ruleName);
+		return after;
+	}
+
+	get shapes(): readonly EnrichShape[] {
+		return this.found;
+	}
+}
+
+export function enrichShapesOf(grammar: unknown): readonly EnrichShape[] {
+	if (!grammar || typeof grammar !== 'object') return [];
+	const shapes = (grammar as Record<string, unknown>)[ENRICH_SHAPES_KEY];
+	return Array.isArray(shapes) ? (shapes as readonly EnrichShape[]) : [];
+}
+
+export function enrichShapeDiagnostics(grammar: string, shapes: readonly EnrichShape[]): GrammarDiagnostic[] {
+	return shapes.map(({ code, ruleName }) => {
+		const { pass, shape } = ENRICH_SHAPES[code];
+		return {
+			scope: 'grammar' as const,
+			code,
+			severity: 'error' as const,
+			grammar,
+			ownerKind: ruleName,
+			message: `kind '${ruleName}' holds ${shape}; the ${pass} pass of enrich rewrites it, and this one reached the model as written.`,
+			proposal: `Give the rule to enrich, or write the form enrich produces.`,
+			canProceed: false,
+			details: { pass }
+		};
+	});
+}

@@ -369,6 +369,12 @@ export const rangePatternWithLeft: Hoisted<typeof O.rangePatternWithLeft> = hois
 export const structItemBrace: Hoisted<typeof O.structItemBrace> = hoistAs<typeof O.structItemBrace>(O.structItemBrace);
 export const structItemTuple: Hoisted<typeof O.structItemTuple> = hoistAs<typeof O.structItemTuple>(O.structItemTuple);
 export const structItemUnit: Hoisted<typeof O.structItemUnit> = hoistAs<typeof O.structItemUnit>(O.structItemUnit);
+export const receiverParameterDeclaration: Hoisted<typeof O.receiverParameterDeclaration> = hoistAs<
+	typeof O.receiverParameterDeclaration
+>(O.receiverParameterDeclaration);
+export const parametersElementsReceiver: Hoisted<typeof O.parametersElementsReceiver> = hoistAs<
+	typeof O.parametersElementsReceiver
+>(O.parametersElementsReceiver);
 export const macroDefinition: Hoisted<typeof O.macroDefinition> = hoistAs<typeof O.macroDefinition>(O.macroDefinition);
 export const tokenTreePattern: Hoisted<typeof O.tokenTreePattern> = hoistAs<typeof O.tokenTreePattern>(
 	O.tokenTreePattern

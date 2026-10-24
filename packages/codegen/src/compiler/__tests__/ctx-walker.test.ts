@@ -1,3 +1,4 @@
+import { kindIdTablesOf } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { describe, it, expect } from 'vitest';
 import { NormalizeCtx } from '../normalize.ts';
 import { DiagnosticSink } from '../../types/diagnostics.ts';
@@ -15,6 +16,7 @@ function makeLinked(rules: Record<string, Rule<'link'>>, overrides?: Partial<Lin
 		externalRoles: new Map<string, ExternalRole>(),
 		word: null,
 		references: [],
+		generatedIdTables: kindIdTablesOf([]),
 		...overrides
 	};
 }

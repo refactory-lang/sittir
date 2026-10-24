@@ -1,6 +1,5 @@
 // @ts-nocheck — evaluated with the DSL globals evaluate() installs
-import { wire } from '../../dsl/wire/wire.ts';
-import { field, rule, variant } from '../../dsl/index.ts';
+import { enrich, field, rule, variant, wire } from '../../dsl/dsl-authoring.ts';
 
 const base = grammar({
 	name: 'patch_sites',
@@ -14,15 +13,11 @@ const base = grammar({
 });
 
 export default grammar(
-	base,
-	wire(
-		{
-			name: 'patch_sites',
-			patches: {
-				host: { 0: field('first'), 1: rule('helper', ($) => repeat1($.b)) },
-				pick: { '1/0': variant('left'), '1/1': variant('right') }
-			}
-		},
-		base
-	)
+	enrich(base),
+	wire({
+		edits: {
+			host: { 0: field('first'), 1: rule('helper', ($) => repeat1($.b)) },
+			pick: { '1/0': variant('left'), '1/1': variant('right') }
+		}
+	})
 );

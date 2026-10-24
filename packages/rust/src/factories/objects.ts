@@ -795,17 +795,17 @@ export function buildAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildAttributeItem(value: Admit<T.Attribute>): T.AttributeItem.Bound {
-	const _attribute = value;
+	const _content = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'attribute_item', { attribute: _attribute });
+	if (handle !== undefined) admitChildren(handle, 'attribute_item', { content: _content });
 	const node = {
 		$type: TSKindId.AttributeItem as const,
 		$named: true as const,
-		_attribute,
+		_content,
 		$with: {
-			attribute: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildAttributeItem(value))
+			content: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildAttributeItem(value))
 		},
-		attribute: () => hydrateStoredSlot(node, '_attribute'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -843,17 +843,17 @@ export function buildInnerAttributeItem(...args: unknown[]) {
 			);
 }
 function _buildInnerAttributeItem(value: Admit<T.Attribute>): T.InnerAttributeItem.Bound {
-	const _attribute = value;
+	const _content = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { attribute: _attribute });
+	if (handle !== undefined) admitChildren(handle, 'inner_attribute_item', { content: _content });
 	const node = {
 		$type: TSKindId.InnerAttributeItem as const,
 		$named: true as const,
-		_attribute,
+		_content,
 		$with: {
-			attribute: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildInnerAttributeItem(value))
+			content: (value: Admit<T.Attribute>) => rebuilt(node, handle, () => _buildInnerAttributeItem(value))
 		},
-		attribute: () => hydrateStoredSlot(node, '_attribute'),
+		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -1622,7 +1622,7 @@ export function buildStaticItem<
 export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound {
 	currentHandle()?.admit(TSKindId.StaticItem, [config]);
 	const _visibility_modifier = config.visibilityModifier;
-	const _ref = strictBooleanStorage(config.ref);
+	const _by_reference = strictBooleanStorage(config.byReference);
 	const _mutable = strictBooleanStorage(config.mutable);
 	const _name = config.name;
 	const _type = admitAliasContent<NonNullable<T.StaticItem['_type']>>(
@@ -1634,7 +1634,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 	if (handle !== undefined)
 		admitChildren(handle, 'static_item', {
 			visibilityModifier: _visibility_modifier,
-			ref: _ref,
+			byReference: _by_reference,
 			mutable: _mutable,
 			name: _name,
 			type: _type,
@@ -1644,7 +1644,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		$type: TSKindId.StaticItem as const,
 		$named: true as const,
 		_visibility_modifier,
-		_ref,
+		_by_reference,
 		_mutable,
 		_name,
 		_type,
@@ -1652,8 +1652,8 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, visibilityModifier: value })),
-			ref: (value?: Admit<NonNullable<T.StaticItem.Config>['ref']>) =>
-				rebuilt(node, handle, () => buildStaticItem({ ...config, ref: value })),
+			byReference: (value?: Admit<NonNullable<T.StaticItem.Config>['byReference']>) =>
+				rebuilt(node, handle, () => buildStaticItem({ ...config, byReference: value })),
 			mutable: (value?: Admit<NonNullable<T.StaticItem.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildStaticItem({ ...config, mutable: value })),
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildStaticItem({ ...config, name: value })),
@@ -1663,7 +1663,7 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 				rebuilt(node, handle, () => buildStaticItem({ ...config, value: value }))
 		},
 		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
-		ref: () => _ref,
+		byReference: () => _by_reference,
 		mutable: () => _mutable,
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
@@ -1685,7 +1685,7 @@ export function buildTypeItem<
 	NameSlot extends T.TypeItem.Config['name'],
 	TypeParametersSlot extends T.TypeItem.Config['typeParameters'],
 	WhereClauseSlot extends T.TypeItem.Config['whereClause'],
-	TypeSlot extends T.TypeItem.Config['type'],
+	ValueSlot extends T.TypeItem.Config['value'],
 	TrailingWhereClauseSlot extends T.TypeItem.Config['trailingWhereClause']
 >(
 	config: RefusingConfig<
@@ -1695,7 +1695,7 @@ export function buildTypeItem<
 			name: NameSlot;
 			typeParameters: TypeParametersSlot;
 			whereClause: WhereClauseSlot;
-			type: TypeSlot;
+			value: ValueSlot;
 			trailingWhereClause: TrailingWhereClauseSlot;
 		}
 	>
@@ -1708,8 +1708,8 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 	]);
 	const _type_parameters = config.typeParameters;
 	const _where_clause = config.whereClause;
-	const _type = admitAliasContent<NonNullable<T.TypeItem['_type']>>(
-		kindIdStorage<NonNullable<T.TypeItem['_type']>>(config.type),
+	const _value = admitAliasContent<NonNullable<T.TypeItem['_value']>>(
+		kindIdStorage<NonNullable<T.TypeItem['_value']>>(config.value),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _trailing_where_clause = config.trailingWhereClause;
@@ -1720,7 +1720,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 			name: _name,
 			typeParameters: _type_parameters,
 			whereClause: _where_clause,
-			type: _type,
+			value: _value,
 			trailingWhereClause: _trailing_where_clause
 		});
 	const node = {
@@ -1730,7 +1730,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		_name,
 		_type_parameters,
 		_where_clause,
-		_type,
+		_value,
 		_trailing_where_clause,
 		$with: {
 			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
@@ -1758,8 +1758,8 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 						(value?: Admit<T.WhereClause>) => buildTypeItem({ ...config, whereClause: value })
 					)
 				),
-			type: (value: Admit<NonNullable<T.TypeItem.Config>['type']>) =>
-				rebuilt(node, handle, () => buildTypeItem({ ...config, type: value })),
+			value: (value: Admit<NonNullable<T.TypeItem.Config>['value']>) =>
+				rebuilt(node, handle, () => buildTypeItem({ ...config, value: value })),
 			trailingWhereClause: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
@@ -1773,7 +1773,7 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 		name: () => hydrateStoredSlot(node, '_name'),
 		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
 		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
-		type: () => hydrateStoredSlot(node, '_type'),
+		value: () => hydrateStoredSlot(node, '_value'),
 		trailingWhereClause: () => hydrateStoredSlot(node, '_trailing_where_clause'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -1867,19 +1867,8 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 						(value?: Admit<T.TypeParameters>) => buildFunctionItem({ ...config, typeParameters: value })
 					)
 				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value: Admit<T.Parameters>) => buildFunctionItem({ ...config, parameters: value })
-					)
-				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildFunctionItem({ ...config, parameters: value })),
 			returnType: (value?: Admit<NonNullable<T.FunctionItem.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionItem({ ...config, returnType: value })),
 			whereClause: (...args: unknown[]) =>
@@ -1987,19 +1976,8 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 						(value?: Admit<T.TypeParameters>) => buildFunctionSignatureItem({ ...config, typeParameters: value })
 					)
 				),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value: Admit<T.Parameters>) => buildFunctionSignatureItem({ ...config, parameters: value })
-					)
-				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, parameters: value })),
 			returnType: (value?: Admit<NonNullable<T.FunctionSignatureItem.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionSignatureItem({ ...config, returnType: value })),
 			whereClause: (...args: unknown[]) =>
@@ -2576,9 +2554,9 @@ function _buildTypeParameters(value: Admit<T.TypeParametersElements>): T.TypePar
 export function buildConstParameter<
 	NameSlot extends T.ConstParameter.Config['name'],
 	TypeSlot extends T.ConstParameter.Config['type'],
-	ValueSlot extends T.ConstParameter.Config['value']
+	DefaultSlot extends T.ConstParameter.Config['default']
 >(
-	config: RefusingConfig<T.ConstParameter.Config, { name: NameSlot; type: TypeSlot; value: ValueSlot }>
+	config: RefusingConfig<T.ConstParameter.Config, { name: NameSlot; type: TypeSlot; default: DefaultSlot }>
 ): T.ConstParameter.Bound;
 export function buildConstParameter(config: T.ConstParameter.Config): T.ConstParameter.Bound {
 	currentHandle()?.admit(TSKindId.ConstParameter, [config]);
@@ -2587,26 +2565,26 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 		kindIdStorage<NonNullable<T.ConstParameter['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
-	const _value = kindIdStorage<NonNullable<T.ConstParameter['_value']>>(config.value);
+	const _default = kindIdStorage<NonNullable<T.ConstParameter['_default']>>(config.default);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'const_parameter', { name: _name, type: _type, value: _value });
+	if (handle !== undefined) admitChildren(handle, 'const_parameter', { name: _name, type: _type, default: _default });
 	const node = {
 		$type: TSKindId.ConstParameter as const,
 		$named: true as const,
 		_name,
 		_type,
-		_value,
+		_default,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildConstParameter({ ...config, name: value })),
 			type: (value: Admit<NonNullable<T.ConstParameter.Config>['type']>) =>
 				rebuilt(node, handle, () => buildConstParameter({ ...config, type: value })),
-			value: (value?: Admit<NonNullable<T.ConstParameter.Config>['value']>) =>
-				rebuilt(node, handle, () => buildConstParameter({ ...config, value: value }))
+			default: (value?: Admit<NonNullable<T.ConstParameter.Config>['default']>) =>
+				rebuilt(node, handle, () => buildConstParameter({ ...config, default: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		default: () => hydrateStoredSlot(node, '_default'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2622,9 +2600,9 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 export function buildTypeParameter<
 	NameSlot extends T.TypeParameter.Config['name'],
 	BoundsSlot extends T.TypeParameter.Config['bounds'],
-	DefaultTypeSlot extends T.TypeParameter.Config['defaultType']
+	DefaultSlot extends T.TypeParameter.Config['default']
 >(
-	config: RefusingConfig<T.TypeParameter.Config, { name: NameSlot; bounds: BoundsSlot; defaultType: DefaultTypeSlot }>
+	config: RefusingConfig<T.TypeParameter.Config, { name: NameSlot; bounds: BoundsSlot; default: DefaultSlot }>
 ): T.TypeParameter.Bound;
 export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParameter.Bound {
 	currentHandle()?.admit(TSKindId.TypeParameter, [config]);
@@ -2632,30 +2610,30 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const _bounds = config.bounds;
-	const _default_type = admitAliasContent<NonNullable<T.TypeParameter['_default_type']>>(
-		kindIdStorage<NonNullable<T.TypeParameter['_default_type']>>(config.defaultType),
+	const _default = admitAliasContent<NonNullable<T.TypeParameter['_default']>>(
+		kindIdStorage<NonNullable<T.TypeParameter['_default']>>(config.default),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'type_parameter', { name: _name, bounds: _bounds, defaultType: _default_type });
+		admitChildren(handle, 'type_parameter', { name: _name, bounds: _bounds, default: _default });
 	const node = {
 		$type: TSKindId.TypeParameter as const,
 		$named: true as const,
 		_name,
 		_bounds,
-		_default_type,
+		_default,
 		$with: {
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, name: value })),
 			bounds: (value?: Admit<T.TraitBounds>) =>
 				rebuilt(node, handle, () => buildTypeParameter({ ...config, bounds: value })),
-			defaultType: (value?: Admit<NonNullable<T.TypeParameter.Config>['defaultType']>) =>
-				rebuilt(node, handle, () => buildTypeParameter({ ...config, defaultType: value }))
+			default: (value?: Admit<NonNullable<T.TypeParameter.Config>['default']>) =>
+				rebuilt(node, handle, () => buildTypeParameter({ ...config, default: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
 		bounds: () => hydrateStoredSlot(node, '_bounds'),
-		defaultType: () => hydrateStoredSlot(node, '_default_type'),
+		default: () => hydrateStoredSlot(node, '_default'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2706,20 +2684,20 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 }
 
 export function buildLetDeclaration<
-	PatternSlot extends T.LetDeclaration.Config['pattern'],
+	NameSlot extends T.LetDeclaration.Config['name'],
 	TypeSlot extends T.LetDeclaration.Config['type'],
 	ValueSlot extends T.LetDeclaration.Config['value'],
 	AlternativeSlot extends T.LetDeclaration.Config['alternative']
 >(
 	config: RefusingConfig<
 		T.LetDeclaration.Config,
-		{ pattern: PatternSlot; type: TypeSlot; value: ValueSlot; alternative: AlternativeSlot }
+		{ name: NameSlot; type: TypeSlot; value: ValueSlot; alternative: AlternativeSlot }
 	>
 ): T.LetDeclaration.Bound;
 export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDeclaration.Bound {
 	currentHandle()?.admit(TSKindId.LetDeclaration, [config]);
 	const _mutable = strictBooleanStorage(config.mutable);
-	const _pattern = kindIdStorage<NonNullable<T.LetDeclaration['_pattern']>>(config.pattern);
+	const _name = kindIdStorage<NonNullable<T.LetDeclaration['_name']>>(config.name);
 	const _type = admitAliasContent<NonNullable<T.LetDeclaration['_type']>>(
 		kindIdStorage<NonNullable<T.LetDeclaration['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
@@ -2730,7 +2708,7 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 	if (handle !== undefined)
 		admitChildren(handle, 'let_declaration', {
 			mutable: _mutable,
-			pattern: _pattern,
+			name: _name,
 			type: _type,
 			value: _value,
 			alternative: _alternative
@@ -2739,15 +2717,15 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 		$type: TSKindId.LetDeclaration as const,
 		$named: true as const,
 		_mutable,
-		_pattern,
+		_name,
 		_type,
 		_value,
 		_alternative,
 		$with: {
 			mutable: (value?: Admit<NonNullable<T.LetDeclaration.Config>['mutable']>) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, mutable: value })),
-			pattern: (value: Admit<NonNullable<T.LetDeclaration.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildLetDeclaration({ ...config, pattern: value })),
+			name: (value: Admit<NonNullable<T.LetDeclaration.Config>['name']>) =>
+				rebuilt(node, handle, () => buildLetDeclaration({ ...config, name: value })),
 			type: (value?: Admit<NonNullable<T.LetDeclaration.Config>['type']>) =>
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, type: value })),
 			value: (value?: Admit<NonNullable<T.LetDeclaration.Config>['value']>) =>
@@ -2756,7 +2734,7 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 				rebuilt(node, handle, () => buildLetDeclaration({ ...config, alternative: value }))
 		},
 		mutable: () => _mutable,
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		alternative: () => hydrateStoredSlot(node, '_alternative'),
@@ -2960,31 +2938,31 @@ function _buildUseList(value?: Admit<T.UseClauses>): T.UseList.Bound {
 }
 
 export function buildUseAsClause<
-	PathSlot extends T.UseAsClause.Config['path'],
+	NameSlot extends T.UseAsClause.Config['name'],
 	AliasSlot extends T.UseAsClause.Config['alias']
->(config: RefusingConfig<T.UseAsClause.Config, { path: PathSlot; alias: AliasSlot }>): T.UseAsClause.Bound;
+>(config: RefusingConfig<T.UseAsClause.Config, { name: NameSlot; alias: AliasSlot }>): T.UseAsClause.Bound;
 export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bound {
 	currentHandle()?.admit(TSKindId.UseAsClause, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.UseAsClause['_path']>>(config.path),
-		'UseAsClause.path',
+	const _name = rejectKeywordText(
+		kindIdStorage<NonNullable<T.UseAsClause['_name']>>(config.name),
+		'UseAsClause.name',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
 	const _alias = config.alias;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { path: _path, alias: _alias });
+	if (handle !== undefined) admitChildren(handle, 'use_as_clause', { name: _name, alias: _alias });
 	const node = {
 		$type: TSKindId.UseAsClause as const,
 		$named: true as const,
-		_path,
+		_name,
 		_alias,
 		$with: {
-			path: (value: Admit<NonNullable<T.UseAsClause.Config>['path']>) =>
-				rebuilt(node, handle, () => buildUseAsClause({ ...config, path: value })),
+			name: (value: Admit<NonNullable<T.UseAsClause.Config>['name']>) =>
+				rebuilt(node, handle, () => buildUseAsClause({ ...config, name: value })),
 			alias: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildUseAsClause({ ...config, alias: value }))
 		},
-		path: () => hydrateStoredSlot(node, '_path'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		alias: () => hydrateStoredSlot(node, '_alias'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3064,57 +3042,13 @@ function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bou
 }
 
 export function buildParameters(): T.EmptyParameters;
-export function buildParameters<V extends Admit<T.ParametersElements>>(
+export function buildParameters<V extends Admit<T.ParametersElements | T.ParametersElementsReceiver>>(
 	...value: [value?: V] & RefuseUndeclared<V>
-): ReturnType<typeof _buildParameters>;
-export function buildParameters<
-	A extends NonEmptyArray<
-		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
-		>
-	>
->(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildParameters>;
-export function buildParameters<
-	A extends NonEmptyArray<
-		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
-		>
-	>
->(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildParameters>;
-export function buildParameters(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildParameters(args[0] as Parameters<typeof _buildParameters>[0]);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
-	return prebuilt
-		? _buildParameters(args[0] as Parameters<typeof _buildParameters>[0])
-		: _buildParameters(
-				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildParameters>[0]
-			);
-}
-function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bound {
-	const _elements = hydrateStored(value);
-	const listView = ownerView(_elements, '_item');
-	if (listView.length === undefined) refuseReadStub('_elements');
+): T.Parameters.Bound;
+export function buildParameters(
+	value?: Admit<T.ParametersElements | T.ParametersElementsReceiver>
+): T.Parameters.Bound {
+	const _elements = value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
 	const node = {
@@ -3122,34 +3056,10 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		$named: true as const,
 		_elements,
 		$with: {
-			elements: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.ParametersElements as const,
-							optional: true,
-							make: buildParametersElements,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value?: Admit<T.ParametersElements>) => _buildParameters(value)
-					)
-				)
+			elements: (value?: Admit<T.ParametersElements | T.ParametersElementsReceiver>) =>
+				rebuilt(node, handle, () => buildParameters(value))
 		},
 		elements: () => hydrateStoredSlot(node, '_elements'),
-		length: listView.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () =>
-			listItems(ownerElements(node.elements(), 'items'), {
-				kind: TSKindId.AttributedParameter,
-				content: 'content',
-				decorations: ['attributeItem']
-			}),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: listOption(listView.list, 'delimiter', undefined),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -3160,7 +3070,6 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 		},
 		$engine: handle && (() => handle.current)
 	};
-	defineListIndices(node, listView.length ?? 0);
 	return stampBuilt(node) as unknown as T.Parameters.Bound;
 }
 
@@ -3612,19 +3521,8 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 				),
 			content: (value: Admit<T.FunctionTypeTraitForm | T.FunctionTypeFnForm>) =>
 				rebuilt(node, handle, () => buildFunctionType({ ...config, content: value })),
-			parameters: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{
-							kind: TSKindId.Parameters as const,
-							optional: false,
-							make: buildParameters,
-							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
-						},
-						(value: Admit<T.Parameters>) => buildFunctionType({ ...config, parameters: value })
-					)
-				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildFunctionType({ ...config, parameters: value })),
 			returnType: (value?: Admit<NonNullable<T.FunctionType.Config>['returnType']>) =>
 				rebuilt(node, handle, () => buildFunctionType({ ...config, returnType: value }))
 		},
@@ -4123,30 +4021,30 @@ export function buildReferenceType<
 export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceType.Bound {
 	currentHandle()?.admit(TSKindId.ReferenceType, [config]);
 	const _lifetime = config.lifetime;
-	const _mutable = strictBooleanStorage(config.mutable);
+	const _exclusive = strictBooleanStorage(config.exclusive);
 	const _type = admitAliasContent<NonNullable<T.ReferenceType['_type']>>(
 		kindIdStorage<NonNullable<T.ReferenceType['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'reference_type', { lifetime: _lifetime, mutable: _mutable, type: _type });
+		admitChildren(handle, 'reference_type', { lifetime: _lifetime, exclusive: _exclusive, type: _type });
 	const node = {
 		$type: TSKindId.ReferenceType as const,
 		$named: true as const,
 		_lifetime,
-		_mutable,
+		_exclusive,
 		_type,
 		$with: {
 			lifetime: (value?: Admit<T.Lifetime>) =>
 				rebuilt(node, handle, () => buildReferenceType({ ...config, lifetime: value })),
-			mutable: (value?: Admit<NonNullable<T.ReferenceType.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildReferenceType({ ...config, mutable: value })),
+			exclusive: (value?: Admit<NonNullable<T.ReferenceType.Config>['exclusive']>) =>
+				rebuilt(node, handle, () => buildReferenceType({ ...config, exclusive: value })),
 			type: (value: Admit<NonNullable<T.ReferenceType.Config>['type']>) =>
 				rebuilt(node, handle, () => buildReferenceType({ ...config, type: value }))
 		},
 		lifetime: () => hydrateStoredSlot(node, '_lifetime'),
-		mutable: () => _mutable,
+		exclusive: () => _exclusive,
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4288,29 +4186,29 @@ export function buildDynamicType(
 export const buildMutableSpecifier: TSKindId.MutableSpecifier = TSKindId.MutableSpecifier;
 
 export function buildMacroInvocation<
-	MacroSlot extends T.MacroInvocation.Config['macro'],
+	FunctionSlot extends T.MacroInvocation.Config['function'],
 	ArgumentsSlot extends T.MacroInvocation.Config['arguments']
 >(
-	config: RefusingConfig<T.MacroInvocation.Config, { macro: MacroSlot; arguments: ArgumentsSlot }>
+	config: RefusingConfig<T.MacroInvocation.Config, { function: FunctionSlot; arguments: ArgumentsSlot }>
 ): T.MacroInvocation.Bound;
 export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroInvocation.Bound {
 	currentHandle()?.admit(TSKindId.MacroInvocation, [config]);
-	const _macro = config.macro;
+	const _function = config.function;
 	const _arguments = config.arguments;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'macro_invocation', { macro: _macro, arguments: _arguments });
+	if (handle !== undefined) admitChildren(handle, 'macro_invocation', { function: _function, arguments: _arguments });
 	const node = {
 		$type: TSKindId.MacroInvocation as const,
 		$named: true as const,
-		_macro,
+		_function,
 		_arguments,
 		$with: {
-			macro: (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
-				rebuilt(node, handle, () => buildMacroInvocation({ ...config, macro: value })),
+			function: (value: Admit<T.ScopedIdentifier | T.Identifier>) =>
+				rebuilt(node, handle, () => buildMacroInvocation({ ...config, function: value })),
 			arguments: (value: Admit<T.DelimTokenTree>) =>
 				rebuilt(node, handle, () => buildMacroInvocation({ ...config, arguments: value }))
 		},
-		macro: () => hydrateStoredSlot(node, '_macro'),
+		function: () => hydrateStoredSlot(node, '_function'),
 		arguments: () => hydrateStoredSlot(node, '_arguments'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4460,28 +4358,28 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 	return stampBuilt(node) as unknown as T.ScopedTypeIdentifier.Bound;
 }
 
-export function buildUnaryExpression<OperandSlot extends T.UnaryExpression.Config['operand']>(
-	config: RefusingConfig<T.UnaryExpression.Config, { operand: OperandSlot }>
+export function buildUnaryExpression<ArgumentSlot extends T.UnaryExpression.Config['argument']>(
+	config: RefusingConfig<T.UnaryExpression.Config, { argument: ArgumentSlot }>
 ): T.UnaryExpression.Bound;
 export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryExpression.Bound {
 	currentHandle()?.admit(TSKindId.UnaryExpression, [config]);
 	const _operator = kindIdStorage<NonNullable<T.UnaryExpression['_operator']>>(config.operator);
-	const _operand = kindIdStorage<NonNullable<T.UnaryExpression['_operand']>>(config.operand);
+	const _argument = kindIdStorage<NonNullable<T.UnaryExpression['_argument']>>(config.argument);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'unary_expression', { operator: _operator, operand: _operand });
+	if (handle !== undefined) admitChildren(handle, 'unary_expression', { operator: _operator, argument: _argument });
 	const node = {
 		$type: TSKindId.UnaryExpression as const,
 		$named: true as const,
 		_operator,
-		_operand,
+		_argument,
 		$with: {
 			operator: (value: Admit<NonNullable<T.UnaryExpression.Config>['operator']>) =>
 				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operator: value })),
-			operand: (value: Admit<NonNullable<T.UnaryExpression.Config>['operand']>) =>
-				rebuilt(node, handle, () => buildUnaryExpression({ ...config, operand: value }))
+			argument: (value: Admit<NonNullable<T.UnaryExpression.Config>['argument']>) =>
+				rebuilt(node, handle, () => buildUnaryExpression({ ...config, argument: value }))
 		},
 		operator: () => _operator,
-		operand: () => hydrateStoredSlot(node, '_operand'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4498,17 +4396,17 @@ export function buildTryExpression<V extends Admit<T.Expression>>(
 	value: V & RefuseUndeclared<V>
 ): T.TryExpression.Bound;
 export function buildTryExpression(value: Admit<T.Expression>): T.TryExpression.Bound {
-	const _value = kindIdStorage<NonNullable<T.TryExpression['_value']>>(value);
+	const _argument = kindIdStorage<NonNullable<T.TryExpression['_argument']>>(value);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'try_expression', { value: _value });
+	if (handle !== undefined) admitChildren(handle, 'try_expression', { argument: _argument });
 	const node = {
 		$type: TSKindId.TryExpression as const,
 		$named: true as const,
-		_value,
+		_argument,
 		$with: {
-			value: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildTryExpression(value))
+			argument: (value: Admit<NonNullable<T.Expression>>) => rebuilt(node, handle, () => buildTryExpression(value))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		argument: () => hydrateStoredSlot(node, '_argument'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4643,32 +4541,32 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 }
 
 export function buildTypeCastExpression<
-	ValueSlot extends T.TypeCastExpression.Config['value'],
+	ExpressionSlot extends T.TypeCastExpression.Config['expression'],
 	TypeSlot extends T.TypeCastExpression.Config['type']
 >(
-	config: RefusingConfig<T.TypeCastExpression.Config, { value: ValueSlot; type: TypeSlot }>
+	config: RefusingConfig<T.TypeCastExpression.Config, { expression: ExpressionSlot; type: TypeSlot }>
 ): T.TypeCastExpression.Bound;
 export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.TypeCastExpression.Bound {
 	currentHandle()?.admit(TSKindId.TypeCastExpression, [config]);
-	const _value = kindIdStorage<NonNullable<T.TypeCastExpression['_value']>>(config.value);
+	const _expression = kindIdStorage<NonNullable<T.TypeCastExpression['_expression']>>(config.expression);
 	const _type = admitAliasContent<NonNullable<T.TypeCastExpression['_type']>>(
 		kindIdStorage<NonNullable<T.TypeCastExpression['_type']>>(config.type),
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'type_cast_expression', { value: _value, type: _type });
+	if (handle !== undefined) admitChildren(handle, 'type_cast_expression', { expression: _expression, type: _type });
 	const node = {
 		$type: TSKindId.TypeCastExpression as const,
 		$named: true as const,
-		_value,
+		_expression,
 		_type,
 		$with: {
-			value: (value: Admit<NonNullable<T.TypeCastExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, value: value })),
+			expression: (value: Admit<NonNullable<T.TypeCastExpression.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, expression: value })),
 			type: (value: Admit<NonNullable<T.TypeCastExpression.Config>['type']>) =>
 				rebuilt(node, handle, () => buildTypeCastExpression({ ...config, type: value }))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		expression: () => hydrateStoredSlot(node, '_expression'),
 		type: () => hydrateStoredSlot(node, '_type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4899,36 +4797,35 @@ export function buildParenthesizedExpression(value: Admit<T.Expression>): T.Pare
 
 export function buildTupleExpression<
 	AttributesSlot extends T.TupleExpression.Config['attributes'],
-	ExpressionsSlot extends T.TupleExpression.Config['expressions']
+	ElementsSlot extends T.TupleExpression.Config['elements']
 >(
-	config: RefusingConfig<T.TupleExpression.Config, { attributes: AttributesSlot; expressions: ExpressionsSlot }>
+	config: RefusingConfig<T.TupleExpression.Config, { attributes: AttributesSlot; elements: ElementsSlot }>
 ): T.TupleExpression.Bound;
 export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleExpression.Bound {
 	currentHandle()?.admit(TSKindId.TupleExpression, [config]);
 	const _attributes = listStorage<NonNullable<T.TupleExpression['_attributes']>>(config.attributes ?? []);
-	const _expressions = config.expressions;
+	const _elements = config.elements;
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'tuple_expression', { attributes: _attributes, expressions: _expressions });
+	if (handle !== undefined) admitChildren(handle, 'tuple_expression', { attributes: _attributes, elements: _elements });
 	const node = {
 		$type: TSKindId.TupleExpression as const,
 		$named: true as const,
 		_attributes,
-		_expressions,
+		_elements,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () => buildTupleExpression({ ...config, attributes: restItems('attributes', values) })),
-			expressions: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Expressions as const, optional: false, make: buildExpressions },
-						(value: Admit<T.Expressions>) => buildTupleExpression({ ...config, expressions: value })
+						(value: Admit<T.Expressions>) => buildTupleExpression({ ...config, elements: value })
 					)
 				)
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
-		expressions: () => hydrateStoredSlot(node, '_expressions'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5071,34 +4968,34 @@ function _buildFieldInitializerList(value?: Admit<T.FieldInitializerListElements
 
 export function buildShorthandFieldInitializer<
 	AttributesSlot extends T.ShorthandFieldInitializer.Config['attributes'],
-	NameSlot extends T.ShorthandFieldInitializer.Config['name']
+	FieldSlot extends T.ShorthandFieldInitializer.Config['field']
 >(
-	config: RefusingConfig<T.ShorthandFieldInitializer.Config, { attributes: AttributesSlot; name: NameSlot }>
+	config: RefusingConfig<T.ShorthandFieldInitializer.Config, { attributes: AttributesSlot; field: FieldSlot }>
 ): T.ShorthandFieldInitializer.Bound;
 export function buildShorthandFieldInitializer(
 	config: T.ShorthandFieldInitializer.Config
 ): T.ShorthandFieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.ShorthandFieldInitializer, [config]);
 	const _attributes = listStorage<NonNullable<T.ShorthandFieldInitializer['_attributes']>>(config.attributes ?? []);
-	const _name = config.name;
+	const _field = config.field;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, name: _name });
+		admitChildren(handle, 'shorthand_field_initializer', { attributes: _attributes, field: _field });
 	const node = {
 		$type: TSKindId.ShorthandFieldInitializer as const,
 		$named: true as const,
 		_attributes,
-		_name,
+		_field,
 		$with: {
 			attributes: (...values: Admit<T.AttributeItem[]>) =>
 				rebuilt(node, handle, () =>
 					buildShorthandFieldInitializer({ ...config, attributes: restItems('attributes', values) })
 				),
-			name: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, name: value }))
+			field: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildShorthandFieldInitializer({ ...config, field: value }))
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
-		name: () => hydrateStoredSlot(node, '_name'),
+		field: () => hydrateStoredSlot(node, '_field'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -5112,42 +5009,37 @@ export function buildShorthandFieldInitializer(
 }
 
 export function buildFieldInitializer<
-	AttributeItemsSlot extends T.FieldInitializer.Config['attributeItems'],
+	AttributesSlot extends T.FieldInitializer.Config['attributes'],
 	FieldSlot extends T.FieldInitializer.Config['field'],
 	ValueSlot extends T.FieldInitializer.Config['value']
 >(
-	config: RefusingConfig<
-		T.FieldInitializer.Config,
-		{ attributeItems: AttributeItemsSlot; field: FieldSlot; value: ValueSlot }
-	>
+	config: RefusingConfig<T.FieldInitializer.Config, { attributes: AttributesSlot; field: FieldSlot; value: ValueSlot }>
 ): T.FieldInitializer.Bound;
 export function buildFieldInitializer(config: T.FieldInitializer.Config): T.FieldInitializer.Bound {
 	currentHandle()?.admit(TSKindId.FieldInitializer, [config]);
-	const _attribute_item = listStorage<NonNullable<T.FieldInitializer['_attribute_item']>>(config.attributeItems ?? []);
+	const _attributes = listStorage<NonNullable<T.FieldInitializer['_attributes']>>(config.attributes ?? []);
 	const _field = admitAliasContent<NonNullable<T.FieldInitializer['_field']>>(config.field, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const _value = kindIdStorage<NonNullable<T.FieldInitializer['_value']>>(config.value);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'field_initializer', { attributeItems: _attribute_item, field: _field, value: _value });
+		admitChildren(handle, 'field_initializer', { attributes: _attributes, field: _field, value: _value });
 	const node = {
 		$type: TSKindId.FieldInitializer as const,
 		$named: true as const,
-		_attribute_item,
+		_attributes,
 		_field,
 		_value,
 		$with: {
-			attributeItems: (...values: Admit<T.AttributeItem[]>) =>
-				rebuilt(node, handle, () =>
-					buildFieldInitializer({ ...config, attributeItems: restItems('attributeItems', values) })
-				),
+			attributes: (...values: Admit<T.AttributeItem[]>) =>
+				rebuilt(node, handle, () => buildFieldInitializer({ ...config, attributes: restItems('attributes', values) })),
 			field: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, field: value })),
 			value: (value: Admit<NonNullable<T.FieldInitializer.Config>['value']>) =>
 				rebuilt(node, handle, () => buildFieldInitializer({ ...config, value: value }))
 		},
-		attributeItems: () => hydrateStoredSlots(node, '_attribute_item'),
+		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		field: () => hydrateStoredSlot(node, '_field'),
 		value: () => hydrateStoredSlot(node, '_value'),
 		$render: () => renderText(handle, node),
@@ -5338,27 +5230,27 @@ export function buildElseClause(value: Admit<T.Block | T.IfExpression>): T.ElseC
 }
 
 export function buildMatchExpression<
-	ValueSlot extends T.MatchExpression.Config['value'],
+	SubjectSlot extends T.MatchExpression.Config['subject'],
 	BodySlot extends T.MatchExpression.Config['body']
->(config: RefusingConfig<T.MatchExpression.Config, { value: ValueSlot; body: BodySlot }>): T.MatchExpression.Bound;
+>(config: RefusingConfig<T.MatchExpression.Config, { subject: SubjectSlot; body: BodySlot }>): T.MatchExpression.Bound;
 export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchExpression.Bound {
 	currentHandle()?.admit(TSKindId.MatchExpression, [config]);
-	const _value = kindIdStorage<NonNullable<T.MatchExpression['_value']>>(config.value);
+	const _subject = kindIdStorage<NonNullable<T.MatchExpression['_subject']>>(config.subject);
 	const _body = orDefault(config.body, () => buildMatchBlock());
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'match_expression', { value: _value, body: _body });
+	if (handle !== undefined) admitChildren(handle, 'match_expression', { subject: _subject, body: _body });
 	const node = {
 		$type: TSKindId.MatchExpression as const,
 		$named: true as const,
-		_value,
+		_subject,
 		_body,
 		$with: {
-			value: (value: Admit<NonNullable<T.MatchExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildMatchExpression({ ...config, value: value })),
+			subject: (value: Admit<NonNullable<T.MatchExpression.Config>['subject']>) =>
+				rebuilt(node, handle, () => buildMatchExpression({ ...config, subject: value })),
 			body: (value: Admit<T.MatchBlock>) =>
 				rebuilt(node, handle, () => buildMatchExpression({ ...config, body: value }))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
+		subject: () => hydrateStoredSlot(node, '_subject'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5662,42 +5554,39 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 
 export function buildForExpression<
 	LabelSlot extends T.ForExpression.Config['label'],
-	PatternSlot extends T.ForExpression.Config['pattern'],
-	ValueSlot extends T.ForExpression.Config['value'],
+	LeftSlot extends T.ForExpression.Config['left'],
+	RightSlot extends T.ForExpression.Config['right'],
 	BodySlot extends T.ForExpression.Config['body']
 >(
-	config: RefusingConfig<
-		T.ForExpression.Config,
-		{ label: LabelSlot; pattern: PatternSlot; value: ValueSlot; body: BodySlot }
-	>
+	config: RefusingConfig<T.ForExpression.Config, { label: LabelSlot; left: LeftSlot; right: RightSlot; body: BodySlot }>
 ): T.ForExpression.Bound;
 export function buildForExpression(config: T.ForExpression.Config): T.ForExpression.Bound {
 	currentHandle()?.admit(TSKindId.ForExpression, [config]);
 	const _label = config.label;
-	const _pattern = kindIdStorage<NonNullable<T.ForExpression['_pattern']>>(config.pattern);
-	const _value = kindIdStorage<NonNullable<T.ForExpression['_value']>>(config.value);
+	const _left = kindIdStorage<NonNullable<T.ForExpression['_left']>>(config.left);
+	const _right = kindIdStorage<NonNullable<T.ForExpression['_right']>>(config.right);
 	const _body = orDefault(config.body, () => buildBlock());
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'for_expression', { label: _label, pattern: _pattern, value: _value, body: _body });
+		admitChildren(handle, 'for_expression', { label: _label, left: _left, right: _right, body: _body });
 	const node = {
 		$type: TSKindId.ForExpression as const,
 		$named: true as const,
 		_label,
-		_pattern,
-		_value,
+		_left,
+		_right,
 		_body,
 		$with: {
 			label: (value?: Admit<T.Label>) => rebuilt(node, handle, () => buildForExpression({ ...config, label: value })),
-			pattern: (value: Admit<NonNullable<T.ForExpression.Config>['pattern']>) =>
-				rebuilt(node, handle, () => buildForExpression({ ...config, pattern: value })),
-			value: (value: Admit<NonNullable<T.ForExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildForExpression({ ...config, value: value })),
+			left: (value: Admit<NonNullable<T.ForExpression.Config>['left']>) =>
+				rebuilt(node, handle, () => buildForExpression({ ...config, left: value })),
+			right: (value: Admit<NonNullable<T.ForExpression.Config>['right']>) =>
+				rebuilt(node, handle, () => buildForExpression({ ...config, right: value })),
 			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => buildForExpression({ ...config, body: value }))
 		},
 		label: () => hydrateStoredSlot(node, '_label'),
-		pattern: () => hydrateStoredSlot(node, '_pattern'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		left: () => hydrateStoredSlot(node, '_left'),
+		right: () => hydrateStoredSlot(node, '_right'),
 		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -5946,30 +5835,32 @@ export function buildAwaitExpression(value: Admit<T.Expression>): T.AwaitExpress
 }
 
 export function buildFieldExpression<
-	ValueSlot extends T.FieldExpression.Config['value'],
-	FieldSlot extends T.FieldExpression.Config['field']
->(config: RefusingConfig<T.FieldExpression.Config, { value: ValueSlot; field: FieldSlot }>): T.FieldExpression.Bound;
+	ObjectSlot extends T.FieldExpression.Config['object'],
+	PropertySlot extends T.FieldExpression.Config['property']
+>(
+	config: RefusingConfig<T.FieldExpression.Config, { object: ObjectSlot; property: PropertySlot }>
+): T.FieldExpression.Bound;
 export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldExpression.Bound {
 	currentHandle()?.admit(TSKindId.FieldExpression, [config]);
-	const _value = kindIdStorage<NonNullable<T.FieldExpression['_value']>>(config.value);
-	const _field = admitAliasContent<NonNullable<T.FieldExpression['_field']>>(config.field, [
+	const _object = kindIdStorage<NonNullable<T.FieldExpression['_object']>>(config.object);
+	const _property = admitAliasContent<NonNullable<T.FieldExpression['_property']>>(config.property, [
 		[[1], (v: unknown) => buildFieldIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'field_expression', { value: _value, field: _field });
+	if (handle !== undefined) admitChildren(handle, 'field_expression', { object: _object, property: _property });
 	const node = {
 		$type: TSKindId.FieldExpression as const,
 		$named: true as const,
-		_value,
-		_field,
+		_object,
+		_property,
 		$with: {
-			value: (value: Admit<NonNullable<T.FieldExpression.Config>['value']>) =>
-				rebuilt(node, handle, () => buildFieldExpression({ ...config, value: value })),
-			field: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildFieldExpression({ ...config, field: value }))
+			object: (value: Admit<NonNullable<T.FieldExpression.Config>['object']>) =>
+				rebuilt(node, handle, () => buildFieldExpression({ ...config, object: value })),
+			property: (value: Admit<T.FieldIdentifier | T.IntegerLiteral | T.FieldIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildFieldExpression({ ...config, property: value }))
 		},
-		value: () => hydrateStoredSlot(node, '_value'),
-		field: () => hydrateStoredSlot(node, '_field'),
+		object: () => hydrateStoredSlot(node, '_object'),
+		property: () => hydrateStoredSlot(node, '_property'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -6352,17 +6243,17 @@ export function buildSlicePattern(...args: unknown[]) {
 			);
 }
 function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
-	const _patterns = hydrateStored(value);
-	const listView = ownerView(_patterns, '_item');
-	if (listView.length === undefined) refuseReadStub('_patterns');
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'slice_pattern', { patterns: _patterns });
+	if (handle !== undefined) admitChildren(handle, 'slice_pattern', { elements: _elements });
 	const node = {
 		$type: TSKindId.SlicePattern as const,
 		$named: true as const,
-		_patterns,
+		_elements,
 		$with: {
-			patterns: (...args: unknown[]) =>
+			elements: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
@@ -6371,10 +6262,10 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 					)
 				)
 		},
-		patterns: () => hydrateStoredSlot(node, '_patterns'),
+		elements: () => hydrateStoredSlot(node, '_elements'),
 		length: listView.length,
 		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node.patterns(), 'items'), undefined),
+		[LIST_READ]: () => listItems(ownerElements(node.elements(), 'items'), undefined),
 		...LIST_METHODS,
 		[Symbol.iterator]: listIterator,
 		[Symbol.isConcatSpreadable]: true,
@@ -6572,22 +6463,22 @@ export function buildReferencePattern<PatternSlot extends T.ReferencePattern.Con
 ): T.ReferencePattern.Bound;
 export function buildReferencePattern(config: T.ReferencePattern.Config): T.ReferencePattern.Bound {
 	currentHandle()?.admit(TSKindId.ReferencePattern, [config]);
-	const _mutable = strictBooleanStorage(config.mutable);
+	const _exclusive = strictBooleanStorage(config.exclusive);
 	const _pattern = kindIdStorage<NonNullable<T.ReferencePattern['_pattern']>>(config.pattern);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'reference_pattern', { mutable: _mutable, pattern: _pattern });
+	if (handle !== undefined) admitChildren(handle, 'reference_pattern', { exclusive: _exclusive, pattern: _pattern });
 	const node = {
 		$type: TSKindId.ReferencePattern as const,
 		$named: true as const,
-		_mutable,
+		_exclusive,
 		_pattern,
 		$with: {
-			mutable: (value?: Admit<NonNullable<T.ReferencePattern.Config>['mutable']>) =>
-				rebuilt(node, handle, () => buildReferencePattern({ ...config, mutable: value })),
+			exclusive: (value?: Admit<NonNullable<T.ReferencePattern.Config>['exclusive']>) =>
+				rebuilt(node, handle, () => buildReferencePattern({ ...config, exclusive: value })),
 			pattern: (value: Admit<NonNullable<T.ReferencePattern.Config>['pattern']>) =>
 				rebuilt(node, handle, () => buildReferencePattern({ ...config, pattern: value }))
 		},
-		mutable: () => _mutable,
+		exclusive: () => _exclusive,
 		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -7533,26 +7424,14 @@ function _buildUseClauses(
 export function buildParametersElements<
 	A extends NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>
 >(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildParametersElements>;
 export function buildParametersElements<
 	A extends NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>
 >(
@@ -7565,7 +7444,6 @@ export function buildParametersElements(
 		| Admit<
 				| T.AttributedParameter
 				| T.Parameter
-				| T.SelfParameter
 				| T.VariadicParameter
 				| TSKindId.Underscore
 				| T.Type
@@ -7582,13 +7460,7 @@ export function buildParametersElements(
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>;
 	return _buildParametersElements(elements, options);
@@ -7596,13 +7468,7 @@ export function buildParametersElements(
 function _buildParametersElements(
 	elements: NonEmptyArray<
 		Admit<
-			| T.AttributedParameter
-			| T.Parameter
-			| T.SelfParameter
-			| T.VariadicParameter
-			| TSKindId.Underscore
-			| T.Type
-			| T.TypeIdentifier.Types
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
 		>
 	>,
 	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
@@ -7637,7 +7503,6 @@ function _buildParametersElements(
 								Admit<
 									| T.AttributedParameter
 									| T.Parameter
-									| T.SelfParameter
 									| T.VariadicParameter
 									| TSKindId.Underscore
 									| T.Type
@@ -12245,6 +12110,284 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
+export function buildReceiverParameterDeclaration<TypeSlot extends T.ReceiverParameterDeclaration.Config['type']>(
+	config: RefusingConfig<T.ReceiverParameterDeclaration.Config, { type: TypeSlot }>
+): T.ReceiverParameterDeclaration.Bound;
+export function buildReceiverParameterDeclaration(
+	config: T.ReceiverParameterDeclaration.Config
+): T.ReceiverParameterDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ReceiverParameterDeclaration, [config]);
+	const _mutable = strictBooleanStorage(config.mutable);
+	const _type = admitAliasContent<NonNullable<T.ReceiverParameterDeclaration['_type']>>(
+		kindIdStorage<NonNullable<T.ReceiverParameterDeclaration['_type']>>(config.type),
+		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'receiver_parameter_declaration', { mutable: _mutable, type: _type });
+	const node = {
+		$type: TSKindId.ReceiverParameterDeclaration as const,
+		$named: true as const,
+		_mutable,
+		_type,
+		$with: {
+			mutable: (value?: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['mutable']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, mutable: value })),
+			type: (value: Admit<NonNullable<T.ReceiverParameterDeclaration.Config>['type']>) =>
+				rebuilt(node, handle, () => buildReceiverParameterDeclaration({ ...config, type: value }))
+		},
+		mutable: () => _mutable,
+		type: () => hydrateStoredSlot(node, '_type'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ReceiverParameterDeclaration.Bound;
+}
+
+export function buildAttributedParameterReceiver<
+	AttributeItemSlot extends T.AttributedParameterReceiver.Config['attributeItem'],
+	ContentSlot extends T.AttributedParameterReceiver.Config['content']
+>(
+	config: RefusingConfig<
+		T.AttributedParameterReceiver.Config,
+		{ attributeItem: AttributeItemSlot; content: ContentSlot }
+	>
+): T.AttributedParameterReceiver.Bound;
+export function buildAttributedParameterReceiver(
+	config: T.AttributedParameterReceiver.Config
+): T.AttributedParameterReceiver.Bound {
+	currentHandle()?.admit(TSKindId.AttributedParameterReceiver, [config]);
+	const _attribute_item = config.attributeItem;
+	const _content = config.content;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'attributed_parameter_receiver', { attributeItem: _attribute_item, content: _content });
+	const node = {
+		$type: TSKindId.AttributedParameterReceiver as const,
+		$named: true as const,
+		_attribute_item,
+		_content,
+		$with: {
+			attributeItem: (value?: Admit<T.AttributeItem>) =>
+				rebuilt(node, handle, () => buildAttributedParameterReceiver({ ...config, attributeItem: value })),
+			content: (value: Admit<T.ReceiverParameterDeclaration | T.SelfParameter>) =>
+				rebuilt(node, handle, () => buildAttributedParameterReceiver({ ...config, content: value }))
+		},
+		attributeItem: () => hydrateStoredSlot(node, '_attribute_item'),
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.AttributedParameterReceiver.Bound;
+}
+
+export function buildParametersElementsReceiver<
+	ReceiverSlot extends T.ParametersElementsReceiver.Config['receiver'],
+	ParametersElementsReceiverGroupSlot extends T.ParametersElementsReceiver.Config['parametersElementsReceiverGroup']
+>(
+	config: RefusingConfig<
+		T.ParametersElementsReceiver.Config,
+		{ receiver: ReceiverSlot; parametersElementsReceiverGroup: ParametersElementsReceiverGroupSlot }
+	>
+): T.ParametersElementsReceiver.Bound;
+export function buildParametersElementsReceiver(
+	config: T.ParametersElementsReceiver.Config
+): T.ParametersElementsReceiver.Bound {
+	currentHandle()?.admit(TSKindId.ParametersElementsReceiver, [config]);
+	const _receiver = config.receiver;
+	const _parameters_elements_receiver_group = config.parametersElementsReceiverGroup;
+	const readGroup_receiver = () => _receiver;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'parameters_elements_receiver', {
+			receiver: _receiver,
+			parametersElementsReceiverGroup: _parameters_elements_receiver_group
+		});
+	const node = {
+		$type: TSKindId.ParametersElementsReceiver as const,
+		$named: true as const,
+		_receiver,
+		_parameters_elements_receiver_group,
+		$with: {
+			receiver: (value: Admit<T.AttributedParameterReceiver>) =>
+				rebuilt(node, handle, () => buildParametersElementsReceiver({ ...config, receiver: value })),
+			parametersElementsReceiverGroup: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElementsReceiverGroup as const,
+							optional: true,
+							make: buildParametersElementsReceiverGroup,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: Admit<T.ParametersElementsReceiverGroup>) =>
+							buildParametersElementsReceiver({ ...config, parametersElementsReceiverGroup: value })
+					)
+				),
+			attributeItem: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							kind: TSKindId.AttributedParameterReceiver as const,
+							make: buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'attributeItem',
+						args,
+						(value: Admit<T.AttributedParameterReceiver>) =>
+							buildParametersElementsReceiver({ ...config, receiver: value }),
+						() => readGroup_receiver.call(node)
+					)
+				),
+			content: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							kind: TSKindId.AttributedParameterReceiver as const,
+							make: buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'content',
+						args,
+						(value: Admit<T.AttributedParameterReceiver>) =>
+							buildParametersElementsReceiver({ ...config, receiver: value }),
+						() => readGroup_receiver.call(node)
+					)
+				)
+		},
+		receiver: () => hydrateStoredSlot(node, '_receiver'),
+		parametersElementsReceiverGroup: () => hydrateStoredSlot(node, '_parameters_elements_receiver_group'),
+		attributeItem:
+			_receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'attributeItem'),
+		content: _receiver === undefined ? undefined : () => groupField(readGroup_receiver.call(node), 'content'),
+		[STORED_SLOT_READERS]: { receiver: readGroup_receiver },
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ParametersElementsReceiver.Bound;
+}
+
+export function buildParametersElementsReceiverGroup<V extends Admit<T.ParametersElements>>(
+	...value: [value?: V] & RefuseUndeclared<V>
+): ReturnType<typeof _buildParametersElementsReceiverGroup>;
+export function buildParametersElementsReceiverGroup<
+	A extends NonEmptyArray<
+		Admit<
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
+		>
+	>
+>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildParametersElementsReceiverGroup>;
+export function buildParametersElementsReceiverGroup<
+	A extends NonEmptyArray<
+		Admit<
+			T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type | T.TypeIdentifier.Types
+		>
+	>
+>(...elements: A & RefuseUndeclared<A>): ReturnType<typeof _buildParametersElementsReceiverGroup>;
+export function buildParametersElementsReceiverGroup(...args: unknown[]) {
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildParametersElementsReceiverGroup(
+			args[0] as Parameters<typeof _buildParametersElementsReceiverGroup>[0]
+		);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.ParametersElements as const);
+	return prebuilt
+		? _buildParametersElementsReceiverGroup(args[0] as Parameters<typeof _buildParametersElementsReceiverGroup>[0])
+		: _buildParametersElementsReceiverGroup(
+				(buildParametersElements as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildParametersElementsReceiverGroup
+				>[0]
+			);
+}
+function _buildParametersElementsReceiverGroup(
+	value?: Admit<T.ParametersElements>
+): T.ParametersElementsReceiverGroup.Bound {
+	const _elements = hydrateStored(value);
+	const listView = ownerView(_elements, '_item');
+	if (listView.length === undefined) refuseReadStub('_elements');
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parameters_elements_receiver_group', { elements: _elements });
+	const node = {
+		$type: TSKindId.ParametersElementsReceiverGroup as const,
+		$named: true as const,
+		_elements,
+		$with: {
+			elements: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElements as const,
+							optional: true,
+							make: buildParametersElements,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: Admit<T.ParametersElements>) => _buildParametersElementsReceiverGroup(value)
+					)
+				)
+		},
+		elements: () => hydrateStoredSlot(node, '_elements'),
+		length: listView.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () =>
+			listItems(ownerElements(node.elements(), 'items'), {
+				kind: TSKindId.AttributedParameter,
+				content: 'content',
+				decorations: ['attributeItem']
+			}),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: listOption(listView.list, 'delimiter', undefined),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listView.length ?? 0);
+	return stampBuilt(node) as unknown as T.ParametersElementsReceiverGroup.Bound;
+}
+
 export function buildStringClose(text: string): T.StringClose.Bound {
 	if (typeof text !== 'string') throw new Error(`string_close: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
@@ -12657,6 +12800,10 @@ export type FluentKindMap = {
 	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
+	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
+	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
+	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
 	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
@@ -12926,6 +13073,10 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	receiver_parameter_declaration: buildReceiverParameterDeclaration,
+	attributed_parameter_receiver: buildAttributedParameterReceiver,
+	parameters_elements_receiver: buildParametersElementsReceiver,
+	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
 	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	type_identifier: buildTypeIdentifier,

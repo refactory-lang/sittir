@@ -9,16 +9,15 @@ import { dirname, join } from 'node:path';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import type { Rule } from '../../types/rule.ts';
 import type { RawGrammar } from '../../compiler/types.ts';
-import { link } from '../../compiler/link.ts';
-import { normalizeGrammar } from '../../compiler/normalize.ts';
-import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
-import type { NodeMap } from '../../compiler/types.ts';
-import type { GeneratedIdEntry, GeneratedIdTables } from '../../dsl/symbol-table.ts';
+import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { stampAutomaticVariants } from '../../dsl/automatic-variants.ts';
 import { predictedSymbolSourceOf } from '../../dsl/symbol-table.ts';
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
+import type { NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
 import { collectPolymorphWires, emitPolymorphsOverlay, seatedRowsOf } from '../overlays/polymorphs.ts';
 import { listRestParamType } from '../shared.ts';
+import { collectKindEntries } from '../kind-discriminant.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar covering the sub-factory shapes exercised here:
@@ -41,7 +40,7 @@ function labelArms(rules: Record<string, Rule<'evaluate'>>): Record<string, Rule
 	return stamped as Record<string, Rule<'evaluate'>>;
 }
 
-function assembledNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
+function assembledNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMapWithIdTables {
 	const raw: RawGrammar = {
 		name: 'synth',
 		fileTypes: [],
@@ -58,26 +57,18 @@ function assembledNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTa
 		word: null,
 		references: []
 	};
-	const linked = link(raw, { generatedIdTables });
-	const normalized = normalizeGrammar(linked);
-	return assemble(AssembleCtx.from(normalized, generatedIdTables));
+	return assemblePredicted(raw, generatedIdTables);
 }
 
-function buildNodeMap(rules: Record<string, Rule<'evaluate'>>, generatedIdTables?: GeneratedIdTables): NodeMap {
-	const nodeMap = assembledNodeMap(rules, generatedIdTables);
-	stampIrSurface(nodeMap, generatedIdTables);
-	return nodeMap;
-}
-
-function seatedRows(nodeMap: NodeMap, kind: string): { readonly buildArgs: string; readonly looseArgs: string } {
+function seatedRows({ nodeMap, generatedIdTables }: NodeMapWithIdTables, kind: string): { readonly buildArgs: string; readonly looseArgs: string } {
 	const node = nodeMap.nodes.get(kind)!;
-	const rows = seatedRowsOf(node, collectPolymorphWires(nodeMap, { silent: true }), builtTypeSurfaceOf(node, nodeMap, undefined)!);
+	const rows = seatedRowsOf(node, collectPolymorphWires(nodeMap, { silent: true }), builtTypeSurfaceOf(node, nodeMap, collectKindEntries(nodeMap, generatedIdTables))!);
 	if (rows === undefined) throw new Error(`'${kind}' has no seated rows`);
 	return rows;
 }
 
-function polymorphNodeMap(): NodeMap {
-	return buildNodeMap({
+function polymorphNodeMap(): NodeMapWithIdTables {
+	return assembledNodeMap({
 		root: {
 			type: CHOICE,
 			members: [
@@ -152,8 +143,8 @@ function polymorphNodeMap(): NodeMap {
 	});
 }
 
-function parameterlessArmNodeMap(): NodeMap {
-	return buildNodeMap({
+function parameterlessArmNodeMap(): NodeMapWithIdTables {
+	return assembledNodeMap({
 		root: { type: SYMBOL, name: 'pair' },
 		pair: {
 			type: SEQ,
@@ -178,8 +169,8 @@ function parameterlessArmNodeMap(): NodeMap {
 	});
 }
 
-function ambiguousNodeMap(): NodeMap {
-	return buildNodeMap({
+function ambiguousNodeMap(): NodeMapWithIdTables {
+	return assembledNodeMap({
 		twice: {
 			type: CHOICE,
 			members: [
@@ -198,8 +189,8 @@ describe('emitPolymorphsOverlay', () => {
 	});
 
 	it('emits one method per sub-factory, applied to the strict and coerce pairs', () => {
-		const nodeMap = polymorphNodeMap();
-		const text = emitPolymorphsOverlay({ nodeMap }).text;
+		const { nodeMap, generatedIdTables } = polymorphNodeMap();
+		const text = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 
 		expect(text).toContain("import * as B from './refines.js';");
 		expect(text).toContain("import * as F from '../raw.js';");
@@ -217,29 +208,29 @@ describe('emitPolymorphsOverlay', () => {
 		expect(text).toContain('	plain: bundle(comment$plain$strict, comment$plain$coerce, { key: "comment.plain", max: 1 }),');
 
 		expect(text).toContain('const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
-		expect(text).toContain("const logic$and$strict = logic$and(F.buildLogic, 'and');");
-		expect(text).toContain("const logic$and$coerce = logic$and(C.coerceToLogic, 'and');");
+		expect(text).toContain('const logic$and$strict = logic$and(F.buildLogic, TSKindId.AndKeyword);');
+		expect(text).toContain('const logic$and$coerce = logic$and(C.coerceToLogic, TSKindId.AndKeyword);');
 		expect(text).toContain('	and: bundle(logic$and$strict, logic$and$coerce, { key: "logic.and", max: 2 }),');
 		expect(text).toContain('	or: bundle(logic$or$strict, logic$or$coerce, { key: "logic.or", max: 2 }),');
 
-		expect(text).toContain("const annotated$plus$strict = annotated$plus(F.buildAnnotated, 'plus');");
+		expect(text).toContain('const annotated$plus$strict = annotated$plus(F.buildAnnotated, TSKindId.PlusKeyword);');
 		expect(text).toContain('	plus: bundle(annotated$plus$strict, annotated$plus$coerce, { key: "annotated.plus", max: 2 }),');
 	});
 
 	it('seats a keyword arm\'s stored text instead of asking the caller for the keyword child', () => {
-		const text = emitPolymorphsOverlay({ nodeMap: parameterlessArmNodeMap() }).text;
+		const text = emitPolymorphsOverlay(parameterlessArmNodeMap()).text;
 
 		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
 		expect(text).toContain('{ ...config, content: value }');
-		expect(text).toContain("const pair$kwSelf$strict = pair$kwSelf(F.buildPair, 'self');");
+		expect(text).toContain('const pair$kwSelf$strict = pair$kwSelf(F.buildPair, TSKindId.KwSelf);');
 		expect(text).not.toContain('_c(child)');
 	});
 
 	it('warns of a skipped sub-factory on stderr: the generated API omits it', () => {
-		const nodeMap = ambiguousNodeMap();
+		const { nodeMap, generatedIdTables } = ambiguousNodeMap();
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		emitPolymorphsOverlay({ nodeMap });
+		emitPolymorphsOverlay({ nodeMap, generatedIdTables });
 
 		expect(warn).toHaveBeenCalledWith(
 			'[codegen] twice: sub-factory same skipped (ambiguous): first, second'
@@ -249,7 +240,7 @@ describe('emitPolymorphsOverlay', () => {
 
 describe('a single hoisted group flattens onto its parent', () => {
 	it('wraps strict with a both-or-neither config and keeps the base spread first', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap, generatedIdTables } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'try' }, { type: SYMBOL, name: 'clause' }] },
 			clause: {
 				type: SEQ,
@@ -271,12 +262,12 @@ describe('a single hoisted group flattens onto its parent', () => {
 			}
 		});
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.propertyName;
-		const out = emitPolymorphsOverlay({ nodeMap }).text;
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(out).toContain(`const clause$flatten$${seatKey} =`);
 		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');
 		expect(out).toContain('function clause$seated(...args: T.Clause.BuildArgs): ReturnType<typeof F.buildClause> {');
 		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '${seatKey}' | '$type'>`;
-		const { buildArgs } = seatedRows(nodeMap, 'clause');
+		const { buildArgs } = seatedRows({ nodeMap, generatedIdTables }, 'clause');
 		expect(buildArgs).toContain(`WithoutGroup<`);
 		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);
 		expect(buildArgs).toContain(`, '${seatKey}'> & (T.ClauseGroup.BuildArgs[0] | NoneOf<${groupKeys}>))`);
@@ -290,7 +281,7 @@ describe('a single hoisted group flattens onto its parent', () => {
 
 describe('a repeated hoisted group seats as an array of its configs', () => {
 	it('builds each element from its config and keeps built elements', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap, generatedIdTables } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'cmp' }, { type: SYMBOL, name: 'comparison' }] },
 			comparison: {
 				type: SEQ,
@@ -316,19 +307,19 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const out = emitPolymorphsOverlay({ nodeMap }).text;
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(out).toContain('const comparison$comparators =');
 		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
 		expect(out).toContain('return comparison$comparators(F.buildComparison, F.buildComparisonComparator)(...args);');
 		expect(out).toContain('...bundle(comparison$seated, comparison$seatedCoerce, { key: "comparison", max: 1 }),');
 		expect(out).toContain('function comparison$seated<A extends T.Comparison.BuildArgs>(...args: A & RefuseUndeclared<A>):');
-		expect(seatedRows(nodeMap, 'comparison').buildArgs).toContain('{ comparators: ReadonlyArray<T.ComparisonComparator.BuildArgs[0]');
+		expect(seatedRows({ nodeMap, generatedIdTables }, 'comparison').buildArgs).toContain('{ comparators: ReadonlyArray<T.ComparisonComparator.BuildArgs[0]');
 	});
 });
 
 describe('a repeated hoisted group on a spread-shaped parent seats through the rest parameters', () => {
 	it('maps each rest argument through the group builder when it is a config', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap, generatedIdTables } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'u' }, { type: SYMBOL, name: 'union' }] },
 			union: {
 				type: SEQ,
@@ -355,7 +346,7 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap }).text;
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(out).toContain('const union$patterns =');
 		expect(out).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
 	});
@@ -363,7 +354,7 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 
 describe('a mount route carries the seats of its own parent', () => {
 	it('builds the mount on the seated parent, not the raw factory', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap, generatedIdTables } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'c' }, { type: SYMBOL, name: 'clause' }] },
 			clause: {
 				type: SEQ,
@@ -395,7 +386,7 @@ describe('a mount route carries the seats of its own parent', () => {
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap }).text;
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(out).toContain('function clause$seated');
 		expect(out).toContain('clause$block(clause$seated,');
 		expect(out).not.toContain('clause$block(F.buildClause,');
@@ -403,8 +394,8 @@ describe('a mount route carries the seats of its own parent', () => {
 });
 
 describe('a visible wrapper declared flattened seats on its parent', () => {
-	const wrapperGrammar = (): NodeMap =>
-		buildNodeMap({
+	const wrapperGrammar = (): NodeMapWithIdTables =>
+		assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'match' }, { type: SYMBOL, name: 'arm' }] },
 			arm: {
 				type: SEQ,
@@ -429,8 +420,8 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 		});
 
 	it('passes a value that is already the wrapper through and builds anything else into it', () => {
-		const nodeMap = wrapperGrammar();
-		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, sourceArtifact: 'test' };
+		const { nodeMap } = wrapperGrammar();
+		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' };
 		stampIrSurface(nodeMap, generatedIdTables);
 		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(out).toContain('const arm$flatten$pattern =');
@@ -508,7 +499,7 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 	it('seats a list with an undeclared separator on its options-first form, through its row', () => {
 		const element: Rule<'evaluate'> = { type: CHOICE, members: [{ type: SYMBOL, name: 'negative' }, { type: SYMBOL, name: 'literal' }] };
 		const separator: Rule<'evaluate'> = { type: CHOICE, members: [{ type: STRING, value: ',' }, { type: STRING, value: ';' }] };
-		const nodeMap = buildNodeMap({
+		const { nodeMap, generatedIdTables } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'u' }, { type: SYMBOL, name: 'items' }] },
 			items: { type: SEQ, members: [element, { type: REPEAT, content: { type: SEQ, members: [separator, element] } }] },
 			negative: {
@@ -521,10 +512,10 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap }).text.split('\n');
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text.split('\n');
 		const seat = out.find((line) => line.startsWith('function items$seatedCoerce<'));
 		expect(seat).toContain('<const A extends T.Items.LooseArgs>(...args: A & RefuseUndeclared<A, T.Items.LooseArgs>)');
-		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, undefined)!.looseArgs;
+		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, collectKindEntries(nodeMap, generatedIdTables))!.looseArgs;
 		expect(row.startsWith('[options: ')).toBe(true);
 		expect(row).not.toMatch(/(^|\| )\[element: /);
 		expect(row).toContain('T.Negative.LooseArgs[0]');
@@ -532,13 +523,8 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 });
 
 describe('a keyword literal arm named by its text', () => {
-	const keyword = (id: number, kind: string, text: string): GeneratedIdEntry => ({
-		id,
-		parser: { cSymbol: `anon_sym_${id}`, parserName: kind, symbolName: kind, literalText: text, anon: true, aux: false, alias: false, hidden: false, keyword: true }
-	});
-
 	it('mounts each keyword literal of an unfielded choice under its source text', () => {
-		const nodeMap = assembledNodeMap(
+		const { nodeMap, generatedIdTables } = assembledNodeMap(
 			{
 				junction: {
 					type: SEQ,
@@ -549,17 +535,16 @@ describe('a keyword literal arm named by its text', () => {
 					]
 				},
 				word: { type: PATTERN, value: '[a-z]+' }
-			},
-			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and'), or_keyword: keyword(4, 'or_keyword', 'or') }, sourceArtifact: 'test' }
+			}
 		);
-		stampIrSurface(nodeMap);
-		const out = emitPolymorphsOverlay({ nodeMap }).text;
-		expect(out).toContain("const junction$and$strict = junction$and(F.buildJunction, 'and');");
-		expect(out).toContain("const junction$or$strict = junction$or(F.buildJunction, 'or');");
+		stampIrSurface(nodeMap, generatedIdTables);
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
+		expect(out).toContain('const junction$and$strict = junction$and(F.buildJunction, TSKindId.AndKeyword);');
+		expect(out).toContain('const junction$or$strict = junction$or(F.buildJunction, TSKindId.OrKeyword);');
 	});
 
 	it('reports a keyword arm whose text names a node arm of the same owner as ambiguous', () => {
-		const nodeMap = assembledNodeMap(
+		const { nodeMap, generatedIdTables } = assembledNodeMap(
 			{
 				junction: {
 					type: SEQ,
@@ -571,12 +556,11 @@ describe('a keyword literal arm named by its text', () => {
 				},
 				and: { type: SEQ, members: [{ type: STRING, value: '&' }, { type: STRING, value: '&' }] },
 				word: { type: PATTERN, value: '[a-z]+' }
-			},
-			{ kindIds: { and_keyword: keyword(3, 'and_keyword', 'and') }, sourceArtifact: 'test' }
+			}
 		);
-		stampIrSurface(nodeMap);
+		stampIrSurface(nodeMap, generatedIdTables);
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-		const out = emitPolymorphsOverlay({ nodeMap }).text;
+		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
 		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
 		expect(out).not.toContain('junction$and');
 		warn.mockRestore();

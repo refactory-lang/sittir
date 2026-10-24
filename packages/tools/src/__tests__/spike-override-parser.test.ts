@@ -13,28 +13,27 @@ describe('spike: override-compiled parser', () => {
 		const parser = new Parser();
 		parser.setLanguage(lang);
 
-		const tree = parser.parse('a if b else c') as any;
+		const tree = parser.parse('a if b else c');
+		if (tree === null) throw new Error('parser returned no tree');
 		const root = tree.rootNode;
 
 		expect(root.type).toBe('module');
-		// Navigate by descendant type, not fixed depth — the parse tree
-		// carries a visible statement_group1 layer (the multi-slot
-		// _simple_statements group is deliberately visible so its slots
-		// stay addressable).
 		const expr = root.descendantsOfType('expression_statement')[0];
 		expect(expr?.type).toBe('expression_statement');
+		if (expr === undefined) throw new Error('no expression statement');
 
 		const cond = expr.firstNamedChild;
+		if (cond === null) throw new Error('no conditional expression');
 		expect(cond.type).toBe('conditional_expression');
 
-		const bodyField = cond.childForFieldName('body');
+		const consequenceField = cond.childForFieldName('consequence');
 		const conditionField = cond.childForFieldName('condition');
 		const alternativeField = cond.childForFieldName('alternative');
 
-		expect(bodyField).not.toBeNull();
+		expect(consequenceField).not.toBeNull();
 		expect(conditionField).not.toBeNull();
 		expect(alternativeField).not.toBeNull();
-		expect(bodyField!.text).toBe('a');
+		expect(consequenceField!.text).toBe('a');
 		expect(conditionField!.text).toBe('b');
 		expect(alternativeField!.text).toBe('c');
 	});

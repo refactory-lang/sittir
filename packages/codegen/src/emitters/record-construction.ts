@@ -12,7 +12,7 @@ export const RECORD_CONSTRUCTION_IMPORTS = ['bindRow', 'builtArenaOf', 'storeCel
 export function recordPlacesOf(
 	node: AuthoredCompound | AssembledList,
 	nodeMap: NodeMap,
-	kindEntries: readonly KindEnumEntry[] | undefined
+	kindEntries: readonly KindEnumEntry[]
 ): ReadonlyMap<string, RecordPlace> | undefined {
 	if (seatPlanOf(node, nodeMap, kindEntries, 'RAW.').groups.length > 0) return undefined;
 	const layout = nodeRecordLayout(node, nodeMap);
@@ -45,8 +45,8 @@ function slotStore(place: RecordPlace, local: string): string {
 	return `  storeCell(arena, record.data, ${at}, ${local});`;
 }
 
-export function recordTailLines(spec: RecordConstruction, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[] | undefined): string[] {
-	const places = kindEntries === undefined ? undefined : recordPlacesOf(spec.node, nodeMap, kindEntries);
+export function recordTailLines(spec: RecordConstruction, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string[] {
+	const places = recordPlacesOf(spec.node, nodeMap, kindEntries);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return recordRefusalLines(spec.node);
 	const stores = spec.slots.map((slot) => {

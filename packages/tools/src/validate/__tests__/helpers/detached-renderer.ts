@@ -7,7 +7,6 @@ export async function detachedRenderer(grammar: string): Promise<(source: string
 	const readNode = await readNodeOf(grammar);
 	const isLeafKind = await loadIsLeafKind(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
-	if (readNode === null) throw new Error(`no readNode for ${grammar}`);
 	const native = await nativeLanguageEngineOf(grammar);
 	return (source) => {
 		const { tree } = readNativeTree(engine, source);

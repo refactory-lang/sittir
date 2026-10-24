@@ -1,8 +1,8 @@
+import type { NodeMap } from '../types.ts';
+import { collectGeneratedKindEntries } from '../../dsl/symbol-table.ts';
 import { describe, expect, it } from 'vitest';
 import { buildRuleCatalog } from '../rule-catalog.ts';
-import { link } from '../link.ts';
-import { normalizeGrammar } from '../normalize.ts';
-import { assemble, AssembleCtx } from '../assemble.ts';
+import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
 import type { RawGrammar } from '../types.ts';
 import {
 	factoryTakesSpreadChildren,
@@ -32,11 +32,10 @@ function buildNodeMap(rules: Record<string, unknown>) {
 		word: null,
 		references: []
 	};
-	const normalized = normalizeGrammar(link(raw));
-	return assemble(AssembleCtx.from(normalized));
+	return assemblePredicted(raw);
 }
 
-function getCompound(nodeMap: ReturnType<typeof buildNodeMap>, kind: string) {
+function getCompound(nodeMap: NodeMap, kind: string) {
 	const node = nodeMap.nodes.get(kind);
 	if (!node || !isSlotBearingCompound(node)) {
 		throw new Error(`expected '${kind}' to assemble as a compound`);
@@ -46,7 +45,7 @@ function getCompound(nodeMap: ReturnType<typeof buildNodeMap>, kind: string) {
 
 describe('slot structural signals', () => {
 	it('treats fieldless slots as unnamed without consulting origin', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
@@ -56,7 +55,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('projects unnamed-slot parseNames from per-value parseKind, not slot aliasSources', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: 'interface_body' },
@@ -79,7 +78,7 @@ describe('slot structural signals', () => {
 		// sole slot therefore reaches the same direct-value factory a named
 		// one does, and `isUnnamed` survives as a wire fact rather than a
 		// surface one.
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
@@ -90,7 +89,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('classifies the child surface from arity, for an unnamed sole slot too', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: { type: 'SYMBOL', name: 'identifier' },
 			identifier: { type: 'PATTERN', value: '[a-z_]\\w*' }
 		});
@@ -105,7 +104,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('shared factory classifiers key unnamed-child spread surfaces off isUnnamed', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			box: {
 				type: 'REPEAT1',
 				content: { type: 'SYMBOL', name: 'identifier' }
@@ -120,7 +119,7 @@ describe('slot structural signals', () => {
 	});
 
 	it('template preservation treats unnamed alias-carried helper slots structurally', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap, generatedIdTables } = buildNodeMap({
 			box: {
 				type: 'ALIAS',
 				content: { type: 'SYMBOL', name: '_helper' },
@@ -132,16 +131,13 @@ describe('slot structural signals', () => {
 		});
 		const slot = getCompound(nodeMap, 'box').slots[0];
 		expect(slot?.isUnnamed).toBe(true);
-
-		// The slot's storageName is the hidden alias source (`helper`), not the
-		// alias's cosmetic display name (`obj`) — `obj` is never a real node
-		// field. The template must bind to the slot that actually backs it.
-		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap });
-		expect(refersTo(templates.bodies.get('box')!, 'helper')).toBe(true);
+		expect(slot?.storageName).toBe('obj');
+		const templates = runTemplateEmitter({ grammar: 'synth', nodeMap, kindEntries: collectGeneratedKindEntries(generatedIdTables) });
+		expect(refersTo(templates.bodies.get('box')!, 'obj')).toBe(true);
 	});
 
 	it('two unnamed same-kind slots in one branch fire storagename-collision (not silently collapsed)', () => {
-		const nodeMap = buildNodeMap({
+		const { nodeMap } = buildNodeMap({
 			host: {
 				type: 'CHOICE',
 				members: [

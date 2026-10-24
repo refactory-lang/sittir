@@ -128,7 +128,7 @@ describe('deriveValuesForRule — kind-id stamps at the mint (PR-K2)', () => {
 
 	it('without a derive context, refs mint id-less (fixture parity)', () => {
 		const rule: Rule = { type: SYMBOL, name: 'identifier' };
-		const [v] = deriveValuesForRule(rule, undefined, 'single');
+		const [v] = deriveValuesForRule(rule, { kindEntries: [] }, 'single');
 		expect(v?.storageKindId).toBeUndefined();
 		expect(v?.parseKindId).toBeUndefined();
 	});

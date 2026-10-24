@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ErrorRegion, StepAnchor } from '@sittir/types';
-import type { LeadMatch } from '../dsl/bind.ts';
+import { bindMatch, type LeadMatch } from '../dsl/verbs/effects.ts';
 import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
 
 export const WILDCARD = '_';
@@ -81,7 +81,13 @@ type MemberRouteFact =
 			readonly token: string;
 			readonly via: readonly SlotSelector[];
 	  }
-	| { readonly route: 'kind'; readonly owner: string; readonly name: string; readonly member: string; readonly kind: string }
+	| {
+			readonly route: 'kind';
+			readonly owner: string;
+			readonly name: string;
+			readonly member: string;
+			readonly kind: string;
+	  }
 	| ({
 			readonly route: 'nested';
 			readonly owner: string;
@@ -247,72 +253,149 @@ export function refineClaims(claims: readonly ClaimFact[], formsOf: (kind: strin
 	});
 }
 
-function bindSelector<S extends SlotSelector>(selector: S, rename: (kind: string) => string): S {
+type FieldNameOf = (owner: string, field: string) => string;
+
+const unchangedField: FieldNameOf = (_owner, field) => field;
+
+function bindField(owner: string | null, field: string, fieldNameOf: FieldNameOf): string {
+	return owner === null ? field : fieldNameOf(owner, field);
+}
+
+function bindSelector<S extends SlotSelector>(
+	selector: S,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf,
+	owner: string | null
+): S {
 	const { adjacent } = selector;
 	return {
 		...selector,
+		field: selector.field === null ? null : bindField(owner, selector.field, fieldNameOf),
 		kind: selector.kind === null ? null : rename(selector.kind),
-		after: selector.after === null ? null : bindSelector(selector.after, rename),
+		after: selector.after === null ? null : bindSelector(selector.after, rename, fieldNameOf, owner),
 		...(adjacent === undefined
 			? {}
 			: {
 					adjacent: {
-						...(adjacent.previous && { previous: bindSelector(adjacent.previous, rename) }),
-						...(adjacent.next && { next: bindSelector(adjacent.next, rename) })
+						...(adjacent.previous && { previous: bindSelector(adjacent.previous, rename, fieldNameOf, owner) }),
+						...(adjacent.next && { next: bindSelector(adjacent.next, rename, fieldNameOf, owner) })
 					}
 				})
 	};
 }
 
-function bindSite(site: CaptureSite, rename: (kind: string) => string): CaptureSite {
-	return { ...site, down: site.down.map((step) => bindSelector(step, rename)) };
+function bindPath(
+	path: readonly SlotSelector[],
+	owner: string | null,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf
+): readonly SlotSelector[] {
+	let parent = owner;
+	return path.map((step) => {
+		const bound = bindSelector(step, rename, fieldNameOf, parent);
+		parent = step.kind;
+		return bound;
+	});
 }
 
-export function bindMatch(match: LeadMatch, rename: (kind: string) => string): LeadMatch {
+function bindVia(
+	via: readonly SlotSelector[],
+	owner: string,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf
+): readonly SlotSelector[] {
+	return bindPath(via.toReversed(), owner, rename, fieldNameOf).toReversed();
+}
+
+function siteRootKind(site: CaptureSite, claim: ClaimFact): string | null {
+	return site.up === 0 ? claim.kind : (claim.within[site.up - 1] ?? null);
+}
+
+function siteTargetKind(site: CaptureSite, claim: ClaimFact): string | null {
+	return site.down.length === 0 ? siteRootKind(site, claim) : site.down[site.down.length - 1]!.kind;
+}
+
+function bindSite(
+	site: CaptureSite,
+	claim: ClaimFact,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf
+): CaptureSite {
+	return { ...site, down: bindPath(site.down, siteRootKind(site, claim), rename, fieldNameOf) };
+}
+
+function bindMember(m: MemberFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): MemberFact {
+	if (m.route === 'presence')
+		return { ...m, owner: rename(m.owner), via: bindVia(m.via, m.owner, rename, fieldNameOf) };
+	if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
+	if (m.route === 'nested')
+		return {
+			...bindSelector(m, rename, fieldNameOf, m.parent),
+			owner: rename(m.owner),
+			parent: rename(m.parent),
+			via: bindVia(m.via, m.owner, rename, fieldNameOf)
+		};
+	return { ...bindSelector(m, rename, fieldNameOf, m.owner), owner: rename(m.owner) };
+}
+
+const bindLeadMatch = (
+	lead: LeadLeadMatch,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf
+): LeadLeadMatch => ('match' in lead ? { ...lead, match: bindMatch(lead.match, rename, fieldNameOf) } : lead);
+
+function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf): ClaimFact {
 	return {
-		...match,
-		kind: rename(match.kind),
-		...(match.within === undefined ? {} : { within: { field: match.within.field, admits: match.within.admits.map((m) => bindMatch(m, rename)) } })
+		...claim,
+		...(claim.match === undefined ? {} : { match: bindMatch(claim.match, rename, fieldNameOf) }),
+		kind: claim.kind === null || claim.kind === WILDCARD ? claim.kind : rename(claim.kind),
+		field: claim.field === null ? null : bindField(claim.within[0] ?? null, claim.field, fieldNameOf),
+		within: claim.within.map(rename),
+		fieldLiterals: Object.fromEntries(
+			Object.entries(claim.fieldLiterals).map(([name, value]) => [bindField(claim.kind, name, fieldNameOf), value])
+		),
+		predicates: claim.predicates.map((p) => ({
+			...p,
+			subject: p.subject === null ? null : bindSite(p.subject, claim, rename, fieldNameOf),
+			arguments: KIND_PREDICATE_OPERATORS.has(p.operator)
+				? p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a))
+				: p.arguments
+		})),
+		children: claim.children.map((child) => ({
+			...child,
+			subject: bindSite(child.subject, claim, rename, fieldNameOf),
+			...('kinds' in child ? { kinds: child.kinds.map(rename) } : {}),
+			...('siblings' in child
+				? {
+						siblings: child.siblings.map((sibling) => ({
+							...sibling,
+							selector: bindSelector(sibling.selector, rename, fieldNameOf, siteTargetKind(child.subject, claim))
+						}))
+					}
+				: {})
+		}))
 	};
 }
 
-function bindMember(m: MemberFact, rename: (kind: string) => string): MemberFact {
-	if (m.route === 'presence') return { ...m, owner: rename(m.owner), via: m.via.map((step) => bindSelector(step, rename)) };
-	if (m.route === 'kind') return { ...m, owner: rename(m.owner), kind: rename(m.kind) };
-	if (m.route === 'nested') return { ...bindSelector(m, rename), owner: rename(m.owner), parent: rename(m.parent), via: m.via.map((step) => bindSelector(step, rename)) };
-	return { ...bindSelector(m, rename), owner: rename(m.owner) };
-}
-
-const bindLeadMatch =(lead: LeadLeadMatch, rename: (kind: string) => string): LeadLeadMatch =>
-	'match' in lead ? { line: lead.line, match: bindMatch(lead.match, rename) } : lead;
-
-export function bindFacts(facts: BindingFacts, rename: (kind: string) => string): BindingFacts {
-	const kind = (k: string | null): string | null => (k === null || k === WILDCARD ? k : rename(k));
+export function bindFacts(
+	facts: BindingFacts,
+	rename: (kind: string) => string,
+	fieldNameOf: FieldNameOf = unchangedField
+): BindingFacts {
 	return {
-		claims: facts.claims.map((c) => ({
-			...c,
-			...(c.match === undefined ? {} : { match: bindMatch(c.match, rename) }),
-			kind: kind(c.kind),
-			within: c.within.map(rename),
-			predicates: c.predicates.map((p) => ({
-				...p,
-				subject: p.subject === null ? null : bindSite(p.subject, rename),
-				arguments: KIND_PREDICATE_OPERATORS.has(p.operator) ? p.arguments.map((a) => ('text' in a ? { text: rename(a.text) } : a)) : p.arguments
-			})),
-			children: c.children.map((child) => ({
-				...child,
-				subject: bindSite(child.subject, rename),
-				...('kinds' in child ? { kinds: child.kinds.map(rename) } : {}),
-				...('siblings' in child ? { siblings: child.siblings.map((sibling) => ({ ...sibling, selector: bindSelector(sibling.selector, rename) })) } : {})
-			}))
-		})),
-		members: facts.members.map((m): MemberFact => (m.leadMatch === undefined ? bindMember(m, rename) : { ...bindMember(m, rename), leadMatch: bindLeadMatch(m.leadMatch, rename) })),
+		claims: facts.claims.map((claim) => bindClaim(claim, rename, fieldNameOf)),
+		members: facts.members.map(
+			(m): MemberFact =>
+				m.leadMatch === undefined
+					? bindMember(m, rename, fieldNameOf)
+					: { ...bindMember(m, rename, fieldNameOf), leadMatch: bindLeadMatch(m.leadMatch, rename, fieldNameOf) }
+		),
 		containers: facts.containers.map((c) => ({
 			...c,
 			kind: rename(c.kind),
-			element: bindSelector(c.element, rename),
-			captures: c.captures.map((x) => bindSelector(x, rename)),
-			dropped: c.dropped.map((x) => bindSelector(x, rename))
+			element: bindSelector(c.element, rename, fieldNameOf, c.kind),
+			captures: c.captures.map((x) => bindSelector(x, rename, fieldNameOf, c.kind)),
+			dropped: c.dropped.map((x) => bindSelector(x, rename, fieldNameOf, c.kind))
 		})),
 		templates: facts.templates,
 		unclaimed: facts.unclaimed.map((u) => ({ ...u, kind: rename(u.kind) }))

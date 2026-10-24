@@ -98,14 +98,10 @@ export const buildClassBody = dispatched(() => backend().buildClassBody);
 export const buildFormalParameters = dispatched(() => backend().buildFormalParameters);
 export const buildClassStaticBlock = dispatched(() => backend().buildClassStaticBlock);
 export const buildRestPattern = dispatched(() => backend().buildRestPattern);
-export const buildMethodDefinition = dispatched(() => backend().buildMethodDefinition);
 export const buildPair = dispatched(() => backend().buildPair);
 export const buildPairPattern = dispatched(() => backend().buildPairPattern);
 export const buildComputedPropertyName = dispatched(() => backend().buildComputedPropertyName);
-export const buildPublicFieldDefinition = dispatched(() => backend().buildPublicFieldDefinition);
 export const buildNonNullExpression = dispatched(() => backend().buildNonNullExpression);
-export const buildMethodSignature = dispatched(() => backend().buildMethodSignature);
-export const buildAbstractMethodSignature = dispatched(() => backend().buildAbstractMethodSignature);
 export const buildFunctionSignature = dispatched(() => backend().buildFunctionSignature);
 export const buildDecoratorParenthesizedExpression = dispatched(() => backend().buildDecoratorParenthesizedExpression);
 export const buildTypeAssertion = dispatched(() => backend().buildTypeAssertion);
@@ -195,6 +191,7 @@ export const buildTupleTypeMembers = dispatched(() => backend().buildTupleTypeMe
 export const buildImportClauseGroup = dispatched(() => backend().buildImportClauseGroup);
 export const buildUsingDeclarationArm = O.buildUsingDeclarationArm;
 export const buildCatchClauseGroup = dispatched(() => backend().buildCatchClauseGroup);
+export const buildGetAccessorSignature = dispatched(() => backend().buildGetAccessorSignature);
 export const buildAmbientDeclarationGlobal = dispatched(() => backend().buildAmbientDeclarationGlobal);
 export const buildAmbientDeclarationModule = dispatched(() => backend().buildAmbientDeclarationModule);
 export const buildObjectTypeContent = dispatched(() => backend().buildObjectTypeContent);
@@ -263,6 +260,25 @@ export const buildForHeaderLhs = dispatched(() => backend().buildForHeaderLhs);
 export const buildForHeaderVarKind = dispatched(() => backend().buildForHeaderVarKind);
 export const buildForHeaderLetConstKind = dispatched(() => backend().buildForHeaderLetConstKind);
 export const buildForHeaderUsingKind = dispatched(() => backend().buildForHeaderUsingKind);
+export const buildFormalParametersGetAccessorSignature = O.buildFormalParametersGetAccessorSignature;
+export const buildFormalParametersSetAccessorSignature = dispatched(
+	() => backend().buildFormalParametersSetAccessorSignature
+);
+export const buildFormalParametersElementsSetAccessorSignature = dispatched(
+	() => backend().buildFormalParametersElementsSetAccessorSignature
+);
+export const buildSetterParameter = dispatched(() => backend().buildSetterParameter);
+export const buildMethodDefinitionPlain = dispatched(() => backend().buildMethodDefinitionPlain);
+export const buildMethodDefinitionGetter = dispatched(() => backend().buildMethodDefinitionGetter);
+export const buildMethodDefinitionSetter = dispatched(() => backend().buildMethodDefinitionSetter);
+export const buildMethodSignaturePlain = dispatched(() => backend().buildMethodSignaturePlain);
+export const buildMethodSignatureGetter = dispatched(() => backend().buildMethodSignatureGetter);
+export const buildMethodSignatureSetter = dispatched(() => backend().buildMethodSignatureSetter);
+export const buildAbstractMethodSignaturePlain = dispatched(() => backend().buildAbstractMethodSignaturePlain);
+export const buildAbstractMethodSignatureGetter = dispatched(() => backend().buildAbstractMethodSignatureGetter);
+export const buildAbstractMethodSignatureSetter = dispatched(() => backend().buildAbstractMethodSignatureSetter);
+export const buildPublicFieldDefinitionPlain = dispatched(() => backend().buildPublicFieldDefinitionPlain);
+export const buildPublicFieldDefinitionAccessor = dispatched(() => backend().buildPublicFieldDefinitionAccessor);
 export const buildHtmlComment = dispatched(() => backend().buildHtmlComment);
 export const buildJsxText = dispatched(() => backend().buildJsxText);
 export const buildTemplateChars = dispatched(() => backend().buildTemplateChars);
@@ -276,6 +292,11 @@ export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
 export const buildIndent = O.buildIndent;
 export const buildDedent = O.buildDedent;
+export const buildReceiverParameterDeclaration = dispatched(() => backend().buildReceiverParameterDeclaration);
+export const buildFormalParametersElementsReceiver = dispatched(() => backend().buildFormalParametersElementsReceiver);
+export const buildFormalParametersElementsReceiverGroup = dispatched(
+	() => backend().buildFormalParametersElementsReceiverGroup
+);
 export const buildTernaryQmark = dispatched(() => backend().buildTernaryQmark);
 export const buildErrorRecovery = dispatched(() => backend().buildErrorRecovery);
 export const buildStatementIdentifier = dispatched(() => backend().buildStatementIdentifier);
@@ -379,14 +400,10 @@ export const _factoryMap = {
 	formal_parameters: buildFormalParameters,
 	class_static_block: buildClassStaticBlock,
 	rest_pattern: buildRestPattern,
-	method_definition: buildMethodDefinition,
 	pair: buildPair,
 	pair_pattern: buildPairPattern,
 	computed_property_name: buildComputedPropertyName,
-	public_field_definition: buildPublicFieldDefinition,
 	non_null_expression: buildNonNullExpression,
-	method_signature: buildMethodSignature,
-	abstract_method_signature: buildAbstractMethodSignature,
 	function_signature: buildFunctionSignature,
 	decorator_parenthesized_expression: buildDecoratorParenthesizedExpression,
 	type_assertion: buildTypeAssertion,
@@ -470,6 +487,7 @@ export const _factoryMap = {
 	import_clause_group: buildImportClauseGroup,
 	using_declaration_arm: buildUsingDeclarationArm,
 	catch_clause_group: buildCatchClauseGroup,
+	_get_accessor_signature: buildGetAccessorSignature,
 	ambient_declaration_global: buildAmbientDeclarationGlobal,
 	ambient_declaration_module: buildAmbientDeclarationModule,
 	object_type_content: buildObjectTypeContent,
@@ -528,6 +546,21 @@ export const _factoryMap = {
 	for_header_var_kind: buildForHeaderVarKind,
 	for_header_let_const_kind: buildForHeaderLetConstKind,
 	for_header_using_kind: buildForHeaderUsingKind,
+	_formal_parameters_get_accessor_signature: buildFormalParametersGetAccessorSignature,
+	_formal_parameters_set_accessor_signature: buildFormalParametersSetAccessorSignature,
+	_formal_parameters_elements_set_accessor_signature: buildFormalParametersElementsSetAccessorSignature,
+	setter_parameter: buildSetterParameter,
+	method_definition_plain: buildMethodDefinitionPlain,
+	method_definition_getter: buildMethodDefinitionGetter,
+	method_definition_setter: buildMethodDefinitionSetter,
+	method_signature_plain: buildMethodSignaturePlain,
+	method_signature_getter: buildMethodSignatureGetter,
+	method_signature_setter: buildMethodSignatureSetter,
+	abstract_method_signature_plain: buildAbstractMethodSignaturePlain,
+	abstract_method_signature_getter: buildAbstractMethodSignatureGetter,
+	abstract_method_signature_setter: buildAbstractMethodSignatureSetter,
+	public_field_definition_plain: buildPublicFieldDefinitionPlain,
+	public_field_definition_accessor: buildPublicFieldDefinitionAccessor,
 	html_comment: buildHtmlComment,
 	jsx_text: buildJsxText,
 	_template_chars: buildTemplateChars,
@@ -541,6 +574,9 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	receiver_parameter_declaration: buildReceiverParameterDeclaration,
+	formal_parameters_elements_receiver: buildFormalParametersElementsReceiver,
+	formal_parameters_elements_receiver_group: buildFormalParametersElementsReceiverGroup,
 	_ternary_qmark: buildTernaryQmark,
 	__error_recovery: buildErrorRecovery,
 	statement_identifier: buildStatementIdentifier,

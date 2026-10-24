@@ -1,3 +1,4 @@
+import { kindIdTablesOf } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { describe, it, expect } from 'vitest';
 import type { RawGrammar, LinkedGrammar, NormalizedGrammar } from '../types.ts';
 import type { AssembledNodeMap } from '../assemble.ts';
@@ -13,6 +14,7 @@ function makeCompilation(overrides: Partial<Compilation> = {}): Compilation {
 		linked: {} as LinkedGrammar,
 		normalized: {} as NormalizedGrammar,
 		nodeMap: {} as AssembledNodeMap,
+		generatedIdTables: kindIdTablesOf([]),
 		diagnostics: new DiagnosticSink(),
 		slotGroupingDiagnostics: [],
 		grammarDiagnostics: [],

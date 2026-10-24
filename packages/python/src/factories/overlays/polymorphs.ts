@@ -453,9 +453,9 @@ export const comparisonOperator = Object.freeze({
 
 const namedExpression$identifier =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'name'> & { name: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { name: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, name: _c(child)(...seated) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'left'> & { left: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+		const { left: seated, ...rest } = config;
+		return _s<ReturnType<PF>>(parent)({ ...rest, left: _c(child)(...seated) } as never, options as never);
 	};
 const namedExpression$identifier$strict = namedExpression$identifier(F.buildNamedExpression, F.buildIdentifier);
 const namedExpression$identifier$coerce = namedExpression$identifier(C.coerceToNamedExpression, C.coerceToIdentifier);
@@ -468,26 +468,26 @@ export const namedExpression = Object.freeze({
 }) as unknown as typeof B.namedExpression & {
 	identifier: {
 		strict: <
-			const V extends OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'> & {
-				name: ArgsOf<typeof F.buildIdentifier>;
+			const V extends OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'left'> & {
+				left: ArgsOf<typeof F.buildIdentifier>;
 			}
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
-					OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'name'> & { name: ArgsOf<typeof F.buildIdentifier> }
+					OmitEach<ArgsOf<typeof F.buildNamedExpression>[0], 'left'> & { left: ArgsOf<typeof F.buildIdentifier> }
 				>,
 			options?: OptionsArg<typeof F.buildNamedExpression>
 		) => ReturnType<typeof F.buildNamedExpression>;
 		coerce: <
-			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'> & {
-				name: ArgsOf<typeof C.coerceToIdentifier>;
+			const V extends OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'left'> & {
+				left: ArgsOf<typeof C.coerceToIdentifier>;
 			}
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
-					OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'name'> & { name: ArgsOf<typeof C.coerceToIdentifier> }
+					OmitEach<ArgsOf<typeof C.coerceToNamedExpression>[0], 'left'> & { left: ArgsOf<typeof C.coerceToIdentifier> }
 				>,
 			options?: OptionsArg<typeof C.coerceToNamedExpression>
 		) => ReturnType<typeof C.coerceToNamedExpression>;

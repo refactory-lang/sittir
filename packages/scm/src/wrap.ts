@@ -904,21 +904,24 @@ export function wrapNamedNodeGroupChildren(
 						tree
 					)
 				),
-			namedNodeExpressions: (
-				...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>
-			) =>
+			namedNodeExpressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapNamedNodeGroupChildren(
-						{
-							...$edited(data),
-							_named_node_expressions: admitSlot(
-								handle,
-								'named_node_group_children',
-								'namedNodeExpressions',
-								restItems('namedNodeExpressions', v)
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: RAW.buildNamedNodeExpressionArm },
+						(...v: NonEmptyArray<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>[number]>) =>
+							wrapNamedNodeGroupChildren(
+								{
+									...$edited(data),
+									_named_node_expressions: admitSlot(
+										handle,
+										'named_node_group_children',
+										'namedNodeExpressions',
+										restItems('namedNodeExpressions', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
 					)
 				)
 		},
@@ -965,19 +968,24 @@ export function wrapNamedNodeGroupAnchoredLast(
 						tree
 					)
 				),
-			namedNodeExpressions: (...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
+			namedNodeExpressions: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
-					wrapNamedNodeGroupAnchoredLast(
-						{
-							...$edited(data),
-							_named_node_expressions: admitSlot(
-								handle,
-								'named_node_group_anchored_last',
-								'namedNodeExpressions',
-								restItems('namedNodeExpressions', v)
+					elementsWith(
+						args,
+						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: RAW.buildNamedNodeExpressionArm },
+						(...v: NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>[number][]) =>
+							wrapNamedNodeGroupAnchoredLast(
+								{
+									...$edited(data),
+									_named_node_expressions: admitSlot(
+										handle,
+										'named_node_group_anchored_last',
+										'namedNodeExpressions',
+										restItems('namedNodeExpressions', v)
+									)
+								},
+								tree
 							)
-						},
-						tree
 					)
 				),
 			last: (v: NonNullable<T.NamedNodeGroupAnchoredLast['_last']>) =>

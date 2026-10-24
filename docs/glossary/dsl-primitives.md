@@ -12,41 +12,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
 
 ### `packages/codegen/src/dsl/primitives/field.ts::maybeKeywordSymbol`
 
-```text
-/**
- * Shared `FIELD(name, <shape-containing-STRING>)` →
- * `FIELD(name, <shape with STRING replaced by SYMBOL(_kw_<name>)>)`
- * transformation. Synthesizes a hidden `_kw_<name>: 'kw'` rule via
- * registerSyntheticRule, marks it for wire-managed `inline:`, and rewrites the content so
- * tree-sitter's normalizer preserves the FIELD wrapper.
- *
- * Tree-sitter strips FIELD wrappers around bare STRING nodes at grammar-
- * normalization time. To keep the field label, we indirect every
- * contained STRING through a hidden SYMBOL rule.
- *
- * Shapes handled:
- *
- *   - **Bare STRING** — direct `field('x', 'literal')` case. The STRING
- *     is replaced by a SYMBOL reference to `_kw_<x>` (body: `'literal'`).
- *
- *   - **OPTIONAL(STRING)** — grammar like `seq(optional('&'), ...)`
- *     with an override `0: field('lifetime')` wraps position 0 as
- *     `field('lifetime', optional('&'))`. Tree-sitter would strip the
- *     FIELD if the inner were bare STRING reachable through the
- *     optional; routing through a SYMBOL preserves the label. Both
- *     the `OPTIONAL` shape and tree-sitter's `CHOICE(STRING, BLANK)`
- *     representation of optional are handled.
- *
- * Used by:
- *   - transform.ts resolvePatch (one-arg field() placeholder path)
- *   - the two-arg field(name, 'literal') path below
- *
- * Optional `wrapSyntheticBody` lets callers apply an extra wrap
- * (e.g., transform's accumulated prec stack) around the synthetic
- * rule's body before registration. Returns the content unchanged
- * when no STRING is reachable through the recognized shapes.
- */
-```
+Rewrites a field's content so a STRING it holds, directly or through an optional, becomes a reference to a hidden keyword rule (`synthesizeKwSymbol`), and returns any other content unchanged. Tree-sitter's normalizer strips a FIELD around a bare STRING, so the label survives only through a SYMBOL; wire inlines the rule, so the parser still sees the token at the site. The rule holds the token alone: a precedence around the site stays in the parent rule, and the inlined token takes it there. The one-arg `field()` placeholder (`transform/transform.ts::resolveFieldPlaceholder`) and the two-arg `field(name, 'text')` (`buildTwoArgFieldResult`) both use it.
 
 #### body
 
@@ -61,12 +27,7 @@ rewritten content is rebuilt in the representation it had
 
 ### `packages/codegen/src/dsl/primitives/field.ts::synthesizeKwSymbol`
 
-```text
-/**
- * Create the `_kw_<fieldName>` hidden rule, register it for wire-managed
- * `inline:`, and return a SYMBOL reference to it.
- */
-```
+Mints the hidden keyword rule a field over a text points at (`wire/wire.ts::wireMintKeyword`) and returns a SYMBOL reference to it. Outside a wire() context it throws.
 
 ### `packages/codegen/src/dsl/primitives/field.ts::field`
 
@@ -77,7 +38,7 @@ rewritten content is rebuilt in the representation it had
  *
  * When the two-arg form is called with a bare STRING literal content
  * (e.g. `field('async', 'async')`), the content is substituted with a
- * synthesized SYMBOL reference to a hidden `_kw_<name>` rule. This
+ * synthesized SYMBOL reference to a hidden keyword rule (named by `wire/keyword-names.ts::resolveKeywordNames`). This
  * mirrors transform.ts's placeholder path — tree-sitter's grammar
  * normalizer strips FIELD wrappers around bare STRING, so we indirect
  * through a SYMBOL to preserve the field in the parse tree.
@@ -132,6 +93,16 @@ rewritten content is rebuilt in the representation it had
  */
 ```
 
+With the forms alone, `refine(forms)` is the entry form: a `RefinePlaceholder` that applies at `.` and registers the same forms when the entry resolves over the rule.
+
+### `packages/codegen/src/dsl/primitives/refine.ts::RefinePlaceholder`
+
+The `refine(forms)` entry: the forms, registered for the kind when the entry resolves at `.`.
+
+### `packages/codegen/src/dsl/primitives/refine.ts::isRefinePlaceholder`
+
+Whether a patch value is the `refine(forms)` entry.
+
 ### `packages/codegen/src/dsl/primitives/role.ts::withRoleScope`
 
 ```text
@@ -140,7 +111,8 @@ rewritten content is rebuilt in the representation it had
  * accumulated bindings AND `fn`'s result. Save/restore guarantees
  * nested `grammar(...)` calls stay isolated even on exception paths.
  *
- * Called by `grammarFn` in evaluate.ts — not by override authors.
+ * Called by the layer pass (`dsl/layer.ts::runLayerPass`) — not by
+ * override authors.
  */
 ```
 
@@ -165,13 +137,12 @@ rewritten content is rebuilt in the representation it had
  * member of the externals array.
  *
  * **Tree-sitter compatibility**: when `role()` is called outside any
- * sittir-managed scope (e.g. when tree-sitter's CLI loads the
- * transpiled `.sittir/grammar.js` and runs `grammar()` natively),
- * the binding is silently dropped and only the symbol passthrough
- * runs. Tree-sitter doesn't read role bindings — they only matter
- * to sittir's Link phase, which always evaluates the override file
- * inside a `withRoleScope` block. This keeps the same call site valid
- * for both consumers without runtime feature detection.
+ * scope, the binding is dropped and only the symbol passthrough runs.
+ * The layer pass opens a scope in either runtime
+ * (`dsl/layer.ts::runLayerPass`), so the bindings reach its record;
+ * tree-sitter never reads them, and link reads them from the evaluated
+ * grammar's `externalRoles`. This keeps the same call site valid for
+ * both consumers without runtime feature detection.
  */
 ```
 
@@ -179,9 +150,8 @@ rewritten content is rebuilt in the representation it had
 
 ```text
 /**
- * Module-local accumulator. Null when no `grammar(...)` call is on
- * the stack — calling `role()` in that state is an error because we
- * have no scope to attach the binding to.
+ * Module-local accumulator. Null when no scope is open; `role()` then
+ * records nothing.
  */
 ```
 
@@ -192,9 +162,9 @@ rewritten content is rebuilt in the representation it had
  * dsl/field.ts — sittir field shadow with one-arg placeholder form.
  *
  * Tree-sitter's baseline `field()` takes two args: `field(name, content)`.
- * Sittir's transform() patches need a one-arg form so authors can write:
+ * Sittir's edit() patches need a one-arg form so authors can write:
  *
- *     transform(original, { 0: field('expression') })
+ *     edit(original, { 0: field('expression') })
  *
  * Two-arg calls delegate to whichever `field` is provided as a global
  * by the runtime — sittir's grammarFn-injected field (`{type:'FIELD'}`)
@@ -215,7 +185,7 @@ rewritten content is rebuilt in the representation it had
 
 ### `packages/codegen/src/dsl/primitives/rule.ts::rule`
 
-`rule(name, body)` in a `patches:` entry declares a real grammar rule `name`
+`rule(name, body)` in a `edits:` entry declares a real grammar rule `name`
 whose body is `body($)`, and replaces the patched path with a reference to
 it. It is how a patch introduces a rule the base grammar lacks (python's
 `comprehension_clauses`) without a hand-written `rules:` entry. The rule is
@@ -283,6 +253,8 @@ A rule with more than one cause declares them together:
 `reauthored([[cause, witnesses], [cause, witnesses], ...], body)` takes two or
 more cause pairs (`CausePair`), and the gate judges each cause on its own. The
 one-cause forms record the same declaration with one cause (`DeclaredCause`).
+TypeScript's `public_field_definition` declares `'rejects-valid-syntax'` for the
+auto-accessor forms it adds and `'ruled-narrowing'` for the ones it drops.
 
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::OtherKindWitness`
 
@@ -346,7 +318,7 @@ tree-sitter's CLI.
  *      patch target. Same pattern as `field('name')`.
  *
  *      In the override file:
- *        transform(original, { '1/0': alias('assignment_eq') })
+ *        edit(original, { '1/0': alias('assignment_eq') })
  *
  *      resolvePatch produces:
  *        alias(original_content_at_1_0, { type: 'SYMBOL', name: 'assignment_eq' })
@@ -356,6 +328,78 @@ tree-sitter's CLI.
  *     import { alias } from '@sittir/codegen/dsl'
  */
 ```
+
+### `packages/codegen/src/dsl/primitives/alias.ts::alias`
+
+`alias(name)` is the placeholder an entry fills at the member it reaches (`transform/transform.ts::resolveAliasPlaceholder`). `alias(rule, value)` is the runtime's own `alias`, except on a reference `copy()` or a path returned: there the copy is shown as `value` (`copy.ts::namedCopy`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::symbol`
+
+The runtime's `sym`.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::nativeAlias`
+
+The runtime's `alias`.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::nameOf`
+
+The kind a source names: a string, or a `$` value read the way the runtime's `alias` reads one, so a name the grammar has no rule for yet still reads.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copyReference`
+
+The reference to a whole copy. A copy of a visible rule aliases back to its source, `alias($._copy, $.source)`, so the tree shows the source's kind; a copy of a hidden rule, or of a supertype, which no tree shows, is the bare copy (`bareReference`). Shown as another name, the reference is `alias($._copy, $.shown)` and the alias `(source, shown)` is recorded (`transform/transform.ts::recordAlias`). The name the reference shows is stamped on the copy effect (`wire/wire.ts::wireNoteCopyDisplay`), so a copy that aliases back declares the display family of its source and itself. The reference is noted as the copy's (`wire/wire.ts::wireNoteCopyReference`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::reachedCopyReference`
+
+The reference a path leaves at a reference it reached that already stands for a copy. With `shown` naming a display the reference does not have, the reference is the copy's, shown as `shown` (`copyReference`). Otherwise it keeps its form: the same reference when it already names the copy, else re-pointed at it (`repointed`). A reference already shown under a name of its own (not its source's) that a path shows as another is `edit-site-conflict` (`refuseRedisplay`), which refuses the whole entry.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::displayOf`
+
+The name a reference shows: an `ALIAS`'s value, or none for a bare symbol.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::referencedNameOf`
+
+The rule a reference names: the symbol, or the symbol an `ALIAS` shows.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::repointed`
+
+The same reference form naming another copy: an `ALIAS` keeps its value and namedness, and a bare symbol stays bare.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::refuseRedisplay`
+
+Refuses to show a copy's reference as `shown` when the reference already has a display of its own. A reference with no display, or shown as its source, takes the new name. A display of its own is a `VerbRefusal` `edit-site-conflict` naming the copy and both displays, and it refuses the entry at the entry's boundary (`transform/transform.ts::appliedAtSite`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copy`
+
+`copy(source, path?)`: the context's copy of `source`, or of the part `path` selects, made or reused (`wire/wire.ts::wireCopy`), and its reference. A whole copy takes `copyReference`; a part, which is not the source's kind, is the bare copy (`bareReference`). It runs only during the layer pass: in a `rules:` callback, a replacing function or a helper. Called anywhere else it throws `edit-entry-invalid`. A refused copy leaves the source's own reference.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::namedCopy`
+
+`alias(reference, value)` on a copy's reference: the copy shown as `value`, replacing the alias back to its source. Any other rule, or an anonymous `value`, is `undefined`, and the runtime's `alias` applies.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::editedCopy`
+
+`edit` and `replace` on a copy's reference: the edit applies to the copy's body and the same reference comes back. Any other rule is `undefined`.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::refuseSplitDisplays`
+
+The check after an edits entry. Every copy the entry gave a display (`wire/wire.ts::wireEntryShown`) must show that display at every reference reachable from the entry's result (`referenceDisplays`). If any reference shows another, that is a `VerbRefusal` `edit-site-conflict` naming the copy and both displays. So an entry that shows one reference of a copy under a new name, and leaves another under the old one, is refused whole. A bare reference to a hidden copy shows no display and is named by the copy's own name. Returns the rule.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::referenceDisplays`
+
+The displays each copy shows across a rule. Every reference to a copy (`copyReferencedBy`) adds its display, and each copy's body is walked once, so references held in a copy's deposit count too.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copyReferencedBy`
+
+The copy a node refers to, as a bare symbol or as an alias over one, when that name is a copy the layer made (`wire/wire.ts::wireCopyOf`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::walker`
+
+The rule walker the display check descends with (`referenceDisplays`).
+
+### `packages/codegen/src/dsl/primitives/copy.ts::bareReference`
+
+A copy referenced by its own name, `$._copy`, showing no display: the reference of a copy of a hidden rule or a supertype, and of every part copy. The copy effect is stamped with no display, and the reference is noted as the copy's.
 
 ### `packages/codegen/src/dsl/primitives/refine.ts::module`
 
@@ -421,15 +465,14 @@ tree-sitter's CLI.
  *
  * `role()` returns the symbol reference UNCHANGED so the externals
  * array still receives a valid token reference. As a side effect it
- * pushes the binding onto a per-grammar accumulator that
- * `evaluate.ts`'s `grammarFn` consumes and attaches to the resulting
- * grammar as `externalRoles`. Link reads it from `raw.externalRoles`
- * to drive its symbol-resolution behavior.
+ * pushes the binding onto the accumulator of the layer pass that
+ * evaluates the callback, which records the bindings as its record's
+ * `externalRoles`. Link reads them from `raw.externalRoles` to drive
+ * its symbol-resolution behavior.
  *
- * The accumulator is scoped to the enclosing `grammar(...)` call via
- * a save/restore pattern (see `withRoleScope`), so nested
- * `grammar(enrich(base), {...})` evaluations don't leak roles between
- * scopes.
+ * The accumulator is scoped to one layer pass via a save/restore
+ * pattern (see `withRoleScope`), so nested layer passes don't leak
+ * roles between layers.
  *
  * Import explicitly:
  *
@@ -453,23 +496,23 @@ The `arm` namespace exists so the placeholder can be spelled `default`, which
 is a reserved word and therefore illegal as a function name but legal as a
 property. `arm.default` is a value, not a call — it carries no per-site data.
 
-Placed on a choice arm in `patches`, it stamps `annotations.default` on that
+Placed on a choice arm in `edits`, it stamps `annotations.default` on that
 arm, and `resolvePatch` rejects a path whose parent is not a choice. The fact
 then rides the slot's value bag beside `variant`/`variantOf`, which is what
 carries it through an ALIAS collapse; the from emitter reads it as the
 tie-break when several arms admit the same bare value.
 
-    patches: { impl_item: { '3/0/0/0': arm.default } }
+    edits: { impl_item: { '3/0/0/0': arm.default } }
 
 ### `packages/codegen/src/dsl/primitives/group.ts::group`
 
-`group()` is the `patches` declaration that a rule is a form of its parent:
+`group()` is the `edits` declaration that a rule is a form of its parent:
 `resolvePatch` lowers it to `annotations.hoisted` on the addressed rule, the
 same stamp the variant lift and the `groups:` / clause-hoist mints make. The
 path `'.'` addresses the rule itself, so an authored hidden rule a parent
 only aliases can be declared a seat without restating its body:
 
-    patches: { _except_clause_as: { '.': group() } }
+    edits: { _except_clause_as: { '.': group() } }
 
 It carries no data; it is a placeholder like `arm.default`, recognised by
 `isGroupPlaceholder` (`__sittirPlaceholder: 'group'`).
@@ -494,7 +537,7 @@ It carries no data; it is a placeholder like `arm.default`, recognised by
  *
  * Usage in grammar.sittir.ts:
  *
- *     closure_expression: ($, original) => transform(original,
+ *     closure_expression: ($, original) => edit(original,
  *         { 0: field('static'), 1: field('async'), 2: field('move') },
  *         { '4/0': variant('block'), '4/1': variant('expr') },
  *     ),
@@ -526,7 +569,23 @@ the grammar does not name it.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variant`
 
-Builds the placeholder; `options.absent` and `options.default` are carried only when set. `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
+Builds the placeholder; `options.absent` and `options.default` are carried only when set. Given a rule as its second argument, it is the direct form `variant(name, rule, options?)`: it returns a copy of the rule carrying the placeholder under `DIRECT_VARIANT_KEY`, which the layer pass applies at that arm's position exactly as the entry would (`transform/transform.ts::withDirectVariants`). `default: true` names the arm the parent's own factory builds when given a bare value; it replaces any default the arms already carry (see `clearSiblingDefaults`).
+
+### `packages/codegen/src/dsl/primitives/variant.ts::DIRECT_VARIANT_KEY`
+
+The symbol key under which a direct `variant(name, rule)` carries its placeholder on the rule it labels. Not enumerable, so JSON never sees it, and a copy of the rule that the pass makes drops it.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::directVariantOf`
+
+The placeholder a rule carries as a direct variant arm, or undefined.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::variantPlaceholder`
+
+The placeholder both forms build, with `absent` and `default` only when set.
+
+### `packages/codegen/src/dsl/primitives/variant.ts::isRuleShape`
+
+Whether `variant`'s second argument is a rule (an object with a string `type`) rather than options.
 
 ### `packages/codegen/src/dsl/primitives/variant.ts::variantMintName`
 
@@ -650,7 +709,7 @@ separator pattern is tried first, because a separator label also spells a seam
 on a token named `<token>_separator_space`; a separator label needs a side
 unless its token is `empty`, and the empty gap takes none. Then the seam
 pattern, then the flank pattern. Wire's `isRetiredAddressKey` is its one
-caller, recognising a `patches:` key spelled like a site. Nothing in the
+caller, recognising an `edits:` key spelled like a site. Nothing in the
 compiler reads an address back out of a label, since every site carries its
 own.
 
@@ -734,3 +793,55 @@ What `reauthored` or `vocabulary` tags a rule function with (`ruleCauseOf`): a r
 ### `packages/codegen/src/dsl/primitives/rule-cause.ts::declaredCause`
 
 The recorded form of a cause pair (`CausePair`).
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::NarrowPlaceholder`
+
+A `narrow` entry: its direction and the admits.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::isNarrowPlaceholder`
+
+Whether an entry value is a `narrow` placeholder.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::narrowing`
+
+The placeholder builder for one direction.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::narrow`
+
+`narrow(...admits)` keeps only the admitted arms at its entry's site, and `narrow.except(...admits)` every other arm. The entry is queued with the layer's path edits and applies in its whole-grammar phase, before the leads, over the rules as the layer's own edits left them (`verbs/narrow.ts::applyNarrows`).
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::withinOf`
+
+A `match` restriction from its authored form: an array is an unfielded child; a record restricts the one field it names, and a record of any other size is refused.
+
+### `packages/codegen/src/dsl/primitives/narrow.ts::match`
+
+Builds a `LeadMatch`: a kind, an optional restriction (`withinOf`) and an optional name for its form. `(required_parameter pattern: (this))` is `match('required_parameter', { pattern: [match('this')] })`.
+
+### `packages/codegen/src/dsl/primitives/lead.ts::LeadPlaceholder`
+
+A `lead` entry: the list's item field, the field the head takes, and the admits.
+
+### `packages/codegen/src/dsl/primitives/lead.ts::isLeadPlaceholder`
+
+Whether an entry value is a `lead` placeholder.
+
+### `packages/codegen/src/dsl/primitives/lead.ts::lead`
+
+`L: { '.': lead(item, field, ...admits) }` separates the head of the separated list `L` that the admits allow into a receiver form (`verbs/lead.ts::applyLead`). It is valid only at the list kind's `.`, where wire queues it for the layer's whole-grammar phase (`transform/transform.ts::queueLeadEntry`).
+
+### `packages/codegen/src/dsl/primitives/rename.ts::RenamePlaceholder`
+
+The `rename(to)` placeholder: the name the kind takes.
+
+### `packages/codegen/src/dsl/primitives/rename.ts::isRenamePlaceholder`
+
+Whether a value is a `rename` placeholder.
+
+### `packages/codegen/src/dsl/primitives/rename.ts::rename`
+
+A rename entry: `kind: { '.': rename(to) }` renames the kind to `to` in the layer it sits in (`verbs/rename.ts::applyRename`). It applies only at `.`, the kind itself.
+
+### `packages/codegen/src/dsl/primitives/copy.ts::copy#2`
+
+The `copy(source, path)` primitive. It names the source, mints a wire copy of it for the part at `path` (the whole rule by default), and returns a reference to the copy: a copy reference for the whole rule, a bare reference for a part. When the layer mints no copy, it returns the plain symbol. The copy's name comes from `copyNameOf`, which drops the leading underscores of its context as well as of its source, so a copy made in a hidden rule has no double underscore.

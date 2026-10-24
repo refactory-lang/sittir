@@ -131,24 +131,14 @@ export const classStaticBlock: Hoisted<typeof O.classStaticBlock> = hoistAs<type
 	O.classStaticBlock
 );
 export const restPattern: Hoisted<typeof O.restPattern> = hoistAs<typeof O.restPattern>(O.restPattern);
-export const methodDefinition: Hoisted<typeof O.methodDefinition> = hoistAs<typeof O.methodDefinition>(
-	O.methodDefinition
-);
 export const pair: Hoisted<typeof O.pair> = hoistAs<typeof O.pair>(O.pair);
 export const pairPattern: Hoisted<typeof O.pairPattern> = hoistAs<typeof O.pairPattern>(O.pairPattern);
 export const computedPropertyName: Hoisted<typeof O.computedPropertyName> = hoistAs<typeof O.computedPropertyName>(
 	O.computedPropertyName
 );
-export const publicFieldDefinition: Hoisted<typeof O.publicFieldDefinition> = hoistAs<typeof O.publicFieldDefinition>(
-	O.publicFieldDefinition
-);
 export const nonNullExpression: Hoisted<typeof O.nonNullExpression> = hoistAs<typeof O.nonNullExpression>(
 	O.nonNullExpression
 );
-export const methodSignature: Hoisted<typeof O.methodSignature> = hoistAs<typeof O.methodSignature>(O.methodSignature);
-export const abstractMethodSignature: Hoisted<typeof O.abstractMethodSignature> = hoistAs<
-	typeof O.abstractMethodSignature
->(O.abstractMethodSignature);
 export const functionSignature: Hoisted<typeof O.functionSignature> = hoistAs<typeof O.functionSignature>(
 	O.functionSignature
 );
@@ -398,6 +388,49 @@ export const forHeaderLetConstKind: Hoisted<typeof O.forHeaderLetConstKind> = ho
 export const forHeaderUsingKind: Hoisted<typeof O.forHeaderUsingKind> = hoistAs<typeof O.forHeaderUsingKind>(
 	O.forHeaderUsingKind
 );
+export const formalParametersSetAccessorSignature: Hoisted<typeof O.formalParametersSetAccessorSignature> = hoistAs<
+	typeof O.formalParametersSetAccessorSignature
+>(O.formalParametersSetAccessorSignature);
+export const setterParameter: Hoisted<typeof O.setterParameter> = hoistAs<typeof O.setterParameter>(O.setterParameter);
+export const methodDefinitionPlain: Hoisted<typeof O.methodDefinitionPlain> = hoistAs<typeof O.methodDefinitionPlain>(
+	O.methodDefinitionPlain
+);
+export const methodDefinitionGetter: Hoisted<typeof O.methodDefinitionGetter> = hoistAs<
+	typeof O.methodDefinitionGetter
+>(O.methodDefinitionGetter);
+export const methodDefinitionSetter: Hoisted<typeof O.methodDefinitionSetter> = hoistAs<
+	typeof O.methodDefinitionSetter
+>(O.methodDefinitionSetter);
+export const methodSignaturePlain: Hoisted<typeof O.methodSignaturePlain> = hoistAs<typeof O.methodSignaturePlain>(
+	O.methodSignaturePlain
+);
+export const methodSignatureGetter: Hoisted<typeof O.methodSignatureGetter> = hoistAs<typeof O.methodSignatureGetter>(
+	O.methodSignatureGetter
+);
+export const methodSignatureSetter: Hoisted<typeof O.methodSignatureSetter> = hoistAs<typeof O.methodSignatureSetter>(
+	O.methodSignatureSetter
+);
+export const abstractMethodSignaturePlain: Hoisted<typeof O.abstractMethodSignaturePlain> = hoistAs<
+	typeof O.abstractMethodSignaturePlain
+>(O.abstractMethodSignaturePlain);
+export const abstractMethodSignatureGetter: Hoisted<typeof O.abstractMethodSignatureGetter> = hoistAs<
+	typeof O.abstractMethodSignatureGetter
+>(O.abstractMethodSignatureGetter);
+export const abstractMethodSignatureSetter: Hoisted<typeof O.abstractMethodSignatureSetter> = hoistAs<
+	typeof O.abstractMethodSignatureSetter
+>(O.abstractMethodSignatureSetter);
+export const publicFieldDefinitionPlain: Hoisted<typeof O.publicFieldDefinitionPlain> = hoistAs<
+	typeof O.publicFieldDefinitionPlain
+>(O.publicFieldDefinitionPlain);
+export const publicFieldDefinitionAccessor: Hoisted<typeof O.publicFieldDefinitionAccessor> = hoistAs<
+	typeof O.publicFieldDefinitionAccessor
+>(O.publicFieldDefinitionAccessor);
+export const receiverParameterDeclaration: Hoisted<typeof O.receiverParameterDeclaration> = hoistAs<
+	typeof O.receiverParameterDeclaration
+>(O.receiverParameterDeclaration);
+export const formalParametersElementsReceiver: Hoisted<typeof O.formalParametersElementsReceiver> = hoistAs<
+	typeof O.formalParametersElementsReceiver
+>(O.formalParametersElementsReceiver);
 export const declaration: Hoisted<typeof O.declaration> = hoistAs<typeof O.declaration>(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistAs<typeof O.importSpecifier>(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistAs<typeof O.variableDeclarator>(
@@ -415,6 +448,16 @@ export const string: Hoisted<typeof O.string> = hoistAs<typeof O.string>(O.strin
 export const comment: Hoisted<typeof O.comment> = hoistAs<typeof O.comment>(O.comment);
 export const metaProperty: Hoisted<typeof O.metaProperty> = hoistAs<typeof O.metaProperty>(O.metaProperty);
 export const pattern: Hoisted<typeof O.pattern> = hoistAs<typeof O.pattern>(O.pattern);
+export const methodDefinition: Hoisted<typeof O.methodDefinition> = hoistAs<typeof O.methodDefinition>(
+	O.methodDefinition
+);
+export const publicFieldDefinition: Hoisted<typeof O.publicFieldDefinition> = hoistAs<typeof O.publicFieldDefinition>(
+	O.publicFieldDefinition
+);
+export const methodSignature: Hoisted<typeof O.methodSignature> = hoistAs<typeof O.methodSignature>(O.methodSignature);
+export const abstractMethodSignature: Hoisted<typeof O.abstractMethodSignature> = hoistAs<
+	typeof O.abstractMethodSignature
+>(O.abstractMethodSignature);
 export const indexSignature: Hoisted<typeof O.indexSignature> = hoistAs<typeof O.indexSignature>(O.indexSignature);
 export const classBodyMember: Hoisted<typeof O.classBodyMember> = hoistAs<typeof O.classBodyMember>(O.classBodyMember);
 export const enumBodyElement: Hoisted<typeof O.enumBodyElement> = hoistAs<typeof O.enumBodyElement>(O.enumBodyElement);

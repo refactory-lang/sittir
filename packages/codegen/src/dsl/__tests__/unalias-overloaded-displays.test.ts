@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { unaliasOverloadedDisplays } from '../rule-transforms.ts';
+import { unaliasOverloadedDisplays, type DisplayFamilies } from '../rule-transforms.ts';
 import { predictedSymbolSourceOf } from '../symbol-table.ts';
 import type { Rule } from '../../types/rule.ts';
 
@@ -11,9 +11,10 @@ const seq = (...members: R[]) => ({ type: 'SEQ', members }) as R;
 const choice = (...members: R[]) => ({ type: 'CHOICE', members }) as R;
 const alias = (content: R, value: string) => ({ type: 'ALIAS', named: true, value, content }) as R;
 
-function run(rules: Record<string, R>, inline: readonly string[] = []): Record<string, R> {
+function run(rules: Record<string, R>, inline: readonly string[] = [], families: DisplayFamilies = new Map()): Record<string, R> {
 	return unaliasOverloadedDisplays(rules, {
-		symbols: predictedSymbolSourceOf({ rules, externals: [], inline, supertypes: [], extras: [], word: null })
+		symbols: predictedSymbolSourceOf({ rules, externals: [], inline, supertypes: [], extras: [], word: null }),
+		families
 	});
 }
 
@@ -25,6 +26,14 @@ describe('unaliasOverloadedDisplays', () => {
 			_reserved: choice(S('default'), S('union'))
 		};
 		expect(run(rules, ['_reserved'])).toBe(rules);
+	});
+
+	it('keeps a terminal storage aliased onto a display rule of token choices', () => {
+		const rules = {
+			program: choice(alias(S('signed'), 'primitive_type'), sym('primitive_type')),
+			primitive_type: choice({ type: 'TOKEN', content: S('int') } as R, { type: 'TOKEN', content: S('char') } as R)
+		};
+		expect(run(rules)).toBe(rules);
 	});
 
 	it('renames a hidden nonterminal aliased onto a nonterminal display rule', () => {
@@ -92,5 +101,49 @@ describe('unaliasOverloadedDisplays', () => {
 		expect(out(b)).toEqual(out(a));
 		expect(out(a).first).toEqual(seq(sym('tree'), alias(sym('_shared'), 'tree_shared')));
 		expect(out(a).second).toEqual(seq(sym('block'), alias(sym('_shared'), 'shared')));
+	});
+
+	const lambdas = { lambda: seq(S('lambda'), S(':')), inner_lambda: seq(S('lambda'), S('.')) };
+	const lambdaFamily: DisplayFamilies = new Map([['lambda_expression', new Set(['lambda', 'inner_lambda'])]]);
+
+	it('keeps a display family a layer declared, and still splits an overload it did not declare', () => {
+		const rules = {
+			program: seq(
+				alias(sym('lambda'), 'lambda_expression'),
+				alias(sym('inner_lambda'), 'lambda_expression'),
+				alias(sym('_paren'), 'group'),
+				alias(sym('_bracket'), 'group')
+			),
+			...lambdas,
+			_paren: seq(S('('), S(')')),
+			_bracket: seq(S('['), S(']'))
+		};
+		const split = [alias(sym('_paren'), 'paren'), alias(sym('_bracket'), 'bracket')];
+		expect(run(rules, [], lambdaFamily).program).toEqual(
+			seq(alias(sym('lambda'), 'lambda_expression'), alias(sym('inner_lambda'), 'lambda_expression'), ...split)
+		);
+		expect(run(rules).program).toEqual(seq(sym('lambda'), sym('inner_lambda'), ...split));
+	});
+
+	it("never mints a declared family's display for a storage it splits", () => {
+		const rules = {
+			program: seq(
+				alias(sym('lambda'), 'lambda_expression'),
+				alias(sym('inner_lambda'), 'lambda_expression'),
+				alias(sym('_lambda_expression'), 'group'),
+				alias(sym('_bracket'), 'group')
+			),
+			...lambdas,
+			_lambda_expression: seq(S('('), S(')')),
+			_bracket: seq(S('['), S(']'))
+		};
+		expect(run(rules, [], lambdaFamily).program).toEqual(
+			seq(
+				alias(sym('lambda'), 'lambda_expression'),
+				alias(sym('inner_lambda'), 'lambda_expression'),
+				alias(sym('_lambda_expression'), 'group_lambda_expression'),
+				alias(sym('_bracket'), 'bracket')
+			)
+		);
 	});
 });

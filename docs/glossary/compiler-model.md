@@ -1045,28 +1045,6 @@ True when a slot's sole required value needs no input: a literal terminal, or a 
 /** The leaf's regex pattern value when the rule is a PatternRule<'link'>; undefined otherwise. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::fixedLiteralText`
-
-```text
-/**
-	 * When this pattern's sole realisation is a single fixed anonymous literal
-	 * (e.g. `_semicolon` = `choice(_automatic_semicolon, ";")` where every
-	 * non-blank, non-symbol leaf collapses to the same string), returns that
-	 * string so callers can treat this like a keyword/token for node
-	 * deserialisation. Returns `undefined` for content-bearing patterns
-	 * (`identifier`, `number`, external scanner symbols, etc.).
-	 *
-	 * Used by the node-model emitter to attach a `text` field to the
-	 * serialized pattern entry, which `leafDefaultTextLiteral` (render-module)
-	 * then picks up to enable the existing u16 acceptance branch in the
-	 * generated `FromNapiValue` impls.
-	 */
-```
-
-Joins with the word matcher the node was assembled under (`wordMatcher`,
-handed in by `assemble` from the normalized grammar), the same matcher the
-flatten and simplify joins use.
-
 ### `packages/codegen/src/compiler/model/node-map.ts::text`
 
 ```text
@@ -1332,22 +1310,6 @@ literals are lexeme fragments and take no kind.
 /** {@link DeriveCtx} with the owning kind bound — per-kind record builders. */
 ```
 
-### `packages/codegen/src/compiler/model/node-map.ts::rawFactoryName`
-
-```text
-/**
-	 * True when this node's rule shape is a text template — a rule whose
-	 * parse result is emitted as a single string of text rather than a
-	 * structured config/children value. Two sources: verbatim-token-stream
-	 * rules (bare-literal sequences with no fields / symbols), and rules
-	 * that reach an external hidden token.
-	 *
-	 * Consumers (emitters) use this instead of reading `node.rule` directly —
-	 * per the project convention that only renderTemplate() methods on
-	 * AssembledNode subclasses reach into the raw rule.
-	 */
-```
-
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminalInit`
 
 ```text
@@ -1445,17 +1407,6 @@ literals are lexeme fragments and take no kind.
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledPattern::textPattern`
 
 The regex source the kind's whole text must match: the pattern composed from the linked token, with its affixes, when one exists, otherwise the bare pattern of a pattern-only rule, otherwise `undefined`. `pattern` is the unwrapped pattern value; consumers that validate or match a leaf's text use `textPattern`.
-
-### `packages/codegen/src/compiler/model/node-map.ts::text`
-
-```text
-/**
-	 * Child-context stamp: wrap the single-literal text in an UntypedNode
-	 * object. `$named: false` — tokens are anonymous in tree-sitter's
-	 * output (non-word literals like `..` / `=>` never have a named
-	 * entry in `node-types.json`).
-	 */
-```
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledList`
 
@@ -1996,14 +1947,14 @@ Every other `ir` path that builds this kind, present only when there is one: eac
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::annotations`
 
 The declarations stamped on the node's rule (`hoisted`, `variant`,
-`variantOf`, `default`, `preference`), read straight off the rule.
+`variantOf`, `default`), read straight off the rule.
 `withKindFacts` keeps the bag on a root that a pass rebuilds. Nothing
 downstream of the node reads `hoisted` here: whether the node seats on its
 parent is `seated`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::KindFacts`
 
-The grammar-wide facts every node constructor reads about its kind: the parser's kind entries, the direct arms of the declared supertypes (`supertypeArmsOf`) and the kind's provenance. `assemble` builds one per grammar and hands the same object to each construction, so a fact added here reaches every node without another parameter at each site.
+The grammar-wide facts every node constructor reads about its kind: the parser's kind entries, the direct arms of the supertypes (`supertypeArmsOf`) and the kind's provenance. `assemble` builds one per grammar and hands the same object to each construction, so a fact added here reaches every node without another parameter at each site.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::provenanceOf`
 
@@ -2032,7 +1983,7 @@ node but a direct supertype arm.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::ownSurface`
 
-Whether the node has entries of its own on the generated surface: a bundle entry, an `ir` key, an `is` guard, generated tests and a key from the `irKey` phases. A node that does not seat has one. A seated node has none, being built through its parent, unless it is a direct arm of a parser-declared supertype (`KindFacts.supertypeArms`): such an arm keeps its seat and its parent route and also gets its own entries, so the low-level surface reaches it two ways. Stamped once in the constructor; the surface readers read it, and the seating readers (overlays, node model, wrap) read `seated`.
+Whether the node has entries of its own on the generated surface: a bundle entry, an `ir` key, an `is` guard, generated tests and a key from the `irKey` phases. A node that does not seat has one. A seated node has none, being built through its parent, unless it is a direct arm of a supertype, declared by the grammar or made by link of a hidden choice (`KindFacts.supertypeArms`): such an arm keeps its seat and its parent route and also gets its own entries, so the low-level surface reaches it two ways. Stamped once in the constructor; the surface readers read it, and the seating readers (overlays, node model, wrap) read `seated`.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::diagnosticRule`
 
@@ -2656,6 +2607,8 @@ the rule shape.
  * text — for every other pattern shape.
  */
 ```
+
+A pattern whose sole realisation is a single fixed anonymous literal, such as `_semicolon` where every non-blank, non-symbol leaf collapses to `;`, reports that string, so callers read it like a keyword or token when they deserialise a node. A content-bearing pattern (an identifier, a number, an external scanner symbol) reports nothing. The node-model emitter attaches the string as the serialized pattern's `text` field, and the render module's default text literal reads it to enable the u16 acceptance branch in the generated `FromNapiValue` impls. The node is assembled under the word matcher `assemble` hands in from the normalized grammar, the same matcher the flatten and simplify joins use.
 
 ### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword::resolvedKindId`
 

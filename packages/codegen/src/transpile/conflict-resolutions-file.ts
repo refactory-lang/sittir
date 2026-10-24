@@ -11,15 +11,23 @@ export function conflictResolutionsPath(pkg: Pick<GrammarPackage, 'dir'>): strin
 
 export function writeConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>, file: ConflictResolutionsFile): void {
 	const path = conflictResolutionsPath(pkg);
-	const content = printRecordLines({ ...file, resolutions: sortedBySymbols(file.resolutions), bound: { ...file.bound, resolutions: sortedBySymbols(file.bound.resolutions) } });
+	const content = printRecordLines({ ...sortedSection(file), bound: sortedSection(file.bound) });
 	if (existsSync(path) && readFileSync(path, 'utf8') === content) return;
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, content);
 }
 
-function sortedBySymbols(resolutions: ResolutionSection['resolutions']): ResolutionSection['resolutions'] {
-	const keyOf = (entry: ResolutionSection['resolutions'][number]): string => JSON.stringify([entry.resolution.symbols, entry]);
-	return [...resolutions].sort((a, b) => compareOrdinal(keyOf(a), keyOf(b)));
+function sortedSection<S extends ResolutionSection>(section: S): S {
+	return {
+		...section,
+		resolutions: sortedBy(section.resolutions, (entry) => [entry.resolution.symbols, entry]),
+		...(section.withdrawn === undefined ? {} : { withdrawn: sortedBy(section.withdrawn, (set) => set) })
+	};
+}
+
+function sortedBy<T>(items: readonly T[], keyOf: (item: T) => unknown): T[] {
+	const key = (item: T): string => JSON.stringify(keyOf(item));
+	return [...items].sort((a, b) => compareOrdinal(key(a), key(b)));
 }
 
 export function ensureConflictResolutions(pkg: Pick<GrammarPackage, 'dir'>): void {

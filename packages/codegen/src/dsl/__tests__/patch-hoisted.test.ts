@@ -11,6 +11,28 @@ const hoistedGroup = (...members: unknown[]) => ({ type: 'SEQ', members, annotat
 const annotationsOf = (rule: unknown) => (rule as { annotations?: Record<string, unknown> }).annotations;
 
 describe('a patch through a hoisted group', () => {
+	it.each(['PREC', 'PREC_LEFT', 'PREC_RIGHT', 'PREC_DYNAMIC'])(
+		"keeps a %s wrapper's annotations and metadata through flat and path patches",
+		(type) => {
+			const original = {
+				type,
+				value: 2,
+				content: hoistedGroup(S('pub'), sym('scope')),
+				annotations: { hoisted: true, variantOf: 'owner' },
+				metadata: { fieldSource: 'override' }
+			};
+			for (const patches of [{ 1: field('scope_path') }, { _: field('item') }]) {
+				const { result } = applyTransformForTest('_group', original, patches);
+				expect(result).toMatchObject({
+					type,
+					value: 2,
+					annotations: original.annotations,
+					metadata: original.metadata
+				});
+			}
+		}
+	);
+
 	it('keeps hoisted when it only wraps a member in a field', () => {
 		const { result } = applyTransformForTest('_group', hoistedGroup(S('pub'), sym('scope')), { 1: field('scope_path') });
 		expect(annotationsOf(result)).toEqual({ hoisted: true });

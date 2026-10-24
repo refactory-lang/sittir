@@ -1,12 +1,13 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { rule } from '../primitives/rule.ts';
-import { applyTransformForTest, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
+import { applyTransformForTest, evaluateWired, installFakeDsl, restoreFakeDsl } from './_test-helpers.ts';
 import { wire } from '../wire/wire.ts';
 import type { GrammarJson } from '../../grammar-shapes/grammar-json.ts';
 import { baseOf } from '../../__tests__/helpers/empty-base.ts';
 
 const S = (value: string) => ({ type: 'STRING', value });
 const sym = (name: string) => ({ type: 'SYMBOL', name });
+const runtimeSym = (name: string): unknown => (globalThis as unknown as { sym: (name: string) => unknown }).sym(name);
 const clauses = ($: Record<string, unknown>) => ({ type: 'REPEAT1', content: { type: 'CHOICE', members: [$.for_in_clause, $.if_clause] } }) as never;
 
 beforeAll(() => installFakeDsl());
@@ -37,18 +38,18 @@ describe('rule() declares a real rule at a path', () => {
 });
 
 describe('wire() installs a rule() name as a rule of the grammar', () => {
-	const $ = new Proxy({}, { get: (_t, name: string) => ({ type: 'SYMBOL', name }) });
 	const run = (patches: Record<string, Record<string, unknown>>, rules: Record<string, (...a: never[]) => unknown> = {}) => {
-		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, patches: patches as never }, baseOf(bases));
-		const out: Record<string, unknown> = {};
-		for (const [name, fn] of Object.entries(wired.rules)) out[name] = (fn as (d: unknown, p?: unknown) => unknown)($, bases[name]);
+		const wired = wire<GrammarJson>({ name: 'test', rules: rules as never, edits: patches as never }, baseOf(bases));
+		const out = evaluateWired(wired);
 		const { deposits } = (wired as unknown as { __wireContext__: { deposits: Map<string, unknown> } }).__wireContext__;
 		return { names: Object.keys(wired.rules), out, deposits };
 	};
 	const bases: Record<string, unknown> = {
 		list_comprehension: { type: 'SEQ', members: [S('['), sym('expression'), sym('_comprehension_clauses'), S(']')] },
 		set_comprehension: { type: 'SEQ', members: [S('{'), sym('expression'), sym('_comprehension_clauses'), S('}')] },
-		demo: { type: 'PREC', value: 2, content: { type: 'SEQ', members: [sym('a'), sym('b')] } }
+		demo: { type: 'PREC', value: 2, content: { type: 'SEQ', members: [sym('a'), sym('b')] } },
+		for_in_clause: S('for'),
+		if_clause: S('if')
 	};
 
 	it('one rule serves every path that declares it with an equal body', () => {
@@ -66,7 +67,7 @@ describe('wire() installs a rule() name as a rule of the grammar', () => {
 			list_comprehension: { 2: rule('comprehension_clauses', clauses) },
 			set_comprehension: { 2: rule('comprehension_clauses', clauses) }
 		});
-		expect((out.comprehension_clauses as { content: { members: unknown[] } }).content.members).toEqual([sym('for_in_clause'), sym('if_clause')]);
+		expect((out.comprehension_clauses as { content: { members: unknown[] } }).content.members).toEqual([runtimeSym('for_in_clause'), runtimeSym('if_clause')]);
 		expect(deposits.has('comprehension_clauses')).toBe(false);
 	});
 
