@@ -106,6 +106,7 @@ impl<T> TriviaEntry<T> {
     }
 
     #[cfg(not(feature = "arena"))]
+    #[allow(clippy::unused_self, reason = "an entry names a built record only in the arena build")]
     fn held_record(&self) -> bool {
         false
     }

@@ -93,6 +93,7 @@ impl<T: Clone> TriviaStore<T> {
 
     /// `entries` as this store answers them: each built record among them
     /// holds this store, which holds the record's own sides.
+    #[cfg_attr(not(feature = "arena"), allow(clippy::unused_self, reason = "an entry names a built record only in the arena build"))]
     fn answered(&self, entries: &[TriviaEntry<T>]) -> Vec<TriviaEntry<T>> {
         #[cfg(feature = "arena")]
         {
