@@ -2240,3 +2240,151 @@ Renames a map key in place: the value takes the new key's position when that key
 ### `packages/codegen/src/dsl/wire/keyword-names.ts::renameMember`
 
 Renames a set member in place, by the same rule as `renameEntry`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::EvaluatedConfig::patterns`
+
+The patterns the evaluated config declares.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::edits`
+
+The `edits` block: the per-kind edit entries the layer applies.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::activeEntryPath`
+
+The path of the entry being applied, for diagnostics.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::aliasTargets`
+
+The alias targets the layer registered.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copies`
+
+The copies minted during the layer pass.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copyDepth`
+
+How deep the walk is within copy references.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copyReferences`
+
+The copy references the walk has made.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::keywordMints`
+
+Keyword mints by name, so a text token reuses its mint.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::layerBodies`
+
+The bodies of the layer's rules.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::pendingRules`
+
+Rules registered but not yet built.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest::from`
+
+The kind the copy is taken from, when it differs from the source.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest::part`
+
+The path within the source.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireCopyRequest::via`
+
+Which verb asked for the copy: `'path'` or `'copy'`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireEntryScope::edited`
+
+The rules the current entry edited.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireEntryScope::shown`
+
+The display name each copy shows under in the entry.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireLayer::depth`
+
+The layer's depth in the stack of layers.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireLayer::diagnostics`
+
+The diagnostics the layer raised.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireLayer::leads`
+
+The lead entries the layer declares.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireLayer::narrows`
+
+The narrowing entries the layer declares.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal::code`
+
+The refusal's code.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal::details`
+
+The refusal's extra details.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireRefusal::message`
+
+The message the refusal carries.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::activeEntryPath`
+
+The `WireContext` field `activeEntryPath`: `'scoped'`: it holds only while one entry is applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::aliasTargets`
+
+The `WireContext` field `aliasTargets`: `'outside'`: an entry does not touch it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::applyingEntries`
+
+The `WireContext` field `applyingEntries`: `'scoped'`: it holds only while one entry is applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copies`
+
+The `WireContext` field `copies`: `'undone'`: an entry that is refused restores it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copyDepth`
+
+The `WireContext` field `copyDepth`: `'scoped'`: it holds only while one entry is applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copyReferences`
+
+The `WireContext` field `copyReferences`: `'unreached'`: no entry reaches it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::currentDollar`
+
+The `WireContext` field `currentDollar`: `'scoped'`: it holds only while one entry is applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::editedMints`
+
+The `WireContext` field `editedMints`: `'outside'`: an entry does not touch it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::entering`
+
+The `WireContext` field `entering`: `'scoped'`: it holds only while one entry is applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::inlineWrites`
+
+The `WireContext` field `inlineWrites`: `'unreached'`: no entry reaches it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::keywordMints`
+
+The `WireContext` field `keywordMints`: `'undone'`: an entry that is refused restores it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::layerBodies`
+
+The `WireContext` field `layerBodies`: `'undone'`: an entry that is refused restores it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::lists`
+
+The `WireContext` field `lists`: `'outside'`: an entry does not touch it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::pendingRules`
+
+The `WireContext` field `pendingRules`: `'undone'`: an entry that is refused restores it.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::layer`
+
+The role of each field of the layer record, as a nested object: `name`, `depth` and `narrows`, `leads`, `renames` and `diagnostics`.
