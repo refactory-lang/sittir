@@ -287,8 +287,10 @@ export function recordFlag(holder: object, tree: TreeHandle, word: number, bit: 
 }
 
 export function chosenSeparatorOf(node: object): unknown {
+	const own = (node as Record<string, unknown>)._separator;
+	if (own !== undefined || recordOf(node) === undefined) return own;
 	const built = builtRefOf(node);
-	return (node as Record<string, unknown>)._separator ?? (built === undefined ? undefined : recordSeparator(node, built.arena.tree));
+	return built === undefined ? undefined : recordSeparator(node, built.arena.tree);
 }
 
 function chosenDelimiterOf(node: object): unknown {
