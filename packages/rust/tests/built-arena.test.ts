@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BuiltArena, cellFormatOf, chunkOf, decodeCell, wordOf } from '@sittir/common/engine';
-import { storeCell, storeList } from '@sittir/common/utils';
+import { builtRecordOf, storeCell, storeList } from '@sittir/common/utils';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
@@ -17,8 +17,23 @@ describe('a built arena', () => {
 	it('never allocates address 0, and gives each record its kind and no side record', () => {
 		const arena = arenaOf();
 		const first = arena.record(7, 4);
-		expect(first.at).not.toBe(0);
-		expect(Array.from(arena.words(first.at, 4).subarray(first.base, first.base + 4))).toEqual([7, 0, 0, 0]);
+		first.data[first.base + 3] = 5;
+		const at = builtRecordOf(arena.view(first), arena)!;
+		expect(at).not.toBe(0);
+		expect(Array.from(arena.words(at, 4).subarray(wordOf(at, format!), wordOf(at, format!) + 4))).toEqual([7, 0, 0, 5]);
+		const second = arena.record(8, 4);
+		expect(Array.from(second.data.subarray(second.base, second.base + 4))).toEqual([8, 0, 0, 0]);
+	});
+
+	it('places a record when it is viewed, past every record its cells name', () => {
+		const arena = arenaOf();
+		const record = arena.record(9, 7);
+		const leaf = arena.adoptLeaf({ $type: 4 }, 4, 2, 'late');
+		storeCell(arena, record.data, record.base + 2, leaf);
+		const at = builtRecordOf(arena.view(record), arena)!;
+		const cell = decodeCell(arena.words(at, 7), wordOf(at, format!) + 2, format!);
+		expect(cell.form === 'builtLeaf' && cell.record).toBe(builtRecordOf(leaf, arena));
+		expect(at).toBeGreaterThan(builtRecordOf(leaf, arena)!);
 	});
 
 	it('grows its shared chunks by doubling, and gives a run past a chunk its own', () => {
@@ -26,7 +41,7 @@ describe('a built arena', () => {
 		const sizes = new Set<number>();
 		let previous = -1;
 		for (let n = 0; n < 5000; n++) {
-			const place = arena.record(1, 3);
+			const place = arena.run(1, 3);
 			const chunk = chunkOf(place.at, format!);
 			if (chunk !== previous) sizes.add(place.data.length);
 			previous = chunk;
@@ -36,7 +51,7 @@ describe('a built arena', () => {
 		const own = arena.run(limit / 5 + 1, 5);
 		expect(wordOf(own.at, format!)).toBe(0);
 		expect(own.data.length).toBe((limit / 5 + 1) * 5);
-		expect(chunkOf(arena.record(1, 3).at, format!)).toBe(previous);
+		expect(chunkOf(arena.run(1, 3).at, format!)).toBe(previous);
 	});
 
 	it('names an empty run by address 0 and allocates nothing for it', () => {
@@ -63,7 +78,7 @@ describe('a built arena', () => {
 
 	it('refuses a read past its written words', () => {
 		const arena = arenaOf();
-		const place = arena.record(1, 3);
+		const place = arena.run(1, 3);
 		expect(() => arena.words(place.at, 4)).toThrow(/past its arena's words/);
 	});
 
@@ -73,7 +88,7 @@ describe('a built arena', () => {
 		storeCell(arena, record.data, record.base + 2, 12);
 		storeCell(arena, record.data, record.base + 7, 'x');
 		storeList(arena, record.data, record.base + 11, ['a', 'b'], 4);
-		const words = arena.words(record.at, 13);
+		const words = record.data;
 		expect(decodeCell(words, record.base + 2, format!)).toEqual({ form: 'unit', kind: 12, row: undefined });
 		const text = decodeCell(words, record.base + 7, format!);
 		expect(text.form === 'builtText' && arena.textOf(text.offset, text.len)).toBe('x');
@@ -89,7 +104,7 @@ describe('a built arena', () => {
 		const leaf = arena.adoptLeaf({ $type: 4 }, 4, 2, 'name');
 		const record = arena.record(9, 7);
 		storeCell(arena, record.data, record.base + 2, leaf);
-		const cell = decodeCell(arena.words(record.at, 7), record.base + 2, format!);
+		const cell = decodeCell(record.data, record.base + 2, format!);
 		expect(cell.form).toBe('builtLeaf');
 		if (cell.form !== 'builtLeaf') return;
 		expect([cell.kind, arena.textOf(cell.offset, cell.len)]).toEqual([4, 'name']);

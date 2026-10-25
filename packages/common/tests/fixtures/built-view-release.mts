@@ -4,8 +4,10 @@
 // from the records. Reports the block's JSON, whether the statement's call is
 // a node, its function leaf, what the call's `$with` builds, and a side
 // written on the call. Then a parsed name, with a comment of its own, that
-// only a built call names: its JSON, whether it is still the parsed node, and
-// whether it still snapshots.
+// only a built call names: its JSON, whether it is still the parsed node,
+// whether it still snapshots, and the call's render. Then parsed alias content
+// only a built call names, while its envelope, which shares its row, is kept:
+// its JSON and the call's render.
 // A child process, because a collection can only be forced under `--expose-gc`.
 import { createEngine } from '../../src/index.ts';
 import { useRecordConstruction } from '../../src/engine-boundary.ts';
@@ -51,6 +53,8 @@ const attempt = (f: () => unknown): string => {
 };
 const before = attempt(() => JSON.stringify(block));
 const named = b.callExpression!({ function: (rs.parse('fn f /* kept */() {}\n').statements()[0] as unknown as { name(): unknown }).name() }) as Call;
+const envelope = (rs.parse('type A = Foo;\n').statements()[0] as unknown as { value(): { content(): unknown } }).value();
+const aliased = b.callExpression!({ function: envelope.content() }) as Call;
 await settle();
 const json = attempt(() => JSON.stringify(block)) === before;
 const call = block.statements()[0]!.content().expression();
@@ -69,6 +73,10 @@ console.log(
 		sided: siding.startsWith('throws') ? siding : attempt(() => rs.render(block as never).toString()),
 		parsedName: attempt(() => JSON.stringify(named.function())),
 		parsed: isParsedNode(named.function()),
-		snapshots: typeof (named.function() as { $snapshot?: unknown }).$snapshot === 'function'
+		snapshots: typeof (named.function() as { $snapshot?: unknown }).$snapshot === 'function',
+		namedRender: attempt(() => rs.render(named as never).toString()),
+		content: attempt(() => JSON.stringify(aliased.function())),
+		aliasedRender: attempt(() => rs.render(aliased as never).toString()),
+		envelope: isParsedNode(envelope)
 	})
 );
