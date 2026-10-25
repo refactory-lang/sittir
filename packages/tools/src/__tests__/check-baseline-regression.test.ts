@@ -1,16 +1,3 @@
-/**
- * Tests for `check-baseline-regression.ts`.
- *
- * The CI regression-checker compares two `BackendBaseline` JSONs (base
- * vs head) and exits non-zero on any of the verdict rules documented on
- * the module comment in `check-baseline-regression.ts` (kept current
- * there; not duplicated here).
- *
- * Tests feed two in-memory BackendBaseline objects to `checkRegression`
- * to keep the surface free of file I/O — the CLI wrapper handles
- * filesystem access.
- */
-
 import { describe, it, expect, vi } from 'vitest';
 import { stableGrammars } from '@sittir/codegen/grammars';
 import { mkdtempSync, writeFileSync } from 'node:fs';
