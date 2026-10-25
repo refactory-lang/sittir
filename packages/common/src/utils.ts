@@ -119,6 +119,12 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 }
 
 export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
+	const given = new Set<string>();
+	for (const { slot, item } of units) {
+		const unit = `${slot}[${item}]`;
+		if (given.has(unit)) throw new Error(`trivia: the sides of the unit at ${unit} are given twice`);
+		given.add(unit);
+	}
 	const built = builtRefOf(node);
 	if (built === undefined) {
 		for (const unit of units) refuseBuiltEntries(unit);
