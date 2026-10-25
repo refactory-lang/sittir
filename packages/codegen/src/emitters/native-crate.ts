@@ -1,7 +1,7 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
-export const NATIVE_RENDER_NODE_ABI = 25;
+export const NATIVE_RENDER_NODE_ABI = 26;
 
 export interface NativeCrateFile {
 	readonly path: string;
