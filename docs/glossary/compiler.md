@@ -4389,33 +4389,6 @@ The source kind a rule id was minted under, decoded; the other inverse of `creat
 /** STORAGE kind id — the rule's own truth, independent of aliasing. */
 ```
 
-### `packages/codegen/src/compiler/generated-metadata.ts::parseId`
-
-```text
-/**
-	 * PARSE kind id — the id a node actually carries at runtime when this
-	 * kind is produced through an alias occurrence whose display name isn't
-	 * covered by `id`'s own symbol (e.g. `_newline`'s storage id 101 vs its
-	 * `alias($._newline, $.newline)` occurrence's own id 294). Render/read
-	 * dispatch match arms MUST key on this when present — it's what
-	 * tree-sitter emits — falling back to `id` when there's no separate
-	 * alias occurrence. Absent for the common case where a kind's storage
-	 * id and its parse-time id are the same thing.
-	 */
-```
-
-### `packages/codegen/src/compiler/generated-metadata.ts::parser`
-
-```text
-/** Parser-origin metadata; absent iff the kind has no parser symbol. */
-```
-
-### `packages/codegen/src/compiler/generated-metadata.ts::parseId`
-
-```text
-/** See `GeneratedIdEntry.parseId` — the id to key render/read dispatch on, when it differs from `id`. */
-```
-
 ### `packages/codegen/src/compiler/generated-metadata.ts::collectSymbolFlags`
 
 Reads `ts_symbol_metadata[]` from `parser.c`: each symbol's `.visible` and `.named` flags (keyed by C symbol name) and the set of symbols flagged `.supertype`. The catalog `hidden` fact derives from `.visible`, `anon` from `.named`, and `supertype` from `.supertype`; the C-name prefix only names a row, never classifies it.
