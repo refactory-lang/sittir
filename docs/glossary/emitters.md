@@ -6744,15 +6744,7 @@ The kind ids a supertype's or an enum kind's guard admits, its row in `_members`
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry::member`
 
-```text
-/**
-	 * The alias occurrence's own runtime symbol id, when this kind's ONLY
-	 * visible identity comes from an `alias_sym_*` occurrence distinct from
-	 * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
-	 * `$type` dispatch tables must also map THIS id to the kind — it's what
-	 * tree-sitter actually emits at the aliased position.
-	 */
-```
+The kind's generated enum member name, as `kindIdMemberName` derives it: the node map's `typeName` when set, else the kind's type name with its leading underscores kept as a prefix. Discriminant expressions name it as `TSKindId.<member>`.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExprForId`
 
