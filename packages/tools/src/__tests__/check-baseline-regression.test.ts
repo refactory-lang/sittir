@@ -21,6 +21,7 @@ import { combineBuiltRender, emptyBuiltRenderRun, finishBuiltRender } from '../v
 import {
 	computeTotals,
 	type BackendBaseline,
+	type DeclaredCounters,
 	type GrammarEntry,
 	type ParityFixtures,
 	type RoundtripResult,
@@ -887,9 +888,53 @@ describe('checkRegression', () => {
 			});
 		});
 
+		it('fails when a departed kind takes a failing case from a row that still fails', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.factoryStorage = { ...rt(28, 30, 28, ['a', 'b']), casesByKind: { a: 19, b: 6, c: 5 } };
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.typescript!.kinds = ['b', 'c'];
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(9, 11, 9, ['b']), casesByKind: { b: 6, c: 5 } };
+			head.totals = computeTotals(head.grammars);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('pass-count-drop');
+			expect(verdict.details).toMatchObject({
+				path: 'grammars.typescript.validators.factoryStorage.pass',
+				note: 'departed a (19 cases), from a row that still fails 2 cases, so a kept case may have begun to fail'
+			});
+		});
+
+		it('binds a declared row\'s astMatchPass, so a case loss declared with it excuses no astMatchPass failure it does not state', () => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.factoryStorage = { ...rt(30, 30, 28, ['b']), casesByKind: { a: 19, b: 6, c: 5 } };
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.typescript!.kinds = ['a', 'b', 'c', 'd'];
+			head.grammars.typescript!.validators.factoryStorage = { ...rt(31, 31, 28, ['b', 'c', 'd']), casesByKind: { a: 19, b: 5, c: 6, d: 1 } };
+			head.totals = computeTotals(head.grammars);
+			const declaring = (astMatchPass: number): BackendBaseline['baselineCounterChange'] => ({
+				reason: 'a case moves from b to c, and d arrives',
+				grammars: {
+					typescript: {
+						factoryStorage: { from: { pass: 30, total: 30, astMatchPass: 28 }, to: { pass: 31, total: 31, astMatchPass }, cases: { b: { from: 6, to: 5 } } }
+					}
+				}
+			});
+			head.baselineCounterChange = declaring(30);
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('case-loss');
+			expect(verdict.details.note).toBe(
+				'cases lost by kinds that did not depart: b (1 case) (factoryStorage head 31/31 (astMatchPass 28) is not the declared to 31/31 (astMatchPass 30))'
+			);
+			head.baselineCounterChange = declaring(28);
+			expect(checkRegression(base, head).ok).toBe(true);
+		});
+
 		it.each([
 			['a kind\'s count', declaration(undefined, { from: 6, to: 4 }), "factoryStorage's declaration does not name b 6 → 5 in its cases"],
-			['the head\'s counters', declaration({ pass: 28, total: 28 }), 'factoryStorage head 29/29 is not the declared to 28/28']
+			['the head\'s counters', declaration({ pass: 28, total: 28 }), 'factoryStorage head 29/29 (astMatchPass 29) is not the declared to 28/28 (astMatchPass 28)']
 		] as const)('fails when the declaration misstates %s', (_, declared, mismatch) => {
 			const head = shrunk();
 			head.baselineCounterChange = declared;
@@ -983,7 +1028,7 @@ describe('checkRegression', () => {
 			return { base, head };
 		}
 
-		const declaring = (row: string, to: { pass: number; total: number }): BackendBaseline['baselineCounterChange'] => ({
+		const declaring = (row: string, to: DeclaredCounters): BackendBaseline['baselineCounterChange'] => ({
 			reason: 'a ruled grammar narrowing rejects one corpus entry',
 			grammars: { typescript: { [row]: { from: { pass: 10, total: 10 }, to } } }
 		});
@@ -1008,7 +1053,7 @@ describe('checkRegression', () => {
 			head.baselineCounterChange = declaring('roundtrip', { pass: 10, total: 12 });
 			const verdict = checkRegression(base, head);
 			expectFail(verdict);
-			expect(verdict.details.note).toBe('roundtrip head 10/11 is not the declared to 10/12');
+			expect(verdict.details.note).toBe('roundtrip head 10/11 (astMatchPass 10) is not the declared to 10/12 (astMatchPass 10)');
 		});
 
 		it('a roundtrip validator\'s astMatchPass fail count is a row of its own, though totals.fail does not move', () => {
@@ -1021,6 +1066,10 @@ describe('checkRegression', () => {
 			expectFail(verdict);
 			expect(verdict.details.path).toBe('grammars.typescript.validators.roundtrip.astMatchPass');
 			head.baselineCounterChange = declaring('roundtrip', { pass: 11, total: 11 });
+			const unstated = checkRegression(base, head);
+			expectFail(unstated);
+			expect(unstated.details.note).toBe('roundtrip head 11/11 (astMatchPass 10) is not the declared to 11/11 (astMatchPass 11)');
+			head.baselineCounterChange = declaring('roundtrip', { pass: 11, total: 11, astMatchPass: 10 });
 			expect(checkRegression(base, head).ok).toBe(true);
 		});
 

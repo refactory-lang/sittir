@@ -34,13 +34,13 @@
  *      rose is a regression, declared or not. One whose fail count did not
  *      rise is cases leaving the row, held as its case loss: each lost case
  *      belongs to a departed kind or to a kind the declaration names with
- *      its counts. A kind that did not depart may lose cases under a pass
- *      drop only when the head's row fails no case, since a failing case
- *      leaving would otherwise hide a kept case that began to fail. A row
- *      whose base records no cases by kind has no case loss to declare, so
- *      its pass drop is a regression; `roundtrip` counts corpus rows and
- *      records no cases by kind. A declaration states its reason. The
- *      aggregate `totals` are sums of the rows and are not compared.
+ *      its counts. Either explains the drop only when the head's row fails
+ *      no case for that metric: in a row that still fails, a failing case
+ *      leaving would hide a kept case that began to fail. A row whose base
+ *      records no cases by kind has no case loss to declare, so its pass
+ *      drop is a regression; `roundtrip` counts corpus rows and records no
+ *      cases by kind. A declaration states its reason. The aggregate
+ *      `totals` are sums of the rows and are not compared.
  *   2. Total drop — a row whose base records no cases by kind
  *      (`roundtrip`, or any row of a base collected before inventories)
  *      lost cases while its pass held, so failing cases left it, unless
@@ -50,6 +50,9 @@
  *      records cases by kind is held case by case under rule 1, so a
  *      departed kind takes its cases, failing ones included, with no
  *      declaration.
+ *      A declared row's counters are its `total` and each count it
+ *      compares: `pass`, and for a roundtrip validator `astMatchPass`,
+ *      which a declaration that omits it states equal to its `pass`.
  *      The head record's declaration is read from the head itself, or,
  *      for a freshly collected head, from the committed record named by
  *      `--declared`. Once the head merges, the base equals `to` and the
@@ -99,6 +102,7 @@ import { kindOfLabel } from '../validate/surface-label.ts';
 import type {
 	BackendBaseline,
 	CounterPair,
+	DeclaredCounters,
 	DeclaredRowChange,
 	GrammarEntry,
 	ParityFixtures,
@@ -600,9 +604,12 @@ function unexplainedDrop({ b, h }: ComparedRow, { before, after }: ComparedMetri
 	const failAfter = h.total - after;
 	if (failAfter > failBefore) return `its fail count rose ${failBefore} → ${failAfter}`;
 	if (losses === undefined) return 'no kind departure explains it: the base records no cases by kind for this row';
-	if (losses.kept.length === 0 || failAfter === 0) return undefined;
-	const departed = losses.departed.length === 0 ? '' : `; departed ${lossText(losses.departed)}`;
-	return `cases lost by kinds that did not depart: ${lossText(losses.kept)}${departed}, from a row that still fails ${casesText(failAfter)}, so a kept case may have begun to fail`;
+	if (failAfter === 0) return undefined;
+	const lost = [
+		...(losses.kept.length === 0 ? [] : [`cases lost by kinds that did not depart: ${lossText(losses.kept)}`]),
+		...(losses.departed.length === 0 ? [] : [`departed ${lossText(losses.departed)}`])
+	];
+	return `${lost.join('; ')}, from a row that still fails ${casesText(failAfter)}, so a kept case may have begun to fail`;
 }
 
 function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
@@ -705,19 +712,30 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 	return null;
 }
 
-function declarationMismatch(declared: DeclaredRowChange | undefined, row: string, b: CounterPair, h: CounterPair): string | undefined {
+function declaredCount(counters: DeclaredCounters, metric: ComparedMetric['name']): number {
+	return metric === 'astMatchPass' ? (counters.astMatchPass ?? counters.pass) : counters.pass;
+}
+
+function countersText(total: number, counts: readonly (readonly [ComparedMetric['name'], number])[]): string {
+	return counts.map(([metric, count]) => (metric === 'pass' ? `${count}/${total}` : ` (${metric} ${count})`)).join('');
+}
+
+function declarationMismatch(declared: DeclaredRowChange | undefined, { row, b, h, metrics }: ComparedRow): string | undefined {
 	if (declared === undefined) return `${row} has no baselineCounterChange declaration`;
-	if (declared.from.total !== b.total || declared.from.pass !== b.pass) {
-		return `${row} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`;
-	}
-	if (declared.to.total !== h.total || declared.to.pass !== h.pass) {
-		return `${row} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`;
+	for (const [side, label, total, at] of [['from', 'base', b.total, 'before'], ['to', 'head', h.total, 'after']] as const) {
+		const counters = declared[side];
+		const actual = metrics.map(({ name, [at]: count }) => [name, count] as const);
+		const stated = metrics.map(({ name }) => [name, declaredCount(counters, name)] as const);
+		if (counters.total !== total || actual.some(([, count], i) => count !== stated[i]![1])) {
+			return `${row} ${label} ${countersText(total, actual)} is not the declared ${side} ${countersText(counters.total, stated)}`;
+		}
 	}
 	return undefined;
 }
 
-function caseLossMismatch(declared: DeclaredRowChange | undefined, { row, b, h }: ComparedRow, kept: readonly KindLoss[]): string | undefined {
-	const counters = declarationMismatch(declared, row, b, h);
+function caseLossMismatch(declared: DeclaredRowChange | undefined, row: ComparedRow, kept: readonly KindLoss[]): string | undefined {
+	const { b, h } = row;
+	const counters = declarationMismatch(declared, row);
 	if (counters !== undefined || declared === undefined) return counters;
 	const undeclared = kept
 		.map(([kind]): KindChange => [kind, ownEntry(b.casesByKind, kind) ?? 0, ownEntry(h.casesByKind, kind) ?? 0])
@@ -726,7 +744,7 @@ function caseLossMismatch(declared: DeclaredRowChange | undefined, { row, b, h }
 			return change?.from !== from || change.to !== to;
 		});
 	if (undeclared.length === 0) return undefined;
-	return `${row}'s declaration does not name ${undeclared.map(([kind, from, to]) => `${kind} ${from} → ${to}`).join(', ')} in its cases`;
+	return `${row.row}'s declaration does not name ${undeclared.map(([kind, from, to]) => `${kind} ${from} → ${to}`).join(', ')} in its cases`;
 }
 
 type KindChange = readonly [kind: string, from: number, to: number];
@@ -749,9 +767,10 @@ function checkHeadKeepsInventories(base: BackendBaseline, head: BackendBaseline)
 
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
-		for (const { row, path, b, h } of comparedRows(g, baseGrammar, headGrammar)) {
+		for (const compared of comparedRows(g, baseGrammar, headGrammar)) {
+			const { row, path, b, h } = compared;
 			if (b.casesByKind !== undefined || h.total >= b.total || h.pass < b.pass) continue;
-			const note = declarationMismatch(declaredRow(head, g, row), row, b, h);
+			const note = declarationMismatch(declaredRow(head, g, row), compared);
 			if (note === undefined) continue;
 			return {
 				ok: false,
@@ -771,7 +790,7 @@ function checkFailRise(base: BackendBaseline, head: BackendBaseline): Regression
 				const before = row.b.total - metric.before;
 				const after = row.h.total - metric.after;
 				if (after <= before) continue;
-				const note = declarationMismatch(declaredRow(head, g, row.row), row.row, row.b, row.h);
+				const note = declarationMismatch(declaredRow(head, g, row.row), row);
 				if (note === undefined) continue;
 				const path = `${row.path}.${metric.name}`;
 				return {
@@ -817,9 +836,10 @@ function failureListSizes(
 	return [validatorSum(baseGE.validators[row]), validatorSum(headGE.validators[row], arrived)];
 }
 
-function failRiseDeclared(head: BackendBaseline, g: string, { row, b, h, metrics }: ComparedRow): boolean {
+function failRiseDeclared(head: BackendBaseline, g: string, compared: ComparedRow): boolean {
+	const { row, b, h, metrics } = compared;
 	const rose = metrics.some(({ before, after }) => h.total - after > b.total - before);
-	return rose && declarationMismatch(declaredRow(head, g, row), row, b, h) === undefined;
+	return rose && declarationMismatch(declaredRow(head, g, row), compared) === undefined;
 }
 
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
