@@ -6,7 +6,7 @@ const objects = await arena.createEngine();
 const records = await arena.createEngine();
 useRecordConstruction(records, await import('../src/factories/records.ts'));
 
-type List = Iterable<unknown> & { readonly separator?: number };
+type List = Iterable<unknown> & { readonly separator?: number; readonly $with: { items(...items: unknown[]): List } };
 
 function withComma(engine: typeof objects): List {
 	const alias = engine.parse('type T = { a: string; b: number };').statements()[0] as unknown as { value(): { members(): List } };
@@ -22,5 +22,14 @@ describe('a built list that chooses its separator', () => {
 
 	it('renders with it, as the object builders render the same list', () => {
 		expect(records.render(withComma(records) as never).toString()).toBe(objects.render(withComma(objects) as never).toString());
+	});
+
+	it('keeps it through a $with of its items, which reads it from the record', () => {
+		const reversed = (engine: typeof objects) => {
+			const list = withComma(engine);
+			return engine.render(list.$with.items(...[...list].reverse()) as never).toString();
+		};
+		expect(reversed(records)).toBe('b: number,\na: string,');
+		expect(reversed(records)).toBe(reversed(objects));
 	});
 });

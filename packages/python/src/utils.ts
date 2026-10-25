@@ -495,10 +495,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	kindId: kindIdFromName,
 	slots: querySlots,
 	layout: triviaFacts.layout,
-	spread: new Set<number>([
-		128, 136, 141, 170, 171, 180, 181, 182, 186, 193, 194, 218, 243, 247, 249, 254, 260, 261, 262, 263, 264, 265, 266,
-		267, 268, 269, 271, 272, 276, 277, 282, 285, 290, 291, 293, 302, 345
-	]),
 	leaves: new Set<number>([1, 66, 89, 93, 94, 95, 106, 119, 120, 121, 122, 132]),
 	textEnvelopes: new Map<number, number>([]),
 	units: new Set<number>([
@@ -507,16 +503,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		63, 64, 65, 67, 68, 69, 70, 71, 72, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 107, 108, 109, 110, 111,
 		112, 113, 114, 115, 116, 117, 118, 123, 124, 125, 126, 127, 138, 148, 149, 150, 211, 212, 253, 258, 259, 280
 	]),
-	blank: 0,
-	options: Object.freeze<NodeJSONFacts['options']>({
-		90: ['prefix'],
-		91: ['prefix'],
-		92: ['prefix'],
-		96: ['marker'],
-		97: ['marker'],
-		98: ['marker'],
-		244: ['trailingComma']
-	})
+	blank: 0
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -524,17 +511,20 @@ export const structure: StructureTable = Object.freeze({
 	90: {
 		kind: 'integer_hex',
 		required: [['_content', 'content']],
-		texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]]
+		texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]],
+		options: ['prefix']
 	},
 	91: {
 		kind: 'integer_octal',
 		required: [['_content', 'content']],
-		texts: [['_prefix', 'IntegerOctal.prefix', ['0o', '0O']]]
+		texts: [['_prefix', 'IntegerOctal.prefix', ['0o', '0O']]],
+		options: ['prefix']
 	},
 	92: {
 		kind: 'integer_binary',
 		required: [['_content', 'content']],
-		texts: [['_prefix', 'IntegerBinary.prefix', ['0b', '0B']]]
+		texts: [['_prefix', 'IntegerBinary.prefix', ['0b', '0B']]],
+		options: ['prefix']
 	},
 	96: {
 		kind: 'float_point',
@@ -543,7 +533,8 @@ export const structure: StructureTable = Object.freeze({
 			['_marker', 'FloatPoint.marker', ['e', 'E']],
 			['_sign', 'FloatPoint.sign', ['-', '+']]
 		],
-		config: ['integer', 'fraction', 'marker', 'sign', 'exponent', 'imaginary']
+		config: ['integer', 'fraction', 'marker', 'sign', 'exponent', 'imaginary'],
+		options: ['marker']
 	},
 	97: {
 		kind: 'float_leading_point',
@@ -552,7 +543,8 @@ export const structure: StructureTable = Object.freeze({
 			['_marker', 'FloatLeadingPoint.marker', ['e', 'E']],
 			['_sign', 'FloatLeadingPoint.sign', ['-', '+']]
 		],
-		config: ['integer', 'fraction', 'marker', 'sign', 'exponent', 'imaginary']
+		config: ['integer', 'fraction', 'marker', 'sign', 'exponent', 'imaginary'],
+		options: ['marker']
 	},
 	98: {
 		kind: 'float_scientific',
@@ -564,7 +556,8 @@ export const structure: StructureTable = Object.freeze({
 			['_marker', 'FloatScientific.marker', ['e', 'E']],
 			['_sign', 'FloatScientific.sign', ['-', '+']]
 		],
-		config: ['integer', 'marker', 'sign', 'exponent', 'imaginary']
+		config: ['integer', 'marker', 'sign', 'exponent', 'imaginary'],
+		options: ['marker']
 	},
 	99: { kind: 'escape_sequence_unicode_fixed', required: [['_content', 'content']] },
 	100: { kind: 'escape_sequence_unicode_wide', required: [['_content', 'content']] },
@@ -1471,7 +1464,8 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [['_async', 'ForInClause.async']],
 		kindIds: [['_trailing_comma', 'ForInClause.trailingComma', [0, 6]]],
 		config: ['async', 'left', 'rights', 'trailingComma'],
-		lists: [['rights', false, 'key']]
+		lists: [['rights', false, 'key']],
+		options: ['trailingComma']
 	},
 	245: {
 		kind: 'if_clause',

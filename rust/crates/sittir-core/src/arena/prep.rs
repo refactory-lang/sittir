@@ -269,7 +269,7 @@ impl RecordKey {
                     None => view,
                 };
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                let place = place_of(view, record, &side, at.site)?;
+                let place = place_of(view, record, &side)?;
                 Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: if at.site.is_some() { changed } else { side.changed } })
             }
             Cell::BuiltLeaf { kind, record, .. } if claims(kind) => {

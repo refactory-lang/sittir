@@ -268,7 +268,7 @@ describe('a built comment whose content another tree parsed', () => {
 		if (table === undefined) throw new Error('an arena tree reads records');
 		const at = table.hydrate(0, Infinity);
 		expect(table.render(at!, false, false)).toBe('fn h() {\n    y; /** doc */\n}\n');
-		expect(table.renderCandidate(0, at)).toBe('fn h() {\n    y; /** doc */\n}\n');
+		expect(table.renderCandidate(0)).toBe('fn h() {\n    y; /** doc */\n}\n');
 	});
 });
 

@@ -118,8 +118,8 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
 impl<G: RecordGrammar> ParsedTree<G> {
     /// The hydrated typed nodes below `index`, in stored field order, as
-    /// coordinates and optional record addresses. Includes nested content
-    /// sharing a row, and excludes unit cells and captured strings.
+    /// the coordinates of their rows. Excludes unit cells and captured
+    /// strings.
     ///
     /// # Errors
     ///
@@ -127,7 +127,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
     pub fn record_candidates<N: RecordCells>(
         &self,
         index: NodeIndex,
-    ) -> Result<Vec<(NodeCoordinate, Option<Address>)>, RenderError> {
+    ) -> Result<Vec<NodeCoordinate>, RenderError> {
         let refused = |what, word| RenderError::Record(super::ArenaError::Malformed { what, word });
         let coord = self
             .row_coordinate(index)
@@ -167,7 +167,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     coordinate.kind = Some(kind);
                     coordinate.end = row.end;
                     coordinate.span = row.span;
-                    candidates.push((coordinate, Some(at)));
+                    candidates.push(coordinate);
                     let record = N::shape(kind)
                         .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
                     let first = pending.len();
@@ -202,7 +202,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                             .ok_or_else(|| refused("candidate row", index.0))?;
                         coordinate.kind = Some(kind);
                         coordinate.span = span;
-                        candidates.push((coordinate, None));
+                        candidates.push(coordinate);
                     }
                 }
                 Cell::ParsedLeaf { kind, span, row } => {
@@ -211,7 +211,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                         .ok_or_else(|| refused("candidate row", row.0))?;
                     coordinate.kind = Some(kind);
                     coordinate.span = span;
-                    candidates.push((coordinate, None));
+                    candidates.push(coordinate);
                 }
                 Cell::Absent | Cell::Unit { .. } | Cell::ParsedText { .. } => {}
                 _ => return Err(refused("built cell in parsed candidates", index.0)),
@@ -235,34 +235,25 @@ impl<G: RecordGrammar> ParsedTree<G> {
         self.render_cell(self.record_root(at, changed)?, options, sources)
     }
 
-    /// Renders a parsed candidate without its outer trivia. Its record stays
-    /// native; a recordless leaf uses the same coordinate cell as a slot does.
-    /// Every other lookup is `sources`', the call's table, as `render_record`
-    /// reads it.
+    /// Renders the parsed candidate at row `index` without its outer trivia:
+    /// the row's record, which stays native, or, for a recordless leaf, the
+    /// same coordinate cell as a slot holds. Every other lookup is
+    /// `sources`', the call's table, as `render_record` reads it.
     ///
     /// # Errors
     ///
-    /// An invalid row or record address, or a refused prepare or render.
+    /// An invalid row, or a refused prepare or render.
     pub fn render_candidate(
         &self,
         index: NodeIndex,
-        at: Option<Address>,
         options: &ResolvedOptions,
         sources: &dyn SourceTable,
     ) -> Result<String, RenderError> {
-        let refused = || {
-            RenderError::Record(super::ArenaError::Malformed {
-                what: "candidate row or address",
-                word: at.unwrap_or(Address::NONE).0,
-            })
-        };
+        let refused = || RenderError::Record(super::ArenaError::Malformed { what: "candidate row", word: index.0 });
         let coord = self.row_coordinate(index).ok_or_else(refused)?;
-        let root = if let Some(at) = at {
-            let (root, row) = self.candidate_record(at)?;
-            if row.index != index {
-                return Err(refused());
-            }
-            root
+        let record = self.tree_arena().record(index);
+        let root = if let Some(at) = record {
+            self.record_root(at, ChangedEdges::default())?
         } else {
             CellAt {
                 cell: Cell::Coordinate {

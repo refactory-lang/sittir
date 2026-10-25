@@ -222,9 +222,9 @@ readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null):
 hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
 /**
  * r" The hydrated typed nodes below `index` in stored field
- * r" order, as JSON pairs `[coordinate, address | null]`. Nested
- * r" content sharing a row is included; units and captured
- * r" strings are omitted. Exports no node fields or words.
+ * r" order, as a JSON list of their rows' coordinates. Units and
+ * r" captured strings are omitted. Exports no node fields or
+ * r" words.
  */
 recordCandidates(treeId: TreeId, index: NodeIndex): string
 /**
@@ -304,11 +304,11 @@ writeBuiltUnitSides(address: number, units: object[]): void
  */
 writeBuiltTriviaSide(address: number, side: string, entries: object[]): void
 /**
- * r" Renders a parsed candidate without exporting its data or its
- * r" outer trivia. A record address must belong to its row; a
- * r" recordless node renders through its native coordinate.
+ * r" Renders the parsed candidate at row `index` without exporting
+ * r" its data or its outer trivia: the row's record, or, for a
+ * r" recordless node, its native coordinate.
  */
-renderCandidate(treeId: number, index: number, address?: number | undefined | null, options?: object | undefined | null): string
+renderCandidate(treeId: number, index: number, options?: object | undefined | null): string
 /**
  * r" The coordinate a read of the live tree `treeId` names the node
  * r" at `index` by, as `[kind, end]`: the kind the read stamps on

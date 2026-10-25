@@ -1,13 +1,14 @@
 import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
-import { bindTree, engineOf, sameLanguage, type TreeEngineHandle } from './engine-scope.ts';
-import { wrapRegistered } from './identity.ts';
+import { bindTree, engineOf, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { stampBuilt } from './source-stamp.ts';
+import { wrapRegistered, type Role } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead, isRebuilt } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
-import { RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
+import { leafData, RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
@@ -16,11 +17,13 @@ export interface BuiltText {
 	readonly len: number;
 }
 
-/** Words a built arena allocated: the chunk holding them, their first word in it, their packed address and their count. */
-export interface BuiltPlace {
+export interface BuiltPlace extends BuiltDraft {
+	readonly at: number;
+}
+
+export interface BuiltDraft {
 	readonly data: Uint32Array;
 	readonly base: number;
-	readonly at: number;
 	readonly words: number;
 }
 
@@ -45,9 +48,14 @@ export interface BuiltRecords {
 
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 12;
+const DRAFT_WORDS = 1 << 12;
 const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0, at: 0, words: 0 });
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
+
+function units(size: number, least: number): void {
+	if (!Number.isSafeInteger(size) || size < least) throw new Error(`a built arena cannot allocate ${size} units`);
+}
 
 class Chunks<A extends Uint32Array | Uint8Array> {
 	readonly #make: (length: number) => A;
@@ -68,9 +76,8 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 		this.used = new Uint32Array(this.#most);
 	}
 
-	/** `size` units in one chunk: the open shared chunk while it has room, else a new one twice its size up to the address limit, or a chunk of their own when larger than that. */
 	alloc(size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
-		if (!Number.isSafeInteger(size) || size < 0) throw new Error(`a built arena cannot allocate ${size} units`);
+		units(size, 0);
 		if (size > this.#limit) {
 			const own = this.#push(size);
 			this.used[own] = size;
@@ -114,13 +121,26 @@ interface SideHold {
 }
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
 
+export type BuiltRow = {
+	readonly $with?: Readonly<Record<string, (...args: never[]) => unknown>>;
+	readonly $trivia: Readonly<Record<string, (...items: unknown[]) => unknown>>;
+};
+
+export interface BuiltViews {
+	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
+	readonly leaves: Readonly<Record<number, (text: string, handle: EngineHandle | undefined) => object>>;
+}
+
 export class BuiltArena {
 	readonly format: CellFormat;
 	readonly owner: object;
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'unitSides' | 'writeUnitSides'>>;
 	readonly #wrap: Wrap;
 	readonly #handle: TreeEngineHandle;
+	readonly #views: BuiltViews;
 	readonly #words: Chunks<Uint32Array>;
+	#drafts = new Uint32Array(DRAFT_WORDS);
+	#drafted = 0;
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
 	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
@@ -130,11 +150,12 @@ export class BuiltArena {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
 
-	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
+	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews) {
 		this.format = format;
 		this.owner = owner;
 		this.#wrap = wrap;
 		this.#handle = handle;
+		this.#views = views;
 		arenasByOwner.set(owner, this);
 		this.tree = {
 			built: this,
@@ -162,8 +183,19 @@ export class BuiltArena {
 		return { data, base: word, at: addressOf(chunk, word, this.format), words: size };
 	}
 
-	/** A record of `kind`, `words` long with its header, zeroed but for its kind: no side record, every cell absent. */
-	record(kind: number, words: number): BuiltPlace {
+	record(kind: number, words: number): BuiltDraft {
+		units(words, 1);
+		if (this.#drafted + words > this.#drafts.length) {
+			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
+			this.#drafted = 0;
+		}
+		const draft = { data: this.#drafts, base: this.#drafted, words };
+		this.#drafts[draft.base] = kind;
+		this.#drafted += words;
+		return draft;
+	}
+
+	#header(kind: number, words: number): BuiltPlace {
 		const place = this.#place(words);
 		place.data[place.base] = kind;
 		return place;
@@ -229,7 +261,7 @@ export class BuiltArena {
 		adoptBuilt(node, { arena: this, at, text });
 		this.#nodes.set(at, new WeakRef(node));
 		this.#released.register(node, at);
-		return node;
+		return stampBuilt(node);
 	}
 
 	#view(at: number): object {
@@ -238,19 +270,26 @@ export class BuiltArena {
 		return this.#adopt(this.#wrap(stub, this.tree) as object, at, undefined);
 	}
 
-	/** The node of the compound record its builder just wrote at `record`: a view of the record. */
-	view(record: BuiltPlace): object {
-		return this.#view(record.at);
+	view(record: BuiltDraft): object {
+		const place = this.#place(record.words);
+		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
+		return this.#view(place.at);
 	}
 
-	/** Gives the leaf `node` of `kind` its record, `words` long, header only, and the interned `text` its cells hold. */
 	adoptLeaf<T extends object>(node: T, kind: number, words: number, text: string): T {
-		return this.#adopt(node, this.record(kind, words).at, this.text(text));
+		return this.#adopt(node, this.#header(kind, words).at, this.text(text));
 	}
 
 	/** The node of the compound record at `at`: its builder's while it is held, else a fresh view of the record. */
 	node(at: number): object {
 		return this.#nodes.get(at)?.deref() ?? this.#view(at);
+	}
+
+	row(node: object): Record<string, unknown> {
+		const kind = (node as { readonly $type: number }).$type;
+		const make = this.#views.rows[kind];
+		if (make === undefined) throw new Error(`a built record of kind ${kind} has no row in its records module`);
+		return make(node, this.#handle);
 	}
 
 	/** Holds the parsed tree `tree`, which a record of this arena names, with its `token`, for as long as the arena lives. */
@@ -264,25 +303,48 @@ export class BuiltArena {
 		if (held === undefined) throw new Error(`a built record links parsed tree ${tree}, which its arena does not hold`);
 		const stub = recordStub(held.tree, at);
 		holdReadTree(stub, held.token);
-		const role = held.tree.records?.record(decodeIndex(stub.$_layout.at.$treeHandle)) === at ? 'node' : 'aliasContent';
-		return wrapRegistered(stub, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, role);
+		return wrapRegistered(stub, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, decodeIndex(stub.$_layout.at.$treeHandle), at));
 	}
 
-	/** The header record of the parsed leaf `node`, of `kind`, a built record holds: its side record names the leaf's tree, rows and byte span. */
 	parsedLeaf(node: object, kind: number, tree: number, index: number, end: number, span: { readonly start: number; readonly end: number }): number {
-		const record = this.record(kind, 2);
+		const record = this.#header(kind, 2);
 		record.data[record.base + 1] = this.push([this.format.sideSides.bit, tree, index, end, span.start, span.end]);
 		this.#nodes.set(record.at, new WeakRef(node));
 		this.#released.register(node, record.at);
 		return record.at;
 	}
 
-	/** The node of the built leaf whose cell names the record `at`. */
-	leaf(at: number): object {
-		const known = this.#nodes.get(at)?.deref();
-		if (known === undefined) throw new Error(`the built leaf at ${at} was released while a record still names it`);
-		return known;
+	leaf({ kind, offset, len, record }: { readonly kind: number; readonly offset: number; readonly len: number; readonly record: number }): object {
+		const known = this.#nodes.get(record)?.deref();
+		if (known !== undefined) return known;
+		const parsed = this.#parsedLeaf(kind, record);
+		if (parsed !== undefined) {
+			this.#nodes.set(record, new WeakRef(parsed));
+			this.#released.register(parsed, record);
+			return parsed;
+		}
+		const make = this.#views.leaves[kind];
+		if (make === undefined) throw new Error(`a built leaf of kind ${kind} has no maker in its records module`);
+		return this.#adopt(make(this.textOf(offset, len), this.#handle), record, { at: offset, len });
 	}
+
+	#parsedLeaf(kind: number, record: number): object | undefined {
+		const side = this.words(record, 2)[wordOf(record, this.format) + 1]!;
+		if (side === 0) return undefined;
+		const words = this.words(side, 1 + this.format.sideSides.words);
+		const at = wordOf(side, this.format);
+		if (words[at] !== this.format.sideSides.bit) return undefined;
+		const held = this.#trees.get(words[at + 1]!);
+		if (held === undefined) throw new Error(`a built record holds a leaf of parsed tree ${words[at + 1]}, which its arena does not hold`);
+		const row = words[at + 2]!;
+		const data = leafData(held.tree, kind, { start: words[at + 4]!, end: words[at + 5]! }, row);
+		holdReadTree(data, held.token);
+		return wrapRegistered(data, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, row, undefined));
+	}
+}
+
+function rowRole(tree: TreeHandle, row: number, record: number | undefined): Role {
+	return tree.records?.record(row) === record ? 'node' : 'aliasContent';
 }
 
 export interface BuiltEntry {
@@ -493,9 +555,7 @@ function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: ob
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {
 	const record = records.record(index);
-	if (record === undefined || records.words(record, 1)[wordOf(record, records.format)] === kind) return record;
-	const content = records.candidates(index).find(([at]) => decodeIndex(at.$treeHandle) === index && at.$type === kind);
-	return content?.[1] ?? undefined;
+	return record !== undefined && records.words(record, 1)[wordOf(record, records.format)] === kind ? record : undefined;
 }
 
 function foreignValue(value: unknown, ref: BuiltRef | undefined): string {
@@ -516,8 +576,7 @@ export function storeList(arena: BuiltArena, data: Uint32Array, at: number, item
 	data[at + 1] = items.length;
 }
 
-/** Gives the fresh list record `record` a side record holding the settings a builder chose: its delimiters and its separator. */
-export function storeListOptions(arena: BuiltArena, record: BuiltPlace, delimiter: number | undefined, separator: number | undefined): void {
+export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {
 	if (delimiter === undefined && separator === undefined) return;
 	const side = [0];
 	if (delimiter !== undefined) {

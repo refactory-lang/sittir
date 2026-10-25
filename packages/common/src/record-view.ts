@@ -2,7 +2,8 @@ import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
-import { treeSlotTable } from './engine-scope.ts';
+import { treeSlotTable, treeStructureTable } from './engine-scope.ts';
+import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
 	decodeCell,
 	decodeListCell,
@@ -115,7 +116,6 @@ function recordListSetting(holder: object, tree: TreeHandle, decode: (words: Uin
 
 const rows = new WeakMap<object, Record<string, unknown>>();
 
-/** The object node of the row the view `node` reads, read once and kept: what a view's writes, queries and snapshots go through. */
 export function rowOf(
 	node: object,
 	tree: TreeHandle,
@@ -123,14 +123,9 @@ export function rowOf(
 ): Record<string, unknown> {
 	const known = rows.get(node);
 	if (known !== undefined) return known;
-	const row = wrap(rowData(node, tree) as object, tree) as Record<string, unknown>;
+	const row = tree.built === undefined ? (wrap(rowData(node, tree) as object, tree) as Record<string, unknown>) : tree.built.row(node);
 	rows.set(node, row);
 	return row;
-}
-
-/** Makes `row` what the writes of the built view `node` go through: the setters and trivia its builder made. */
-export function bindRow(node: object, row: Record<string, unknown>): void {
-	rows.set(node, row);
 }
 
 /** The read data of the row a record stub or view names, read as an object (`RecordReader.object`). */
@@ -171,13 +166,12 @@ export function rowTrivia(
 }
 
 /** A parsed leaf as read data: its kind, its coordinate (`coordinateAt`) and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
-function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
+export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
 	const text = tree.text;
 	if (text === undefined) throw new Error('a record view needs a tree that answers its text');
 	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };
 }
 
-/** The value a cell holds, as read data: what `hydrate` turns into the node an accessor returns. */
 function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 	switch (cell.form) {
 		case 'absent':
@@ -197,7 +191,7 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 			return cell.kind;
 		case 'builtLeaf':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.leaf(cell.record);
+			return tree.built.leaf(cell);
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
 			return tree.built.textOf(cell.offset, cell.len);
@@ -326,6 +320,24 @@ export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refu
 	const chosen = chosenSeparatorOf(node);
 	if (typeof chosen === 'number') values.push(['_separator', chosen]);
 	return values;
+}
+
+export function builtInputs(node: object): BuilderInputs {
+	const tree = builtRefOf(node)?.arena.tree;
+	if (tree === undefined) throw new Error('a built row reads the record of a built view');
+	const kind = (node as { readonly $type: number }).$type;
+	const members = node as Record<string, unknown>;
+	const inputs = builderInputs(treeSlotTable(tree)?.[kind] ?? [], treeStructureTable(tree)?.[kind], (accessor) => {
+		const read = members[accessor];
+		return typeof read === 'function' ? listed((read as () => unknown).call(node)) : undefined;
+	});
+	const settings = Object.entries({ delimiter: chosenDelimiterOf(node), separator: chosenSeparatorOf(node) }).filter(([, value]) => value !== undefined);
+	return settings.length === 0 ? inputs : { ...inputs, options: { ...inputs.options, ...Object.fromEntries(settings) } };
+}
+
+function listed(value: unknown): unknown {
+	if (value === null || typeof value !== 'object' || Array.isArray(value) || typeof (value as { readonly $type?: unknown }).$type === 'number') return value;
+	return Symbol.iterator in value ? [...(value as Iterable<unknown>)] : value;
 }
 
 function engineSlotsOf(node: object): (kind: number) => readonly QuerySlotEntry[] {

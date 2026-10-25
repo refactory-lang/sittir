@@ -135,6 +135,27 @@ describe('record construction', () => {
 		expect(rendered).toContain('g(); // kept');
 	});
 
+	it.each([
+		['its own comment', (engine: typeof objects) => {
+			const b = engine.build;
+			return b.callExpression({ function: (engine.parse('fn f /* kept */() {}\n').statements()[0] as unknown as Built & { name(): never }).name(), arguments: b.arguments() });
+		}, 'f /* kept */()'],
+		['as a list item', (engine: typeof objects) => {
+			const b = engine.build;
+			const name = (engine.parse('fn f() {}\n').statements()[0] as unknown as Built & { name(): never }).name();
+			return b.callExpression({ function: b.identifier('g'), arguments: b.arguments(name, b.identifier('x')) });
+		}, 'g(f, x)'],
+		['as alias content, in two holders', (engine: typeof objects) => {
+			const b = engine.build;
+			const content = (engine.parse('type A = Foo;\n').statements()[0] as unknown as { value(): { content(): never } }).value().content();
+			return b.block({ statements: [b.expressionStatement(b.callExpression({ function: content, arguments: b.arguments() })), b.expressionStatement(b.callExpression({ function: content, arguments: b.arguments() }))] });
+		}, '{\n    Foo();\n    Foo();\n}']
+	])('renders a built record holding a parsed leaf with %s, through its tree', (_, holder, expected) => {
+		const rendered = records.render(holder(records) as never).toString();
+		expect(rendered).toBe(objects.render(holder(objects) as never).toString());
+		expect(rendered).toBe(expected);
+	});
+
 	it('renders a rebuild with its new child and its unchanged ones', () => {
 		const b = records.build;
 		const fn = b.functionItem({ name: b.identifier('f'), parameters: b.parameters(), body: b.block({ statements: [] }) }) as unknown as Built;
