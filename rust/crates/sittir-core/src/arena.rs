@@ -170,6 +170,9 @@ pub enum ArenaError {
     UnknownKind { kind: crate::types::KindId, owner: &'static str },
 }
 
+/// A record entry whose arena, or the store that holds its sides, is gone.
+pub const ARENA_RELEASED: ArenaError = ArenaError::Unwritable("the arena that built a side's record was released");
+
 impl fmt::Display for ArenaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {

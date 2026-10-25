@@ -121,6 +121,58 @@ describe('a built arena rendered natively', () => {
 		expect(owner.render(built).toString()).toBe('/* owner */ x;');
 	});
 
+	describe('a built record in a side of a node another engine of its language holds', () => {
+		type Engine = Awaited<ReturnType<typeof recordEngine>>;
+		const holders = async (make: () => Promise<Engine>) => {
+			const [builder, holder] = [await make(), await make()];
+			const parsed = holder.parse('fn f() {\n    g();\n}\n');
+			const statement = (parsed.statements()[0] as unknown as { body(): { statements(): readonly typeof built[] } }).body().statements()[0]!;
+			const built = holder.build.expressionStatement(holder.build.identifier('x'));
+			const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
+			comment.$trivia.leading(builder.build.blockComment(builder.build.blockCommentRegular(' d ')));
+			statement.$trivia.trailing(comment);
+			built.$trivia.trailing(comment);
+			return { holder, parsed, statement, built, comment };
+		};
+		const rendered = async (make: () => Promise<Engine>) => {
+			const { holder, parsed, built } = await holders(make);
+			return { parsed: holder.render(parsed).toString(), built: holder.render(built).toString() };
+		};
+
+		it('renders where the side renders, on records as on objects', async () => {
+			const objects = await rendered(async () => arena.createEngine());
+			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* d */ /* c */\n}\n', built: 'x; /* d */ /* c */' });
+			expect(await rendered(recordEngine)).toEqual(objects);
+		});
+
+		it("reads back as its builder's node", async () => {
+			const { statement, built, comment } = await holders(recordEngine);
+			expect(statement.$trivia.trailing()[0]).toBe(comment);
+			expect(built.$trivia.trailing()[0]).toBe(comment);
+		});
+
+		it('refuses by name, in a render and a read, once its builder is disposed', async () => {
+			const builder = await recordEngine();
+			const holder = await recordEngine();
+			const built = holder.build.expressionStatement(holder.build.identifier('x'));
+			built.$trivia.trailing(builder.build.blockComment(builder.build.blockCommentRegular(' c ')));
+			builder.dispose();
+			expect(() => holder.render(built).toString()).toThrow(/the arena that built a side's record was released/);
+			expect(() => built.$trivia.trailing()).toThrow(/the arena that built a side's record was released/);
+		});
+
+		it('renders once nothing else names its builder or the record', () => {
+			const fixture = fileURLToPath(new URL('../../common/tests/fixtures/foreign-side-release.mts', import.meta.url));
+			const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+				cwd: fileURLToPath(new URL('..', import.meta.url)),
+				encoding: 'utf8',
+				env: { ...process.env, SITTIR_BACKEND: 'native' }
+			});
+			const rendered = { parsed: 'fn f() {\n    g(); /* d */ /* c */\n}\n', built: 'x; /* d */ /* c */' };
+			expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ collected: true, before: rendered, after: rendered });
+		}, 60_000);
+	});
+
 	it("renders a built record with its builder's sides once nothing else names its builder", () => {
 		// A collection can only be forced under `--expose-gc`, so the case runs
 		// in a child process that reports the render before and after.

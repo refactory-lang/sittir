@@ -22,7 +22,6 @@ import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts
 import { recordOf, recordStub } from './record-view.ts';
 import { builtEntries, type BuiltRecords, type BuiltText } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
-import { treeBuiltArena } from './engine-scope.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -574,7 +573,7 @@ export function createNativeEngine<
 							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							triviaSide: (index, side) => {
-								const entries = builtEntries(treeBuiltArena(tree), engine.triviaSide(parsed.treeId, index, side));
+								const entries = builtEntries(engine.triviaSide(parsed.treeId, index, side));
 								holdReadTree(entries, liveToken);
 								return entries;
 							},

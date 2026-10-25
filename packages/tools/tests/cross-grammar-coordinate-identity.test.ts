@@ -5,8 +5,11 @@
 // grammar's engine is refused by another grammar's, naming both languages,
 // whether it is rendered or handed to a builder.
 import { describe, expect, it } from 'vitest';
-import type { AnyUntypedNode } from '@sittir/types';
+import type { AnyUntypedNode, TriviaEntry } from '@sittir/types';
 import { createEngine } from '@sittir/common';
+import { useRecordConstruction } from '@sittir/common/engine';
+import { writeTrivia } from '@sittir/common/utils';
+import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { languageByName } from '../src/languages.ts';
 
 describe('a coordinate names its tree across grammars', () => {
@@ -28,6 +31,18 @@ describe('a coordinate names its tree across grammars', () => {
 		expect(() => typescript.build.program({ statements: [item] })).toThrow(refusal);
 		const root = typescript.parse('a;\n') as unknown as { $with: { statements(...items: unknown[]): unknown } };
 		expect(() => root.$with.statements(item)).toThrow(refusal);
+	});
+
+	it('refuses a record another grammar built in a side, naming both languages', async () => {
+		const recordEngine = async (grammar: 'rust' | 'typescript') => {
+			const engine = await createEngine(await languageByName(grammar), { nodeStorage: 'arena' });
+			useRecordConstruction(engine, await requireGrammarModule(grammar, 'factories/records.ts'));
+			return engine as unknown as { build: Record<string, (...args: unknown[]) => object> };
+		};
+		const [rust, typescript] = [await recordEngine('rust'), await recordEngine('typescript')];
+		const statement = rust.build.expressionStatement!(rust.build.identifier!('x'));
+		const foreign = typescript.build.expressionStatement!(typescript.build.identifier!('y')) as TriviaEntry;
+		expect(() => writeTrivia(statement, { trailing: [foreign] })).toThrow('cannot write a typescript record into a side of a rust node');
 	});
 
 	it('mints distinct ids for trees parsed by engines of different grammars', async () => {

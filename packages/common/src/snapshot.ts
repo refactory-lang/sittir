@@ -3,7 +3,7 @@ import { decodeIndex, type TreeHandle } from './read.ts';
 import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf, withinSides } from './node-data.ts';
 import { treeOf } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
-import { builtArenaOf, isBuiltEntry, type BuiltArena } from './built-arena.ts';
+import { builtArenaOf, builtEntryNode, isBuiltEntry } from './built-arena.ts';
 import { storedSlotValues } from './record-view.ts';
 import { treeBuiltArena } from './engine-scope.ts';
 
@@ -47,23 +47,22 @@ function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: 
 		const at = coordinateOf(value);
 		const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
 		if (at === undefined || tree === undefined) return copyOf(value, within, nesting);
-		const arena = treeBuiltArena(tree);
 		const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
-		return arena === undefined ? read : detached(read, arena, within, nesting);
+		return treeBuiltArena(tree) === undefined ? read : detached(read, within, nesting);
 	});
 }
 
-function detached(value: unknown, arena: BuiltArena, within: Set<object>, nesting: number): unknown {
-	if (Array.isArray(value)) return value.map((entry) => detached(entry, arena, within, nesting));
+function detached(value: unknown, within: Set<object>, nesting: number): unknown {
+	if (Array.isArray(value)) return value.map((entry) => detached(entry, within, nesting));
 	if (!isRecord(value)) return value;
-	if (isBuiltEntry(value)) return snapshotIn(arena.node(value.$record), undefined, undefined, within, nesting);
-	for (const key of Object.keys(value)) value[key] = key === '$_layout' ? detachedLayout(value[key], arena, within, nesting) : detached(value[key], arena, within, nesting);
+	if (isBuiltEntry(value)) return snapshotIn(builtEntryNode(value), undefined, undefined, within, nesting);
+	for (const key of Object.keys(value)) value[key] = key === '$_layout' ? detachedLayout(value[key], within, nesting) : detached(value[key], within, nesting);
 	return value;
 }
 
-function detachedLayout(layout: unknown, arena: BuiltArena, within: Set<object>, holder: number): unknown {
+function detachedLayout(layout: unknown, within: Set<object>, holder: number): unknown {
 	if (!isRecord(layout)) return layout;
-	const each = (entry: unknown, nesting: number) => detached(entry, arena, within, nesting);
+	const each = (entry: unknown, nesting: number) => detached(entry, within, nesting);
 	const { trivia, units } = layout;
 	return {
 		...layout,

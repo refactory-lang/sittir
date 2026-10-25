@@ -1,5 +1,5 @@
-import type { QuerySlots } from '@sittir/types';
-import { bindTree, type TreeEngineHandle } from './engine-scope.ts';
+import type { EngineIdentity, QuerySlots } from '@sittir/types';
+import { bindTree, sameLanguage, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead } from './node-data.ts';
 import { decodeIndex, isCoordinate } from './read.ts';
@@ -102,12 +102,17 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 	}
 }
 
+const arenasByOwner = new WeakMap<object, BuiltArena>();
+const sideArenas = new WeakMap<object, Map<string, readonly BuiltArena[]>>();
+const NO_RECORDS = 'a side names a built record, and its engine builds no records';
+
 export class BuiltArena {
 	readonly format: CellFormat;
 	readonly owner: object;
 	readonly slots: QuerySlots;
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly #wrap: Wrap;
+	readonly #handle: TreeEngineHandle;
 	readonly #words: Chunks<Uint32Array>;
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
@@ -123,11 +128,13 @@ export class BuiltArena {
 		this.owner = owner;
 		this.slots = slots;
 		this.#wrap = wrap;
+		this.#handle = handle;
+		arenasByOwner.set(owner, this);
 		this.tree = {
 			built: this,
 			triviaSide: (at, side) => {
 				const entries = trivia.triviaSide(at, side);
-				return entries === undefined ? undefined : builtEntries(this, entries);
+				return entries === undefined ? undefined : builtEntries(entries);
 			},
 			writeTriviaSide: (at, side, entries) => trivia.writeTriviaSide(at, side, entries)
 		};
@@ -136,6 +143,10 @@ export class BuiltArena {
 		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format, pushed);
 		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format, pushed);
 		this.#words.alloc(1);
+	}
+
+	get engine(): EngineIdentity {
+		return this.#handle.current;
 	}
 
 	#place(size: number): BuiltPlace {
@@ -269,23 +280,45 @@ export class BuiltArena {
 export interface BuiltEntry {
 	readonly $type: number;
 	readonly $record: number;
+	readonly $owner: object;
 }
 
 export function isBuiltEntry(entry: unknown): entry is BuiltEntry {
 	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<BuiltEntry>).$record === 'number';
 }
 
-export function builtEntries(arena: BuiltArena | undefined, entries: readonly unknown[]): unknown[] {
+export function builtEntries(entries: readonly unknown[]): unknown[] {
 	if (!entries.some(isBuiltEntry)) return entries as unknown[];
-	if (arena === undefined) throw new Error('a side names a built record, and its engine builds no records');
-	return entries.map((entry) => (isBuiltEntry(entry) ? arena.node(entry.$record) : entry));
+	return entries.map((entry) => (isBuiltEntry(entry) ? builtEntryNode(entry) : entry));
 }
 
-export function builtEntryOf(entry: object, arena: BuiltArena | undefined): BuiltEntry | undefined {
-	const built = builtRefOf(entry);
-	if (built === undefined || built.text !== undefined) return undefined;
-	if (built.arena !== arena) throw new Error('a built record is a side entry only of a node of the engine that built it');
-	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
+export function builtEntryNode(entry: BuiltEntry): object {
+	const arena = arenasByOwner.get(entry.$owner);
+	if (arena === undefined) throw new Error(NO_RECORDS);
+	return arena.node(entry.$record);
+}
+
+function recordRefOf(entry: unknown): BuiltRef | undefined {
+	const built = typeof entry === 'object' && entry !== null ? builtRefOf(entry) : undefined;
+	return built?.text === undefined ? built : undefined;
+}
+
+export function builtEntryOf(entry: object, holder: BuiltArena | undefined): BuiltEntry | undefined {
+	const built = recordRefOf(entry);
+	if (built === undefined) return undefined;
+	if (holder === undefined) throw new Error(NO_RECORDS);
+	if (!sameLanguage(built.arena.engine, holder.engine)) {
+		throw new Error(`cannot write a ${built.arena.engine.language.name} record into a side of a ${holder.engine.language.name} node`);
+	}
+	return { $type: (entry as { readonly $type: number }).$type, $record: built.at, $owner: built.arena.owner };
+}
+
+export function holdSideArenas(table: object, at: number, side: TriviaSideName, entries: readonly unknown[]): void {
+	const arenas = new Set(entries.map((entry) => recordRefOf(entry)?.arena).filter((arena) => arena !== undefined));
+	let held = sideArenas.get(table);
+	if (held === undefined) sideArenas.set(table, (held = new Map()));
+	if (arenas.size === 0) held.delete(`${at}:${side}`);
+	else held.set(`${at}:${side}`, [...arenas]);
 }
 
 export function isBuiltNode(value: object): boolean {

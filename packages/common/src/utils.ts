@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { entrySnapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
-import { builtEntryOf, isBuiltNode } from './built-arena.ts';
+import { builtEntryOf, holdSideArenas, isBuiltNode } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -114,7 +114,9 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
-		if (entries !== undefined) at.tree.writeTriviaSide(at.index, side, entries.map(wire));
+		if (entries === undefined) continue;
+		at.tree.writeTriviaSide(at.index, side, entries.map(wire));
+		holdSideArenas(at.tree, at.index, side, entries);
 	}
 }
 

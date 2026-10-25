@@ -100,9 +100,11 @@ export declare class SittirEngine {
   triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
   /**
    * Replace `side` of the node at `index` of the live tree `treeId`
-   * with `entries`. A built record among them (`{ $type, $record }`)
-   * renders from the engine's built arena wherever the side renders.
-   * Refuses as `triviaSide` does.
+   * with `entries`. A built record among them (`{ $type, $record,
+   * $owner }`) renders from the built arena of its owner, an engine
+   * of this language, wherever the side renders. Refuses as
+   * `triviaSide` does, and an owner that is no engine of this
+   * language.
    */
   writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
   /**
