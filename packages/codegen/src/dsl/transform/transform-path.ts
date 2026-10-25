@@ -13,7 +13,7 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
-import { isEnrichedField, isParserHiddenName } from '../rule-patterns.ts';
+import { isBlank, isEnrichedField, isParserHiddenName } from '../rule-patterns.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -549,7 +549,7 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 		return carryOverProperties(rule, immediate(newContent));
 	}
 	if (isFieldType(t)) {
-		if (isFieldType(newContent.type)) return newContent;
+		if (isFieldType(newContent.type) || isBlank(newContent)) return newContent;
 		const name = (rule as unknown as { name: string }).name;
 		return carryOverProperties(rule, nativeRequired('field')(name, newContent));
 	}

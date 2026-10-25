@@ -281,6 +281,11 @@ describe('applyPath()', () => {
 			expect(applyPath(rule, parsePath('body:/0'), sym('c'))).toEqual(seq(str('x'), fld('body', seq(sym('c'), sym('b')))));
 		});
 
+		it('removes a field whose content the patch blanks, since a field over a blank captures nothing', () => {
+			const rule = seq(choice(fld('static', str('static')), { type: 'BLANK' }), fld('body', sym('block')));
+			expect(applyPath(rule, parsePath('static:'), { type: 'BLANK' })).toEqual(seq(choice({ type: 'BLANK' }, { type: 'BLANK' }), fld('body', sym('block'))));
+		});
+
 		it('throws when the field name at that position does not match', () => {
 			const rule = fld('name', sym('identifier'));
 			expect(() => applyPath(rule, [{ kind: 'fieldName', name: 'body' }], sym('new_identifier'))).toThrow(

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -229,6 +229,26 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('identifier')?.map((e) => e.vocab)).toEqual(['declaration.parameter', 'expression.identifier']);
 		expect(routes.readEntries.get('mut_pattern')?.map((e) => [e.kind, e.vocab])).toEqual([['mut_pattern', 'declaration.parameter']]);
 		expect(routes.readEntries.get('parameter')?.map((e) => e.vocab)).toEqual(['declaration.parameter']);
+	});
+
+	it("decides a literal claim on the clone its split named, and still tests it on the kind the clone was split from", async () => {
+		const input = await grammar(['(meth) @declaration.method', '((meth name: (identifier) @name) @declaration.constructor (#eq? @name "constructor"))'].join('\n'));
+		const clone = node('constructor_declaration', [slot('deco', ['decorator'], { required: false })], { splitFrom: 'meth' });
+		const routes = resolveRoutes({ ...input, model: new Map([...input.model, [clone.kind, clone]]) });
+		expect(routes.readEntries.get('constructor_declaration')?.map((e) => [e.vocab, e.decided])).toEqual([
+			['declaration.constructor', true],
+			['declaration.method', undefined]
+		]);
+		expect(routes.readEntries.get('meth')?.find((e) => e.vocab === 'declaration.constructor')?.decided).toBeUndefined();
+	});
+
+	it("gives a hidden copy its source's forms, and the source its hidden copy, without revisiting either", () => {
+		const copy = node('_meth_copy', MODEL.find((n) => n.kind === 'meth')!.slots, { splitFrom: 'meth' });
+		const clone = node('constructor_declaration', [], { splitFrom: 'meth' });
+		const model = new Map([...MODEL, copy, clone].map((n) => [n.kind, n]));
+		expect(formsOf(model, '_meth_copy')).toEqual(['_meth_copy', 'meth', 'constructor_declaration']);
+		expect(formsOf(model, 'meth')).toEqual(['meth', '_meth_copy', 'constructor_declaration']);
+		expect(formsOf(model, 'constructor_declaration')).toEqual(['constructor_declaration']);
 	});
 
 	it('leaves a wildcard claim off a kind that already claims the same path itself', async () => {

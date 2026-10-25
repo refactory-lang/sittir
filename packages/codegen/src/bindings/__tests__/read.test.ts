@@ -470,6 +470,10 @@ describe('readBindings: the match tree of an anchored capture', () => {
 		expect(facts.members.find((m) => m.route !== 'dropped' && m.name === 'receiver')?.leadMatch).toEqual({ line: 1, refused: 'a negated field' });
 		expect(facts.claims[1]?.match).toBeUndefined();
 	});
+	it('reads the fields a claim negates', async () => {
+		const facts = await readBindings('(required_parameter pattern: (this) !type) @parameter.untyped');
+		expect(facts.claims[0]?.absent).toEqual(['type']);
+	});
 	it('refuses an alternation whose options sit under different fields', async () => {
 		const text = '(function_item (parameters (parameters_elements . (required_parameter [pattern: (this) type: (identifier)]) @receiver))) @declaration.method';
 		expect((await memberNamed(text, 'receiver'))?.leadMatch).toEqual({ line: 1, refused: 'an alternation over two fields' });

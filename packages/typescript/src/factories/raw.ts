@@ -9291,7 +9291,7 @@ export function buildClassBodyMemberMethod(
 				rebuilt(node, handle, () =>
 					buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
 				),
-			methodDefinition: (value: Admit<T.MethodDefinition>) =>
+			methodDefinition: (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling }))
@@ -11997,6 +11997,51 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
+export function buildConstructorDeclaration<
+	ParametersSlot extends T.ConstructorDeclaration.Config['parameters'],
+	BodySlot extends T.ConstructorDeclaration.Config['body']
+>(
+	config?: RefusingConfig<Partial<T.ConstructorDeclaration.Config>, { parameters: ParametersSlot; body: BodySlot }>
+): T.ConstructorDeclaration.Bound;
+export function buildConstructorDeclaration(
+	config: Partial<T.ConstructorDeclaration.Config> = {}
+): T.ConstructorDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [config]);
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.ConstructorDeclaration['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _body = orDefault(config.body, () => buildStatementBlock());
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstructorDeclaration as const,
+		$named: true as const,
+		_accessibility_modifier,
+		_parameters,
+		_body,
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, accessibilityModifier: value })),
+			parameters: (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
+		},
+		accessibilityModifier: () => _accessibility_modifier,
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ConstructorDeclaration.Bound;
+}
+
 export function buildReceiverParameterDeclaration<
 	DecoratorsSlot extends T.ReceiverParameterDeclaration.Config['decorators'],
 	TypeSlot extends T.ReceiverParameterDeclaration.Config['type'],
@@ -12781,6 +12826,7 @@ export type FluentKindMap = {
 	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	constructor_declaration: T.ConstructorDeclaration.Bound;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	formal_parameters_elements_receiver: T.FormalParametersElementsReceiver.Bound;
 	formal_parameters_elements_receiver_group: T.FormalParametersElementsReceiverGroup.Bound;
@@ -13060,6 +13106,7 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	constructor_declaration: buildConstructorDeclaration,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	formal_parameters_elements_receiver: buildFormalParametersElementsReceiver,
 	formal_parameters_elements_receiver_group: buildFormalParametersElementsReceiverGroup,

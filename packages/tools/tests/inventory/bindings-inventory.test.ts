@@ -186,6 +186,7 @@ describe('deriveVocabulary', () => {
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
 		const body = d.members.get('expression.class')?.get('body');
 		expect([...(body?.kinds ?? [])].sort()).toEqual([
+			'declaration.constructor',
 			'declaration.field',
 			'declaration.method',
 			'declaration.method.signature',

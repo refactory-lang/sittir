@@ -417,6 +417,7 @@ export const ir: {
 	readonly abstractMethodSignatureSetter: typeof F.abstractMethodSignatureSetter;
 	readonly publicFieldDefinitionPlain: typeof F.publicFieldDefinitionPlain;
 	readonly publicFieldDefinitionAccessor: typeof F.publicFieldDefinitionAccessor;
+	readonly constructorDeclaration: typeof F.constructorDeclaration;
 	readonly receiverParameterDeclaration: typeof F.receiverParameterDeclaration;
 	readonly formalParametersElementsReceiver: typeof F.formalParametersElementsReceiver;
 	readonly interfaceBody: typeof F.interfaceBody;
@@ -690,6 +691,7 @@ export const ir: {
 	abstractMethodSignatureSetter: F.abstractMethodSignatureSetter,
 	publicFieldDefinitionPlain: F.publicFieldDefinitionPlain,
 	publicFieldDefinitionAccessor: F.publicFieldDefinitionAccessor,
+	constructorDeclaration: F.constructorDeclaration,
 	receiverParameterDeclaration: F.receiverParameterDeclaration,
 	formalParametersElementsReceiver: F.formalParametersElementsReceiver,
 	interfaceBody: F.interfaceBody,

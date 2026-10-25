@@ -518,7 +518,8 @@ function claimFact(
 	}
 	const read = isGroup(v) || v.children.length === 0 ? undefined : matchOf(v, nodes, patternPredicates);
 	const match = read !== undefined && 'match' in read && read.match.within !== undefined ? { match: read.match } : {};
-	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, tokens, children: isGroup(v) ? [] : childFacts(v, origin), ...match };
+	const absent = isGroup(v) ? [] : v.negated.map((negated) => leafText(negated.identifier()));
+	return { vocab, kind, field: v.field, predicates, toplevel, within, fieldLiterals, absent, tokens, children: isGroup(v) ? [] : childFacts(v, origin), ...match };
 }
 
 function memberFact(

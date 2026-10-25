@@ -1257,9 +1257,7 @@ export namespace CharacterClass {
 			readonly before?: WhitespaceKindId;
 			readonly caret?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly lbrack?: { readonly after?: WhitespaceKindId };
-			readonly leading?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 			readonly rbrack?: { readonly before?: WhitespaceKindId };
-			readonly trailing?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }

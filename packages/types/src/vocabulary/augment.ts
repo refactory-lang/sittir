@@ -390,7 +390,9 @@ declare module './declaration.ts' {
 				| V.Declaration.Constant.Public.Internal<G>
 				| V.Declaration.Constant.Public.Restricted<G>;
 		}
-		interface Constructor<G extends GrammarContext<G>> extends classes.Declaration.Constructor<G> {}
+		interface Constructor<G extends GrammarContext<G>> extends classes.Declaration.Constructor<G> {
+			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Constructor<G>['decorators']>;
+		}
 		namespace Constructor {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Constructor.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Constructor.Protected<G> {}

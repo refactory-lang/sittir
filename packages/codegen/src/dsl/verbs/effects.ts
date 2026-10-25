@@ -2,7 +2,7 @@ import type { LayerRecords } from '../layer-record.ts';
 import type { DisplayFamilies } from '../rule-transforms.ts';
 import { isPreference } from '../primitives/preference.ts';
 import { formatPreferencePath, parsePreferencePath } from '../primitives/preference-path.ts';
-import { fieldNames, isRecord, subtypeNames, supertypesOf, transparentReach, type GrammarRecord } from '../rule-patterns.ts';
+import { fieldNames, fieldThrough, isRecord, subtypeNames, supertypesOf, transparentReach, type GrammarRecord } from '../rule-patterns.ts';
 import { LABELS_KEY } from '../wire/options-block.ts';
 import { REPARSE_HOST_PRIORITY } from '../wire/reparse-hosts.ts';
 
@@ -308,14 +308,19 @@ function ownerOptions(options: GrammarRecord, owner: string): GrammarRecord {
 	};
 }
 
-export function inheritSplitOptions(grammar: GrammarRecord, heirs: Readonly<Record<string, string>>): unknown {
+export function inheritSplitOptions(grammar: GrammarRecord, heirs: Readonly<Record<string, OptionHeir>>): unknown {
 	if (!isRecord(grammar.options)) return grammar.options;
 	const out = { ...grammar.options };
 	const fields = fieldNames(grammar.rules);
-	for (const [to, from] of Object.entries(heirs)) {
+	const rules = (isRecord(grammar.rules) ? grammar.rules : {}) as Record<string, unknown>;
+	for (const [to, { source: from, body }] of Object.entries(heirs)) {
 		const projected = renameOptionPaths(ownerOptions(grammar.options, from), (name) => name === from ? to : name, true, fields);
 		if (!isRecord(projected)) continue;
-		for (const [key, value] of Object.entries(projected)) {
+		const hasField = (kind: string, name: string): boolean => fieldThrough(rules, rules[kind], name, new Set([kind])) !== undefined;
+		const keepsSite = (path: string): boolean =>
+			parsePreferencePath(path).every((segment) => segment.kind !== 'fieldName' || !hasField(from, segment.name) || hasField(body, segment.name));
+		for (const [key, projectedValue] of Object.entries(projected)) {
+			const value = isRecord(projectedValue) ? Object.fromEntries(Object.entries(projectedValue).filter(([path]) => keepsSite(path))) : projectedValue;
 			const existing = out[key];
 			out[key] = isRecord(value) && isRecord(existing) ? { ...value, ...existing } : existing ?? value;
 		}
@@ -341,12 +346,17 @@ export function effectsForOwners<E extends { readonly kind: string }>(grammar: G
 
 const inheritsOptions = (origin: CopyOrigin): boolean => origin.kind === 'path' || origin.kind === 'copy';
 
-function optionHeirsOf(effects: readonly Effect[]): Record<string, string> {
-	const heirs: Record<string, string> = {};
+interface OptionHeir {
+	readonly source: string;
+	readonly body: string;
+}
+
+function optionHeirsOf(effects: readonly Effect[]): Record<string, OptionHeir> {
+	const heirs: Record<string, OptionHeir> = {};
 	for (const effect of effects) {
 		if (effect.kind !== 'copy' || !inheritsOptions(effect.origin)) continue;
 		const address = effect.display ?? effect.copy;
-		if (address !== effect.source) heirs[address] = effect.source;
+		if (address !== effect.source) heirs[address] = { source: effect.source, body: effect.copy };
 	}
 	return heirs;
 }

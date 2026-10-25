@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ErrorRegion, StepAnchor } from '@sittir/types';
 import { bindMatch, type LeadMatch } from '../dsl/verbs/effects.ts';
-import type { SitedName } from '../dsl/bind.ts';
+import type { LiteralSplit, SitedName } from '../dsl/bind.ts';
 import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 import { boundKindName } from './names.ts';
 import { allGrammars, grammarPackageDir, PACKAGES_DIR, type GrammarName } from '../grammars.ts';
@@ -61,6 +61,7 @@ export interface ClaimFact {
 	readonly toplevel: boolean;
 	readonly within: readonly string[];
 	readonly fieldLiterals: Readonly<Record<string, string>>;
+	readonly absent: readonly string[];
 	readonly tokens: readonly string[];
 	readonly children: readonly ChildFact[];
 	readonly flag?: string;
@@ -226,7 +227,7 @@ export const bindingGrammars = (): readonly GrammarName[] => allGrammars().filte
 
 export const VOCABULARY_DIR = join(PACKAGES_DIR, 'types', 'src', 'vocabulary');
 
-export type RefinementKind = 'predicate' | 'field-literal' | 'token' | 'child-pattern';
+export type RefinementKind = 'predicate' | 'field-literal' | 'token' | 'negated-field' | 'child-pattern';
 
 export interface RefinedClaim extends ClaimFact {
 	readonly refines: string | null;
@@ -234,13 +235,32 @@ export interface RefinedClaim extends ClaimFact {
 }
 
 const untested = (claim: ClaimFact): boolean =>
-	claim.predicates.length === 0 && Object.keys(claim.fieldLiterals).length === 0 && claim.tokens.length === 0 && claim.children.length === 0;
+	claim.predicates.length === 0 && Object.keys(claim.fieldLiterals).length === 0 && claim.tokens.length === 0 && claim.absent.length === 0 && claim.children.length === 0;
 
 function refinementKindOf(claim: ClaimFact): RefinementKind {
 	if (claim.predicates.length > 0) return 'predicate';
 	if (Object.keys(claim.fieldLiterals).length > 0) return 'field-literal';
 	if (claim.tokens.length > 0) return 'token';
+	if (claim.absent.length > 0) return 'negated-field';
 	return 'child-pattern';
+}
+
+const LITERAL_OPERATORS: ReadonlySet<string> = new Set(['eq', 'any-of']);
+
+export type LiteralText = Omit<LiteralSplit, 'absent' | 'relax'>;
+
+export function literalClaimOf(claim: ClaimFact): LiteralText | undefined {
+	const [predicate, ...more] = claim.predicates;
+	if (predicate === undefined || more.length > 0 || !LITERAL_OPERATORS.has(predicate.operator)) return undefined;
+	const step = predicate.subject?.up === 0 && predicate.subject.down.length === 1 ? predicate.subject.down[0]! : undefined;
+	if (step === undefined || step.field === null || step.kind === null || step.kind === WILDCARD) return undefined;
+	const texts = predicate.arguments.flatMap((argument) => ('text' in argument ? [argument.text] : []));
+	if (texts.length === 0 || texts.length !== predicate.arguments.length) return undefined;
+	const onlyItsLeaf = claim.children.every(
+		(child) => 'kinds' in child && child.subject.up === 0 && child.subject.down.length === 1 && child.subject.down[0]!.field === step.field && child.kinds.every((kind) => kind === step.kind)
+	);
+	if (!onlyItsLeaf || claim.tokens.length > 0 || Object.keys(claim.fieldLiterals).length > 0) return undefined;
+	return { field: step.field, leaf: step.kind, texts };
 }
 
 export function refineClaims(claims: readonly ClaimFact[], formsOf: (kind: string) => readonly string[]): RefinedClaim[] {
@@ -395,6 +415,7 @@ function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldName
 		fieldLiterals: Object.fromEntries(
 			Object.entries(claim.fieldLiterals).map(([name, value]) => [bindField(claim.kind, name, fieldNameOf), value])
 		),
+		absent: claim.absent.map((name) => bindField(claim.kind, name, fieldNameOf)),
 		predicates: claim.predicates.map((p) => ({
 			...p,
 			subject: p.subject === null ? null : bindSite(p.subject, claim, rename, fieldNameOf),

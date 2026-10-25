@@ -126,7 +126,7 @@ export function readTestOf(entry: ReadEntry, model: SlotModel, subjectOf: SlotSu
 		const plan = keywordTestOf(last.holder, last.slot.name, pin.text, subjectOf, presenceOf);
 		return typeof plan === 'string' ? plan : { up: 0, via, plan };
 	});
-	const predicates = [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
+	const predicates = entry.decided === true ? [] : [...entry.claim.predicates.filter((p) => entry.spelled !== true || !comparesOwnText(p)), ...entry.children.map(childPredicate)];
 	const conditions = [...pins, ...predicates.map((p) => (typeof p === 'string' ? p : conditionOf(entry, p, model, subjectOf, typeOf)))];
 	const refused = conditions.filter((c) => typeof c === 'string');
 	if (refused.length > 0) throw new Error(`portable: cannot test ${entry.kind} as ${entry.vocab}: ${refused.join('; ')}`);

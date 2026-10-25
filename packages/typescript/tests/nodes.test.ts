@@ -7016,6 +7016,25 @@ describe('_function_signature_automatic_semicolon', () => {
 	});
 });
 
+describe('constructor_declaration', () => {
+	it('factory produces correct type', () => {
+		const node = ir.constructorDeclaration({
+			parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.StatementBlock, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.ConstructorDeclaration);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.constructorDeclaration({
+			parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.StatementBlock, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('receiver_parameter_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.receiverParameterDeclaration({});

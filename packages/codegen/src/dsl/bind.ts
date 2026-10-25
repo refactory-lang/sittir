@@ -16,10 +16,29 @@ export interface SplitStep {
 	readonly as: string | null;
 }
 
+export interface AbsentField {
+	readonly field: string;
+	readonly through: readonly string[];
+}
+
+export interface RelaxSite {
+	readonly kind: string;
+	readonly path: string;
+	readonly display: string;
+}
+export interface LiteralSplit {
+	readonly field: string;
+	readonly leaf: string;
+	readonly texts: readonly string[];
+	readonly absent: readonly AbsentField[];
+	readonly relax: readonly RelaxSite[];
+}
+
 export interface Split {
 	readonly owner: string;
 	readonly path: readonly SplitStep[];
 	readonly as: string;
+	readonly literal?: LiteralSplit;
 }
 
 export interface FieldRename {

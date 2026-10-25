@@ -67,4 +67,25 @@ describe('link relaxation of word-display aliases', () => {
 		);
 		expect(aliasValues(linked.rules.source!).sort()).toEqual(['property_name', 'statement_name']);
 	});
+
+	it('keeps a field whose whole content is the alias as fixed text, out of its display, and relaxes the same alias where it is one arm', () => {
+		const linked = link(
+			makeRaw(
+				{
+					fixed: { type: 'SEQ', members: [{ type: 'FIELD', name: 'name', content: alias('property_name', str('for')) }, str('(')] } as Rule<'evaluate'>,
+					armed: { type: 'CHOICE', members: [alias('property_name', str('while')), alias('property_name', sym('identifier'))] } as Rule<'evaluate'>,
+					keywords: { type: 'CHOICE', members: [str('for'), str('while'), str('(')] } as Rule<'evaluate'>,
+					identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
+				},
+				{ word: 'identifier' }
+			),
+			{ generatedIdTables: { ...idTables, kindIds: { ...idTables.kindIds, '(': anonEntry(9, '(') } } }
+		);
+		const fixed = linked.rules.fixed as Extract<Rule<'link'>, { type: 'SEQ' }>;
+		const name = fixed.members[0] as Extract<Rule<'link'>, { type: 'FIELD' }>;
+		expect(name.content).toMatchObject({ type: 'ALIAS', value: 'property_name', content: { type: 'SYMBOL', name: 'for', literal: 'for' } });
+		expect(linked.relaxedDisplayLiterals).toEqual({ property_name: ['while'] });
+		expect((linked.displayUnions?.get('property_name') ?? []).filter((member) => member.literal)).toEqual([]);
+		expect(linked.terminalAliasWireIds?.get('property_name') ?? []).not.toContain(5);
+	});
 });

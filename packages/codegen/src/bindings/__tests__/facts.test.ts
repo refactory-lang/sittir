@@ -10,6 +10,7 @@ const claim = (vocab: string, kind: string | null, extra: Partial<ClaimFact> = {
 	toplevel: true,
 	within: [],
 	fieldLiterals: {},
+	absent: [],
 	tokens: [],
 	children: [],
 	...extra
@@ -214,17 +215,18 @@ describe('refineClaims', () => {
 		expect(refineClaims([...claims].reverse(), SAME).map((c) => c.refines)).toEqual([...expected].reverse());
 	});
 
-	it('names how a refinement tells its nodes apart: predicate, field literal, token or child pattern', () => {
+	it('names how a refinement tells its nodes apart: predicate, field literal, token, negated field or child pattern', () => {
 		const claims = refineClaims(
 			[
 				claim('identifier', 'identifier'),
 				claim('identifier.receiver', 'identifier', { predicates: [{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ text: 'self' }], subject: { up: 0, down: [] } }] }),
 				claim('identifier.receiver.token', 'identifier', { tokens: ['self'] }),
-				claim('identifier.receiver.token.child', 'identifier')
+				claim('identifier.receiver.token.child', 'identifier'),
+				claim('identifier.receiver.untyped', 'identifier', { absent: ['type'] })
 			],
 			SAME
 		);
-		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern']);
+		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern', 'negated-field']);
 	});
 
 	it("refines a form's claim by its supertype's claim: a claim with a test of its own is a refinement, a plain one names the form", () => {

@@ -518,6 +518,19 @@ describe('portable is: typescript', async () => {
 		}
 	});
 
+	it('reads a constructor as the constructor, and a method, field or overload named constructor as what it is', () => {
+		const SOURCE = 'class A {\n  private constructor(a: number) {}\n  static constructor() {}\n}\ndeclare class B {\n  constructor: Function;\n  constructor(a: string);\n}\n';
+		const declared = find(SOURCE, 'constructor_declaration');
+		expect(at('declaration.constructor')(declared)).toBe(true);
+		expect(at('declaration.constructor.private')(declared)).toBe(true);
+		expect(at('declaration.method')(declared)).toBe(false);
+		const method = find(SOURCE, 'method_definition_plain');
+		expect(at('declaration.method')(method)).toBe(true);
+		expect(at('declaration.constructor')(method)).toBe(false);
+		expect(at('declaration.constructor')(find(SOURCE, 'public_field_definition_plain'))).toBe(false);
+		expect(at('declaration.constructor')(find(SOURCE, 'method_signature_plain'))).toBe(false);
+	});
+
 	it('reads a catch clause as the one catch kind, with or without its binding', () => {
 		const SOURCE = 'try { a(); } catch (e: unknown) { b(); }\ntry { c(); } catch { d(); }\n';
 		const bound = find(SOURCE, 'catch_clause');

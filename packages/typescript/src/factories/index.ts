@@ -425,6 +425,9 @@ export const publicFieldDefinitionPlain: Hoisted<typeof O.publicFieldDefinitionP
 export const publicFieldDefinitionAccessor: Hoisted<typeof O.publicFieldDefinitionAccessor> = hoistAs<
 	typeof O.publicFieldDefinitionAccessor
 >(O.publicFieldDefinitionAccessor);
+export const constructorDeclaration: Hoisted<typeof O.constructorDeclaration> = hoistAs<
+	typeof O.constructorDeclaration
+>(O.constructorDeclaration);
 export const receiverParameterDeclaration: Hoisted<typeof O.receiverParameterDeclaration> = hoistAs<
 	typeof O.receiverParameterDeclaration
 >(O.receiverParameterDeclaration);

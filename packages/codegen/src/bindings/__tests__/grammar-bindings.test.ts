@@ -31,6 +31,7 @@ const claim = (vocab: string, kind: string, extra: Partial<ClaimFact> = {}): Cla
 	toplevel: true,
 	within: [],
 	fieldLiterals: {},
+	absent: [],
 	tokens: [],
 	children: [],
 	...extra
@@ -391,6 +392,116 @@ describe('deriveGrammarBindings', () => {
 			}
 		]);
 	});
+
+	describe("a claim on a word's text", () => {
+		const symbol = (name: string) => ({ type: 'SYMBOL', name });
+		const named = (leaf: string, content: object) => ({ type: 'FIELD', name: 'name', content: { type: 'ALIAS', named: true, value: leaf, content } });
+		const optionalField = (name: string, text: string) => ({ type: 'CHOICE', members: [{ type: 'FIELD', name, content: { type: 'STRING', value: text } }, { type: 'BLANK' }] });
+		const literalGrammar = (): RawGrammar => {
+			const rules = {
+				...base.rules,
+				class_m: { type: 'SEQ', members: [{ type: 'STRING', value: 'class' }, { type: 'FIELD', name: 'body', content: { type: 'REPEAT', content: symbol('member_m') } }] },
+				member_m: { type: 'SEQ', members: [symbol('meth'), { type: 'STRING', value: ';' }] },
+				object_m: { type: 'SEQ', members: [{ type: 'STRING', value: '{' }, symbol('meth'), { type: 'STRING', value: '}' }] },
+				meth: { type: 'CHOICE', members: [symbol('meth_plain'), symbol('meth_get')] },
+				meth_plain: { type: 'SEQ', members: [optionalField('static', 'static'), named('prop_id', symbol('identifier')), symbol('_sig')] },
+				_sig: { type: 'SEQ', members: [optionalField('type_parameters', '<T>'), { type: 'STRING', value: '()' }] },
+				meth_get: { type: 'SEQ', members: [{ type: 'STRING', value: 'get' }, named('prop_id', symbol('identifier'))] },
+				text_m: { type: 'SEQ', members: [{ type: 'FIELD', name: 'name', content: symbol('string_m') }] },
+				string_m: { type: 'PATTERN', value: '"[a-z]*"' }
+			};
+			return { ...base, rules, word: 'identifier', supertypes: [symbol('meth')] } as never;
+		};
+		const literalClaim = (kind: string, within: readonly string[], leaf: string, text: string, absent: readonly string[] = []): ClaimFact => {
+			const subject = { up: 0, down: [{ field: 'name', kind: leaf, after: null, anchor: null }] };
+			return claim('declaration.constructor', kind, {
+				toplevel: within.length === 0,
+				within,
+				absent,
+				predicates: [{ operator: 'eq', capture: 'name', arguments: [{ text }], subject }],
+				children: [{ subject, kinds: [leaf], captured: true }]
+			});
+		};
+		const derive = (claims: readonly ClaimFact[]) =>
+			bind({ file: FILE, facts: { ...FACTS, claims, members: [] }, base: literalGrammar(), vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+
+		it('splits beside its source at the site it names, through a supertype the path has to name', () => {
+			const { bindings, diagnostics } = derive([literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor')]);
+			expect(diagnostics).toEqual([]);
+			expect(bindings.splits).toEqual([
+				{
+					owner: 'member_m',
+					path: [
+						{ field: null, kind: 'meth', as: null },
+						{ field: null, kind: 'meth_plain', as: null }
+					],
+					as: 'constructor_declaration',
+					literal: { field: 'name', leaf: 'prop_id', texts: ['constructor'], absent: [], relax: [] }
+				}
+			]);
+		});
+
+		it('relaxes the literal back into each display at every site that relaxes the keywords its own site does, on the outermost choice a nested one sits in', () => {
+			const relaxed = (leaf: string, text: string) => ({ type: 'ALIAS', named: true, value: leaf, content: { type: 'STRING', value: text } });
+			const word = (leaf: string) => ({ type: 'ALIAS', named: true, value: leaf, content: symbol('identifier') });
+			const grammar = literalGrammar();
+			const rules = {
+				...grammar.rules,
+				meth_plain: { type: 'SEQ', members: [optionalField('static', 'static'), { type: 'FIELD', name: 'name', content: { type: 'CHOICE', members: [word('prop_id'), relaxed('prop_id', 'get')] } }, symbol('_sig')] },
+				pair_m: { type: 'SEQ', members: [{ type: 'FIELD', name: 'key', content: { type: 'CHOICE', members: [word('prop_id'), relaxed('prop_id', 'get')] } }, { type: 'STRING', value: ':' }] },
+				expr_m: { type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'get')] },
+				let_m: { type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'let')] },
+				nested_m: { type: 'CHOICE', members: [{ type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'get')] }, symbol('string_m')] }
+			};
+			const { bindings, diagnostics } = bind({ file: FILE, facts: { ...FACTS, claims: [literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor')], members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			expect(diagnostics).toEqual([]);
+			expect(bindings.splits.map((split) => split.literal?.relax)).toEqual([
+				[
+					{ kind: 'meth_plain', path: '1/name:', display: 'prop_id' },
+					{ kind: 'pair_m', path: '0/key:', display: 'prop_id' },
+					{ kind: 'expr_m', path: '.', display: 'identifier' },
+					{ kind: 'nested_m', path: '.', display: 'identifier' }
+				]
+			]);
+		});
+
+		it('blanks each field the claim negates in its copy, through the hidden rule that holds it', () => {
+			const { bindings, diagnostics } = derive([literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor', ['static', 'type_parameters'])]);
+			expect(diagnostics).toEqual([]);
+			expect(bindings.splits.map((split) => split.literal?.absent)).toEqual([
+				[
+					{ field: 'static', through: [] },
+					{ field: 'type_parameters', through: ['_sig'] }
+				]
+			]);
+		});
+
+		it('leaves the claim in the residue when a field it negates is no field of its kind', () => {
+			const { bindings, report } = derive([literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor', ['nope'])]);
+			expect(bindings.splits).toEqual([]);
+			expect(report.residue).toContainEqual({ cause: 'negated field is not a field of the split kind', row: 'meth_plain → declaration.constructor' });
+		});
+
+		it("refuses the split when the leaf is not the grammar's word or an alias of it", () => {
+			const { bindings, diagnostics } = derive([literalClaim('text_m', ['member_m'], 'string_m', 'abc')]);
+			expect(bindings.splits).toEqual([]);
+			expect(diagnostics).toMatchObject([
+				{ code: 'literal-split-not-keyword', canProceed: false, details: { leaf: 'string_m', reason: "string_m is not the grammar's word or an alias of it" } }
+			]);
+		});
+
+		it('refuses the split when the word does not match the literal', () => {
+			const { bindings, diagnostics } = derive([literalClaim('meth_plain', ['member_m'], 'prop_id', 'Not-A-Word')]);
+			expect(bindings.splits).toEqual([]);
+			expect(diagnostics).toMatchObject([{ code: 'literal-split-not-keyword', details: { texts: ['Not-A-Word'], reason: 'Not-A-Word is not word-shaped' } }]);
+		});
+
+		it('leaves the claim in the residue when it names no site', () => {
+			const { bindings, report } = derive([literalClaim('meth_plain', [], 'prop_id', 'constructor')]);
+			expect(bindings.splits).toEqual([]);
+			expect(report.residue).toContainEqual({ cause: 'literal split names no site', row: 'meth_plain → declaration.constructor' });
+		});
+	});
 });
 
 const EDITS: GrammarBindings['patches'] = new Map([
@@ -455,6 +566,44 @@ export default grammar(
 		expect(text).toContain("import { alias, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
 		expect(text).toContain('export const renames = {};');
 		expect(text).toContain('trait_item: { "body:/(declaration_list as trait_body)/(function_item)": alias("method_declaration") }');
+	});
+
+	it('prints a split on a literal as a narrowed copy beside its source, nesting the copy of each hidden rule a blanked field sits in', () => {
+		const split: Split = {
+			owner: 'member_m',
+			path: [{ field: null, kind: 'meth_plain', as: null }],
+			as: 'constructor_declaration',
+			literal: { field: 'name', leaf: 'prop_id', texts: ['constructor'], absent: [{ field: 'static', through: [] }, { field: 'type_parameters', through: ['_sig'] }], relax: [] }
+		};
+		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits: [split] }, 'h');
+		expect(text).toContain("import { alias, copy, edit, enrich, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
+		expect(text).toContain(
+			'member_m: { "(meth_plain)": ($, member) => choice(member, alias(edit(copy("meth_plain"), { "name:": alias("constructor", $.prop_id), "static:": blank(), "(_sig)": edit(copy("_sig"), { "type_parameters:": blank() }) }), $.constructor_declaration)) }'
+		);
+	});
+
+	it('prefers a split that relaxes its literal elsewhere, and adds the literal to the choice of keywords each site relaxes', () => {
+		const split: Split = {
+			owner: 'member_m',
+			path: [{ field: null, kind: 'meth_plain', as: null }],
+			as: 'constructor_declaration',
+			literal: {
+				field: 'name',
+				leaf: 'prop_id',
+				texts: ['constructor'],
+				absent: [],
+				relax: [
+					{ kind: 'pair_m', path: '0/key:', display: 'prop_id' },
+					{ kind: 'expr_m', path: '.', display: 'identifier' }
+				]
+			}
+		};
+		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits: [split] }, 'h');
+		expect(text).toContain(
+			'member_m: { "(meth_plain)": ($, member) => choice(member, prec.dynamic(1, alias(edit(copy("meth_plain"), { "name:": alias("constructor", $.prop_id) }), $.constructor_declaration))) }'
+		);
+		expect(text).toContain('pair_m: { "0/key:": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.prop_id)] }) }');
+		expect(text).toContain('expr_m: { ".": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.identifier)] }) }');
 	});
 
 	it('gives a kind its patch sets first, then one set per lead on it', () => {

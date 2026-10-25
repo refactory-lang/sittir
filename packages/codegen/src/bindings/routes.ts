@@ -1,5 +1,6 @@
-import { WILDCARD, isFixedText, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
-import { camel, snake } from './names.ts';
+import { WILDCARD, isFixedText, literalClaimOf, isIdentifierPath, type Anchor, type BindingFacts, type CaptureSite, type ChildFact, type ClaimFact, type ContainerFact, type EnumMember, type MemberFact, type NamedMemberFact, type ModelNode, type ModelSlot, type PredicateFact, type Sibling, type SlotModel, type SlotSelector, type TemplateFact } from './facts.ts';
+import { boundKindName, camel, snake } from './names.ts';
+import { isParserHiddenName } from '../dsl/rule-patterns.ts';
 
 export interface LayoutSlot {
 	readonly kind: string | null;
@@ -45,6 +46,7 @@ export interface ReadEntry {
 	readonly template: TemplateFact | undefined;
 	readonly members: readonly MemberRoute[];
 	readonly spelled?: true;
+	readonly decided?: true;
 }
 
 export type MemberRoute = (
@@ -727,10 +729,14 @@ function ownTextAdmits(claim: ClaimFact, text: string): boolean {
 	);
 }
 
-export function formsOf(model: SlotModel, kind: string): readonly string[] {
-	const supertype = modelNode(model, kind)?.modelType === 'supertype';
-	const nested = [...model.values()].filter((node) => node.splitFrom === kind || (supertype && node.variantOf === kind));
-	return [...new Set([kind, ...nested.flatMap((node) => formsOf(model, node.kind))])];
+export function formsOf(model: SlotModel, kind: string, seen: ReadonlySet<string> = new Set()): readonly string[] {
+	if (seen.has(kind)) return [];
+	const within = new Set([...seen, kind]);
+	const node = modelNode(model, kind);
+	const supertype = node?.modelType === 'supertype';
+	const nested = [...model.values()].filter((other) => other.splitFrom === kind || (supertype && other.variantOf === kind));
+	const source = node?.splitFrom != null && isParserHiddenName(kind) ? formsOf(model, node.splitFrom, within) : [];
+	return [...new Set([kind, ...nested.flatMap((other) => formsOf(model, other.kind, within)), ...source])];
 }
 
 interface ReadKind {
@@ -753,6 +759,7 @@ interface ClaimRead {
 	readonly claim: ClaimFact;
 	readonly index: number;
 	readonly spelled: boolean;
+	readonly decided: boolean;
 }
 
 type ClaimReads = ReadonlyMap<string, readonly ClaimRead[]>;
@@ -764,9 +771,11 @@ export function readsByKind(model: SlotModel, claims: readonly ClaimFact[]): Cla
 		const owner = claim.kind;
 		if (owner === null) return;
 		const forms = owner === WILDCARD ? admittedKinds(model, claim).filter((kind) => !claimsOwn.has(`${kind} ${claim.vocab}`)) : formsOf(model, owner);
+		const literal = owner !== WILDCARD && literalClaimOf(claim) !== undefined;
 		for (const form of forms.filter((form) => shownKinds(model, form).some((kind) => modelNode(model, kind) !== undefined)))
 			for (const { kind, spelled } of readKinds(model, form, claim)) {
-				const read = { form, claimed: owner === WILDCARD ? form : owner, vocab: claim.vocab, claim, index, spelled };
+				const decided = literal && modelNode(model, form)?.splitFrom != null && form === boundKindName(claim.vocab, isParserHiddenName(form));
+				const read = { form, claimed: owner === WILDCARD ? form : owner, vocab: claim.vocab, claim, index, spelled, decided };
 				(reads.get(kind) ?? reads.set(kind, []).get(kind))?.push(read);
 			}
 	});
@@ -856,7 +865,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	for (const [kind, at] of reads)
 		readEntries.set(
 			kind,
-			at.map(({ form, claimed, vocab, claim, index, spelled }) => {
+			at.map(({ form, claimed, vocab, claim, index, spelled, decided }) => {
 				const entry: ReadEntry = {
 					kind,
 					claimed,
@@ -867,7 +876,8 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 					children: claimChildTests(input.model, kind, claim),
 					template: input.bindings.templates.find((t) => t.vocabs.includes(vocab)),
 					members: [],
-					...(spelled ? { spelled: true as const } : {})
+					...(spelled ? { spelled: true as const } : {}),
+					...(decided ? { decided: true as const } : {})
 				};
 				if (form !== claimed) inherited.add(entry);
 				return entry;

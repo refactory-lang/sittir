@@ -609,6 +609,7 @@ function keywordSlotOf(rule: RenderRule, config: RenderRulesConfig): string | un
 }
 
 function seamNameOf(rule: RenderRule, config: RenderRulesConfig): string | undefined {
+	if (isDisplayedLiteral(rule)) return undefined;
 	return literalTokenOf(rule, config) ?? punctuationReferenceTokenOf(rule, config) ?? literalSlotOf(rule, config) ?? enumSlotOf(rule, config) ?? keywordSlotOf(rule, config);
 }
 

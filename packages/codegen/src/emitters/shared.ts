@@ -57,6 +57,7 @@ import { matchesWordShape } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
+import { admitsWhitespaceMember, canonicalText, SPACE_MEMBER } from '../dsl/whitespace.ts';
 import type { RenderRule } from '../types/rule.ts';
 
 export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
@@ -1243,8 +1244,10 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 export function literalMergePairs(
 	literals: readonly { readonly text: string }[],
 	kindEntries: readonly KindEntryLike[],
-	rules: Readonly<Record<string, RenderRule>> | undefined
+	grammar: Pick<NodeMap, 'normalizedRules' | 'nodelessExtrasRun'>
 ): [number, number][] {
+	if (!admitsWhitespaceMember(grammar.nodelessExtrasRun, SPACE_MEMBER, canonicalText(SPACE_MEMBER))) return [];
+	const rules = grammar.normalizedRules;
 	const excluded = /[A-Za-z0-9_\s]/;
 	const pairs = new Set<number>();
 	for (const c of rules === undefined ? [] : sameCharMergePairs(rules)) {

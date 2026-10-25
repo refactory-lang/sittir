@@ -4836,17 +4836,9 @@ fn render_character_class(node: &CharacterClassNode, w: &mut dyn ::sittir_core::
         negation.render(w)?;
         w.site_at(options::SITE_CHARACTER_CLASS_CARET_AFTER);
     }
-    if leading.is_present() {
-        w.site_at(options::SITE_CHARACTER_CLASS_LEADING_BEFORE);
-        leading.render(w)?;
-        w.site_at(options::SITE_CHARACTER_CLASS_LEADING_AFTER);
-    }
+    leading.render(w)?;
     class_atoms.render(w)?;
-    if trailing.is_present() {
-        w.site_at(options::SITE_CHARACTER_CLASS_TRAILING_BEFORE);
-        trailing.render(w)?;
-        w.site_at(options::SITE_CHARACTER_CLASS_TRAILING_AFTER);
-    }
+    trailing.render(w)?;
     w.site_at(options::SITE_CHARACTER_CLASS_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -4905,6 +4897,7 @@ fn render_named_capturing_group(node: &NamedCapturingGroupNode, w: &mut dyn ::si
     let pattern = &node.pattern;
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
@@ -5337,7 +5330,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(40, 63), (63, 60)]); // "(?" "?<"
+.with_literal_merge_pairs(&[]); // no multi-char punctuation transitions in this grammar
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`

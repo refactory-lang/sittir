@@ -256,6 +256,7 @@ export interface NodeRef<T extends AssembledNode = AssembledNode> {
 	readonly optionalElement?: boolean;
 	readonly immediate?: boolean;
 	readonly tokenized?: boolean;
+	readonly copyOf?: string;
 }
 
 export type NodeOrTerminal = NodeRef;
@@ -554,6 +555,10 @@ export function storageKindOfRef(node: AssembledNode | UnresolvedRef): string {
 	return isUnresolvedRef(node) ? node.name : node.kind;
 }
 
+export function sourceKindOfRef(ref: NodeBackedRef): string {
+	return ref.copyOf ?? storageKindOfRef(ref.node);
+}
+
 export function surfaceHiddenOfRef(node: AssembledNode | UnresolvedRef): boolean {
 	return isUnresolvedRef(node) ? surfaceHiddenOf(undefined, node.name) : node.surfaceHidden;
 }
@@ -799,6 +804,7 @@ export function deriveValuesForRule(
 						parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 						parseKindId: rule.aliasedToId ?? rule.kindId,
 						...armFacts,
+						...(rule.copyOf === undefined ? {} : { copyOf: rule.copyOf }),
 						multiplicity
 					}
 				];
@@ -813,6 +819,7 @@ export function deriveValuesForRule(
 					parseKind: { kind: 'unresolved-ref', name: rule.aliasedTo ?? rule.name },
 					parseKindId: rule.aliasedToId ?? parseEntry?.parseId ?? parseEntry?.id,
 					...armFacts,
+					...(rule.copyOf === undefined ? {} : { copyOf: rule.copyOf }),
 					multiplicity
 				}
 			];
@@ -1432,7 +1439,7 @@ export function projectSlotNaming(slot: SlotNamingInputs): {
 	parseNames: readonly string[];
 } {
 	const parseNames = slot.fieldName !== undefined ? [slot.fieldName] : valueParseNamesOf(slot);
-	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map((v) => storageKindOfRef(v.node)))];
+	const nodeRefStorageKinds = [...new Set(slot.values.filter(isNodeRef).map(sourceKindOfRef))];
 	const literalStorageKinds = [
 		...new Set(
 			slot.values

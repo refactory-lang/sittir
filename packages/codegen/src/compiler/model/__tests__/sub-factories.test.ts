@@ -180,7 +180,7 @@ function inlineNodeMap(): NodeMapWithIdTables {
 
 function buildNodeMap(
 	rules: Record<string, Rule<'evaluate'>>,
-	lists: { readonly supertypes?: readonly string[]; readonly inline?: readonly string[] } = {}
+	lists: { readonly supertypes?: readonly string[]; readonly inline?: readonly string[]; readonly splitFrom?: Readonly<Record<string, string>> } = {}
 ): NodeMapWithIdTables {
 	const raw: RawGrammar = {
 		name: 'synth',
@@ -196,7 +196,8 @@ function buildNodeMap(
 		conflicts: [],
 		precedences: [],
 		word: null,
-		references: []
+		references: [],
+		...(lists.splitFrom === undefined ? {} : { splitFrom: lists.splitFrom })
 	};
 	return assemblePredicted(raw);
 }
@@ -270,6 +271,22 @@ describe('sub-factories — subFactoriesOf', () => {
 		const held = subFactoriesOf(nodeMap.nodes.get('holder')!, nodeMap);
 		expect(held.entries.map((e) => e.name).sort()).toEqual(['circle', 'other', 'square']);
 		expect(subFactoriesOf(nodeMap.nodes.get('fielded')!, nodeMap).entries).toEqual([]);
+	});
+
+	it("a hidden copy in an unnamed slot mounts its source's labelled members", () => {
+		const shape = (name: string): Rule<'evaluate'> => ({ type: SYMBOL, name, ...label('_shape', name) });
+		const { nodeMap } = buildNodeMap(
+			{
+				root: { type: SEQ, members: [{ type: SYMBOL, name: 'copied' }, { type: SYMBOL, name: '_shape' }] },
+				copied: { type: SEQ, members: [{ type: STRING, value: 'c' }, { type: SYMBOL, name: '_shape_copied' }] },
+				_shape: { type: CHOICE, members: [shape('circle'), shape('square')] },
+				_shape_copied: { type: CHOICE, members: [shape('circle'), shape('square')] },
+				circle: { type: SEQ, members: [{ type: STRING, value: 'o' }, { type: FIELD, name: 'r', content: { type: PATTERN, value: '[0-9]+' } }] },
+				square: { type: SEQ, members: [{ type: STRING, value: '#' }, { type: FIELD, name: 'side', content: { type: PATTERN, value: '[0-9]+' } }] }
+			},
+			{ supertypes: ['_shape', '_shape_copied'], splitFrom: { _shape_copied: '_shape' } }
+		);
+		expect(subFactoriesOf(nodeMap.nodes.get('copied')!, nodeMap).entries.map((e) => e.name).sort()).toEqual(['circle', 'square']);
 	});
 
 	it("an inline rule's labels are arms only in the host's unnamed slot", () => {

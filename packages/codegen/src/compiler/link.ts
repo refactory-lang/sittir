@@ -18,6 +18,7 @@ import {
 } from '../types/rule-types.ts'; // @rule-type-consts
 import type {
 	AliasRule,
+	AnyRule,
 	Rule,
 	RuleId,
 	SymbolRef,
@@ -260,6 +261,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 	reportAuxTokens(evaluated.rules, linkCtx);
 
 	stampLinkMintedVisibility(rules, linkCtx);
+	stampCopyRefs(rules, linkCtx.copyBase);
 	const variantChildren = deriveVariantChildren(rules, linkCtx.copyBase);
 	const refineForms = new Map<string, readonly LinkedRefineForm[]>();
 	for (const [kind, forms] of raw.refineForms ?? []) {
@@ -904,8 +906,9 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	const relaxedLiterals = new Set<string>();
 	const relaxedDisplayLiterals = new Map<string, Set<string>>();
 	const wordDisplays = wordDisplaysOf(raw.rules, { word: raw.word ?? undefined });
+	const fixedNames = fixedNamesOf(raw.rules);
 	const relaxedWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> | undefined => {
-		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING) return undefined;
+		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING || fixedNames.has(rule)) return undefined;
 		const stands = rule.value === raw.word || wordDisplays.has(rule.value);
 		if (!stands) return undefined;
 		const literal = rule.content.value;
@@ -996,6 +999,16 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 
 const aliasedRefWalker = new RuleWalker<Rule<'link'>>();
 const splicedNameWalker = new RuleWalker<Rule<'link'>>();
+const copyRefWalker = new RuleWalker<Rule<'link'>>();
+
+function stampCopyRefs(rules: Record<string, Rule<'link'>>, copyBase: CopyBase): void {
+	const visit = (node: Rule<'link'>): Rule<'link'> => {
+		if (node.type !== SYMBOL) return node;
+		const base = copyBase(node.name);
+		return base === node.name ? node : { ...node, copyOf: base };
+	};
+	for (const [name, rule] of Object.entries(rules)) rules[name] = visit(copyRefWalker.map(rule, visit));
+}
 
 function stampLinkMintedVisibility(rules: Record<string, Rule<'link'>>, ctx: LinkCtx): void {
 	for (const [name, rule] of Object.entries(rules)) {
@@ -1138,7 +1151,9 @@ function collectDisplayUnions(rules: Record<string, Rule<'link'>>, ctx: StampKin
 			);
 		} else if (content.type === STRING) add({ display, storage: content.value, literal: true });
 	};
+	const fixed = fixedNamesOf(rules);
 	const visit = (rule: Rule<'link'>): void => {
+		if (fixed.has(rule)) return;
 		if (rule.type === ALIAS && rule.named && rule.value) {
 			addStorage({ display: rule.value, content: rule.content });
 			visit(rule.content);
@@ -1324,6 +1339,7 @@ function collectTerminalAliasWireIds(
 		return undefined;
 	};
 	const visit = (rule: Rule<'link'>): void => {
+		if (fixed.has(rule)) return;
 		if (rule.type === SYMBOL) {
 			if (rule.literal !== undefined && rule.kindId !== undefined && rule.aliasedTo !== undefined) {
 				addBothSpellings(rule.aliasedTo, rule.kindId);
@@ -1345,7 +1361,29 @@ function collectTerminalAliasWireIds(
 		const content = (rule as { content?: Rule<'link'> }).content;
 		if (content !== undefined) visit(content);
 	};
+	const fixed = new Set(ruleBags.flatMap((bag) => [...fixedNamesOf(bag)]));
 	for (const bag of ruleBags) for (const rule of Object.values(bag)) visit(rule);
+	return out;
+}
+
+const fixedNameWalker = new RuleWalker<AnyRule>();
+
+function isLiteralAlias(rule: AnyRule): boolean {
+	if (rule.type === ALIAS) return rule.named && (rule.content.type === STRING || (rule.content.type === SYMBOL && rule.content.literal !== undefined));
+	return rule.type === SYMBOL && rule.literal !== undefined && rule.aliasedTo !== undefined;
+}
+
+function fixedNamesOf<R extends AnyRule>(rules: Readonly<Record<string, R>>): ReadonlySet<R> {
+	const out = new Set<R>();
+	for (const rule of Object.values(rules)) {
+		fixedNameWalker.find(rule, (node) => {
+			if (node.type !== FIELD) return false;
+			let content = node.content;
+			while (isPrecWrapper(content) && 'content' in content) content = content.content;
+			if (isLiteralAlias(content)) out.add(content as R);
+			return false;
+		});
+	}
 	return out;
 }
 

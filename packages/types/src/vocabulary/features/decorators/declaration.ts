@@ -4,6 +4,9 @@ export namespace Declaration {
 	export interface Class<G extends GrammarContext<G>> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 	}
+	export interface Constructor<G extends GrammarContext<G>> {
+		readonly decorators?: V.Attribute.Decorator<G>[];
+	}
 	export interface Field<G extends GrammarContext<G>> {
 		readonly decorators?: V.Attribute.Decorator<G>[];
 		// t only

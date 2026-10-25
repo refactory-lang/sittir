@@ -745,6 +745,12 @@ export const records = {
 	HtmlCommentNode: { words: 2 },
 	JsxTextNode: { words: 2 },
 	TemplateCharsNode: { words: 2 },
+	ConstructorDeclarationNode: {
+		words: 17,
+		accessibility_modifier: { word: 2, width: 5 },
+		parameters: { word: 7, width: 5 },
+		body: { word: 12, width: 5 }
+	},
 	ReceiverParameterDeclarationNode: {
 		words: 20,
 		decorator: { word: 3, width: 2, run: 5 },

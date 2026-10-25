@@ -119,16 +119,8 @@
 					"test": "leading",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "leading_before"
-						},
-						{
 							"kind": "slot",
 							"name": "leading"
-						},
-						{
-							"kind": "seam",
-							"field": "leading_after"
 						}
 					]
 				}
@@ -145,16 +137,8 @@
 					"test": "trailing",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "trailing_before"
-						},
-						{
 							"kind": "slot",
 							"name": "trailing"
-						},
-						{
-							"kind": "seam",
-							"field": "trailing_after"
 						}
 					]
 				}
@@ -686,6 +670,9 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",

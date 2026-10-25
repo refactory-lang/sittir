@@ -1854,6 +1854,49 @@
 			"field": "construct_signature_after"
 		}
 	],
+	"constructor_declaration": [
+		{
+			"kind": "seam",
+			"field": "constructor_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "accessibility_modifier",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "accessibility_modifier"
+						},
+						{
+							"kind": "seam",
+							"field": "accessibility_modifier_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"text": "constructor"
+		},
+		{
+			"kind": "adjacent"
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "constructor_declaration_after"
+		}
+	],
 	"constructor_type": [
 		{
 			"kind": "seam",

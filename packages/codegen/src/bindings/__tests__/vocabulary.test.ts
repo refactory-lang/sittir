@@ -155,6 +155,7 @@ const claim = (vocab: string): ClaimFact => ({
 	toplevel: true,
 	within: [],
 	fieldLiterals: {},
+	absent: [],
 	tokens: [],
 	children: []
 });
