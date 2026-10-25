@@ -30,18 +30,21 @@
  *      declares the row and names each such kind in its `cases`, with the
  *      base's and the head's counts (`case-loss`). A departed kind's lost
  *      cases are allowed and listed in the passing verdict. A gain never
- *      offsets a loss. A pass drop is a regression unless the row's fail
- *      count (`total - pass`) did not rise and every lost case belongs to
- *      a departed kind; a declaration does not excuse it. `roundtrip`
- *      counts corpus rows and records no cases by kind, so no departure
- *      explains its drop. The aggregate `totals` are sums of the rows and
+ *      offsets a loss. A pass drop whose row's fail count (`total - pass`)
+ *      rose is a regression, declared or not. One whose fail count did not
+ *      rise is cases leaving the row, held as its case loss: each lost case
+ *      belongs to a departed kind or to a kind the declaration names with
+ *      its counts. A row whose base records no cases by kind has no case
+ *      loss to declare, so its pass drop is a regression; `roundtrip`
+ *      counts corpus rows and records no cases by kind. A declaration
+ *      states its reason. The aggregate `totals` are sums of the rows and
  *      are not compared.
  *   2. Total drop — a row whose base records no cases by kind
  *      (`roundtrip`, or any row of a base collected before inventories)
  *      lost cases while its pass held, so failing cases left it, unless
  *      `baselineCounterChange` declares that row with `from` equal to the
  *      base's counters and `to` equal to the head's. A row that lost a
- *      pass is rule 1's, which no declaration excuses. A row whose base
+ *      pass is rule 1's. A row whose base
  *      records cases by kind is held case by case under rule 1, so a
  *      departed kind takes its cases, failing ones included, with no
  *      declaration.
@@ -389,6 +392,16 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 			details: { path: `${label}.commit`, after: obj['commit'] }
 		};
 	}
+	const declared = obj['baselineCounterChange'] as { readonly reason?: unknown } | null | undefined;
+	const declaredReason = declared?.reason;
+	if (declared !== undefined && (typeof declaredReason !== 'string' || declaredReason.trim() === '')) {
+		return {
+			ok: false,
+			reason: 'schema-violation',
+			summary: `schema violation: ${label}.baselineCounterChange states no reason`,
+			details: { path: `${label}.baselineCounterChange.reason`, after: declaredReason, note: 'a declaration states why its rows change' }
+		};
+	}
 	const grammars = obj['grammars'];
 	if (grammars === null || typeof grammars !== 'object') {
 		return {
@@ -585,9 +598,7 @@ function unexplainedDrop({ b, h }: ComparedRow, { before, after }: ComparedMetri
 	const failAfter = h.total - after;
 	if (failAfter > failBefore) return `its fail count rose ${failBefore} → ${failAfter}`;
 	if (losses === undefined) return 'no kind departure explains it: the base records no cases by kind for this row';
-	if (losses.kept.length === 0) return undefined;
-	const departed = losses.departed.length === 0 ? '' : `; departed ${lossText(losses.departed)}`;
-	return `cases lost by kinds that did not depart: ${lossText(losses.kept)}${departed}`;
+	return undefined;
 }
 
 function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
