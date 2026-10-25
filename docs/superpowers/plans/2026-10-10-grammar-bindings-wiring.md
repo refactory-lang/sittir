@@ -142,10 +142,11 @@ The python docstring's `doc` member resolves through the `_simple_statements` si
 
 The runtime bindings are what the portable engine runs, generated per grammar from the routes. The vocabulary's mapped types (owner × value crossings, per-kind flag unions) are authored in the vocabulary, not generated here.
 
-**Order (ruled by the user, 2026-10-25).** Three PRs come first, in this order:
-1. The vocabulary renames still pending from the synonyms rulings (census: `docs/superpowers/probes/2026-10-25-vocabulary-renames-census/`). Rust's match arm keeps its low-level field `match`, authored in rust's grammar layer. The facts that tell `expression.update`'s prefix and postfix forms apart ride the same PR.
+**Order (ruled by the user, 2026-10-25).** Three PRs come before this stage, in this order:
+1. The vocabulary renames still pending from the synonyms rulings (census: `docs/superpowers/probes/2026-10-25-vocabulary-renames-census/`). Rust's match arm keeps its low-level field `match`, authored in rust's grammar layer. `expression.update`'s prefix form takes a `prefix` flag in the same PR, and unset means postfix.
 2. The closure-parameter residue: the rust closure-parameter claim restated as an envelope, the part of the portable-surface plan's placement-residue task still to land. It goes before this stage, so every guard this stage generates agrees with the routes' read tests.
-3. This stage. Its runtime lands first and stays unexported. The flag guards, the build tables, the pick and the corpus round-trip lane land and are proved without types. Nothing new reaches the public portable API, a loosely typed `build` included, until the vocabulary-typed module, generated outside the package, has zero errors (the generator plan's rule for rejected members).
+3. The loose and strict builder surfaces made separate: codegen emits the two builder tables apart, through one emitter seam both builder backends use, and the engine loads only the table its `api` asks for. `bundle()` and the flavour pair retire, so this stage's build tables are written against one table per surface.
+4. This stage. Its runtime lands first and stays unexported. The flag guards, the build tables, the pick and the corpus round-trip lane land and are proved without types. Nothing new reaches the public portable API, a loosely typed `build` included, until the vocabulary-typed module, generated outside the package, has zero errors (the generator plan's rule for rejected members).
 
 - Honor the authored numeric and boolean scalar value contracts in high-to-low runtime builds and built-node crossings, through the [scalar-contract follow-up](2026-10-06-binding-generator.md#follow-up-high-to-low-runtime-scalar-bindings-october-15) in the generator plan.
 - `build`, `is` and `kinds` per vocabulary path, keyed by `$type`;
