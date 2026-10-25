@@ -14,7 +14,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
+import { adoptSideNesting, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
 import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
@@ -494,6 +494,7 @@ export function createNativeEngine<
 	}
 
 	try {
+		adoptSideNesting(status.native);
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)

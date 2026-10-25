@@ -125,7 +125,7 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const tree = treeOf(node);
 	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
 	const wire = (entry: TriviaEntry): unknown =>
-		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
+		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(snapshotOf(entry, 1) as AnyUntypedNode, PLAIN_KINDS));
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
 		if (entries !== undefined) at.tree.writeTriviaSide(at.index, side, entries.map(wire));

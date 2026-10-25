@@ -389,6 +389,19 @@ export const SIDE_FIELD_SIDES: number
 
 export const SIDE_FIELD_SPAN: number
 
+/**
+ * The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
+ * the JavaScript projection of a side's entries enforces as the
+ * render does.
+ */
+export const SIDE_NESTING_BOUND: number
+
+/**
+ * The refusal of a side nested past `SIDE_NESTING_BOUND`
+ * (`trivia::SIDE_NESTING_REFUSAL`).
+ */
+export const SIDE_NESTING_REFUSAL: string
+
 export const SIDE_WORDS_AT: number
 
 export const SIDE_WORDS_EDGES: number

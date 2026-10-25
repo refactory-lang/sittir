@@ -580,6 +580,17 @@ macro_rules! napi_engine {
             }
         }
 
+        /// The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
+        /// the JavaScript projection of a side's entries enforces as the
+        /// render does.
+        #[::napi_derive::napi]
+        pub const SIDE_NESTING_BOUND: u32 = $crate::trivia::SIDE_NESTING_BOUND as u32;
+
+        /// The refusal of a side nested past `SIDE_NESTING_BOUND`
+        /// (`trivia::SIDE_NESTING_REFUSAL`).
+        #[::napi_derive::napi]
+        pub const SIDE_NESTING_REFUSAL: &str = $crate::trivia::SIDE_NESTING_REFUSAL;
+
         $crate::records_codec! {
             /// The tag word of an absent cell (`arena::cell::tag`).
             #[::napi_derive::napi]
@@ -751,8 +762,7 @@ macro_rules! napi_engine {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                         let table = self.render_options(Some(parsed), options)?;
-                        let records = $crate::napi_engine::ArenaEntries { env: &env, grammar: self.engine.grammar(), trees: &*trees };
-                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, &records)))
+                        let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_record(address, $crate::slot::ChangedEdges { leading, trailing }, &table, sources))))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_record panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_record failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))
@@ -787,10 +797,10 @@ macro_rules! napi_engine {
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let changed = $crate::slot::ChangedEdges { leading, trailing };
-                        let records = $crate::napi_engine::ArenaEntries { env: &env, grammar: self.engine.grammar(), trees: &*trees };
-                        let sources = $crate::render::WithRecords { sources: &*trees, records: &records };
-                        let ctx = $crate::prepare::RenderContext { options: &table, sources: &sources };
-                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.engine.render_built(&arena, root, changed, &*trees, &ctx)))
+                        let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| {
+                            let ctx = $crate::prepare::RenderContext { options: &table, sources };
+                            ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.engine.render_built(&arena, root, changed, &*trees, &ctx)))
+                        })
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))
@@ -845,8 +855,7 @@ macro_rules! napi_engine {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                         let table = self.render_options(Some(parsed), options)?;
-                        let records = $crate::napi_engine::ArenaEntries { env: &env, grammar: self.engine.grammar(), trees: &*trees };
-                        let canonical = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate(index, address, &table, &records)))
+                        let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate(index, address, &table, sources))))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_candidate panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_candidate failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))
@@ -1164,22 +1173,83 @@ fn written_chunk<'e, T: ChunkElement>(env: &'e napi::Env, chunk: napi::Unknown<'
     chunk.get(..written.map_or(0, |&n| n as usize)).ok_or(ArenaError::Unwritable("a built arena chunk is shorter than its written length"))
 }
 
-/// One call's `EntryRecords`: a record entry renders from the arena its
-/// store holds (`BuiltChunks`), borrowed through `env`, the parsed trees it
-/// links held from `trees`.
+/// The table one call renders through: every lookup is the live `trees`',
+/// and a trivia entry's built record renders from the arena its store holds
+/// (`BuiltChunks`), borrowed through `env`, with this table as its context's,
+/// so the entries inside it render here too.
 #[cfg(feature = "arena")]
-pub struct ArenaEntries<'a, G: crate::engine::EngineGrammar, H> {
-    pub env: &'a napi::Env,
-    pub grammar: G,
-    pub trees: &'a std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
+struct ArenaSources<'a, G: crate::engine::EngineGrammar, H> {
+    env: &'a napi::Env,
+    grammar: G,
+    trees: &'a std::collections::HashMap<crate::types::TreeId, crate::engine::ParsedTree<G>, H>,
 }
 
 #[cfg(feature = "arena")]
-impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::EntryRecords for ArenaEntries<'_, G, H>
+impl<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher> crate::render::SourceTable for ArenaSources<'_, G, H>
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, ctx: &crate::prepare::RenderContext<'_>, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+    fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
+        self.trees.source_of(tree_id)
+    }
+
+    fn kind_of(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+        self.trees.kind_of(coord)
+    }
+
+    fn line_starts_inside_tokens(&self, coord: &crate::slot::NodeCoordinate) -> Vec<u32> {
+        self.trees.line_starts_inside_tokens(coord)
+    }
+
+    fn last_list_child_kind(&self, tree: crate::types::TreeId, span: crate::types::Span, kind: crate::types::KindId) -> Option<crate::types::KindId> {
+        self.trees.last_list_child_kind(tree, span, kind)
+    }
+
+    fn for_each_kind_ending_with(&self, coord: &crate::slot::NodeCoordinate, f: &mut dyn FnMut(crate::types::KindId)) {
+        self.trees.for_each_kind_ending_with(coord, f);
+    }
+
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        self.trees.depth_move(coord)
+    }
+
+    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
+        self.trees.sides(coord)
+    }
+
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
+        self.trees.frames(coord)
+    }
+
+    fn slot_layouts(&self, coord: &crate::slot::NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
+        crate::render::SourceTable::slot_layouts(self.trees, coord)
+    }
+
+    fn separator_before(&self, coord: &crate::slot::NodeCoordinate) -> Option<crate::types::KindId> {
+        crate::render::SourceTable::separator_before(self.trees, coord)
+    }
+
+    fn framed_span(&self, coord: &crate::slot::NodeCoordinate) -> crate::types::Span {
+        self.trees.framed_span(coord)
+    }
+
+    fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        crate::render::SourceTable::edited_within(self.trees, coord)
+    }
+
+    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        crate::render::SourceTable::renders_as_source(self.trees, coord)
+    }
+
+    fn seat_through(&self, coord: &crate::slot::NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(crate::types::KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
+        self.trees.seat_through(coord, wrappers, seat)
+    }
+
+    fn read_ctx(&self, tree: crate::types::TreeId) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
+        crate::render::SourceTable::read_ctx(self.trees, tree)
+    }
+
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         use crate::boundary::DecodesKind;
         use crate::render::RenderError;
         if !G::Trivia::decodes(record.kind) {
@@ -1190,13 +1260,13 @@ where
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
         let (words, bytes) = store.built().borrow(self.env).map_err(RenderError::Record)?;
         let arena = crate::arena::BorrowedArena::new(&words, &bytes).map_err(RenderError::Record)?;
-        crate::arena::render_record_entry(self.grammar, &arena, record, store, self.trees, ctx, w)
+        crate::arena::render_record_entry(self.grammar, &arena, record, store, self.trees, &crate::prepare::RenderContext { options, sources: self }, w)
     }
 }
 
 /// `f` over the table a call renders through: the live `trees`, which also
 /// render each trivia entry's built record from its store's arena
-/// (`ArenaEntries`), borrowed through `env`.
+/// (`ArenaSources`), borrowed through `env`.
 #[cfg(feature = "arena")]
 pub fn entry_sources<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, R>(
     env: &napi::Env,
@@ -1207,7 +1277,7 @@ pub fn entry_sources<G: crate::arena::RecordGrammar, H: std::hash::BuildHasher, 
 where
     G::Trivia: crate::boundary::DecodesKind,
 {
-    f(&crate::render::WithRecords { sources: trees, records: &ArenaEntries { env, grammar, trees } })
+    f(&ArenaSources { env, grammar, trees })
 }
 
 /// Lets go of the built arena chunks `store` holds (`BuiltChunks::release`).

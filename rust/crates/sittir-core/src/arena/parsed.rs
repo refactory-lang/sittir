@@ -11,7 +11,7 @@ use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
 use crate::read::{Depth, ReadNode};
 use crate::record::HEADER_WORDS;
-use crate::render::{EntryRecords, RenderError, SourceTable, WithRecords};
+use crate::render::{RenderError, SourceTable};
 use crate::slot::{ChangedEdges, NodeCoordinate};
 use crate::trivia_store::TriviaStore;
 use crate::types::{KindId, NodeIndex};
@@ -215,20 +215,22 @@ impl<G: RecordGrammar> ParsedTree<G> {
     /// The record at `at` of the tree's arena, rendered as a render root
     /// whose `changed` edges have no neighbour (the edges a node crossing as
     /// its coordinate marks), under `options`, its line endings unspelled,
-    /// each trivia entry's built record through `records`.
+    /// through `sources`: the call's table, which holds this tree among the
+    /// others its trivia entries reach, and renders their built records.
     ///
     /// # Errors
     ///
     /// `RenderError::Record` for an address that names no record of the
     /// arena: none, past what it wrote, or a header naming no kind the
     /// grammar writes a record of; else what the record's render refuses.
-    pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions, records: &dyn EntryRecords) -> Result<String, RenderError> {
-        self.render_cell(self.record_root(at, changed)?, options, &WithRecords { sources: self, records })
+    pub fn render_record(&self, at: Address, changed: ChangedEdges, options: &ResolvedOptions, sources: &dyn SourceTable) -> Result<String, RenderError> {
+        self.render_cell(self.record_root(at, changed)?, options, sources)
     }
 
     /// Renders a parsed candidate without its outer trivia. Its record stays
     /// native; a recordless leaf uses the same coordinate cell as a slot does.
-    /// Each trivia entry's built record renders through `records`.
+    /// Every other lookup is `sources`', the call's table, as `render_record`
+    /// reads it.
     ///
     /// # Errors
     ///
@@ -238,7 +240,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
         index: NodeIndex,
         at: Option<Address>,
         options: &ResolvedOptions,
-        records: &dyn EntryRecords,
+        sources: &dyn SourceTable,
     ) -> Result<String, RenderError> {
         let refused = || {
             RenderError::Record(super::ArenaError::Malformed {
@@ -264,7 +266,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                 site: None,
             }
         };
-        self.render_cell(root, options, &WithRecords { sources: &CandidateSources { tree: self, index }, records })
+        self.render_cell(root, options, &CandidateSources { sources, tree: self, index })
     }
 
     fn candidate_record(&self, at: Address) -> Result<(CellAt, Row), RenderError> {
@@ -317,7 +319,10 @@ impl<G: RecordGrammar> ParsedTree<G> {
     }
 }
 
+/// The table a candidate renders through: `sources`', except that the
+/// candidate, the node at `index` of `tree`, has no outer sides.
 struct CandidateSources<'a, G: EngineGrammar> {
+    sources: &'a dyn SourceTable,
     tree: &'a ParsedTree<G>,
     index: NodeIndex,
 }
@@ -330,15 +335,15 @@ impl<G: EngineGrammar> CandidateSources<'_, G> {
 
 impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
     fn source_of(&self, tree: crate::types::TreeId) -> Option<&std::sync::Arc<str>> {
-        self.tree.source_of(tree)
+        self.sources.source_of(tree)
     }
 
     fn kind_of(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        self.tree.kind_of(coord)
+        self.sources.kind_of(coord)
     }
 
     fn line_starts_inside_tokens(&self, coord: &NodeCoordinate) -> Vec<u32> {
-        self.tree.line_starts_inside_tokens(coord)
+        self.sources.line_starts_inside_tokens(coord)
     }
 
     fn last_list_child_kind(
@@ -347,19 +352,19 @@ impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
         span: crate::types::Span,
         kind: KindId,
     ) -> Option<KindId> {
-        self.tree.last_list_child_kind(tree, span, kind)
+        self.sources.last_list_child_kind(tree, span, kind)
     }
 
     fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
-        self.tree.for_each_kind_ending_with(coord, f);
+        self.sources.for_each_kind_ending_with(coord, f);
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
-        self.tree.depth_move(coord)
+        self.sources.depth_move(coord)
     }
 
     fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
-        let sides = self.tree.sides(coord)?;
+        let sides = self.sources.sides(coord)?;
         if !self.is_root(coord) {
             return Some(sides);
         }
@@ -376,32 +381,32 @@ impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
         if self.is_root(coord) {
             crate::trivia::Frames::default()
         } else {
-            self.tree.frames(coord)
+            self.sources.frames(coord)
         }
     }
 
     fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
-        SourceTable::slot_layouts(self.tree, coord)
+        self.sources.slot_layouts(coord)
     }
 
     fn separator_before(&self, coord: &NodeCoordinate) -> Option<KindId> {
-        SourceTable::separator_before(self.tree, coord)
+        self.sources.separator_before(coord)
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> crate::types::Span {
         if self.is_root(coord) {
             coord.span
         } else {
-            self.tree.framed_span(coord)
+            self.sources.framed_span(coord)
         }
     }
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
-        SourceTable::edited_within(self.tree, coord)
+        self.sources.edited_within(coord)
     }
 
     fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
-        self.tree.renders_as_source(coord)
+        self.sources.renders_as_source(coord)
     }
 
     fn seat_through(
@@ -410,13 +415,17 @@ impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
         wrappers: &[Option<crate::options::SeatPath>],
         seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>,
     ) -> Option<crate::types::SiteId> {
-        self.tree.seat_through(coord, wrappers, seat)
+        self.sources.seat_through(coord, wrappers, seat)
     }
 
     fn read_ctx(
         &self,
         tree: crate::types::TreeId,
     ) -> Option<(&tree_sitter::Tree, crate::read::ReadCtx<'_>)> {
-        self.tree.read_ctx(tree)
+        self.sources.read_ctx(tree)
+    }
+
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &ResolvedOptions, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
+        self.sources.render_record_entry(record, held, options, w)
     }
 }

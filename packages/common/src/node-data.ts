@@ -44,6 +44,34 @@ export function asTextNode<T>(value: T): T {
 	return typeof text === 'string' ? Object.assign(value, { $text: () => text }) : value;
 }
 
+let sideNesting: { readonly bound: number; readonly refusal: string } | undefined;
+
+export function adoptSideNesting(native: object): void {
+	const { SIDE_NESTING_BOUND: bound, SIDE_NESTING_REFUSAL: refusal } = native as { readonly SIDE_NESTING_BOUND?: unknown; readonly SIDE_NESTING_REFUSAL?: unknown };
+	if (typeof bound !== 'number' || typeof refusal !== 'string') throw new Error('the addon exports no side nesting bound');
+	if (sideNesting !== undefined && (sideNesting.bound !== bound || sideNesting.refusal !== refusal))
+		throw new Error(`the addon's side nesting bound, ${bound}, is not the ${sideNesting.bound} another addon gave`);
+	sideNesting = { bound, refusal };
+}
+
+function nestedSide(holder: number): number {
+	const nesting = holder + 1;
+	if (sideNesting !== undefined && nesting > sideNesting.bound) throw new Error(sideNesting.refusal);
+	return nesting;
+}
+
+export function mapSideEntries<S extends TriviaSides<unknown>>(sides: S, holder: number, each: (entry: unknown, nesting: number) => unknown): S {
+	return mapTriviaEntries(sides, (entries) => {
+		if (entries.length === 0) return [];
+		const nesting = nestedSide(holder);
+		return entries.map((entry) => each(entry, nesting));
+	}) as S;
+}
+
+export function mapUnitSides(units: readonly unknown[], holder: number, each: (entry: unknown, nesting: number) => unknown): unknown[] {
+	return units.map((unit) => ({ ...(unit as object), ...mapSideEntries(unit as TriviaSides<unknown>, holder, each) }));
+}
+
 export function withinSides<T>(value: object, within: Set<object>, read: () => T): T {
 	if (within.has(value)) throw new Error('a side that reaches its own node');
 	within.add(value);
@@ -55,39 +83,39 @@ export function withinSides<T>(value: object, within: Set<object>, read: () => T
 }
 
 /**
- * A trivia entry as native reads it: each `$text` method in it, its own, its slots' and its sides', as the string it returns. Every other key crosses as the entry holds it. A coordinate crosses as it is.
+ * A trivia entry of a side at `nesting` as native reads it: each `$text` method in it, its own, its slots' and its sides', as the string it returns. Every other key crosses as the entry holds it. A coordinate crosses as it is.
  *
- * @throws when the entry is among its own slots or sides, at any depth.
+ * @throws when the entry is among its own slots or sides, at any depth, and when a side in it nests past the addon's bound.
  */
-function entryData(value: unknown, within: Set<object>): unknown {
-	if (Array.isArray(value)) return value.map((entry) => entryData(entry, within));
+function entryData(value: unknown, within: Set<object>, nesting: number): unknown {
+	if (Array.isArray(value)) return value.map((entry) => entryData(entry, within, nesting));
 	if (!isRecord(value) || isCoordinate(value)) return value;
 	return withinSides(value, within, () => {
 		const out: Record<string, unknown> = {};
 		for (const key of Object.keys(value)) {
 			const raw = value[key];
-			out[key] = key === '$text' ? nodeText(value) : key === '$_layout' ? layoutData(raw, within) : isStorageKey(key) ? entryData(raw, within) : raw;
+			out[key] = key === '$text' ? nodeText(value) : key === '$_layout' ? layoutData(raw, within, nesting) : isStorageKey(key) ? entryData(raw, within, nesting) : raw;
 		}
 		return out;
 	});
 }
 
-function layoutData(layout: unknown, within: Set<object>): unknown {
+function layoutData(layout: unknown, within: Set<object>, holder: number): unknown {
 	if (!isRecord(layout)) return layout;
 	const { trivia, units } = layout as NodeDataLayout;
 	return {
 		...layout,
-		...(trivia == null ? {} : { trivia: entriesData(trivia as TriviaSides<unknown>, within) }),
-		...(units == null ? {} : { units: unitsData(units, within) })
+		...(trivia == null ? {} : { trivia: entriesData(trivia as TriviaSides<unknown>, within, holder) }),
+		...(units == null ? {} : { units: unitsData(units, within, holder) })
 	};
 }
 
-function entriesData<S extends TriviaSides<unknown>>(sides: S, within = new Set<object>()): S {
-	return mapTriviaEntries(sides, (entries) => entries.map((entry) => entryData(entry, within))) as S;
+function entriesData<S extends TriviaSides<unknown>>(sides: S, within: Set<object>, holder: number): S {
+	return mapSideEntries(sides, holder, (entry, nesting) => entryData(entry, within, nesting));
 }
 
-function unitsData(units: readonly unknown[], within = new Set<object>()): unknown[] {
-	return units.map((unit) => ({ ...(unit as object), ...entriesData(unit as TriviaSides<unknown>, within) }));
+function unitsData(units: readonly unknown[], within: Set<object>, holder: number): unknown[] {
+	return mapUnitSides(units, holder, (entry, nesting) => entryData(entry, within, nesting));
 }
 
 /**
@@ -780,10 +808,10 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const trivia = fold ? triviaOf(value) : sided ? sidesOf(value) : undefined;
 	if (trivia != null) {
 		if (fold) forEachTriviaList(trivia as TriviaSides<unknown>, assertTriviaHoldsTree);
-		setLayout(out, 'trivia', entriesData(trivia as TriviaSides<unknown>));
+		setLayout(out, 'trivia', entriesData(trivia as TriviaSides<unknown>, new Set(), 0));
 	}
 	const units = fold || sided ? unitSidesOf(value) : undefined;
-	if (units !== undefined && units.length > 0) setLayout(out, 'units', unitsData(units));
+	if (units !== undefined && units.length > 0) setLayout(out, 'units', unitsData(units, new Set(), 0));
 	const source = fold ? placeOf(value) : undefined;
 	if (source !== undefined && sourceTree(source) !== undefined) {
 		setLayout(out, 'sides', plainCoordinate({ $treeHandle: source.treeHandle, $end: source.end, $span: source.span, $type: source.kind }));

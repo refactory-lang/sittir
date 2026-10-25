@@ -246,6 +246,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// each by the store that answered it and its address.
     #[cfg(feature = "arena")]
     entries: Vec<(usize, crate::arena::Address)>,
+    /// The nesting of the side whose entry is being written
+    /// (`RenderSink::side_nesting`).
+    side_nesting: usize,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -338,6 +341,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             recorder: None,
             #[cfg(feature = "arena")]
             entries: Vec::new(),
+            side_nesting: 0,
         }
     }
 
@@ -1168,6 +1172,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         self.frames.last().is_some_and(|frame| frame.origin == Some((coord.tree, coord.index)))
+    }
+
+    fn side_nesting(&self) -> usize {
+        self.side_nesting
+    }
+
+    fn set_side_nesting(&mut self, nesting: usize) -> usize {
+        std::mem::replace(&mut self.side_nesting, nesting)
     }
 
     fn layout_depth(&mut self, delta: i32) {

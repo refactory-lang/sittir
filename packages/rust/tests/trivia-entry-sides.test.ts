@@ -1,18 +1,12 @@
+import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '@sittir/common';
 import { useRecordConstruction } from '@sittir/common/engine';
+import { treeOf } from '@sittir/common/utils';
 import arena from '../src/arena.ts';
-import rust from '../src/index.ts';
-
-const objects = await createEngine(rust);
-type Engine = typeof objects;
-const records = (await arena.createEngine()) as Engine;
-useRecordConstruction(records, await import('../src/factories/records.ts'));
-const constructions: readonly [string, Engine][] = [
-	['objects', objects],
-	['arena objects', (await arena.createEngine()) as Engine],
-	['records', records]
-];
+import { constructions, nestedComments, objects, records, type Engine, type Reported, type Route } from './side-nesting.mts';
 
 type Side = 'leading' | 'trailing';
 type Sided = { readonly $trivia: { leading(...items: never[]): unknown; trailing(...items: never[]): unknown } };
@@ -240,5 +234,96 @@ describe('every construction renders each shape as objects do', () => {
 	it.each(constructions)('renders a built leaf root with the sides written on it (%s)', (_, rs) => {
 		expect(leafRoot(rs)).toBe(leafRoot(objects));
 		expect(leafRoot(rs)).toBe('// before\nx /* after */');
+	});
+});
+
+describe('a built comment whose content another tree parsed', () => {
+	type Parsed = { statements(): unknown[] } & { $render(): string };
+	const holderOf = (rs: Engine) => {
+		const root = rs.parse('fn h() {\n    y;\n}\n') as unknown as Parsed;
+		const item = root.statements()[0] as { body(): { statements(): unknown[] }; $render(): string };
+		const y = item.body().statements()[0] as unknown as Sided & { $render(): string };
+		return { root, item, y };
+	};
+	const docContent = (rs: Engine) => {
+		const root = rs.parse('fn f() {\n    x; /** doc */\n}\n') as unknown as Parsed;
+		const x = (root.statements()[0] as { body(): { statements(): unknown[] } }).body().statements()[0] as unknown as Sided;
+		const [doc] = (x.$trivia as unknown as { trailing(): { content(): unknown }[] }).trailing();
+		if (doc === undefined) throw new Error('expected a doc comment');
+		return doc.content();
+	};
+
+	it.each(constructions)("renders in the holder's tree, its statement and its function, as objects render it (%s)", (_, rs) => {
+		const { root, item, y } = holderOf(rs);
+		withSide(y, 'trailing', [rs.build.blockComment(docContent(rs) as never)]);
+		expect(root.$render()).toBe('fn h() {\n    y; /** doc */\n}\n');
+		expect(item.$render()).toBe('fn h() {\n    y; /** doc */\n}');
+		expect(y.$render()).toBe('y; /** doc */');
+	});
+
+	it.each(constructions.filter(([label]) => label !== 'objects'))("renders as the holder tree's record and its candidate (%s)", (_, rs) => {
+		const { root, y } = holderOf(rs);
+		withSide(y, 'trailing', [rs.build.blockComment(docContent(rs) as never)]);
+		const table = treeOf(root as object)?.records;
+		if (table === undefined) throw new Error('an arena tree reads records');
+		const at = table.hydrate(0, Infinity);
+		expect(table.render(at!, false, false)).toBe('fn h() {\n    y; /** doc */\n}\n');
+		expect(table.renderCandidate(0, at)).toBe('fn h() {\n    y; /** doc */\n}\n');
+	});
+});
+
+describe("a side nests at most as deep as the addon's bound", () => {
+	const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
+	const bound = native.SIDE_NESTING_BOUND;
+	const helper = fileURLToPath(new URL('./side-nesting.mts', import.meta.url));
+	const routes: readonly [Route, string][] = [
+		['own', 'its own leading side'],
+		['content', "its content's leading side"]
+	];
+
+	it('is one bound with one refusal, which names it', () => {
+		expect(bound).toBe(64);
+		expect(native.SIDE_NESTING_REFUSAL).toBe(`sides nest more than ${bound} deep, the stack-safety bound on side nesting`);
+	});
+
+	describe.each(routes)('a chain of comments, each in %s', (route) => {
+		it('renders at the bound as objects render it, and refuses one past it with the addon\'s refusal, on every storage', () => {
+			const expected = nestedComments(objects, route, bound, false);
+			expect(expected.split('/*').length - 1).toBe(bound);
+			for (const [, rs] of constructions) {
+				expect(nestedComments(rs, route, bound, false)).toBe(expected);
+				expect(() => nestedComments(rs, route, bound + 1, false)).toThrow(native.SIDE_NESTING_REFUSAL);
+			}
+		});
+
+		it('refuses a ring at the bound and one past it with the same refusal, on every storage', () => {
+			for (const [, rs] of constructions) {
+				for (const length of [bound, bound + 1]) expect(() => nestedComments(rs, route, length, true)).toThrow(native.SIDE_NESTING_REFUSAL);
+			}
+		});
+
+		it('refuses a ring of 12,000 by the bound in a process that runs on after it, on every storage', () => {
+			for (const [label] of constructions) {
+				const out = execFileSync(process.execPath, ['--import', 'tsx', helper, label, route, '12000', 'ring'], {
+					cwd: fileURLToPath(new URL('..', import.meta.url)),
+					encoding: 'utf8',
+					env: { ...process.env, SITTIR_BACKEND: 'native' }
+				});
+				const reported = JSON.parse(out.trim().split('\n').at(-1) ?? '') as Reported;
+				expect('refusal' in reported && reported.refusal).toContain(native.SIDE_NESTING_REFUSAL);
+			}
+		}, 120_000);
+
+		it('renders at the bound in a Worker as it renders here, on every storage', async () => {
+			for (const [label, rs] of constructions) {
+				const reported = await new Promise<Reported>((resolve, reject) => {
+					const worker = new Worker(helper, { workerData: { sideNesting: [label, route, bound, 'chain'] }, execArgv: ['--import', 'tsx'], env: { ...process.env, SITTIR_BACKEND: 'native' } });
+					worker.once('message', resolve);
+					worker.once('error', reject);
+					worker.once('exit', (code) => reject(new Error(`the Worker exited with ${code} before it reported`)));
+				});
+				expect(reported).toEqual({ text: nestedComments(rs, route, bound, false) });
+			}
+		}, 120_000);
 	});
 });
