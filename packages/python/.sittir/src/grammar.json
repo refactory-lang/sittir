@@ -4987,7 +4987,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "base_type",
+          "name": "qualifier",
           "content": {
             "type": "SYMBOL",
             "name": "type"

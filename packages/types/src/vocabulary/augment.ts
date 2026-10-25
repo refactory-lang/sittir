@@ -2281,9 +2281,8 @@ declare module './identifier.ts' {
 			| V.Identifier.Label<G>
 			| V.Identifier.Lifetime<G>
 			| V.Identifier.Metavariable<G>
-			| V.Identifier.Nested<G>
+			| V.Identifier.Qualified<G>
 			| V.Identifier.Receiver<G>
-			| V.Identifier.Scoped<G>
 			| V.Identifier.Super<G>;
 	}
 }
@@ -2863,11 +2862,6 @@ declare module './type.ts' {
 		interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Object<G> {}
 		interface Optional<G extends GrammarContext<G>> extends typeAnnotations.Type.Optional<G> {}
 		interface Parenthesized<G extends GrammarContext<G>> extends typeAnnotations.Type.Parenthesized<G> {}
-		interface Path<G extends GrammarContext<G>> extends typeAnnotations.Type.Path<G> {}
-		namespace Path {
-			interface Expression<G extends GrammarContext<G>> extends typeAnnotations.Type.Path.Expression<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Path<G> | V.Type.Path.Expression<G>;
-		}
 		interface Pointer<G extends GrammarContext<G>> extends typeAnnotations.Type.Pointer<G> {
 			readonly writable?: gate.In<G, features.References, references.Type.Pointer<G>['writable']>;
 		}
@@ -2974,8 +2968,6 @@ declare module './type.ts' {
 			| V.Type.Object<G>
 			| V.Type.Optional<G>
 			| V.Type.Parenthesized<G>
-			| V.Type.Path<G>
-			| V.Type.Path.Expression<G>
 			| V.Type.Pointer<G>
 			| V.Type.Predicate<G>
 			| V.Type.Predicate.Asserts<G>

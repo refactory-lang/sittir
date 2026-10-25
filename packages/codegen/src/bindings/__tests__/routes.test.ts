@@ -781,7 +781,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
-		const routes = resolveRoutes(await grammar(['(private_name) @identifier', '(scoped_name) @identifier.scoped', '(char_text) @literal.character'].join('\n')));
+		const routes = resolveRoutes(await grammar(['(private_name) @identifier', '(scoped_name) @identifier.qualified', '(char_text) @literal.character'].join('\n')));
 		expect(routes.members.get('private_name')).toEqual([]);
 		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
 		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);

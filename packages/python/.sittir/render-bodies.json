@@ -3238,7 +3238,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "base_type"
+			"name": "qualifier"
 		},
 		{
 			"kind": "seam",

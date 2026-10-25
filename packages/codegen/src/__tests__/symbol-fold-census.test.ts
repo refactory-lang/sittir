@@ -5,8 +5,8 @@ import { foldedSymbols } from '../compiler/generated-metadata.ts';
 import { grammarPackage, sittirDirOf } from '../grammars.ts';
 
 const PINS: Record<string, number> = {
-	rust: 4,
-	typescript: 11,
+	rust: 6,
+	typescript: 12,
 	python: 3,
 	scm: 4,
 	regex: 1

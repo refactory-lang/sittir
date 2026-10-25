@@ -3754,24 +3754,25 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 }
 
 export function buildMemberType<
-	BaseTypeSlot extends T.MemberType.Config['baseType'],
+	QualifierSlot extends T.MemberType.Config['qualifier'],
 	NameSlot extends T.MemberType.Config['name']
->(config: RefusingConfig<T.MemberType.Config, { baseType: BaseTypeSlot; name: NameSlot }>): T.MemberType.Bound;
+>(config: RefusingConfig<T.MemberType.Config, { qualifier: QualifierSlot; name: NameSlot }>): T.MemberType.Bound;
 export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound {
 	currentHandle()?.admit(TSKindId.MemberType, [config]);
-	const _base_type = config.baseType;
+	const _qualifier = config.qualifier;
 	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.MemberType as const,
 		$named: true as const,
-		_base_type,
+		_qualifier,
 		_name,
 		$with: {
-			baseType: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildMemberType({ ...config, baseType: value })),
+			qualifier: (value: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildMemberType({ ...config, qualifier: value })),
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildMemberType({ ...config, name: value }))
 		},
-		baseType: () => hydrateStoredSlot(node, '_base_type'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

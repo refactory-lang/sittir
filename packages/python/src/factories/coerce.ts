@@ -4808,9 +4808,9 @@ export function coerceToConstrainedType(input: T.ConstrainedType.Loose): ReturnT
 	});
 }
 
-export function resolveMemberType_baseType(
-	value: T.MemberType.LooseConfig['baseType']
-): Admit<T.MemberType['_base_type']> {
+export function resolveMemberType_qualifier(
+	value: T.MemberType.LooseConfig['qualifier']
+): Admit<T.MemberType['_qualifier']> {
 	return _resolveOneBranch<T.Type>(value, 'type');
 }
 
@@ -4825,7 +4825,7 @@ export function coerceToMemberType(input: T.MemberType.Loose): ReturnType<typeof
 	if (!_isLooseConfig<T.MemberType.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildMemberType>;
 	currentHandle()?.admit(TSKindId.MemberType, [input]);
 	return F.buildMemberType({
-		baseType: resolveMemberType_baseType(input.baseType),
+		qualifier: resolveMemberType_qualifier(input.qualifier),
 		name: resolveMemberType_name(input.name)
 	});
 }

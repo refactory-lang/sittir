@@ -205,7 +205,8 @@
 (generic_type) @type.generic
 (union_type) @type.union
 (constrained_type) @type.constrained
-(member_type) @type.path
+(member_type) @identifier.qualified
+(member_type base_type: (_) @qualifier)
 (splat_type) @type.splat
 (splat_type name: (_) @type)
 (splat_type operator: "**") @type.splat.map

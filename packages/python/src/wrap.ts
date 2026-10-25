@@ -3029,15 +3029,15 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 	const node = {
 		...data,
 		$type: TSKindId.MemberType as const,
-		baseType() {
-			return hydrateSlot<T.Type>(this, '_base_type', tree);
+		qualifier() {
+			return hydrateSlot<T.Type>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
-			baseType: (v: NonNullable<T.MemberType['_base_type']>) =>
-				rebuilt(node, handle, () => wrapMemberType({ ...$edited(data), _base_type: v }, tree)),
+			qualifier: (v: NonNullable<T.MemberType['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapMemberType({ ...$edited(data), _qualifier: v }, tree)),
 			name: (v: NonNullable<T.MemberType['_name']>) =>
 				rebuilt(node, handle, () => wrapMemberType({ ...$edited(data), _name: v }, tree))
 		},

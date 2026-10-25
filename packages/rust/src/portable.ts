@@ -579,6 +579,8 @@ export interface PortableIds {
 		| TSKindId.Lifetime
 		| TSKindId.Metavariable
 		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.ScopedTypeIdentifierInExpressionPosition
 		| TSKindId.Self
 		| TSKindId.ShorthandFieldIdentifier
 		| TSKindId.Super
@@ -586,8 +588,11 @@ export interface PortableIds {
 	'identifier.label': TSKindId.Label;
 	'identifier.lifetime': TSKindId.Lifetime;
 	'identifier.metavariable': TSKindId.Metavariable;
+	'identifier.qualified':
+		| TSKindId.ScopedIdentifier
+		| TSKindId.ScopedTypeIdentifier
+		| TSKindId.ScopedTypeIdentifierInExpressionPosition;
 	'identifier.receiver': TSKindId.Self;
-	'identifier.scoped': TSKindId.ScopedIdentifier;
 	literal:
 		| TSKindId.CharLiteral
 		| TSKindId.CharLiteralEmpty
@@ -774,8 +779,6 @@ export interface PortableIds {
 		| TSKindId.PointerTypeMut
 		| TSKindId.QualifiedType
 		| TSKindId.ReferenceType
-		| TSKindId.ScopedTypeIdentifier
-		| TSKindId.ScopedTypeIdentifierInExpressionPosition
 		| TSKindId.StrKeyword
 		| TSKindId.TupleType
 		| TSKindId.U128Keyword
@@ -793,8 +796,6 @@ export interface PortableIds {
 	'type.function': TSKindId.FunctionType;
 	'type.generic': TSKindId.GenericType | TSKindId.GenericTypeWithTurbofish;
 	'type.generic.turbofish': TSKindId.GenericTypeWithTurbofish;
-	'type.path': TSKindId.ScopedTypeIdentifier | TSKindId.ScopedTypeIdentifierInExpressionPosition;
-	'type.path.expression': TSKindId.ScopedTypeIdentifierInExpressionPosition;
 	'type.pointer': TSKindId.PointerType | TSKindId.PointerTypeConst | TSKindId.PointerTypeMut;
 	'type.primitive':
 		| TSKindId.BoolKeyword
@@ -1430,14 +1431,14 @@ export interface PortableKindsAt {
 		readonly label: PortableKindsAt['identifier.label'];
 		readonly lifetime: PortableKindsAt['identifier.lifetime'];
 		readonly metavariable: PortableKindsAt['identifier.metavariable'];
+		readonly qualified: PortableKindsAt['identifier.qualified'];
 		readonly receiver: PortableKindsAt['identifier.receiver'];
-		readonly scoped: PortableKindsAt['identifier.scoped'];
 	};
 	'identifier.label': { readonly $path: 'identifier.label' };
 	'identifier.lifetime': { readonly $path: 'identifier.lifetime' };
 	'identifier.metavariable': { readonly $path: 'identifier.metavariable' };
+	'identifier.qualified': { readonly $path: 'identifier.qualified' };
 	'identifier.receiver': { readonly $path: 'identifier.receiver' };
-	'identifier.scoped': { readonly $path: 'identifier.scoped' };
 	literal: {
 		readonly $path: 'literal';
 		readonly boolean: PortableKindsAt['literal.boolean'];
@@ -1606,7 +1607,6 @@ export interface PortableKindsAt {
 		readonly dynamic: PortableKindsAt['type.dynamic'];
 		readonly function: PortableKindsAt['type.function'];
 		readonly generic: PortableKindsAt['type.generic'];
-		readonly path: PortableKindsAt['type.path'];
 		readonly pointer: PortableKindsAt['type.pointer'];
 		readonly primitive: PortableKindsAt['type.primitive'];
 		readonly qualified: PortableKindsAt['type.qualified'];
@@ -1622,8 +1622,6 @@ export interface PortableKindsAt {
 	'type.function': { readonly $path: 'type.function' };
 	'type.generic': { readonly $path: 'type.generic'; readonly turbofish: PortableKindsAt['type.generic.turbofish'] };
 	'type.generic.turbofish': { readonly $path: 'type.generic.turbofish' };
-	'type.path': { readonly $path: 'type.path'; readonly expression: PortableKindsAt['type.path.expression'] };
-	'type.path.expression': { readonly $path: 'type.path.expression' };
 	'type.pointer': { readonly $path: 'type.pointer' };
 	'type.primitive': {
 		readonly $path: 'type.primitive';
@@ -2511,14 +2509,14 @@ export interface PortableIsAt {
 		readonly label: PortableIsAt['identifier.label'];
 		readonly lifetime: PortableIsAt['identifier.lifetime'];
 		readonly metavariable: PortableIsAt['identifier.metavariable'];
+		readonly qualified: PortableIsAt['identifier.qualified'];
 		readonly receiver: PortableIsAt['identifier.receiver'];
-		readonly scoped: PortableIsAt['identifier.scoped'];
 	};
 	'identifier.label': PortableGuard<PortableIds['identifier.label'], RustNode, TSKindId> & {};
 	'identifier.lifetime': PortableGuard<PortableIds['identifier.lifetime'], RustNode, TSKindId> & {};
 	'identifier.metavariable': PortableGuard<PortableIds['identifier.metavariable'], RustNode, TSKindId> & {};
+	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], RustNode, TSKindId> & {};
 	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver'], RustNode, TSKindId> & {};
-	'identifier.scoped': PortableGuard<PortableIds['identifier.scoped'], RustNode, TSKindId> & {};
 	literal: PortableGuard<PortableIds['literal'], RustNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly character: PortableIsAt['literal.character'];
@@ -2702,7 +2700,6 @@ export interface PortableIsAt {
 		readonly dynamic: PortableIsAt['type.dynamic'];
 		readonly function: PortableIsAt['type.function'];
 		readonly generic: PortableIsAt['type.generic'];
-		readonly path: PortableIsAt['type.path'];
 		readonly pointer: PortableIsAt['type.pointer'];
 		readonly primitive: PortableIsAt['type.primitive'];
 		readonly qualified: PortableIsAt['type.qualified'];
@@ -2720,10 +2717,6 @@ export interface PortableIsAt {
 		readonly turbofish: PortableIsAt['type.generic.turbofish'];
 	};
 	'type.generic.turbofish': PortableGuard<PortableIds['type.generic.turbofish'], RustNode, TSKindId> & {};
-	'type.path': PortableGuard<PortableIds['type.path'], RustNode, TSKindId> & {
-		readonly expression: PortableIsAt['type.path.expression'];
-	};
-	'type.path.expression': PortableGuard<PortableIds['type.path.expression'], RustNode, TSKindId> & {};
 	'type.pointer': PortableGuard<PortableIds['type.pointer'], RustNode, TSKindId> & {};
 	'type.primitive': PortableGuard<PortableIds['type.primitive'], RustNode, TSKindId> & {
 		readonly boolean: PortableIsAt['type.primitive.boolean'];
@@ -3499,6 +3492,8 @@ const table: PortableTable = {
 				TSKindId.Lifetime,
 				TSKindId.Metavariable,
 				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.ScopedTypeIdentifierInExpressionPosition,
 				TSKindId.Self,
 				TSKindId.ShorthandFieldIdentifier,
 				TSKindId.Super,
@@ -3509,8 +3504,15 @@ const table: PortableTable = {
 		'identifier.label': { ids: [TSKindId.Label], exact: true },
 		'identifier.lifetime': { ids: [TSKindId.Lifetime], exact: true },
 		'identifier.metavariable': { ids: [TSKindId.Metavariable], exact: true },
+		'identifier.qualified': {
+			ids: [
+				TSKindId.ScopedIdentifier,
+				TSKindId.ScopedTypeIdentifier,
+				TSKindId.ScopedTypeIdentifierInExpressionPosition
+			],
+			exact: false
+		},
 		'identifier.receiver': { ids: [TSKindId.Self], exact: true },
-		'identifier.scoped': { ids: [TSKindId.ScopedIdentifier], exact: false },
 		literal: {
 			ids: [
 				TSKindId.CharLiteral,
@@ -3755,8 +3757,6 @@ const table: PortableTable = {
 				TSKindId.PointerTypeMut,
 				TSKindId.QualifiedType,
 				TSKindId.ReferenceType,
-				TSKindId.ScopedTypeIdentifier,
-				TSKindId.ScopedTypeIdentifierInExpressionPosition,
 				TSKindId.StrKeyword,
 				TSKindId.TupleType,
 				TSKindId.U128Keyword,
@@ -3777,11 +3777,6 @@ const table: PortableTable = {
 		'type.function': { ids: [TSKindId.FunctionType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType, TSKindId.GenericTypeWithTurbofish], exact: true },
 		'type.generic.turbofish': { ids: [TSKindId.GenericTypeWithTurbofish], exact: true },
-		'type.path': {
-			ids: [TSKindId.ScopedTypeIdentifier, TSKindId.ScopedTypeIdentifierInExpressionPosition],
-			exact: true
-		},
-		'type.path.expression': { ids: [TSKindId.ScopedTypeIdentifierInExpressionPosition], exact: true },
 		'type.pointer': { ids: [TSKindId.PointerType, TSKindId.PointerTypeConst, TSKindId.PointerTypeMut], exact: true },
 		'type.primitive': {
 			ids: [
@@ -5194,6 +5189,10 @@ const table: PortableTable = {
 		[TSKindId.PointerType]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.PointerTypeConst]: [{ path: 'type.pointer', within: [], test: [] }],
 		[TSKindId.PointerTypeMut]: [{ path: 'type.pointer', within: [], test: [] }],
+		[TSKindId.ScopedIdentifier]: [
+			{ path: 'identifier.qualified', within: [], test: [] },
+			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] }
+		],
 		[TSKindId.QualifiedType]: [{ path: 'type.qualified', within: [], test: [] }],
 		[TSKindId.RangeExpression]: [{ path: 'expression.range', within: [], test: [] }],
 		[TSKindId.RangeExpressionBare]: [
@@ -5303,12 +5302,8 @@ const table: PortableTable = {
 		],
 		[TSKindId.RemovedTraitBound]: [{ path: 'clause.bounds.removed', within: [], test: [] }],
 		[TSKindId.ReturnExpression]: [{ path: 'statement.return', within: [], test: [] }],
-		[TSKindId.ScopedIdentifier]: [
-			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'identifier.scoped', within: [], test: [] }
-		],
-		[TSKindId.ScopedTypeIdentifier]: [{ path: 'type.path', within: [], test: [] }],
-		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'type.path.expression', within: [], test: [] }],
+		[TSKindId.ScopedTypeIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
+		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
 		[TSKindId.Self]: [{ path: 'identifier.receiver', within: [], test: [] }],
 		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.receiver', within: [], test: [] }],

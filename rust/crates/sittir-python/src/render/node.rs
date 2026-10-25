@@ -15364,9 +15364,9 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeNode {
 pub struct MemberTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_base_type")]
-    #[slot(field = field::BASE_TYPE, word = 2, width = 5)]
-    pub base_type: ::sittir_core::SlotValue<Box<TypeNode>>,
+    #[wire(key = "_qualifier")]
+    #[slot(field = field::QUALIFIER, word = 2, width = 5)]
+    pub qualifier: ::sittir_core::SlotValue<Box<TypeNode>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -15394,7 +15394,7 @@ impl ::sittir_core::prepare::Prepare for MemberTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.base_type.prepare(ctx)?;
+        self.qualifier.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
@@ -26349,10 +26349,10 @@ fn render_constrained_type(node: &ConstrainedTypeNode, w: &mut dyn ::sittir_core
 }
 
 fn render_member_type(node: &MemberTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let base_type = &node.base_type;
     let name = &node.name;
+    let qualifier = &node.qualifier;
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_base_type", ::sittir_core::types::ItemIndex(0), w, |w| base_type.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_qualifier", ::sittir_core::types::ItemIndex(0), w, |w| qualifier.render(w))?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_AFTER);

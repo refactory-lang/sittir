@@ -339,7 +339,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['constraint', 1, undefined, '_constraint']
 	],
 	231: [
-		['baseType', 0, undefined, '_base_type'],
+		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
 	232: [
@@ -1353,14 +1353,14 @@ export const structure: StructureTable = Object.freeze({
 	231: {
 		kind: 'member_type',
 		required: [
-			['_base_type', 'baseType'],
+			['_qualifier', 'qualifier'],
 			['_name', 'name']
 		],
 		nodeOnly: [
-			['_base_type', 'MemberType.baseType', 'a built Type', [226]],
+			['_qualifier', 'MemberType.qualifier', 'a built Type', [226]],
 			['_name', 'MemberType.name', 'buildIdentifier(…)', [1]]
 		],
-		config: ['baseType', 'name']
+		config: ['qualifier', 'name']
 	},
 	232: {
 		kind: 'keyword_argument',

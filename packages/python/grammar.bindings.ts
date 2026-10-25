@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "fd09af043c4653f69ae86a9813a8d213d48bea21e3f133fa14e2a4891e1ae194";
+export const hash = "128c594bda8602ead286c75c8d6d2c872707d7a4d56c61126f197291fa98b65f";
 
 export const renames = {
 	module: "file",
@@ -77,7 +77,7 @@ export const renames = {
 	complex_pattern: "complex_case_pattern",
 	case_tuple_pattern: "tuple_case_pattern",
 	case_list_pattern: "list_case_pattern",
-	member_type: "path_type",
+	member_type: "qualified_identifier",
 	splat_type: "rest_type",
 	string: "string_literal",
 	escape_sequence: "escape_string_literal",
@@ -119,6 +119,7 @@ export default grammar(
 			list: { "1/0": field("elements") },
 			list_pattern: { "1/0": field("elements") },
 			list_splat_pattern: { "1": field("pattern") },
+			member_type: { "0": field("qualifier") },
 			named_expression: { "0": field("left"), "2": field("right") },
 			set: { "1": field("elements") },
 			splat_type: { "1": field("type") },

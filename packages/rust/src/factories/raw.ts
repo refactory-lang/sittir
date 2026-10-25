@@ -4042,14 +4042,16 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 }
 
 export function buildScopedIdentifier<
-	PathSlot extends T.ScopedIdentifier.Config['path'],
+	QualifierSlot extends T.ScopedIdentifier.Config['qualifier'],
 	NameSlot extends T.ScopedIdentifier.Config['name']
->(config: RefusingConfig<T.ScopedIdentifier.Config, { path: PathSlot; name: NameSlot }>): T.ScopedIdentifier.Bound;
+>(
+	config: RefusingConfig<T.ScopedIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
+): T.ScopedIdentifier.Bound;
 export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.ScopedIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.ScopedIdentifier, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path),
-		'ScopedIdentifier.path',
+	const _qualifier = rejectKeywordText(
+		kindIdStorage<NonNullable<T.ScopedIdentifier['_qualifier']>>(config.qualifier),
+		'ScopedIdentifier.qualifier',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -4063,15 +4065,15 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 	const node = {
 		$type: TSKindId.ScopedIdentifier as const,
 		$named: true as const,
-		_path,
+		_qualifier,
 		_name,
 		$with: {
-			path: (value?: Admit<NonNullable<T.ScopedIdentifier.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, path: value })),
+			qualifier: (value?: Admit<NonNullable<T.ScopedIdentifier.Config>['qualifier']>) =>
+				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, qualifier: value })),
 			name: (value: Admit<NonNullable<T.ScopedIdentifier.Config>['name']>) =>
 				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, name: value }))
 		},
-		path: () => hydrateStoredSlot(node, '_path'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4086,18 +4088,21 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 }
 
 export function buildScopedTypeIdentifierInExpressionPosition<
-	PathSlot extends T.ScopedTypeIdentifierInExpressionPosition.Config['path'],
+	QualifierSlot extends T.ScopedTypeIdentifierInExpressionPosition.Config['qualifier'],
 	NameSlot extends T.ScopedTypeIdentifierInExpressionPosition.Config['name']
 >(
-	config: RefusingConfig<T.ScopedTypeIdentifierInExpressionPosition.Config, { path: PathSlot; name: NameSlot }>
+	config: RefusingConfig<
+		T.ScopedTypeIdentifierInExpressionPosition.Config,
+		{ qualifier: QualifierSlot; name: NameSlot }
+	>
 ): T.ScopedTypeIdentifierInExpressionPosition.Bound;
 export function buildScopedTypeIdentifierInExpressionPosition(
 	config: T.ScopedTypeIdentifierInExpressionPosition.Config
 ): T.ScopedTypeIdentifierInExpressionPosition.Bound {
 	currentHandle()?.admit(TSKindId.ScopedTypeIdentifierInExpressionPosition, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path),
-		'ScopedTypeIdentifierInExpressionPosition.path',
+	const _qualifier = rejectKeywordText(
+		kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']>>(config.qualifier),
+		'ScopedTypeIdentifierInExpressionPosition.qualifier',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -4108,15 +4113,15 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 	const node = {
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 		$named: true as const,
-		_path,
+		_qualifier,
 		_name,
 		$with: {
-			path: (value?: Admit<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value })),
+			qualifier: (value?: Admit<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['qualifier']>) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, qualifier: value })),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, name: value }))
 		},
-		path: () => hydrateStoredSlot(node, '_path'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -4131,16 +4136,16 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 }
 
 export function buildScopedTypeIdentifier<
-	PathSlot extends T.ScopedTypeIdentifier.Config['path'],
+	QualifierSlot extends T.ScopedTypeIdentifier.Config['qualifier'],
 	NameSlot extends T.ScopedTypeIdentifier.Config['name']
 >(
-	config: RefusingConfig<T.ScopedTypeIdentifier.Config, { path: PathSlot; name: NameSlot }>
+	config: RefusingConfig<T.ScopedTypeIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
 ): T.ScopedTypeIdentifier.Bound;
 export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): T.ScopedTypeIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.ScopedTypeIdentifier, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path),
-		'ScopedTypeIdentifier.path',
+	const _qualifier = rejectKeywordText(
+		kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_qualifier']>>(config.qualifier),
+		'ScopedTypeIdentifier.qualifier',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -4151,15 +4156,15 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 	const node = {
 		$type: TSKindId.ScopedTypeIdentifier as const,
 		$named: true as const,
-		_path,
+		_qualifier,
 		_name,
 		$with: {
-			path: (value?: Admit<NonNullable<T.ScopedTypeIdentifier.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, path: value })),
+			qualifier: (value?: Admit<NonNullable<T.ScopedTypeIdentifier.Config>['qualifier']>) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, qualifier: value })),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, name: value }))
 		},
-		path: () => hydrateStoredSlot(node, '_path'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

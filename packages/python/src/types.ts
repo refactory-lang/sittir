@@ -4022,20 +4022,20 @@ export interface ConstrainedType {
 
 export interface MemberType {
 	readonly $type: TSKindId.MemberType;
-	readonly _base_type: Type;
+	readonly _qualifier: Type;
 	readonly _name: Identifier;
 	readonly __slotNames__?: {
-		readonly _base_type: 'baseType';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __looseHints__?: {
-		readonly base_type: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+		readonly qualifier: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
-		readonly baseType: SlotHint<T.Type>;
+		readonly qualifier: SlotHint<T.Type>;
 		readonly name: SlotHint<T.Identifier>;
 	};
-	readonly baseType: () => Type;
+	readonly qualifier: () => Type;
 	readonly name: () => Identifier;
 }
 

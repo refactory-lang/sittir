@@ -5060,10 +5060,10 @@
       ]
     },
     "member_type": {
-      "vocab": "type.path",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "type.path",
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5072,13 +5072,13 @@
       ],
       "members": [
         {
-          "name": "baseType",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "base_type",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "member_type",
-              "slot": "base_type"
+              "slot": "qualifier"
             }
           ]
         },

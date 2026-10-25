@@ -17,17 +17,11 @@ export namespace Identifier {
 		readonly $kind: 'identifier.dotted';
 		readonly names: G['identifier'][];
 	}
-	export interface Nested<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by t
-		readonly $kind: 'identifier.nested';
-		readonly object: G['identifier'];
-		readonly property: V.Identifier<G>;
-	}
-	export interface Scoped<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by r
-		readonly $kind: 'identifier.scoped';
+	export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
+		// claimed by prt
+		readonly $kind: 'identifier.qualified';
 		readonly name: G['identifier'];
-		readonly path?: G['slots']['identifier.scoped']['path'];
+		readonly qualifier?: G['slots']['identifier.qualified']['qualifier'];
 	}
 	export interface Super<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by t

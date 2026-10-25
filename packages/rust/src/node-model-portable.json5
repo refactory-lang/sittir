@@ -12359,6 +12359,26 @@
         "list": false
       }
     },
+    "qualified_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "qualified_type": {
       "vocab": "type.qualified",
       "read": [
@@ -13403,7 +13423,7 @@
       }
     },
     "scoped_identifier": {
-      "vocab": "identifier.scoped",
+      "vocab": "identifier.qualified",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -13415,7 +13435,14 @@
           "test": []
         },
         {
-          "vocab": "identifier.scoped",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13424,13 +13451,13 @@
       ],
       "members": [
         {
-          "name": "path",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "path",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "scoped_identifier",
-              "slot": "path"
+              "slot": "qualifier"
             }
           ]
         },
@@ -13448,10 +13475,17 @@
       ]
     },
     "scoped_type_identifier": {
-      "vocab": "type.path",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "type.path",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13460,13 +13494,13 @@
       ],
       "members": [
         {
-          "name": "path",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "path",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "scoped_type_identifier",
-              "slot": "path"
+              "slot": "qualifier"
             }
           ]
         },
@@ -13484,10 +13518,24 @@
       ]
     },
     "scoped_type_identifier_in_expression_position": {
-      "vocab": "type.path.expression",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "type.path.expression",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13496,13 +13544,13 @@
       ],
       "members": [
         {
-          "name": "path",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "path",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "scoped_type_identifier_in_expression_position",
-              "slot": "path"
+              "slot": "qualifier"
             }
           ]
         },
@@ -18937,7 +18985,7 @@
           "super",
           "crate",
           "identifier",
-          "scoped_identifier",
+          "qualified_identifier",
           "use_as_clause",
           "use_list",
           "scoped_use_list",
@@ -19957,15 +20005,15 @@
       },
       {
         "depth": 2,
-        "paths": 97,
-        "kinds": 155,
+        "paths": 96,
+        "kinds": 157,
         "refinements": 7
       },
       {
         "depth": 3,
-        "paths": 107,
-        "kinds": 120,
-        "refinements": 81
+        "paths": 106,
+        "kinds": 119,
+        "refinements": 80
       },
       {
         "depth": 4,

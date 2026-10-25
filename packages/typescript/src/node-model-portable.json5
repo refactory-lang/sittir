@@ -9783,10 +9783,17 @@
       }
     },
     "nested_identifier": {
-      "vocab": "identifier.nested",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "identifier.nested",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9795,34 +9802,41 @@
       ],
       "members": [
         {
-          "name": "object",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "object",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "nested_identifier",
-              "slot": "object"
+              "slot": "qualifier"
             }
           ]
         },
         {
-          "name": "property",
+          "name": "name",
           "route": "slot",
-          "slot": "property",
+          "slot": "name",
           "path": [
             {
               "owner": "nested_identifier",
-              "slot": "property"
+              "slot": "name"
             }
           ]
         }
       ]
     },
     "nested_type_identifier": {
-      "vocab": "type.path",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "type.path",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9831,13 +9845,13 @@
       ],
       "members": [
         {
-          "name": "module",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "module",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "nested_type_identifier",
-              "slot": "module"
+              "slot": "qualifier"
             }
           ]
         },
@@ -12015,6 +12029,26 @@
         },
         {
           "vocab": "modifier.visibility",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "qualified_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -14691,8 +14725,8 @@
       },
       {
         "depth": 2,
-        "paths": 110,
-        "kinds": 145,
+        "paths": 109,
+        "kinds": 146,
         "refinements": 4
       },
       {

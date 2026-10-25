@@ -8,8 +8,8 @@ export function rebuildSpliceLoose() {
 	return rs.build.sourceFile({
 		statements: [rs.build.useDeclaration({
 			argument: rs.build.scopedIdentifier({
-				path: rs.build.scopedIdentifier({
-					path: rs.kinds.Crate,
+				qualifier: rs.build.scopedIdentifier({
+					qualifier: rs.kinds.Crate,
 					name: "types",
 				}),
 				name: "Edit",
@@ -50,8 +50,8 @@ export function rebuildSpliceLoose() {
 			}).$trivia.leading(rs.build.lineComment.docOuter(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n"))],
 		}), rs.build.implItemBody.positiveClause({
 			traitClause: rs.build.scopedTypeIdentifier({
-				path: rs.build.scopedIdentifier({
-					path: "std",
+				qualifier: rs.build.scopedIdentifier({
+					qualifier: "std",
 					name: "fmt",
 				}),
 				name: "Display",
@@ -69,8 +69,8 @@ export function rebuildSpliceLoose() {
 							exclusive: true,
 							type: rs.build.genericType({
 								type: rs.build.scopedTypeIdentifier({
-									path: rs.build.scopedIdentifier({
-										path: "std",
+									qualifier: rs.build.scopedIdentifier({
+										qualifier: "std",
 										name: "fmt",
 									}),
 									name: "Formatter",
@@ -81,8 +81,8 @@ export function rebuildSpliceLoose() {
 					}))],
 				}),
 				returnType: rs.build.scopedTypeIdentifier({
-					path: rs.build.scopedIdentifier({
-						path: "std",
+					qualifier: rs.build.scopedIdentifier({
+						qualifier: "std",
 						name: "fmt",
 					}),
 					name: "Result",
@@ -94,7 +94,7 @@ export function rebuildSpliceLoose() {
 							arms: [rs.build.matchArmBlockEnding({
 								pattern: rs.build.structPattern({
 									type: rs.build.scopedTypeIdentifier({
-										path: "SpliceError",
+										qualifier: "SpliceError",
 										name: "InvalidRange",
 									}),
 									fields: [rs.build.fieldPatternShorthand({
@@ -115,7 +115,7 @@ export function rebuildSpliceLoose() {
 							}), rs.build.matchArmWithComma({
 								pattern: rs.build.structPattern({
 									type: rs.build.scopedTypeIdentifier({
-										path: "SpliceError",
+										qualifier: "SpliceError",
 										name: "OutOfBounds",
 									}),
 									fields: [rs.build.fieldPatternShorthand({
@@ -135,7 +135,7 @@ export function rebuildSpliceLoose() {
 							lastArm: rs.build.lastMatchArm({
 								pattern: rs.build.structPattern({
 									type: rs.build.scopedTypeIdentifier({
-										path: "SpliceError",
+										qualifier: "SpliceError",
 										name: "NonCharBoundary",
 									}),
 									fields: [rs.build.fieldPatternShorthand({
@@ -160,8 +160,8 @@ export function rebuildSpliceLoose() {
 			}),
 		}), rs.build.implItemBody.positiveClause({
 			traitClause: rs.build.scopedTypeIdentifier({
-				path: rs.build.scopedIdentifier({
-					path: "std",
+				qualifier: rs.build.scopedIdentifier({
+					qualifier: "std",
 					name: "error",
 				}),
 				name: "Error",
@@ -219,7 +219,7 @@ export function rebuildSpliceLoose() {
 									function: "Err",
 									arguments: rs.build.structExpression({
 										name: rs.build.scopedTypeIdentifierInExpressionPosition({
-											path: "SpliceError",
+											qualifier: "SpliceError",
 											name: "InvalidRange",
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
@@ -255,7 +255,7 @@ export function rebuildSpliceLoose() {
 									function: "Err",
 									arguments: rs.build.structExpression({
 										name: rs.build.scopedTypeIdentifierInExpressionPosition({
-											path: "SpliceError",
+											qualifier: "SpliceError",
 											name: "OutOfBounds",
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
@@ -311,7 +311,7 @@ export function rebuildSpliceLoose() {
 									function: "Err",
 									arguments: rs.build.structExpression({
 										name: rs.build.scopedTypeIdentifierInExpressionPosition({
-											path: "SpliceError",
+											qualifier: "SpliceError",
 											name: "NonCharBoundary",
 										}),
 										body: rs.build.fieldInitializerList({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer({
@@ -381,7 +381,7 @@ export function rebuildSpliceLoose() {
 					name: "buf",
 					value: rs.build.callExpression({
 						function: rs.build.scopedIdentifier({
-							path: "String",
+							qualifier: "String",
 							name: "from",
 						}),
 						arguments: "source",

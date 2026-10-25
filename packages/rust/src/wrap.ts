@@ -2936,7 +2936,7 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.ScopedIdentifier as const,
-		path() {
+		qualifier() {
 			return hydrateSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -2947,14 +2947,14 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 				| T.BracketedType
 				| T.GenericTypeWithTurbofish
 				| undefined
-			>(this, '_path', tree);
+			>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.Identifier | TSKindId.Super>(this, '_name', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedIdentifier['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _path: v }, tree)),
+			qualifier: (v: NonNullable<T.ScopedIdentifier['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _qualifier: v }, tree)),
 			name: (v: NonNullable<T.ScopedIdentifier['_name']>) =>
 				rebuilt(node, handle, () => wrapScopedIdentifier({ ...$edited(data), _name: v }, tree))
 		},
@@ -2980,7 +2980,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
-		path() {
+		qualifier() {
 			return hydrateSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -2990,14 +2990,16 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 				| T.ScopedIdentifier
 				| T.GenericTypeWithTurbofish
 				| undefined
-			>(this, '_path', tree);
+			>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _path: v }, tree)),
+			qualifier: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']>) =>
+				rebuilt(node, handle, () =>
+					wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _qualifier: v }, tree)
+				),
 			name: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_name']>) =>
 				rebuilt(node, handle, () => wrapScopedTypeIdentifierInExpressionPosition({ ...$edited(data), _name: v }, tree))
 		},
@@ -3023,7 +3025,7 @@ export function wrapScopedTypeIdentifier(
 	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifier as const,
-		path() {
+		qualifier() {
 			return hydrateSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -3035,14 +3037,14 @@ export function wrapScopedTypeIdentifier(
 				| T.BracketedType
 				| T.GenericType
 				| undefined
-			>(this, '_path', tree);
+			>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedTypeIdentifier['_path']>) =>
-				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _path: v }, tree)),
+			qualifier: (v: NonNullable<T.ScopedTypeIdentifier['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _qualifier: v }, tree)),
 			name: (v: NonNullable<T.ScopedTypeIdentifier['_name']>) =>
 				rebuilt(node, handle, () => wrapScopedTypeIdentifier({ ...$edited(data), _name: v }, tree))
 		},

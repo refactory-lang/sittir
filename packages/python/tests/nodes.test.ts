@@ -3773,7 +3773,7 @@ describe('type sub-factories', () => {
 	});
 	it('memberType builds the parent', () => {
 		const node = ir.type.memberType({
-			baseType: stampBuilt({
+			qualifier: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
@@ -3949,7 +3949,7 @@ describe('constrained_type', () => {
 describe('member_type', () => {
 	it('factory produces correct type', () => {
 		const node = ir.memberType({
-			baseType: stampBuilt({
+			qualifier: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,
@@ -3962,7 +3962,7 @@ describe('member_type', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.memberType({
-			baseType: stampBuilt({
+			qualifier: stampBuilt({
 				$type: TSKindId.Type,
 				$text: 'test',
 				$named: true,

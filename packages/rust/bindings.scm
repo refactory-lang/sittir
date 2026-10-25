@@ -310,7 +310,8 @@
 (try_block) @expression.block.try
 (gen_block) @expression.block.gen
 (generic_function) @expression.instantiation
-(scoped_identifier) @identifier.scoped
+(scoped_identifier) @identifier.qualified
+(scoped_identifier path: (_) @qualifier)
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (match_pattern) @pattern.match
@@ -377,8 +378,10 @@
 (bounded_type) @type.bounded
 (qualified_type) @type.qualified
 (bracketed_type) @type.bracketed
-(scoped_type_identifier) @type.path
-(scoped_type_identifier_in_expression_position) @type.path.expression
+(scoped_type_identifier) @identifier.qualified
+(scoped_type_identifier path: (_) @qualifier)
+(scoped_type_identifier_in_expression_position) @identifier.qualified
+(scoped_type_identifier_in_expression_position path: (_) @qualifier)
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal) @literal.string

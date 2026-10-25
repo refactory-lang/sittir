@@ -22,7 +22,7 @@ export function nestedGreetFunction() {
 		// Each arm nests under the arm that reaches it: `pub`, its
 		// parenthesized `scope`, then the `in <path>` form.
 		visibilityModifier: rs.build.visibilityModifier.pub.scope.inPath(
-			rs.build.scopedIdentifier({ path: rs.build.crate, name: rs.build.identifier('x') }),
+			rs.build.scopedIdentifier({ qualifier: rs.build.crate, name: rs.build.identifier('x') }),
 		),
 		name: rs.build.identifier('greet'),
 		parameters: rs.build.parameters.strict(

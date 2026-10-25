@@ -1459,17 +1459,17 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.NestedIdentifier as const,
-		object() {
-			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_object', tree);
+		qualifier() {
+			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_qualifier', tree);
 		},
-		property() {
-			return hydrateSlot<T.PropertyIdentifier>(this, '_property', tree);
+		name() {
+			return hydrateSlot<T.PropertyIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			object: (v: NonNullable<T.NestedIdentifier['_object']>) =>
-				rebuilt(node, handle, () => wrapNestedIdentifier({ ...$edited(data), _object: v }, tree)),
-			property: (v: NonNullable<T.NestedIdentifier['_property']>) =>
-				rebuilt(node, handle, () => wrapNestedIdentifier({ ...$edited(data), _property: v }, tree))
+			qualifier: (v: NonNullable<T.NestedIdentifier['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapNestedIdentifier({ ...$edited(data), _qualifier: v }, tree)),
+			name: (v: NonNullable<T.NestedIdentifier['_name']>) =>
+				rebuilt(node, handle, () => wrapNestedIdentifier({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3412,15 +3412,15 @@ export function wrapNestedTypeIdentifier(
 	const node = {
 		...data,
 		$type: TSKindId.NestedTypeIdentifier as const,
-		module() {
-			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_module', tree);
+		qualifier() {
+			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			module: (v: NonNullable<T.NestedTypeIdentifier['_module']>) =>
-				rebuilt(node, handle, () => wrapNestedTypeIdentifier({ ...$edited(data), _module: v }, tree)),
+			qualifier: (v: NonNullable<T.NestedTypeIdentifier['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapNestedTypeIdentifier({ ...$edited(data), _qualifier: v }, tree)),
 			name: (v: NonNullable<T.NestedTypeIdentifier['_name']>) =>
 				rebuilt(node, handle, () => wrapNestedTypeIdentifier({ ...$edited(data), _name: v }, tree))
 		},

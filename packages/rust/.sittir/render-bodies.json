@@ -6055,17 +6055,17 @@
 	"scoped_identifier": [
 		{
 			"kind": "seam",
-			"field": "scoped_identifier_before"
+			"field": "qualified_identifier_before"
 		},
 		{
 			"kind": "if",
 			"arms": [
 				{
-					"test": "path",
+					"test": "qualifier",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "path"
+							"name": "qualifier"
 						}
 					]
 				}
@@ -6089,23 +6089,23 @@
 		},
 		{
 			"kind": "seam",
-			"field": "scoped_identifier_after"
+			"field": "qualified_identifier_after"
 		}
 	],
 	"scoped_type_identifier": [
 		{
 			"kind": "seam",
-			"field": "scoped_type_identifier_before"
+			"field": "qualified_identifier_before"
 		},
 		{
 			"kind": "if",
 			"arms": [
 				{
-					"test": "path",
+					"test": "qualifier",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "path"
+							"name": "qualifier"
 						}
 					]
 				}
@@ -6129,23 +6129,23 @@
 		},
 		{
 			"kind": "seam",
-			"field": "scoped_type_identifier_after"
+			"field": "qualified_identifier_after"
 		}
 	],
 	"scoped_type_identifier_in_expression_position": [
 		{
 			"kind": "seam",
-			"field": "scoped_type_identifier_in_expression_position_before"
+			"field": "qualified_identifier_before"
 		},
 		{
 			"kind": "if",
 			"arms": [
 				{
-					"test": "path",
+					"test": "qualifier",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "path"
+							"name": "qualifier"
 						}
 					]
 				}
@@ -6169,7 +6169,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "scoped_type_identifier_in_expression_position_after"
+			"field": "qualified_identifier_after"
 		}
 	],
 	"scoped_use_list": [

@@ -218,8 +218,9 @@ export interface PortableIds {
 	'expression.yield': TSKindId.Yield | TSKindId.YieldFromClause;
 	'expression.yield.delegate': TSKindId.YieldFromClause;
 	file: TSKindId.Module;
-	identifier: TSKindId.DottedName | TSKindId.Identifier;
+	identifier: TSKindId.DottedName | TSKindId.Identifier | TSKindId.MemberType;
 	'identifier.dotted': TSKindId.DottedName;
+	'identifier.qualified': TSKindId.MemberType;
 	literal:
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
@@ -402,16 +403,9 @@ export interface PortableIds {
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.throw': TSKindId.RaiseStatement;
 	'statement.try': TSKindId.TryStatement;
-	type:
-		| TSKindId.ConstrainedType
-		| TSKindId.GenericType
-		| TSKindId.MemberType
-		| TSKindId.SplatType
-		| TSKindId.Type
-		| TSKindId.UnionType;
+	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.Type | TSKindId.UnionType;
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
-	'type.path': TSKindId.MemberType;
 	'type.rest': TSKindId.SplatType;
 	'type.rest.map': TSKindId.SplatType;
 	'type.union': TSKindId.UnionType;
@@ -743,8 +737,13 @@ export interface PortableKindsAt {
 	};
 	'expression.yield.delegate': { readonly $path: 'expression.yield.delegate' };
 	file: { readonly $path: 'file' };
-	identifier: { readonly $path: 'identifier'; readonly dotted: PortableKindsAt['identifier.dotted'] };
+	identifier: {
+		readonly $path: 'identifier';
+		readonly dotted: PortableKindsAt['identifier.dotted'];
+		readonly qualified: PortableKindsAt['identifier.qualified'];
+	};
 	'identifier.dotted': { readonly $path: 'identifier.dotted' };
+	'identifier.qualified': { readonly $path: 'identifier.qualified' };
 	literal: {
 		readonly $path: 'literal';
 		readonly boolean: PortableKindsAt['literal.boolean'];
@@ -922,13 +921,11 @@ export interface PortableKindsAt {
 		readonly $path: 'type';
 		readonly constrained: PortableKindsAt['type.constrained'];
 		readonly generic: PortableKindsAt['type.generic'];
-		readonly path: PortableKindsAt['type.path'];
 		readonly rest: PortableKindsAt['type.rest'];
 		readonly union: PortableKindsAt['type.union'];
 	};
 	'type.constrained': { readonly $path: 'type.constrained' };
 	'type.generic': { readonly $path: 'type.generic' };
-	'type.path': { readonly $path: 'type.path' };
 	'type.rest': { readonly $path: 'type.rest'; readonly map: PortableKindsAt['type.rest.map'] };
 	'type.rest.map': { readonly $path: 'type.rest.map' };
 	'type.union': { readonly $path: 'type.union' };
@@ -1464,8 +1461,10 @@ export interface PortableIsAt {
 	file: PortableGuard<PortableIds['file'], PythonNode, TSKindId> & {};
 	identifier: PortableGuard<PortableIds['identifier'], PythonNode, TSKindId> & {
 		readonly dotted: PortableIsAt['identifier.dotted'];
+		readonly qualified: PortableIsAt['identifier.qualified'];
 	};
 	'identifier.dotted': PortableGuard<PortableIds['identifier.dotted'], PythonNode, TSKindId> & {};
+	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], PythonNode, TSKindId> & {};
 	literal: PortableGuard<PortableIds['literal'], PythonNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly ellipsis: PortableIsAt['literal.ellipsis'];
@@ -1663,13 +1662,11 @@ export interface PortableIsAt {
 	type: PortableGuard<PortableIds['type'], PythonNode, TSKindId> & {
 		readonly constrained: PortableIsAt['type.constrained'];
 		readonly generic: PortableIsAt['type.generic'];
-		readonly path: PortableIsAt['type.path'];
 		readonly rest: PortableIsAt['type.rest'];
 		readonly union: PortableIsAt['type.union'];
 	};
 	'type.constrained': PortableGuard<PortableIds['type.constrained'], PythonNode, TSKindId> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic'], PythonNode, TSKindId> & {};
-	'type.path': PortableGuard<PortableIds['type.path'], PythonNode, TSKindId> & {};
 	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId> & {
 		readonly map: PortableIsAt['type.rest.map'];
 	};
@@ -1968,8 +1965,9 @@ const table: PortableTable = {
 		'expression.yield': { ids: [TSKindId.Yield, TSKindId.YieldFromClause], exact: true },
 		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
 		file: { ids: [TSKindId.Module], exact: true },
-		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier], exact: true },
+		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier, TSKindId.MemberType], exact: true },
 		'identifier.dotted': { ids: [TSKindId.DottedName], exact: true },
+		'identifier.qualified': { ids: [TSKindId.MemberType], exact: true },
 		literal: {
 			ids: [
 				TSKindId.ConcatenatedString,
@@ -2194,19 +2192,11 @@ const table: PortableTable = {
 		'statement.throw': { ids: [TSKindId.RaiseStatement], exact: true },
 		'statement.try': { ids: [TSKindId.TryStatement], exact: true },
 		type: {
-			ids: [
-				TSKindId.ConstrainedType,
-				TSKindId.GenericType,
-				TSKindId.MemberType,
-				TSKindId.SplatType,
-				TSKindId.Type,
-				TSKindId.UnionType
-			],
+			ids: [TSKindId.ConstrainedType, TSKindId.GenericType, TSKindId.SplatType, TSKindId.Type, TSKindId.UnionType],
 			exact: true
 		},
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
-		'type.path': { ids: [TSKindId.MemberType], exact: true },
 		'type.rest': { ids: [TSKindId.SplatType], exact: true },
 		'type.rest.map': { ids: [TSKindId.SplatType], exact: false },
 		'type.union': { ids: [TSKindId.UnionType], exact: true }
@@ -2643,7 +2633,7 @@ const table: PortableTable = {
 		[TSKindId.ListSplat]: [{ path: 'element.spread', within: [], test: [] }],
 		[TSKindId.ListSplatPattern]: [{ path: 'pattern.rest', within: [], test: [] }],
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
-		[TSKindId.MemberType]: [{ path: 'type.path', within: [], test: [] }],
+		[TSKindId.MemberType]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
 			{
 				path: 'declaration.constructor',

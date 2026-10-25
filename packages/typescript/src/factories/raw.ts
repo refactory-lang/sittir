@@ -2002,42 +2002,37 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 }
 
 export function buildNestedIdentifier<
-	ObjectSlot extends T.NestedIdentifier.Config['object'],
-	PropertySlot extends T.NestedIdentifier.Config['property']
+	QualifierSlot extends T.NestedIdentifier.Config['qualifier'],
+	NameSlot extends T.NestedIdentifier.Config['name']
 >(
-	config: RefusingConfig<T.NestedIdentifier.Config, { object: ObjectSlot; property: PropertySlot }>
+	config: RefusingConfig<T.NestedIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
 ): T.NestedIdentifier.Bound;
 export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.NestedIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.NestedIdentifier, [config]);
-	const _object = rejectReservedText(
-		config.object,
-		'NestedIdentifier.object',
+	const _qualifier = rejectReservedText(
+		config.qualifier,
+		'NestedIdentifier.qualifier',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _property = admitAliasContent<NonNullable<T.NestedIdentifier['_property']>>(
-		rejectReservedText(
-			config.property,
-			'NestedIdentifier.property',
-			TSKindId.Identifier,
-			_reservedWords_buildIdentifier
-		),
+	const _name = admitAliasContent<NonNullable<T.NestedIdentifier['_name']>>(
+		rejectReservedText(config.name, 'NestedIdentifier.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.NestedIdentifier as const,
 		$named: true as const,
-		_object,
-		_property,
+		_qualifier,
+		_name,
 		$with: {
-			object: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, object: value })),
-			property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, property: value }))
+			qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, qualifier: value })),
+			name: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, name: value }))
 		},
-		object: () => hydrateStoredSlot(node, '_object'),
-		property: () => hydrateStoredSlot(node, '_property'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4739,16 +4734,16 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 }
 
 export function buildNestedTypeIdentifier<
-	ModuleSlot extends T.NestedTypeIdentifier.Config['module'],
+	QualifierSlot extends T.NestedTypeIdentifier.Config['qualifier'],
 	NameSlot extends T.NestedTypeIdentifier.Config['name']
 >(
-	config: RefusingConfig<T.NestedTypeIdentifier.Config, { module: ModuleSlot; name: NameSlot }>
+	config: RefusingConfig<T.NestedTypeIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
 ): T.NestedTypeIdentifier.Bound;
 export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config): T.NestedTypeIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.NestedTypeIdentifier, [config]);
-	const _module = rejectReservedText(
-		config.module,
-		'NestedTypeIdentifier.module',
+	const _qualifier = rejectReservedText(
+		config.qualifier,
+		'NestedTypeIdentifier.qualifier',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
@@ -4760,15 +4755,15 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 	const node = {
 		$type: TSKindId.NestedTypeIdentifier as const,
 		$named: true as const,
-		_module,
+		_qualifier,
 		_name,
 		$with: {
-			module: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, module: value })),
+			qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, qualifier: value })),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value }))
 		},
-		module: () => hydrateStoredSlot(node, '_module'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

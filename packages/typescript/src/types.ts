@@ -997,7 +997,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[240, 'object_assignment_pattern'],
 	[241, 'array'],
 	[242, 'array_pattern'],
-	[243, 'nested_identifier'],
+	[243, 'qualified_identifier'],
 	[244, 'class'],
 	[245, 'class_declaration'],
 	[246, 'class_heritage'],
@@ -1073,7 +1073,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[315, 'internal_module'],
 	[316, '_module'],
 	[317, 'import_alias'],
-	[318, 'nested_type_identifier'],
+	[318, 'qualified_identifier'],
 	[319, 'interface_declaration'],
 	[320, 'extends_type_clause'],
 	[321, 'enum_declaration'],
@@ -2551,6 +2551,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.AutomaticSemicolon;
 		case 'function_signature_automatic_semicolon':
 			return TSKindId.FunctionSignatureAutomaticSemicolon;
+		case 'qualified_identifier':
+			return TSKindId.NestedIdentifier;
 		case 'lhs_expression':
 			return TSKindId.LhsExpression;
 		default:
@@ -3874,21 +3876,21 @@ export interface ArrayPattern {
 
 export interface NestedIdentifier {
 	readonly $type: TSKindId.NestedIdentifier;
-	readonly _object: Identifier | NestedIdentifier;
-	readonly _property: PropertyIdentifier;
+	readonly _qualifier: Identifier | NestedIdentifier;
+	readonly _name: PropertyIdentifier;
 	readonly __slotNames__?: {
-		readonly _object: 'object';
-		readonly _property: 'property';
+		readonly _qualifier: 'qualifier';
+		readonly _name: 'name';
 	};
 	readonly __looseHints__?: {
-		readonly property: readonly Identifier[];
+		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly object: SlotHint<T.Identifier | T.NestedIdentifier>;
-		readonly property: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
+		readonly qualifier: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly name: SlotHint<T.PropertyIdentifier | T.PropertyIdentifier.Types>;
 	};
-	readonly object: () => Identifier | NestedIdentifier;
-	readonly property: () => PropertyIdentifier;
+	readonly qualifier: () => Identifier | NestedIdentifier;
+	readonly name: () => PropertyIdentifier;
 }
 
 export interface Class {
@@ -5612,20 +5614,20 @@ export interface ImportAlias {
 
 export interface NestedTypeIdentifier {
 	readonly $type: TSKindId.NestedTypeIdentifier;
-	readonly _module: Identifier | NestedIdentifier;
+	readonly _qualifier: Identifier | NestedIdentifier;
 	readonly _name: TypeIdentifier;
 	readonly __slotNames__?: {
-		readonly _module: 'module';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly module: SlotHint<T.Identifier | T.NestedIdentifier>;
+		readonly qualifier: SlotHint<T.Identifier | T.NestedIdentifier>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
-	readonly module: () => Identifier | NestedIdentifier;
+	readonly qualifier: () => Identifier | NestedIdentifier;
 	readonly name: () => TypeIdentifier;
 }
 
@@ -10979,7 +10981,7 @@ export interface OptionsHintMap {
 	objectAssignmentPattern: ObjectAssignmentPattern.Hints;
 	array: Array.Hints;
 	arrayPattern: ArrayPattern.Hints;
-	nestedIdentifier: NestedIdentifier.Hints;
+	qualifiedIdentifier: NestedIdentifier.Hints | NestedTypeIdentifier.Hints;
 	class: Class.Hints;
 	classDeclaration: ClassDeclaration.Hints;
 	functionExpression: FunctionExpression.Hints;
@@ -11028,7 +11030,6 @@ export interface OptionsHintMap {
 	module: Module.Hints;
 	internalModule: InternalModule.Hints;
 	importAlias: ImportAlias.Hints;
-	nestedTypeIdentifier: NestedTypeIdentifier.Hints;
 	interfaceDeclaration: InterfaceDeclaration.Hints;
 	extendsTypeClause: ExtendsTypeClause.Hints;
 	enumDeclaration: EnumDeclaration.Hints;
@@ -11895,6 +11896,16 @@ export namespace NestedIdentifier {
 	}
 }
 
+export namespace NestedTypeIdentifier {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly dot?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
 export namespace Class {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -12469,10 +12480,10 @@ export namespace ImplementsClause {
 				readonly intersectionType?: { readonly after?: LayoutKindId };
 				readonly literalTypeNegativeNumber?: { readonly after?: LayoutKindId };
 				readonly lookupType?: { readonly after?: LayoutKindId };
-				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly null?: { readonly after?: LayoutKindId };
 				readonly objectType?: { readonly after?: LayoutKindId };
 				readonly parenthesizedType?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly readonlyType?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -12553,16 +12564,6 @@ export namespace ImportAlias {
 	}
 }
 
-export namespace NestedTypeIdentifier {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: LayoutKindId;
-			readonly before?: LayoutKindId;
-			readonly dot?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
-		};
-	}
-}
-
 export namespace InterfaceDeclaration {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -12582,7 +12583,7 @@ export namespace ExtendsTypeClause {
 			readonly type?: {
 				readonly end?: LayoutKindId;
 				readonly genericType?: { readonly after?: LayoutKindId };
-				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13217,10 +13218,10 @@ export namespace Types {
 				readonly intersectionType?: { readonly after?: LayoutKindId };
 				readonly literalTypeNegativeNumber?: { readonly after?: LayoutKindId };
 				readonly lookupType?: { readonly after?: LayoutKindId };
-				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly null?: { readonly after?: LayoutKindId };
 				readonly objectType?: { readonly after?: LayoutKindId };
 				readonly parenthesizedType?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly readonlyType?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -13280,12 +13281,12 @@ export namespace TupleTypeMembers {
 				readonly intersectionType?: { readonly after?: LayoutKindId };
 				readonly literalTypeNegativeNumber?: { readonly after?: LayoutKindId };
 				readonly lookupType?: { readonly after?: LayoutKindId };
-				readonly nestedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly null?: { readonly after?: LayoutKindId };
 				readonly objectType?: { readonly after?: LayoutKindId };
 				readonly optionalTupleParameter?: { readonly after?: LayoutKindId };
 				readonly optionalType?: { readonly after?: LayoutKindId };
 				readonly parenthesizedType?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly readonlyType?: { readonly after?: LayoutKindId };
 				readonly restType?: { readonly after?: LayoutKindId };
 				readonly separator?: {

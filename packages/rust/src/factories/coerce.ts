@@ -5756,9 +5756,9 @@ export function coerceToMacroInvocation(input: T.MacroInvocation.Loose): ReturnT
 	});
 }
 
-export function resolveScopedIdentifier_path(
-	value: T.ScopedIdentifier.LooseConfig['path']
-): Admit<T.ScopedIdentifier['_path']> {
+export function resolveScopedIdentifier_qualifier(
+	value: T.ScopedIdentifier.LooseConfig['qualifier']
+): Admit<T.ScopedIdentifier['_qualifier']> {
 	return _keywordOr(
 		value,
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
@@ -5800,14 +5800,14 @@ export function coerceToScopedIdentifier(input: T.ScopedIdentifier.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildScopedIdentifier>;
 	currentHandle()?.admit(TSKindId.ScopedIdentifier, [input]);
 	return F.buildScopedIdentifier({
-		path: resolveScopedIdentifier_path(input.path),
+		qualifier: resolveScopedIdentifier_qualifier(input.qualifier),
 		name: resolveScopedIdentifier_name(input.name)
 	});
 }
 
-export function resolveScopedTypeIdentifierInExpressionPosition_path(
-	value: T.ScopedTypeIdentifierInExpressionPosition.LooseConfig['path']
-): Admit<T.ScopedTypeIdentifierInExpressionPosition['_path']> {
+export function resolveScopedTypeIdentifierInExpressionPosition_qualifier(
+	value: T.ScopedTypeIdentifierInExpressionPosition.LooseConfig['qualifier']
+): Admit<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']> {
 	return _keywordOr(
 		value,
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
@@ -5847,14 +5847,14 @@ export function coerceToScopedTypeIdentifierInExpressionPosition(
 		return input as unknown as ReturnType<typeof F.buildScopedTypeIdentifierInExpressionPosition>;
 	currentHandle()?.admit(TSKindId.ScopedTypeIdentifierInExpressionPosition, [input]);
 	return F.buildScopedTypeIdentifierInExpressionPosition({
-		path: resolveScopedTypeIdentifierInExpressionPosition_path(input.path),
+		qualifier: resolveScopedTypeIdentifierInExpressionPosition_qualifier(input.qualifier),
 		name: resolveScopedTypeIdentifierInExpressionPosition_name(input.name)
 	});
 }
 
-export function resolveScopedTypeIdentifier_path(
-	value: T.ScopedTypeIdentifier.LooseConfig['path']
-): Admit<T.ScopedTypeIdentifier['_path']> {
+export function resolveScopedTypeIdentifier_qualifier(
+	value: T.ScopedTypeIdentifier.LooseConfig['qualifier']
+): Admit<T.ScopedTypeIdentifier['_qualifier']> {
 	return _keywordOr(
 		value,
 		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
@@ -5894,7 +5894,7 @@ export function coerceToScopedTypeIdentifier(
 		return input as unknown as ReturnType<typeof F.buildScopedTypeIdentifier>;
 	currentHandle()?.admit(TSKindId.ScopedTypeIdentifier, [input]);
 	return F.buildScopedTypeIdentifier({
-		path: resolveScopedTypeIdentifier_path(input.path),
+		qualifier: resolveScopedTypeIdentifier_qualifier(input.qualifier),
 		name: resolveScopedTypeIdentifier_name(input.name)
 	});
 }

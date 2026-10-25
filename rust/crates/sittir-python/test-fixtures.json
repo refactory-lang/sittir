@@ -33610,8 +33610,8 @@
     "edits": [],
     "expectedSourceOut": "lambda b, c: d(\"e\" % f)",
     "expectedReparseTree": "(lambda_expression parameters: (lambda_parameters (parameters_elements item: (identifier) item: (identifier))) body: (call function: (identifier) arguments: (argument_list arguments: (argument_list_elements item: (binary_operator left: (string string_start: (string_start) content: (string_content elements: (string_fragment)) string_end: (string_end)) right: (identifier))))))",
-    "wrappedText": "_ = (lambda b, c: d(\"e\" % f))",
-    "wrappedOffset": 5
+    "wrappedText": "lambda b, c: d(\"e\" % f)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -33636,8 +33636,8 @@
     "edits": [],
     "expectedSourceOut": "lambda: True",
     "expectedReparseTree": "(lambda_expression body: (true))",
-    "wrappedText": "_ = (lambda: True)",
-    "wrappedOffset": 5
+    "wrappedText": "lambda: True",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -33717,8 +33717,8 @@
     "edits": [],
     "expectedSourceOut": "lambda a, b = c, *d, **e: a",
     "expectedReparseTree": "(lambda_expression parameters: (lambda_parameters (parameters_elements item: (identifier) item: (default_parameter name: (identifier) default: (identifier)) item: (list_splat_pattern pattern: (identifier)) item: (dictionary_splat_pattern pattern: (identifier)))) body: (identifier))",
-    "wrappedText": "_ = (lambda a, b = c, *d, **e: a)",
-    "wrappedOffset": 5
+    "wrappedText": "lambda a, b = c, *d, **e: a",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",
@@ -33785,8 +33785,8 @@
     "edits": [],
     "expectedSourceOut": "lambda (a, b): (a, b)",
     "expectedReparseTree": "(lambda_expression parameters: (lambda_parameters (parameters_elements item: (tuple_pattern elements: (tuple_pattern_elements item: (identifier) item: (identifier))))) body: (tuple elements: (tuple_elements item: (identifier) item: (identifier))))",
-    "wrappedText": "_ = (lambda (a, b): (a, b))",
-    "wrappedOffset": 5
+    "wrappedText": "lambda (a, b): (a, b)",
+    "wrappedOffset": 0
   },
   {
     "kind": "render",

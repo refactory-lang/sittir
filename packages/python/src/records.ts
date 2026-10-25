@@ -171,7 +171,7 @@ export const records = {
 	GenericTypeNode: { words: 12, name: { word: 2, width: 5 }, type_parameter: { word: 7, width: 5 } },
 	UnionTypeNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	ConstrainedTypeNode: { words: 12, base_type: { word: 2, width: 5 }, constraint: { word: 7, width: 5 } },
-	MemberTypeNode: { words: 12, base_type: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	MemberTypeNode: { words: 12, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	KeywordArgumentNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	ListNode: { words: 7, elements: { word: 2, width: 5 } },
 	SetNode: { words: 7, elements: { word: 2, width: 5 } },

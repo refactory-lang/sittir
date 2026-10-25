@@ -1066,9 +1066,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[260, 'delim_token_tree'],
 	[261, '_delim_tokens'],
 	[262, '_non_delim_token'],
-	[263, 'scoped_identifier'],
-	[264, 'scoped_type_identifier_in_expression_position'],
-	[265, 'scoped_type_identifier'],
+	[263, 'qualified_identifier'],
+	[264, 'qualified_identifier'],
+	[265, 'qualified_identifier'],
 	[266, 'range_expression'],
 	[267, 'unary_expression'],
 	[268, 'try_expression'],
@@ -2501,6 +2501,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MacroRulesBang;
 		case '"':
 			return TSKindId.StringClose;
+		case 'qualified_identifier':
+			return TSKindId.ScopedIdentifier;
 		case 'let_chain':
 			return TSKindId.LetChain;
 		default:
@@ -6369,7 +6371,7 @@ export interface MacroInvocation {
 
 export interface ScopedIdentifier {
 	readonly $type: TSKindId.ScopedIdentifier;
-	readonly _path?:
+	readonly _qualifier?:
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6380,11 +6382,11 @@ export interface ScopedIdentifier {
 		| GenericTypeWithTurbofish;
 	readonly _name: Identifier | TSKindId.Super;
 	readonly __slotNames__?: {
-		readonly _path: 'path';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly path?:
+		readonly qualifier?:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
@@ -6394,10 +6396,10 @@ export interface ScopedIdentifier {
 		readonly name: KindEnum<'super', TSKindId.Super> | Identifier;
 	};
 	readonly __slotHints__?: {
-		readonly path: SlotHint<NonNullable<T.ScopedIdentifier.Config>['path'], true>;
+		readonly qualifier: SlotHint<NonNullable<T.ScopedIdentifier.Config>['qualifier'], true>;
 		readonly name: SlotHint<NonNullable<T.ScopedIdentifier.Config>['name']>;
 	};
-	readonly path: () =>
+	readonly qualifier: () =>
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6412,7 +6414,7 @@ export interface ScopedIdentifier {
 
 export interface ScopedTypeIdentifierInExpressionPosition {
 	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
-	readonly _path?:
+	readonly _qualifier?:
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6422,11 +6424,11 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 		| GenericTypeWithTurbofish;
 	readonly _name: TypeIdentifier;
 	readonly __slotNames__?: {
-		readonly _path: 'path';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly path?:
+		readonly qualifier?:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
@@ -6437,10 +6439,10 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly path: SlotHint<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path'], true>;
+		readonly qualifier: SlotHint<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['qualifier'], true>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
-	readonly path: () =>
+	readonly qualifier: () =>
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6454,7 +6456,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 
 export interface ScopedTypeIdentifier {
 	readonly $type: TSKindId.ScopedTypeIdentifier;
-	readonly _path?:
+	readonly _qualifier?:
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6466,11 +6468,11 @@ export interface ScopedTypeIdentifier {
 		| GenericType;
 	readonly _name: TypeIdentifier;
 	readonly __slotNames__?: {
-		readonly _path: 'path';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly path?:
+		readonly qualifier?:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
@@ -6483,10 +6485,10 @@ export interface ScopedTypeIdentifier {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly path: SlotHint<NonNullable<T.ScopedTypeIdentifier.Config>['path'], true>;
+		readonly qualifier: SlotHint<NonNullable<T.ScopedTypeIdentifier.Config>['qualifier'], true>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
-	readonly path: () =>
+	readonly qualifier: () =>
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -11617,9 +11619,10 @@ export interface OptionsHintMap {
 	abstractType: AbstractType.Hints;
 	dynamicType: DynamicType.Hints;
 	macroInvocation: MacroInvocation.Hints;
-	scopedIdentifier: ScopedIdentifier.Hints;
-	scopedTypeIdentifierInExpressionPosition: ScopedTypeIdentifierInExpressionPosition.Hints;
-	scopedTypeIdentifier: ScopedTypeIdentifier.Hints;
+	qualifiedIdentifier:
+		| ScopedIdentifier.Hints
+		| ScopedTypeIdentifierInExpressionPosition.Hints
+		| ScopedTypeIdentifier.Hints;
 	unaryExpression: UnaryExpression.Hints;
 	tryExpression: TryExpression.Hints;
 	binaryExpression: BinaryExpression.Hints;
@@ -12198,9 +12201,9 @@ export namespace TraitBounds {
 				readonly neverType?: { readonly after?: LayoutKindId };
 				readonly pointerTypeConst?: { readonly after?: LayoutKindId };
 				readonly pointerTypeMut?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly referenceType?: { readonly after?: LayoutKindId };
 				readonly removedTraitBound?: { readonly after?: LayoutKindId };
-				readonly scopedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly plus?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -12849,6 +12852,7 @@ export namespace LetChain {
 				readonly macroInvocation?: { readonly after?: LayoutKindId };
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
@@ -12858,7 +12862,6 @@ export namespace LetChain {
 				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
 				readonly returnExpression?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly ampAmp?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -12999,13 +13002,13 @@ export namespace ClosureParameters {
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
 				readonly parameter?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
 				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
 				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13436,7 +13439,7 @@ export namespace UseClauses {
 				readonly crate?: { readonly after?: LayoutKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly scopedUseList?: { readonly after?: LayoutKindId };
 				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
@@ -13506,9 +13509,9 @@ export namespace Types {
 				readonly neverType?: { readonly after?: LayoutKindId };
 				readonly pointerTypeConst?: { readonly after?: LayoutKindId };
 				readonly pointerTypeMut?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly referenceType?: { readonly after?: LayoutKindId };
 				readonly removedTraitBound?: { readonly after?: LayoutKindId };
-				readonly scopedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13606,6 +13609,7 @@ export namespace Expressions {
 				readonly macroInvocation?: { readonly after?: LayoutKindId };
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
@@ -13615,7 +13619,6 @@ export namespace Expressions {
 				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
 				readonly returnExpression?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -13675,13 +13678,13 @@ export namespace TuplePatternElements {
 				readonly negativeLiteral?: { readonly after?: LayoutKindId };
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
 				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
 				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13713,13 +13716,13 @@ export namespace Patterns {
 				readonly negativeLiteral?: { readonly after?: LayoutKindId };
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
 				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
 				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};

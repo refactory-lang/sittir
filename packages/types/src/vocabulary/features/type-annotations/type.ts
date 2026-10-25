@@ -133,25 +133,6 @@ export namespace Type {
 		readonly $kind: 'type.parenthesized';
 		readonly type: G['slots']['type.parenthesized']['type'];
 	}
-	export interface Path<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
-		// claimed by prt
-		readonly $kind: 'type.path';
-		readonly baseType?: G['type'];
-		// p only
-		readonly module?: G['identifier'];
-		// t only
-		readonly name: G['identifier'];
-		readonly path?: G['slots']['type.path']['path'];
-		// r only
-	}
-	export namespace Path {
-		export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Type.Path<G>> {
-			// claimed by r
-			readonly $kind: 'type.path.expression';
-			readonly name: V.Identifier<G>;
-			readonly path?: G['slots']['type.path.expression']['path'];
-		}
-	}
 	export interface Pointer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r
 		readonly $kind: 'type.pointer';

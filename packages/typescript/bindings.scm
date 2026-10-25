@@ -442,8 +442,10 @@
 (private_property_identifier) @identifier
 (shorthand_property_identifier) @identifier
 (shorthand_property_identifier_pattern) @identifier
-(nested_identifier) @identifier.nested
-(nested_type_identifier) @type.path
+(nested_identifier) @identifier.qualified
+(nested_identifier object: (_) @qualifier property: (_) @name)
+(nested_type_identifier) @identifier.qualified
+(nested_type_identifier module: (_) @qualifier)
 (statement_identifier) @identifier.label
 (this) @identifier.this
 (super) @identifier.super

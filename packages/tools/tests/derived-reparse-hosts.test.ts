@@ -58,32 +58,50 @@ describe('a kind with no declared host is hosted through a parent that is', () =
 	}, 120_000);
 });
 
+async function expectStorageHosts(grammar: 'python' | 'rust' | 'typescript', display: string, cases: readonly (readonly [string, string])[]) {
+	const ctx = await contextFor(grammar);
+	const { Parser, lang } = await loadLanguageForGrammar(grammar);
+	const parser = new Parser();
+	parser.setLanguage(lang);
+	const ids = new Set<number>();
+	for (const [source, kind] of cases) {
+		const original = parser.parse(source)!.rootNode.descendantsOfType(display)[0]!;
+		ids.add(original.grammarId);
+		const hosted = wrapForReparse(original.text, kind, grammar, ctx.kindToSupertypes, {
+			root: ctx.root,
+			targetKind: original.type,
+			adoptedVariantKinds: ctx.adoptedVariantKinds
+		});
+		expect(hosted).not.toBeNull();
+		const reparsed = parser.parse(hosted!.text)!;
+		expect(reparsed.rootNode.hasError).toBe(false);
+		const found = findReparsedNodeAtOffset(reparsed, original.grammarId, hosted!);
+		expect(found, `${kind} (${original.grammarId}/${original.typeId}): ${hosted!.text}`).not.toBeNull();
+		expect(found!.toString()).toBe(original.toString());
+	}
+	expect(ids.size).toBe(cases.length);
+}
+
 describe('the reparsed node is found by grammar id', () => {
 	it('python: derives separate hosts for physical lambda kinds sharing one display alias', async () => {
-		const ctx = await contextFor('python');
-		const { Parser, lang } = await loadLanguageForGrammar('python');
-		const parser = new Parser();
-		parser.setLanguage(lang);
-		const ids = new Set<number>();
-		for (const [source, kind] of [
+		await expectStorageHosts('python', 'lambda_expression', [
 			['_ = lambda: x', 'lambda'],
 			['[x for x in lambda: x]', 'lambda_within_for_in_clause']
-		] as const) {
-			const original = parser.parse(source)!.rootNode.descendantsOfType('lambda_expression')[0]!;
-			ids.add(original.grammarId);
-			const hosted = wrapForReparse(original.text, kind!, 'python', ctx.kindToSupertypes, {
-				root: ctx.root,
-				targetKind: original.type,
-				adoptedVariantKinds: ctx.adoptedVariantKinds
-			});
-			expect(hosted).not.toBeNull();
-			const reparsed = parser.parse(hosted!.text)!;
-			expect(reparsed.rootNode.hasError).toBe(false);
-			const found = findReparsedNodeAtOffset(reparsed, original.grammarId, hosted!);
-			expect(found, `${kind} (${original.grammarId}/${original.typeId}): ${hosted!.text}`).not.toBeNull();
-			expect(found!.toString()).toBe(original.toString());
-		}
-		expect(ids.size).toBe(2);
+		]);
+	}, 120_000);
+
+	it('rust: a value path and a type path sharing the qualified identifier display each reparse where they parse', async () => {
+		await expectStorageHosts('rust', 'qualified_identifier', [
+			['fn f() { a::b(); }', 'scoped_identifier'],
+			['fn f() -> a::B {}', 'scoped_type_identifier']
+		]);
+	}, 120_000);
+
+	it('typescript: a nested value name and a nested type name sharing the qualified identifier display each reparse where they parse', async () => {
+		await expectStorageHosts('typescript', 'qualified_identifier', [
+			['import x = a.b;', 'nested_identifier'],
+			['let x: a.B;', 'nested_type_identifier']
+		]);
 	}, 120_000);
 
 	it('python: the named yield and the yield keyword it wraps are told apart', async () => {

@@ -1229,8 +1229,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['statement'];
 		};
-		readonly 'identifier.scoped': {
-			readonly path: G['identifier'] | string | G['type'];
+		readonly 'identifier.qualified': {
+			readonly qualifier: G['identifier'] | string | G['type'];
 		};
 		readonly 'literal.character': {
 			readonly content: string;
@@ -1701,14 +1701,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly trait: V.Identifier<G> | V.Type.Path<G>;
+			readonly trait: V.Identifier<G> | V.Identifier.Qualified<G>;
 		};
 		readonly 'type.function.constructor': {
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'type.generic': {
-			readonly name: G['identifier'] | string | V.Type.Path<G>;
-			readonly type: G['identifier'] | string | V.Type.Path<G>;
+			readonly name: G['identifier'] | string | V.Identifier.Qualified<G>;
+			readonly type: G['identifier'] | string | V.Identifier.Qualified<G>;
 			readonly typeArguments: V.Element.TypeArgument<G> | G['identifier'] | G['type'];
 		};
 		readonly 'type.index_query': {
@@ -1741,12 +1741,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'type.parenthesized': {
 			readonly type: G['identifier'] | G['type'];
-		};
-		readonly 'type.path': {
-			readonly path: G['identifier'] | string | G['type'];
-		};
-		readonly 'type.path.expression': {
-			readonly path: G['identifier'] | string | V.Type.Generic.Turbofish<G>;
 		};
 		readonly 'type.pointer': {
 			readonly type:
