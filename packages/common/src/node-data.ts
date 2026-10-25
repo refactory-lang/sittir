@@ -336,10 +336,12 @@ interface TableAt {
 	readonly index: number;
 }
 
+function writesSides(tree: TreeHandle | undefined): tree is TreeHandle & TableAt['tree'] {
+	return tree?.triviaSide !== undefined && tree.writeTriviaSide !== undefined;
+}
+
 function tableOf(tree: TreeHandle | undefined, index: number | undefined): TableAt | undefined {
-	return tree?.triviaSide === undefined || tree.writeTriviaSide === undefined || index === undefined
-		? undefined
-		: { tree: { triviaSide: tree.triviaSide, writeTriviaSide: tree.writeTriviaSide }, index };
+	return writesSides(tree) && index !== undefined ? { tree, index } : undefined;
 }
 
 export function tableAt(node: object): TableAt | undefined {

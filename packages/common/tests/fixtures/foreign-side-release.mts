@@ -1,7 +1,8 @@
-// Run with `node --expose-gc --import tsx`: prints one JSON line reporting
-// how an engine renders its parsed and built nodes holding, in a side, a
-// record another engine of its language built, with a side of its own that
-// engine wrote, once nothing but that side names the record or its engine.
+// Run with `node --expose-gc --import tsx <parsed|built>`: prints one JSON
+// line reporting how an engine renders its parsed or its built node holding,
+// in a side, a record another engine of its language built, with a side of
+// its own that engine wrote, once nothing but that side names the record or
+// its engine. One holder per run, so neither holder's hold covers the other.
 import { useRecordConstruction } from '../../src/engine-boundary.ts';
 import arena from '../../../rust/src/arena.ts';
 
@@ -24,27 +25,33 @@ async function recordEngine(): Promise<Engine> {
 	return engine;
 }
 
+const kind = process.argv[2];
+if (kind !== 'parsed' && kind !== 'built') throw new Error('name the holder: parsed or built');
 const holder = await recordEngine();
+type Sided = { $trivia: { trailing(entry?: unknown): unknown } };
 const parsed = holder.parse('fn f() {\n    g();\n}\n');
-const statement = (parsed.statements()[0] as unknown as { body(): { statements(): readonly { $trivia: { trailing(entry: unknown): unknown } }[] } }).body().statements()[0]!;
-const built = holder.build.expressionStatement(holder.build.identifier('x'));
+const root = kind === 'parsed' ? parsed : holder.build.expressionStatement(holder.build.identifier('x'));
+const target = (kind === 'parsed' ? (parsed.statements()[0] as unknown as { body(): { statements(): readonly Sided[] } }).body().statements()[0]! : root) as Sided;
 
 async function written(): Promise<WeakRef<object>> {
 	const builder = await recordEngine();
 	const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
 	comment.$trivia.leading(builder.build.blockComment(builder.build.blockCommentRegular(' d ')));
-	statement.$trivia.trailing(comment);
-	built.$trivia.trailing(comment);
+	target.$trivia.trailing(comment);
 	return new WeakRef(comment);
 }
 
-const render = () => {
+const attempt = (read: () => unknown) => {
 	try {
-		return { parsed: holder.render(parsed).toString(), built: holder.render(built).toString() };
+		return String(read());
 	} catch (error) {
 		return `throws: ${(error as Error).message.slice(0, 80)}`;
 	}
 };
+const render = () => ({
+	render: attempt(() => holder.render(root as never)),
+	read: attempt(() => (target.$trivia.trailing() as readonly { $render(): string }[]).map((entry) => entry.$render()).join(' '))
+});
 
 const comment = await written();
 const before = render();

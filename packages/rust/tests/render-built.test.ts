@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
@@ -161,16 +162,31 @@ describe('a built arena rendered natively', () => {
 			expect(() => built.$trivia.trailing()).toThrow(/the arena that built a side's record was released/);
 		});
 
-		it('renders once nothing else names its builder or the record', () => {
+		it.each([
+			['parsed', 'fn f() {\n    g(); /* d */ /* c */\n}\n'],
+			['built', 'x; /* d */ /* c */']
+		])('renders in a %s holder, and reads back, once nothing else names its builder or the record', (holder, render) => {
 			const fixture = fileURLToPath(new URL('../../common/tests/fixtures/foreign-side-release.mts', import.meta.url));
-			const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture], {
+			const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture, holder], {
 				cwd: fileURLToPath(new URL('..', import.meta.url)),
 				encoding: 'utf8',
 				env: { ...process.env, SITTIR_BACKEND: 'native' }
 			});
-			const rendered = { parsed: 'fn f() {\n    g(); /* d */ /* c */\n}\n', built: 'x; /* d */ /* c */' };
+			const rendered = { render, read: '/* d */ /* c */' };
 			expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ collected: true, before: rendered, after: rendered });
 		}, 60_000);
+
+		it("refuses as a record's owner another grammar's engine, whatever its prototype", () => {
+			const engine = addon().SittirEngine;
+			const native = new engine() as unknown as { writeBuiltTriviaSide(at: number, side: string, entries: readonly object[]): void };
+			const typescript = createRequire(import.meta.url)('../../typescript/native/index.cjs') as { SittirEngine: new () => object };
+			const forged = Object.setPrototypeOf(new typescript.SittirEngine(), engine.prototype) as object;
+			expect(forged).toBeInstanceOf(engine);
+			const entry = (owner: object) => [{ $type: 1, $record: 8, $owner: owner }];
+			expect(() => native.writeBuiltTriviaSide(5, 'leading', entry(forged))).toThrow(/SittirEngine/);
+			expect(() => native.writeBuiltTriviaSide(5, 'leading', entry({}))).toThrow(/SittirEngine/);
+			expect(() => native.writeBuiltTriviaSide(5, 'leading', entry(native))).not.toThrow();
+		});
 	});
 
 	it("renders a built record with its builder's sides once nothing else names its builder", () => {

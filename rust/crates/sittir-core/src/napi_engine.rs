@@ -552,16 +552,15 @@ macro_rules! napi_engine {
             }
 
             /// The store of `owner`, an engine of this language, which holds
-            /// its built arena's chunks and its records' sides.
+            /// its built arena's chunks and its records' sides. Refuses any
+            /// other value, another grammar's engine among them, whatever its
+            /// prototype.
             fn store_of(env: &::napi::Env, owner: ::napi::Unknown<'_>) -> ::napi::Result<$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
                 use ::napi::JsValue;
-                // SAFETY: `owner` is live in `env` for the call, and `validate`
-                // refuses a value that is no instance of this addon's engine
-                // class before `ClassInstance` unwraps it as one.
-                let engine = unsafe {
-                    <&SittirEngine as ::napi::bindgen_prelude::ValidateNapiValue>::validate(env.raw(), owner.raw())?;
-                    <::napi::bindgen_prelude::ClassInstance<'_, SittirEngine> as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env.raw(), owner.raw())?
-                };
+                // SAFETY: `owner` is live in `env` for the call. `ClassInstance`
+                // checks the napi type tag this addon's engine class stamps on
+                // each instance it constructs before it casts the wrapped value.
+                let engine = unsafe { <::napi::bindgen_prelude::ClassInstance<'_, SittirEngine> as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env.raw(), owner.raw())? };
                 Ok(engine.as_ref().engine.written().clone())
             }
 
