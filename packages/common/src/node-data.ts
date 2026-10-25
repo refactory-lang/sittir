@@ -560,7 +560,6 @@ export function sideRead(node: object, side: TriviaSideName): SideRead {
 	return table === undefined ? NO_SIDE : { entries: (table.tree.triviaSide(table.index, side) ?? []) as TriviaEntry[], tree };
 }
 
-/** Every non-empty side of `node` (`sideOf`); `undefined` when it has none. */
 export function sidesOf(node: object): NodeTrivia | undefined {
 	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
 	for (const side of TRIVIA_SIDES) {

@@ -84,21 +84,6 @@ function findUndefined(node: AnyUntypedNode, path = ''): string[] {
 	return results;
 }
 
-/**
- * Shallow structural diff: compare type, factory-declared field keys,
- * named children count.
- *
- * The factory output `b` is the ground truth for "what fields this kind
- * declares." Any field in `from()` output `a` that isn't in `b` is
- * acceptable runtime metadata (promoted anonymous keywords like `fn`,
- * `{`, `;` from `readUntypedNode.promoteAnonymousKeyword`, tree-sitter
- * punctuation, etc.) — those don't count as divergence. Only mismatches
- * on keys the factory actually declared are real bugs.
- *
- * Undefined-valued entries are dropped before comparison — property
- * access can't distinguish `{a: undefined}` from `{}`, so the structural
- * comparison shouldn't either.
- */
 export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode, read: object = a): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);

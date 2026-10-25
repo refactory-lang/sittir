@@ -72,7 +72,6 @@ function detachedLayout(layout: unknown, arena: BuiltArena, within: Set<object>,
 	};
 }
 
-/** A built node's own data, with every key that names a tree removed: its storage and its sides snapshotted in turn. */
 function copyOf(value: Record<string, unknown>, within: Set<object>, nesting: number): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {

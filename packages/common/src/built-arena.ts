@@ -97,19 +97,11 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 		this.used[chunk] = used;
 	}
 
-	/** Whether `length` units from `unit` of `chunk` are written. */
 	holds(chunk: number, unit: number, length: number): boolean {
 		return chunk < this.chunks.length && unit + length <= this.used[chunk]!;
 	}
 }
 
-/**
- * The records an engine's builders write, and the nodes that view them. The records are chunks of words and of
- * UTF-8 bytes that JavaScript owns and native code borrows for one call at a time. The arena only appends: a
- * record, once written, never changes. Address 0 names no record, so the first chunk's first word is never
- * allocated. A record's node is the one its builder returned, kept while anything holds it; a read of a cell
- * naming a record whose node was released views the record afresh.
- */
 export class BuiltArena {
 	readonly format: CellFormat;
 	readonly owner: object;
@@ -208,7 +200,6 @@ export class BuiltArena {
 		return this.#words.chunks[chunk]!;
 	}
 
-	/** Every chunk of words and of bytes, each cut to what is written, for one native call to borrow. */
 	chunks(): BuiltChunks {
 		const cut = <A extends Uint32Array | Uint8Array>(table: Chunks<A>): A[] =>
 			table.chunks.map((chunk, n) => chunk.subarray(0, table.used[n]) as A);
@@ -297,7 +288,6 @@ export function builtEntryOf(entry: object, arena: BuiltArena | undefined): Buil
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 
-/** Whether `value` is the node of a built record, which its builder checked as it wrote it. */
 export function isBuiltNode(value: object): boolean {
 	return builtRefOf(value) !== undefined;
 }
@@ -306,7 +296,6 @@ export function builtArenaOf(value: object): BuiltArena | undefined {
 	return builtRefOf(value)?.arena;
 }
 
-/** The address of the record `value` is the node of in `arena`, `undefined` for any other value. */
 export function builtRecordOf(value: object, arena: BuiltArena): number | undefined {
 	const ref = builtRefOf(value);
 	return ref?.arena === arena ? ref.at : undefined;
@@ -369,12 +358,6 @@ export function encodeCell(words: Uint32Array | number[], at: number, format: Ce
 	}
 }
 
-/**
- * Writes the cell of a slot holding `value` into a fresh record at `at`: nothing for no value, a unit for a kind id,
- * a captured string for text, else a built leaf or a child naming the record of a node built in `arena`.
- *
- * @throws For a node no builder of `arena` made.
- */
 export function storeCell(arena: BuiltArena, data: Uint32Array, at: number, value: unknown): void {
 	if (value === undefined || value === null) return;
 	if (typeof value === 'number') return writeUnit(data, at, arena.format, value, 0);

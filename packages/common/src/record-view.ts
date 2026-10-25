@@ -94,7 +94,6 @@ export function recordStub(tree: TreeHandle, at: number): RecordStub {
 	return { $type: kind, [RECORD]: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) } };
 }
 
-/** The delimiters setting of the list the record `holder` views, as its side record holds it; `undefined` when it holds none. */
 export function recordDelimiter(holder: object, tree: TreeHandle): number | undefined {
 	return recordListSetting(holder, tree, decodeSideDelimiter);
 }

@@ -412,39 +412,6 @@ export interface ReadRenderParseResult {
 	trivia: ValidatorSkip[];
 }
 
-/**
- * Width, in rendered bytes, of the leading trivia the render prints before a
- * candidate's first token: the candidate's own, and that of each node down its
- * first-descendant chain (a block's first statement prints its comments ahead
- * of the block's content). A child belongs to the chain when stripping its
- * leading entries changes the render from its first byte; one whose entries
- * sit further in is interior trivia and is left alone. The width is the offset
- * of the first token in the render, so a stripped render that differs from the
- * original further on does not change it. The text is what
- * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
- * candidate's content. The candidate's real node starts this many bytes
- * after where its `rendered` string (trivia included) was spliced into the
- * reparse wrapper, so the offset-based lookup below must skip past it.
- * Returns 0 when there's no leading trivia (the common case).
- *
- * Derived by differencing two engine renders (with vs. without the leading
- * trivia) rather than rendering each trivia entry standalone: trivia entries
- * are embedded raw at read time (never wrapped into model shape), and only
- * the in-context `TriviaNode` decode carries the verbatim `$text`
- * fallback for that raw shape — a standalone root render of the same entry
- * hard-fails decoding (`Missing field _content`).
- *
- * `triviaOf` is the sides view the render itself uses (`sidesOf`), so the
- * width counts what the render printed: a leading comment and the whitespace
- * between it and the node, never the root's outer-edge whitespace. Each copy
- * is an edit of its node (`markEdited`) holding every side it renders, the
- * stripped one an empty `leading`, so both renders print the node from its
- * storage and differ only by the leading trivia; a coordinate, which holds
- * no storage, is hydrated and read one level down through the slot readers
- * first (`storageOf`, `materializeShallow`). A copy keeps
- * the node's source identity. Both are measured without trailing whitespace,
- * which only the outer edge contributes.
- */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
 	render: (node: AnyUntypedNode) => string,
@@ -791,12 +758,6 @@ export function wrapRendered(
 	return placed === null ? null : { text: placed.text, offset: placed.offset + placement.prefix.length };
 }
 
-/**
- * The candidate as its own source span has it: its leading and trailing sides
- * lie outside the span, where its parent renders them, so a candidate
- * rendered alone leaves both out and keeps its inner side. The one place
- * every validator lane prepares a candidate.
- */
 export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => NodeTrivia | undefined): AnyUntypedNode {
 	const record = recordOf(data) !== undefined;
 	if (record && !isBuiltNode(data)) return data;

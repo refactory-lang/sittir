@@ -262,7 +262,6 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 	return { index: word(1), end: word(2), span: { start: word(3), end: word(4) } };
 }
 
-/** A list's delimiters setting as the side record at `at` in `words` holds it, `undefined` when it holds none. */
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {
 	return sideListSetting(words, at, format, format.sideDelimiter, 'delimiters setting');
 }

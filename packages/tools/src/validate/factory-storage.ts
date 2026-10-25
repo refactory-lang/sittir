@@ -238,18 +238,6 @@ function compareStorageValue(expected: unknown, actual: unknown, path: string, c
 	return null;
 }
 
-/**
- * Deep-compare a factory-built node against the materialized reference
- * node a real parse+read produced. Returns a human-readable diff
- * description for the first divergence found, or `null` when the two are
- * storage-identical (ignoring identity-only metadata — see
- * `IGNORED_NODE_KEYS`).
- *
- * @param expected - Materialized reference node (from the wrapped read tree).
- * @param actual - Factory-built node under test.
- * @param path - Field-path accumulator for error messages (empty at the root).
- * @param ctx - Factory-shape lookup used to decide whether `$text` applies.
- */
 function compareNodeStorage(
 	expected: Record<string, unknown>,
 	actual: Record<string, unknown>,
@@ -328,13 +316,6 @@ export interface FactoryStorageResult {
 
 const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span']);
 
-/**
- * `node` with every node under it built through `build` from its leaves up,
- * so none keeps the identity of the read it came from. A node `build` has no
- * factory for is kept as its data, without the keys that name its source.
- * Each copy carries the sides `sides` gives the read it came from, taken
- * while that read still names its tree.
- */
 function rebuildChildren(
 	node: Record<string, unknown>,
 	build: (node: Record<string, unknown>) => unknown,

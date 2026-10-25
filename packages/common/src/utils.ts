@@ -57,14 +57,6 @@ export function queryOf(handle: EngineHandle, node: object): object {
 	return handle.current.query(node);
 }
 
-/**
- * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
- * node it returns: a built source's stored sides, and the source identity a parsed source's
- * sides are read through. Inner comments can only travel to a node that is still empty: once the
- * rebuild gives the node a child, a comment would sit beside it, so the rebuild refuses. Inner
- * layout (whitespace, depth members, which cross as bare kinds) spelled the inside of an empty
- * node, so a node that gains a child drops it.
- */
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
