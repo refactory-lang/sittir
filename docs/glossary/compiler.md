@@ -8180,3 +8180,107 @@ Canonicalizes a choice. A choice with a blank arm becomes `OPTIONAL` over its ot
 ### `packages/codegen/src/compiler/canonical-rules.ts::canonicalRule`
 
 One node's canonical form at the compile boundary, applied bottom-up by `canonicalRuleTree`. A prec or `RESERVED` wrapper is peeled, its facts carried onto the content (`peelWrapper`; a reserved word set goes to the metadata). `OPTIONAL`, `REPEAT` and `REPEAT1` lose the wrappers that add nothing (an optional repeat is a repeat). A choice with a blank arm becomes `OPTIONAL` over its other arms and a choice of nothing but blanks is blank (`canonicalChoiceRule`), a choice of one member is that member, and a choice of fields all named alike becomes one field over a choice. A sequence drops its blank members (`dsl/rule-patterns.ts::withoutBlankMembers`) and a sequence of one member is that member, so `seq($.x, blank())` canonicalizes as `seq($.x)`, wrapper facts carried. A bare `BLANK` becomes the empty choice the compile phases read as blank. Tokens carry `immediate` explicitly. Everything else is unchanged.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::aliasEnvelopeStorages`
+
+The storage each alias envelope holds, keyed by the envelope.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::AliasStorage`
+
+The storage an alias envelope holds: its name, kind id and literal.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::AliasStorage::kindId`
+
+The kind id the envelope stores its content under.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::AliasStorage::literal`
+
+The literal the envelope stores, when its content is one.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::AliasStorage::name`
+
+The name the envelope stores its content under.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::copyAliasEnvelopeBodies`
+
+Copies the bodies of alias envelopes into the grammar so each envelope has its own.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::linkAliasStorages`
+
+Links each alias envelope to its storage, so the envelope reads and writes through it.
+
+### `packages/codegen/src/compiler/alias-envelopes.ts::withAliasEnvelopeEntries`
+
+Adds the envelope entries for a grammar's aliases.
+
+### `packages/codegen/src/compiler/link.ts::ApplyGroupOverridesArgs`
+
+The arguments that apply a group override.
+
+### `packages/codegen/src/compiler/link.ts::ApplyGroupOverridesResult`
+
+The result of applying a group override.
+
+### `packages/codegen/src/compiler/link.ts::DeriveSynthesizedNameArgs`
+
+The arguments that derive a synthesized rule name.
+
+### `packages/codegen/src/compiler/link.ts::LinkCtx::copyBase`
+
+The base a copy of a rule is taken from.
+
+### `packages/codegen/src/compiler/link.ts::ValidateGroupsArgs`
+
+The arguments that validate the groups of a grammar.
+
+### `packages/codegen/src/compiler/rule-catalog.ts::reownedRuleId`
+
+The id of a rule after it is reowned by another kind.
+
+### `packages/codegen/src/compiler/rule-catalog.ts::RuleCatalogBuildResult`
+
+The result of building the rule catalog.
+
+### `packages/codegen/src/compiler/types.ts::GeneratedMetadata`
+
+The metadata a generated grammar records.
+
+### `packages/codegen/src/compiler/types.ts::GeneratedMetadataCatalog`
+
+The catalog of a generated grammar's metadata.
+
+### `packages/codegen/src/compiler/types.ts::LinkedGrammar::fixedNameLiterals`
+
+The fixed literals a linked grammar's names take.
+
+### `packages/codegen/src/compiler/types.ts::NodeMap`
+
+The node map the compiler assembles from the grammar.
+
+### `packages/codegen/src/compiler/types.ts::NodeMap::fixedNameLiterals`
+
+The fixed literals the node map's names take.
+
+### `packages/codegen/src/compiler/types.ts::NormalizedGrammar::fixedNameLiterals`
+
+The fixed literals a normalized grammar's names take.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar`
+
+The grammar as the compiler first reads it.
+
+### `packages/codegen/src/compiler/types.ts::RawGrammar::fixedNameLiterals`
+
+The fixed literals a raw grammar's names take.
+
+### `packages/codegen/src/compiler/types.ts::RuleCatalogEntry`
+
+One entry of the rule catalog.
+
+### `packages/codegen/src/compiler/types.ts::RuleClassification`
+
+How a rule is classified.
+
+### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::fixedNameLiterals`
+
+The fixed literals a simplified grammar's names take.
