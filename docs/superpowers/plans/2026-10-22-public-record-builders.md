@@ -110,12 +110,17 @@ the last slice.
     coordinate, and the table holds that tree, so the entry's own sides are
     read at render and it reads back as its parsed view. A parsed entry of
     another language is refused by name at the write.
-  - **Open:** a view the arena makes of a record without its builder
-    (`BuiltArena.node` once the builder's object is collected) is complete:
-    the built stamp, `$with` from the record's stored slots, and `$trivia`,
-    with no builder closure. Red first: after collection, `JSON.stringify` of
-    a block rebuilt with a fresh built child throws (`not y;`), and the
-    record's `$with` rebuilds as an object node.
+  - A view the arena makes of a record from the record alone, once its
+    builder's object is collected, is the node its builder made. The arena
+    stamps every built node it adopts. A compound view's `$with` and `$trivia`
+    come from its kind's row, made lazily from the record: the row reads the
+    builder's input back from the record's slots and list settings, so a
+    builder binds no closure. A leaf is made anew from its cell's kind and
+    text by its kind's maker, the one its builder calls. The records module
+    hands the arena both, by kind.
+  - A builder's input shape (its config keys, options and positional list) is
+    the structure row its emitter writes beside the builder. One reader
+    (`builderInputs`) serves the JSON reviver and the rows.
   - `$with` shares unchanged children and copies bounded ones.
   - Disposal, growth and invalid buffers are covered.
 - [x] **Record views for every compound kind.** A kind that seats a group

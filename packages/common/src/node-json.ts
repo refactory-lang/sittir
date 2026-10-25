@@ -1,4 +1,5 @@
-import type { NodeJSON, NodeJSONFacts, NodeJSONValue } from '@sittir/types';
+import type { NodeJSON, NodeJSONFacts, NodeJSONValue, StructureTable } from '@sittir/types';
+import { builderArgs, builderInputs } from './builder-inputs.ts';
 import { nodeText, unitSidesOf, type UnitSidesData } from './node-data.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 import { hydrateTriviaEntry, isNode, writeUnitSides } from './utils.ts';
@@ -89,9 +90,9 @@ function kindName(kindId: number, facts: NodeJSONFacts): string {
 
 type Revived = { readonly $trivia: Readonly<Record<string, (...items: unknown[]) => unknown>> };
 
-/** How the reviver builds: the language's build-by-kind hook, and the engine's settle for each node it builds. */
 export interface ReviveHooks {
 	readonly facts: NodeJSONFacts;
+	readonly structure: StructureTable;
 	build(kind: string, ...input: unknown[]): unknown;
 	settle(node: unknown): unknown;
 }
@@ -138,25 +139,17 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		if (typeof object.$text !== 'string') throw new Error(`${path}: ${name} is a leaf and needs its $text`);
 		node = buildAt(path, hooks, name, [{ text: object.$text }]);
 	} else {
-		const optionNames = new Set(facts.options[kindId] ?? []);
-		const slots: Record<string, unknown> = {};
-		const options: Record<string, unknown> = {};
 		const units: UnitSidesData[] = [];
-		for (const accessor of accessors) {
-			if (!(accessor in object)) continue;
+		const inputs = builderInputs(facts.slots[kindId] ?? [], hooks.structure[kindId], (accessor) => {
+			if (!(accessor in object)) return undefined;
 			const member = object[accessor];
 			const at = `${path}.${accessor}`;
 			const slot = storageKeys.get(accessor)!;
-			const value = Array.isArray(member)
+			return Array.isArray(member)
 				? member.map((item, index) => (item === null ? undefined : reviveItem(item, `${at}[${index}]`, hooks, slot, index, units)))
 				: reviveItem(member, at, hooks, slot, 0, units);
-			if (optionNames.has(accessor)) options[accessor] = value;
-			else slots[accessor] = value;
-		}
-		const hasOptions = Object.keys(options).length > 0;
-		const items = (Object.values(slots)[0] ?? []) as unknown[];
-		const args = facts.spread.has(kindId) ? (hasOptions ? [options, ...items] : items) : hasOptions ? [slots, options] : [slots];
-		node = buildAt(path, hooks, name, args);
+		});
+		node = buildAt(path, hooks, name, builderArgs(inputs));
 		if (units.length > 0) writeUnitSides(node as object, units);
 	}
 	for (const [side, key] of COMMENT_SIDES) {

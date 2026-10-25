@@ -1,0 +1,68 @@
+// Run with `node --expose-gc --import tsx <objects|arena objects|records>`:
+// prints one JSON line reporting a built block's statement once nothing but
+// the block names that statement, so the block's arena makes its views anew
+// from the records. Reports the block's JSON, whether the statement's call is
+// a node, its function leaf, what the call's `$with` builds, and a side
+// written on the call.
+// A child process, because a collection can only be forced under `--expose-gc`.
+import { createEngine } from '../../src/index.ts';
+import { useRecordConstruction } from '../../src/engine-boundary.ts';
+import { builtRefOf } from '../../src/built-ref.ts';
+import { isNode } from '../../src/utils.ts';
+import arena from '../../../rust/src/arena.ts';
+import rust from '../../../rust/src/index.ts';
+
+if (typeof globalThis.gc !== 'function') throw new Error('run with --expose-gc');
+const collect = globalThis.gc;
+
+async function settle(): Promise<void> {
+	for (let round = 0; round < 10; round += 1) {
+		collect();
+		await new Promise((resolve) => setTimeout(resolve, 25));
+	}
+}
+
+type Engine = Awaited<ReturnType<typeof arena.createEngine>>;
+
+async function engineOf(construction: string): Promise<Engine> {
+	if (construction === 'objects') return (await createEngine(rust)) as unknown as Engine;
+	const engine = await arena.createEngine();
+	if (construction === 'records') useRecordConstruction(engine, await import('../../../rust/src/factories/records.ts'));
+	else if (construction !== 'arena objects') throw new Error('name the construction: objects, arena objects or records');
+	return engine;
+}
+
+type Call = { function(): unknown; $with: { function(value: unknown): object }; $trivia: { trailing(...items: unknown[]): unknown } };
+type Statement = { content(): { expression(): Call } };
+type Block = { statements(): readonly Statement[]; $with: { statements(...items: unknown[]): Block } };
+
+const rs = await engineOf(process.argv[2] ?? '');
+const b = rs.build as unknown as Record<string, (...args: unknown[]) => unknown>;
+const statement = (name: string) => b.expressionStatement!(b.callExpression!({ function: b.identifier!(name) }));
+const block = (b.block!({ statements: [statement('x')] }) as Block).$with.statements(statement('y'), ...(b.block!({ statements: [statement('x')] }) as Block).statements());
+const attempt = (f: () => unknown): string => {
+	try {
+		return String(f());
+	} catch (error) {
+		return `throws: ${(error as Error).message.slice(0, 90)}`;
+	}
+};
+const before = attempt(() => JSON.stringify(block));
+await settle();
+const json = attempt(() => JSON.stringify(block)) === before;
+const call = block.statements()[0]!.content().expression();
+const node = isNode(call);
+const leaf = attempt(() => rs.render(call.function() as never).toString());
+let edited: object | undefined;
+const editing = attempt(() => (edited = call.$with.function(b.identifier!('z'))));
+const siding = attempt(() => call.$trivia.trailing(b.blockComment!(b.blockCommentRegular!(' c '))));
+console.log(
+	JSON.stringify({
+		json,
+		node,
+		leaf,
+		edited: edited === undefined ? editing : attempt(() => rs.render(edited as never).toString()),
+		editedBuilt: edited !== undefined && builtRefOf(edited) !== undefined,
+		sided: siding.startsWith('throws') ? siding : attempt(() => rs.render(block as never).toString())
+	})
+);

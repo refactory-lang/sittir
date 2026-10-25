@@ -9,7 +9,8 @@ const arenaOf = (): BuiltArena =>
 	new BuiltArena(
 		{ format: format!, owner: {}, hold: () => undefined, trivia: { triviaSide: () => undefined, writeTriviaSide: () => undefined, unitSides: () => [], writeUnitSides: () => undefined } },
 		() => ({}),
-		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {} } as never
+		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
+		{ rows: {}, leaves: {} }
 	);
 
 describe('a built arena', () => {
@@ -92,7 +93,7 @@ describe('a built arena', () => {
 		expect(cell.form).toBe('builtLeaf');
 		if (cell.form !== 'builtLeaf') return;
 		expect([cell.kind, arena.textOf(cell.offset, cell.len)]).toEqual([4, 'name']);
-		expect(arena.leaf(cell.record)).toBe(leaf);
+		expect(arena.leaf(cell)).toBe(leaf);
 	});
 
 	it('refuses a child no builder of the arena made', () => {

@@ -154,10 +154,6 @@ export interface NodeJSONFacts {
 	readonly units: ReadonlySet<number>;
 	/** The kind id an optional slot holds when it chose none. */
 	readonly blank: number;
-	/** The kinds whose builder takes their one repeated slot's items as its rest arguments, after its options: lists, and compounds with a sole repeated slot. */
-	readonly spread: ReadonlySet<number>;
-	/** Each kind's registered slots, by kind id: the slot names its builder takes in its options argument. */
-	readonly options: Readonly<Record<number, readonly string[]>>;
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {
@@ -254,6 +250,8 @@ export interface StructureRow {
 	readonly config?: readonly string[];
 	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */
 	readonly lists?: readonly (readonly [propertyName: string, holes: boolean, arrival: 'key' | number])[];
+	/** The slots the builder takes in its options argument, not its config or its items. */
+	readonly options?: readonly string[];
 }
 
 /** Each kind's {@link StructureRow} by kind id; a kind with nothing to check has no row. */

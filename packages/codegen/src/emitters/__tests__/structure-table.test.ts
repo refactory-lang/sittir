@@ -39,7 +39,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		});
 	});
 
-	it('rows each scalar slot by its storage, options slots included: a boolean, a kind id of its kinds, one of its texts', () => {
+	it('rows each scalar slot by its storage, options slots included: a boolean, a kind id of its kinds, one of its texts; and names the options slots', () => {
 		const ids = (...kinds: string[]) => kinds.map((k) => node(k).kindId!).sort((a, b) => a - b);
 		expect(compoundStructureRow(node('for_in_clause') as never, nodeMap, kindEntries)).toEqual({
 			kind: 'for_in_clause',
@@ -52,7 +52,8 @@ describe('the structure table: what a built node of each kind must hold', () => 
 			booleans: [['_async', 'ForInClause.async']],
 			kindIds: [['_trailing_comma', 'ForInClause.trailingComma', [BLANK_KIND_ID, ...ids('comma')]]],
 			config: ['async', 'left', 'rights', 'trailingComma'],
-			lists: [['rights', false, 'key']]
+			lists: [['rights', false, 'key']],
+			options: ['trailingComma']
 		});
 		expect(compoundStructureRow(node('complex_pattern') as never, nodeMap, kindEntries)).toMatchObject({
 			booleans: [['_sign', 'ComplexPattern.sign']],
@@ -61,7 +62,8 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		expect(compoundStructureRow(node('integer_hex') as never, nodeMap, kindEntries)).toEqual({
 			kind: 'integer_hex',
 			required: [['_content', 'content']],
-			texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]]
+			texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]],
+			options: ['prefix']
 		});
 	});
 

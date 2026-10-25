@@ -1,5 +1,6 @@
 import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
-import { bindTree, engineOf, sameLanguage, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { stampBuilt } from './source-stamp.ts';
 import { wrapRegistered } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead, isRebuilt } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
@@ -114,12 +115,23 @@ interface SideHold {
 }
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
 
+export type BuiltRow = {
+	readonly $with?: Readonly<Record<string, (...args: never[]) => unknown>>;
+	readonly $trivia: Readonly<Record<string, (...items: unknown[]) => unknown>>;
+};
+
+export interface BuiltViews {
+	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
+	readonly leaves: Readonly<Record<number, (text: string, handle: EngineHandle | undefined) => object>>;
+}
+
 export class BuiltArena {
 	readonly format: CellFormat;
 	readonly owner: object;
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'unitSides' | 'writeUnitSides'>>;
 	readonly #wrap: Wrap;
 	readonly #handle: TreeEngineHandle;
+	readonly #views: BuiltViews;
 	readonly #words: Chunks<Uint32Array>;
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
@@ -130,11 +142,12 @@ export class BuiltArena {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
 
-	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle) {
+	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews) {
 		this.format = format;
 		this.owner = owner;
 		this.#wrap = wrap;
 		this.#handle = handle;
+		this.#views = views;
 		arenasByOwner.set(owner, this);
 		this.tree = {
 			built: this,
@@ -229,7 +242,7 @@ export class BuiltArena {
 		adoptBuilt(node, { arena: this, at, text });
 		this.#nodes.set(at, new WeakRef(node));
 		this.#released.register(node, at);
-		return node;
+		return stampBuilt(node);
 	}
 
 	#view(at: number): object {
@@ -251,6 +264,13 @@ export class BuiltArena {
 	/** The node of the compound record at `at`: its builder's while it is held, else a fresh view of the record. */
 	node(at: number): object {
 		return this.#nodes.get(at)?.deref() ?? this.#view(at);
+	}
+
+	row(node: object): Record<string, unknown> {
+		const kind = (node as { readonly $type: number }).$type;
+		const make = this.#views.rows[kind];
+		if (make === undefined) throw new Error(`a built record of kind ${kind} has no row in its records module`);
+		return make(node, this.#handle);
 	}
 
 	/** Holds the parsed tree `tree`, which a record of this arena names, with its `token`, for as long as the arena lives. */
@@ -277,11 +297,12 @@ export class BuiltArena {
 		return record.at;
 	}
 
-	/** The node of the built leaf whose cell names the record `at`. */
-	leaf(at: number): object {
-		const known = this.#nodes.get(at)?.deref();
-		if (known === undefined) throw new Error(`the built leaf at ${at} was released while a record still names it`);
-		return known;
+	leaf({ kind, offset, len, record }: { readonly kind: number; readonly offset: number; readonly len: number; readonly record: number }): object {
+		const known = this.#nodes.get(record)?.deref();
+		if (known !== undefined) return known;
+		const make = this.#views.leaves[kind];
+		if (make === undefined) throw new Error(`a built leaf of kind ${kind} has no maker in its records module`);
+		return this.#adopt(make(this.textOf(offset, len), this.#handle), record, { at: offset, len });
 	}
 }
 

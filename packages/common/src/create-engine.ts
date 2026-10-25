@@ -26,7 +26,7 @@ import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandl
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
-import { BuiltArena } from './built-arena.ts';
+import { BuiltArena, type BuiltViews } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
@@ -226,6 +226,7 @@ function assembleEngine<API extends LanguageAPI>(
 		current: identity,
 		hydrate: hooks.hydrate,
 		querySlots: hooks.querySlots,
+		structure: hooks.structure,
 		settle: settlerOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
@@ -277,7 +278,7 @@ function assembleEngine<API extends LanguageAPI>(
 		reviver: (key, value) =>
 			key !== ''
 				? value
-				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, build: hooks.buildByKind, settle: handle.settle })),
+				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, structure: hooks.structure, build: hooks.buildByKind, settle: handle.settle })),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
@@ -345,7 +346,9 @@ function assembleEngine<API extends LanguageAPI>(
 	const built = nativeBuiltRecords(native);
 	if (built !== undefined) {
 		recordConstruction.set(frozen, (records) => {
-			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle);
+			const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
+			if (views === undefined) throw new Error('useRecordConstruction: the records module exports no builtViews');
+			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views);
 			handle.records = records;
 		});
 	}

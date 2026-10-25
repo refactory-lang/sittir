@@ -738,7 +738,7 @@ export {
 	rowOf,
 	rowTrivia,
 	rowWith,
-	bindRow,
+	builtInputs,
 	chosenSeparatorOf,
 	slotValuesOf,
 	storedSlotValues,
@@ -746,4 +746,4 @@ export {
 	type RefusedSlot
 } from './record-view.ts';
 
-export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltPlace, type BuiltText } from './built-arena.ts';
+export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltPlace, type BuiltRow, type BuiltText, type BuiltViews } from './built-arena.ts';

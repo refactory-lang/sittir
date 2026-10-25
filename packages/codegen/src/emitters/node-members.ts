@@ -46,8 +46,16 @@ export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
 
-export function builtRowLines(setters: readonly SetterEntry[] | undefined, inner: InnerPositions): string[] {
-	return ['  bindRow(node, {', ...withBlockLines(setters, withEntry), ...triviaBlockLines(false, inner), '  });'];
+export function builtRowLines(name: string, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, inner: InnerPositions): string[] {
+	return [
+		`function ${name}(node: object, handle: EngineHandle | undefined): BuiltRow {`,
+		...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
+		'  return {',
+		...withBlockLines(setters, withEntry),
+		...triviaBlockLines(false, inner),
+		'  };',
+		'}'
+	];
 }
 
 function withBlockLines(setters: readonly SetterEntry[] | undefined, entry: (setter: SetterEntry) => string): string[] {

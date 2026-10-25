@@ -11,7 +11,6 @@ import {
 	rebuilt,
 	renderText,
 	nodeJSON,
-	stampBuilt,
 	triviaSide,
 	triviaInner,
 	describeValue,
@@ -20,12 +19,13 @@ import {
 	listStorage,
 	strictBooleanStorage,
 	unaffixed,
-	bindRow,
 	builtArenaOf,
+	builtInputs,
 	storeCell,
 	storeFlag,
 	storeList
 } from '@sittir/common/utils';
+import type { BuiltRow, BuiltViews, EngineHandle } from '@sittir/common/utils';
 
 import {
 	_leafRe_buildIdentifier,
@@ -47,7 +47,11 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	const record = arena.record(TSKindId.Program as const, 4);
 	storeList(arena, record.data, record.base + 2, _definitions, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.Program.Bound;
+}
+
+function rowProgram(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			definitions: (...vs: Admit<T.Definition>[]) =>
 				rebuilt(node, handle, () => buildProgram(...restItems('definitions', vs)))
@@ -57,8 +61,7 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.Program.Bound;
+	};
 }
 
 export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
@@ -82,7 +85,11 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	const record = arena.record(TSKindId.EscapeSequence as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.EscapeSequence.Bound;
+}
+
+function rowEscapeSequence(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value))
 		},
@@ -90,8 +97,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.EscapeSequence.Bound;
+	};
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
@@ -100,6 +106,15 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
+	return builtArenaOf(handle).adoptLeaf(
+		leafIdentifier(text, handle),
+		TSKindId.Identifier as const,
+		2,
+		text
+	) as unknown as T.Identifier.Bound;
+}
+
+function leafIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
 		$type: TSKindId.Identifier as const,
 		$named: true as const,
@@ -113,8 +128,7 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 		},
 		$engine: handle && (() => handle.current)
 	};
-	builtArenaOf(handle).adoptLeaf(node, TSKindId.Identifier as const, 2, text);
-	return stampBuilt(node) as unknown as T.Identifier.Bound;
+	return node;
 }
 
 export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bound {
@@ -123,6 +137,15 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 	if (!_leafRe_buildImmediateIdentifier.test(text))
 		throw new Error(`_immediate_identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
+	return builtArenaOf(handle).adoptLeaf(
+		leafImmediateIdentifier(text, handle),
+		TSKindId.ImmediateIdentifier as const,
+		2,
+		text
+	) as unknown as T.ImmediateIdentifier.Bound;
+}
+
+function leafImmediateIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
 		$type: TSKindId.ImmediateIdentifier as const,
 		$named: true as const,
@@ -136,8 +159,7 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 		},
 		$engine: handle && (() => handle.current)
 	};
-	builtArenaOf(handle).adoptLeaf(node, TSKindId.ImmediateIdentifier as const, 2, text);
-	return stampBuilt(node) as unknown as T.ImmediateIdentifier.Bound;
+	return node;
 }
 
 export function buildCapture<V extends Admit<T.ImmediateIdentifier>>(value: V & RefuseUndeclared<V>): T.Capture.Bound;
@@ -150,7 +172,11 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 	const record = arena.record(TSKindId.Capture as const, 7);
 	storeCell(arena, record.data, record.base + 2, _name);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.Capture.Bound;
+}
+
+function rowCapture(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			name: (value: Admit<T.ImmediateIdentifier>) => rebuilt(node, handle, () => buildCapture(value))
 		},
@@ -158,8 +184,7 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.Capture.Bound;
+	};
 }
 
 export function buildString<V extends Admit<T.StringContent>>(
@@ -190,7 +215,11 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	const record = arena.record(TSKindId.String as const, 8);
 	storeCell(arena, record.data, record.base + 2, _string_content);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.String.Bound;
+}
+
+function rowString(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			stringContent: (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value))
 		},
@@ -198,8 +227,7 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.String.Bound;
+	};
 }
 
 export function buildImmediateString<V extends Admit<T.StringContent>>(
@@ -232,7 +260,11 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	const record = arena.record(TSKindId.ImmediateString as const, 8);
 	storeCell(arena, record.data, record.base + 2, _string_content);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.ImmediateString.Bound;
+}
+
+function rowImmediateString(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			stringContent: (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildImmediateString(value))
 		},
@@ -240,8 +272,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.ImmediateString.Bound;
+	};
 }
 
 export function buildStringContent<A extends NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>>(
@@ -259,7 +290,11 @@ export function buildStringContent(
 	const record = arena.record(TSKindId.StringContent as const, 4);
 	storeList(arena, record.data, record.base + 2, _content, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.StringContent.Bound;
+}
+
+function rowStringContent(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			contents: (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
 				rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
@@ -268,8 +303,7 @@ export function buildStringContent(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.StringContent.Bound;
+	};
 }
 
 export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>>(
@@ -287,7 +321,11 @@ export function buildParameters(
 	const record = arena.record(TSKindId.Parameters as const, 4);
 	storeList(arena, record.data, record.base + 2, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.Parameters.Bound;
+}
+
+function rowParameters(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			elements: (...vs: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>) =>
 				rebuilt(node, handle, () => buildParameters(...restItems('elements', vs)))
@@ -296,8 +334,7 @@ export function buildParameters(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.Parameters.Bound;
+	};
 }
 
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
@@ -320,7 +357,11 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	const record = arena.record(TSKindId.Comment as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.Comment.Bound;
+}
+
+function rowComment(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
 		},
@@ -328,8 +369,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.Comment.Bound;
+	};
 }
 
 export function buildList<
@@ -348,7 +388,13 @@ export function buildList(config: T.List.Config): T.List.Bound {
 	storeList(arena, record.data, record.base + 2, _definitions, 5);
 	storeList(arena, record.data, record.base + 4, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.List.Bound;
+}
+
+function rowList(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.List.Config;
+	return {
 		$with: {
 			definitions: (...values: Admit<NonEmptyArray<T.Definition>>) =>
 				rebuilt(node, handle, () => buildList({ ...config, definitions: restItems('definitions', values) })),
@@ -359,8 +405,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.List.Bound;
+	};
 }
 
 export function buildGrouping<
@@ -381,7 +426,13 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	storeList(arena, record.data, record.base + 2, _grouping_group, 5);
 	storeList(arena, record.data, record.base + 4, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.Grouping.Bound;
+}
+
+function rowGrouping(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.Grouping.Config;
+	return {
 		$with: {
 			groupingGroups: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
@@ -399,8 +450,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.Grouping.Bound;
+	};
 }
 
 export function buildMissingNode(): T.EmptyMissingNode;
@@ -422,7 +472,13 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeList(arena, record.data, record.base + 12, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.MissingNode.Bound;
+}
+
+function rowMissingNode(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.MissingNode.Config;
+	return {
 		$with: {
 			name: (value?: Admit<T.Identifier | T.String>) =>
 				rebuilt(node, handle, () => buildMissingNode({ ...config, name: value })),
@@ -434,8 +490,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
 			inner: (...items: unknown[]) => triviaInner(node, handle, items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.MissingNode.Bound;
+	};
 }
 
 export function buildAnonymousNode<
@@ -454,7 +509,13 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeList(arena, record.data, record.base + 12, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.AnonymousNode.Bound;
+}
+
+function rowAnonymousNode(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.AnonymousNode.Config;
+	return {
 		$with: {
 			name: (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
 				rebuilt(node, handle, () => buildAnonymousNode({ ...config, name: value })),
@@ -465,8 +526,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.AnonymousNode.Bound;
+	};
 }
 
 export function buildFieldDefinition<
@@ -487,7 +547,13 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _definition);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.FieldDefinition.Bound;
+}
+
+function rowFieldDefinition(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.FieldDefinition.Config;
+	return {
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildFieldDefinition({ ...config, name: value })),
@@ -498,8 +564,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.FieldDefinition.Bound;
+	};
 }
 
 export function buildNegatedField<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.NegatedField.Bound;
@@ -512,7 +577,11 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 	const record = arena.record(TSKindId.NegatedField as const, 7);
 	storeCell(arena, record.data, record.base + 2, _identifier);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.NegatedField.Bound;
+}
+
+function rowNegatedField(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			identifier: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNegatedField(value))
 		},
@@ -520,8 +589,7 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.NegatedField.Bound;
+	};
 }
 
 export function buildPredicate<
@@ -545,7 +613,13 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	storeCell(arena, record.data, record.base + 12, _type);
 	storeCell(arena, record.data, record.base + 17, _parameters);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.Predicate.Bound;
+}
+
+function rowPredicate(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.Predicate.Config;
+	return {
 		$with: {
 			prefix: (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
 				rebuilt(node, handle, () => buildPredicate({ ...config, prefix: value })),
@@ -560,8 +634,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.Predicate.Bound;
+	};
 }
 
 export function buildListElementQuantifier<V extends Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>(
@@ -578,7 +651,11 @@ export function buildListElementQuantifier(
 	const record = arena.record(TSKindId.ListElementQuantifier as const, 7);
 	storeCell(arena, record.data, record.base + 2, _quantifier);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.ListElementQuantifier.Bound;
+}
+
+function rowListElementQuantifier(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
 		$with: {
 			quantifier: (value: Admit<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>) =>
 				rebuilt(node, handle, () => buildListElementQuantifier(value))
@@ -587,8 +664,7 @@ export function buildListElementQuantifier(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.ListElementQuantifier.Bound;
+	};
 }
 
 export function buildGroupExpressionArm<
@@ -609,7 +685,13 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _right);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.GroupExpressionArm.Bound;
+}
+
+function rowGroupExpressionArm(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.GroupExpressionArm.Config;
+	return {
 		$with: {
 			left: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
 				rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, left: value })),
@@ -620,8 +702,7 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.GroupExpressionArm.Bound;
+	};
 }
 
 export function buildNamedNodeExpressionArm<
@@ -642,7 +723,13 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _right);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.NamedNodeExpressionArm.Bound;
+}
+
+function rowNamedNodeExpressionArm(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.NamedNodeExpressionArm.Config;
+	return {
 		$with: {
 			left: (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
 				rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, left: value })),
@@ -653,8 +740,7 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.NamedNodeExpressionArm.Bound;
+	};
 }
 
 export function buildGroupingGroup<GroupExpressionSlot extends T.GroupingGroup.Config['groupExpression']>(
@@ -673,7 +759,13 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 	storeCell(arena, record.data, record.base + 3, _group_expression);
 	if (_anchor) storeFlag(record.data, record.base + 2, 1);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.GroupingGroup.Bound;
+}
+
+function rowGroupingGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.GroupingGroup.Config;
+	return {
 		$with: {
 			groupExpression: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
 				rebuilt(node, handle, () => buildGroupingGroup({ ...config, groupExpression: value })),
@@ -684,8 +776,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.GroupingGroup.Bound;
+	};
 }
 
 export function buildStringContentText(text: string): T.StringContentText.Bound {
@@ -694,6 +785,15 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 	if (!_leafRe_buildStringContentText.test(text))
 		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
+	return builtArenaOf(handle).adoptLeaf(
+		leafStringContentText(text, handle),
+		TSKindId.StringContentText as const,
+		2,
+		text
+	) as unknown as T.StringContentText.Bound;
+}
+
+function leafStringContentText(text: string, handle: EngineHandle | undefined): object {
 	const node = {
 		$type: TSKindId.StringContentText as const,
 		$named: true as const,
@@ -707,8 +807,7 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 		},
 		$engine: handle && (() => handle.current)
 	};
-	builtArenaOf(handle).adoptLeaf(node, TSKindId.StringContentText as const, 2, text);
-	return stampBuilt(node) as unknown as T.StringContentText.Bound;
+	return node;
 }
 
 export const buildAnchor: TSKindId.Anchor = TSKindId.Anchor;
@@ -738,7 +837,13 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 	storeCell(arena, record.data, record.base + 7, _named_node_group);
 	storeList(arena, record.data, record.base + 12, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.NamedNodePlain.Bound;
+}
+
+function rowNamedNodePlain(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.NamedNodePlain.Config;
+	return {
 		$with: {
 			name: (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
 				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, name: value })),
@@ -751,8 +856,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.NamedNodePlain.Bound;
+	};
 }
 
 export function buildNamedNodeSupertyped<
@@ -788,7 +892,13 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	storeCell(arena, record.data, record.base + 17, _named_node_group);
 	storeList(arena, record.data, record.base + 22, _elements, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.NamedNodeSupertyped.Bound;
+}
+
+function rowNamedNodeSupertyped(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.NamedNodeSupertyped.Config;
+	return {
 		$with: {
 			supertype: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, supertype: value })),
@@ -803,8 +913,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.NamedNodeSupertyped.Bound;
+	};
 }
 
 export function buildNamedNodeGroupChildren<
@@ -830,7 +939,13 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 	if (_anchor) storeFlag(record.data, record.base + 2, 1);
 	storeList(arena, record.data, record.base + 3, _named_node_expressions, 5);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.NamedNodeGroupChildren.Bound;
+}
+
+function rowNamedNodeGroupChildren(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.NamedNodeGroupChildren.Config;
+	return {
 		$with: {
 			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupChildren({ ...config, anchor: value })),
@@ -851,8 +966,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.NamedNodeGroupChildren.Bound;
+	};
 }
 
 export function buildNamedNodeGroupAnchoredLast<
@@ -887,7 +1001,13 @@ export function buildNamedNodeGroupAnchoredLast(
 	storeList(arena, record.data, record.base + 3, _named_node_expressions, 5);
 	storeCell(arena, record.data, record.base + 5, _last);
 	const node = arena.view(record);
-	bindRow(node, {
+	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+}
+
+function rowNamedNodeGroupAnchoredLast(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.NamedNodeGroupAnchoredLast.Config;
+	return {
 		$with: {
 			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
 				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, anchor: value })),
@@ -910,8 +1030,7 @@ export function buildNamedNodeGroupAnchoredLast(
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
-	});
-	return stampBuilt(node) as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+	};
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -1006,3 +1125,32 @@ export const _factoryMap = {
 	_dedent: buildDedent
 } as const;
 export type _FactoryMap = typeof _factoryMap;
+
+export const builtViews: BuiltViews = Object.freeze({
+	rows: Object.freeze({
+		1: rowEscapeSequence,
+		11: rowComment,
+		33: rowProgram,
+		39: rowCapture,
+		40: rowString,
+		41: rowImmediateString,
+		42: rowStringContent,
+		43: rowParameters,
+		44: rowList,
+		45: rowGrouping,
+		46: rowMissingNode,
+		47: rowAnonymousNode,
+		50: rowFieldDefinition,
+		51: rowNegatedField,
+		52: rowPredicate,
+		54: rowListElementQuantifier,
+		56: rowGroupExpressionArm,
+		57: rowNamedNodeExpressionArm,
+		58: rowGroupingGroup,
+		61: rowNamedNodePlain,
+		62: rowNamedNodeSupertyped,
+		63: rowNamedNodeGroupChildren,
+		64: rowNamedNodeGroupAnchoredLast
+	}),
+	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 23: leafStringContentText })
+});
