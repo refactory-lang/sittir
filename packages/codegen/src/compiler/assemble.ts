@@ -351,6 +351,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		reserved: normalized.reserved,
 		relaxedLiterals: normalized.relaxedLiterals,
 		relaxedDisplayLiterals: normalized.relaxedDisplayLiterals,
+		fixedNameLiterals: normalized.fixedNameLiterals,
 		fileTypes: normalized.fileTypes,
 		provenance: normalized.provenance,
 		externals: normalized.externals,

@@ -304,6 +304,7 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		reserved: raw.reserved,
 		relaxedLiterals: raw.relaxedLiterals,
 		relaxedDisplayLiterals: raw.relaxedDisplayLiterals,
+		fixedNameLiterals: raw.fixedNameLiterals,
 		fileTypes: raw.fileTypes,
 		provenance: { renamedFrom: raw.renamedFrom, splitFrom: raw.splitFrom, variantOf: ownedVariants(variantChildren, references, linkCtx.copyBase) },
 		references,
@@ -905,6 +906,7 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	const wordMatcher = compileWordMatcher(raw.word, raw.rules);
 	const relaxedLiterals = new Set<string>();
 	const relaxedDisplayLiterals = new Map<string, Set<string>>();
+	const fixedNameLiterals = new Map<string, Set<string>>();
 	const wordDisplays = wordDisplaysOf(raw.rules, { word: raw.word ?? undefined });
 	const fixedNames = fixedNamesOf(raw.rules);
 	const relaxedWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> | undefined => {
@@ -913,9 +915,12 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		if (!stands) return undefined;
 		const literal = rule.content.value;
 		if (!matchesWordShape(literal, wordMatcher) || findEntryForLiteralText(ctx.kindEntries, literal) === undefined) return undefined;
+		if (fixedNames.has(rule)) {
+			fixedNameLiterals.set(rule.value, (fixedNameLiterals.get(rule.value) ?? new Set<string>()).add(literal));
+			return undefined;
+		}
 		if (rule.value === raw.word) relaxedLiterals.add(literal);
 		else relaxedDisplayLiterals.set(rule.value, (relaxedDisplayLiterals.get(rule.value) ?? new Set<string>()).add(literal));
-		if (fixedNames.has(rule)) return undefined;
 		const word = { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
 		return rule.value === raw.word ? word : { ...rule, content: word };
 	};
@@ -969,7 +974,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		};
 	}
 	const displayLiterals = Object.fromEntries([...relaxedDisplayLiterals].map(([display, literals]) => [display, [...literals]]));
-	if ((relaxedLiterals.size === 0 && relaxedDisplayLiterals.size === 0) || raw.word === null) return { ...raw, rules };
+	const fixed = fixedNameLiterals.size === 0 ? {} : { fixedNameLiterals: Object.fromEntries([...fixedNameLiterals].map(([display, literals]) => [display, [...literals]])) };
+	if ((relaxedLiterals.size === 0 && relaxedDisplayLiterals.size === 0) || raw.word === null) return { ...raw, ...fixed, rules };
 	const isWordOnly = (name: string): boolean => {
 		const body = rules[name];
 		return (
@@ -991,7 +997,8 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 		rules: kept,
 		inline: raw.inline.filter((name) => !dissolved.has(name)),
 		relaxedLiterals: [...relaxedLiterals],
-		relaxedDisplayLiterals: displayLiterals
+		relaxedDisplayLiterals: displayLiterals,
+		...fixed
 	};
 }
 
