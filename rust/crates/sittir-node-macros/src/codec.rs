@@ -247,6 +247,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         quote!(#ident::#name(unsafe { <#ty as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? }))
     };
     let (mut by_index, mut by_decodes, mut encodes) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut indices, mut claimed) = (Vec::new(), Vec::new());
     let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
     for variant in variants {
         let name = variant.name;
@@ -257,10 +258,12 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         };
         if let Some(i) = variant.index {
             by_index.push(quote!(::core::option::Option::Some(#i) => return ::core::result::Result::Ok(#value),));
+            indices.push(i);
         }
         if !variant.decodes.is_empty() {
             let ids = &variant.decodes;
             by_decodes.push(quote!(if [#(#ids),*].contains(&id) { return ::core::result::Result::Ok(#value); }));
+            claimed.extend(ids.iter());
         }
         if variant.blank {
             blank = quote!(if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(#ident::#name); });
@@ -299,7 +302,24 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     };
     let missing = format!("$type property missing in {owner}");
     let boxed = boxed(ident);
+    let mut decodes = Vec::new();
+    if !indices.is_empty() {
+        decodes.push(quote!(::core::matches!(__variant(id, id), ::core::option::Option::Some(#(#indices)|*))));
+    }
+    if !claimed.is_empty() {
+        decodes.push(quote!([#(#claimed),*].contains(&id)));
+    }
+    if variants.iter().any(|variant| variant.blank) {
+        decodes.push(quote!(id == ::sittir_core::types::KindId::BLANK));
+    }
+    let decodes = if decodes.is_empty() { quote!(false) } else { quote!(#(#decodes)||*) };
     Ok(gated(&quote! {
+        impl ::sittir_core::boundary::DecodesKind for #ident {
+            const OWNER: &'static str = #owner;
+            fn decodes(id: __Kind) -> bool {
+                #decodes
+            }
+        }
         unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: __Kind) -> #napi::Result<#ident> {
             match __variant(id, id) {
                 #(#by_index)*
@@ -307,7 +327,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             }
             #(#by_decodes)*
             #blank
-            ::core::result::Result::Err(#napi::Error::from_reason(::std::format!("unknown kind id {id} in {}", #owner)))
+            ::core::result::Result::Err(#napi::Error::from_reason(::sittir_core::boundary::unknown_kind(id, #owner)))
         }
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
@@ -472,7 +492,8 @@ mod tests {
         assert!(has(&out, "match __variant(id, id) { ::core::option::Option::Some(0u16) => return"));
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id)"));
         assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(PropertyNodeSlot::Blank); }"));
-        assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyNodeSlot")"#));
+        assert!(has(&out, r#"::sittir_core::boundary::unknown_kind(id, "PropertyNodeSlot")"#));
+        assert!(has(&out, "::core::matches!(__variant(id, id), ::core::option::Option::Some(0u16 | 1u16)) || [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id) || id == ::sittir_core::types::KindId::BLANK"));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }
 

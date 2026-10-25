@@ -23,6 +23,7 @@ import {
 	refuseReadStub,
 	hydrateStored,
 	elementsWith,
+	seatWith,
 	rebuilt,
 	renderText,
 	nodeJSON,
@@ -3120,9 +3121,40 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 	const _start = kindIdStorage<NonNullable<T.Slice['_start']>>(config.start);
 	const _stop = kindIdStorage<NonNullable<T.Slice['_stop']>>(config.stop);
 	const _step = config.step;
+	const readGroup_step = () => _step;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'slice', { start: _start, stop: _stop, step: _step });
-	throw new Error('slice has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Slice as const, { _start, _stop, _step });
+	const record = arena.record(TSKindId.Slice as const, 21);
+	storeCell(arena, record.data, record.base + 2, _start);
+	storeCell(arena, record.data, record.base + 7, _stop);
+	storeCell(arena, record.data, record.base + 12, _step);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			start: (value?: Admit<NonNullable<T.Slice.Config>['start']>) =>
+				rebuilt(node, handle, () => buildSlice({ ...config, start: value })),
+			stop: (value?: Admit<NonNullable<T.Slice.Config>['stop']>) =>
+				rebuilt(node, handle, () => buildSlice({ ...config, stop: value })),
+			step: (value?: Admit<T.SliceGroup>) => rebuilt(node, handle, () => buildSlice({ ...config, step: value })),
+			expression: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{ slot: 'step', stored: '_step', make: buildSliceGroup, keys: [{ name: 'expression', rest: false }] },
+						'expression',
+						args,
+						(value?: Admit<T.SliceGroup>) => buildSlice({ ...config, step: value }),
+						() => readGroup_step.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.Slice.Bound;
 }
 
 export const buildEllipsis: TSKindId.Ellipsis = TSKindId.Ellipsis;

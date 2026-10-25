@@ -1,10 +1,12 @@
+import type { QuerySlots } from '@sittir/types';
 import { bindTree, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead } from './node-data.ts';
 import { decodeIndex, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
-import type { RecordReader, TreeHandle } from './read.ts';
+import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
+import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
 import { RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
@@ -21,36 +23,46 @@ export interface BuiltPlace {
 	readonly words: number;
 }
 
-/** What a built node names: its arena and its record, and for a leaf the text its cells hold. */
-interface BuiltRef {
-	readonly arena: BuiltArena;
-	readonly at: number;
-	readonly text: BuiltText | undefined;
+type Wrap = (data: object, tree: TreeHandle) => unknown;
+
+export interface BuiltChunks {
+	readonly words: readonly Uint32Array[];
+	readonly bytes: readonly Uint8Array[];
 }
 
-type Wrap = (data: object, tree: TreeHandle) => unknown;
+export interface BuiltRecords {
+	readonly format: CellFormat;
+	readonly owner: object;
+	hold(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
+	readonly trivia: {
+		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
+		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	};
+}
 
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 12;
 const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0, at: 0, words: 0 });
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
-const builtRefs = new WeakMap<object, BuiltRef>();
 
 class Chunks<A extends Uint32Array | Uint8Array> {
 	readonly #make: (length: number) => A;
+	readonly #pushed: () => void;
 	readonly #first: number;
 	readonly #limit: number;
 	readonly #most: number;
 	readonly chunks: A[] = [];
-	readonly used: number[] = [];
+	readonly used: Uint32Array;
 	#open = -1;
 
-	constructor(make: (length: number) => A, first: number, format: CellFormat) {
+	constructor(make: (length: number) => A, first: number, format: CellFormat, pushed: () => void) {
 		this.#make = make;
+		this.#pushed = pushed;
 		this.#limit = 2 ** format.chunkShift;
 		this.#most = 2 ** (32 - format.chunkShift);
 		this.#first = Math.min(first, this.#limit);
+		this.used = new Uint32Array(this.#most);
 	}
 
 	/** `size` units in one chunk: the open shared chunk while it has room, else a new one twice its size up to the address limit, or a chunk of their own when larger than that. */
@@ -76,7 +88,7 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 		const chunk = this.chunks.length;
 		if (chunk >= this.#most) throw new Error('a built arena holds as many chunks as an address can name');
 		this.chunks.push(this.#make(length));
-		this.used.push(0);
+		this.#pushed();
 		return chunk;
 	}
 
@@ -85,24 +97,16 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 		this.used[chunk] = used;
 	}
 
-	/** Whether `length` units from `unit` of `chunk` are written. */
 	holds(chunk: number, unit: number, length: number): boolean {
-		const used = this.used[chunk];
-		return used !== undefined && unit + length <= used;
+		return chunk < this.chunks.length && unit + length <= this.used[chunk]!;
 	}
 }
 
-/**
- * The records an engine's builders write, and the nodes that view them. The records are chunks of words and of
- * UTF-8 bytes that JavaScript owns and native code borrows for one call at a time. The arena only appends: a
- * record, once written, never changes. Address 0 names no record, so the first chunk's first word is never
- * allocated. A record's node is the one its builder returned, kept while anything holds it; a read of a cell
- * naming a record whose node was released views the record afresh.
- */
 export class BuiltArena {
 	readonly format: CellFormat;
-	/** The tree a built record's view reads through: its records are this arena's. */
-	readonly tree: TreeHandle;
+	readonly owner: object;
+	readonly slots: QuerySlots;
+	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly #wrap: Wrap;
 	readonly #words: Chunks<Uint32Array>;
 	readonly #bytes: Chunks<Uint8Array>;
@@ -114,13 +118,23 @@ export class BuiltArena {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
 
-	constructor(format: CellFormat, wrap: Wrap, handle: TreeEngineHandle) {
+	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, slots: QuerySlots, handle: TreeEngineHandle) {
 		this.format = format;
+		this.owner = owner;
+		this.slots = slots;
 		this.#wrap = wrap;
-		this.tree = { built: this };
+		this.tree = {
+			built: this,
+			triviaSide: (at, side) => {
+				const entries = trivia.triviaSide(at, side);
+				return entries === undefined ? undefined : builtEntries(this, entries);
+			},
+			writeTriviaSide: (at, side, entries) => trivia.writeTriviaSide(at, side, entries)
+		};
 		bindTree(this.tree, handle);
-		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format);
-		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format);
+		const pushed = () => hold(this.#words.chunks, this.#bytes.chunks, this.#words.used, this.#bytes.used);
+		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format, pushed);
+		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format, pushed);
 		this.#words.alloc(1);
 	}
 
@@ -186,15 +200,14 @@ export class BuiltArena {
 		return this.#words.chunks[chunk]!;
 	}
 
-	/** Every chunk of words and of bytes, each cut to what is written, for one native call to borrow. */
-	chunks(): { readonly words: readonly Uint32Array[]; readonly bytes: readonly Uint8Array[] } {
+	chunks(): BuiltChunks {
 		const cut = <A extends Uint32Array | Uint8Array>(table: Chunks<A>): A[] =>
 			table.chunks.map((chunk, n) => chunk.subarray(0, table.used[n]) as A);
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
 	}
 
 	#adopt<T extends object>(node: T, at: number, text: BuiltText | undefined): T {
-		builtRefs.set(node, { arena: this, at, text });
+		adoptBuilt(node, { arena: this, at, text });
 		this.#nodes.set(at, new WeakRef(node));
 		this.#released.register(node, at);
 		return node;
@@ -253,14 +266,38 @@ export class BuiltArena {
 	}
 }
 
-/** Whether `value` is the node of a built record, which its builder checked as it wrote it. */
-export function isBuiltNode(value: object): boolean {
-	return builtRefs.has(value);
+export interface BuiltEntry {
+	readonly $type: number;
+	readonly $record: number;
 }
 
-/** The address of the record `value` is the node of in `arena`, `undefined` for any other value. */
+export function isBuiltEntry(entry: unknown): entry is BuiltEntry {
+	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<BuiltEntry>).$record === 'number';
+}
+
+export function builtEntries(arena: BuiltArena | undefined, entries: readonly unknown[]): unknown[] {
+	if (!entries.some(isBuiltEntry)) return entries as unknown[];
+	if (arena === undefined) throw new Error('a side names a built record, and its engine builds no records');
+	return entries.map((entry) => (isBuiltEntry(entry) ? arena.node(entry.$record) : entry));
+}
+
+export function builtEntryOf(entry: object, arena: BuiltArena | undefined): BuiltEntry | undefined {
+	const built = builtRefOf(entry);
+	if (built === undefined || built.text !== undefined) return undefined;
+	if (built.arena !== arena) throw new Error('a built record is a side entry only of a node of the engine that built it');
+	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
+}
+
+export function isBuiltNode(value: object): boolean {
+	return builtRefOf(value) !== undefined;
+}
+
+export function builtArenaOf(value: object): BuiltArena | undefined {
+	return builtRefOf(value)?.arena;
+}
+
 export function builtRecordOf(value: object, arena: BuiltArena): number | undefined {
-	const ref = builtRefs.get(value);
+	const ref = builtRefOf(value);
 	return ref?.arena === arena ? ref.at : undefined;
 }
 
@@ -321,17 +358,11 @@ export function encodeCell(words: Uint32Array | number[], at: number, format: Ce
 	}
 }
 
-/**
- * Writes the cell of a slot holding `value` into a fresh record at `at`: nothing for no value, a unit for a kind id,
- * a captured string for text, else a built leaf or a child naming the record of a node built in `arena`.
- *
- * @throws For a node no builder of `arena` made.
- */
 export function storeCell(arena: BuiltArena, data: Uint32Array, at: number, value: unknown): void {
 	if (value === undefined || value === null) return;
 	if (typeof value === 'number') return writeUnit(data, at, arena.format, value, 0);
 	if (typeof value === 'string') return writeBuiltText(data, at, arena.format, arena.text(value));
-	const ref = typeof value === 'object' ? builtRefs.get(value) : undefined;
+	const ref = builtRefOf(value);
 	if (ref === undefined && typeof value === 'object') return storeParsed(arena, data, at, value);
 	if (ref === undefined || ref.arena !== arena) throw new Error(`a built record holds only nodes its own engine built, not ${foreignValue(value, ref)}`);
 	const kind = (value as { readonly $type: number }).$type;

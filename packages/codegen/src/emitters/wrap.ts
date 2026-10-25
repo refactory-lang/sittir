@@ -143,7 +143,7 @@ export namespace wrap {
 
 	export function view(output: string[], node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): boolean {
 		if (!node.rawFactoryName) return false;
-		const storage = recordStorageOf(node, nodeMap, kindEntries);
+		const storage = recordStorageOf(node, nodeMap);
 		if (storage === undefined) return false;
 		const source = node instanceof AssembledList ? emitSeparatedListWrap(node, kindEntries, nodeMap, storage) : emitFieldCarryingWrap(node, kindEntries, nodeMap, storage);
 		if (source === undefined) return false;
@@ -158,8 +158,8 @@ type WrapStorage =
 
 const OBJECT: WrapStorage = { mode: 'object' };
 
-function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): WrapStorage | undefined {
-	const places = recordPlacesOf(node, nodeMap, kindEntries);
+function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap): WrapStorage | undefined {
+	const places = recordPlacesOf(node, nodeMap);
 	return places === undefined ? undefined : { mode: 'record', places };
 }
 
@@ -313,11 +313,18 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 						'view'
 					)
 			: undefined;
-	const groups = groupSeatParts(
-		plan,
-		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
-		(stored) => dataAccessExpr('data', stored)
-	);
+	const groups =
+		storage.mode === 'object'
+			? groupSeatParts(
+					plan,
+					({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
+					(stored) => dataAccessExpr('data', stored)
+				)
+			: groupSeatParts(
+					plan,
+					({ stored, group }) => `() => viewSlot<T.${group} | undefined>(node, tree, ${cellArgs(placeOf(storage, stored))})`,
+					(stored) => `recordSlot(data, tree, ${cellArgs(placeOf(storage, stored))})`
+				);
 	return [
 		wrapHeader(node, storage, parsedType),
 		'  const handle = currentHandle();',

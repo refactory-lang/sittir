@@ -1,14 +1,18 @@
-import type { ByteSpan, NodeCoordinate } from '@sittir/types';
+import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
+import { builtRefOf } from './built-ref.ts';
+import { treeOf } from './tree-token.ts';
 import {
 	decodeCell,
 	decodeListCell,
 	decodeSideDelimiter,
 	decodeSideRow,
+	decodeSideSeparatorKind,
+	sideListSettingOffset,
 	wordOf,
 	type RecordCell
 } from './record-cell.ts';
-import { aliasContentOf, carryReadTree, coordinateOf } from './node-data.ts';
+import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './node-data.ts';
 
 /** The own key of a record stub and of the view made from it: the record's address. */
 export const RECORD = Symbol.for('sittir.record');
@@ -52,15 +56,13 @@ function wordsAt(
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
-/** The words of the side record at `side`, long enough for every field before a list's delimiters setting and the setting itself. */
 function sideWordsAt(records: RecordWords, side: number): { readonly words: Uint32Array; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;
-	const length = records.format.sideBeforeDelimiter.reduce(
-		(sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words),
-		1
-	);
-	return wordsAt(records, side, (mask & records.format.sideDelimiter) === 0 ? length : length + 1);
+	const { format } = records;
+	const held = [format.sideDelimiter, format.sideSeparatorKind].filter((bit) => (mask & bit) !== 0);
+	const length = held.reduce((most, bit) => Math.max(most, sideListSettingOffset(mask, format, bit) + 1), sideListSettingOffset(mask, format, format.sideDelimiter));
+	return wordsAt(records, side, length);
 }
 
 /** The address of the side record of the record at `at`, 0 for none. */
@@ -92,15 +94,22 @@ export function recordStub(tree: TreeHandle, at: number): RecordStub {
 	return { $type: kind, [RECORD]: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) } };
 }
 
-/** The delimiters setting of the list the record `holder` views, as its side record holds it; `undefined` when it holds none. */
 export function recordDelimiter(holder: object, tree: TreeHandle): number | undefined {
+	return recordListSetting(holder, tree, decodeSideDelimiter);
+}
+
+export function recordSeparator(holder: object, tree: TreeHandle): number | undefined {
+	return recordListSetting(holder, tree, decodeSideSeparatorKind);
+}
+
+function recordListSetting(holder: object, tree: TreeHandle, decode: (words: Uint32Array, at: number, format: RecordWords['format']) => number | undefined): number | undefined {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record option read needs a record view');
 	const records = recordsOf(tree);
 	const side = sideOf(records, at);
 	if (side === 0) return undefined;
 	const { words, start } = sideWordsAt(records, side);
-	return decodeSideDelimiter(words, start, records.format);
+	return decode(words, start, records.format);
 }
 
 const rows = new WeakMap<object, Record<string, unknown>>();
@@ -273,4 +282,56 @@ export function recordFlag(holder: object, tree: TreeHandle, word: number, bit: 
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const { words, start } = wordsAt(recordsOf(tree), at, word + 1);
 	return ((words[start + word]! >>> bit) & 1) === 1;
+}
+
+export function chosenSeparatorOf(node: object): unknown {
+	const own = (node as Record<string, unknown>)._separator;
+	if (own !== undefined || recordOf(node) === undefined) return own;
+	const built = builtRefOf(node);
+	return built === undefined ? undefined : recordSeparator(node, built.arena.tree);
+}
+
+function chosenDelimiterOf(node: object): unknown {
+	const own = (node as Record<string, unknown>)._delimiter;
+	if (own !== undefined || recordOf(node) === undefined) return own;
+	const tree = builtRefOf(node)?.arena.tree ?? treeOf(node);
+	return tree === undefined ? undefined : recordDelimiter(node, tree);
+}
+
+export interface RefusedSlot {
+	readonly storageKey: string;
+	readonly accessor: string;
+	readonly error: Error;
+}
+
+export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refused?: (slot: RefusedSlot) => void): [storageKey: string, value: unknown][] {
+	const members = node as Record<string, unknown>;
+	const values = rows.flatMap(([accessor, , , storageKey]): [string, unknown][] => {
+		const read = members[accessor];
+		if (typeof read !== 'function' || read.length !== 0) {
+			if (Object.hasOwn(node, storageKey)) throw new Error(`a node of kind ${String(members.$type)} stores ${storageKey}, but has no reader ${accessor}()`);
+			return [];
+		}
+		if (refused === undefined) return [[storageKey, (read as () => unknown).call(node)]];
+		try {
+			return [[storageKey, (read as () => unknown).call(node)]];
+		} catch (error) {
+			refused({ storageKey, accessor, error: error as Error });
+			return [];
+		}
+	});
+	const delimiter = chosenDelimiterOf(node);
+	if (typeof delimiter === 'number') values.push(['_delimiter', delimiter]);
+	const chosen = chosenSeparatorOf(node);
+	if (typeof chosen === 'number') values.push(['_separator', chosen]);
+	return values;
+}
+
+export function storedSlotValues(
+	node: object,
+	slotsOf: (kind: number) => readonly QuerySlotEntry[],
+	refused?: (slot: RefusedSlot) => void
+): [storageKey: string, value: unknown][] {
+	if (recordOf(node) !== undefined) return slotValuesOf(node, slotsOf((node as { readonly $type: number }).$type), refused);
+	return Object.entries(node).filter(([key]) => isStorageKey(key));
 }

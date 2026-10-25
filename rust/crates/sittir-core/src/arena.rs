@@ -13,6 +13,7 @@
 
 mod admit;
 mod borrowed;
+mod built;
 pub mod cell;
 mod parsed;
 mod prep;
@@ -28,9 +29,10 @@ use std::fmt;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
+pub use built::{render_record_entry, BuiltRoot};
 pub use cell::{Cell, ListCell};
 pub use parsed::RecordGrammar;
-pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
+pub use prep::{own_seat, prepare_entry_root, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot, write_inline_slot};
@@ -89,6 +91,18 @@ pub struct Address(pub u32);
 
 impl Address {
     pub const NONE: Address = Address(0);
+
+    /// This address, which names a record: every address but 0.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for address 0.
+    pub fn record(self) -> Result<Address, ArenaError> {
+        if self == Address::NONE {
+            return Err(ArenaError::Malformed { what: "record address", word: 0 });
+        }
+        Ok(self)
+    }
 
     #[must_use]
     pub fn new(chunk: u32, word: u32) -> Option<Address> {
@@ -151,6 +165,9 @@ pub enum ArenaError {
     UnknownSlot(Box<str>),
     /// A value no record holds: `what` names it.
     Unwritable(&'static str),
+    /// A record of kind `kind` read where a value of the choice `owner` is
+    /// read, which decodes no node of that kind.
+    UnknownKind { kind: crate::types::KindId, owner: &'static str },
 }
 
 impl fmt::Display for ArenaError {
@@ -166,6 +183,7 @@ impl fmt::Display for ArenaError {
             ArenaError::Malformed { what, word } => write!(f, "{what} {word} is not one a record writer writes"),
             ArenaError::UnknownSlot(key) => write!(f, "the layout names slot `{key}`, which has no stamped cell in its record"),
             ArenaError::Unwritable(what) => write!(f, "a record writer does not write {what}"),
+            ArenaError::UnknownKind { kind, owner } => f.write_str(&crate::boundary::unknown_kind(*kind, owner)),
         }
     }
 }

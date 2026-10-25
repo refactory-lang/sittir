@@ -22,6 +22,7 @@ import {
 	ownerView,
 	refuseReadStub,
 	hydrateStored,
+	seatWith,
 	elementsWith,
 	rebuilt,
 	renderText,
@@ -2758,9 +2759,39 @@ export function buildUseWildcard(...args: unknown[]) {
 }
 function _buildUseWildcard(value?: Admit<T.UseWildcardGroup>): T.UseWildcard.Bound {
 	const _use_wildcard_group = value;
+	const readGroup_useWildcardGroup = () => _use_wildcard_group;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'use_wildcard', { useWildcardGroup: _use_wildcard_group });
-	throw new Error('use_wildcard has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UseWildcard as const, { _use_wildcard_group });
+	const record = arena.record(TSKindId.UseWildcard as const, 11);
+	storeCell(arena, record.data, record.base + 2, _use_wildcard_group);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			useWildcardGroup: (value?: Admit<T.UseWildcardGroup>) => rebuilt(node, handle, () => _buildUseWildcard(value)),
+			path: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'useWildcardGroup',
+							stored: '_use_wildcard_group',
+							make: buildUseWildcardGroup,
+							keys: [{ name: 'path', rest: false }]
+						},
+						'path',
+						args,
+						(value?: Admit<T.UseWildcardGroup>) => _buildUseWildcard(value),
+						() => readGroup_useWildcardGroup.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.UseWildcard.Bound;
 }
 
 export function buildParameters(): T.EmptyParameters;
@@ -4740,9 +4771,61 @@ export function buildMatchBlock<V extends Admit<T.MatchBlockArms>>(
 ): T.MatchBlock.Bound;
 export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.Bound {
 	const _match_block_arms = value;
+	const readGroup_matchBlockArms = () => _match_block_arms;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'match_block', { matchBlockArms: _match_block_arms });
-	throw new Error('match_block has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MatchBlock as const, { _match_block_arms });
+	const record = arena.record(TSKindId.MatchBlock as const, 7);
+	storeCell(arena, record.data, record.base + 2, _match_block_arms);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			matchBlockArms: (value?: Admit<T.MatchBlockArms>) => rebuilt(node, handle, () => buildMatchBlock(value)),
+			arms: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							make: buildMatchBlockArms,
+							keys: [
+								{ name: 'arms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'arms',
+						args,
+						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				),
+			lastArm: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'matchBlockArms',
+							stored: '_match_block_arms',
+							make: buildMatchBlockArms,
+							keys: [
+								{ name: 'arms', rest: true },
+								{ name: 'lastArm', rest: false, required: true }
+							]
+						},
+						'lastArm',
+						args,
+						(value?: Admit<T.MatchBlockArms>) => buildMatchBlock(value),
+						() => readGroup_matchBlockArms.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.MatchBlock.Bound;
 }
 
 export function buildLastMatchArm<
@@ -4765,6 +4848,7 @@ export function buildLastMatchArm(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
 		[[',', TSKindId.Comma] as const]
 	);
+	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'last_match_arm', {
@@ -4773,7 +4857,69 @@ export function buildLastMatchArm(
 			value: _value,
 			trailingComma: _trailing_comma
 		});
-	throw new Error('last_match_arm has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.LastMatchArm as const, { _attributes, _match, _value, _trailing_comma });
+	const record = arena.record(TSKindId.LastMatchArm as const, 19);
+	storeList(arena, record.data, record.base + 2, _attributes, 5);
+	storeCell(arena, record.data, record.base + 4, _match);
+	storeCell(arena, record.data, record.base + 9, _value);
+	storeCell(arena, record.data, record.base + 14, _trailing_comma);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
+				rebuilt(node, handle, () =>
+					buildLastMatchArm({ ...config, attributes: restItems('attributes', values) }, options)
+				),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, match: value }, options)),
+			value: (value: Admit<NonNullable<T.LastMatchArm.Config>['value']>) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value }, options)),
+			trailingComma: (spelling: TSKindId.Comma | null) =>
+				rebuilt(node, handle, () => buildLastMatchArm(config, { ...options, trailingComma: spelling })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'match',
+							stored: '_match',
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, match: value }, options),
+						() => readGroup_match.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'match',
+							stored: '_match',
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: Admit<T.MatchPattern>) => buildLastMatchArm({ ...config, match: value }, options),
+						() => readGroup_match.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.LastMatchArm.Bound;
 }
 
 export function buildMatchPattern<
@@ -9075,10 +9221,68 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
 	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
+	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, match: _match, value: _value });
-	throw new Error('match_arm_with_comma has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MatchArmWithComma as const, { _attributes, _match, _value });
+	const record = arena.record(TSKindId.MatchArmWithComma as const, 14);
+	storeList(arena, record.data, record.base + 2, _attributes, 5);
+	storeCell(arena, record.data, record.base + 4, _match);
+	storeCell(arena, record.data, record.base + 9, _value);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, match: value })),
+			value: (value: Admit<NonNullable<T.MatchArmWithComma.Config>['value']>) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, value: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'match',
+							stored: '_match',
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma({ ...config, match: value }),
+						() => readGroup_match.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'match',
+							stored: '_match',
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: Admit<T.MatchPattern>) => buildMatchArmWithComma({ ...config, match: value }),
+						() => readGroup_match.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.MatchArmWithComma.Bound;
 }
 
 export function buildMatchArmBlockEnding<
@@ -9096,10 +9300,83 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
 	const _value = config.value;
+	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, match: _match, value: _value });
-	throw new Error('match_arm_block_ending has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MatchArmBlockEnding as const, { _attributes, _match, _value });
+	const record = arena.record(TSKindId.MatchArmBlockEnding as const, 14);
+	storeList(arena, record.data, record.base + 2, _attributes, 5);
+	storeCell(arena, record.data, record.base + 4, _match);
+	storeCell(arena, record.data, record.base + 9, _value);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
+				rebuilt(node, handle, () =>
+					buildMatchArmBlockEnding({ ...config, attributes: restItems('attributes', values) })
+				),
+			match: (value: Admit<T.MatchPattern>) =>
+				rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, match: value })),
+			value: (
+				value: Admit<
+					| T.UnsafeBlock
+					| T.AsyncBlock
+					| T.GenBlock
+					| T.TryBlock
+					| T.Block
+					| T.IfExpression
+					| T.MatchExpression
+					| T.WhileExpression
+					| T.LoopExpression
+					| T.ForExpression
+					| T.ConstBlock
+				>
+			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, value: value })),
+			pattern: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'match',
+							stored: '_match',
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'pattern',
+						args,
+						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding({ ...config, match: value }),
+						() => readGroup_match.call(node)
+					)
+				),
+			condition: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'match',
+							stored: '_match',
+							make: buildMatchPattern,
+							keys: [
+								{ name: 'pattern', rest: false, required: true },
+								{ name: 'condition', rest: false }
+							]
+						},
+						'condition',
+						args,
+						(value: Admit<T.MatchPattern>) => buildMatchArmBlockEnding({ ...config, match: value }),
+						() => readGroup_match.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.MatchArmBlockEnding.Bound;
 }
 
 export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSlashes.Bound {
@@ -10735,13 +11012,85 @@ export function buildParametersElementsReceiver(
 	currentHandle()?.admit(TSKindId.ParametersElementsReceiver, [config]);
 	const _receiver = config.receiver;
 	const _parameters_elements_receiver_group = config.parametersElementsReceiverGroup;
+	const readGroup_receiver = () => _receiver;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'parameters_elements_receiver', {
 			receiver: _receiver,
 			parametersElementsReceiverGroup: _parameters_elements_receiver_group
 		});
-	throw new Error('parameters_elements_receiver has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ParametersElementsReceiver as const, {
+		_receiver,
+		_parameters_elements_receiver_group
+	});
+	const record = arena.record(TSKindId.ParametersElementsReceiver as const, 17);
+	storeCell(arena, record.data, record.base + 2, _receiver);
+	storeCell(arena, record.data, record.base + 7, _parameters_elements_receiver_group);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			receiver: (value: Admit<T.AttributedParameterReceiver>) =>
+				rebuilt(node, handle, () => buildParametersElementsReceiver({ ...config, receiver: value })),
+			parametersElementsReceiverGroup: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.ParametersElementsReceiverGroup as const,
+							optional: true,
+							make: buildParametersElementsReceiverGroup,
+							element: { keys: ['attributeItem', 'content'], make: buildAttributedParameter }
+						},
+						(value?: Admit<T.ParametersElementsReceiverGroup>) =>
+							buildParametersElementsReceiver({ ...config, parametersElementsReceiverGroup: value })
+					)
+				),
+			attributeItem: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							make: buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'attributeItem',
+						args,
+						(value: Admit<T.AttributedParameterReceiver>) =>
+							buildParametersElementsReceiver({ ...config, receiver: value }),
+						() => readGroup_receiver.call(node)
+					)
+				),
+			content: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'receiver',
+							stored: '_receiver',
+							make: buildAttributedParameterReceiver,
+							keys: [
+								{ name: 'attributeItem', rest: false },
+								{ name: 'content', rest: false, required: true }
+							]
+						},
+						'content',
+						args,
+						(value: Admit<T.AttributedParameterReceiver>) =>
+							buildParametersElementsReceiver({ ...config, receiver: value }),
+						() => readGroup_receiver.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.ParametersElementsReceiver.Bound;
 }
 
 export function buildParametersElementsReceiverGroup<V extends Admit<T.ParametersElements>>(

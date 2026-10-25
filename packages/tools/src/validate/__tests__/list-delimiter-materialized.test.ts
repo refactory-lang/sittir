@@ -31,7 +31,7 @@ describe("a separated list's trailing delimiter, through the validator walk", ()
 				expect(found).toHaveLength(1);
 				const data = materialize(found[0], accessorOf) as unknown as Record<string, unknown>;
 				expect(data._delimiter).toBe(Delimiter.Trailing);
-				expect(separatedListFactoryOptions(data)).toEqual({ delimiter: Delimiter.Trailing });
+				expect(separatedListFactoryOptions(data, accessorOf)).toEqual({ delimiter: Delimiter.Trailing });
 				engine.dispose();
 			});
 		}

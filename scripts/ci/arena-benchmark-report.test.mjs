@@ -156,4 +156,8 @@ test('independent grammar runners preserve complete coverage, paired statistics 
 	assert.throws(() => mergeCorpusShards(changed, data.options.grammars), /same runtime/);
 	changed[0].after.commit = 'changed';
 	assert.throws(() => mergeCorpusShards(changed, data.options.grammars), /commit changed/);
+	assert.match(summarize(combined).markdown, /build objects under both storage settings/);
+	const records = shards.map((shard) => ({ ...shard, report: { ...shard.report, options: { ...shard.report.options, construction: 'records' } } }));
+	assert.match(summarize(mergeCorpusShards(records, data.options.grammars)).markdown, /build records on the arena arm and objects on the object arm/);
+	assert.throws(() => mergeCorpusShards([records[0], ...shards.slice(1)], data.options.grammars), /same construction/);
 });

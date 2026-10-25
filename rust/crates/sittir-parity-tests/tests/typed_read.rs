@@ -258,7 +258,7 @@ fn trivia_spans(layout: &Layout, side: &str) -> Vec<(u32, u32)> {
     entries
         .unwrap_or_default()
         .iter()
-        .filter_map(|e| e.value.coord().map(|c| (c.span.start, c.span.end)))
+        .filter_map(|e| e.value().and_then(SlotValue::coord).map(|c| (c.span.start, c.span.end)))
         .collect()
 }
 
@@ -393,7 +393,7 @@ fn an_error_inside_a_node_is_trivia() {
     let file: File = read_seated(source, kind::SOURCE_FILE, 0, Depth::All).unwrap();
     let block = function(&file, 0).body.node().unwrap();
     let inner = block.layout.as_ref().unwrap().trivia.as_ref().unwrap().inner.as_ref().unwrap();
-    assert_eq!(inner[0].value.coord().unwrap().kind, Some(kind::ERROR));
+    assert_eq!(inner[0].value().and_then(SlotValue::coord).unwrap().kind, Some(kind::ERROR));
 }
 
 #[test]

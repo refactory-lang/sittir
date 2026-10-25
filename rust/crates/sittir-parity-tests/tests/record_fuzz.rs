@@ -65,7 +65,7 @@ impl<T: Clone> Built<T> {
     /// writer (`arena::admit`).
     fn admit<N: RecordCells>(&self) -> Result<(), ArenaError> {
         let Cell::Child { at, .. } = self.root.cell else { unreachable!("a built root is a child cell") };
-        sittir_core::arena::admit(&self.arena, at, N::shape)
+        sittir_core::arena::admit(&self.arena, at, N::shape).map(drop)
     }
 
     /// `G`'s render of the root, its panic caught.

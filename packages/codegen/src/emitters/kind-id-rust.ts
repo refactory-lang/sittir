@@ -110,7 +110,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`};`);
 	lines.push('');
 	lines.push(`/// The grammar's root kinds: a render whose root is one of them is a document.`);
-	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${rootKindIds(nodeMap).map((id) => `KindId(${id})`).join(', ')}];`);
+	lines.push(`pub const ROOT_KINDS: &[KindId] = &[${kindIds(rootKindIds(nodeMap))}];`);
 
 	const table = relaxationTable(nodeMap, entries);
 	lines.push('');

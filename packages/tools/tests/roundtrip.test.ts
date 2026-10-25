@@ -9,7 +9,7 @@ const kindNameFromId = (kindId: number): string => {
 	if (kind === undefined) throw new Error(`fixture: kind id ${kindId} has no name`);
 	return kind;
 };
-const noSlots: common.SlotAccessorOf = (typeId) => ({ kind: String(typeId), accessors: {}, delimiter: false });
+const noSlots: common.SlotAccessorOf = (typeId) => ({ kind: String(typeId), slots: [], accessors: {}, separator: false });
 
 describe('exercise roundtrip helpers', () => {
 	afterEach(() => {

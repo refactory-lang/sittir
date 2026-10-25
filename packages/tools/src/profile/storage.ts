@@ -10,6 +10,7 @@ import type { NativeHydrationOptions, NativeHydrationRun } from './native-hydrat
 import { median } from './storage-common.ts';
 import { summarizeValidationStorage, type ValidationStorageRun } from './validation-storage.ts';
 import type { ValidationStorageOptions } from './validation-storage-worker.ts';
+import type { Construction } from '../validate/common.ts';
 export { median } from './storage-common.ts';
 
 const execute = promisify(execFile);
@@ -23,6 +24,7 @@ export interface StorageBenchOptions {
 	idleGate?: string;
 	output?: string;
 	validation?: boolean;
+	construction?: Construction;
 }
 
 function retainedMemory(rows: readonly { baseline: NodeJS.MemoryUsage; current: NodeJS.MemoryUsage }[]) {
@@ -104,6 +106,9 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
 	if (options.limit !== undefined) integer('limit', options.limit, 1);
 	const nativeDepth = options.nativeDepth ?? 'all';
+	const construction = options.construction ?? 'objects';
+	if (!options.validation && construction !== 'objects')
+		throw new Error('--construction applies only to validation profiles, whose arena arm it builds with');
 	if (options.validation && (options.limit !== undefined || nativeDepth !== 'all'))
 		throw new Error(
 			'validation profiles use the complete deep corpus; --limit and finite --native-depth apply only to native hydration'
@@ -129,7 +134,7 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 					validationSamples.push(
 						await runWorker<ValidationStorageRun>(
 							'validation-storage',
-							{ grammar, storage, warmup, iterations },
+							{ grammar, storage, construction: storage === 'arena' ? construction : 'objects', warmup, iterations },
 							round,
 							options.idleGate
 						)
@@ -186,7 +191,8 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 			warmup,
 			iterations,
 			limit: options.limit ?? null,
-			nativeDepth
+			nativeDepth,
+			construction
 		},
 		...(options.validation ? { validationSummary, validationSamples } : { nativeSummary, nativeSamples })
 	};

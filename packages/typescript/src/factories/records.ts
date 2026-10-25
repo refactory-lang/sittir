@@ -23,6 +23,7 @@ import {
 	ownerView,
 	refuseReadStub,
 	hydrateStored,
+	seatWith,
 	rebuilt,
 	renderText,
 	nodeJSON,
@@ -1461,10 +1462,65 @@ export function buildCatchClause(config: Partial<T.CatchClause.Config> = {}): T.
 	currentHandle()?.admit(TSKindId.CatchClause, [config]);
 	const _catch_clause_group = config.catchClauseGroup;
 	const _body = orDefault(config.body, () => buildStatementBlock());
+	const readGroup_catchClauseGroup = () => _catch_clause_group;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'catch_clause', { catchClauseGroup: _catch_clause_group, body: _body });
-	throw new Error('catch_clause has no record view, so a record engine cannot build it yet');
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CatchClause as const, { _catch_clause_group, _body });
+	const record = arena.record(TSKindId.CatchClause as const, 28);
+	storeCell(arena, record.data, record.base + 2, _catch_clause_group);
+	storeCell(arena, record.data, record.base + 17, _body);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			catchClauseGroup: (value?: Admit<T.CatchClauseGroup>) =>
+				rebuilt(node, handle, () => buildCatchClause({ ...config, catchClauseGroup: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildCatchClause({ ...config, body: value })),
+			parameter: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							make: buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'parameter',
+						args,
+						(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				),
+			type: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					seatWith(
+						{
+							slot: 'catchClauseGroup',
+							stored: '_catch_clause_group',
+							make: buildCatchClauseGroup,
+							keys: [
+								{ name: 'parameter', rest: false, required: true },
+								{ name: 'type', rest: false }
+							]
+						},
+						'type',
+						args,
+						(value?: Admit<T.CatchClauseGroup>) => buildCatchClause({ ...config, catchClauseGroup: value }),
+						() => readGroup_catchClauseGroup.call(node)
+					)
+				)
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.CatchClause.Bound;
 }
 
 export function buildFinallyClause<V extends Admit<T.StatementBlock>>(

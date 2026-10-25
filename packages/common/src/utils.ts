@@ -1,18 +1,19 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
-import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { mapTriviaEntries, TRIVIA_SIDES } from './trivia.ts';
+import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, writtenSides } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
-import { snapshotOf } from './snapshot.ts';
-import { recordOf } from './record-view.ts';
-import { isBuiltNode } from './built-arena.ts';
+import { entrySnapshotOf } from './snapshot.ts';
+import { chosenSeparatorOf, recordOf } from './record-view.ts';
+import { builtRefOf } from './built-ref.ts';
+import { builtEntryOf, isBuiltNode } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -56,14 +57,6 @@ export function queryOf(handle: EngineHandle, node: object): object {
 	return handle.current.query(node);
 }
 
-/**
- * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
- * node it returns: a built source's stored sides, and the source identity a parsed source's
- * sides are read through. Inner comments can only travel to a node that is still empty: once the
- * rebuild gives the node a child, a comment would sit beside it, so the rebuild refuses. Inner
- * layout (whitespace, depth members, which cross as bare kinds) spelled the inside of an empty
- * node, so a node that gains a child drops it.
- */
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
@@ -82,9 +75,9 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
-	const trivia = triviaOf(node);
-	if (inner.length > 0) setTriviaData(result, { ...trivia, inner: [] });
-	else if (trivia !== undefined) setTriviaData(result, trivia);
+	const trivia = writtenSides(node);
+	if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
+	else if (trivia !== undefined) writeTrivia(result, trivia);
 	return handle === undefined ? result : handle.settle(result);
 }
 
@@ -108,14 +101,23 @@ export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] 
 
 const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
 
-/**
- * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
- * loose string built through `ir.comment`: its full spelling (`'// note'`) or its interior
- * (`' note'`). `inner` writes only to an empty node of a kind with an inner site. A parsed
- * node's side is written into its tree's trivia table, a built node's into its own data. The table
- * takes each entry as detached data (`snapshotOf`): it outlives any other tree an entry was read
- * from, and a snapshot of the tree returns its sides as they are.
- */
+export function writeTrivia(node: object, trivia: NodeTrivia): void {
+	const at = tableAt(node);
+	if (at === undefined) {
+		const own = triviaOf(node);
+		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
+		return;
+	}
+	const tree = treeOf(node);
+	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
+	const wire = (entry: TriviaEntry): unknown =>
+		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
+	for (const side of TRIVIA_SIDES) {
+		const entries = trivia[side];
+		if (entries !== undefined) at.tree.writeTriviaSide(at.index, side, entries.map(wire));
+	}
+}
+
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const node = target as AnyUntypedNode;
 	if (handle === undefined) throw new Error(NO_ENGINE);
@@ -127,10 +129,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		return hydratedEntries(entries, tree);
 	};
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
-		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
-		const at = tableAt(node);
-		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
-		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
+		writeTrivia(node, { [side]: scoped(() => items.map((item) => triviaEntryOf(item, facts))) });
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -383,17 +382,16 @@ const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
 
 const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
 
-/**
- * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
- * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
- * An owner names the accessor that returns its list and answers that list's `separator`.
- */
+export function listSeparatorOf(node: object): unknown {
+	return chosenSeparatorOf(node) ?? slotSeparatorOf(node);
+}
+
 export function defineListSeparator(node: object, accessor?: string): void {
 	let getter = SEPARATOR_GETTERS.get(accessor);
 	if (getter === undefined) {
 		getter = function (this: Record<string, unknown>) {
 			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
-			return this._separator ?? slotSeparatorOf(this);
+			return listSeparatorOf(this);
 		};
 		SEPARATOR_GETTERS.set(accessor, getter);
 	}
@@ -675,7 +673,7 @@ export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEn
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf, slotSeparatorOf } from './node-data.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
 export { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
@@ -696,6 +694,7 @@ export * from './runtime.ts';
 export {
 	RECORD,
 	recordDelimiter,
+	recordSeparator,
 	recordFlag,
 	recordItems,
 	recordLength,
@@ -707,7 +706,11 @@ export {
 	rowTrivia,
 	rowWith,
 	bindRow,
-	type RecordStub
+	chosenSeparatorOf,
+	slotValuesOf,
+	storedSlotValues,
+	type RecordStub,
+	type RefusedSlot
 } from './record-view.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltPlace, type BuiltText } from './built-arena.ts';
