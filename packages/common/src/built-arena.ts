@@ -48,7 +48,7 @@ export interface BuiltRecords {
 
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 12;
-const FIRST_DRAFT_WORDS = 1 << 6;
+const DRAFT_WORDS = 1 << 12;
 const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0, at: 0, words: 0 });
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -136,8 +136,8 @@ export class BuiltArena {
 	readonly #handle: TreeEngineHandle;
 	readonly #views: BuiltViews;
 	readonly #words: Chunks<Uint32Array>;
-	#draft = new Uint32Array(FIRST_DRAFT_WORDS);
-	#open: BuiltDraft | undefined;
+	#drafts = new Uint32Array(DRAFT_WORDS);
+	#drafted = 0;
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
 	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
@@ -181,11 +181,14 @@ export class BuiltArena {
 	}
 
 	record(kind: number, words: number): BuiltDraft {
-		if (this.#draft.length < words) this.#draft = new Uint32Array(Math.max(words, this.#draft.length * 2));
-		else this.#draft.fill(0, 0, words);
-		this.#draft[0] = kind;
-		this.#open = { data: this.#draft, base: 0, words };
-		return this.#open;
+		if (this.#drafted + words > this.#drafts.length) {
+			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
+			this.#drafted = 0;
+		}
+		const draft = { data: this.#drafts, base: this.#drafted, words };
+		this.#drafts[draft.base] = kind;
+		this.#drafted += words;
+		return draft;
 	}
 
 	#header(kind: number, words: number): BuiltPlace {
@@ -264,8 +267,6 @@ export class BuiltArena {
 	}
 
 	view(record: BuiltDraft): object {
-		if (record !== this.#open) throw new Error('a record draft was placed already or drafted over: a builder drafts one record at a time and places it once');
-		this.#open = undefined;
 		const place = this.#place(record.words);
 		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
 		return this.#view(place.at);

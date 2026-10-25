@@ -36,18 +36,24 @@ describe('a built arena', () => {
 		expect(at).toBeGreaterThan(builtRecordOf(leaf, arena)!);
 	});
 
-	it('places only the draft it handed out last, once', () => {
+	it('gives each draft words of its own, which no later draft shares', () => {
 		const arena = arenaOf();
+		const placed = (at: number, words: number): number[] => Array.from(arena.words(at, words).subarray(wordOf(at, format!), wordOf(at, format!) + words));
 		const outer = arena.record(9, 7);
 		const inner = arena.record(4, 2);
-		expect(builtRecordOf(arena.view(inner), arena)).toBeTypeOf('number');
-		expect(() => arena.view(outer)).toThrow(/drafted over/);
-		expect(() => arena.view(inner)).toThrow(/drafted over/);
-		const abandoned = arena.record(9, 7);
-		abandoned.data[abandoned.base + 2] = 1;
+		const innerAt = builtRecordOf(arena.view(inner), arena)!;
 		const next = arena.record(8, 3);
-		const at = builtRecordOf(arena.view(next), arena)!;
-		expect(Array.from(arena.words(at, 3).subarray(wordOf(at, format!), wordOf(at, format!) + 3))).toEqual([8, 0, 0]);
+		inner.data[inner.base + 1] = 7;
+		outer.data[outer.base + 3] = 5;
+		expect(placed(builtRecordOf(arena.view(outer), arena)!, 7)).toEqual([9, 0, 0, 5, 0, 0, 0]);
+		expect(placed(builtRecordOf(arena.view(next), arena)!, 3)).toEqual([8, 0, 0]);
+		expect(placed(innerAt, 2)).toEqual([4, 0]);
+		const first = arena.record(7, 4);
+		for (let n = 0; n < 3000; n++) arena.view(arena.record(1, 3));
+		const wide = arena.record(6, 5000);
+		first.data[first.base + 3] = 5;
+		expect(placed(builtRecordOf(arena.view(first), arena)!, 4)).toEqual([7, 0, 0, 5]);
+		expect(placed(builtRecordOf(arena.view(wide), arena)!, 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
 	});
 
 	it('grows its shared chunks by doubling, and gives a run past a chunk its own', () => {
