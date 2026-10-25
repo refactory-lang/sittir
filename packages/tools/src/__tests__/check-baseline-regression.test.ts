@@ -865,6 +865,29 @@ describe('checkRegression', () => {
 		});
 
 		it.each([
+			['pass', rt(28, 30, 28, ['b']), rt(27, 29, 27, ['b']), { pass: 28, total: 30 }, { pass: 27, total: 29 }],
+			['astMatchPass', rt(30, 30, 28, ['b']), rt(29, 29, 27, ['b']), { pass: 30, total: 30 }, { pass: 29, total: 29 }]
+		] as const)('fails, declared or not, when a row that still fails loses a kept case under its %s drop', (metric, before, after, from, to) => {
+			const base = inventoried();
+			base.grammars.typescript!.validators.factoryStorage = { ...before, casesByKind: { a: 19, b: 6, c: 5 } };
+			base.totals = computeTotals(base.grammars);
+			const head = clone(base);
+			head.grammars.typescript!.validators.factoryStorage = { ...after, casesByKind: { a: 19, b: 5, c: 5 } };
+			head.totals = computeTotals(head.grammars);
+			head.baselineCounterChange = {
+				reason: 'a failing case of b leaves while a kept case of b begins to fail',
+				grammars: { typescript: { factoryStorage: { from, to, cases: { b: { from: 6, to: 5 } } } } }
+			};
+			const verdict = checkRegression(base, head);
+			expectFail(verdict);
+			expect(verdict.reason).toBe('pass-count-drop');
+			expect(verdict.details).toMatchObject({
+				path: `grammars.typescript.validators.factoryStorage.${metric}`,
+				note: 'cases lost by kinds that did not depart: b (1 case), from a row that still fails 2 cases, so a kept case may have begun to fail'
+			});
+		});
+
+		it.each([
 			['a kind\'s count', declaration(undefined, { from: 6, to: 4 }), "factoryStorage's declaration does not name b 6 → 5 in its cases"],
 			['the head\'s counters', declaration({ pass: 28, total: 28 }), 'factoryStorage head 29/29 is not the declared to 28/28']
 		] as const)('fails when the declaration misstates %s', (_, declared, mismatch) => {

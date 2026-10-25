@@ -34,11 +34,13 @@
  *      rose is a regression, declared or not. One whose fail count did not
  *      rise is cases leaving the row, held as its case loss: each lost case
  *      belongs to a departed kind or to a kind the declaration names with
- *      its counts. A row whose base records no cases by kind has no case
- *      loss to declare, so its pass drop is a regression; `roundtrip`
- *      counts corpus rows and records no cases by kind. A declaration
- *      states its reason. The aggregate `totals` are sums of the rows and
- *      are not compared.
+ *      its counts. A kind that did not depart may lose cases under a pass
+ *      drop only when the head's row fails no case, since a failing case
+ *      leaving would otherwise hide a kept case that began to fail. A row
+ *      whose base records no cases by kind has no case loss to declare, so
+ *      its pass drop is a regression; `roundtrip` counts corpus rows and
+ *      records no cases by kind. A declaration states its reason. The
+ *      aggregate `totals` are sums of the rows and are not compared.
  *   2. Total drop — a row whose base records no cases by kind
  *      (`roundtrip`, or any row of a base collected before inventories)
  *      lost cases while its pass held, so failing cases left it, unless
@@ -598,7 +600,9 @@ function unexplainedDrop({ b, h }: ComparedRow, { before, after }: ComparedMetri
 	const failAfter = h.total - after;
 	if (failAfter > failBefore) return `its fail count rose ${failBefore} → ${failAfter}`;
 	if (losses === undefined) return 'no kind departure explains it: the base records no cases by kind for this row';
-	return undefined;
+	if (losses.kept.length === 0 || failAfter === 0) return undefined;
+	const departed = losses.departed.length === 0 ? '' : `; departed ${lossText(losses.departed)}`;
+	return `cases lost by kinds that did not depart: ${lossText(losses.kept)}${departed}, from a row that still fails ${casesText(failAfter)}, so a kept case may have begun to fail`;
 }
 
 function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
