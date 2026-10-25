@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { entrySnapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
-import { builtEntryOf, holdSideArenas, isBuiltNode } from './built-arena.ts';
+import { builtEntryOf, holdSideArenas, isBuiltNode, refuseRecordEntries } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -104,6 +104,7 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const at = tableAt(node);
 	if (at === undefined) {
+		refuseRecordEntries(trivia);
 		const own = triviaOf(node);
 		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;

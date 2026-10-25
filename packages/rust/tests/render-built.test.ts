@@ -3,7 +3,9 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
-import { treeOf, writeTrivia } from '@sittir/common/utils';
+import { treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
+import { builtEntryOf } from '../../common/src/built-arena.ts';
+import { builtRefOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
 
@@ -30,6 +32,8 @@ function arenaEngine() {
 }
 
 const words = (...values: number[]) => new Uint32Array([0, ...values]);
+
+const writtenEntry = (node: object) => builtEntryOf(node, builtRefOf(node)!.arena)!;
 
 const recordEngine = async () => {
 	const engine = await arena.createEngine();
@@ -175,6 +179,31 @@ describe('a built arena rendered natively', () => {
 			const rendered = { render, read: '/* d */ /* c */' };
 			expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ collected: true, before: rendered, after: rendered });
 		}, 60_000);
+
+		it('refuses in a side of an object node, whose engine builds no records', async () => {
+			const comment = (await recordEngine()).build.blockComment(' c ');
+			const objects = await arena.createEngine();
+			const statement = objects.build.expressionStatement(objects.build.identifier('x'));
+			expect(() => statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
+			const parsed = objects.parse('fn f() {\n    g();\n}\n').statements()[0] as unknown as { body(): { statements(): readonly typeof statement[] } };
+			expect(() => parsed.body().statements()[0]!.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
+		});
+
+		it("reads back as its builder's node from a parsed unit's side", async () => {
+			const [holder, builder] = [await recordEngine(), await recordEngine()];
+			const block = (holder.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
+			const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
+			const tree = treeOf(block)!;
+			const holderRow = treeHandleOf(block)! % 2 ** 32;
+			const written = [writtenEntry(comment)];
+			const unitRow = [1, 2, 3].map((n) => holderRow + n).find((row) => {
+				tree.writeTriviaSide!(row, 'leading', written);
+				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(row, 'leading', []), false);
+			});
+			expect(unitRow).toBeDefined();
+			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comment]);
+			expect(JSON.stringify(block)).toContain('" c "');
+		});
 
 		it("refuses as a record's owner another grammar's engine, whatever its prototype", () => {
 			const engine = addon().SittirEngine;

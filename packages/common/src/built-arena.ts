@@ -8,6 +8,7 @@ import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
 import { RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
+import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
 export interface BuiltText {
@@ -311,6 +312,12 @@ export function builtEntryOf(entry: object, holder: BuiltArena | undefined): Bui
 		throw new Error(`cannot write a ${built.arena.engine.language.name} record into a side of a ${holder.engine.language.name} node`);
 	}
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at, $owner: built.arena.owner };
+}
+
+export function refuseRecordEntries(trivia: TriviaSides<unknown>): void {
+	forEachTriviaList(trivia, (entries) => {
+		if (entries.some((entry) => recordRefOf(entry) !== undefined)) throw new Error(NO_RECORDS);
+	});
 }
 
 export function holdSideArenas(table: object, at: number, side: TriviaSideName, entries: readonly unknown[]): void {

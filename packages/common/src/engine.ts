@@ -16,7 +16,7 @@ import type {
 import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { adoptSideNesting, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
-import { forEachTriviaList, type TriviaSides } from './trivia.ts';
+import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
@@ -579,7 +579,7 @@ export function createNativeEngine<
 							},
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							unitSides: (index) => {
-								const units = engine.unitSides(parsed.treeId, index);
+								const units = engine.unitSides(parsed.treeId, index).map((unit) => ({ ...(unit as object), ...mapTriviaEntries(unit as TriviaSides<unknown>, builtEntries) }));
 								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
 								return units;
 							},
