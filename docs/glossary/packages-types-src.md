@@ -557,3 +557,367 @@ The kind ids a slot may hold.
 ### `packages/types/src/engine-api.ts::StructureRow::texts`
 
 The text a slot must hold.
+
+### `packages/types/src/vocabulary/argument.ts::Argument::$kind`
+
+The discriminant of a `Argument` node: `'argument'`.
+
+### `packages/types/src/vocabulary/argument.ts::ArgumentSynonyms::named`
+
+The synonym that stands for the canonical `named` in this vocabulary: 'keyword'.
+
+### `packages/types/src/vocabulary/clause.ts::Clause::$kind`
+
+The discriminant of a `Clause` node: `'clause'`.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::bounds`
+
+The synonym that stands for the canonical `bounds` in this vocabulary: 'constraint'.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::case`
+
+The synonym that stands for the canonical `case` in this vocabulary: 'arm'.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::catch`
+
+The synonym that stands for the canonical `catch` in this vocabulary: 'except' | 'rescue'.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::else_if`
+
+The synonym that stands for the canonical `else_if` in this vocabulary: 'elif' | 'elsif' | 'elseif'.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::finally`
+
+The synonym that stands for the canonical `finally` in this vocabulary: 'ensure'.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::resource`
+
+The synonym that stands for the canonical `resource` in this vocabulary: 'using'.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms::wildcard`
+
+The synonym that stands for the canonical `wildcard` in this vocabulary: 'glob'.
+
+### `packages/types/src/vocabulary/context.ts::Unmapped::$unmapped`
+
+The marker of a kind with no vocabulary mapping.
+
+### `packages/types/src/vocabulary/declaration.ts::Declaration::$kind`
+
+The discriminant of a `Declaration` node: `'declaration'`.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::constructor`
+
+The synonym that stands for the canonical `constructor` in this vocabulary: 'initializer' | 'init'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::enum_member`
+
+The synonym that stands for the canonical `enum_member` in this vocabulary: 'variant' | 'enumerator'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::extension`
+
+The synonym that stands for the canonical `extension` in this vocabulary: 'impl'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::foreign`
+
+The synonym that stands for the canonical `foreign` in this vocabulary: 'extern'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::index`
+
+The synonym that stands for the canonical `index` in this vocabulary: 'indexer'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::internal`
+
+The synonym that stands for the canonical `internal` in this vocabulary: 'crate'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::module`
+
+The synonym that stands for the canonical `module` in this vocabulary: 'mod'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::receiver`
+
+The synonym that stands for the canonical `receiver` in this vocabulary: 'self' | 'this'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::special`
+
+The synonym that stands for the canonical `special` in this vocabulary: 'dunder' | 'magic'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::struct`
+
+The synonym that stands for the canonical `struct` in this vocabulary: 'record'.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms::type_alias`
+
+The synonym that stands for the canonical `type_alias` in this vocabulary: 'typedef' | 'typealias'.
+
+### `packages/types/src/vocabulary/element.ts::Element::$kind`
+
+The discriminant of a `Element` node: `'element'`.
+
+### `packages/types/src/vocabulary/element.ts::ElementSynonyms::map`
+
+The synonym that stands for the canonical `map` in this vocabulary: 'dictionary' | 'dict'.
+
+### `packages/types/src/vocabulary/element.ts::ElementSynonyms::spread`
+
+The synonym that stands for the canonical `spread` in this vocabulary: 'splat' | 'unpack'.
+
+### `packages/types/src/vocabulary/expression.ts::Expression::$kind`
+
+The discriminant of a `Expression` node: `'expression'`.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::coalesce`
+
+The synonym that stands for the canonical `coalesce` in this vocabulary: 'nullish'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::compound`
+
+The synonym that stands for the canonical `compound` in this vocabulary: 'augmented'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::conditional`
+
+The synonym that stands for the canonical `conditional` in this vocabulary: 'ternary'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::construct`
+
+The synonym that stands for the canonical `construct` in this vocabulary: 'new'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::generator`
+
+The synonym that stands for the canonical `generator` in this vocabulary: 'gen'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::lambda`
+
+The synonym that stands for the canonical `lambda` in this vocabulary: 'closure' | 'arrow'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::list`
+
+The synonym that stands for the canonical `list` in this vocabulary: 'array'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::map`
+
+The synonym that stands for the canonical `map` in this vocabulary: 'dictionary' | 'dict'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::matrix_multiply`
+
+The synonym that stands for the canonical `matrix_multiply` in this vocabulary: 'matmul'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::member`
+
+The synonym that stands for the canonical `member` in this vocabulary: 'attribute' | 'field' | 'property'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::propagate`
+
+The synonym that stands for the canonical `propagate` in this vocabulary: 'try'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::qualified`
+
+The synonym that stands for the canonical `qualified` in this vocabulary: 'path' | 'scoped'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::reference`
+
+The synonym that stands for the canonical `reference` in this vocabulary: 'borrow'.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms::subscript`
+
+The synonym that stands for the canonical `subscript` in this vocabulary: 'index'.
+
+### `packages/types/src/vocabulary/features/async-await/declaration.ts::Declaration`
+
+The async-await declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/async-await/declaration.ts::Declaration::Constructor`
+
+The constructor of the async-await declaration.
+
+### `packages/types/src/vocabulary/features/decorators/declaration.ts::Declaration`
+
+The decorators declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/decorators/declaration.ts::Declaration::Constructor`
+
+The constructor of the decorators declaration.
+
+### `packages/types/src/vocabulary/features/parametric-polymorphism/declaration.ts::Declaration::Constructor`
+
+The constructor of the parametric-polymorphism declaration.
+
+### `packages/types/src/vocabulary/features/type-annotations/declaration.ts::Declaration`
+
+The type-annotations declaration of the vocabulary.
+
+### `packages/types/src/vocabulary/features/type-annotations/declaration.ts::Declaration::Constructor`
+
+The constructor of the type-annotations declaration.
+
+### `packages/types/src/vocabulary/identifier.ts::Identifier::$kind`
+
+The discriminant of a `Identifier` node: `'identifier'`.
+
+### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms::receiver`
+
+The synonym that stands for the canonical `receiver` in this vocabulary: 'self' | 'this'.
+
+### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms::super`
+
+The synonym that stands for the canonical `super` in this vocabulary: 'base'.
+
+### `packages/types/src/vocabulary/literal.ts::Literal::$kind`
+
+The discriminant of a `Literal` node: `'literal'`.
+
+### `packages/types/src/vocabulary/literal.ts::LiteralSynonyms::character`
+
+The synonym that stands for the canonical `character` in this vocabulary: 'char' | 'rune'.
+
+### `packages/types/src/vocabulary/literal.ts::LiteralSynonyms::interpolated`
+
+The synonym that stands for the canonical `interpolated` in this vocabulary: 'f' | 'template'.
+
+### `packages/types/src/vocabulary/literal.ts::LiteralSynonyms::multiline`
+
+The synonym that stands for the canonical `multiline` in this vocabulary: 'triple'.
+
+### `packages/types/src/vocabulary/literal.ts::LiteralSynonyms::null`
+
+The synonym that stands for the canonical `null` in this vocabulary: 'none' | 'nil'.
+
+### `packages/types/src/vocabulary/modifier.ts::Modifier::$kind`
+
+The discriminant of a `Modifier` node: `'modifier'`.
+
+### `packages/types/src/vocabulary/modifier.ts::ModifierSynonyms::internal`
+
+The synonym that stands for the canonical `internal` in this vocabulary: 'crate'.
+
+### `packages/types/src/vocabulary/pattern.ts::Pattern::$kind`
+
+The discriminant of a `Pattern` node: `'pattern'`.
+
+### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms::list`
+
+The synonym that stands for the canonical `list` in this vocabulary: 'array' | 'slice'.
+
+### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms::map`
+
+The synonym that stands for the canonical `map` in this vocabulary: 'dictionary' | 'dict'.
+
+### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms::rest`
+
+The synonym that stands for the canonical `rest` in this vocabulary: 'splat' | 'unpack'.
+
+### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms::struct`
+
+The synonym that stands for the canonical `struct` in this vocabulary: 'record'.
+
+### `packages/types/src/vocabulary/statement.ts::Statement::$kind`
+
+The discriminant of a `Statement` node: `'statement'`.
+
+### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::empty`
+
+The synonym that stands for the canonical `empty` in this vocabulary: 'pass'.
+
+### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::import`
+
+The synonym that stands for the canonical `import` in this vocabulary: 'use'.
+
+### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::package`
+
+The synonym that stands for the canonical `package` in this vocabulary: 'crate'.
+
+### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::resource`
+
+The synonym that stands for the canonical `resource` in this vocabulary: 'using'.
+
+### `packages/types/src/vocabulary/statement.ts::StatementSynonyms::throw`
+
+The synonym that stands for the canonical `throw` in this vocabulary: 'raise'.
+
+### `packages/types/src/vocabulary/type.ts::Type::$kind`
+
+The discriminant of a `Type` node: `'type'`.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::boolean`
+
+The synonym that stands for the canonical `boolean` in this vocabulary: 'bool'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::character`
+
+The synonym that stands for the canonical `character` in this vocabulary: 'char'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::float64`
+
+The synonym that stands for the canonical `float64` in this vocabulary: 'double'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::int16`
+
+The synonym that stands for the canonical `int16` in this vocabulary: 'short'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::int8`
+
+The synonym that stands for the canonical `int8` in this vocabulary: 'byte'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::nullable`
+
+The synonym that stands for the canonical `nullable` in this vocabulary: 'maybe'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::reference`
+
+The synonym that stands for the canonical `reference` in this vocabulary: 'borrow'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::rest`
+
+The synonym that stands for the canonical `rest` in this vocabulary: 'splat' | 'unpack'.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms::string`
+
+The synonym that stands for the canonical `string` in this vocabulary: 'str'.
+
+### `packages/types/src/vocabulary/utils.ts::FlagSynonyms`
+
+The synonyms of the vocabulary's flags: each flag's alternative spellings.
+
+### `packages/types/src/vocabulary/argument.ts::ArgumentSynonyms`
+
+The synonyms the `Argument` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/clause.ts::ClauseSynonyms`
+
+The synonyms the `Clause` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/declaration.ts::DeclarationSynonyms`
+
+The synonyms the `Declaration` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/element.ts::ElementSynonyms`
+
+The synonyms the `Element` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/expression.ts::ExpressionSynonyms`
+
+The synonyms the `Expression` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms`
+
+The synonyms the `Identifier` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/literal.ts::LiteralSynonyms`
+
+The synonyms the `Literal` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/modifier.ts::ModifierSynonyms`
+
+The synonyms the `Modifier` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/pattern.ts::PatternSynonyms`
+
+The synonyms the `Pattern` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/statement.ts::StatementSynonyms`
+
+The synonyms the `Statement` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/vocabulary/type.ts::TypeSynonyms`
+
+The synonyms the `Type` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
