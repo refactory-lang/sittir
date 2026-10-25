@@ -7,14 +7,19 @@ import {
 	wrapHosts,
 	type FieldRename,
 	type FieldWrap,
+	type LiteralSplit,
+	type RelaxSite,
 	type Split
 } from '../dsl/bind.ts';
+import { wordDisplaysOf } from '../dsl/rule-transforms.ts';
+import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import type { Lead } from '../dsl/verbs/effects.ts';
-import { fieldRules, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
+import { fieldRules, fieldThrough, isEnrichedField, isRecord, OPAQUE_RULES, supertypesOf, symbolNames, type GrammarRecord } from '../dsl/rule-patterns.ts';
 import type { GrammarDiagnostic } from '../types/diagnostics.ts';
 import { isPrecWrapper } from '../types/runtime-shapes.ts';
 import type { EvaluatedGrammar, RawGrammar } from '../compiler/types.ts';
-import { type BindingFacts, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, refineClaims } from './facts.ts';
+import { isEnrichGroupLiftSymbol } from '../dsl/transform/transform-path.ts';
+import { type BindingFacts, type LiteralText, type MemberFact, type ModelSlot, type RefinedClaim, type SlotModel, WILDCARD, isNamedMember, literalClaimOf, refineClaims } from './facts.ts';
 import { type GrammarRoutes, type MemberRoute, formsOf } from './routes.ts';
 import { boundKindName } from './names.ts';
 import { deriveLeads } from './leads.ts';
@@ -67,24 +72,135 @@ export interface GrammarBindingsInput {
 
 export const memberFieldName = (member: string): string => member.replace(/[A-Z]/g, (c) => `_${c.toLowerCase()}`);
 
+function relaxedTexts(rules: Readonly<Record<string, unknown>>, rule: unknown, display: string, entered: Set<string>, out: Set<string>): Set<string> {
+	if (Array.isArray(rule)) for (const r of rule) relaxedTexts(rules, r, display, entered, out);
+	if (!isRecord(rule)) return out;
+	if (rule.type === 'ALIAS' && rule.named === true && rule.value === display && isRecord(rule.content) && rule.content.type === 'STRING' && typeof rule.content.value === 'string') return out.add(rule.content.value);
+	if (rule.type === 'SYMBOL' && typeof rule.name === 'string') {
+		if (isParserHiddenName(rule.name) && !entered.has(rule.name)) relaxedTexts(rules, rules[rule.name], display, entered.add(rule.name), out);
+		return out;
+	}
+	for (const value of Object.values(rule)) relaxedTexts(rules, value, display, entered, out);
+	return out;
+}
+
+function relaxedFamilyOf(rules: Readonly<Record<string, unknown>>, kind: string, literal: LiteralText): ReadonlySet<string> {
+	const through = fieldThrough(rules, rules[kind], literal.field, new Set([kind])) ?? [];
+	const holder = rules[through[through.length - 1] ?? kind];
+	const contents = fieldRules(holder).filter((f) => f.name === literal.field).map((f) => f.content);
+	return relaxedTexts(rules, contents, literal.leaf, new Set(), new Set());
+}
+
+function admitsDisplay(rules: Readonly<Record<string, unknown>>, rule: unknown, display: string, word: string, entered: Set<string>): boolean {
+	if (!isRecord(rule)) return false;
+	if (isPrecWrapper(rule as { type: string })) return admitsDisplay(rules, rule.content, display, word, entered);
+	if (rule.type === 'CHOICE') return Array.isArray(rule.members) && rule.members.some((m) => admitsDisplay(rules, m, display, word, entered));
+	if (rule.type === 'ALIAS') return rule.named === true && rule.value === display && admitsDisplay(rules, rule.content, word, word, entered);
+	if (rule.type !== 'SYMBOL' || typeof rule.name !== 'string') return false;
+	if (rule.name === display) return true;
+	if (!isParserHiddenName(rule.name) || entered.has(rule.name)) return false;
+	return admitsDisplay(rules, rules[rule.name], display, word, entered.add(rule.name));
+}
+
+function relaxSitesOf(rules: Readonly<Record<string, unknown>>, word: string, family: ReadonlySet<string>, texts: readonly string[]): RelaxSite[] {
+	const sites: RelaxSite[] = [];
+	for (const [kind, body] of Object.entries(rules)) {
+		const walk = (rule: unknown, path: readonly string[], within?: { readonly path: readonly string[]; readonly rule: unknown }): void => {
+			if (!isRecord(rule)) return;
+			if (isPrecWrapper(rule as { type: string })) return walk(rule.content, path);
+			if (rule.type === 'FIELD' && typeof rule.name === 'string') return walk(rule.content, [...path, `${rule.name}:`]);
+			if (SINGLE.has(rule.type as string)) return walk(rule.content, [...path, '0']);
+			if (rule.type !== 'SEQ' && rule.type !== 'CHOICE') return;
+			const members = Array.isArray(rule.members) ? (rule.members as unknown[]) : [];
+			if (rule.type === 'CHOICE') {
+				const site = within ?? { path, rule };
+				const byDisplay = new Map<string, Set<string>>();
+				for (const m of members) {
+					if (isRecord(m) && m.type === 'ALIAS' && m.named === true && typeof m.value === 'string' && isRecord(m.content) && m.content.type === 'STRING' && typeof m.content.value === 'string') {
+						byDisplay.set(m.value, (byDisplay.get(m.value) ?? new Set()).add(m.content.value));
+					}
+				}
+				for (const [display, held] of byDisplay) {
+					const at = site.path.length === 0 ? '.' : site.path.join('/');
+					if ([...family].every((text) => held.has(text)) && texts.some((text) => !held.has(text)) && admitsDisplay(rules, site.rule, display, word, new Set()) && !sites.some((s) => s.kind === kind && s.path === at && s.display === display)) sites.push({ kind, path: at, display });
+				}
+				members.forEach((m, i) => walk(m, [...path, String(i)], site));
+				return;
+			}
+			members.forEach((m, i) => walk(m, [...path, String(i)]));
+		};
+		walk(body, []);
+	}
+	return sites;
+}
+
 type FieldRequest = FieldRename | FieldWrap;
 
+const SEVERAL_FIELDS = 'placement reaches a kind through several fields';
 const SINGLE = new Set(['OPTIONAL', 'REPEAT', 'REPEAT1', 'FIELD', 'TOKEN', 'IMMEDIATE_TOKEN', 'ALIAS']);
 const metaOf = (r: GrammarRecord): GrammarRecord => (isRecord(r.metadata) ? r.metadata : {});
 const isLift = (r: GrammarRecord): boolean => r.type === 'SYMBOL' && metaOf(r).symbolSource === 'group-lift' && !(isRecord(r.annotations) && 'variant' in r.annotations);
 const isGroupAlias = (r: GrammarRecord): boolean => r.type === 'ALIAS' && metaOf(r).aliasSource === 'visible-group';
 
-function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: string, child: string): string | undefined {
-	let found: string | undefined;
-	const walk = (r: unknown, field: string | undefined): void => {
-		if (Array.isArray(r)) return r.forEach((x) => walk(x, field));
-		if (!isRecord(r)) return;
-		if (r.type === 'SYMBOL' && r.name === child && field !== undefined) found = field;
-		const inner = r.type === 'FIELD' ? (r.name as string) : field;
-		for (const v of Object.values(r)) walk(v, inner);
-	};
-	walk(rules[owner], undefined);
-	return found;
+interface ReferenceField {
+	readonly name: string;
+	readonly whole: boolean;
+}
+
+interface PlacedStep {
+	readonly kind: string;
+	readonly field: ReferenceField | undefined;
+}
+
+interface PlacedSplit {
+	readonly kind: string;
+	readonly within: readonly string[];
+	readonly as: string;
+	readonly steps: readonly PlacedStep[];
+	readonly literal?: LiteralSplit;
+}
+
+function reachesThroughHidden(rules: Readonly<Record<string, unknown>>, rule: unknown, child: string, entered: Set<string>): boolean {
+	if (Array.isArray(rule)) return rule.some((r) => reachesThroughHidden(rules, r, child, entered));
+	if (!isRecord(rule) || (OPAQUE_RULES.has(rule.type) && !isEnrichedField(rule))) return false;
+	if (rule.type !== 'SYMBOL' || typeof rule.name !== 'string') return Object.values(rule).some((v) => reachesThroughHidden(rules, v, child, entered));
+	if (rule.name === child) return true;
+	if (!isParserHiddenName(rule.name) || isEnrichGroupLiftSymbol(rule) || entered.has(rule.name)) return false;
+	entered.add(rule.name);
+	return reachesThroughHidden(rules, rules[rule.name], child, entered);
+}
+
+function supertypesBetween(
+	rules: Readonly<Record<string, unknown>>,
+	supertypes: ReadonlySet<string>,
+	owner: string,
+	child: string,
+	entered: ReadonlySet<string> = new Set()
+): readonly string[] | undefined {
+	if (reachesThroughHidden(rules, rules[owner], child, new Set())) return [];
+	for (const supertype of supertypes) {
+		if (supertype === owner || entered.has(supertype) || !reachesThroughHidden(rules, rules[owner], supertype, new Set())) continue;
+		const rest = supertypesBetween(rules, supertypes, supertype, child, new Set([...entered, owner]));
+		if (rest !== undefined) return [supertype, ...rest];
+	}
+	return undefined;
+}
+
+function fieldOfReference(rules: Readonly<Record<string, unknown>>, owner: string, child: string): ReferenceField | undefined | 'several' {
+	const fields = fieldRules(rules[owner]).filter((f) => !isEnrichedField(f) && reachesThroughHidden(rules, f.content, child, new Set()));
+	const field = fields.at(-1);
+	if (field === undefined) return undefined;
+	if (fields.some((f) => f.name !== field.name)) return 'several';
+	const content = unwrappedPrec(field.content);
+	return { name: field.name, whole: isRecord(content) && content.type === 'SYMBOL' && content.name === child };
+}
+
+function placedStepsOf(rules: Readonly<Record<string, unknown>>, stop: ReadonlySet<string>, kind: string, within: readonly string[]): readonly PlacedStep[] | 'several' {
+	const owner = within[within.length - 1]!;
+	const claimed = [...within.slice(0, -1).toReversed(), kind];
+	const kinds = claimed.flatMap((k, i) => [...(supertypesBetween(rules, stop, i === 0 ? owner : claimed[i - 1]!, k) ?? []), k]);
+	const steps = kinds.map((k, i) => ({ kind: k, field: fieldOfReference(rules, i === 0 ? owner : kinds[i - 1]!, k) }));
+	return steps.some((step) => step.field === 'several') ? 'several' : (steps as PlacedStep[]);
 }
 
 function isUnionSlotMember(model: SlotModel, owner: string, kind: string): boolean {
@@ -172,6 +288,8 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	});
 	const rules = base.rules as Record<string, unknown>;
 	const ruleNames = new Set(Object.keys(rules));
+	const checks = { ...base, rules } as unknown as GrammarRecord;
+	const stop = supertypesOf(checks);
 	const residue: GrammarBindingsResidue[] = [];
 	const left = (cause: string, row: string): void => {
 		residue.push({ cause, row });
@@ -216,9 +334,64 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const realizedByParent: string[] = [];
 	const wanted: { kind: string; to: string; row: string }[] = [];
 	const wantedAliases: { kind: string; to: string; row: string }[] = [];
-	const placedSplits: { kind: string; within: readonly string[]; as: string; member: string }[] = [];
+	const placedSplits: PlacedSplit[] = [];
+	const wordMatcher = compileWordMatcher(base.word, base.rules);
+	const wordLeaves = new Set([...(base.word === null ? [] : [base.word]), ...wordDisplaysOf(base.rules, { word: base.word ?? undefined })]);
+	const literalDiagnostics: GrammarDiagnostic[] = [];
+	const refuseLiteral = (row: string, literal: LiteralText): void => {
+		const reason = wordLeaves.has(literal.leaf)
+			? `${literal.texts.filter((text) => !matchesWordShape(text, wordMatcher)).join(', ')} is not word-shaped`
+			: `${literal.leaf} is not the grammar's word or an alias of it`;
+		literalDiagnostics.push({
+			scope: 'grammar',
+			code: 'literal-split-not-keyword',
+			severity: 'fail',
+			grammar: base.name,
+			message: `${input.file}: the claim ${row} names its kind by the text of ${literal.leaf}, which cannot become a keyword: ${reason}`,
+			canProceed: false,
+			details: { file: input.file, claim: row, leaf: literal.leaf, texts: literal.texts, reason }
+		});
+	};
+	const literalSplitAt = (c: RefinedClaim, kind: string, within: readonly string[], literal: LiteralText, as: string): PlacedSplit | string => {
+		if (!ruleNames.has(kind) || !within.every((w) => ruleNames.has(w))) return 'placed claim';
+		const absent = c.absent.flatMap((field) => {
+			const through = fieldThrough(rules, rules[kind], field, new Set([kind]), (symbol) => !isEnrichGroupLiftSymbol(symbol));
+			return through === undefined ? [] : [{ field, through }];
+		});
+		if (absent.length !== c.absent.length) return 'negated field is not a field of the split kind';
+		const steps = placedStepsOf(rules, stop, kind, within);
+		if (steps === 'several') return SEVERAL_FIELDS;
+		const family = relaxedFamilyOf(rules, kind, literal);
+		const relax = family.size === 0 || base.word === null ? [] : relaxSitesOf(input.layerRules as Readonly<Record<string, unknown>>, base.word, family, literal.texts);
+		return { kind, within, as, steps, literal: { ...literal, absent, relax } };
+	};
+	const mintedLiterals: { c: RefinedClaim; kind: string; literal: LiteralText; row: string }[] = [];
 	for (const c of claims) {
 		const row = `${c.kind ?? '(group)'} → ${c.vocab}`;
+		const kind = c.kind;
+		const literal = c.refines === null && kind !== null && kind !== WILDCARD ? literalClaimOf(c) : undefined;
+		if (literal !== undefined && kind !== null) {
+			if (!wordLeaves.has(literal.leaf) || !literal.texts.every((text) => matchesWordShape(text, wordMatcher))) {
+				refuseLiteral(row, literal);
+				continue;
+			}
+			if (!placed(c) && !ruleNames.has(kind)) {
+				mintedLiterals.push({ c, kind, literal, row });
+				continue;
+			}
+			if (!placed(c)) {
+				left('literal split names no site', row);
+				continue;
+			}
+			const split = literalSplitAt(c, kind, c.within, literal, boundKindName(c.vocab, isParserHiddenName(kind)));
+			if (typeof split === 'string') {
+				left(split, row);
+				continue;
+			}
+			placedSplits.push(split);
+			realizedKinds.push(row);
+			continue;
+		}
 		if (c.refinement !== null) {
 			left(`${c.refinement} refinement`, row);
 			continue;
@@ -239,12 +412,16 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			}
 			const outer = c.within[c.within.length - 1]!;
 			const reference = c.within[c.within.length - 2] ?? c.kind;
-			const member = fieldOfReference(rules, outer, reference);
-			if (member === undefined) {
+			if (fieldOfReference(rules, outer, reference) === undefined) {
 				left('placement container has no member name', row);
 				continue;
 			}
-			placedSplits.push({ kind: c.kind, within: c.within, as: to, member });
+			const steps = placedStepsOf(rules, stop, c.kind, c.within);
+			if (steps === 'several') {
+				left(SEVERAL_FIELDS, row);
+				continue;
+			}
+			placedSplits.push({ kind: c.kind, within: c.within, as: to, steps });
 			realizedKinds.push(row);
 			continue;
 		}
@@ -270,6 +447,17 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		wanted.push({ kind: c.kind, to, row });
+	}
+	for (const { c, kind, literal, row } of mintedLiterals) {
+		const sites = placedSplits.filter((split) => split.literal === undefined && split.as === kind);
+		const at = sites.map((site) => literalSplitAt(c, site.kind, site.within, literal, boundKindName(c.vocab, isParserHiddenName(kind))));
+		const refused = sites.length === 0 ? 'literal split names no site' : at.find((split): split is string => typeof split === 'string');
+		if (refused !== undefined) {
+			left(refused, row);
+			continue;
+		}
+		placedSplits.push(...at.filter((split): split is PlacedSplit => typeof split !== 'string'));
+		realizedKinds.push(row);
 	}
 	for (let changed = true; changed; ) {
 		changed = false;
@@ -300,20 +488,23 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		realizedKinds.push(a.row);
 	}
 
+	const layer = input.layerRules as unknown as GrammarRecord;
+
 	const splits: Split[] = placedSplits.map((split) => {
-		const outer = split.within[split.within.length - 1]!;
-		const outerName = Object.hasOwn(renames, outer) ? renames[outer]! : Object.hasOwn(aliases, outer) ? aliases[outer]! : outer;
+		const owner = split.within[split.within.length - 1]!;
+		const ownerName = Object.hasOwn(renames, owner) ? renames[owner]! : Object.hasOwn(aliases, owner) ? aliases[owner]! : owner;
+		const first = split.steps[0]?.field;
+		const cloneName = (kind: string, i: number): string | null => {
+			if (i === split.steps.length - 1 || stop.has(kind)) return null;
+			return i === 0 && first?.whole === true ? `${ownerName}_${first.name}` : `${kind}_${ownerName}`;
+		};
 		return {
-			kind: split.kind,
-			within: split.within,
+			owner,
+			path: split.steps.map(({ kind, field }, i) => ({ field: field?.name ?? null, kind, as: cloneName(kind, i) })),
 			as: split.as,
-			containers: split.within.slice(0, -1).map(() => ({ name: `${outerName}_${split.member}`, field: memberFieldName(split.member) }))
+			...(split.literal === undefined ? {} : { literal: split.literal })
 		};
 	});
-
-	const checks = { ...base, rules } as unknown as GrammarRecord;
-	const layer = input.layerRules as unknown as GrammarRecord;
-	const stop = supertypesOf(checks);
 	const realizedMembers: string[] = [];
 	const candidates: { row: string; request: FieldRequest; group?: string }[] = [];
 	const named = facts.members.filter(isNamedMember);
@@ -481,11 +672,26 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 		else fieldWraps.push(request);
 	}
 
+	const layerField = (owner: string, field: string): string => fieldRenames.find((r) => r.owner === owner && r.from === field)?.to ?? field;
+	const layerSplits = splits.map((split): Split => {
+		if (split.literal === undefined) return split;
+		const source = split.path[split.path.length - 1]!.kind;
+		const { field, absent } = split.literal;
+		return {
+			...split,
+			literal: {
+				...split.literal,
+				field: layerField(source, field),
+				absent: absent.map((a) => ({ ...a, field: layerField(a.through[a.through.length - 1] ?? source, a.field) }))
+			}
+		};
+	});
 	const layerRules = Object.fromEntries(Object.keys(rules).map((name) => [name, input.layerRules[name]]));
 	const patches = grammarBindingsPatches({ ...checks, rules: layerRules }, fieldRenames, fieldWraps, aliases);
-	const { leads, diagnostics } = deriveLeads({ file: input.file, base, facts });
+	const { leads, diagnostics: leadDiagnostics } = deriveLeads({ file: input.file, base, facts });
+	const diagnostics = [...leadDiagnostics, ...literalDiagnostics];
 	return {
-		bindings: { patches, renames, leads, splits },
+		bindings: { patches, renames, leads, splits: layerSplits },
 		diagnostics,
 		report: {
 			claims: facts.claims.length,

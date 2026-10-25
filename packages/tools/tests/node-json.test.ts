@@ -435,9 +435,9 @@ describe('a rebuilt node reads each side from where that side lives', () => {
 		expect(comments(String(revived))).toBe(2);
 	});
 
-	it('keeps a comment written on rebuilt alias content', () => {
-		const content = (ts.parse('interface I {}').statements()[0] as unknown as { body(): { content(): Rebuildable & { members(): unknown } } }).body().content();
-		const rebuilt = content.$with.members!(content.members());
+	it('keeps a comment written on a rebuilt flat alias display', () => {
+		const body = (ts.parse('interface I {}').statements()[0] as unknown as { body(): Rebuildable & { members(): unknown } }).body();
+		const rebuilt = body.$with.members!(body.members());
 		rebuilt.$trivia.leading('/* new */');
 		expect(String(rebuilt)).toContain('/* new */');
 		expect(String(JSON.parse(JSON.stringify(rebuilt), ts.reviver))).toContain('/* new */');

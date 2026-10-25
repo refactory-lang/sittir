@@ -57,7 +57,7 @@ export function rebuildSpliceLoose() {
 				name: "Display",
 			}),
 			type: "SpliceError",
-			body: rs.build.functionItem({
+			body: rs.build.methodDeclaration({
 				name: "fmt",
 				parameters: rs.build.parametersElementsReceiver({
 					content: rs.build.selfParameter({
@@ -167,7 +167,7 @@ export function rebuildSpliceLoose() {
 				name: "Error",
 			}),
 			type: "SpliceError",
-			body: rs.build.declarationList(),
+			body: rs.build.extensionDeclarationBody(),
 		}), rs.build.functionItem({
 			visibilityModifier: rs.build.visibilityModifier.pub(),
 			name: "apply_edits",

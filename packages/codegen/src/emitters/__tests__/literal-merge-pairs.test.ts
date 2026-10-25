@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { literalMergePairs } from '../shared.ts';
+import { nodelessExtrasRun } from '../../dsl/rule-patterns.ts';
+
+const spaced = { normalizedRules: undefined, nodelessExtrasRun: nodelessExtrasRun([{ type: 'PATTERN', value: '\\s' }], {}) };
 
 const entries = [
 	{ kind: 'dotdoteq', id: 1, anon: true, symbolName: '..=', literalText: '..=' },
@@ -14,13 +17,13 @@ describe('literalMergePairs', () => {
 				{ text: '()' }
 			],
 			entries,
-			undefined
+			spaced
 		);
 		expect(pairs).toEqual([['.'.charCodeAt(0), '='.charCodeAt(0)]]);
 	});
 
 	it('yields nothing for a literal no parser token spells', () => {
-		expect(literalMergePairs([{ text: '()' }], entries, undefined)).toEqual([]);
+		expect(literalMergePairs([{ text: '()' }], entries, spaced)).toEqual([]);
 	});
 
 	it('adds a same-char pair only when the doubled token can begin what follows the single one', () => {
@@ -34,12 +37,18 @@ describe('literalMergePairs', () => {
 			shift: { type: 'SEQ', members: [{ type: 'SYMBOL', name: 'id' }, { type: 'STRING', value: '>>' }, { type: 'SYMBOL', name: 'id' }] },
 			expr: { type: 'CHOICE', members: [{ type: 'SYMBOL', name: 'update' }, { type: 'SYMBOL', name: 'id' }] },
 			id: { type: 'PATTERN', value: '[a-z]+' }
-		} as unknown as Parameters<typeof literalMergePairs>[2];
+		} as unknown as NonNullable<Parameters<typeof literalMergePairs>[2]['normalizedRules']>;
 		const tokens = [
 			{ kind: 'minus', id: 3, anon: true, symbolName: '-', literalText: '-' },
 			{ kind: 'minus_minus', id: 4, anon: true, symbolName: '--', literalText: '--' },
 			{ kind: 'shr', id: 5, anon: true, symbolName: '>>', literalText: '>>' }
 		];
-		expect(literalMergePairs([{ text: '--' }, { text: '>>' }], tokens, rules)).toEqual([['-'.charCodeAt(0), '-'.charCodeAt(0)]]);
+		expect(literalMergePairs([{ text: '--' }, { text: '>>' }], tokens, { ...spaced, normalizedRules: rules })).toEqual([['-'.charCodeAt(0), '-'.charCodeAt(0)]]);
+	});
+
+	it('yields nothing in a grammar whose extras admit no space, since a space there is text, not trivia', () => {
+		const newlinesOnly = { normalizedRules: undefined, nodelessExtrasRun: nodelessExtrasRun([{ type: 'PATTERN', value: '\\r?\\n' }], {}) };
+		expect(literalMergePairs([{ text: '..=' }], entries, newlinesOnly)).toEqual([]);
+		expect(literalMergePairs([{ text: '..=' }], entries, { normalizedRules: undefined, nodelessExtrasRun: undefined })).toEqual([]);
 	});
 });

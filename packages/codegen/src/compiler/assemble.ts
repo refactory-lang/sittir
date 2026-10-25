@@ -37,6 +37,7 @@ import { isNonterminalRuleType } from '../dsl/rule-patterns.ts';
 import type { SimplifiedGrammar, NodeMap, SignaturePool } from './types.ts';
 import { supertypeKindsOf } from './normalize.ts';
 import type { RuleId } from '../types/rule.ts';
+import { linkAliasStorages } from './alias-envelopes.ts';
 import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, type GeneratedIdTables, type GeneratedKindEntry, isSurfaceHiddenKind, seatedOf, supertypeArmsOf } from '../dsl/symbol-table.ts';
 import type {
 	AssembledNode,
@@ -333,6 +334,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		}
 	}
 
+	linkAliasStorages(nodes, normalized.refineForms);
 	const assembled: AssembledNodeMap = {
 		name: normalized.name,
 		root: normalized.root,
@@ -349,6 +351,7 @@ export function assemble(ctx: AssembleCtx): AssembledNodeMap {
 		reserved: normalized.reserved,
 		relaxedLiterals: normalized.relaxedLiterals,
 		relaxedDisplayLiterals: normalized.relaxedDisplayLiterals,
+		fixedNameLiterals: normalized.fixedNameLiterals,
 		fileTypes: normalized.fileTypes,
 		provenance: normalized.provenance,
 		externals: normalized.externals,

@@ -157,6 +157,20 @@ describe('diffSlotNames — PR-A wide divergence probe core', () => {
 		expect(proj.storageName).toBe('interface_body');
 		expect(proj.parseNames).toEqual(['object_type']);
 	});
+
+	it('a ref to a hidden copy takes the name of the visible kind it copies', () => {
+		const copy = {
+			kind: 'node-ref',
+			node: { name: '_method_definition_member', kind: '_method_definition_member' },
+			parseKind: { kind: 'unresolved-ref', name: '_method_definition_member' },
+			copyOf: 'method_definition',
+			multiplicity: 'single'
+		} as unknown as NodeOrTerminal;
+		const proj = projectSlotNaming({ ...cleanSlot(), values: [copy] } as unknown as AssembledNonterminal);
+		expect(proj.storageName).toBe('method_definition');
+		expect(proj.propertyName).toBe('methodDefinition');
+		expect(proj.parseNames).toEqual(['_method_definition_member']);
+	});
 });
 
 describe('snakeToCamel — reserved accessor names', () => {

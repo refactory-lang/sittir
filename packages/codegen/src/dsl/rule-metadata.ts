@@ -9,6 +9,7 @@ export interface RuleMetadataShape {
 	symbolSource?: 'grammar' | 'link' | 'group-lift';
 	aliasSource?: 'visible-group';
 	reservedWordsets?: readonly string[];
+	aliasStorage?: string;
 }
 
 export function makeRuleMetadata(shape: RuleMetadataShape): RuleMetadata {
@@ -21,6 +22,10 @@ export function readRuleMetadata(meta: unknown): RuleMetadataShape | undefined {
 
 export function reservedWordsetsOf(meta: unknown): readonly string[] | undefined {
 	return readRuleMetadata(meta)?.reservedWordsets;
+}
+
+export function aliasStorageOf(meta: unknown): string | undefined {
+	return readRuleMetadata(meta)?.aliasStorage;
 }
 
 export function withReservedWordsets(meta: unknown, reservedWordsets: readonly string[]): RuleMetadata {

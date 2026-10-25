@@ -342,6 +342,19 @@ export function findFirst(
 	return null;
 }
 
+export function findSpanNode(root: TS.Node, startIndex: number, endIndex: number, kind: string): TS.Node | null {
+	const spanned: TS.Node[] = [];
+	const visit = (node: TS.Node): void => {
+		if (node.startIndex === startIndex && node.endIndex === endIndex) spanned.push(node);
+		for (let i = 0; i < node.childCount; i++) {
+			const child = node.child(i);
+			if (child !== null && child.startIndex <= startIndex && child.endIndex >= endIndex) visit(child);
+		}
+	};
+	visit(root);
+	return spanned.find((node) => node.type === kind) ?? spanned.find((node) => node.grammarType === kind) ?? spanned[0] ?? null;
+}
+
 export function collectKinds(node: TS.Node, kindOf: (node: TS.Node) => string = nodeType): Set<string> {
 	const kinds = new Set<string>();
 

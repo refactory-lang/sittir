@@ -199,6 +199,7 @@ export function summarize(d: Derivation): string {
 	if (d.wildcardContainers.length > 0)
 		lines.push(`wildcard claims that land on a list or container, not on its members ${d.wildcardContainers.join('; ')}`);
 	if (d.unenteredForms.length > 0) lines.push(`forms with no entry for their supertype's claim ${d.unenteredForms.join('; ')}`);
+	if (d.stoppedReads.length > 0) lines.push(`base claims a clone's own claim stops ${d.stoppedReads.join('; ')}`);
 	const top = [...d.unmapped].sort((a, b) => b[1] - a[1]).slice(0, 12);
 	if (top.length > 0) lines.push(`  ${top.map(([k, n]) => `${k.slice(1, -1)}×${n}`).join(' ')}`);
 	return lines.join('\n');

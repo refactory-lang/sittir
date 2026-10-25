@@ -56,6 +56,7 @@ export const ir: {
 	readonly boundaryAssertion: typeof F.buildBoundaryAssertion;
 	readonly nonBoundaryAssertion: typeof F.buildNonBoundaryAssertion;
 	readonly negation: typeof F.buildNegation;
+	readonly lazy: typeof F.buildLazy;
 	readonly identityEscape: typeof F.buildIdentityEscape;
 	readonly patternCharacter: typeof F.buildPatternCharacter;
 	readonly posixClassName: typeof F.buildPosixClassName;
@@ -70,6 +71,7 @@ export const ir: {
 	readonly decimalDigits: typeof F.buildDecimalDigits;
 	readonly characterClassEscapeText1: typeof F.buildCharacterClassEscapeText1;
 	readonly characterClassEscapeText2: typeof F.buildCharacterClassEscapeText2;
+	readonly unicodePropertyName: typeof F.buildUnicodePropertyName;
 	readonly layout: typeof layout;
 } = Object.freeze({
 	// Node factories
@@ -105,6 +107,7 @@ export const ir: {
 	boundaryAssertion: F.buildBoundaryAssertion,
 	nonBoundaryAssertion: F.buildNonBoundaryAssertion,
 	negation: F.buildNegation,
+	lazy: F.buildLazy,
 
 	// Leaves whose one slot is their own text
 	identityEscape: F.buildIdentityEscape,
@@ -123,6 +126,7 @@ export const ir: {
 	decimalDigits: F.buildDecimalDigits,
 	characterClassEscapeText1: F.buildCharacterClassEscapeText1,
 	characterClassEscapeText2: F.buildCharacterClassEscapeText2,
+	unicodePropertyName: F.buildUnicodePropertyName,
 
 	// Supertype-grouped sub-namespaces (also exported standalone above)
 	layout

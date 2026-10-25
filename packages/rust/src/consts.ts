@@ -101,6 +101,7 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'delim_token_tree_bracket',
 	'delim_token_tree_paren',
 	'enum_variant_list',
+	'extension_declaration_body',
 	'field_declaration_list',
 	'field_initializer_list',
 	'match_block',
@@ -114,6 +115,7 @@ export const INNER_SITES: ReadonlySet<string> = new Set<string>([
 	'token_tree_pattern_brace',
 	'token_tree_pattern_bracket',
 	'token_tree_pattern_paren',
+	'trait_interface_declaration_body',
 	'tuple_pattern',
 	'use_bounds',
 	'use_list'

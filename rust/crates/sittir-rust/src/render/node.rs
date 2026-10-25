@@ -19,8 +19,12 @@ use super::options;
 use super::{field_ids as field, kind_ids as kind};
 use ::sittir_core::VerbatimNode;
 
+pub fn stamp(grammar: KindId, display: KindId) -> KindId {
+    ::sittir_core::read::stamp(grammar, display, <AnyNode as ::sittir_core::read::ReadNode>::shows, kind::relaxes)
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AnyNode {
     #[kind(kind::SOURCE_FILE)]
     SourceFile(SourceFileNode),
@@ -506,6 +510,10 @@ pub enum AnyNode {
     DocComment(DocCommentNode),
     #[kind(kind::_BLOCK_COMMENT_CONTENT)]
     BlockCommentContent(BlockCommentContentNode),
+    #[kind(kind::_TRAIT_INTERFACE_DECLARATION_BODY)]
+    TraitInterfaceDeclarationBody(TraitInterfaceDeclarationBodyNode),
+    #[kind(kind::_EXTENSION_DECLARATION_BODY)]
+    ExtensionDeclarationBody(ExtensionDeclarationBodyNode),
     #[kind(kind::_RECEIVER_PARAMETER_DECLARATION)]
     ReceiverParameterDeclaration(ReceiverParameterDeclarationNode),
     #[kind(kind::_ATTRIBUTED_PARAMETER_RECEIVER)]
@@ -522,10 +530,12 @@ pub enum AnyNode {
     TypeIdentifier(TypeIdentifierNode),
     #[kind(kind::_FIELD_IDENTIFIER, display)]
     FieldIdentifier(FieldIdentifierNode),
-    #[kind(kind::_CRATE_VISIBILITY_MODIFIER, display)]
-    CrateVisibilityModifier(CrateVisibilityModifierNode),
     #[kind(kind::_SHORTHAND_FIELD_IDENTIFIER, display)]
     ShorthandFieldIdentifier(ShorthandFieldIdentifierNode),
+    #[kind(display(kind::_METHOD_DECLARATION))]
+    MethodDeclaration(Box<FunctionItemNode>),
+    #[kind(display(kind::_SIGNATURE_METHOD_DECLARATION))]
+    SignatureMethodDeclaration(Box<FunctionSignatureItemNode>),
     #[kind(kind::EMPTY_STATEMENT)]
     #[node(edged)]
     EmptyStatement(::sittir_core::options::Edges),
@@ -585,6 +595,8 @@ pub enum AnyNode {
     Indent,
     #[kind(kind::_DEDENT)]
     Dedent,
+    #[kind(display(kind::_CRATE_VISIBILITY_MODIFIER))]
+    CrateVisibilityModifier,
     #[kind(kind::SEMI)]
     Semi,
     #[kind(kind::EQ_GT)]
@@ -1088,6 +1100,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::RawStringLiteralEnd(t) => t.prepare(ctx),
             AnyNode::DocComment(t) => t.prepare(ctx),
             AnyNode::BlockCommentContent(t) => t.prepare(ctx),
+            AnyNode::TraitInterfaceDeclarationBody(t) => t.prepare(ctx),
+            AnyNode::ExtensionDeclarationBody(t) => t.prepare(ctx),
             AnyNode::ReceiverParameterDeclaration(t) => t.prepare(ctx),
             AnyNode::AttributedParameterReceiver(t) => t.prepare(ctx),
             AnyNode::ParametersElementsReceiver(t) => t.prepare(ctx),
@@ -1096,8 +1110,9 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.prepare(ctx),
             AnyNode::TypeIdentifier(t) => t.prepare(ctx),
             AnyNode::FieldIdentifier(t) => t.prepare(ctx),
-            AnyNode::CrateVisibilityModifier(t) => t.prepare(ctx),
             AnyNode::ShorthandFieldIdentifier(t) => t.prepare(ctx),
+            AnyNode::MethodDeclaration(t) => t.prepare(ctx),
+            AnyNode::SignatureMethodDeclaration(t) => t.prepare(ctx),
             AnyNode::EmptyStatement(_) => Ok(()),
             AnyNode::UnitType(_) => Ok(()),
             AnyNode::NeverType(_) => Ok(()),
@@ -1123,6 +1138,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DoubleBlankline => Ok(()),
             AnyNode::Indent => Ok(()),
             AnyNode::Dedent => Ok(()),
+            AnyNode::CrateVisibilityModifier => Ok(()),
             AnyNode::Semi => Ok(()),
             AnyNode::EqGt => Ok(()),
             AnyNode::Colon => Ok(()),
@@ -1497,6 +1513,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::RawStringLiteralEnd(t) => t.gap_edges(),
             AnyNode::DocComment(t) => t.gap_edges(),
             AnyNode::BlockCommentContent(t) => t.gap_edges(),
+            AnyNode::TraitInterfaceDeclarationBody(t) => t.gap_edges(),
+            AnyNode::ExtensionDeclarationBody(t) => t.gap_edges(),
             AnyNode::ReceiverParameterDeclaration(t) => t.gap_edges(),
             AnyNode::AttributedParameterReceiver(t) => t.gap_edges(),
             AnyNode::ParametersElementsReceiver(t) => t.gap_edges(),
@@ -1505,8 +1523,9 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.gap_edges(),
             AnyNode::TypeIdentifier(t) => t.gap_edges(),
             AnyNode::FieldIdentifier(t) => t.gap_edges(),
-            AnyNode::CrateVisibilityModifier(t) => t.gap_edges(),
             AnyNode::ShorthandFieldIdentifier(t) => t.gap_edges(),
+            AnyNode::MethodDeclaration(t) => t.gap_edges(),
+            AnyNode::SignatureMethodDeclaration(t) => t.gap_edges(),
             AnyNode::EmptyStatement(edges) => Some(edges),
             AnyNode::UnitType(edges) => Some(edges),
             AnyNode::NeverType(edges) => Some(edges),
@@ -1532,6 +1551,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DoubleBlankline => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
+            AnyNode::CrateVisibilityModifier => None,
             AnyNode::Semi => None,
             AnyNode::EqGt => None,
             AnyNode::Colon => None,
@@ -1906,6 +1926,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::RawStringLiteralEnd(t) => t.snapshot_edge(),
             AnyNode::DocComment(t) => t.snapshot_edge(),
             AnyNode::BlockCommentContent(t) => t.snapshot_edge(),
+            AnyNode::TraitInterfaceDeclarationBody(t) => t.snapshot_edge(),
+            AnyNode::ExtensionDeclarationBody(t) => t.snapshot_edge(),
             AnyNode::ReceiverParameterDeclaration(t) => t.snapshot_edge(),
             AnyNode::AttributedParameterReceiver(t) => t.snapshot_edge(),
             AnyNode::ParametersElementsReceiver(t) => t.snapshot_edge(),
@@ -1914,8 +1936,9 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.snapshot_edge(),
             AnyNode::TypeIdentifier(t) => t.snapshot_edge(),
             AnyNode::FieldIdentifier(t) => t.snapshot_edge(),
-            AnyNode::CrateVisibilityModifier(t) => t.snapshot_edge(),
             AnyNode::ShorthandFieldIdentifier(t) => t.snapshot_edge(),
+            AnyNode::MethodDeclaration(t) => t.snapshot_edge(),
+            AnyNode::SignatureMethodDeclaration(t) => t.snapshot_edge(),
             AnyNode::EmptyStatement(_) => None,
             AnyNode::UnitType(_) => None,
             AnyNode::NeverType(_) => None,
@@ -1941,6 +1964,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DoubleBlankline => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
+            AnyNode::CrateVisibilityModifier => None,
             AnyNode::Semi => None,
             AnyNode::EqGt => None,
             AnyNode::Colon => None,
@@ -2315,6 +2339,8 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::RawStringLiteralEnd(t) => t.source_separator(ctx),
             AnyNode::DocComment(t) => t.source_separator(ctx),
             AnyNode::BlockCommentContent(t) => t.source_separator(ctx),
+            AnyNode::TraitInterfaceDeclarationBody(t) => t.source_separator(ctx),
+            AnyNode::ExtensionDeclarationBody(t) => t.source_separator(ctx),
             AnyNode::ReceiverParameterDeclaration(t) => t.source_separator(ctx),
             AnyNode::AttributedParameterReceiver(t) => t.source_separator(ctx),
             AnyNode::ParametersElementsReceiver(t) => t.source_separator(ctx),
@@ -2323,8 +2349,9 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.source_separator(ctx),
             AnyNode::TypeIdentifier(t) => t.source_separator(ctx),
             AnyNode::FieldIdentifier(t) => t.source_separator(ctx),
-            AnyNode::CrateVisibilityModifier(t) => t.source_separator(ctx),
             AnyNode::ShorthandFieldIdentifier(t) => t.source_separator(ctx),
+            AnyNode::MethodDeclaration(t) => t.source_separator(ctx),
+            AnyNode::SignatureMethodDeclaration(t) => t.source_separator(ctx),
             AnyNode::EmptyStatement(_) => None,
             AnyNode::UnitType(_) => None,
             AnyNode::NeverType(_) => None,
@@ -2350,6 +2377,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::DoubleBlankline => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
+            AnyNode::CrateVisibilityModifier => None,
             AnyNode::Semi => None,
             AnyNode::EqGt => None,
             AnyNode::Colon => None,
@@ -2487,7 +2515,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, codec_only)]
+#[node(choice, stamp = stamp, codec_only)]
 pub enum TriviaNode {
     #[kind(kind::LINE_COMMENT)]
     LineComment(LineCommentNode),
@@ -2670,7 +2698,7 @@ pub type NodeLayout = ::sittir_core::layout::NodeLayout<TriviaNode>;
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StatementNode {
     #[kind(kind::EXPRESSION_STATEMENT)]
     ExpressionStatement(ExpressionStatementNode),
@@ -2852,7 +2880,7 @@ impl ::sittir_core::render::Render for StatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DeclarationStatementNode {
     #[kind(kind::CONST_ITEM)]
     ConstItem(Box<ConstItemNode>),
@@ -3066,7 +3094,7 @@ impl ::sittir_core::render::Render for DeclarationStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MacroDefinitionNode {
     #[kind(kind::MACRO_DEFINITION_PAREN)]
     MacroDefinitionParen(MacroDefinitionParenNode),
@@ -3135,7 +3163,7 @@ impl ::sittir_core::render::Render for MacroDefinitionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TokenTreePatternNode {
     #[kind(kind::TOKEN_TREE_PATTERN_PAREN)]
     TokenTreePatternParen(TokenTreePatternParenNode),
@@ -3196,7 +3224,7 @@ impl ::sittir_core::render::Render for TokenTreePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TokenTreeNode {
     #[kind(kind::TOKEN_TREE_PAREN)]
     TokenTreeParen(TokenTreeParenNode),
@@ -3257,7 +3285,7 @@ impl ::sittir_core::render::Render for TokenTreeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ModItemNode {
     #[kind(kind::MOD_ITEM_EXTERNAL)]
     ModItemExternal(ModItemExternalNode),
@@ -3318,7 +3346,7 @@ impl ::sittir_core::render::Render for ModItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForeignModItemNode {
     #[kind(kind::FOREIGN_MOD_ITEM_SEMI)]
     ForeignModItemSemi(ForeignModItemSemiNode),
@@ -3379,7 +3407,7 @@ impl ::sittir_core::render::Render for ForeignModItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StructItemNode {
     #[kind(kind::STRUCT_ITEM_BRACE)]
     StructItemBrace(Box<StructItemBraceNode>),
@@ -3448,7 +3476,7 @@ impl ::sittir_core::render::Render for StructItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImplItemNode {
     #[kind(kind::IMPL_ITEM_BODY)]
     ImplItemBody(Box<ImplItemBodyNode>),
@@ -3509,7 +3537,7 @@ impl ::sittir_core::render::Render for ImplItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeNode {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -3670,7 +3698,7 @@ impl ::sittir_core::render::Render for TypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PointerTypeNode {
     #[kind(kind::POINTER_TYPE_CONST)]
     PointerTypeConst(PointerTypeConstNode),
@@ -3731,7 +3759,7 @@ impl ::sittir_core::render::Render for PointerTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExpressionNode {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -4095,7 +4123,7 @@ impl ::sittir_core::render::Render for ExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DelimTokenTreeNode {
     #[kind(kind::DELIM_TOKEN_TREE_PAREN)]
     DelimTokenTreeParen(DelimTokenTreeParenNode),
@@ -4156,7 +4184,7 @@ impl ::sittir_core::render::Render for DelimTokenTreeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangeExpressionNode {
     #[kind(kind::RANGE_EXPRESSION_BINARY)]
     RangeExpressionBinary(RangeExpressionBinaryNode),
@@ -4233,7 +4261,7 @@ impl ::sittir_core::render::Render for RangeExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ReferenceExpressionNode {
     #[kind(kind::REFERENCE_EXPRESSION_RAW_CONST)]
     ReferenceExpressionRawConst(ReferenceExpressionRawConstNode),
@@ -4310,7 +4338,7 @@ impl ::sittir_core::render::Render for ReferenceExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ArrayExpressionNode {
     #[kind(kind::ARRAY_EXPRESSION_SEMI)]
     ArrayExpressionSemi(ArrayExpressionSemiNode),
@@ -4371,7 +4399,7 @@ impl ::sittir_core::render::Render for ArrayExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MatchArmNode {
     #[kind(kind::MATCH_ARM_WITH_COMMA)]
     MatchArmWithComma(Box<MatchArmWithCommaNode>),
@@ -4425,7 +4453,7 @@ impl ::sittir_core::render::Render for MatchArmNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClosureExpressionNode {
     #[kind(kind::CLOSURE_EXPRESSION_BLOCK)]
     ClosureExpressionBlock(ClosureExpressionBlockNode),
@@ -4486,7 +4514,7 @@ impl ::sittir_core::render::Render for ClosureExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PatternNode {
     #[kind(kind::STRING_LITERAL, kind::RAW_STRING_LITERAL, kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_PLAIN, kind::CHAR_LITERAL_EMPTY, kind::BOOLEAN_LITERAL, kind::INTEGER_LITERAL_DECIMAL, kind::INTEGER_LITERAL_HEX, kind::INTEGER_LITERAL_BINARY, kind::INTEGER_LITERAL_OCTAL, kind::FLOAT_LITERAL, kind::NEGATIVE_LITERAL, kind::_LITERAL_PATTERN, kind::CHAR_LITERAL, kind::INTEGER_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
     LiteralPattern(LiteralPatternNode),
@@ -4661,7 +4689,7 @@ impl ::sittir_core::render::Render for PatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangePatternNode {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
     RangePatternWithLeft(RangePatternWithLeftNode),
@@ -4722,7 +4750,7 @@ impl ::sittir_core::render::Render for RangePatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OrPatternNode {
     #[kind(kind::OR_PATTERN_BINARY)]
     OrPatternBinary(OrPatternBinaryNode),
@@ -4783,7 +4811,7 @@ impl ::sittir_core::render::Render for OrPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LiteralPatternNode {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -4892,7 +4920,7 @@ impl ::sittir_core::render::Render for LiteralPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IntegerLiteralNode {
     #[kind(kind::INTEGER_LITERAL_DECIMAL)]
     IntegerLiteralDecimal(IntegerLiteralDecimalNode),
@@ -4969,7 +4997,7 @@ impl ::sittir_core::render::Render for IntegerLiteralNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CharLiteralNode {
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE, kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED, kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED, kind::CHAR_LITERAL_ESCAPED_HEX, kind::CHAR_LITERAL_ESCAPED)]
     CharLiteralEscaped(CharLiteralEscapedNode),
@@ -5046,7 +5074,7 @@ impl ::sittir_core::render::Render for CharLiteralNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CharLiteralEscapedNode {
     #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
     CharLiteralEscapedSimple(CharLiteralEscapedSimpleNode),
@@ -5122,9 +5150,385 @@ impl ::sittir_core::render::Render for CharLiteralEscapedNode {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
+pub enum DeclarationStatementTraitItemNode {
+    #[kind(kind::CONST_ITEM)]
+    ConstItem(Box<ConstItemNode>),
+    #[kind(kind::MACRO_INVOCATION)]
+    MacroInvocation(MacroInvocationNode),
+    #[kind(kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::MACRO_DEFINITION)]
+    MacroDefinition(MacroDefinitionNode),
+    #[kind(kind::EMPTY_STATEMENT)]
+    #[node(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
+    #[kind(kind::ATTRIBUTE_ITEM)]
+    AttributeItem(AttributeItemNode),
+    #[kind(kind::INNER_ATTRIBUTE_ITEM)]
+    InnerAttributeItem(InnerAttributeItemNode),
+    #[kind(kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::MOD_ITEM)]
+    ModItem(ModItemNode),
+    #[kind(kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::FOREIGN_MOD_ITEM)]
+    ForeignModItem(ForeignModItemNode),
+    #[kind(kind::STRUCT_ITEM_BRACE, kind::STRUCT_ITEM_TUPLE, kind::STRUCT_ITEM_UNIT, kind::STRUCT_ITEM)]
+    StructItem(StructItemNode),
+    #[kind(kind::UNION_ITEM)]
+    UnionItem(Box<UnionItemNode>),
+    #[kind(kind::ENUM_ITEM)]
+    EnumItem(Box<EnumItemNode>),
+    #[kind(kind::TYPE_ITEM)]
+    TypeItem(Box<TypeItemNode>),
+    #[kind(display(kind::_METHOD_DECLARATION))]
+    MethodDeclaration(Box<FunctionItemNode>),
+    #[kind(display(kind::_SIGNATURE_METHOD_DECLARATION))]
+    SignatureMethodDeclaration(Box<FunctionSignatureItemNode>),
+    #[kind(kind::IMPL_ITEM_BODY, kind::IMPL_ITEM_SEMI, kind::IMPL_ITEM)]
+    ImplItem(ImplItemNode),
+    #[kind(kind::TRAIT_ITEM)]
+    TraitItem(Box<TraitItemNode>),
+    #[kind(kind::ASSOCIATED_TYPE)]
+    AssociatedType(AssociatedTypeNode),
+    #[kind(kind::LET_DECLARATION)]
+    LetDeclaration(Box<LetDeclarationNode>),
+    #[kind(kind::USE_DECLARATION)]
+    UseDeclaration(Box<UseDeclarationNode>),
+    #[kind(kind::EXTERN_CRATE_DECLARATION)]
+    ExternCrateDeclaration(ExternCrateDeclarationNode),
+    #[kind(kind::STATIC_ITEM)]
+    StaticItem(Box<StaticItemNode>),
+}
+
+impl ::sittir_core::prepare::Prepare for DeclarationStatementTraitItemNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            DeclarationStatementTraitItemNode::ConstItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::MacroInvocation(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::MacroDefinition(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::EmptyStatement(_) => Ok(()),
+            DeclarationStatementTraitItemNode::AttributeItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::InnerAttributeItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::ModItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::ForeignModItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::StructItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::UnionItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::EnumItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::TypeItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::MethodDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::SignatureMethodDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::ImplItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::TraitItem(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::AssociatedType(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::LetDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::UseDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::ExternCrateDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementTraitItemNode::StaticItem(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            DeclarationStatementTraitItemNode::ConstItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::MacroInvocation(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::MacroDefinition(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::EmptyStatement(edges) => Some(edges),
+            DeclarationStatementTraitItemNode::AttributeItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::InnerAttributeItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::ModItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::ForeignModItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::StructItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::UnionItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::EnumItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::TypeItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::MethodDeclaration(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::SignatureMethodDeclaration(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::ImplItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::TraitItem(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::AssociatedType(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::LetDeclaration(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::UseDeclaration(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::ExternCrateDeclaration(t) => t.gap_edges(),
+            DeclarationStatementTraitItemNode::StaticItem(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            DeclarationStatementTraitItemNode::ConstItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::MacroInvocation(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::MacroDefinition(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::EmptyStatement(_) => None,
+            DeclarationStatementTraitItemNode::AttributeItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::InnerAttributeItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::ModItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::ForeignModItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::StructItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::UnionItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::EnumItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::TypeItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::MethodDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::SignatureMethodDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::ImplItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::TraitItem(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::AssociatedType(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::LetDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::UseDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::ExternCrateDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementTraitItemNode::StaticItem(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            DeclarationStatementTraitItemNode::ConstItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::MacroInvocation(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::MacroDefinition(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::EmptyStatement(_) => None,
+            DeclarationStatementTraitItemNode::AttributeItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::InnerAttributeItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::ModItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::ForeignModItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::StructItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::UnionItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::EnumItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::TypeItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::MethodDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::SignatureMethodDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::ImplItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::TraitItem(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::AssociatedType(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::LetDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::UseDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::ExternCrateDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementTraitItemNode::StaticItem(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for DeclarationStatementTraitItemNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ConstItem(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::MacroDefinition(inner) => inner.kind_in(kinds),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+            Self::ModItem(inner) => inner.kind_in(kinds),
+            Self::ForeignModItem(inner) => inner.kind_in(kinds),
+            Self::StructItem(inner) => inner.kind_in(kinds),
+            Self::UnionItem(inner) => inner.kind_in(kinds),
+            Self::EnumItem(inner) => inner.kind_in(kinds),
+            Self::TypeItem(inner) => inner.kind_in(kinds),
+            Self::MethodDeclaration(inner) => inner.kind_in(kinds),
+            Self::SignatureMethodDeclaration(inner) => inner.kind_in(kinds),
+            Self::ImplItem(inner) => inner.kind_in(kinds),
+            Self::TraitItem(inner) => inner.kind_in(kinds),
+            Self::AssociatedType(inner) => inner.kind_in(kinds),
+            Self::LetDeclaration(inner) => inner.kind_in(kinds),
+            Self::UseDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
+            Self::StaticItem(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for DeclarationStatementTraitItemNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_declaration_statement_trait_item(self, w)
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
+pub enum DeclarationStatementImplItemBodyNode {
+    #[kind(kind::CONST_ITEM)]
+    ConstItem(Box<ConstItemNode>),
+    #[kind(kind::MACRO_INVOCATION)]
+    MacroInvocation(MacroInvocationNode),
+    #[kind(kind::MACRO_DEFINITION_PAREN, kind::MACRO_DEFINITION_BRACKET, kind::MACRO_DEFINITION_BRACE, kind::MACRO_DEFINITION)]
+    MacroDefinition(MacroDefinitionNode),
+    #[kind(kind::EMPTY_STATEMENT)]
+    #[node(edged)]
+    EmptyStatement(::sittir_core::options::Edges),
+    #[kind(kind::ATTRIBUTE_ITEM)]
+    AttributeItem(AttributeItemNode),
+    #[kind(kind::INNER_ATTRIBUTE_ITEM)]
+    InnerAttributeItem(InnerAttributeItemNode),
+    #[kind(kind::MOD_ITEM_EXTERNAL, kind::MOD_ITEM_INLINE, kind::MOD_ITEM)]
+    ModItem(ModItemNode),
+    #[kind(kind::FOREIGN_MOD_ITEM_SEMI, kind::FOREIGN_MOD_ITEM_BODY, kind::FOREIGN_MOD_ITEM)]
+    ForeignModItem(ForeignModItemNode),
+    #[kind(kind::STRUCT_ITEM_BRACE, kind::STRUCT_ITEM_TUPLE, kind::STRUCT_ITEM_UNIT, kind::STRUCT_ITEM)]
+    StructItem(StructItemNode),
+    #[kind(kind::UNION_ITEM)]
+    UnionItem(Box<UnionItemNode>),
+    #[kind(kind::ENUM_ITEM)]
+    EnumItem(Box<EnumItemNode>),
+    #[kind(kind::TYPE_ITEM)]
+    TypeItem(Box<TypeItemNode>),
+    #[kind(display(kind::_METHOD_DECLARATION))]
+    MethodDeclaration(Box<FunctionItemNode>),
+    #[kind(kind::FUNCTION_SIGNATURE_ITEM)]
+    FunctionSignatureItem(Box<FunctionSignatureItemNode>),
+    #[kind(kind::IMPL_ITEM_BODY, kind::IMPL_ITEM_SEMI, kind::IMPL_ITEM)]
+    ImplItem(ImplItemNode),
+    #[kind(kind::TRAIT_ITEM)]
+    TraitItem(Box<TraitItemNode>),
+    #[kind(kind::ASSOCIATED_TYPE)]
+    AssociatedType(AssociatedTypeNode),
+    #[kind(kind::LET_DECLARATION)]
+    LetDeclaration(Box<LetDeclarationNode>),
+    #[kind(kind::USE_DECLARATION)]
+    UseDeclaration(Box<UseDeclarationNode>),
+    #[kind(kind::EXTERN_CRATE_DECLARATION)]
+    ExternCrateDeclaration(ExternCrateDeclarationNode),
+    #[kind(kind::STATIC_ITEM)]
+    StaticItem(Box<StaticItemNode>),
+}
+
+impl ::sittir_core::prepare::Prepare for DeclarationStatementImplItemBodyNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        match self {
+            DeclarationStatementImplItemBodyNode::ConstItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::MacroInvocation(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::MacroDefinition(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::EmptyStatement(_) => Ok(()),
+            DeclarationStatementImplItemBodyNode::AttributeItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::InnerAttributeItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::ModItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::ForeignModItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::StructItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::UnionItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::EnumItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::TypeItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::MethodDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::FunctionSignatureItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::ImplItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::TraitItem(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::AssociatedType(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::LetDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::UseDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::ExternCrateDeclaration(t) => t.prepare(ctx),
+            DeclarationStatementImplItemBodyNode::StaticItem(t) => t.prepare(ctx),
+        }
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        match self {
+            DeclarationStatementImplItemBodyNode::ConstItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::MacroInvocation(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::MacroDefinition(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::EmptyStatement(edges) => Some(edges),
+            DeclarationStatementImplItemBodyNode::AttributeItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::InnerAttributeItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::ModItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::ForeignModItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::StructItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::UnionItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::EnumItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::TypeItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::MethodDeclaration(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::FunctionSignatureItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::ImplItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::TraitItem(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::AssociatedType(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::LetDeclaration(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::UseDeclaration(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::ExternCrateDeclaration(t) => t.gap_edges(),
+            DeclarationStatementImplItemBodyNode::StaticItem(t) => t.gap_edges(),
+        }
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            DeclarationStatementImplItemBodyNode::ConstItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::MacroInvocation(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::MacroDefinition(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::EmptyStatement(_) => None,
+            DeclarationStatementImplItemBodyNode::AttributeItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::InnerAttributeItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::ModItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::ForeignModItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::StructItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::UnionItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::EnumItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::TypeItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::MethodDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::FunctionSignatureItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::ImplItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::TraitItem(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::AssociatedType(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::LetDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::UseDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::ExternCrateDeclaration(t) => t.snapshot_edge(),
+            DeclarationStatementImplItemBodyNode::StaticItem(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        match self {
+            DeclarationStatementImplItemBodyNode::ConstItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::MacroInvocation(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::MacroDefinition(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::EmptyStatement(_) => None,
+            DeclarationStatementImplItemBodyNode::AttributeItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::InnerAttributeItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::ModItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::ForeignModItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::StructItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::UnionItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::EnumItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::TypeItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::MethodDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::FunctionSignatureItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::ImplItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::TraitItem(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::AssociatedType(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::LetDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::UseDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::ExternCrateDeclaration(t) => t.source_separator(ctx),
+            DeclarationStatementImplItemBodyNode::StaticItem(t) => t.source_separator(ctx),
+        }
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::view::KindOf for DeclarationStatementImplItemBodyNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        match self {
+            Self::ConstItem(inner) => inner.kind_in(kinds),
+            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::MacroDefinition(inner) => inner.kind_in(kinds),
+            Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
+            Self::AttributeItem(inner) => inner.kind_in(kinds),
+            Self::InnerAttributeItem(inner) => inner.kind_in(kinds),
+            Self::ModItem(inner) => inner.kind_in(kinds),
+            Self::ForeignModItem(inner) => inner.kind_in(kinds),
+            Self::StructItem(inner) => inner.kind_in(kinds),
+            Self::UnionItem(inner) => inner.kind_in(kinds),
+            Self::EnumItem(inner) => inner.kind_in(kinds),
+            Self::TypeItem(inner) => inner.kind_in(kinds),
+            Self::MethodDeclaration(inner) => inner.kind_in(kinds),
+            Self::FunctionSignatureItem(inner) => inner.kind_in(kinds),
+            Self::ImplItem(inner) => inner.kind_in(kinds),
+            Self::TraitItem(inner) => inner.kind_in(kinds),
+            Self::AssociatedType(inner) => inner.kind_in(kinds),
+            Self::LetDeclaration(inner) => inner.kind_in(kinds),
+            Self::UseDeclaration(inner) => inner.kind_in(kinds),
+            Self::ExternCrateDeclaration(inner) => inner.kind_in(kinds),
+            Self::StaticItem(inner) => inner.kind_in(kinds),
+        }
+    }
+}
+
+impl ::sittir_core::render::Render for DeclarationStatementImplItemBodyNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_declaration_statement_impl_item_body(self, w)
+    }
+}
+
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
 pub enum ExpressionStatementContentNodeSlot {
     #[kind(kind::EXPRESSION_STATEMENT_WITH_SEMI)]
     ExpressionStatementWithSemi(ExpressionStatementWithSemiNode),
@@ -5261,7 +5665,7 @@ impl ::sittir_core::render::Render for ExpressionStatementContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TokenRepetitionPatternTokenPatternsNodeSlot {
     #[kind(kind::TOKEN_TREE_PATTERN_PAREN)]
     TokenTreePatternParen(TokenTreePatternParenNode),
@@ -5358,7 +5762,7 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternTokenPatternsNodeSl
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TokenRepetitionPatternOperatorNodeSlot {
     #[kind(kind::PLUS)]
     Plus,
@@ -5417,7 +5821,7 @@ impl ::sittir_core::render::Render for TokenRepetitionPatternOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TokenRepetitionTokensNodeSlot {
     #[kind(kind::TOKEN_TREE_PAREN)]
     TokenTreeParen(TokenTreeParenNode),
@@ -5506,7 +5910,7 @@ impl ::sittir_core::render::Render for TokenRepetitionTokensNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TokenRepetitionOperatorNodeSlot {
     #[kind(kind::PLUS)]
     Plus,
@@ -5565,7 +5969,7 @@ impl ::sittir_core::render::Render for TokenRepetitionOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NonSpecialTokenContentNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -5793,7 +6197,7 @@ impl ::sittir_core::render::Render for NonSpecialTokenContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AttributePathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -5893,7 +6297,7 @@ impl ::sittir_core::render::Render for AttributePathNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EnumVariantBodyNodeSlot {
     #[kind(kind::FIELD_DECLARATION_LIST)]
     FieldDeclarationList(FieldDeclarationListNode),
@@ -5950,7 +6354,7 @@ impl ::sittir_core::render::Render for EnumVariantBodyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionItemNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -6015,7 +6419,7 @@ impl ::sittir_core::render::Render for FunctionItemNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionModifiersModifierNodeSlot {
     #[kind(kind::EXTERN_MODIFIER)]
     ExternModifier(ExternModifierNode),
@@ -6096,7 +6500,7 @@ impl ::sittir_core::render::Render for FunctionModifiersModifierNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum WherePredicateLeftNodeSlot {
     #[kind(kind::LIFETIME)]
     Lifetime(LifetimeNode),
@@ -6225,7 +6629,7 @@ impl ::sittir_core::render::Render for WherePredicateLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TraitBoundsBoundsNodeSlot {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -6428,7 +6832,7 @@ impl ::sittir_core::render::Render for TraitBoundsBoundsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ConstParameterDefaultNodeSlot {
     #[kind(kind::BLOCK)]
     Block(BlockNode),
@@ -6613,7 +7017,7 @@ impl ::sittir_core::render::Render for ConstParameterDefaultNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UseDeclarationArgumentNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -6745,7 +7149,7 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ParametersElementsNodeSlot {
     #[kind(kind::PARAMETERS_ELEMENTS)]
     ParametersElements(ParametersElementsNode),
@@ -6802,37 +7206,37 @@ impl ::sittir_core::render::Render for ParametersElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VisibilityModifierContentNodeSlot {
-    #[kind(kind::_CRATE_VISIBILITY_MODIFIER, display)]
-    CrateVisibilityModifier(CrateVisibilityModifierNode),
     #[kind(kind::VISIBILITY_MODIFIER_PUB)]
     VisibilityModifierPub(VisibilityModifierPubNode),
+    #[kind(display(kind::_CRATE_VISIBILITY_MODIFIER))]
+    CrateVisibilityModifier,
 }
 
 impl ::sittir_core::prepare::Prepare for VisibilityModifierContentNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.prepare(ctx),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.prepare(ctx),
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier => Ok(()),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.gap_edges(),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.gap_edges(),
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier => None,
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.snapshot_edge(),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.snapshot_edge(),
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier => None,
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(t) => t.source_separator(ctx),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.source_separator(ctx),
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier => None,
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -6843,8 +7247,8 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierContentNodeSlot {
 impl ::sittir_core::view::KindOf for VisibilityModifierContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::CrateVisibilityModifier(inner) => inner.kind_in(kinds),
             Self::VisibilityModifierPub(inner) => inner.kind_in(kinds),
+            Self::CrateVisibilityModifier => [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -6852,14 +7256,14 @@ impl ::sittir_core::view::KindOf for VisibilityModifierContentNodeSlot {
 impl ::sittir_core::render::Render for VisibilityModifierContentNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            VisibilityModifierContentNodeSlot::CrateVisibilityModifier(inner) => inner.render(w),
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(inner) => inner.render(w),
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier => render_crate_visibility_modifier(w),
         }
     }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BracketedTypeTypeNodeSlot {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -7054,7 +7458,7 @@ impl ::sittir_core::render::Render for BracketedTypeTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionTypeContentNodeSlot {
     #[kind(kind::FUNCTION_TYPE_TRAIT_FORM)]
     FunctionTypeTraitForm(FunctionTypeTraitFormNode),
@@ -7111,7 +7515,7 @@ impl ::sittir_core::render::Render for FunctionTypeContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GenericFunctionFunctionNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -7184,7 +7588,7 @@ impl ::sittir_core::render::Render for GenericFunctionFunctionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GenericTypeTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -7257,7 +7661,7 @@ impl ::sittir_core::render::Render for GenericTypeTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GenericTypeWithTurbofishTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -7314,7 +7718,7 @@ impl ::sittir_core::render::Render for GenericTypeWithTurbofishTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BoundedTypeLeftNodeSlot {
     #[kind(kind::LIFETIME)]
     Lifetime(LifetimeNode),
@@ -7517,7 +7921,7 @@ impl ::sittir_core::render::Render for BoundedTypeLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AbstractTypeTraitNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -7614,7 +8018,7 @@ impl ::sittir_core::render::Render for AbstractTypeTraitNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DynamicTypeTraitNodeSlot {
     #[kind(kind::HIGHER_RANKED_TRAIT_BOUND)]
     HigherRankedTraitBound(HigherRankedTraitBoundNode),
@@ -7703,7 +8107,7 @@ impl ::sittir_core::render::Render for DynamicTypeTraitNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MacroInvocationFunctionNodeSlot {
     #[kind(kind::SCOPED_IDENTIFIER)]
     ScopedIdentifier(ScopedIdentifierNode),
@@ -7768,7 +8172,7 @@ impl ::sittir_core::render::Render for MacroInvocationFunctionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ScopedIdentifierPathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -7884,7 +8288,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierPathNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ScopedIdentifierNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -7950,7 +8354,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -8058,7 +8462,7 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionP
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ScopedTypeIdentifierPathNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -8182,7 +8586,7 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierPathNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnaryExpressionOperatorNodeSlot {
     #[kind(kind::DASH)]
     Dash,
@@ -8241,7 +8645,7 @@ impl ::sittir_core::render::Render for UnaryExpressionOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BinaryExpressionOperatorNodeSlot {
     #[kind(kind::AMP_AMP)]
     AmpAmp,
@@ -8360,7 +8764,7 @@ impl ::sittir_core::render::Render for BinaryExpressionOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CompoundAssignmentExprOperatorNodeSlot {
     #[kind(kind::PLUS_EQ)]
     PlusEq,
@@ -8439,7 +8843,7 @@ impl ::sittir_core::render::Render for CompoundAssignmentExprOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CallExpressionFunctionNodeSlot {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -8946,7 +9350,7 @@ impl ::sittir_core::render::Render for CallExpressionFunctionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StructExpressionNameNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -9011,7 +9415,7 @@ impl ::sittir_core::render::Render for StructExpressionNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FieldInitializerFieldNodeSlot {
     #[kind(kind::_FIELD_IDENTIFIER, display)]
     FieldIdentifier(FieldIdentifierNode),
@@ -9092,7 +9496,7 @@ impl ::sittir_core::render::Render for FieldInitializerFieldNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IfExpressionConditionNodeSlot {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -9647,7 +10051,7 @@ impl ::sittir_core::render::Render for IfExpressionConditionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LetChainLeftNodeSlot {
     #[kind(kind::_LET_CHAIN)]
     LetChain(LetChainNode),
@@ -10202,7 +10606,7 @@ impl ::sittir_core::render::Render for LetChainLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LetChainRightNodeSlot {
     #[kind(kind::LET_CONDITION)]
     LetCondition(LetConditionNode),
@@ -10749,7 +11153,7 @@ impl ::sittir_core::render::Render for LetChainRightNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ElseClauseBodyNodeSlot {
     #[kind(kind::BLOCK)]
     Block(BlockNode),
@@ -10806,7 +11210,7 @@ impl ::sittir_core::render::Render for ElseClauseBodyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LastMatchArmAttributesNodeSlot {
     #[kind(kind::ATTRIBUTE_ITEM)]
     AttributeItem(AttributeItemNode),
@@ -10863,7 +11267,7 @@ impl ::sittir_core::render::Render for LastMatchArmAttributesNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LastMatchArmTrailingCommaNodeSlot {
     #[kind(kind::COMMA)]
     Comma,
@@ -10907,7 +11311,7 @@ impl ::sittir_core::render::Render for LastMatchArmTrailingCommaNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClosureParametersParametersNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -11238,7 +11642,7 @@ impl ::sittir_core::render::Render for ClosureParametersParametersNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GenericPatternNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11303,7 +11707,7 @@ impl ::sittir_core::render::Render for GenericPatternNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TupleStructPatternTypeNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11376,7 +11780,7 @@ impl ::sittir_core::render::Render for TupleStructPatternTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StructPatternTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -11433,7 +11837,7 @@ impl ::sittir_core::render::Render for StructPatternTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NegativeLiteralValueNodeSlot {
     #[kind(kind::INTEGER_LITERAL_DECIMAL)]
     IntegerLiteralDecimal(IntegerLiteralDecimalNode),
@@ -11522,7 +11926,7 @@ impl ::sittir_core::render::Render for NegativeLiteralValueNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StringLiteralElementsNodeSlot {
     #[kind(kind::ESCAPE_SEQUENCE_SIMPLE)]
     EscapeSequenceSimple(EscapeSequenceSimpleNode),
@@ -11611,7 +12015,7 @@ impl ::sittir_core::render::Render for StringLiteralElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LineCommentContentNodeSlot {
     #[kind(kind::LINE_COMMENT_EXTRA_SLASHES)]
     LineCommentExtraSlashes(LineCommentExtraSlashesNode),
@@ -11692,7 +12096,7 @@ impl ::sittir_core::render::Render for LineCommentContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BlockCommentContentNodeSlot {
     #[kind(kind::BLOCK_COMMENT_DOC_OUTER)]
     BlockCommentDocOuter(BlockCommentDocOuterNode),
@@ -11765,7 +12169,7 @@ impl ::sittir_core::render::Render for BlockCommentContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UseBoundsElementsItemNodeSlot {
     #[kind(kind::LIFETIME)]
     Lifetime(LifetimeNode),
@@ -11822,7 +12226,7 @@ impl ::sittir_core::render::Render for UseBoundsElementsItemNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FieldInitializerListElementsItemNodeSlot {
     #[kind(kind::SHORTHAND_FIELD_INITIALIZER)]
     ShorthandFieldInitializer(ShorthandFieldInitializerNode),
@@ -11887,7 +12291,7 @@ impl ::sittir_core::render::Render for FieldInitializerListElementsItemNodeSlot 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TuplePatternElementsItemNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -12226,7 +12630,7 @@ impl ::sittir_core::render::Render for TuplePatternElementsItemNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StructPatternElementsItemNodeSlot {
     #[kind(kind::FIELD_PATTERN_SHORTHAND)]
     FieldPatternShorthand(FieldPatternShorthandNode),
@@ -12292,7 +12696,7 @@ impl ::sittir_core::render::Render for StructPatternElementsItemNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClosureExpressionExprBodyNodeSlot {
     #[kind(kind::UNARY_EXPRESSION)]
     UnaryExpression(UnaryExpressionNode),
@@ -12844,7 +13248,7 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImplItemPositiveClauseTraitNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -12909,7 +13313,7 @@ impl ::sittir_core::render::Render for ImplItemPositiveClauseTraitNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImplItemBodyTraitClauseNodeSlot {
     #[kind(kind::IMPL_ITEM_POSITIVE_CLAUSE)]
     ImplItemPositiveClause(ImplItemPositiveClauseNode),
@@ -12966,7 +13370,7 @@ impl ::sittir_core::render::Render for ImplItemBodyTraitClauseNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VisibilityModifierPubScopeContentNodeSlot {
     #[kind(kind::VISIBILITY_MODIFIER_PUB_SCOPE_IN_PATH)]
     VisibilityModifierPubScopeInPath(VisibilityModifierPubScopeInPathNode),
@@ -13042,7 +13446,7 @@ impl ::sittir_core::render::Render for VisibilityModifierPubScopeContentNodeSlot
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangeExpressionBinaryOperatorNodeSlot {
     #[kind(kind::DOT_DOT)]
     DotDot,
@@ -13086,7 +13490,7 @@ impl ::sittir_core::render::Render for RangeExpressionBinaryOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MatchArmBlockEndingValueNodeSlot {
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockNode),
@@ -13215,7 +13619,7 @@ impl ::sittir_core::render::Render for MatchArmBlockEndingValueNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DelimTokenTreeParenDelimTokensNodeSlot {
     #[kind(kind::_NON_SPECIAL_TOKEN)]
     NonSpecialToken(NonSpecialTokenNode),
@@ -13296,7 +13700,7 @@ impl ::sittir_core::render::Render for DelimTokenTreeParenDelimTokensNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangePatternPrefixRightNodeSlot {
     #[kind(kind::STRING_LITERAL)]
     StringLiteral(StringLiteralNode),
@@ -13516,7 +13920,7 @@ impl ::sittir_core::render::Render for RangePatternPrefixRightNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangePatternPrefixContentNodeSlot {
     #[kind(kind::DOT_DOT_EQ)]
     DotDotEq,
@@ -13567,7 +13971,7 @@ impl ::sittir_core::render::Render for RangePatternPrefixContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangePatternWithLeftWithRightContentNodeSlot {
     #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
@@ -13629,7 +14033,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftWithRightContentNodeS
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangePatternWithLeftContentNodeSlot {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT_WITH_RIGHT)]
     RangePatternWithLeftWithRight(RangePatternWithLeftWithRightNode),
@@ -13691,7 +14095,7 @@ impl ::sittir_core::render::Render for RangePatternWithLeftContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AttributedParameterContentNodeSlot {
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterNode>),
@@ -13907,7 +14311,7 @@ impl ::sittir_core::render::Render for AttributedParameterContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AttributedTypeParameterContentNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
@@ -13980,7 +14384,7 @@ impl ::sittir_core::render::Render for AttributedTypeParameterContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeArgumentContentNodeSlot {
     #[kind(kind::ABSTRACT_TYPE)]
     AbstractType(AbstractTypeNode),
@@ -14311,7 +14715,7 @@ impl ::sittir_core::render::Render for TypeArgumentContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AttributedParameterReceiverContentNodeSlot {
     #[kind(kind::_RECEIVER_PARAMETER_DECLARATION)]
     ReceiverParameterDeclaration(ReceiverParameterDeclarationNode),
@@ -14433,7 +14837,7 @@ impl ::sittir_core::prepare::Prepare for SourceFileNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EmptyStatementNode {
     #[kind(kind::EMPTY_STATEMENT)]
     #[node(edged)]
@@ -15759,8 +16163,10 @@ impl ::sittir_core::prepare::Prepare for TypeItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 42)]
+#[node(kind = kind::FUNCTION_ITEM, displays = [kind::_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT], words = 42)]
 pub struct FunctionItemNode {
+    #[wire(key = "$type")]
+    pub kind: KindId,
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_visibility_modifier")]
@@ -15791,7 +16197,7 @@ pub struct FunctionItemNode {
 
 impl ::sittir_core::view::KindOf for FunctionItemNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(208)].iter().any(|k| kinds.contains(k))
+        kinds.contains(&self.kind)
     }
 }
 
@@ -15836,8 +16242,10 @@ impl ::sittir_core::prepare::Prepare for FunctionItemNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 37)]
+#[node(kind = kind::FUNCTION_SIGNATURE_ITEM, displays = [kind::_SIGNATURE_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT, kind::SEMI], words = 37)]
 pub struct FunctionSignatureItemNode {
+    #[wire(key = "$type")]
+    pub kind: KindId,
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_visibility_modifier")]
@@ -15865,7 +16273,7 @@ pub struct FunctionSignatureItemNode {
 
 impl ::sittir_core::view::KindOf for FunctionSignatureItemNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(209)].iter().any(|k| kinds.contains(k))
+        kinds.contains(&self.kind)
     }
 }
 
@@ -16089,7 +16497,7 @@ pub struct TraitItemNode {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 28, width = 5)]
-    pub body: ::sittir_core::SlotValue<DeclarationListNode>,
+    pub body: ::sittir_core::SlotValue<TraitInterfaceDeclarationBodyNode>,
 }
 
 impl ::sittir_core::view::KindOf for TraitItemNode {
@@ -17572,7 +17980,7 @@ impl ::sittir_core::prepare::Prepare for TupleTypeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnitTypeNode {
     #[kind(kind::UNIT_TYPE)]
     #[node(edged)]
@@ -18044,7 +18452,7 @@ impl ::sittir_core::prepare::Prepare for ReferenceTypeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NeverTypeNode {
     #[kind(kind::NEVER_TYPE)]
     #[node(edged)]
@@ -18194,7 +18602,7 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MutableSpecifierNode {
     #[kind(kind::MUTABLE_SPECIFIER)]
     MutableSpecifier,
@@ -19067,7 +19475,7 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnitExpressionNode {
     #[kind(kind::UNIT_EXPRESSION)]
     #[node(edged)]
@@ -20933,7 +21341,7 @@ impl ::sittir_core::prepare::Prepare for StructPatternNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RemainingFieldPatternNode {
     #[kind(kind::REMAINING_FIELD_PATTERN)]
     #[node(edged)]
@@ -21430,7 +21838,7 @@ impl ::sittir_core::prepare::Prepare for LineCommentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InnerLineDocCommentMarkerNode {
     #[kind(kind::_INNER_LINE_DOC_COMMENT_MARKER)]
     InnerLineDocCommentMarker,
@@ -21458,7 +21866,7 @@ impl ::sittir_core::render::Render for InnerLineDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OuterLineDocCommentMarkerNode {
     #[kind(kind::_OUTER_LINE_DOC_COMMENT_MARKER)]
     OuterLineDocCommentMarker,
@@ -21629,7 +22037,7 @@ impl ::sittir_core::prepare::Prepare for ShebangNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum Self_Node {
     #[kind(kind::SELF)]
     #[node(edged)]
@@ -21677,7 +22085,7 @@ impl ::sittir_core::render::Render for Self_Node {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SuperNode {
     #[kind(kind::SUPER)]
     #[node(edged)]
@@ -21725,7 +22133,7 @@ impl ::sittir_core::render::Render for SuperNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CrateNode {
     #[kind(kind::CRATE)]
     #[node(edged)]
@@ -23504,7 +23912,7 @@ impl ::sittir_core::render::Render for TokenKeywordsEnum {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum _RangeExpressionBareNode {
     #[kind(kind::DOT_DOT, kind::_RANGE_EXPRESSION_BARE)]
     _RangeExpressionBare,
@@ -23532,7 +23940,7 @@ impl ::sittir_core::render::Render for _RangeExpressionBareNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImplItemUnsafeMarkerNode {
     #[kind(kind::UNSAFE_KEYWORD, kind::_IMPL_ITEM_UNSAFE_MARKER)]
     ImplItemUnsafeMarker,
@@ -24887,7 +25295,7 @@ pub struct ImplItemBodyNode {
     pub where_clause: Option<::sittir_core::SlotValue<WhereClauseNode>>,
     #[wire(key = "_body")]
     #[slot(field = field::BODY, word = 23, width = 5)]
-    pub body: ::sittir_core::SlotValue<DeclarationListNode>,
+    pub body: ::sittir_core::SlotValue<ExtensionDeclarationBodyNode>,
 }
 
 impl ::sittir_core::view::KindOf for ImplItemBodyNode {
@@ -27247,7 +27655,7 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RangePatternWithLeftBareNode {
     #[kind(kind::RANGE_PATTERN_WITH_LEFT_BARE)]
     RangePatternWithLeftBare,
@@ -27515,7 +27923,7 @@ impl ::sittir_core::prepare::Prepare for StructItemUnitNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum WildcardPatternNode {
     #[kind(kind::_WILDCARD_PATTERN)]
     #[node(edged)]
@@ -28159,7 +28567,7 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralContentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OuterDocCommentMarkerNode {
     #[kind(kind::_OUTER_DOC_COMMENT_MARKER)]
     OuterDocCommentMarker,
@@ -28187,7 +28595,7 @@ impl ::sittir_core::render::Render for OuterDocCommentMarkerNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InnerDocCommentMarkerNode {
     #[kind(kind::_INNER_DOC_COMMENT_MARKER)]
     InnerDocCommentMarker,
@@ -28399,7 +28807,7 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TightNode {
     #[kind(kind::_TIGHT)]
     Tight,
@@ -28427,7 +28835,7 @@ impl ::sittir_core::render::Render for TightNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SpaceNode {
     #[kind(kind::_SPACE)]
     Space,
@@ -28455,7 +28863,7 @@ impl ::sittir_core::render::Render for SpaceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TabNode {
     #[kind(kind::_TAB)]
     Tab,
@@ -28483,7 +28891,7 @@ impl ::sittir_core::render::Render for TabNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NewlineNode {
     #[kind(kind::_NEWLINE)]
     Newline,
@@ -28511,7 +28919,7 @@ impl ::sittir_core::render::Render for NewlineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BlanklineNode {
     #[kind(kind::_BLANKLINE)]
     Blankline,
@@ -28539,7 +28947,7 @@ impl ::sittir_core::render::Render for BlanklineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DoubleBlanklineNode {
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
@@ -28567,7 +28975,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IndentNode {
     #[kind(kind::_INDENT)]
     Indent,
@@ -28595,7 +29003,7 @@ impl ::sittir_core::render::Render for IndentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DedentNode {
     #[kind(kind::_DEDENT)]
     Dedent,
@@ -28623,6 +29031,114 @@ impl ::sittir_core::render::Render for DedentNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_TRAIT_INTERFACE_DECLARATION_BODY, layout = [kind::LBRACE, kind::RBRACE], words = 4)]
+pub struct TraitInterfaceDeclarationBodyNode {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "_declarations")]
+    #[slot(field = field::DECLARATIONS, word = 2, width = 2, run = 5)]
+    pub declarations: Vec<::sittir_core::SlotValue<DeclarationStatementTraitItemNode>>,
+    #[wire(key = "_declarations_separator_space")]
+    pub declarations_separator_space: Option<KindId>,
+}
+
+impl ::sittir_core::view::KindOf for TraitInterfaceDeclarationBodyNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(435)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for TraitInterfaceDeclarationBodyNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(435) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for TraitInterfaceDeclarationBodyNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(435)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_trait_interface_declaration_body(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for TraitInterfaceDeclarationBodyNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.declarations.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_declarations"));
+        self.declarations_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_DECLARATIONS_SEPARATOR_SPACE).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.declarations.iter_mut().map(Some), options::SEATS_TRAIT_INTERFACE_DECLARATION_BODY_DECLARATIONS, ctx);
+        self.declarations.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_EXTENSION_DECLARATION_BODY, layout = [kind::LBRACE, kind::RBRACE], words = 4)]
+pub struct ExtensionDeclarationBodyNode {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "_declarations")]
+    #[slot(field = field::DECLARATIONS, word = 2, width = 2, run = 5)]
+    pub declarations: Vec<::sittir_core::SlotValue<DeclarationStatementImplItemBodyNode>>,
+    #[wire(key = "_declarations_separator_space")]
+    pub declarations_separator_space: Option<KindId>,
+}
+
+impl ::sittir_core::view::KindOf for ExtensionDeclarationBodyNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(436)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for ExtensionDeclarationBodyNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(436) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for ExtensionDeclarationBodyNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(436)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_extension_declaration_body(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ExtensionDeclarationBodyNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        ::sittir_core::prepare::fill_slot_gaps(self.declarations.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_declarations"));
+        self.declarations_separator_space.get_or_insert(ctx.options.site_arm(options::SITE_EXTENSION_DECLARATION_BODY_DECLARATIONS_SEPARATOR_SPACE).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.declarations.iter_mut().map(Some), options::SEATS_EXTENSION_DECLARATION_BODY_DECLARATIONS, ctx);
+        self.declarations.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(kind = kind::_RECEIVER_PARAMETER_DECLARATION, layout = [kind::SELF, kind::COLON], words = 8)]
 pub struct ReceiverParameterDeclarationNode {
     #[wire(key = "$_layout")]
@@ -28637,19 +29153,19 @@ pub struct ReceiverParameterDeclarationNode {
 
 impl ::sittir_core::view::KindOf for ReceiverParameterDeclarationNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(435)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(437)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ReceiverParameterDeclarationNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(435) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(437) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ReceiverParameterDeclarationNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(435)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_receiver_parameter_declaration(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(437)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_receiver_parameter_declaration(self, w))
     }
 }
 
@@ -28690,19 +29206,19 @@ pub struct AttributedParameterReceiverNode {
 
 impl ::sittir_core::view::KindOf for AttributedParameterReceiverNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(436)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(438)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AttributedParameterReceiverNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(436) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(438) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AttributedParameterReceiverNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(436)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_parameter_receiver(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(438)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_attributed_parameter_receiver(self, w))
     }
 }
 
@@ -28743,19 +29259,19 @@ pub struct ParametersElementsReceiverNode {
 
 impl ::sittir_core::view::KindOf for ParametersElementsReceiverNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(437)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(439)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParametersElementsReceiverNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(437) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(439) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParametersElementsReceiverNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(437)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements_receiver(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(439)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements_receiver(self, w))
     }
 }
 
@@ -28793,19 +29309,19 @@ pub struct ParametersElementsReceiverGroupNode {
 
 impl ::sittir_core::view::KindOf for ParametersElementsReceiverGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(438)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(440)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ParametersElementsReceiverGroupNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(438) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(440) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ParametersElementsReceiverGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(438)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements_receiver_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(440)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_parameters_elements_receiver_group(self, w))
     }
 }
 
@@ -28934,19 +29450,19 @@ pub struct TypeIdentifierNode {
 
 impl ::sittir_core::view::KindOf for TypeIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(479)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(473) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(479) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(479)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -28982,19 +29498,19 @@ pub struct FieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for FieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(470)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(474)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(470) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(474) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(470)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(474)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
 }
 
@@ -29018,51 +29534,31 @@ impl ::sittir_core::prepare::Prepare for FieldIdentifierNode {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_CRATE_VISIBILITY_MODIFIER, display, content = content, words = 7)]
-pub struct CrateVisibilityModifierNode {
-    #[wire(key = "$_layout")]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<CrateNode>,
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
+pub enum CrateVisibilityModifierNode {
+    #[kind(display(kind::_CRATE_VISIBILITY_MODIFIER))]
+    CrateVisibilityModifier,
 }
 
 impl ::sittir_core::view::KindOf for CrateVisibilityModifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(469)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for CrateVisibilityModifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(469) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for CrateVisibilityModifierNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(469)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_crate_visibility_modifier(self, w))
+        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::prepare::Prepare for CrateVisibilityModifierNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.layout.prepare(ctx)?;
-        self.content.prepare(ctx)?;
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         Ok(())
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for CrateVisibilityModifierNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_crate_visibility_modifier(w)
     }
 }
 
@@ -29078,19 +29574,19 @@ pub struct ShorthandFieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for ShorthandFieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(472)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandFieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(472) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(477) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandFieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(472)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(477)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
 }
 
@@ -29115,7 +29611,7 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldIdentifierNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SemiNode {
     #[kind(kind::SEMI)]
     Semi,
@@ -29143,7 +29639,7 @@ impl ::sittir_core::render::Render for SemiNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqGtNode {
     #[kind(kind::EQ_GT)]
     EqGt,
@@ -29171,7 +29667,7 @@ impl ::sittir_core::render::Render for EqGtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ColonNode {
     #[kind(kind::COLON)]
     Colon,
@@ -29199,7 +29695,7 @@ impl ::sittir_core::render::Render for ColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DollarNode {
     #[kind(kind::DOLLAR)]
     Dollar,
@@ -29227,7 +29723,7 @@ impl ::sittir_core::render::Render for DollarNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenNode {
     #[kind(kind::LPAREN)]
     Lparen,
@@ -29255,7 +29751,7 @@ impl ::sittir_core::render::Render for LparenNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RparenNode {
     #[kind(kind::RPAREN)]
     Rparen,
@@ -29283,7 +29779,7 @@ impl ::sittir_core::render::Render for RparenNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusNode {
     #[kind(kind::PLUS)]
     Plus,
@@ -29311,7 +29807,7 @@ impl ::sittir_core::render::Render for PlusNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarNode {
     #[kind(kind::STAR)]
     Star,
@@ -29339,7 +29835,7 @@ impl ::sittir_core::render::Render for StarNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkNode {
     #[kind(kind::QMARK)]
     Qmark,
@@ -29367,7 +29863,7 @@ impl ::sittir_core::render::Render for QmarkNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BlockKeywordNode {
     #[kind(kind::BLOCK_KEYWORD)]
     BlockKeyword,
@@ -29395,7 +29891,7 @@ impl ::sittir_core::render::Render for BlockKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExprKeywordNode {
     #[kind(kind::EXPR_KEYWORD)]
     ExprKeyword,
@@ -29423,7 +29919,7 @@ impl ::sittir_core::render::Render for ExprKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum Expr2021KeywordNode {
     #[kind(kind::EXPR2021_KEYWORD)]
     Expr2021Keyword,
@@ -29451,7 +29947,7 @@ impl ::sittir_core::render::Render for Expr2021KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IdentKeywordNode {
     #[kind(kind::IDENT_KEYWORD)]
     IdentKeyword,
@@ -29479,7 +29975,7 @@ impl ::sittir_core::render::Render for IdentKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ItemKeywordNode {
     #[kind(kind::ITEM_KEYWORD)]
     ItemKeyword,
@@ -29507,7 +30003,7 @@ impl ::sittir_core::render::Render for ItemKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LifetimeKeywordNode {
     #[kind(kind::LIFETIME_KEYWORD)]
     LifetimeKeyword,
@@ -29535,7 +30031,7 @@ impl ::sittir_core::render::Render for LifetimeKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LiteralKeywordNode {
     #[kind(kind::LITERAL_KEYWORD)]
     LiteralKeyword,
@@ -29563,7 +30059,7 @@ impl ::sittir_core::render::Render for LiteralKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MetaKeywordNode {
     #[kind(kind::META_KEYWORD)]
     MetaKeyword,
@@ -29591,7 +30087,7 @@ impl ::sittir_core::render::Render for MetaKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PatKeywordNode {
     #[kind(kind::PAT_KEYWORD)]
     PatKeyword,
@@ -29619,7 +30115,7 @@ impl ::sittir_core::render::Render for PatKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PatParamKeywordNode {
     #[kind(kind::PAT_PARAM_KEYWORD)]
     PatParamKeyword,
@@ -29647,7 +30143,7 @@ impl ::sittir_core::render::Render for PatParamKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PathKeywordNode {
     #[kind(kind::PATH_KEYWORD)]
     PathKeyword,
@@ -29675,7 +30171,7 @@ impl ::sittir_core::render::Render for PathKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StmtKeywordNode {
     #[kind(kind::STMT_KEYWORD)]
     StmtKeyword,
@@ -29703,7 +30199,7 @@ impl ::sittir_core::render::Render for StmtKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TtKeywordNode {
     #[kind(kind::TT_KEYWORD)]
     TtKeyword,
@@ -29731,7 +30227,7 @@ impl ::sittir_core::render::Render for TtKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TyKeywordNode {
     #[kind(kind::TY_KEYWORD)]
     TyKeyword,
@@ -29759,7 +30255,7 @@ impl ::sittir_core::render::Render for TyKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VisKeywordNode {
     #[kind(kind::VIS_KEYWORD)]
     VisKeyword,
@@ -29787,7 +30283,7 @@ impl ::sittir_core::render::Render for VisKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PoundNode {
     #[kind(kind::POUND)]
     Pound,
@@ -29815,7 +30311,7 @@ impl ::sittir_core::render::Render for PoundNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbrackNode {
     #[kind(kind::LBRACK)]
     Lbrack,
@@ -29843,7 +30339,7 @@ impl ::sittir_core::render::Render for LbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RbrackNode {
     #[kind(kind::RBRACK)]
     Rbrack,
@@ -29871,7 +30367,7 @@ impl ::sittir_core::render::Render for RbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BangNode {
     #[kind(kind::BANG, folded(kind::BANG2))]
     Bang,
@@ -29899,7 +30395,7 @@ impl ::sittir_core::render::Render for BangNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbraceNode {
     #[kind(kind::LBRACE)]
     Lbrace,
@@ -29927,7 +30423,7 @@ impl ::sittir_core::render::Render for LbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RbraceNode {
     #[kind(kind::RBRACE)]
     Rbrace,
@@ -29955,7 +30451,7 @@ impl ::sittir_core::render::Render for RbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnionKeywordNode {
     #[kind(kind::UNION_KEYWORD)]
     UnionKeyword,
@@ -29983,7 +30479,7 @@ impl ::sittir_core::render::Render for UnionKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EnumKeywordNode {
     #[kind(kind::ENUM_KEYWORD)]
     EnumKeyword,
@@ -30011,7 +30507,7 @@ impl ::sittir_core::render::Render for EnumKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqNode {
     #[kind(kind::EQ)]
     Eq,
@@ -30039,7 +30535,7 @@ impl ::sittir_core::render::Render for EqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExternKeywordNode {
     #[kind(kind::EXTERN_KEYWORD)]
     ExternKeyword,
@@ -30067,7 +30563,7 @@ impl ::sittir_core::render::Render for ExternKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AsKeywordNode {
     #[kind(kind::AS_KEYWORD)]
     AsKeyword,
@@ -30095,7 +30591,7 @@ impl ::sittir_core::render::Render for AsKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ConstKeywordNode {
     #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
@@ -30123,7 +30619,7 @@ impl ::sittir_core::render::Render for ConstKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StaticKeywordNode {
     #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
@@ -30151,7 +30647,7 @@ impl ::sittir_core::render::Render for StaticKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RefKeywordNode {
     #[kind(kind::REF_KEYWORD)]
     RefKeyword,
@@ -30179,7 +30675,7 @@ impl ::sittir_core::render::Render for RefKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeKeywordNode {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
@@ -30207,7 +30703,7 @@ impl ::sittir_core::render::Render for TypeKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FnKeywordNode {
     #[kind(kind::FN_KEYWORD)]
     FnKeyword,
@@ -30235,7 +30731,7 @@ impl ::sittir_core::render::Render for FnKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashGtNode {
     #[kind(kind::DASH_GT)]
     DashGt,
@@ -30263,7 +30759,7 @@ impl ::sittir_core::render::Render for DashGtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AsyncKeywordNode {
     #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
@@ -30291,7 +30787,7 @@ impl ::sittir_core::render::Render for AsyncKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DefaultKeywordNode {
     #[kind(kind::DEFAULT_KEYWORD)]
     DefaultKeyword,
@@ -30319,7 +30815,7 @@ impl ::sittir_core::render::Render for DefaultKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnsafeKeywordNode {
     #[kind(kind::UNSAFE_KEYWORD)]
     UnsafeKeyword,
@@ -30347,7 +30843,7 @@ impl ::sittir_core::render::Render for UnsafeKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum WhereKeywordNode {
     #[kind(kind::WHERE_KEYWORD)]
     WhereKeyword,
@@ -30375,7 +30871,7 @@ impl ::sittir_core::render::Render for WhereKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TraitKeywordNode {
     #[kind(kind::TRAIT_KEYWORD)]
     TraitKeyword,
@@ -30403,7 +30899,7 @@ impl ::sittir_core::render::Render for TraitKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForKeywordNode {
     #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
@@ -30431,7 +30927,7 @@ impl ::sittir_core::render::Render for ForKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtNode {
     #[kind(kind::LT, folded(kind::LT2))]
     Lt,
@@ -30459,7 +30955,7 @@ impl ::sittir_core::render::Render for LtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtNode {
     #[kind(kind::GT)]
     Gt,
@@ -30487,7 +30983,7 @@ impl ::sittir_core::render::Render for GtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LetKeywordNode {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
@@ -30515,7 +31011,7 @@ impl ::sittir_core::render::Render for LetKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ElseKeywordNode {
     #[kind(kind::ELSE_KEYWORD)]
     ElseKeyword,
@@ -30543,7 +31039,7 @@ impl ::sittir_core::render::Render for ElseKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UseKeywordNode {
     #[kind(kind::USE_KEYWORD)]
     UseKeyword,
@@ -30571,7 +31067,7 @@ impl ::sittir_core::render::Render for UseKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ColonColonNode {
     #[kind(kind::COLON_COLON)]
     ColonColon,
@@ -30599,7 +31095,7 @@ impl ::sittir_core::render::Render for ColonColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpNode {
     #[kind(kind::AMP)]
     Amp,
@@ -30627,7 +31123,7 @@ impl ::sittir_core::render::Render for AmpNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DotDotDotNode {
     #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
@@ -30655,7 +31151,7 @@ impl ::sittir_core::render::Render for DotDotDotNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SquoteNode {
     #[kind(kind::SQUOTE)]
     Squote,
@@ -30683,7 +31179,7 @@ impl ::sittir_core::render::Render for SquoteNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImplKeywordNode {
     #[kind(kind::IMPL_KEYWORD)]
     ImplKeyword,
@@ -30711,7 +31207,7 @@ impl ::sittir_core::render::Render for ImplKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DynKeywordNode {
     #[kind(kind::DYN_KEYWORD)]
     DynKeyword,
@@ -30739,7 +31235,7 @@ impl ::sittir_core::render::Render for DynKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashNode {
     #[kind(kind::DASH)]
     Dash,
@@ -30767,7 +31263,7 @@ impl ::sittir_core::render::Render for DashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpAmpNode {
     #[kind(kind::AMP_AMP)]
     AmpAmp,
@@ -30795,7 +31291,7 @@ impl ::sittir_core::render::Render for AmpAmpNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipePipeNode {
     #[kind(kind::PIPE_PIPE)]
     PipePipe,
@@ -30823,7 +31319,7 @@ impl ::sittir_core::render::Render for PipePipeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipeNode {
     #[kind(kind::PIPE)]
     Pipe,
@@ -30851,7 +31347,7 @@ impl ::sittir_core::render::Render for PipeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CaretNode {
     #[kind(kind::CARET)]
     Caret,
@@ -30879,7 +31375,7 @@ impl ::sittir_core::render::Render for CaretNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqEqNode {
     #[kind(kind::EQ_EQ)]
     EqEq,
@@ -30907,7 +31403,7 @@ impl ::sittir_core::render::Render for EqEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BangEqNode {
     #[kind(kind::BANG_EQ)]
     BangEq,
@@ -30935,7 +31431,7 @@ impl ::sittir_core::render::Render for BangEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtEqNode {
     #[kind(kind::LT_EQ)]
     LtEq,
@@ -30963,7 +31459,7 @@ impl ::sittir_core::render::Render for LtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtEqNode {
     #[kind(kind::GT_EQ)]
     GtEq,
@@ -30991,7 +31487,7 @@ impl ::sittir_core::render::Render for GtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtLtNode {
     #[kind(kind::LT_LT)]
     LtLt,
@@ -31019,7 +31515,7 @@ impl ::sittir_core::render::Render for LtLtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtGtNode {
     #[kind(kind::GT_GT)]
     GtGt,
@@ -31047,7 +31543,7 @@ impl ::sittir_core::render::Render for GtGtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SlashNode {
     #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
@@ -31075,7 +31571,7 @@ impl ::sittir_core::render::Render for SlashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PercentNode {
     #[kind(kind::PERCENT)]
     Percent,
@@ -31103,7 +31599,7 @@ impl ::sittir_core::render::Render for PercentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusEqNode {
     #[kind(kind::PLUS_EQ)]
     PlusEq,
@@ -31131,7 +31627,7 @@ impl ::sittir_core::render::Render for PlusEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashEqNode {
     #[kind(kind::DASH_EQ)]
     DashEq,
@@ -31159,7 +31655,7 @@ impl ::sittir_core::render::Render for DashEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarEqNode {
     #[kind(kind::STAR_EQ)]
     StarEq,
@@ -31187,7 +31683,7 @@ impl ::sittir_core::render::Render for StarEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SlashEqNode {
     #[kind(kind::SLASH_EQ)]
     SlashEq,
@@ -31215,7 +31711,7 @@ impl ::sittir_core::render::Render for SlashEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PercentEqNode {
     #[kind(kind::PERCENT_EQ)]
     PercentEq,
@@ -31243,7 +31739,7 @@ impl ::sittir_core::render::Render for PercentEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpEqNode {
     #[kind(kind::AMP_EQ)]
     AmpEq,
@@ -31271,7 +31767,7 @@ impl ::sittir_core::render::Render for AmpEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipeEqNode {
     #[kind(kind::PIPE_EQ)]
     PipeEq,
@@ -31299,7 +31795,7 @@ impl ::sittir_core::render::Render for PipeEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CaretEqNode {
     #[kind(kind::CARET_EQ)]
     CaretEq,
@@ -31327,7 +31823,7 @@ impl ::sittir_core::render::Render for CaretEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtLtEqNode {
     #[kind(kind::LT_LT_EQ)]
     LtLtEq,
@@ -31355,7 +31851,7 @@ impl ::sittir_core::render::Render for LtLtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtGtEqNode {
     #[kind(kind::GT_GT_EQ)]
     GtGtEq,
@@ -31383,7 +31879,7 @@ impl ::sittir_core::render::Render for GtGtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ReturnKeywordNode {
     #[kind(kind::RETURN_KEYWORD)]
     ReturnKeyword,
@@ -31411,7 +31907,7 @@ impl ::sittir_core::render::Render for ReturnKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum YieldKeywordNode {
     #[kind(kind::YIELD_KEYWORD)]
     YieldKeyword,
@@ -31439,7 +31935,7 @@ impl ::sittir_core::render::Render for YieldKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DotDotNode {
     #[kind(kind::DOT_DOT)]
     DotDot,
@@ -31467,7 +31963,7 @@ impl ::sittir_core::render::Render for DotDotNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IfKeywordNode {
     #[kind(kind::IF_KEYWORD)]
     IfKeyword,
@@ -31495,7 +31991,7 @@ impl ::sittir_core::render::Render for IfKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MatchKeywordNode {
     #[kind(kind::MATCH_KEYWORD)]
     MatchKeyword,
@@ -31523,7 +32019,7 @@ impl ::sittir_core::render::Render for MatchKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CommaNode {
     #[kind(kind::COMMA)]
     Comma,
@@ -31551,7 +32047,7 @@ impl ::sittir_core::render::Render for CommaNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum WhileKeywordNode {
     #[kind(kind::WHILE_KEYWORD)]
     WhileKeyword,
@@ -31579,7 +32075,7 @@ impl ::sittir_core::render::Render for WhileKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LoopKeywordNode {
     #[kind(kind::LOOP_KEYWORD)]
     LoopKeyword,
@@ -31607,7 +32103,7 @@ impl ::sittir_core::render::Render for LoopKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InKeywordNode {
     #[kind(kind::IN_KEYWORD)]
     InKeyword,
@@ -31635,7 +32131,7 @@ impl ::sittir_core::render::Render for InKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BreakKeywordNode {
     #[kind(kind::BREAK_KEYWORD)]
     BreakKeyword,
@@ -31663,7 +32159,7 @@ impl ::sittir_core::render::Render for BreakKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ContinueKeywordNode {
     #[kind(kind::CONTINUE_KEYWORD)]
     ContinueKeyword,
@@ -31691,7 +32187,7 @@ impl ::sittir_core::render::Render for ContinueKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DotNode {
     #[kind(kind::DOT)]
     Dot,
@@ -31719,7 +32215,7 @@ impl ::sittir_core::render::Render for DotNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AwaitKeywordNode {
     #[kind(kind::AWAIT_KEYWORD)]
     AwaitKeyword,
@@ -31747,7 +32243,7 @@ impl ::sittir_core::render::Render for AwaitKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MoveKeywordNode {
     #[kind(kind::MOVE_KEYWORD)]
     MoveKeyword,
@@ -31775,7 +32271,7 @@ impl ::sittir_core::render::Render for MoveKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GenKeywordNode {
     #[kind(kind::GEN_KEYWORD)]
     GenKeyword,
@@ -31803,7 +32299,7 @@ impl ::sittir_core::render::Render for GenKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TryKeywordNode {
     #[kind(kind::TRY_KEYWORD)]
     TryKeyword,
@@ -31831,7 +32327,7 @@ impl ::sittir_core::render::Render for TryKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AtNode {
     #[kind(kind::AT)]
     At,
@@ -31859,7 +32355,7 @@ impl ::sittir_core::render::Render for AtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TrueKeywordNode {
     #[kind(kind::TRUE_KEYWORD)]
     TrueKeyword,
@@ -31887,7 +32383,7 @@ impl ::sittir_core::render::Render for TrueKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FalseKeywordNode {
     #[kind(kind::FALSE_KEYWORD)]
     FalseKeyword,
@@ -31915,7 +32411,7 @@ impl ::sittir_core::render::Render for FalseKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SlashSlashNode {
     #[kind(kind::SLASH_SLASH)]
     SlashSlash,
@@ -31943,7 +32439,7 @@ impl ::sittir_core::render::Render for SlashSlashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SlashStarNode {
     #[kind(kind::SLASH_STAR)]
     SlashStar,
@@ -31971,7 +32467,7 @@ impl ::sittir_core::render::Render for SlashStarNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarSlashNode {
     #[kind(kind::STAR_SLASH)]
     StarSlash,
@@ -31999,7 +32495,7 @@ impl ::sittir_core::render::Render for StarSlashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum U8KeywordNode {
     #[kind(kind::U8_KEYWORD)]
     U8Keyword,
@@ -32027,7 +32523,7 @@ impl ::sittir_core::render::Render for U8KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum I8KeywordNode {
     #[kind(kind::I8_KEYWORD)]
     I8Keyword,
@@ -32055,7 +32551,7 @@ impl ::sittir_core::render::Render for I8KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum U16KeywordNode {
     #[kind(kind::U16_KEYWORD)]
     U16Keyword,
@@ -32083,7 +32579,7 @@ impl ::sittir_core::render::Render for U16KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum I16KeywordNode {
     #[kind(kind::I16_KEYWORD)]
     I16Keyword,
@@ -32111,7 +32607,7 @@ impl ::sittir_core::render::Render for I16KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum U32KeywordNode {
     #[kind(kind::U32_KEYWORD)]
     U32Keyword,
@@ -32139,7 +32635,7 @@ impl ::sittir_core::render::Render for U32KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum I32KeywordNode {
     #[kind(kind::I32_KEYWORD)]
     I32Keyword,
@@ -32167,7 +32663,7 @@ impl ::sittir_core::render::Render for I32KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum U64KeywordNode {
     #[kind(kind::U64_KEYWORD)]
     U64Keyword,
@@ -32195,7 +32691,7 @@ impl ::sittir_core::render::Render for U64KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum I64KeywordNode {
     #[kind(kind::I64_KEYWORD)]
     I64Keyword,
@@ -32223,7 +32719,7 @@ impl ::sittir_core::render::Render for I64KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum U128KeywordNode {
     #[kind(kind::U128_KEYWORD)]
     U128Keyword,
@@ -32251,7 +32747,7 @@ impl ::sittir_core::render::Render for U128KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum I128KeywordNode {
     #[kind(kind::I128_KEYWORD)]
     I128Keyword,
@@ -32279,7 +32775,7 @@ impl ::sittir_core::render::Render for I128KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IsizeKeywordNode {
     #[kind(kind::ISIZE_KEYWORD)]
     IsizeKeyword,
@@ -32307,7 +32803,7 @@ impl ::sittir_core::render::Render for IsizeKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UsizeKeywordNode {
     #[kind(kind::USIZE_KEYWORD)]
     UsizeKeyword,
@@ -32335,7 +32831,7 @@ impl ::sittir_core::render::Render for UsizeKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum F32KeywordNode {
     #[kind(kind::F32_KEYWORD)]
     F32Keyword,
@@ -32363,7 +32859,7 @@ impl ::sittir_core::render::Render for F32KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum F64KeywordNode {
     #[kind(kind::F64_KEYWORD)]
     F64Keyword,
@@ -32391,7 +32887,7 @@ impl ::sittir_core::render::Render for F64KeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BoolKeywordNode {
     #[kind(kind::BOOL_KEYWORD)]
     BoolKeyword,
@@ -32419,7 +32915,7 @@ impl ::sittir_core::render::Render for BoolKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StrKeywordNode {
     #[kind(kind::STR_KEYWORD)]
     StrKeyword,
@@ -32447,7 +32943,7 @@ impl ::sittir_core::render::Render for StrKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CharKeywordNode {
     #[kind(kind::CHAR_KEYWORD)]
     CharKeyword,
@@ -32475,7 +32971,7 @@ impl ::sittir_core::render::Render for CharKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnderscoreNode {
     #[kind(kind::UNDERSCORE)]
     Underscore,
@@ -32503,7 +32999,7 @@ impl ::sittir_core::render::Render for UnderscoreNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DotDotEqNode {
     #[kind(kind::DOT_DOT_EQ)]
     DotDotEq,
@@ -32531,7 +33027,7 @@ impl ::sittir_core::render::Render for DotDotEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ModKeywordNode {
     #[kind(kind::MOD_KEYWORD)]
     ModKeyword,
@@ -32559,7 +33055,7 @@ impl ::sittir_core::render::Render for ModKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PubKeywordNode {
     #[kind(kind::PUB_KEYWORD)]
     PubKeyword,
@@ -32587,7 +33083,7 @@ impl ::sittir_core::render::Render for PubKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StructKeywordNode {
     #[kind(kind::STRUCT_KEYWORD)]
     StructKeyword,
@@ -32615,7 +33111,7 @@ impl ::sittir_core::render::Render for StructKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RawKeywordNode {
     #[kind(kind::RAW_KEYWORD)]
     RawKeyword,
@@ -32643,7 +33139,7 @@ impl ::sittir_core::render::Render for RawKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MacroRulesBangNode {
     #[kind(kind::MACRO_RULES_BANG)]
     MacroRulesBang,
@@ -34339,6 +34835,61 @@ impl ::sittir_core::prepare::SeatTarget for LiteralPatternNode {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for DeclarationStatementTraitItemNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::ConstItem(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
+            Self::MacroDefinition(t) => t.seat_target(table, ctx),
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)).map(|site| (edges, site)),
+            Self::AttributeItem(t) => t.seat_target(table, ctx),
+            Self::InnerAttributeItem(t) => t.seat_target(table, ctx),
+            Self::ModItem(t) => t.seat_target(table, ctx),
+            Self::ForeignModItem(t) => t.seat_target(table, ctx),
+            Self::StructItem(t) => t.seat_target(table, ctx),
+            Self::UnionItem(t) => t.seat_target(table, ctx),
+            Self::EnumItem(t) => t.seat_target(table, ctx),
+            Self::TypeItem(t) => t.seat_target(table, ctx),
+            Self::ImplItem(t) => t.seat_target(table, ctx),
+            Self::TraitItem(t) => t.seat_target(table, ctx),
+            Self::AssociatedType(t) => t.seat_target(table, ctx),
+            Self::LetDeclaration(t) => t.seat_target(table, ctx),
+            Self::UseDeclaration(t) => t.seat_target(table, ctx),
+            Self::ExternCrateDeclaration(t) => t.seat_target(table, ctx),
+            Self::StaticItem(t) => t.seat_target(table, ctx),
+            Self::MethodDeclaration { .. } | Self::SignatureMethodDeclaration { .. } => None,
+        }
+    }
+}
+
+impl ::sittir_core::prepare::SeatTarget for DeclarationStatementImplItemBodyNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::ConstItem(t) => t.seat_target(table, ctx),
+            Self::MacroInvocation(t) => t.seat_target(table, ctx),
+            Self::MacroDefinition(t) => t.seat_target(table, ctx),
+            Self::EmptyStatement(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(178)).map(|site| (edges, site)),
+            Self::AttributeItem(t) => t.seat_target(table, ctx),
+            Self::InnerAttributeItem(t) => t.seat_target(table, ctx),
+            Self::ModItem(t) => t.seat_target(table, ctx),
+            Self::ForeignModItem(t) => t.seat_target(table, ctx),
+            Self::StructItem(t) => t.seat_target(table, ctx),
+            Self::UnionItem(t) => t.seat_target(table, ctx),
+            Self::EnumItem(t) => t.seat_target(table, ctx),
+            Self::TypeItem(t) => t.seat_target(table, ctx),
+            Self::FunctionSignatureItem(t) => t.seat_target(table, ctx),
+            Self::ImplItem(t) => t.seat_target(table, ctx),
+            Self::TraitItem(t) => t.seat_target(table, ctx),
+            Self::AssociatedType(t) => t.seat_target(table, ctx),
+            Self::LetDeclaration(t) => t.seat_target(table, ctx),
+            Self::UseDeclaration(t) => t.seat_target(table, ctx),
+            Self::ExternCrateDeclaration(t) => t.seat_target(table, ctx),
+            Self::StaticItem(t) => t.seat_target(table, ctx),
+            Self::MethodDeclaration { .. } => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for ExpressionStatementContentNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
@@ -35319,7 +35870,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AttributedArgument(t) => t.seat_target(table, ctx),
             Self::AttributedOrderedField(t) => t.seat_target(table, ctx),
             Self::TypeArgument(t) => t.seat_target(table, ctx),
-            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::CrateVisibilityModifier { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
+            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::TraitInterfaceDeclarationBody { .. } | Self::ExtensionDeclarationBody { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MethodDeclaration { .. } | Self::SignatureMethodDeclaration { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::CrateVisibilityModifier { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -39027,10 +39578,60 @@ fn render_block_comment_content(t: &BlockCommentContentNode, w: &mut dyn ::sitti
     w.text(&t.text)
 }
 
+fn render_trait_interface_declaration_body(node: &TraitInterfaceDeclarationBodyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let declarations = ListView {
+        items: &node.declarations,
+        template: "{}",
+        token: "",
+        separators: None,
+        before: KindId::BLANK,
+        after: node.declarations_separator_space.unwrap_or(KindId::BLANK),
+        leading: false,
+        trailing: false,
+        head: Some(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_DECLARATIONS_START),
+        tail: Some(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_DECLARATIONS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_declarations"),
+    };
+    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text("{")?;
+    w.site_at(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_LBRACE_AFTER);
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
+    declarations.render(w)?;
+    w.site_at(options::SITE_TRAIT_INTERFACE_DECLARATION_BODY_RBRACE_BEFORE);
+    w.text("}")?;
+    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
+fn render_extension_declaration_body(node: &ExtensionDeclarationBodyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let declarations = ListView {
+        items: &node.declarations,
+        template: "{}",
+        token: "",
+        separators: None,
+        before: KindId::BLANK,
+        after: node.declarations_separator_space.unwrap_or(KindId::BLANK),
+        leading: false,
+        trailing: false,
+        head: Some(options::SITE_EXTENSION_DECLARATION_BODY_DECLARATIONS_START),
+        tail: Some(options::SITE_EXTENSION_DECLARATION_BODY_DECLARATIONS_END),
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_declarations"),
+    };
+    w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.text("{")?;
+    w.site_at(options::SITE_EXTENSION_DECLARATION_BODY_LBRACE_AFTER);
+    ::sittir_core::trivia::render_inner(node.layout.trivia(), w)?;
+    declarations.render(w)?;
+    w.site_at(options::SITE_EXTENSION_DECLARATION_BODY_RBRACE_BEFORE);
+    w.text("}")?;
+    w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::After, node.layout.edges().after);
+    Ok(())
+}
+
 fn render_receiver_parameter_declaration(node: &ReceiverParameterDeclarationNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let mutable = View::new(::sittir_core::view::Presence::new(node.mutable, MutableSpecifierNode::MutableSpecifier), "{}");
     let type_ = &node.type_;
-    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::Before, node.layout.edges().before);
     if mutable.is_present() {
         mutable.render(w)?;
         w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_MUTABLE_AFTER);
@@ -39042,37 +39643,37 @@ fn render_receiver_parameter_declaration(node: &ReceiverParameterDeclarationNode
     w.text(":")?;
     w.site_at(options::SITE_RECEIVER_PARAMETER_DECLARATION_COLON_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
-    w.edge(::sittir_core::types::KindId(435), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_attributed_parameter_receiver(node: &AttributedParameterReceiverNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let attribute_item = View::new(&node.attribute_item, "{}");
     let content = &node.content;
-    w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_attribute_item", ::sittir_core::types::ItemIndex(0), w, |w| attribute_item.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    w.edge(::sittir_core::types::KindId(436), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_parameters_elements_receiver(node: &ParametersElementsReceiverNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let parameters_elements_receiver_group = View::new(&node.parameters_elements_receiver_group, "{}");
     let receiver = &node.receiver;
-    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(439), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_receiver", ::sittir_core::types::ItemIndex(0), w, |w| receiver.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_parameters_elements_receiver_group", ::sittir_core::types::ItemIndex(0), w, |w| parameters_elements_receiver_group.render(w))?;
-    w.edge(::sittir_core::types::KindId(437), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(439), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
 fn render_parameters_elements_receiver_group(node: &ParametersElementsReceiverGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let elements = View::new(&node.elements, "{}");
-    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(440), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(",")?;
     w.site_at(options::SITE_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
-    w.edge(::sittir_core::types::KindId(438), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(440), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -39093,12 +39694,6 @@ fn render_type_identifier(node: &TypeIdentifierNode, w: &mut dyn ::sittir_core::
 fn render_field_identifier(node: &FieldIdentifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    Ok(())
-}
-
-fn render_crate_visibility_modifier(node: &CrateVisibilityModifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = &node.content;
-    w.text("crate")?;
     Ok(())
 }
 
@@ -39206,6 +39801,10 @@ fn render_indent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
 
 fn render_dedent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(175)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.dedent(::sittir_core::layout_kinds::LayoutKinds::NEWLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
+}
+
+fn render_crate_visibility_modifier(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("crate"))
 }
 
 fn render_semi(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -40028,6 +40627,58 @@ fn render_char_literal_escaped(t: &CharLiteralEscapedNode, w: &mut dyn ::sittir_
     }
 }
 
+fn render_declaration_statement_trait_item(t: &DeclarationStatementTraitItemNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        DeclarationStatementTraitItemNode::ConstItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::MacroInvocation(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::MacroDefinition(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
+        DeclarationStatementTraitItemNode::AttributeItem(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::InnerAttributeItem(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::ModItem(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::ForeignModItem(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::StructItem(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::UnionItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::EnumItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::TypeItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::MethodDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::SignatureMethodDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::ImplItem(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::TraitItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::AssociatedType(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::LetDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::UseDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementTraitItemNode::ExternCrateDeclaration(inner) => inner.render(w),
+        DeclarationStatementTraitItemNode::StaticItem(inner) => inner.as_ref().render(w),
+    }
+}
+
+fn render_declaration_statement_impl_item_body(t: &DeclarationStatementImplItemBodyNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    match t {
+        DeclarationStatementImplItemBodyNode::ConstItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::MacroInvocation(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::MacroDefinition(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
+        DeclarationStatementImplItemBodyNode::AttributeItem(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::InnerAttributeItem(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::ModItem(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::ForeignModItem(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::StructItem(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::UnionItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::EnumItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::TypeItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::MethodDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::FunctionSignatureItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::ImplItem(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::TraitItem(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::AssociatedType(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::LetDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::UseDeclaration(inner) => inner.as_ref().render(w),
+        DeclarationStatementImplItemBodyNode::ExternCrateDeclaration(inner) => inner.render(w),
+        DeclarationStatementImplItemBodyNode::StaticItem(inner) => inner.as_ref().render(w),
+    }
+}
+
 /// Word-class table derived from this grammar's Link-pinned word pattern.
 static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core::spacing::WordMatcher::new(
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, true, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false],
@@ -40295,6 +40946,8 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::RawStringLiteralEnd(inner) => inner.kind_in(kinds),
             Self::DocComment(inner) => inner.kind_in(kinds),
             Self::BlockCommentContent(inner) => inner.kind_in(kinds),
+            Self::TraitInterfaceDeclarationBody(inner) => inner.kind_in(kinds),
+            Self::ExtensionDeclarationBody(inner) => inner.kind_in(kinds),
             Self::ReceiverParameterDeclaration(inner) => inner.kind_in(kinds),
             Self::AttributedParameterReceiver(inner) => inner.kind_in(kinds),
             Self::ParametersElementsReceiver(inner) => inner.kind_in(kinds),
@@ -40303,8 +40956,9 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
-            Self::CrateVisibilityModifier(inner) => inner.kind_in(kinds),
             Self::ShorthandFieldIdentifier(inner) => inner.kind_in(kinds),
+            Self::MethodDeclaration(inner) => inner.kind_in(kinds),
+            Self::SignatureMethodDeclaration(inner) => inner.kind_in(kinds),
             Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
             Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
             Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
@@ -40330,6 +40984,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::DoubleBlankline => [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k)),
             Self::Indent => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
             Self::Dedent => [::sittir_core::types::KindId(175)].iter().any(|k| kinds.contains(k)),
+            Self::CrateVisibilityModifier => [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k)),
             Self::Semi => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
             Self::EqGt => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
             Self::Colon => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
@@ -40707,6 +41362,8 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::RawStringLiteralEnd(t) => t.render(w),
             AnyNode::DocComment(t) => t.render(w),
             AnyNode::BlockCommentContent(t) => t.render(w),
+            AnyNode::TraitInterfaceDeclarationBody(t) => t.render(w),
+            AnyNode::ExtensionDeclarationBody(t) => t.render(w),
             AnyNode::ReceiverParameterDeclaration(t) => t.render(w),
             AnyNode::AttributedParameterReceiver(t) => t.render(w),
             AnyNode::ParametersElementsReceiver(t) => t.render(w),
@@ -40715,8 +41372,9 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ErrorSentinel(t) => t.render(w),
             AnyNode::TypeIdentifier(t) => t.render(w),
             AnyNode::FieldIdentifier(t) => t.render(w),
-            AnyNode::CrateVisibilityModifier(t) => t.render(w),
             AnyNode::ShorthandFieldIdentifier(t) => t.render(w),
+            AnyNode::MethodDeclaration(t) => t.render(w),
+            AnyNode::SignatureMethodDeclaration(t) => t.render(w),
             AnyNode::EmptyStatement(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(178), edges, w, render_empty_statement),
             AnyNode::UnitType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(244), edges, w, render_unit_type),
             AnyNode::NeverType(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(254), edges, w, render_never_type),
@@ -40742,6 +41400,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::DoubleBlankline => render_double_blankline(w),
             AnyNode::Indent => render_indent(w),
             AnyNode::Dedent => render_dedent(w),
+            AnyNode::CrateVisibilityModifier => render_crate_visibility_modifier(w),
             AnyNode::Semi => render_semi(w),
             AnyNode::EqGt => render_eq_gt(w),
             AnyNode::Colon => render_colon(w),
@@ -40943,7 +41602,6 @@ const _: () = assert!(::core::mem::size_of::<ConstBlockNode>() <= 256, "ConstBlo
 const _: () = assert!(::core::mem::size_of::<ConstItemNode>() > 256, "ConstItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<ConstParameterNode>() > 256, "ConstParameterNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<ContinueExpressionNode>() <= 256, "ContinueExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<CrateVisibilityModifierNode>() <= 256, "CrateVisibilityModifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DeclarationListNode>() <= 256, "DeclarationListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DeclarationStatementNode>() <= 256, "DeclarationStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<DelimTokenTreeBraceNode>() <= 256, "DelimTokenTreeBraceNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -40964,6 +41622,7 @@ const _: () = assert!(::core::mem::size_of::<EscapeSequenceUnicodeFixedNode>() <
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementNode>() <= 256, "ExpressionStatementNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExpressionStatementWithSemiNode>() <= 256, "ExpressionStatementWithSemiNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExpressionsNode>() <= 256, "ExpressionsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ExtensionDeclarationBodyNode>() <= 256, "ExtensionDeclarationBodyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExternCrateDeclarationNode>() <= 256, "ExternCrateDeclarationNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ExternModifierNode>() <= 256, "ExternModifierNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<FieldDeclarationListElementsNode>() <= 256, "FieldDeclarationListElementsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -41120,6 +41779,7 @@ const _: () = assert!(::core::mem::size_of::<TokenTreePatternBracketNode>() <= 2
 const _: () = assert!(::core::mem::size_of::<TokenTreePatternParenNode>() <= 256, "TokenTreePatternParenNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TokenTreePunctuationEnum>() <= 256, "TokenTreePunctuationEnum is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TraitBoundsNode>() <= 256, "TraitBoundsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<TraitInterfaceDeclarationBodyNode>() <= 256, "TraitInterfaceDeclarationBodyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TraitItemNode>() > 256, "TraitItemNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<TryBlockNode>() <= 256, "TryBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<TryExpressionNode>() <= 256, "TryExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -41161,4 +41821,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierPathNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionPathNodeSlot, ScopedTypeIdentifierPathNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierPathNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionPathNodeSlot, ScopedTypeIdentifierPathNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);

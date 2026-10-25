@@ -35,6 +35,15 @@ function readLeftContent(text: string): { $type: number; $text?: string } | unde
 	return { $type: leaf.$type, $text: leaf.$text() };
 }
 
+describe('a contextual keyword the grammar relaxes into the word', () => {
+	it('queries as an identifier, not a keyword unit, and a getter still reads its own form', () => {
+		const nodes = Array.from(ts.parse('get + set;').$query().$descendants);
+		expect(nodes.flatMap((node) => (typeof node !== 'number' && node.$type === ts.kinds.Identifier ? [node.$text()] : []))).toEqual(['get', 'set']);
+		expect(nodes.filter((node) => typeof node === 'number')).toEqual([]);
+		expect(Array.from(ts.parse('class A { get x() { return 1; } }').$query().$descendants.ofType(ts.kinds.MethodDefinitionGetter))).toHaveLength(1);
+	});
+});
+
 describe('a contextual keyword at a slot the grammar relaxes it in', () => {
 	it('loose text builds the identifier the parser reads', () => {
 		const built = ts.build.assignmentExpression({ left: 'async', right: ts.build.identifier('b') });

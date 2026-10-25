@@ -535,6 +535,8 @@ export const records = {
 	RawStringLiteralEndNode: { words: 2 },
 	DocCommentNode: { words: 2 },
 	BlockCommentContentNode: { words: 2 },
+	TraitInterfaceDeclarationBodyNode: { words: 4, declarations: { word: 2, width: 2, run: 5 } },
+	ExtensionDeclarationBodyNode: { words: 4, declarations: { word: 2, width: 2, run: 5 } },
 	ReceiverParameterDeclarationNode: { words: 8, mutable: { word: 2, bit: 0 }, type_: { word: 3, width: 5 } },
 	AttributedParameterReceiverNode: { words: 12, attribute_item: { word: 2, width: 5 }, content: { word: 7, width: 5 } },
 	ParametersElementsReceiverNode: {
@@ -547,6 +549,5 @@ export const records = {
 	ErrorSentinelNode: { words: 2 },
 	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
 	FieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
-	CrateVisibilityModifierNode: { words: 7, content: { word: 2, width: 5 } },
 	ShorthandFieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

@@ -12,7 +12,9 @@ import {
 	isNodeRef,
 	isRequired,
 	isTerminalValue,
+	layoutNodeOf,
 	storageKindOfRef,
+	type AssembledNode,
 	type NodeOrTerminal
 } from './node-map.ts';
 import { spacingSitesOf, type EdgeArm, type RenderRules, type SeatedChild } from './render-rules.ts';
@@ -86,6 +88,14 @@ export function undeclaredSeparatorSites(config: SitePreferencesConfig): SitePre
 	return resolveSitePreferences(config, false).filter(isUndeclaredSeparator);
 }
 
+function ownsLayout(node: AssembledNode | undefined): boolean {
+	return node === undefined || layoutNodeOf(node) === node;
+}
+
+function ownLayouts(nodeMap: NodeMap): [string, AssembledNode][] {
+	return [...nodeMap.nodes].filter(([, node]) => ownsLayout(node));
+}
+
 function isUndeclaredSeparator(site: SitePreference): boolean {
 	return site.source === 'separator' && site.defaultArm === UNDECLARED_ARM;
 }
@@ -93,7 +103,7 @@ function isUndeclaredSeparator(site: SitePreference): boolean {
 function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boolean): SitePreference[] {
 	const out: SitePreference[] = [];
 	const candidates: SiteCandidate[] = [];
-	for (const [kind, node] of config.nodeMap.nodes) {
+	for (const [kind, node] of ownLayouts(config.nodeMap)) {
 		if (!(node instanceof AbstractAssembledCompound)) continue;
 		for (const slot of node.slots) {
 			if (slot.name === undefined) continue;
@@ -101,13 +111,14 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 			if (candidate) candidates.push(candidate);
 		}
 	}
-	for (const [kind, node] of config.nodeMap.nodes) {
+	for (const [kind, node] of ownLayouts(config.nodeMap)) {
 		if (!(node instanceof AssembledSupertype)) continue;
 		const candidate = variantChoiceCandidate(kind, node, config);
 		if (candidate) candidates.push(candidate);
 	}
 	if (config.renderRules !== undefined) {
 		for (const site of spacingSitesOf(config.renderRules, config.nodeMap)) {
+			if (!ownsLayout(config.nodeMap.nodes.get(site.kind))) continue;
 			const arms = site.arms;
 			out.push({
 				kind: site.kind,
@@ -127,7 +138,7 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 			});
 		}
 	}
-	for (const [kind, node] of config.nodeMap.nodes) {
+	for (const [kind, node] of ownLayouts(config.nodeMap)) {
 		if (!(node instanceof AssembledList)) continue;
 		const slot = node.slots[0]?.name;
 		const members = delimiterMembersFor(node);
@@ -135,7 +146,7 @@ function resolveSitePreferences(config: SitePreferencesConfig, requireHit: boole
 		const address = `${slot}_${DELIMITER_LABEL}`;
 		out.push({ kind, slot, address, label: DELIMITER_LABEL, arms: members.map((value) => ({ value })), defaultArm: 'Delimiter.None', source: 'delimiter' });
 	}
-	for (const [kind, node] of config.nodeMap.nodes) {
+	for (const [kind, node] of ownLayouts(config.nodeMap)) {
 		if (!(node instanceof AssembledList) || node.separatorRule === undefined) continue;
 		const slot = node.slots[0]?.name;
 		if (slot === undefined) continue;

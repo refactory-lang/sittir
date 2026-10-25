@@ -390,7 +390,20 @@ declare module './declaration.ts' {
 				| V.Declaration.Constant.Public.Internal<G>
 				| V.Declaration.Constant.Public.Restricted<G>;
 		}
-		interface Constructor<G extends GrammarContext<G>> extends classes.Declaration.Constructor<G> {}
+		interface Constructor<G extends GrammarContext<G>> extends classes.Declaration.Constructor<G> {
+			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Constructor<G>['async']>;
+			readonly decorators?: gate.In<G, features.Decorators, decorators.Declaration.Constructor<G>['decorators']>;
+			readonly returnType?: gate.In<
+				G,
+				features.TypeAnnotations,
+				typeAnnotations.Declaration.Constructor<G>['returnType']
+			>;
+			readonly typeParameters?: gate.In<
+				G,
+				features.ParametricPolymorphism,
+				parametricPolymorphism.Declaration.Constructor<G>['typeParameters']
+			>;
+		}
 		namespace Constructor {
 			interface Private<G extends GrammarContext<G>> extends visibility.Declaration.Constructor.Private<G> {}
 			interface Protected<G extends GrammarContext<G>> extends visibility.Declaration.Constructor.Protected<G> {}

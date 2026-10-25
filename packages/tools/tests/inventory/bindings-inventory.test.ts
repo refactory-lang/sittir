@@ -25,6 +25,7 @@ const CEILING = JSON.parse(
 	readonly compiling: readonly string[];
 	readonly vocabularyDisagreements: readonly string[];
 	readonly unroutedScope: readonly string[];
+	readonly stoppedAtClones: readonly string[];
 };
 
 describe('bindingIssues', () => {
@@ -186,6 +187,7 @@ describe('deriveVocabulary', () => {
 		expect([...parameters].filter((k) => k.startsWith('<'))).toEqual([]);
 		const body = d.members.get('expression.class')?.get('body');
 		expect([...(body?.kinds ?? [])].sort()).toEqual([
+			'declaration.constructor',
 			'declaration.field',
 			'declaration.method',
 			'declaration.method.signature',
@@ -218,6 +220,9 @@ describe('deriveVocabulary', () => {
 describe('the authored vocabulary', () => {
 	it('disagrees with the bindings only where the ceiling records', async () => {
 		expect(vocabularyDisagreements(await deriveVocabulary(), await readVocabulary(VOCABULARY_DIR))).toEqual(CEILING.vocabularyDisagreements);
+	}, 120_000);
+	it("stops a base's claim only at the clones the ceiling records, where the clone's own unconditional claim sits at an unrelated path", async () => {
+		expect((await deriveVocabulary()).stoppedReads).toEqual(CEILING.stoppedAtClones);
 	}, 120_000);
 	it('has its scope routed wherever it declares one, but where the ceiling records', async () => {
 		const d = await deriveVocabulary();

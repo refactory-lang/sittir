@@ -16,7 +16,7 @@ describe('a seated forwarded group is reached through its parent mount', () => {
 	it('builds a unicode property value through the group mount', () => {
 		const built = re.build.unicodePropertyValueExpression.unicodePropertyValueExpressionGroup.strict({
 			unicodePropertyValue: re.build.unicodePropertyValue('Greek'),
-			unicodePropertyValueExpressionGroup: re.build.unicodePropertyValue('Script')
+			unicodePropertyValueExpressionGroup: re.build.unicodePropertyName('Script')
 		});
 		expect(built.$render()).toBe('Script=Greek');
 	});

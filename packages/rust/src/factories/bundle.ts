@@ -497,6 +497,11 @@ export const structItemUnit = bundle(F.buildStructItemUnit, C.coerceToStructItem
 	key: 'structItemUnit',
 	max: 1
 });
+export const traitInterfaceDeclarationBody = bundle(
+	F.buildTraitInterfaceDeclarationBody,
+	C.coerceToTraitInterfaceDeclarationBody
+);
+export const extensionDeclarationBody = bundle(F.buildExtensionDeclarationBody, C.coerceToExtensionDeclarationBody);
 export const receiverParameterDeclaration = bundle(
 	F.buildReceiverParameterDeclaration,
 	C.coerceToReceiverParameterDeclaration,
@@ -506,4 +511,13 @@ export const parametersElementsReceiver = bundle(
 	F.buildParametersElementsReceiver,
 	C.coerceToParametersElementsReceiver,
 	{ key: 'parametersElementsReceiver', max: 1 }
+);
+export const methodDeclaration = bundle(F.buildMethodDeclaration, C.coerceToMethodDeclaration, {
+	key: 'methodDeclaration',
+	max: 1
+});
+export const signatureMethodDeclaration = bundle(
+	F.buildSignatureMethodDeclaration,
+	C.coerceToSignatureMethodDeclaration,
+	{ key: 'signatureMethodDeclaration', max: 1 }
 );

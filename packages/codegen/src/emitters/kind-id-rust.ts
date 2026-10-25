@@ -42,14 +42,18 @@ export function kindConstants(
 }
 
 export function relaxedKeywordIds(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): number[] {
-	return (nodeMap.relaxedLiterals ?? []).flatMap((literal) => {
+	const fixed = nodeMap.word === null || nodeMap.word === undefined ? [] : (nodeMap.fixedNameLiterals?.[nodeMap.word] ?? []);
+	return [...new Set([...(nodeMap.relaxedLiterals ?? []), ...fixed])].flatMap((literal) => {
 		const entry = findKindEntryForLiteral(entries, literal);
 		return entry === undefined ? [] : [entry.id];
 	});
 }
 
 export function relaxedDisplayIds(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): [number, number[]][] {
-	return Object.entries(nodeMap.relaxedDisplayLiterals ?? {}).flatMap(([display, literals]) => {
+	const shown = new Map(Object.entries(nodeMap.relaxedDisplayLiterals ?? {}));
+	for (const [display, literals] of Object.entries(nodeMap.fixedNameLiterals ?? {}))
+		if (display !== nodeMap.word) shown.set(display, [...new Set([...(shown.get(display) ?? []), ...literals])]);
+	return [...shown].flatMap(([display, literals]) => {
 		const shown = findEntryForKindName(entries, `_${display}`) ?? findEntryForKindName(entries, display);
 		const ids = literals.flatMap((literal) => {
 			const entry = findKindEntryForLiteral(entries, literal);

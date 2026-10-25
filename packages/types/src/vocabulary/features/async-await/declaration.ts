@@ -1,6 +1,10 @@
 import type { GrammarContext } from '../../context.ts';
 import type { Flag } from '../../utils.ts';
 export namespace Declaration {
+	export interface Constructor<G extends GrammarContext<G>> {
+		readonly async?: Flag;
+		// p only
+	}
 	export interface Function<G extends GrammarContext<G>> {
 		readonly async?: Flag;
 	}

@@ -26,13 +26,11 @@ describe('a hidden token rule whose parse holds its token', () => {
 	});
 });
 
-describe('a runtime engine holds an alias envelope\'s kind-id content to its kinds', () => {
-	it('refuses another kind id or a function where the alias holds its keyword', async () => {
+describe('a keyword alias display is a leaf of its own kind', () => {
+	it('builds as its kind id and renders its keyword', async () => {
 		const rs = await createEngine(rust, { verifyStructure: 'runtime' });
 		const { buildCrateVisibilityModifier } = scopeBuilders(rs, raw);
-		const loose = buildCrateVisibilityModifier as unknown as (...args: unknown[]) => unknown;
-		expect(() => loose(TSKindId.DotDot)).toThrow('CrateVisibilityModifier.content: takes a kind id of');
-		expect(() => loose(() => 1)).toThrow('CrateVisibilityModifier.content: takes a kind id of');
-		expect(rs.render(buildCrateVisibilityModifier()).toString()).toBe('crate');
+		expect(buildCrateVisibilityModifier).toBe(TSKindId.CrateVisibilityModifier);
+		expect(rs.render(rs.build.visibilityModifier(buildCrateVisibilityModifier)).toString()).toBe('crate');
 	});
 });

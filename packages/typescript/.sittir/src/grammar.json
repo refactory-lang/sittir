@@ -1966,6 +1966,15 @@
                   },
                   "named": true,
                   "value": "statement_identifier"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "STRING",
+                    "value": "constructor"
+                  },
+                  "named": true,
+                  "value": "statement_identifier"
                 }
               ]
             }
@@ -2701,6 +2710,15 @@
             "variant": "non_null",
             "variantOf": "primary_expression"
           }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "constructor"
+          },
+          "named": true,
+          "value": "identifier"
         }
       ]
     },
@@ -3019,6 +3037,15 @@
                               },
                               "named": true,
                               "value": "shorthand_property_identifier"
+                            },
+                            {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "STRING",
+                                "value": "constructor"
+                              },
+                              "named": true,
+                              "value": "shorthand_property_identifier"
                             }
                           ]
                         },
@@ -3284,6 +3311,15 @@
                                     "content": {
                                       "type": "STRING",
                                       "value": "let"
+                                    },
+                                    "named": true,
+                                    "value": "shorthand_property_identifier"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "STRING",
+                                      "value": "constructor"
                                     },
                                     "named": true,
                                     "value": "shorthand_property_identifier"
@@ -3586,6 +3622,15 @@
                               },
                               "named": true,
                               "value": "shorthand_property_identifier_pattern"
+                            },
+                            {
+                              "type": "ALIAS",
+                              "content": {
+                                "type": "STRING",
+                                "value": "constructor"
+                              },
+                              "named": true,
+                              "value": "shorthand_property_identifier_pattern"
                             }
                           ]
                         },
@@ -3851,6 +3896,15 @@
                                     "content": {
                                       "type": "STRING",
                                       "value": "let"
+                                    },
+                                    "named": true,
+                                    "value": "shorthand_property_identifier_pattern"
+                                  },
+                                  {
+                                    "type": "ALIAS",
+                                    "content": {
+                                      "type": "STRING",
+                                      "value": "constructor"
                                     },
                                     "named": true,
                                     "value": "shorthand_property_identifier_pattern"
@@ -4154,6 +4208,15 @@
               {
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "STRING",
+                  "value": "constructor"
+                },
+                "named": true,
+                "value": "shorthand_property_identifier_pattern"
               }
             ]
           }
@@ -6328,6 +6391,15 @@
             "variant": "non_null_expression",
             "variantOf": "_lhs_expression"
           }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "constructor"
+          },
+          "named": true,
+          "value": "identifier"
         }
       ]
     },
@@ -6668,6 +6740,15 @@
             "variant": "non_null",
             "variantOf": "_augmented_assignment_lhs"
           }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "constructor"
+          },
+          "named": true,
+          "value": "identifier"
         }
       ]
     },
@@ -9224,6 +9305,15 @@
               "variant": "computed_property_name",
               "variantOf": "_property_name"
             }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "constructor"
+            },
+            "named": true,
+            "value": "property_identifier"
           }
         ]
       },
@@ -14933,7 +15023,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "method_definition"
+          "name": "_method_definition_class_body_member_method"
         },
         {
           "type": "FIELD",
@@ -15308,6 +15398,15 @@
                     "content": {
                       "type": "STRING",
                       "value": "let"
+                    },
+                    "named": true,
+                    "value": "identifier"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "constructor"
                     },
                     "named": true,
                     "value": "identifier"
@@ -16233,6 +16332,15 @@
           {
             "type": "SYMBOL",
             "name": "identifier"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "constructor"
+            },
+            "named": true,
+            "value": "identifier"
           }
         ]
       },
@@ -18836,6 +18944,210 @@
       "type": "STRING",
       "value": "!"
     },
+    "_method_definition_plain_class_body_member_method": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "accessibility_modifier",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "accessibility_modifier"
+                },
+                "metadata": {
+                  "fieldSource": "enriched"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "BLANK"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "BLANK"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "BLANK"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "BLANK"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "BLANK"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "STRING",
+                "value": "constructor"
+              },
+              "named": true,
+              "value": "property_identifier"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "BLANK"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_call_signature_class_body_member_method"
+          },
+          {
+            "type": "FIELD",
+            "name": "body",
+            "content": {
+              "type": "SYMBOL",
+              "name": "statement_block"
+            }
+          }
+        ],
+        "annotations": {
+          "hoisted": true
+        }
+      }
+    },
+    "_call_signature_class_body_member_method": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "BLANK"
+        },
+        {
+          "type": "FIELD",
+          "name": "parameters",
+          "content": {
+            "type": "SYMBOL",
+            "name": "formal_parameters"
+          }
+        },
+        {
+          "type": "BLANK"
+        }
+      ]
+    },
+    "_method_definition_class_body_member_method": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC_LEFT",
+          "value": 0,
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "method_definition_plain",
+                "annotations": {
+                  "variant": "plain",
+                  "variantOf": "method_definition"
+                }
+              },
+              {
+                "type": "PREC_DYNAMIC",
+                "value": 1,
+                "content": {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_method_definition_plain_class_body_member_method"
+                  },
+                  "named": true,
+                  "value": "constructor_declaration"
+                }
+              }
+            ],
+            "annotations": {
+              "variantOf": "method_definition",
+              "variant": "plain"
+            }
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 0,
+          "content": {
+            "type": "SYMBOL",
+            "name": "method_definition_getter",
+            "annotations": {
+              "variant": "getter",
+              "variantOf": "method_definition"
+            }
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 0,
+          "content": {
+            "type": "SYMBOL",
+            "name": "method_definition_setter",
+            "annotations": {
+              "variant": "setter",
+              "variantOf": "method_definition"
+            }
+          }
+        }
+      ]
+    },
     "_parameter_name_receiver": {
       "type": "SEQ",
       "members": [
@@ -19397,6 +19709,10 @@
     [
       "variable_declarator_plain",
       "for_header_let_const_kind"
+    ],
+    [
+      "_property_name",
+      "_method_definition_plain_class_body_member_method"
     ],
     [
       "primary_expression",
@@ -20152,7 +20468,8 @@
     "export_statement_default",
     "variable_declarator",
     "meta_property",
-    "_for_header"
+    "_for_header",
+    "_method_definition_class_body_member_method"
   ],
   "reserved": {
     "global": [

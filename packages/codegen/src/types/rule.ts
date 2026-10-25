@@ -301,6 +301,7 @@ export type SymbolRule<T extends PhaseName = 'normalize'> = RuleBase<T> & {
 	readonly aliasedTo?: string;
 	readonly kindId?: number;
 	readonly aliasedToId?: number;
+	readonly copyOf?: string;
 };
 
 export function aliasTargetOf(ref: SymbolRule<PhaseName>): string | undefined {

@@ -2788,6 +2788,46 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "typescript",
+    "message": "conflict between _property_name, _method_definition_plain_class_body_member_method on '(' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "_property_name",
+          "_method_definition_plain_class_body_member_method"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "_property_name"
+        ],
+        [
+          "_method_definition_plain_class_body_member_method",
+          "method_definition_plain",
+          "method_definition"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'class'",
+          "'{'",
+          "'constructor'"
+        ],
+        "lookahead": "'('",
+        "interpretations": [
+          "_property_name",
+          "_method_definition_plain_class_body_member_method"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "typescript",
     "message": "conflict between primary_expression, _parameter_name, _parameter_name_formal_parameter on '(' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {

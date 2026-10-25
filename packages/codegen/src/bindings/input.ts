@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { slotPropertyName } from '../compiler/model/node-map.ts';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
-import { boundNameOf } from '../dsl/bind.ts';
+import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
 import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
@@ -38,6 +38,8 @@ export interface NodeModelNode {
 	readonly text?: string;
 	readonly pattern?: string;
 	readonly variantOf?: string;
+	readonly splitFrom?: string;
+	readonly aliasStorage?: string;
 }
 
 export interface NodeModelRecord {
@@ -79,6 +81,8 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 			text: n.text ?? null,
 			pattern: n.pattern ?? null,
 			variantOf: n.variantOf ?? null,
+			splitFrom: n.splitFrom ?? null,
+			aliasStorage: n.aliasStorage ?? null,
 			shownAs: shown.get(n.kind) ?? []
 		});
 	}
@@ -116,13 +120,16 @@ export async function grammarInput(
 	if (!existsSync(scmPath)) return undefined;
 	const model = slotModelOf(record);
 	const effects = raw.bindingEffects ?? [];
+	const aliases = effects.filter((effect) => effect.kind === 'alias');
+	const nameOf = boundNameOf(renamedFromOf(record), aliases);
 	const facts = bindFacts(
 		await readBindings(readFileSync(scmPath, 'utf8')),
-		boundNameOf(renamedFromOf(record), effects.filter((effect) => effect.kind === 'alias')),
+		nameOf,
 		boundFieldNameOf(
 			effects.filter((effect) => effect.kind === 'segment'),
 			{ rules: raw.rules ?? {}, supertypes: raw.supertypes ?? [] }
-		)
+		),
+		boundNameAt(nameOf, aliases)
 	);
 	const known = vocabulary ?? (await readVocabulary(VOCABULARY_DIR));
 	return {

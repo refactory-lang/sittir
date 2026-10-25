@@ -62,6 +62,28 @@
     ]
   },
   {
+    "type": "_method_definition_class_body_member_method",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "constructor_declaration",
+        "named": true
+      },
+      {
+        "type": "method_definition_getter",
+        "named": true
+      },
+      {
+        "type": "method_definition_plain",
+        "named": true
+      },
+      {
+        "type": "method_definition_setter",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "abstract_method_signature",
     "named": true,
     "subtypes": [
@@ -2212,7 +2234,7 @@
       "required": true,
       "types": [
         {
-          "type": "method_definition",
+          "type": "_method_definition_class_body_member_method",
           "named": true
         }
       ]
@@ -2503,6 +2525,52 @@
         "types": [
           {
             "type": "type_parameters",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "constructor_declaration",
+    "named": true,
+    "fields": {
+      "accessibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "accessibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "property_identifier",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "formal_parameters",
             "named": true
           }
         ]

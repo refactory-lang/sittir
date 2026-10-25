@@ -852,7 +852,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -3054,7 +3054,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -3245,14 +3245,7 @@
           "test": []
         }
       ],
-      "members": [],
-      "container": {
-        "kinds": [
-          "crate"
-        ],
-        "terminals": [],
-        "list": false
-      }
+      "members": []
     },
     "declaration_list": {
       "container": {
@@ -3787,7 +3780,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -4819,7 +4812,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -4925,7 +4918,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -5018,7 +5011,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -5436,6 +5429,15 @@
         "list": true
       }
     },
+    "extension_declaration_body": {
+      "container": {
+        "kinds": [
+          "_declaration_statement_impl_item_body"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
     "extern_crate_declaration": {
       "vocab": "statement.import.package",
       "read": [
@@ -5766,7 +5768,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -6274,7 +6276,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -6856,820 +6858,6 @@
       "vocab": "declaration.function",
       "read": [
         {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 4
-                  }
-                },
-                {
-                  "slots": {
-                    "230": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "349": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "not",
-                "of": {
-                  "op": "is",
-                  "types": [
-                    231
-                  ],
-                  "slots": {
-                    "429": 1
-                  }
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 4
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  437
-                ],
-                "slots": {
-                  "230": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 4
-                  }
-                },
-                {
-                  "slots": {
-                    "230": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "437": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  231
-                ],
-                "slots": {
-                  "436": 1
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.private",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "slots": {
-                  "381": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "slots": {
-                  "381": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.restricted",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.private",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "slots": {
-                  "381": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "slots": {
-                  "381": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.restricted",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "impl_item_body"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  469
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "208": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "208": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  469
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "declaration.function.private",
           "toplevel": true,
           "within": [],
@@ -7996,7 +7184,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -8187,41 +7375,6 @@
             {
               "owner": "function_modifiers",
               "slot": "modifier"
-            }
-          ]
-        },
-        {
-          "name": "receiver",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "parameters_elements_receiver",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "parameters",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "parameters_elements_receiver",
-          "slot": "receiver",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "function_item",
-              "slot": "parameters"
-            },
-            {
-              "owner": "parameters",
-              "slot": "elements"
-            },
-            {
-              "owner": "parameters_elements_receiver",
-              "slot": "receiver"
             }
           ]
         },
@@ -8419,76 +7572,6 @@
               "slot": "visibility_modifier_pub_scope"
             }
           ]
-        },
-        {
-          "name": "scope",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "visibility_modifier_pub",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "visibility_modifier",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "function_item",
-              "slot": "visibility_modifier"
-            },
-            {
-              "owner": "visibility_modifier",
-              "slot": "content"
-            },
-            {
-              "owner": "visibility_modifier_pub",
-              "slot": "visibility_modifier_pub_scope"
-            }
-          ]
-        },
-        {
-          "name": "scope",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "visibility_modifier_pub",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "visibility_modifier",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "function_item",
-              "slot": "visibility_modifier"
-            },
-            {
-              "owner": "visibility_modifier",
-              "slot": "content"
-            },
-            {
-              "owner": "visibility_modifier_pub",
-              "slot": "visibility_modifier_pub_scope"
-            }
-          ]
         }
       ]
     },
@@ -8509,367 +7592,6 @@
     "function_signature_item": {
       "vocab": "declaration.function.signature",
       "read": [
-        {
-          "vocab": "declaration.method.signature.private",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "209": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "slots": {
-                  "381": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  125
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.signature.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "209": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  380
-                ],
-                "slots": {
-                  "381": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  127
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.signature.public.restricted",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "209": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "235": 0
-                  }
-                },
-                {
-                  "slots": {
-                    "381": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  126,
-                  379
-                ],
-                "slots": {
-                  "380": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.signature.public",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "209": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  381
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.signature.public.internal",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  235
-                ],
-                "slots": {
-                  "209": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "209": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "is",
-                "types": [
-                  469
-                ],
-                "slots": {
-                  "235": 0
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.method.signature",
-          "toplevel": false,
-          "within": [
-            "declaration_list",
-            "trait_item"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "declaration.function.signature.private",
           "toplevel": true,
@@ -9197,7 +7919,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -9427,41 +8149,6 @@
             {
               "owner": "parameters_elements_receiver",
               "slot": "receiver"
-            }
-          ]
-        },
-        {
-          "name": "scope",
-          "route": "nested",
-          "via": [
-            {
-              "field": null,
-              "kind": "visibility_modifier_pub",
-              "after": null,
-              "anchor": null
-            },
-            {
-              "field": null,
-              "kind": "visibility_modifier",
-              "after": null,
-              "anchor": null
-            }
-          ],
-          "parent": "visibility_modifier_pub",
-          "slot": "visibility_modifier_pub_scope",
-          "multiple": false,
-          "path": [
-            {
-              "owner": "function_signature_item",
-              "slot": "visibility_modifier"
-            },
-            {
-              "owner": "visibility_modifier",
-              "slot": "content"
-            },
-            {
-              "owner": "visibility_modifier_pub",
-              "slot": "visibility_modifier_pub_scope"
             }
           ]
         },
@@ -11540,6 +10227,848 @@
       ],
       "members": []
     },
+    "method_declaration": {
+      "vocab": "declaration.method",
+      "read": [
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 4
+                  }
+                }
+              ],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    439
+                  ],
+                  "slots": {
+                    "230": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 4
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  439
+                ],
+                "slots": {
+                  "230": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 4
+                  }
+                },
+                {
+                  "slots": {
+                    "230": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "439": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  231
+                ],
+                "slots": {
+                  "438": 1
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "476": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "476": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  127
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public.restricted",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "476": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  126,
+                  379
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "476": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "476": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "476": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  473
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "returnType",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "whereClause",
+          "route": "slot",
+          "slot": "where_clause",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "async",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "async",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "const",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "const",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "unsafe",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "unsafe",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "default",
+          "route": "presence",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "token": "default",
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ],
+          "flag": true
+        },
+        {
+          "name": "extern",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "function_modifiers",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "function_modifiers",
+          "slot": "modifier",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "function_modifiers"
+            },
+            {
+              "owner": "function_modifiers",
+              "slot": "modifier"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "parameters_elements_receiver_group"
+            },
+            {
+              "owner": "parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
+            }
+          ]
+        }
+      ]
+    },
     "mod_item": {
       "vocab": "declaration.module",
       "read": [
@@ -11883,7 +11412,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -12279,7 +11808,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -14143,6 +13672,636 @@
         }
       ]
     },
+    "signature_method_declaration": {
+      "vocab": "declaration.method.signature",
+      "read": [
+        {
+          "vocab": "declaration.method.signature",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 4
+                  }
+                }
+              ],
+              "plan": {
+                "op": "not",
+                "of": {
+                  "op": "is",
+                  "types": [
+                    439
+                  ],
+                  "slots": {
+                    "230": 0
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "478": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  125
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "478": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  380
+                ],
+                "slots": {
+                  "381": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  127
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.public.restricted",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "478": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "235": 0
+                  }
+                },
+                {
+                  "slots": {
+                    "381": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  126,
+                  379
+                ],
+                "slots": {
+                  "380": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "478": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  381
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature.public.internal",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  235
+                ],
+                "slots": {
+                  "478": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [
+                {
+                  "slots": {
+                    "478": 0
+                  }
+                }
+              ],
+              "plan": {
+                "op": "is",
+                "types": [
+                  473
+                ],
+                "slots": {
+                  "235": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.method.signature",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "functionModifiers",
+          "route": "slot",
+          "slot": "function_modifiers",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "function_modifiers"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "name"
+            }
+          ]
+        },
+        {
+          "name": "typeParameters",
+          "route": "slot",
+          "slot": "type_parameters",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "type_parameters"
+            }
+          ]
+        },
+        {
+          "name": "returnType",
+          "route": "slot",
+          "slot": "return_type",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "return_type"
+            }
+          ]
+        },
+        {
+          "name": "whereClause",
+          "route": "slot",
+          "slot": "where_clause",
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "where_clause"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "parameters_elements_receiver_group"
+            },
+            {
+              "owner": "parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "receiver",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "parameters_elements_receiver",
+          "slot": "receiver",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "parameters_elements_receiver",
+              "slot": "receiver"
+            }
+          ]
+        },
+        {
+          "name": "scope",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "visibility_modifier_pub",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "visibility_modifier",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "visibility_modifier_pub",
+          "slot": "visibility_modifier_pub_scope",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "signature_method_declaration",
+              "slot": "visibility_modifier"
+            },
+            {
+              "owner": "visibility_modifier",
+              "slot": "content"
+            },
+            {
+              "owner": "visibility_modifier_pub",
+              "slot": "visibility_modifier_pub_scope"
+            }
+          ]
+        }
+      ]
+    },
     "slice_pattern": {
       "vocab": "pattern.list",
       "read": [
@@ -14539,7 +14698,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -15128,7 +15287,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -15557,7 +15716,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -15993,7 +16152,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -16548,6 +16707,15 @@
         "list": true
       }
     },
+    "trait_interface_declaration_body": {
+      "container": {
+        "kinds": [
+          "_declaration_statement_trait_item"
+        ],
+        "terminals": [],
+        "list": true
+      }
+    },
     "trait_item": {
       "vocab": "declaration.interface.trait",
       "read": [
@@ -16878,7 +17046,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -17462,7 +17630,7 @@
               "via": [
                 {
                   "slots": {
-                    "473": 0
+                    "479": 0
                   }
                 }
               ],
@@ -17821,7 +17989,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -18549,7 +18717,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -19132,7 +19300,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  469
+                  473
                 ],
                 "slots": {
                   "235": 0
@@ -19813,25 +19981,25 @@
       {
         "depth": 2,
         "paths": 103,
-        "kinds": 158,
+        "kinds": 159,
         "refinements": 12
       },
       {
         "depth": 3,
         "paths": 109,
-        "kinds": 120,
+        "kinds": 122,
         "refinements": 81
       },
       {
         "depth": 4,
         "paths": 89,
-        "kinds": 53,
+        "kinds": 55,
         "refinements": 63
       },
       {
         "depth": 5,
         "paths": 16,
-        "kinds": 6,
+        "kinds": 7,
         "refinements": 16
       }
     ]

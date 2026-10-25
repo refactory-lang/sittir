@@ -379,6 +379,7 @@ const UNEXPECTABLE_CODES: ReadonlySet<string> = new Set([
 	'conflict-resolutions-stale',
 	'conflict-dynamic-precedence-lost',
 	'lead-refused',
+	'literal-split-not-keyword',
 	'eof-not-last',
 	'eof-in-token',
 	...Object.keys(ENRICH_SHAPES)

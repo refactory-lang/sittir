@@ -79,6 +79,7 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.CrateVisibilityModifier]: 'crate';
 	[TSKindId.Semi]: ';';
 	[TSKindId.EqGt]: '=>';
 	[TSKindId.Colon]: ':';
@@ -608,7 +609,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[471, '_let_chain'],
+	[475, '_let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -754,44 +755,50 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[432, 'attributed_ordered_field'],
 	[433, 'type_argument'],
 	[434, 'match_block_arms'],
-	[435, 'receiver_parameter_declaration'],
-	[436, 'attributed_parameter_receiver'],
-	[437, 'parameters_elements_receiver'],
-	[438, 'parameters_elements_receiver_group'],
-	[439, 'source_file_repeat1'],
-	[440, 'token_repetition_pattern_repeat1'],
-	[441, 'token_repetition_repeat1'],
-	[442, 'declaration_list_repeat1'],
-	[443, 'function_modifiers_repeat1'],
-	[444, 'trait_bounds_repeat1'],
-	[445, 'tuple_expression_repeat1'],
-	[446, 'last_match_arm_repeat1'],
-	[447, 'string_literal_repeat1'],
-	[448, 'macro_rules_repeat1'],
-	[449, 'enum_variant_list_elements_repeat1'],
-	[450, 'field_declaration_list_elements_repeat1'],
-	[451, 'ordered_field_declaration_list_elements_repeat1'],
-	[452, 'where_predicates_repeat1'],
-	[453, 'type_parameters_elements_repeat1'],
-	[454, 'use_clauses_repeat1'],
-	[455, 'parameters_elements_repeat1'],
-	[456, 'lifetimes_repeat1'],
-	[457, 'types_repeat1'],
-	[458, 'use_bounds_elements_repeat1'],
-	[459, 'type_arguments_elements_repeat1'],
-	[460, 'arguments_elements_repeat1'],
-	[461, 'expressions_repeat1'],
-	[462, 'field_initializer_list_elements_repeat1'],
-	[463, '_closure_parameters_optional1_repeat1'],
-	[464, 'tuple_pattern_elements_repeat1'],
-	[465, 'patterns_repeat1'],
-	[466, 'struct_pattern_elements_repeat1'],
-	[467, 'delim_token_tree_paren_repeat1'],
-	[468, '_match_block_arms_repeat1'],
-	[469, 'crate_visibility_modifier'],
-	[470, 'field_identifier'],
-	[472, 'shorthand_field_identifier'],
-	[473, 'type_identifier'],
+	[435, 'trait_interface_declaration_body'],
+	[436, 'extension_declaration_body'],
+	[437, 'receiver_parameter_declaration'],
+	[438, 'attributed_parameter_receiver'],
+	[439, 'parameters_elements_receiver'],
+	[440, 'parameters_elements_receiver_group'],
+	[441, 'source_file_repeat1'],
+	[442, 'token_repetition_pattern_repeat1'],
+	[443, 'token_repetition_repeat1'],
+	[444, 'declaration_list_repeat1'],
+	[445, 'function_modifiers_repeat1'],
+	[446, 'trait_bounds_repeat1'],
+	[447, 'tuple_expression_repeat1'],
+	[448, 'last_match_arm_repeat1'],
+	[449, 'string_literal_repeat1'],
+	[450, 'macro_rules_repeat1'],
+	[451, 'enum_variant_list_elements_repeat1'],
+	[452, 'field_declaration_list_elements_repeat1'],
+	[453, 'ordered_field_declaration_list_elements_repeat1'],
+	[454, 'where_predicates_repeat1'],
+	[455, 'type_parameters_elements_repeat1'],
+	[456, 'use_clauses_repeat1'],
+	[457, 'parameters_elements_repeat1'],
+	[458, 'lifetimes_repeat1'],
+	[459, 'types_repeat1'],
+	[460, 'use_bounds_elements_repeat1'],
+	[461, 'type_arguments_elements_repeat1'],
+	[462, 'arguments_elements_repeat1'],
+	[463, 'expressions_repeat1'],
+	[464, 'field_initializer_list_elements_repeat1'],
+	[465, '_closure_parameters_optional1_repeat1'],
+	[466, 'tuple_pattern_elements_repeat1'],
+	[467, 'patterns_repeat1'],
+	[468, 'struct_pattern_elements_repeat1'],
+	[469, 'delim_token_tree_paren_repeat1'],
+	[470, '_match_block_arms_repeat1'],
+	[471, '_declaration_list_trait_item_repeat1'],
+	[472, '_declaration_list_impl_item_body_repeat1'],
+	[473, 'crate_visibility_modifier'],
+	[474, 'field_identifier'],
+	[476, 'method_declaration'],
+	[477, 'shorthand_field_identifier'],
+	[478, 'signature_method_declaration'],
+	[479, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1086,7 +1093,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[471, 'let_chain'],
+	[475, 'let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1232,44 +1239,50 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[432, 'attributed_ordered_field'],
 	[433, 'type_argument'],
 	[434, 'match_block_arms'],
-	[435, 'receiver_parameter_declaration'],
-	[436, 'attributed_parameter_receiver'],
-	[437, 'parameters_elements_receiver'],
-	[438, 'parameters_elements_receiver_group'],
-	[439, 'source_file_repeat1'],
-	[440, 'token_repetition_pattern_repeat1'],
-	[441, 'token_repetition_repeat1'],
-	[442, 'declaration_list_repeat1'],
-	[443, 'function_modifiers_repeat1'],
-	[444, 'trait_bounds_repeat1'],
-	[445, 'tuple_expression_repeat1'],
-	[446, 'last_match_arm_repeat1'],
-	[447, 'string_literal_repeat1'],
-	[448, 'macro_rules_repeat1'],
-	[449, 'enum_variant_list_elements_repeat1'],
-	[450, 'field_declaration_list_elements_repeat1'],
-	[451, 'ordered_field_declaration_list_elements_repeat1'],
-	[452, 'where_predicates_repeat1'],
-	[453, 'type_parameters_elements_repeat1'],
-	[454, 'use_clauses_repeat1'],
-	[455, 'parameters_elements_repeat1'],
-	[456, 'lifetimes_repeat1'],
-	[457, 'types_repeat1'],
-	[458, 'use_bounds_elements_repeat1'],
-	[459, 'type_arguments_elements_repeat1'],
-	[460, 'arguments_elements_repeat1'],
-	[461, 'expressions_repeat1'],
-	[462, 'field_initializer_list_elements_repeat1'],
-	[463, '_closure_parameters_optional1_repeat1'],
-	[464, 'tuple_pattern_elements_repeat1'],
-	[465, 'patterns_repeat1'],
-	[466, 'struct_pattern_elements_repeat1'],
-	[467, 'delim_token_tree_paren_repeat1'],
-	[468, '_match_block_arms_repeat1'],
-	[469, 'crate_visibility_modifier'],
-	[470, 'field_identifier'],
-	[472, 'shorthand_field_identifier'],
-	[473, 'type_identifier'],
+	[435, 'trait_interface_declaration_body'],
+	[436, 'extension_declaration_body'],
+	[437, 'receiver_parameter_declaration'],
+	[438, 'attributed_parameter_receiver'],
+	[439, 'parameters_elements_receiver'],
+	[440, 'parameters_elements_receiver_group'],
+	[441, 'source_file_repeat1'],
+	[442, 'token_repetition_pattern_repeat1'],
+	[443, 'token_repetition_repeat1'],
+	[444, 'declaration_list_repeat1'],
+	[445, 'function_modifiers_repeat1'],
+	[446, 'trait_bounds_repeat1'],
+	[447, 'tuple_expression_repeat1'],
+	[448, 'last_match_arm_repeat1'],
+	[449, 'string_literal_repeat1'],
+	[450, 'macro_rules_repeat1'],
+	[451, 'enum_variant_list_elements_repeat1'],
+	[452, 'field_declaration_list_elements_repeat1'],
+	[453, 'ordered_field_declaration_list_elements_repeat1'],
+	[454, 'where_predicates_repeat1'],
+	[455, 'type_parameters_elements_repeat1'],
+	[456, 'use_clauses_repeat1'],
+	[457, 'parameters_elements_repeat1'],
+	[458, 'lifetimes_repeat1'],
+	[459, 'types_repeat1'],
+	[460, 'use_bounds_elements_repeat1'],
+	[461, 'type_arguments_elements_repeat1'],
+	[462, 'arguments_elements_repeat1'],
+	[463, 'expressions_repeat1'],
+	[464, 'field_initializer_list_elements_repeat1'],
+	[465, '_closure_parameters_optional1_repeat1'],
+	[466, 'tuple_pattern_elements_repeat1'],
+	[467, 'patterns_repeat1'],
+	[468, 'struct_pattern_elements_repeat1'],
+	[469, 'delim_token_tree_paren_repeat1'],
+	[470, '_match_block_arms_repeat1'],
+	[471, '_declaration_list_trait_item_repeat1'],
+	[472, '_declaration_list_impl_item_body_repeat1'],
+	[473, 'crate_visibility_modifier'],
+	[474, 'field_identifier'],
+	[476, 'method_declaration'],
+	[477, 'shorthand_field_identifier'],
+	[478, 'signature_method_declaration'],
+	[479, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2146,6 +2159,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.TypeArgument;
 		case 'match_block_arms':
 			return TSKindId.MatchBlockArms;
+		case 'trait_interface_declaration_body':
+			return TSKindId.TraitInterfaceDeclarationBody;
+		case 'extension_declaration_body':
+			return TSKindId.ExtensionDeclarationBody;
 		case 'receiver_parameter_declaration':
 			return TSKindId.ReceiverParameterDeclaration;
 		case 'attributed_parameter_receiver':
@@ -2214,12 +2231,20 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DelimTokenTreeParenRepeat1;
 		case '_match_block_arms_repeat1':
 			return TSKindId._MatchBlockArmsRepeat1;
+		case '_declaration_list_trait_item_repeat1':
+			return TSKindId._DeclarationListTraitItemRepeat1;
+		case '_declaration_list_impl_item_body_repeat1':
+			return TSKindId._DeclarationListImplItemBodyRepeat1;
 		case 'crate_visibility_modifier':
 			return TSKindId.CrateVisibilityModifier;
 		case 'field_identifier':
 			return TSKindId.FieldIdentifier;
+		case 'method_declaration':
+			return TSKindId.MethodDeclaration;
 		case 'shorthand_field_identifier':
 			return TSKindId.ShorthandFieldIdentifier;
+		case 'signature_method_declaration':
+			return TSKindId.SignatureMethodDeclaration;
 		case 'type_identifier':
 			return TSKindId.TypeIdentifier;
 		case 'ERROR':
@@ -2899,6 +2924,54 @@ export enum LayoutKind {
 	DoubleBlankline = '_double_blankline',
 	Indent = '_indent',
 	Dedent = '_dedent'
+}
+
+export enum DeclarationStatementTraitItemKind {
+	ConstItem = 'const_item',
+	MacroInvocation = 'macro_invocation',
+	MacroDefinition = 'macro_definition',
+	EmptyStatement = 'empty_statement',
+	AttributeItem = 'attribute_item',
+	InnerAttributeItem = 'inner_attribute_item',
+	ModItem = 'mod_item',
+	ForeignModItem = 'foreign_mod_item',
+	StructItem = 'struct_item',
+	UnionItem = 'union_item',
+	EnumItem = 'enum_item',
+	TypeItem = 'type_item',
+	MethodDeclaration = 'method_declaration',
+	SignatureMethodDeclaration = 'signature_method_declaration',
+	ImplItem = 'impl_item',
+	TraitItem = 'trait_item',
+	AssociatedType = 'associated_type',
+	LetDeclaration = 'let_declaration',
+	UseDeclaration = 'use_declaration',
+	ExternCrateDeclaration = 'extern_crate_declaration',
+	StaticItem = 'static_item'
+}
+
+export enum DeclarationStatementImplItemBodyKind {
+	ConstItem = 'const_item',
+	MacroInvocation = 'macro_invocation',
+	MacroDefinition = 'macro_definition',
+	EmptyStatement = 'empty_statement',
+	AttributeItem = 'attribute_item',
+	InnerAttributeItem = 'inner_attribute_item',
+	ModItem = 'mod_item',
+	ForeignModItem = 'foreign_mod_item',
+	StructItem = 'struct_item',
+	UnionItem = 'union_item',
+	EnumItem = 'enum_item',
+	TypeItem = 'type_item',
+	MethodDeclaration = 'method_declaration',
+	FunctionSignatureItem = 'function_signature_item',
+	ImplItem = 'impl_item',
+	TraitItem = 'trait_item',
+	AssociatedType = 'associated_type',
+	LetDeclaration = 'let_declaration',
+	UseDeclaration = 'use_declaration',
+	ExternCrateDeclaration = 'extern_crate_declaration',
+	StaticItem = 'static_item'
 }
 
 // Node types — concrete interfaces
@@ -3677,11 +3750,7 @@ export interface UnionItem {
 		readonly _body: 'body';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -3729,11 +3798,7 @@ export interface EnumItem {
 		readonly _body: 'body';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -3810,11 +3875,7 @@ export interface EnumVariant {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -3907,11 +3968,7 @@ export interface FieldDeclaration {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
@@ -3961,11 +4018,7 @@ export interface ExternCrateDeclaration {
 		readonly _alias: 'alias';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -4035,11 +4088,7 @@ export interface ConstItem {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -4117,11 +4166,7 @@ export interface StaticItem {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly mutable?: 'mut' | 'mut';
 	};
 	readonly __slotHints__?: {
@@ -4199,11 +4244,7 @@ export interface TypeItem {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -4297,11 +4338,7 @@ export interface FunctionItem {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
@@ -4396,11 +4433,7 @@ export interface FunctionSignatureItem {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
@@ -4613,7 +4646,7 @@ export interface TraitItem {
 	readonly _type_parameters?: TypeParameters;
 	readonly _bounds?: TraitBounds;
 	readonly _where_clause?: WhereClause;
-	readonly _body: DeclarationList;
+	readonly _body: TraitInterfaceDeclarationBody;
 	readonly __slotNames__?: {
 		readonly _visibility_modifier: 'visibilityModifier';
 		readonly _unsafe: 'unsafe';
@@ -4627,16 +4660,12 @@ export interface TraitItem {
 		readonly unsafe?: BaseBooleanKeyword<'unsafe'>;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly bounds?: readonly (Type | Lifetime | HigherRankedTraitBound)[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
-		readonly body: readonly DeclarationStatement[];
+		readonly body: readonly DeclarationStatementTraitItem[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -4645,7 +4674,7 @@ export interface TraitItem {
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly bounds: SlotHint<T.TraitBounds, true>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
-		readonly body: SlotHint<T.DeclarationList>;
+		readonly body: SlotHint<T.TraitInterfaceDeclarationBody>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -4661,7 +4690,7 @@ export interface TraitItem {
 	readonly typeParameters: () => TypeParameters | undefined;
 	readonly bounds: () => TraitBounds | undefined;
 	readonly whereClause: () => WhereClause | undefined;
-	readonly body: () => DeclarationList;
+	readonly body: () => TraitInterfaceDeclarationBody;
 }
 
 export interface AssociatedType {
@@ -5177,11 +5206,7 @@ export interface UseDeclaration {
 			| UseWildcard;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -5517,14 +5542,17 @@ export interface ExternModifier {
 
 export interface VisibilityModifier {
 	readonly $type: TSKindId.VisibilityModifier;
-	readonly _content: CrateVisibilityModifier | VisibilityModifierPub;
+	readonly _content: TSKindId.CrateVisibilityModifier | VisibilityModifierPub;
 	readonly __slotNames__?: {
 		readonly _content: 'content';
 	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>;
+	readonly __inputHints__?: {
+		readonly content: KindEnum<'crate', TSKindId.CrateVisibilityModifier | TSKindId.Crate> | VisibilityModifierPub;
 	};
-	readonly content: () => CrateVisibilityModifier | VisibilityModifierPub;
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>>;
+	};
+	readonly content: () => TSKindId.CrateVisibilityModifier | VisibilityModifierPub;
 }
 
 export interface BracketedType {
@@ -8940,7 +8968,7 @@ export interface ImplItemBody {
 	readonly _trait_clause?: ImplItemPositiveClause | ImplItemNegativeClause;
 	readonly _type: Type;
 	readonly _where_clause?: WhereClause;
-	readonly _body: DeclarationList;
+	readonly _body: ExtensionDeclarationBody;
 	readonly __slotNames__?: {
 		readonly _unsafe: 'unsafe';
 		readonly _type_parameters: 'typeParameters';
@@ -8996,7 +9024,7 @@ export interface ImplItemBody {
 		readonly unsafe?: 'unsafe' | 'unsafe';
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
-		readonly body: readonly DeclarationStatement[];
+		readonly body: readonly DeclarationStatementImplItemBody[];
 	};
 	readonly __slotHints__?: {
 		readonly unsafe: SlotHint<NonNullable<T.ImplItemBody.Config>['unsafe'], true>;
@@ -9004,7 +9032,7 @@ export interface ImplItemBody {
 		readonly traitClause: SlotHint<T.ImplItemPositiveClause | T.ImplItemNegativeClause, true>;
 		readonly type: SlotHint<NonNullable<T.ImplItemBody.Config>['type']>;
 		readonly whereClause: SlotHint<T.WhereClause, true>;
-		readonly body: SlotHint<T.DeclarationList>;
+		readonly body: SlotHint<T.ExtensionDeclarationBody>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
@@ -9019,7 +9047,7 @@ export interface ImplItemBody {
 	readonly traitClause: () => ImplItemPositiveClause | ImplItemNegativeClause | undefined;
 	readonly type: () => Type;
 	readonly whereClause: () => WhereClause | undefined;
-	readonly body: () => DeclarationList;
+	readonly body: () => ExtensionDeclarationBody;
 }
 
 export interface ImplItemSemi {
@@ -9202,11 +9230,7 @@ export interface ModItemExternal {
 		readonly _name: 'name';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
@@ -9227,11 +9251,7 @@ export interface ModItemInline {
 		readonly _body: 'body';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly body: readonly DeclarationStatement[];
 	};
 	readonly __slotHints__?: {
@@ -10127,11 +10147,7 @@ export interface StructItemBrace {
 		readonly _body: 'body';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
@@ -10179,11 +10195,7 @@ export interface StructItemTuple {
 		readonly _where_clause: 'whereClause';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 		readonly body: readonly AttributedOrderedField[];
@@ -10227,11 +10239,7 @@ export interface StructItemUnit {
 		readonly _type_parameters: 'typeParameters';
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly AttributedTypeParameter[];
 	};
@@ -10439,11 +10447,7 @@ export interface AttributedOrderedField {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly visibility_modifier?:
-			| VisibilityModifier
-			| 'crate'
-			| 'pub'
-			| readonly (CrateVisibilityModifier | VisibilityModifierPub)[];
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
 	};
 	readonly __slotHints__?: {
 		readonly attributeItems: SlotHint<T.AttributeItem[], true, true>;
@@ -10538,6 +10542,36 @@ export interface MatchBlockArms {
 	};
 	readonly arms: () => readonly MatchArm[];
 	readonly lastArm: () => LastMatchArm;
+}
+
+export interface TraitInterfaceDeclarationBody {
+	readonly $type: TSKindId.TraitInterfaceDeclarationBody;
+	readonly _declarations: readonly DeclarationStatementTraitItem[];
+	readonly __slotNames__?: {
+		readonly _declarations: 'declarations';
+	};
+	readonly __inputHints__?: {
+		readonly declarations?: readonly (KindEnum<';', TSKindId.Semi> | DeclarationStatementTraitItem)[];
+	};
+	readonly __slotHints__?: {
+		readonly declarations: SlotHint<T.DeclarationStatementTraitItem[], false, true>;
+	};
+	readonly declarations: () => readonly DeclarationStatementTraitItem[];
+}
+
+export interface ExtensionDeclarationBody {
+	readonly $type: TSKindId.ExtensionDeclarationBody;
+	readonly _declarations: readonly DeclarationStatementImplItemBody[];
+	readonly __slotNames__?: {
+		readonly _declarations: 'declarations';
+	};
+	readonly __inputHints__?: {
+		readonly declarations?: readonly (KindEnum<';', TSKindId.Semi> | DeclarationStatementImplItemBody)[];
+	};
+	readonly __slotHints__?: {
+		readonly declarations: SlotHint<T.DeclarationStatementImplItemBody[], false, true>;
+	};
+	readonly declarations: () => readonly DeclarationStatementImplItemBody[];
 }
 
 export interface ReceiverParameterDeclaration {
@@ -10716,25 +10750,6 @@ export interface FieldIdentifier {
 	readonly content: () => Identifier;
 }
 
-export interface CrateVisibilityModifier {
-	readonly $type: TSKindId.CrateVisibilityModifier;
-	readonly _content: number;
-	readonly __slotNames__?: {
-		readonly _content: 'content';
-	};
-	readonly __inputHints__?: {
-		readonly content: KindEnum<'crate', TSKindId.Crate>;
-	};
-	readonly __looseHints__?: {
-		readonly content: 'crate' | 'crate';
-	};
-	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<TSKindId.Crate>>;
-	};
-	readonly __aliasContent__?: CrateVisibilityModifier.Types;
-	readonly content: () => number;
-}
-
 export interface ShorthandFieldIdentifier {
 	readonly $type: TSKindId.ShorthandFieldIdentifier;
 	readonly _content: Identifier;
@@ -10746,6 +10761,196 @@ export interface ShorthandFieldIdentifier {
 	};
 	readonly __aliasContent__?: ShorthandFieldIdentifier.Types;
 	readonly content: () => Identifier;
+}
+
+export interface MethodDeclaration {
+	readonly $type: TSKindId.MethodDeclaration;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _function_modifiers?: FunctionModifiers;
+	readonly _name: Identifier | Metavariable;
+	readonly _type_parameters?: TypeParameters;
+	readonly _parameters: Parameters;
+	readonly _return_type?: Type;
+	readonly _where_clause?: WhereClause;
+	readonly _body: Block;
+	readonly __slotNames__?: {
+		readonly _visibility_modifier: 'visibilityModifier';
+		readonly _function_modifiers: 'functionModifiers';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _where_clause: 'whereClause';
+		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly return_type?:
+			| KindEnum<
+					| '!'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char',
+					| TSKindId.Bang
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+			  >
+			| Type;
+	};
+	readonly __looseHints__?: {
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+	};
+	readonly __slotHints__?: {
+		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
+		readonly functionModifiers: SlotHint<T.FunctionModifiers, true>;
+		readonly name: SlotHint<T.Identifier | T.Metavariable>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.Parameters>;
+		readonly returnType: SlotHint<NonNullable<T.MethodDeclaration.Config>['returnType'], true>;
+		readonly whereClause: SlotHint<T.WhereClause, true>;
+		readonly body: SlotHint<T.Block>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
+	};
+	readonly visibilityModifier: () => VisibilityModifier | undefined;
+	readonly functionModifiers: () => FunctionModifiers | undefined;
+	readonly name: () => Identifier | Metavariable;
+	readonly typeParameters: () => TypeParameters | undefined;
+	readonly parameters: () => Parameters;
+	readonly returnType: () => Type | undefined;
+	readonly whereClause: () => WhereClause | undefined;
+	readonly body: () => Block;
+}
+
+export interface SignatureMethodDeclaration {
+	readonly $type: TSKindId.SignatureMethodDeclaration;
+	readonly _visibility_modifier?: VisibilityModifier;
+	readonly _function_modifiers?: FunctionModifiers;
+	readonly _name: Identifier | Metavariable;
+	readonly _type_parameters?: TypeParameters;
+	readonly _parameters: Parameters;
+	readonly _return_type?: Type;
+	readonly _where_clause?: WhereClause;
+	readonly __slotNames__?: {
+		readonly _visibility_modifier: 'visibilityModifier';
+		readonly _function_modifiers: 'functionModifiers';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _where_clause: 'whereClause';
+	};
+	readonly __inputHints__?: {
+		readonly return_type?:
+			| KindEnum<
+					| '!'
+					| 'u8'
+					| 'i8'
+					| 'u16'
+					| 'i16'
+					| 'u32'
+					| 'i32'
+					| 'u64'
+					| 'i64'
+					| 'u128'
+					| 'i128'
+					| 'isize'
+					| 'usize'
+					| 'f32'
+					| 'f64'
+					| 'bool'
+					| 'str'
+					| 'char',
+					| TSKindId.Bang
+					| TSKindId.U8Keyword
+					| TSKindId.I8Keyword
+					| TSKindId.U16Keyword
+					| TSKindId.I16Keyword
+					| TSKindId.U32Keyword
+					| TSKindId.I32Keyword
+					| TSKindId.U64Keyword
+					| TSKindId.I64Keyword
+					| TSKindId.U128Keyword
+					| TSKindId.I128Keyword
+					| TSKindId.IsizeKeyword
+					| TSKindId.UsizeKeyword
+					| TSKindId.F32Keyword
+					| TSKindId.F64Keyword
+					| TSKindId.BoolKeyword
+					| TSKindId.StrKeyword
+					| TSKindId.CharKeyword
+			  >
+			| Type;
+	};
+	readonly __looseHints__?: {
+		readonly visibility_modifier?: VisibilityModifier | 'crate' | 'pub' | readonly ('crate' | VisibilityModifierPub)[];
+		readonly function_modifiers?: readonly ('async' | 'default' | 'const' | 'unsafe' | ExternModifier)[];
+		readonly type_parameters?: readonly AttributedTypeParameter[];
+		readonly parameters: readonly (ParametersElements | ParametersElementsReceiver)[];
+		readonly where_clause?: WhereClause | 'where' | readonly WherePredicate[];
+	};
+	readonly __slotHints__?: {
+		readonly visibilityModifier: SlotHint<T.VisibilityModifier, true>;
+		readonly functionModifiers: SlotHint<T.FunctionModifiers, true>;
+		readonly name: SlotHint<T.Identifier | T.Metavariable>;
+		readonly typeParameters: SlotHint<T.TypeParameters, true>;
+		readonly parameters: SlotHint<T.Parameters>;
+		readonly returnType: SlotHint<NonNullable<T.SignatureMethodDeclaration.Config>['returnType'], true>;
+		readonly whereClause: SlotHint<T.WhereClause, true>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<
+				T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter,
+				{ delimiter?: Delimiter.None | Delimiter.Trailing },
+				T.AttributedTypeParameter.Config
+			>;
+			readonly whereClause: ListSlotHint<T.WherePredicate, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
+	};
+	readonly visibilityModifier: () => VisibilityModifier | undefined;
+	readonly functionModifiers: () => FunctionModifiers | undefined;
+	readonly name: () => Identifier | Metavariable;
+	readonly typeParameters: () => TypeParameters | undefined;
+	readonly parameters: () => Parameters;
+	readonly returnType: () => Type | undefined;
+	readonly whereClause: () => WhereClause | undefined;
 }
 
 // Leaf node types
@@ -10899,6 +11104,7 @@ export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
 export type StringClose = Terminal<TSKindId.StringClose, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
+export type CrateVisibilityModifier = TSKindId.CrateVisibilityModifier;
 
 // Supertype unions
 export type Statement =
@@ -11103,6 +11309,52 @@ export type CharLiteralEscaped =
 
 export type Layout = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
 
+export type DeclarationStatementTraitItem =
+	| ConstItem
+	| MacroInvocation
+	| MacroDefinition
+	| EmptyStatement
+	| AttributeItem
+	| InnerAttributeItem
+	| ModItem
+	| ForeignModItem
+	| StructItem
+	| UnionItem
+	| EnumItem
+	| TypeItem
+	| MethodDeclaration
+	| SignatureMethodDeclaration
+	| ImplItem
+	| TraitItem
+	| AssociatedType
+	| LetDeclaration
+	| UseDeclaration
+	| ExternCrateDeclaration
+	| StaticItem;
+
+export type DeclarationStatementImplItemBody =
+	| ConstItem
+	| MacroInvocation
+	| MacroDefinition
+	| EmptyStatement
+	| AttributeItem
+	| InnerAttributeItem
+	| ModItem
+	| ForeignModItem
+	| StructItem
+	| UnionItem
+	| EnumItem
+	| TypeItem
+	| MethodDeclaration
+	| FunctionSignatureItem
+	| ImplItem
+	| TraitItem
+	| AssociatedType
+	| LetDeclaration
+	| UseDeclaration
+	| ExternCrateDeclaration
+	| StaticItem;
+
 export namespace Statement {
 	export type Kind = '_statement';
 	export type Bound = SupertypeSurface<Statement, BoundByKindId>;
@@ -11281,6 +11533,18 @@ export namespace Layout {
 	export type Kind = '_layout';
 	export type Bound = SupertypeSurface<Layout, BoundByKindId>;
 	export type Parsed = SupertypeSurface<Layout, ParsedByKindId>;
+}
+
+export namespace DeclarationStatementTraitItem {
+	export type Kind = '_declaration_statement_trait_item';
+	export type Bound = SupertypeSurface<DeclarationStatementTraitItem, BoundByKindId>;
+	export type Parsed = SupertypeSurface<DeclarationStatementTraitItem, ParsedByKindId>;
+}
+
+export namespace DeclarationStatementImplItemBody {
+	export type Kind = '_declaration_statement_impl_item_body';
+	export type Bound = SupertypeSurface<DeclarationStatementImplItemBody, BoundByKindId>;
+	export type Parsed = SupertypeSurface<DeclarationStatementImplItemBody, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -11489,6 +11753,8 @@ export interface OptionsHintMap {
 	attributedOrderedField: AttributedOrderedField.Hints;
 	typeArgument: TypeArgument.Hints;
 	matchBlockArms: MatchBlockArms.Hints;
+	traitInterfaceDeclarationBody: TraitInterfaceDeclarationBody.Hints;
+	extensionDeclarationBody: ExtensionDeclarationBody.Hints;
 	receiverParameterDeclaration: ReceiverParameterDeclaration.Hints;
 	attributedParameterReceiver: AttributedParameterReceiver.Hints;
 	parametersElementsReceiver: ParametersElementsReceiver.Hints;
@@ -14309,6 +14575,91 @@ export namespace MatchBlockArms {
 				readonly start?: LayoutKindId;
 			};
 			readonly before?: LayoutKindId;
+		};
+	}
+}
+
+export namespace TraitInterfaceDeclarationBody {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly declarations?: {
+				readonly associatedType?: { readonly after?: LayoutKindId };
+				readonly attributeItem?: { readonly after?: LayoutKindId };
+				readonly constItem?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
+				readonly end?: LayoutKindId;
+				readonly enumItem?: { readonly after?: LayoutKindId };
+				readonly externCrateDeclaration?: { readonly after?: LayoutKindId };
+				readonly foreignModItemBody?: { readonly after?: LayoutKindId };
+				readonly foreignModItemSemi?: { readonly after?: LayoutKindId };
+				readonly implItemBody?: { readonly after?: LayoutKindId };
+				readonly implItemSemi?: { readonly after?: LayoutKindId };
+				readonly innerAttributeItem?: { readonly after?: LayoutKindId };
+				readonly letDeclaration?: { readonly after?: LayoutKindId };
+				readonly macroDefinitionBrace?: { readonly after?: LayoutKindId };
+				readonly macroDefinitionBracket?: { readonly after?: LayoutKindId };
+				readonly macroDefinitionParen?: { readonly after?: LayoutKindId };
+				readonly macroInvocation?: { readonly after?: LayoutKindId };
+				readonly modItemExternal?: { readonly after?: LayoutKindId };
+				readonly modItemInline?: { readonly after?: LayoutKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly start?: LayoutKindId;
+				readonly staticItem?: { readonly after?: LayoutKindId };
+				readonly structItemBrace?: { readonly after?: LayoutKindId };
+				readonly structItemTuple?: { readonly after?: LayoutKindId };
+				readonly structItemUnit?: { readonly after?: LayoutKindId };
+				readonly traitItem?: { readonly after?: LayoutKindId };
+				readonly typeItem?: { readonly after?: LayoutKindId };
+				readonly unionItem?: { readonly after?: LayoutKindId };
+				readonly useDeclaration?: { readonly after?: LayoutKindId };
+			};
+			readonly lbrace?: { readonly after?: LayoutKindId };
+			readonly rbrace?: { readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ExtensionDeclarationBody {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
+			readonly declarations?: {
+				readonly associatedType?: { readonly after?: LayoutKindId };
+				readonly attributeItem?: { readonly after?: LayoutKindId };
+				readonly constItem?: { readonly after?: LayoutKindId };
+				readonly emptyStatement?: { readonly after?: LayoutKindId };
+				readonly end?: LayoutKindId;
+				readonly enumItem?: { readonly after?: LayoutKindId };
+				readonly externCrateDeclaration?: { readonly after?: LayoutKindId };
+				readonly foreignModItemBody?: { readonly after?: LayoutKindId };
+				readonly foreignModItemSemi?: { readonly after?: LayoutKindId };
+				readonly functionSignatureItem?: { readonly after?: LayoutKindId };
+				readonly implItemBody?: { readonly after?: LayoutKindId };
+				readonly implItemSemi?: { readonly after?: LayoutKindId };
+				readonly innerAttributeItem?: { readonly after?: LayoutKindId };
+				readonly letDeclaration?: { readonly after?: LayoutKindId };
+				readonly macroDefinitionBrace?: { readonly after?: LayoutKindId };
+				readonly macroDefinitionBracket?: { readonly after?: LayoutKindId };
+				readonly macroDefinitionParen?: { readonly after?: LayoutKindId };
+				readonly macroInvocation?: { readonly after?: LayoutKindId };
+				readonly modItemExternal?: { readonly after?: LayoutKindId };
+				readonly modItemInline?: { readonly after?: LayoutKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly start?: LayoutKindId;
+				readonly staticItem?: { readonly after?: LayoutKindId };
+				readonly structItemBrace?: { readonly after?: LayoutKindId };
+				readonly structItemTuple?: { readonly after?: LayoutKindId };
+				readonly structItemUnit?: { readonly after?: LayoutKindId };
+				readonly traitItem?: { readonly after?: LayoutKindId };
+				readonly typeItem?: { readonly after?: LayoutKindId };
+				readonly unionItem?: { readonly after?: LayoutKindId };
+				readonly useDeclaration?: { readonly after?: LayoutKindId };
+			};
+			readonly lbrace?: { readonly after?: LayoutKindId };
+			readonly rbrace?: { readonly before?: LayoutKindId };
 		};
 	}
 }
@@ -17581,6 +17932,34 @@ export interface MatchBlockArmsNs extends NodeNs<
 	readonly BuildArgs: MatchBlockArms.BuildArgs;
 	readonly LooseArgs: MatchBlockArms.LooseArgs;
 }
+export interface TraitInterfaceDeclarationBodyNs extends NodeNs<
+	TraitInterfaceDeclarationBody,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	TraitInterfaceDeclarationBody.Bound,
+	never,
+	TSKindId.TraitInterfaceDeclarationBody,
+	TraitInterfaceDeclarationBody.Parsed,
+	EmptyTraitInterfaceDeclarationBody
+> {
+	readonly BuildArgs: TraitInterfaceDeclarationBody.BuildArgs;
+	readonly LooseArgs: TraitInterfaceDeclarationBody.LooseArgs;
+}
+export interface ExtensionDeclarationBodyNs extends NodeNs<
+	ExtensionDeclarationBody,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ExtensionDeclarationBody.Bound,
+	never,
+	TSKindId.ExtensionDeclarationBody,
+	ExtensionDeclarationBody.Parsed,
+	EmptyExtensionDeclarationBody
+> {
+	readonly BuildArgs: ExtensionDeclarationBody.BuildArgs;
+	readonly LooseArgs: ExtensionDeclarationBody.LooseArgs;
+}
 export interface ReceiverParameterDeclarationNs extends NodeNs<
 	ReceiverParameterDeclaration,
 	LeafScalarMap,
@@ -17665,20 +18044,6 @@ export interface FieldIdentifierNs extends NodeNs<
 	readonly BuildArgs: FieldIdentifier.BuildArgs;
 	readonly LooseArgs: FieldIdentifier.LooseArgs;
 }
-export interface CrateVisibilityModifierNs extends NodeNs<
-	CrateVisibilityModifier,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	CrateVisibilityModifier.Bound,
-	'content',
-	TSKindId.CrateVisibilityModifier,
-	CrateVisibilityModifier.Parsed,
-	never
-> {
-	readonly BuildArgs: CrateVisibilityModifier.BuildArgs;
-	readonly LooseArgs: CrateVisibilityModifier.LooseArgs;
-}
 export interface ShorthandFieldIdentifierNs extends NodeNs<
 	ShorthandFieldIdentifier,
 	LeafScalarMap,
@@ -17692,6 +18057,34 @@ export interface ShorthandFieldIdentifierNs extends NodeNs<
 > {
 	readonly BuildArgs: ShorthandFieldIdentifier.BuildArgs;
 	readonly LooseArgs: ShorthandFieldIdentifier.LooseArgs;
+}
+export interface MethodDeclarationNs extends NodeNs<
+	MethodDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	MethodDeclaration.Bound,
+	never,
+	TSKindId.MethodDeclaration,
+	MethodDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: MethodDeclaration.BuildArgs;
+	readonly LooseArgs: MethodDeclaration.LooseArgs;
+}
+export interface SignatureMethodDeclarationNs extends NodeNs<
+	SignatureMethodDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SignatureMethodDeclaration.Bound,
+	never,
+	TSKindId.SignatureMethodDeclaration,
+	SignatureMethodDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: SignatureMethodDeclaration.BuildArgs;
+	readonly LooseArgs: SignatureMethodDeclaration.LooseArgs;
 }
 export interface EmptyStatementNs extends KeywordNs<TSKindId.EmptyStatement, ';', TSKindId.EmptyStatement> {}
 export interface UnitTypeNs extends KeywordNs<TSKindId.UnitType, '()', TSKindId.UnitType> {}
@@ -17745,6 +18138,11 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface CrateVisibilityModifierNs extends KeywordNs<
+	TSKindId.CrateVisibilityModifier,
+	'crate',
+	TSKindId.CrateVisibilityModifier
+> {}
 export interface IdentifierNs extends LeafNs<Identifier, string, Identifier.Bound, TSKindId.Identifier> {}
 export interface TokenRepetitionPatternTextNs extends LeafNs<
 	TokenRepetitionPatternText,
@@ -18036,14 +18434,17 @@ export interface NamespaceMap {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedFieldNs;
 	[TSKindId.TypeArgument]: TypeArgumentNs;
 	[TSKindId.MatchBlockArms]: MatchBlockArmsNs;
+	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBodyNs;
+	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBodyNs;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclarationNs;
 	[TSKindId.AttributedParameterReceiver]: AttributedParameterReceiverNs;
 	[TSKindId.ParametersElementsReceiver]: ParametersElementsReceiverNs;
 	[TSKindId.ParametersElementsReceiverGroup]: ParametersElementsReceiverGroupNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
-	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifierNs;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
+	[TSKindId.MethodDeclaration]: MethodDeclarationNs;
+	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclarationNs;
 	[TSKindId.EmptyStatement]: EmptyStatementNs;
 	[TSKindId.UnitType]: UnitTypeNs;
 	[TSKindId.NeverType]: NeverTypeNs;
@@ -18068,6 +18469,7 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifierNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternTextNs;
 	[TSKindId.StringOpen]: StringOpenNs;
@@ -18310,14 +18712,17 @@ export interface BoundByKindId {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedField.Bound;
 	[TSKindId.TypeArgument]: TypeArgument.Bound;
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Bound;
+	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBody.Bound;
+	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBody.Bound;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclaration.Bound;
 	[TSKindId.AttributedParameterReceiver]: AttributedParameterReceiver.Bound;
 	[TSKindId.ParametersElementsReceiver]: ParametersElementsReceiver.Bound;
 	[TSKindId.ParametersElementsReceiverGroup]: ParametersElementsReceiverGroup.Bound;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Bound;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Bound;
-	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifier.Bound;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Bound;
+	[TSKindId.MethodDeclaration]: MethodDeclaration.Bound;
+	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclaration.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Bound;
 	[TSKindId.StringOpen]: StringOpen.Bound;
@@ -18560,14 +18965,17 @@ export interface ParsedByKindId {
 	[TSKindId.AttributedOrderedField]: AttributedOrderedField.Parsed;
 	[TSKindId.TypeArgument]: TypeArgument.Parsed;
 	[TSKindId.MatchBlockArms]: MatchBlockArms.Parsed;
+	[TSKindId.TraitInterfaceDeclarationBody]: TraitInterfaceDeclarationBody.Parsed;
+	[TSKindId.ExtensionDeclarationBody]: ExtensionDeclarationBody.Parsed;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclaration.Parsed;
 	[TSKindId.AttributedParameterReceiver]: AttributedParameterReceiver.Parsed;
 	[TSKindId.ParametersElementsReceiver]: ParametersElementsReceiver.Parsed;
 	[TSKindId.ParametersElementsReceiverGroup]: ParametersElementsReceiverGroup.Parsed;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Parsed;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Parsed;
-	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifier.Parsed;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Parsed;
+	[TSKindId.MethodDeclaration]: MethodDeclaration.Parsed;
+	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclaration.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternText.Parsed;
 	[TSKindId.StringOpen]: StringOpen.Parsed;
@@ -18611,6 +19019,7 @@ export type FixedTextKindId =
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
+	| TSKindId.CrateVisibilityModifier
 	| TSKindId.Semi
 	| TSKindId.EqGt
 	| TSKindId.Colon
@@ -18963,14 +19372,17 @@ export interface TypeKeyOf {
 	[TSKindId.AttributedOrderedField]: 'attributedOrderedField';
 	[TSKindId.TypeArgument]: 'typeArgument';
 	[TSKindId.MatchBlockArms]: 'matchBlockArms';
+	[TSKindId.TraitInterfaceDeclarationBody]: 'traitInterfaceDeclarationBody';
+	[TSKindId.ExtensionDeclarationBody]: 'extensionDeclarationBody';
 	[TSKindId.ReceiverParameterDeclaration]: 'receiverParameterDeclaration';
 	[TSKindId.AttributedParameterReceiver]: 'attributedParameterReceiver';
 	[TSKindId.ParametersElementsReceiver]: 'parametersElementsReceiver';
 	[TSKindId.ParametersElementsReceiverGroup]: 'parametersElementsReceiverGroup';
 	[TSKindId.TypeIdentifier]: 'typeIdentifier';
 	[TSKindId.FieldIdentifier]: 'fieldIdentifier';
-	[TSKindId.CrateVisibilityModifier]: 'crateVisibilityModifier';
 	[TSKindId.ShorthandFieldIdentifier]: 'shorthandFieldIdentifier';
+	[TSKindId.MethodDeclaration]: 'methodDeclaration';
+	[TSKindId.SignatureMethodDeclaration]: 'signatureMethodDeclaration';
 	[TSKindId.EmptyStatement]: 'emptyStatement';
 	[TSKindId.UnitType]: 'unitType';
 	[TSKindId.NeverType]: 'neverType';
@@ -18995,6 +19407,7 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.CrateVisibilityModifier]: 'crateVisibilityModifier';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.TokenRepetitionPatternText]: 'tokenRepetitionPatternText';
 	[TSKindId.StringOpen]: 'stringOpen';
@@ -20390,9 +20803,7 @@ export namespace VisibilityModifier {
 	}
 	export type Loose = LooseFor<TSKindId.VisibilityModifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifier>;
-	export type BuildArgs = [
-		value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
-	];
+	export type BuildArgs = [value: Admit<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>];
 	export type LooseArgs = [value: T.VisibilityModifier.Loose];
 	export type Kind = TSKindId.VisibilityModifier;
 }
@@ -25973,6 +26384,78 @@ export namespace MatchBlockArms {
 	export type LooseArgs = [config: T.MatchBlockArms.Loose];
 	export type Kind = TSKindId.MatchBlockArms;
 }
+export namespace TraitInterfaceDeclarationBody {
+	export type Config = ConfigFor<TSKindId.TraitInterfaceDeclarationBody>;
+	export interface Bound extends BoundOf<T.TraitInterfaceDeclarationBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.TraitInterfaceDeclarationBody['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.TraitInterfaceDeclarationBody, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.TraitInterfaceDeclarationBody['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.TraitInterfaceDeclarationBody['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.TraitInterfaceDeclarationBody>;
+	export type LooseConfig = LooseConfigFor<TSKindId.TraitInterfaceDeclarationBody>;
+	export type BuildArgs = [...children: Admit<T.DeclarationStatementTraitItem[]>];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.TraitInterfaceDeclarationBody.Loose
+					| LooseValue<T.DeclarationStatementTraitItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<T.DeclarationStatementTraitItem, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				>
+		  ];
+	export type Kind = TSKindId.TraitInterfaceDeclarationBody;
+}
+export namespace ExtensionDeclarationBody {
+	export type Config = ConfigFor<TSKindId.ExtensionDeclarationBody>;
+	export interface Bound extends BoundOf<T.ExtensionDeclarationBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ExtensionDeclarationBody['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ExtensionDeclarationBody, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ExtensionDeclarationBody['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ExtensionDeclarationBody['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ExtensionDeclarationBody>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ExtensionDeclarationBody>;
+	export type BuildArgs = [...children: Admit<T.DeclarationStatementImplItemBody[]>];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.ExtensionDeclarationBody.Loose
+					| LooseValue<T.DeclarationStatementImplItemBody, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				children: Readonly<
+					LooseValue<T.DeclarationStatementImplItemBody, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				>
+		  ];
+	export type Kind = TSKindId.ExtensionDeclarationBody;
+}
 export namespace ReceiverParameterDeclaration {
 	export type Config = ConfigFor<TSKindId.ReceiverParameterDeclaration>;
 	export interface Bound extends BoundOf<T.ReceiverParameterDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -26175,32 +26658,6 @@ export namespace FieldIdentifier {
 	export type LooseArgs = [value: T.FieldIdentifier.Loose];
 	export type Kind = TSKindId.FieldIdentifier;
 }
-export namespace CrateVisibilityModifier {
-	export type Config = ConfigFor<TSKindId.CrateVisibilityModifier>;
-	export type Types = SupertypeSurface<TSKindId.Crate, BoundByKindId>;
-	export interface Bound extends BoundOf<T.CrateVisibilityModifier, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.CrateVisibilityModifier['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed
-		extends ParsedOf<T.CrateVisibilityModifier, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.CrateVisibilityModifier['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.CrateVisibilityModifier['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.CrateVisibilityModifier>;
-	export type LooseConfig = LooseConfigFor<TSKindId.CrateVisibilityModifier>;
-	export type BuildArgs = [value?: Admit<TSKindId.Crate>];
-	export type LooseArgs = [value?: T.CrateVisibilityModifier.Loose];
-	export type Kind = TSKindId.CrateVisibilityModifier;
-}
 export namespace ShorthandFieldIdentifier {
 	export type Config = ConfigFor<TSKindId.ShorthandFieldIdentifier>;
 	export type Types = SupertypeSurface<Identifier, BoundByKindId>;
@@ -26226,6 +26683,55 @@ export namespace ShorthandFieldIdentifier {
 	export type BuildArgs = [value: Admit<T.Identifier>];
 	export type LooseArgs = [value: T.ShorthandFieldIdentifier.Loose];
 	export type Kind = TSKindId.ShorthandFieldIdentifier;
+}
+export namespace MethodDeclaration {
+	export type Config = ConfigFor<TSKindId.MethodDeclaration>;
+	export interface Bound extends BoundOf<T.MethodDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.MethodDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MethodDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.MethodDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.MethodDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.MethodDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MethodDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.MethodDeclaration>];
+	export type LooseArgs = [config: T.MethodDeclaration.Loose];
+	export type Kind = TSKindId.MethodDeclaration;
+}
+export namespace SignatureMethodDeclaration {
+	export type Config = ConfigFor<TSKindId.SignatureMethodDeclaration>;
+	export interface Bound extends BoundOf<T.SignatureMethodDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.SignatureMethodDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.SignatureMethodDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.SignatureMethodDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.SignatureMethodDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.SignatureMethodDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SignatureMethodDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.SignatureMethodDeclaration>];
+	export type LooseArgs = [config: T.SignatureMethodDeclaration.Loose];
+	export type Kind = TSKindId.SignatureMethodDeclaration;
 }
 export namespace EmptyStatement {
 	export type Config = EmptyStatementNs['Config'];
@@ -26466,6 +26972,16 @@ export namespace Dedent {
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
+}
+export namespace CrateVisibilityModifier {
+	export type Config = CrateVisibilityModifierNs['Config'];
+	export type Bound = CrateVisibilityModifierNs['Bound'];
+	export type Parsed = CrateVisibilityModifierNs['Bound'];
+	export type Loose = CrateVisibilityModifierNs['Loose'];
+	export type LooseConfig = CrateVisibilityModifierNs['LooseConfig'];
+	export type BuildArgs = CrateVisibilityModifierNs['BuildArgs'];
+	export type LooseArgs = CrateVisibilityModifierNs['LooseArgs'];
+	export type Kind = TSKindId.CrateVisibilityModifier;
 }
 export namespace Identifier {
 	export type Config = IdentifierNs['Config'];
@@ -26833,7 +27349,13 @@ export interface RustTypeMap extends GrammarTypeMap {
 		| { readonly node: DelimTokenTreeBracket.Parsed; readonly empty: EmptyDelimTokenTreeBracket.Parsed }
 		| { readonly node: DelimTokenTreeBrace; readonly empty: EmptyDelimTokenTreeBrace }
 		| { readonly node: DelimTokenTreeBrace.Bound; readonly empty: EmptyDelimTokenTreeBrace }
-		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed };
+		| { readonly node: DelimTokenTreeBrace.Parsed; readonly empty: EmptyDelimTokenTreeBrace.Parsed }
+		| { readonly node: TraitInterfaceDeclarationBody; readonly empty: EmptyTraitInterfaceDeclarationBody }
+		| { readonly node: TraitInterfaceDeclarationBody.Bound; readonly empty: EmptyTraitInterfaceDeclarationBody }
+		| { readonly node: TraitInterfaceDeclarationBody.Parsed; readonly empty: EmptyTraitInterfaceDeclarationBody.Parsed }
+		| { readonly node: ExtensionDeclarationBody; readonly empty: EmptyExtensionDeclarationBody }
+		| { readonly node: ExtensionDeclarationBody.Bound; readonly empty: EmptyExtensionDeclarationBody }
+		| { readonly node: ExtensionDeclarationBody.Parsed; readonly empty: EmptyExtensionDeclarationBody.Parsed };
 	readonly trivia: Comment | Layout;
 }
 
@@ -27044,5 +27566,23 @@ export interface EmptyDelimTokenTreeBrace extends DelimTokenTreeBrace.Bound {
 export namespace EmptyDelimTokenTreeBrace {
 	export type Parsed = DelimTokenTreeBrace.Parsed & {
 		readonly $trivia: TriviaSetterOf<EmptyDelimTokenTreeBrace.Parsed> & InnerTrivia<EmptyDelimTokenTreeBrace.Parsed>;
+	};
+}
+export interface EmptyTraitInterfaceDeclarationBody extends TraitInterfaceDeclarationBody.Bound {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyTraitInterfaceDeclarationBody {
+	export type Parsed = TraitInterfaceDeclarationBody.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyTraitInterfaceDeclarationBody.Parsed> &
+			InnerTrivia<EmptyTraitInterfaceDeclarationBody.Parsed>;
+	};
+}
+export interface EmptyExtensionDeclarationBody extends ExtensionDeclarationBody.Bound {
+	readonly $trivia: TriviaSetterOf<this> & InnerTrivia<this>;
+}
+export namespace EmptyExtensionDeclarationBody {
+	export type Parsed = ExtensionDeclarationBody.Parsed & {
+		readonly $trivia: TriviaSetterOf<EmptyExtensionDeclarationBody.Parsed> &
+			InnerTrivia<EmptyExtensionDeclarationBody.Parsed>;
 	};
 }

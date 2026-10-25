@@ -9,7 +9,6 @@ import {
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
-	contentRole,
 	inTreeEngine,
 	currentHandle,
 	elementsWith,
@@ -989,58 +988,6 @@ export function wrapInlineFlagsGroupDisable(
 	return node as unknown as T.InlineFlagsGroupDisable.Parsed;
 }
 
-export function wrapLazy(data: T.Lazy, tree: TreeHandle): T.Lazy.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.Lazy as const,
-		content() {
-			return this._content;
-		},
-		$with: {
-			content: (v: NonNullable<T.Lazy['_content']>) =>
-				rebuilt(node, handle, () => wrapLazy({ ...$edited(data), _content: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.Lazy.Parsed;
-}
-
-export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeHandle): T.UnicodePropertyName.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.UnicodePropertyName as const,
-		content() {
-			return hydrateSlot<T.UnicodePropertyValue>(this, '_content', tree, contentRole(this, this._content));
-		},
-		$with: {
-			content: (v: NonNullable<T.UnicodePropertyName['_content']>) =>
-				rebuilt(node, handle, () => wrapUnicodePropertyName({ ...$edited(data), _content: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.UnicodePropertyName.Parsed;
-}
-
 function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	const handle = currentHandle();
 	const node = {
@@ -1096,8 +1043,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.InlineFlagsGroupToggle]: (d, t) => wrapInlineFlagsGroupToggle(d as unknown as T.InlineFlagsGroupToggle, t),
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
 		wrapInlineFlagsGroupDisable(d as unknown as T.InlineFlagsGroupDisable, t),
-	[TSKindId.Lazy]: (d, t) => wrapLazy(d as unknown as T.Lazy, t),
-	[TSKindId.UnicodePropertyName]: (d, t) => wrapUnicodePropertyName(d as unknown as T.UnicodePropertyName, t),
 	[TSKindId.PatternCharacter]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.PosixClassName]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.ClassCharacter]: (d, t) => wrapLeaf(d, t),
@@ -1110,7 +1055,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.GroupName]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.DecimalDigits]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.CharacterClassEscapeText1]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t)
+	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.UnicodePropertyName]: (d, t) => wrapLeaf(d, t)
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

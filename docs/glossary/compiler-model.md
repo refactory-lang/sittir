@@ -5300,7 +5300,7 @@ A closer that is a leaf rather than a literal has no closer text, so only the la
 
 | grammar | guard-excludes-closer | reserved-word | regular-token | unguarded |
 | --- | --- | --- | --- | --- |
-| python | 3 | 0 | 0 | 0 |
+| python | 4 | 0 | 0 | 0 |
 | regex | 16 | 0 | 0 | 0 |
 | rust | 25 | 0 | 1 | 0 |
 | scm | 7 | 0 | 1 | 0 |

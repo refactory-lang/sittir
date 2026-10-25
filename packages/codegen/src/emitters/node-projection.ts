@@ -10,6 +10,7 @@ import {
 	isFixedTextLeaf,
 	isNodeRef,
 	kindIdText,
+	layoutDisplaysOf,
 	storageTargetOf
 } from '../compiler/model/node-map.ts';
 import { findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
@@ -155,6 +156,14 @@ function terminalNodeLiteralForKind(kind: string, nodeMap: NodeMap): NodeLiteral
 	return { kind, text: target.text, resolvedKindId: target.resolvedKindId };
 }
 
+export function displayClaimedIds(nodeMap: NodeMap): ReadonlySet<number> {
+	return new Set(
+		[...nodeMap.nodes.values()].flatMap((node) =>
+			node instanceof AssembledAlias ? [node.aliasTypeId] : node.aliasStorageNode !== undefined && node.kindId !== undefined ? [node.kindId] : []
+		)
+	);
+}
+
 export interface ReadNames {
 	kind(id: number): string;
 	field(name: string): string;
@@ -182,7 +191,7 @@ export interface ReadFactsCtx {
 	readonly kindEntries: readonly KindEnumEntry[];
 	readonly names: ReadNames;
 	readonly listOwners: ReadonlySet<string>;
-	readonly envelopeIds: ReadonlySet<number>;
+	readonly displayIds: ReadonlySet<number>;
 	readonly folds: ReadonlyMap<number, readonly number[]>;
 	readonly grammar: string;
 }
@@ -259,7 +268,12 @@ export function nodeArgs(
 	}
 	if (ownId === undefined) throw new Error(`node read facts: ${node.kind} has no parser symbol, so no reader can claim it`);
 	const folded = foldedTokens(ownId, ctx);
-	const kind = `kind = ${ctx.names.kind(ownId)}${folded.length === 0 ? '' : `, folded = [${folded.map((id) => ctx.names.kind(id)).join(', ')}]`}`;
+	const displays = layoutDisplaysOf(node).flatMap((display) => findKindEntry(ctx.kindEntries, display.kind)?.id ?? []);
+	const kind = [
+		`kind = ${ctx.names.kind(ownId)}`,
+		...(folded.length === 0 ? [] : [`folded = [${folded.map((id) => ctx.names.kind(id)).join(', ')}]`]),
+		...(displays.length === 0 ? [] : [`displays = [${displays.map((id) => ctx.names.kind(id)).join(', ')}]`])
+	].join(', ');
 	if (isTextLeaf(node)) {
 		const fixed = kindIdText(node);
 		return fixed === undefined ? `${kind}, text` : `${kind}, text = ${rustStringLiteral(fixed)}`;
@@ -362,7 +376,7 @@ function foldedTokens(id: number, ctx: ReadFactsCtx): number[] {
 }
 
 export function variantKindArgs(ids: readonly number[], display: boolean, ctx: ReadFactsCtx): string {
-	const shown = display ? [] : ids.filter((id) => ctx.envelopeIds.has(id));
+	const shown = display ? [] : ids.filter((id) => ctx.displayIds.has(id));
 	const plain = ids.filter((id) => !shown.includes(id));
 	return [
 		...plain.map((id) => ctx.names.kind(id)),

@@ -123,6 +123,7 @@ export interface RawGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
+	readonly fixedNameLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly references: SymbolRef[];
 	readonly externalRoles?: Map<string, ExternalRole>;
@@ -199,6 +200,7 @@ export interface LinkedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
+	readonly fixedNameLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly references: SymbolRef[];
@@ -226,6 +228,7 @@ export interface NormalizedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
+	readonly fixedNameLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
@@ -261,6 +264,7 @@ export interface SimplifiedGrammar {
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
+	readonly fixedNameLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];
@@ -304,6 +308,7 @@ export interface NodeMap {
 	readonly reserved?: ReservedWordsets;
 	readonly relaxedLiterals?: readonly string[];
 	readonly relaxedDisplayLiterals?: Readonly<Record<string, readonly string[]>>;
+	readonly fixedNameLiterals?: Readonly<Record<string, readonly string[]>>;
 	readonly fileTypes: readonly string[];
 	readonly provenance?: KindProvenance;
 	readonly externals?: readonly RuleListEntry[];

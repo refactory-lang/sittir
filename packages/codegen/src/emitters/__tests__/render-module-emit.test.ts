@@ -29,11 +29,12 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
-import { aliasEnvelopeIds, aliasEnvelopesOf, isTextLeaf } from '../shared.ts';
+import { isTextLeaf } from '../shared.ts';
 import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
 	assertOneUntaggedSlot,
+	displayClaimedIds,
 	enumKindArgs,
 	flankArgs,
 	layoutTokenIds,
@@ -285,7 +286,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a fixed-text kind decodes its numeric kind id into its unit, which writes the kind text', async () => {
 		const src = await getTypescriptNodeRs();
-		expect(src).toContain('#[node(choice)]\npub enum PlusNode {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
+		expect(src).toContain('#[node(choice, stamp = stamp)]\npub enum PlusNode {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
 		expect(src).toMatch(
 			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    NodeLayout::render\(None, Some\(::sittir_core::types::KindId\(\d+\)\), ::sittir_core::layout::TriviaRole::Token, w, \|w\| w\.text\("\+"\)\)/
 		);
@@ -582,7 +583,7 @@ describe('node read facts', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
-			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'rust'
 		};
@@ -602,7 +603,7 @@ describe('node read facts', () => {
 	const shape = (s: AssembledNonterminal) => nodeSlotShapeOf(s, model.nodeMap);
 
 	it('lists the tokens a kind writes itself as its layout', () => {
-		expect(args('FunctionItemNode')).toBe('kind = kind::FUNCTION_ITEM, layout = [kind::FN_KEYWORD, kind::DASH_GT]');
+		expect(args('FunctionItemNode')).toBe('kind = kind::FUNCTION_ITEM, displays = [kind::_METHOD_DECLARATION], layout = [kind::FN_KEYWORD, kind::DASH_GT]');
 	});
 
 	it('reads a layout token from its stamp and refuses one with none', () => {
@@ -687,7 +688,7 @@ describe('node read facts for an aliased presence keyword', () => {
 			kindEntries: model.kindEntries,
 			names: readNames(model.kindEntries, generatedFieldIds(model.generatedIdTables)),
 			listOwners: new Set(listViewOwners(model.nodeMap).map((node) => node.kind)),
-			envelopeIds: new Set(aliasEnvelopeIds(aliasEnvelopesOf(model.nodeMap))),
+			displayIds: displayClaimedIds(model.nodeMap),
 			folds: model.generatedIdTables.folds ?? new Map(),
 			grammar: 'typescript'
 		};
@@ -714,7 +715,7 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemNode \{/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 42\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
 		);
 		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 12, width = 5\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
@@ -723,7 +724,7 @@ describe('node attributes', () => {
 	it("gives a choice's variants the ids today's decode claims for them", async () => {
 		const src = await getRustTemplatesRs();
 		const typeEnum = src.slice(src.indexOf('pub enum TypeNode {'));
-		expect(src).toMatch(/#\[node\(choice\)\]\npub enum TypeNode \{/);
+		expect(src).toMatch(/#\[node\(choice, stamp = stamp\)\]\npub enum TypeNode \{/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[node\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
 		expect(src).toMatch(/#\[node\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
@@ -811,7 +812,7 @@ describe('the wire codec facts', () => {
 
 	it('derives the codec alone for trivia', async () => {
 		const src = await getRustTemplatesRs();
-		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(choice, codec_only\)\]\npub enum TriviaNode \{/);
+		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(choice, stamp = stamp, codec_only\)\]\npub enum TriviaNode \{/);
 		expect(src).toMatch(/    #\[node\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
 		expect(src).toMatch(/    #\[node\(verbatim\)\]\n    Verbatim\(VerbatimNode\),\n    #\[node\(text\)\]/);
 	});

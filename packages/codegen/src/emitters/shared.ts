@@ -57,6 +57,7 @@ import { matchesWordShape } from '../util/word-matcher.ts';
 import { type KindEntryLike, findEntryForLiteralText, findOwnKindEntry } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import { sameCharMergePairs } from '../compiler/model/first-tokens.ts';
+import { admitsWhitespaceMember, canonicalText, SPACE_MEMBER } from '../dsl/whitespace.ts';
 import type { RenderRule } from '../types/rule.ts';
 
 export function isSlotBearingCompound(node: AssembledNode): node is SlotBearingCompound {
@@ -645,7 +646,7 @@ export function kindEnumAltIdPairs(
 		if (!isFixedTextLeaf(target)) continue;
 		const stored = keywordRefWireIdentity(value, target).kindId;
 		if (stored === undefined) continue;
-		for (const alt of [value.storageKindId, value.parseKindId, target.resolvedKindId]) {
+		for (const alt of [value.storageKindId, value.parseKindId, target.aliasStorageNode === undefined ? target.resolvedKindId : undefined]) {
 			if (alt === undefined || alt === stored || seen.has(alt)) continue;
 			seen.add(alt);
 			out.push([alt, stored]);
@@ -1243,8 +1244,10 @@ export function classifyTemplateEmission(node: AssembledNode): TemplateEmission 
 export function literalMergePairs(
 	literals: readonly { readonly text: string }[],
 	kindEntries: readonly KindEntryLike[],
-	rules: Readonly<Record<string, RenderRule>> | undefined
+	grammar: Pick<NodeMap, 'normalizedRules' | 'nodelessExtrasRun'>
 ): [number, number][] {
+	if (!admitsWhitespaceMember(grammar.nodelessExtrasRun, SPACE_MEMBER, canonicalText(SPACE_MEMBER))) return [];
+	const rules = grammar.normalizedRules;
 	const excluded = /[A-Za-z0-9_\s]/;
 	const pairs = new Set<number>();
 	for (const c of rules === undefined ? [] : sameCharMergePairs(rules)) {
@@ -1294,6 +1297,10 @@ export function importLocalName(specifier: string): string {
 
 export function isDeclaredSupertype(node: AssembledNode | undefined): node is AssembledSupertype {
 	return node instanceof AssembledSupertype && node.declared;
+}
+
+export function isAuthoredSupertype(node: AssembledNode | undefined): node is AssembledSupertype {
+	return isDeclaredSupertype(node) && node.splitFrom === undefined;
 }
 
 export function pruneUnusedImports(lines: readonly string[], names: readonly string[]): string[] {

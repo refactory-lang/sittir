@@ -22,12 +22,12 @@ const inPlace = (rules: Rules, index: number, name: string): unknown => {
 };
 
 describe('alias(name) in an entry aliases a symbol member in place', () => {
-	it('wraps a symbol member of a seq as alias(member, $.name), through the field enrich gave it, and records the alias effect', async () => {
+	it('wraps a symbol member of a seq as alias(member, $.name), through the field enrich gave it, and records the alias effect scoped to the entry\'s owner', async () => {
 		const rules = "k: ($) => seq('x', $.y), y: () => /y/";
 		const base = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: '' });
 		const named = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { k: { '1': alias('w') } }" });
 		expect(withoutIds(named.rules)).toEqual(inPlace(base.rules as unknown as Rules, 1, 'w'));
-		expect(named.bindingEffects).toEqual([{ kind: 'alias', from: 'y', to: 'w' }]);
+		expect(named.bindingEffects).toEqual([{ kind: 'alias', from: 'y', to: 'w', scope: 'k' }]);
 	}, 60_000);
 
 	it('keeps a choice arm\'s variant label when it aliases the arm, addressed by a negative index', async () => {
@@ -35,6 +35,14 @@ describe('alias(name) in an entry aliases a symbol member in place', () => {
 		const base = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: '' });
 		const named = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { k: { '-1': alias('w') } }" });
 		expect(withoutIds(named.rules)).toEqual(inPlace(base.rules as unknown as Rules, 1, 'w'));
-		expect(named.bindingEffects).toEqual([{ kind: 'alias', from: 'y', to: 'w' }]);
+		expect(named.bindingEffects).toEqual([{ kind: 'alias', from: 'y', to: 'w', scope: 'k' }]);
+	}, 60_000);
+
+	it('records the same alias effect for alias(member, $.name) in a function entry as for alias(name)', async () => {
+		const rules = "k: ($) => choice($.a, $.y), a: () => 'a', y: () => /y/";
+		const placeholder = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { k: { '-1': alias('w') } }" });
+		const explicit = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { k: { '-1': ($, member) => alias(member, $.w) } }" });
+		expect(withoutIds(explicit.rules)).toEqual(withoutIds(placeholder.rules));
+		expect(explicit.bindingEffects).toEqual(placeholder.bindingEffects);
 	}, 60_000);
 });
