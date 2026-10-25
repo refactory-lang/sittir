@@ -7676,10 +7676,6 @@ A field's name from its C name when the name table has no entry for it: the C na
 
 A token's text spelled as a name, the way a punctuation token's kind key is spelled: word characters stay, and each punctuation character becomes its lower-cased word, joined with `_` (`*` is `star`, `?.` is `qmark_dot`), through `sanitizeCIdentifier`. `deriveSymbolRuntimeName` spells a punctuation kind key with it, and `wire/keyword-names.ts::spelledKeywordRuleName` a keyword rule's name.
 
-### `packages/codegen/src/dsl/bind.ts::split`
-
-The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
-
 ### `packages/codegen/src/dsl/bind.ts::Split`
 
 A placement split in grammar bindings: the base kind `kind`, wherever it is reached under the chain `within` (innermost first, the outermost kind last), becomes the new kind `as`. `containers` names, per intermediate kind of `within` that is visible, the clone that holds the split kind there and the field the outer kind reaches the clone under. `splitGrammar` applies it.
@@ -9207,3 +9203,99 @@ A shape the `symbol-to-field` pass rewrites: a node kind in a sequence with no f
 ### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unlabeled-choice-arm`
 
 A shape the `automatic variants` pass rewrites: a choice arm that is not labeled as a variant.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::CopyBase`
+
+The base a copy of an automatic variant is taken from.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::copyBaseOf`
+
+The base an automatic variant's copy is taken from.
+
+### `packages/codegen/src/dsl/bind.ts::AbsentField`
+
+A field that is absent from a binding.
+
+### `packages/codegen/src/dsl/bind.ts::AbsentField::through`
+
+The path an absent field is reached through.
+
+### `packages/codegen/src/dsl/bind.ts::boundNameAt`
+
+The name a binding holds at a site. It refuses a site it cannot name, so no binding is guessed.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit`
+
+A split of a literal into the parts a binding names.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::absent`
+
+The absent fields a literal split leaves out.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::leaf`
+
+The leaf a literal split ends at.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::relax`
+
+The relaxation a literal split applies.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::texts`
+
+The texts a literal split produces.
+
+### `packages/codegen/src/dsl/bind.ts::RelaxSite`
+
+A site where a literal is relaxed.
+
+### `packages/codegen/src/dsl/bind.ts::RelaxSite::display`
+
+The display name the relaxed site shows.
+
+### `packages/codegen/src/dsl/bind.ts::RelaxSite::path`
+
+The path to the relaxed site.
+
+### `packages/codegen/src/dsl/bind.ts::SitedName`
+
+A name bound at a site.
+
+### `packages/codegen/src/dsl/bind.ts::SitedName::scope`
+
+The scope the site's name is bound in.
+
+### `packages/codegen/src/dsl/bind.ts::Split::literal`
+
+The literal the split holds.
+
+### `packages/codegen/src/dsl/bind.ts::Split::path`
+
+The path the split takes.
+
+### `packages/codegen/src/dsl/bind.ts::SplitStep`
+
+One step of a split.
+
+### `packages/codegen/src/dsl/rule-attrs.ts::reownRuleIds`
+
+Gives each rule id a new owner.
+
+### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
+
+The storage a rule's alias envelope holds.
+
+### `packages/codegen/src/dsl/rule-metadata.ts::RuleMetadataShape::aliasStorage`
+
+The alias storage a rule's metadata records.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::fieldThrough`
+
+The field a rule reaches through another rule.
+
+### `packages/codegen/src/dsl/symbol-table.ts::CEnumEntry`
+
+One entry of the C enum table.
+
+### `packages/codegen/src/dsl/symbol-table.ts::ReservedWordset`
+
+A reserved word set.
