@@ -107,9 +107,13 @@ export interface CaseCountChange {
 	to: number;
 }
 
+export interface DeclaredCounters extends CounterPair {
+	astMatchPass?: number;
+}
+
 export interface DeclaredRowChange {
-	from: CounterPair;
-	to: CounterPair;
+	from: DeclaredCounters;
+	to: DeclaredCounters;
 	cases?: Readonly<Record<string, CaseCountChange>>;
 }
 
