@@ -313,18 +313,22 @@ macro_rules! napi_engine {
             }
 
             /// Replace `side` of the node at `index` of the live tree `treeId`
-            /// with `entries`. A built record among them (`{ $type, $record }`)
-            /// renders from the engine's built arena wherever the side renders.
-            /// Refuses as `triviaSide` does.
+            /// with `entries`. A built record among them (`{ $type, $record,
+            /// $owner }`) renders from the built arena of its owner, an engine
+            /// of this language, wherever the side renders. Refuses as
+            /// `triviaSide` does, and an owner that is no engine of this
+            /// language.
             #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, side: string, entries: object[]")]
             pub fn write_trivia_side(
                 &self,
+                env: ::napi::Env,
                 tree_id: $crate::types::TreeId,
                 index: $crate::types::NodeIndex,
                 side: String,
-                entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                entries: Vec<$crate::trivia::WireEntry<'_, <$grammar as $crate::engine::EngineGrammar>::Trivia>>,
             ) -> ::napi::Result<()> {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                let entries = Self::owned_entries(&env, entries)?;
                 with_live_node(tree_id, index, |parsed, index| {
                     parsed.write_trivia_side(index, side, entries);
                     Ok(())
@@ -538,6 +542,28 @@ macro_rules! napi_engine {
         }
 
         impl SittirEngine {
+            /// `entries` as a store takes them: each built record holds the
+            /// store of the engine its `$owner` names.
+            fn owned_entries(
+                env: &::napi::Env,
+                entries: Vec<$crate::trivia::WireEntry<'_, <$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+            ) -> ::napi::Result<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
+                entries.into_iter().map(|entry| entry.resolve(&|owner| Self::store_of(env, owner))).collect()
+            }
+
+            /// The store of `owner`, an engine of this language, which holds
+            /// its built arena's chunks and its records' sides. Refuses any
+            /// other value, another grammar's engine among them, whatever its
+            /// prototype.
+            fn store_of(env: &::napi::Env, owner: ::napi::Unknown<'_>) -> ::napi::Result<$crate::trivia_store::TriviaStore<<$grammar as $crate::engine::EngineGrammar>::Trivia>> {
+                use ::napi::JsValue;
+                // SAFETY: `owner` is live in `env` for the call. `ClassInstance`
+                // checks the napi type tag this addon's engine class stamps on
+                // each instance it constructs before it casts the wrapped value.
+                let engine = unsafe { <::napi::bindgen_prelude::ClassInstance<'_, SittirEngine> as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env.raw(), owner.raw())? };
+                Ok(engine.as_ref().engine.written().clone())
+            }
+
             /// The options a render of a node of `tree` takes: `options` over
             /// the tree's layer (`ParsedTree::inferred`) over the engine's. A
             /// node of no tree takes `options` over the engine's.
@@ -815,8 +841,9 @@ macro_rules! napi_engine {
                 /// owns them. A trivia entry this engine's store answers
                 /// renders from them.
                 #[::napi_derive::napi(ts_args_type = "words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array")]
-                pub fn hold_built_arena(&self, env: ::napi::Env, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, written_words: ::napi::Unknown<'_>, written_bytes: ::napi::Unknown<'_>) -> ::napi::Result<()> {
-                    self.engine.written().built_mut().hold(&env, &words, &bytes, [written_words, written_bytes])
+                pub fn hold_built_arena(&self, env: ::napi::Env, this: ::napi::bindgen_prelude::This<'_>, words: Vec<::napi::Unknown<'_>>, bytes: Vec<::napi::Unknown<'_>>, written_words: ::napi::Unknown<'_>, written_bytes: ::napi::Unknown<'_>) -> ::napi::Result<()> {
+                    let owner = ::napi::JsValue::to_unknown(&this.object);
+                    self.engine.written().built_mut().hold(&env, owner, &words, &bytes, [written_words, written_bytes])
                 }
 
                 /// The entries a write gave `side` (`leading`, `trailing` or
@@ -829,6 +856,41 @@ macro_rules! napi_engine {
                     self.engine.built_trivia_side(address, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
+                /// The sides writes gave each unit the record at `address` in
+                /// the arena this engine built holds: `{ slot, item, leading?,
+                /// trailing?, inner? }`. Refuses an arena this engine no
+                /// longer holds and an address naming no record in it.
+                #[::napi_derive::napi(ts_args_type = "address: number", ts_return_type = "object[]")]
+                pub fn built_unit_sides(&self, env: ::napi::Env, address: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let chunks = self.engine.written().built();
+                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    self.engine.built_unit_sides(&arena, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// The units the record at `address` in the arena this engine
+                /// built holds have the sides `units` gives (`{ slot, item,
+                /// leading?, trailing?, inner? }`), in place of every unit
+                /// side it had; `renderBuilt` then writes them, and a built
+                /// record among them renders as `writeTriviaSide` says.
+                /// Refuses as `builtUnitSides` does, and a slot the record's
+                /// kind has no cell for.
+                #[::napi_derive::napi(ts_args_type = "address: number, units: object[]")]
+                pub fn write_built_unit_sides(
+                    &self,
+                    env: ::napi::Env,
+                    address: f64,
+                    units: Vec<$crate::layout::WireUnit<'_, <$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                ) -> ::napi::Result<()> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let units = units.into_iter().map(|unit| unit.resolve(&|owner| Self::store_of(&env, owner))).collect::<::napi::Result<Vec<_>>>()?;
+                    let chunks = self.engine.written().built();
+                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    self.engine.write_built_unit_sides(&arena, address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
                 /// Replace `side` of the built record at `address` with
                 /// `entries`, which `renderBuilt` then writes; a built record
                 /// among them renders as `writeTriviaSide` says. Refuses as
@@ -836,12 +898,14 @@ macro_rules! napi_engine {
                 #[::napi_derive::napi(ts_args_type = "address: number, side: string, entries: object[]")]
                 pub fn write_built_trivia_side(
                     &self,
+                    env: ::napi::Env,
                     address: f64,
                     side: String,
-                    entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                    entries: Vec<$crate::trivia::WireEntry<'_, <$grammar as $crate::engine::EngineGrammar>::Trivia>>,
                 ) -> ::napi::Result<()> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    let entries = Self::owned_entries(&env, entries)?;
                     self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
@@ -1057,21 +1121,21 @@ impl ChunkElement for u8 {
     const REFUSED: &'static str = "a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer";
 }
 
-/// A weak reference to a JavaScript typed array: it does not keep the
-/// array alive, and reads as nothing once the array is collected.
+/// A weak reference to a JavaScript value: it does not keep the value
+/// alive, and reads as nothing once the value is collected.
 #[cfg(feature = "arena")]
-struct WeakArray(napi::sys::napi_ref);
+struct WeakValue(napi::sys::napi_ref);
 
 // SAFETY: as `napi::Ref` is: a reference is made, read and deleted only on
 // the JavaScript thread, each inside a call that hands over its `env`.
 #[cfg(feature = "arena")]
-unsafe impl Send for WeakArray {}
+unsafe impl Send for WeakValue {}
 // SAFETY: as above; a shared reference reads nothing outside such a call.
 #[cfg(feature = "arena")]
-unsafe impl Sync for WeakArray {}
+unsafe impl Sync for WeakValue {}
 
 #[cfg(feature = "arena")]
-impl WeakArray {
+impl WeakValue {
     fn new(env: &napi::Env, value: napi::Unknown<'_>) -> napi::Result<Self> {
         use napi::JsValue;
         let mut raw = std::ptr::null_mut();
@@ -1095,50 +1159,66 @@ impl WeakArray {
 }
 
 /// The chunks of an engine's built arena, as its store holds them for the
-/// trivia entries it answers: each words and bytes chunk, and the two tables
-/// of how much of each chunk is written, all held weakly. JavaScript owns
-/// them and keeps them while anything can render one of their records.
+/// trivia entries it answers: each words and bytes chunk, the two tables of
+/// how much of each chunk is written, and the engine that holds them, which
+/// a record entry names as its owner, all held weakly. JavaScript owns them
+/// and keeps them while anything can render one of their records.
 #[cfg(feature = "arena")]
 #[derive(Default)]
 pub struct BuiltChunks {
-    words: Vec<WeakArray>,
-    bytes: Vec<WeakArray>,
-    written: Option<[WeakArray; 2]>,
+    words: Vec<WeakValue>,
+    bytes: Vec<WeakValue>,
+    written: Option<[WeakValue; 2]>,
+    owner: Option<WeakValue>,
 }
 
 #[cfg(feature = "arena")]
 impl std::fmt::Debug for BuiltChunks {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("BuiltChunks").field("words", &self.words.len()).field("bytes", &self.bytes.len()).field("held", &self.written.is_some()).finish()
+        f.debug_struct("BuiltChunks").field("words", &self.words.len()).field("bytes", &self.bytes.len()).field("held", &self.written.is_some()).field("owned", &self.owner.is_some()).finish()
     }
 }
 
 #[cfg(feature = "arena")]
 impl BuiltChunks {
-    /// Holds `words` and `bytes`, the arena's chunks, and `written`, the
-    /// words written of each words chunk and the bytes of each bytes chunk,
-    /// in place of what was held.
+    /// Holds `owner`, the engine whose builders write the arena, `words` and
+    /// `bytes`, the arena's chunks, and `written`, the words written of each
+    /// words chunk and the bytes of each bytes chunk, in place of what was
+    /// held.
     ///
     /// # Errors
     ///
     /// A reference napi refuses to make or delete.
-    pub fn hold(&mut self, env: &napi::Env, words: &[napi::Unknown<'_>], bytes: &[napi::Unknown<'_>], written: [napi::Unknown<'_>; 2]) -> napi::Result<()> {
+    pub fn hold(&mut self, env: &napi::Env, owner: napi::Unknown<'_>, words: &[napi::Unknown<'_>], bytes: &[napi::Unknown<'_>], written: [napi::Unknown<'_>; 2]) -> napi::Result<()> {
         self.release(env)?;
-        self.words = words.iter().map(|chunk| WeakArray::new(env, *chunk)).collect::<napi::Result<_>>()?;
-        self.bytes = bytes.iter().map(|chunk| WeakArray::new(env, *chunk)).collect::<napi::Result<_>>()?;
+        self.owner = Some(WeakValue::new(env, owner)?);
+        self.words = words.iter().map(|chunk| WeakValue::new(env, *chunk)).collect::<napi::Result<_>>()?;
+        self.bytes = bytes.iter().map(|chunk| WeakValue::new(env, *chunk)).collect::<napi::Result<_>>()?;
         let [words, bytes] = written;
-        self.written = Some([WeakArray::new(env, words)?, WeakArray::new(env, bytes)?]);
+        self.written = Some([WeakValue::new(env, words)?, WeakValue::new(env, bytes)?]);
         Ok(())
     }
 
-    /// Lets go of every chunk: an entry of the arena then renders no more.
+    /// Lets go of every chunk and the owner: an entry of the arena then
+    /// renders and reads back no more.
     ///
     /// # Errors
     ///
     /// A reference napi refuses to delete.
     pub fn release(&mut self, env: &napi::Env) -> napi::Result<()> {
-        let held = self.words.drain(..).chain(self.bytes.drain(..)).chain(self.written.take().into_iter().flatten());
+        let held = self.words.drain(..).chain(self.bytes.drain(..)).chain(self.written.take().into_iter().flatten()).chain(self.owner.take());
         held.into_iter().try_for_each(|reference| reference.delete(env))
+    }
+
+    /// The engine whose builders write the arena, which a record entry names
+    /// as its owner.
+    ///
+    /// # Errors
+    ///
+    /// `ARENA_RELEASED` before the arena is held, once it is released, or
+    /// once the engine is collected.
+    pub fn owner<'e>(&self, env: &'e napi::Env) -> Result<napi::Unknown<'e>, crate::arena::ArenaError> {
+        self.owner.as_ref().and_then(|owner| owner.get(env).ok().flatten()).ok_or(crate::arena::ARENA_RELEASED)
     }
 
     /// The chunks, each cut to what is written, borrowed for the call.
@@ -1150,8 +1230,8 @@ impl BuiltChunks {
     /// length.
     pub fn borrow<'e>(&self, env: &'e napi::Env) -> Result<BorrowedChunks<'e>, crate::arena::ArenaError> {
         use crate::arena::ArenaError;
-        let released = ArenaError::Unwritable("the arena that built a side's record was released");
-        let array = |weak: &WeakArray| weak.get(env).ok().flatten().ok_or(released.clone());
+        let released = crate::arena::ARENA_RELEASED;
+        let array = |weak: &WeakValue| weak.get(env).ok().flatten().ok_or(released.clone());
         let [words_written, bytes_written] = self.written.as_ref().ok_or(released.clone())?;
         let table = |weak| borrowed_chunk::<u32>(env, array(weak)?).map_err(|_| ArenaError::Unwritable("a built arena's written table is no Uint32Array"));
         let (words_written, bytes_written) = (table(words_written)?, table(bytes_written)?);

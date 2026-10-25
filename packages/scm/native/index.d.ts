@@ -100,9 +100,11 @@ export declare class SittirEngine {
   triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
   /**
    * Replace `side` of the node at `index` of the live tree `treeId`
-   * with `entries`. A built record among them (`{ $type, $record }`)
-   * renders from the engine's built arena wherever the side renders.
-   * Refuses as `triviaSide` does.
+   * with `entries`. A built record among them (`{ $type, $record,
+   * $owner }`) renders from the built arena of its owner, an engine
+   * of this language, wherever the side renders. Refuses as
+   * `triviaSide` does, and an owner that is no engine of this
+   * language.
    */
   writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
   /**
@@ -277,6 +279,23 @@ holdBuiltArena(words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Ar
  * r" no write did. Refuses address 0 and any other side.
  */
 builtTriviaSide(address: number, side: string): object[] | null
+/**
+ * r" The sides writes gave each unit the record at `address` in
+ * r" the arena this engine built holds: `{ slot, item, leading?,
+ * r" trailing?, inner? }`. Refuses an arena this engine no
+ * r" longer holds and an address naming no record in it.
+ */
+builtUnitSides(address: number): object[]
+/**
+ * r" The units the record at `address` in the arena this engine
+ * r" built holds have the sides `units` gives (`{ slot, item,
+ * r" leading?, trailing?, inner? }`), in place of every unit
+ * r" side it had; `renderBuilt` then writes them, and a built
+ * r" record among them renders as `writeTriviaSide` says.
+ * r" Refuses as `builtUnitSides` does, and a slot the record's
+ * r" kind has no cell for.
+ */
+writeBuiltUnitSides(address: number, units: object[]): void
 /**
  * r" Replace `side` of the built record at `address` with
  * r" `entries`, which `renderBuilt` then writes; a built record

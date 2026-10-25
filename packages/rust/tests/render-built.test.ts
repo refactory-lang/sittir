@@ -1,8 +1,11 @@
 import { execFileSync } from 'node:child_process';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
-import { treeOf, writeTrivia } from '@sittir/common/utils';
+import { treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
+import { sideEntryOf } from '../../common/src/built-arena.ts';
+import { builtRefOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
 
@@ -29,6 +32,8 @@ function arenaEngine() {
 }
 
 const words = (...values: number[]) => new Uint32Array([0, ...values]);
+
+const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
 
 const recordEngine = async () => {
 	const engine = await arena.createEngine();
@@ -119,6 +124,100 @@ describe('a built arena rendered natively', () => {
 		noted(renderer, 'y', ' renderer ');
 		expect(renderer.render(built).toString()).toBe('/* owner */ x;');
 		expect(owner.render(built).toString()).toBe('/* owner */ x;');
+	});
+
+	describe('a built record in a side of a node another engine of its language holds', () => {
+		type Engine = Awaited<ReturnType<typeof recordEngine>>;
+		const holders = async (make: () => Promise<Engine>) => {
+			const [builder, holder] = [await make(), await make()];
+			const parsed = holder.parse('fn f() {\n    g();\n}\n');
+			const statement = (parsed.statements()[0] as unknown as { body(): { statements(): readonly typeof built[] } }).body().statements()[0]!;
+			const built = holder.build.expressionStatement(holder.build.identifier('x'));
+			const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
+			comment.$trivia.leading(builder.build.blockComment(builder.build.blockCommentRegular(' d ')));
+			statement.$trivia.trailing(comment);
+			built.$trivia.trailing(comment);
+			return { holder, parsed, statement, built, comment };
+		};
+		const rendered = async (make: () => Promise<Engine>) => {
+			const { holder, parsed, built } = await holders(make);
+			return { parsed: holder.render(parsed).toString(), built: holder.render(built).toString() };
+		};
+
+		it('renders where the side renders, on records as on objects', async () => {
+			const objects = await rendered(async () => arena.createEngine());
+			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* d */ /* c */\n}\n', built: 'x; /* d */ /* c */' });
+			expect(await rendered(recordEngine)).toEqual(objects);
+		});
+
+		it("reads back as its builder's node", async () => {
+			const { statement, built, comment } = await holders(recordEngine);
+			expect(statement.$trivia.trailing()[0]).toBe(comment);
+			expect(built.$trivia.trailing()[0]).toBe(comment);
+		});
+
+		it('refuses by name, in a render and a read, once its builder is disposed', async () => {
+			const builder = await recordEngine();
+			const holder = await recordEngine();
+			const built = holder.build.expressionStatement(holder.build.identifier('x'));
+			built.$trivia.trailing(builder.build.blockComment(builder.build.blockCommentRegular(' c ')));
+			builder.dispose();
+			expect(() => holder.render(built).toString()).toThrow(/the arena that built a side's record was released/);
+			expect(() => built.$trivia.trailing()).toThrow(/the arena that built a side's record was released/);
+		});
+
+		it.each([
+			['parsed', 'fn f() {\n    g(); /* d */ /* c */\n}\n', '/* d */ /* c */'],
+			['built', 'x; /* d */ /* c */', '/* d */ /* c */'],
+			['unit', '{\n    y;\n    /* d */ /* c */ ;\n    x();\n}', '/* d */ /* c */'],
+			['read', 'x; /* c */', '/* c */']
+		])('renders in a %s holder, and reads back, once nothing else names its source or the entry', (holder, render, read) => {
+			const fixture = fileURLToPath(new URL('../../common/tests/fixtures/foreign-side-release.mts', import.meta.url));
+			const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture, holder], {
+				cwd: fileURLToPath(new URL('..', import.meta.url)),
+				encoding: 'utf8',
+				env: { ...process.env, SITTIR_BACKEND: 'native' }
+			});
+			const rendered = { render, read };
+			expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ collected: true, before: rendered, after: rendered });
+		}, 60_000);
+
+		it('refuses in a side of an object node, whose engine builds no records', async () => {
+			const comment = (await recordEngine()).build.blockComment(' c ');
+			const objects = await arena.createEngine();
+			const statement = objects.build.expressionStatement(objects.build.identifier('x'));
+			expect(() => statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
+			const parsed = objects.parse('fn f() {\n    g();\n}\n').statements()[0] as unknown as { body(): { statements(): readonly typeof statement[] } };
+			expect(() => parsed.body().statements()[0]!.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
+		});
+
+		it("reads back as its builder's node from a parsed unit's side", async () => {
+			const [holder, builder] = [await recordEngine(), await recordEngine()];
+			const block = (holder.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
+			const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
+			const tree = treeOf(block)!;
+			const holderRow = treeHandleOf(block)! % 2 ** 32;
+			const written = [writtenEntry(comment)];
+			const unitRow = [1, 2, 3].map((n) => holderRow + n).find((row) => {
+				tree.writeTriviaSide!(row, 'leading', written);
+				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(row, 'leading', []), false);
+			});
+			expect(unitRow).toBeDefined();
+			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comment]);
+			expect(JSON.stringify(block)).toContain('" c "');
+		});
+
+		it("refuses as a record's owner another grammar's engine, whatever its prototype", () => {
+			const engine = addon().SittirEngine;
+			const native = new engine() as unknown as { writeBuiltTriviaSide(at: number, side: string, entries: readonly object[]): void };
+			const typescript = createRequire(import.meta.url)('../../typescript/native/index.cjs') as { SittirEngine: new () => object };
+			const forged = Object.setPrototypeOf(new typescript.SittirEngine(), engine.prototype) as object;
+			expect(forged).toBeInstanceOf(engine);
+			const entry = (owner: object) => [{ $type: 1, $record: 8, $owner: owner }];
+			expect(() => native.writeBuiltTriviaSide(5, 'leading', entry(forged))).toThrow(/SittirEngine/);
+			expect(() => native.writeBuiltTriviaSide(5, 'leading', entry({}))).toThrow(/SittirEngine/);
+			expect(() => native.writeBuiltTriviaSide(5, 'leading', entry(native))).not.toThrow();
+		});
 	});
 
 	it("renders a built record with its builder's sides once nothing else names its builder", () => {

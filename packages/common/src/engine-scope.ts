@@ -5,6 +5,7 @@ import type {
 	LanguageAPI,
 	LanguageHooks,
 	NodeStorage,
+	QuerySlots,
 	Rendered
 } from '@sittir/types';
 import { assertHoldsTree, treeOf } from './tree-token.ts';
@@ -30,6 +31,7 @@ export interface EngineHandle {
 /** The handle a parsed tree is bound to (`bindTree`): the engine that read it, which hydrates the coordinates it names. */
 export interface TreeEngineHandle extends EngineHandle {
 	hydrate: LanguageHooks<LanguageAPI>['hydrate'];
+	readonly querySlots: QuerySlots;
 }
 
 export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
@@ -149,6 +151,10 @@ export function hydrateStored(value: unknown): unknown {
 }
 
 /** `value` as an accessor of a node of `tree` returns it, through the engine `tree` is bound to; `value` as it is when none is. */
+export function treeSlotTable(tree: object): QuerySlots | undefined {
+	return treeHandles.get(tree)?.querySlots;
+}
+
 export function hydrateOn(tree: object, value: unknown): unknown {
 	const handle = treeHandles.get(tree);
 	return handle === undefined ? value : handle.hydrate(value, tree);

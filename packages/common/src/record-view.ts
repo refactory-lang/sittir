@@ -2,6 +2,7 @@ import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
+import { treeSlotTable } from './engine-scope.ts';
 import {
 	decodeCell,
 	decodeListCell,
@@ -327,9 +328,15 @@ export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refu
 	return values;
 }
 
+function engineSlotsOf(node: object): (kind: number) => readonly QuerySlotEntry[] {
+	const tree = builtRefOf(node)?.arena.tree ?? treeOf(node);
+	const table = tree === undefined ? undefined : treeSlotTable(tree);
+	return (kind) => table?.[kind] ?? [];
+}
+
 export function storedSlotValues(
 	node: object,
-	slotsOf: (kind: number) => readonly QuerySlotEntry[],
+	slotsOf: (kind: number) => readonly QuerySlotEntry[] = engineSlotsOf(node),
 	refused?: (slot: RefusedSlot) => void
 ): [storageKey: string, value: unknown][] {
 	if (recordOf(node) !== undefined) return slotValuesOf(node, slotsOf((node as { readonly $type: number }).$type), refused);

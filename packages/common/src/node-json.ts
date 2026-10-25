@@ -1,7 +1,7 @@
 import type { NodeJSON, NodeJSONFacts, NodeJSONValue } from '@sittir/types';
-import { nodeText, setUnitSides, unitSidesOf, type UnitSidesData } from './node-data.ts';
+import { nodeText, unitSidesOf, type UnitSidesData } from './node-data.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
-import { hydrateTriviaEntry, isNode } from './utils.ts';
+import { hydrateTriviaEntry, isNode, writeUnitSides } from './utils.ts';
 
 type Members = { readonly [member: string]: unknown };
 
@@ -157,7 +157,7 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 		const items = (Object.values(slots)[0] ?? []) as unknown[];
 		const args = facts.spread.has(kindId) ? (hasOptions ? [options, ...items] : items) : hasOptions ? [slots, options] : [slots];
 		node = buildAt(path, hooks, name, args);
-		if (units.length > 0) setUnitSides(node as object, units);
+		if (units.length > 0) writeUnitSides(node as object, units);
 	}
 	for (const [side, key] of COMMENT_SIDES) {
 		const comments = object[key];

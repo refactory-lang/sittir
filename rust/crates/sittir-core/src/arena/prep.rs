@@ -158,6 +158,12 @@ pub trait PrepareRecord<T>: Sized {
     fn snapshot_edge(prep: &RecordPrep<'_, T>, at: CellAt) -> Option<SnapshotEdge>;
     /// `KindOf::kind_in`.
     fn kind_in(prep: &RecordPrep<'_, T>, at: CellAt, kinds: &[KindId]) -> bool;
+    /// The storage key of the slot whose cell a record of `kind` holds at
+    /// `word`, `None` for any other word or kind.
+    fn slot_key(kind: KindId, word: u32) -> Option<&'static str>;
+    /// The word a record of `kind` holds the cell of the slot `key` at,
+    /// `None` for any other slot or kind. The inverse of `slot_key`.
+    fn slot_word(kind: KindId, key: &str) -> Option<u32>;
 }
 
 impl<T, N: PrepareRecord<T>> PrepareRecord<T> for Box<N> {
@@ -187,6 +193,14 @@ impl<T, N: PrepareRecord<T>> PrepareRecord<T> for Box<N> {
 
     fn kind_in(prep: &RecordPrep<'_, T>, at: CellAt, kinds: &[KindId]) -> bool {
         N::kind_in(prep, at, kinds)
+    }
+
+    fn slot_key(kind: KindId, word: u32) -> Option<&'static str> {
+        N::slot_key(kind, word)
+    }
+
+    fn slot_word(kind: KindId, key: &str) -> Option<u32> {
+        N::slot_word(kind, key)
     }
 }
 
@@ -219,6 +233,14 @@ impl<T> PrepareRecord<T> for crate::verbatim::VerbatimNode {
 
     fn kind_in(_: &RecordPrep<'_, T>, _: CellAt, _: &[KindId]) -> bool {
         false
+    }
+
+    fn slot_key(_: KindId, _: u32) -> Option<&'static str> {
+        None
+    }
+
+    fn slot_word(_: KindId, _: &str) -> Option<u32> {
+        None
     }
 }
 

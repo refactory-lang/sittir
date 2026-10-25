@@ -34,12 +34,14 @@ struct Methods {
     separator: TokenStream,
     snapshot: TokenStream,
     kind_in: TokenStream,
+    slot_key: TokenStream,
+    slot_word: TokenStream,
 }
 
 /// The impl of `PrepareRecord<trivia>` for `ty`, under `generics` and the
 /// where clause `bounds`.
 fn implementation(ty: &Ident, trivia: &TokenStream, generics: &TokenStream, bounds: &TokenStream, methods: &Methods) -> TokenStream {
-    let Methods { claims, prepare, takes_gaps, seat, separator, snapshot, kind_in } = methods;
+    let Methods { claims, prepare, takes_gaps, seat, separator, snapshot, kind_in, slot_key, slot_word } = methods;
     let prep = quote!(::sittir_core::arena::RecordPrep<'_, #trivia>);
     let at = quote!(::sittir_core::arena::CellAt);
     let ctx = quote!(&::sittir_core::prepare::RenderContext<'_>);
@@ -76,6 +78,14 @@ fn implementation(ty: &Ident, trivia: &TokenStream, generics: &TokenStream, boun
             fn kind_in(prep: &#prep, at: #at, kinds: &[::sittir_core::types::KindId]) -> bool {
                 #kind_in
             }
+            #[allow(unused_variables, reason = "a type with no slot of its own names none")]
+            fn slot_key(kind: ::sittir_core::types::KindId, word: u32) -> ::core::option::Option<&'static str> {
+                #slot_key
+            }
+            #[allow(unused_variables, reason = "a type with no slot of its own names none")]
+            fn slot_word(kind: ::sittir_core::types::KindId, key: &str) -> ::core::option::Option<u32> {
+                #slot_word
+            }
         }
     })
 }
@@ -87,10 +97,15 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
     let (Some(prepare_fn), Some(kind)) = (&attrs.prepare_fn, &attrs.kind) else {
         return Err(syn::Error::new_spanned(view, format!("`{ident}` has a record view, so it names its kind and its prepare body (`prepare_fn = …`)")));
     };
-    let keys = fields.iter().filter_map(|field| match (&field.role, &field.key) {
-        (Role::Slot(slot), Some(key)) => slot.cell.word.map(|word| quote!(#word => ::core::option::Option::Some(#key),)),
-        _ => None,
-    });
+    let slots: Vec<(u32, &syn::LitStr)> = fields
+        .iter()
+        .filter_map(|field| match (&field.role, &field.key) {
+            (Role::Slot(slot), Some(key)) => slot.cell.word.map(|word| (word, key)),
+            _ => None,
+        })
+        .collect();
+    let keys = slots.iter().map(|(word, key)| quote!(#word => ::core::option::Option::Some(#key),));
+    let words = slots.iter().map(|(word, key)| quote!(#key => ::core::option::Option::Some(#word),));
     let through = match &attrs.seat_through {
         Some(content) => {
             let field = fields.iter().find(|field| field.ident == content).ok_or_else(|| syn::Error::new_spanned(content, format!("`{ident}` seats through `{content}`, which is none of its fields")))?;
@@ -107,10 +122,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
     let methods = Methods {
         claims: quote!(kind == #kind),
         prepare: quote! {
-            let mut record = ::sittir_core::arena::RecordAt::of(prep, at, #kind, |word| match word {
-                #(#keys)*
-                _ => ::core::option::Option::None,
-            })?;
+            let mut record = ::sittir_core::arena::RecordAt::of(prep, at, #kind, |word| <Self as ::sittir_core::arena::PrepareRecord<#trivia>>::slot_key(#kind, word))?;
             #prepare_fn(&mut record, prep, ctx)
         },
         takes_gaps: quote!(true),
@@ -118,6 +130,24 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
         separator: quote!(::sittir_core::arena::record_source_separator(prep, at, #kind, ctx)),
         snapshot: quote!(::sittir_core::arena::record_snapshot_edge(prep, at, #kind)),
         kind_in: quote!(::sittir_core::arena::view_kind_in::<#trivia, #view<'_>>(prep, at, kinds)),
+        slot_key: quote! {
+            if kind != #kind {
+                return ::core::option::Option::None;
+            }
+            match word {
+                #(#keys)*
+                _ => ::core::option::Option::None,
+            }
+        },
+        slot_word: quote! {
+            if kind != #kind {
+                return ::core::option::Option::None;
+            }
+            match key {
+                #(#words)*
+                _ => ::core::option::Option::None,
+            }
+        },
     };
     Ok(implementation(ident, trivia, &TokenStream::new(), &TokenStream::new(), &methods))
 }
@@ -162,6 +192,8 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
     let payload_seats = dispatch(quote!(seat_record(prep, at, table, ctx)));
     let separators = dispatch(quote!(source_separator(prep, at, ctx)));
     let snapshots = dispatch(quote!(snapshot_edge(prep, at)));
+    let slot_keys = dispatch(quote!(slot_key(kind, word)));
+    let slot_words = dispatch(quote!(slot_word(kind, key)));
     let refused = refused("choice cell");
     let unit = quote!(::sittir_core::arena::Cell::Unit { .. });
     let unit_claim = quote!(false #(|| #unit_claims)*);
@@ -209,6 +241,14 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
             ::core::option::Option::None
         },
         kind_in: quote!(::sittir_core::arena::view_kind_in::<__T, <Self as ::sittir_core::arena::HasRecord>::Record<'_>>(prep, at, kinds)),
+        slot_key: quote! {
+            #(#slot_keys)*
+            ::core::option::Option::None
+        },
+        slot_word: quote! {
+            #(#slot_words)*
+            ::core::option::Option::None
+        },
     };
     let view_bound = quote!(for<'__a> <Self as ::sittir_core::arena::HasRecord>::Record<'__a>: ::sittir_core::arena::RecordView<'__a, __T> + ::sittir_core::view::KindOf,);
     implementation(ident, &quote!(__T), &quote!(<__T>), &quote!(where #(#bounds)* #view_bound), &methods)
@@ -224,6 +264,8 @@ pub fn members(ident: &Ident) -> TokenStream {
         separator: quote!(::core::option::Option::None),
         snapshot: quote!(::core::option::Option::None),
         kind_in: quote!(::sittir_core::arena::view_kind_in::<__T, Self>(prep, at, kinds)),
+        slot_key: quote!(::core::option::Option::None),
+        slot_word: quote!(::core::option::Option::None),
     };
     implementation(ident, &quote!(__T), &quote!(<__T>), &TokenStream::new(), &methods)
 }
@@ -255,7 +297,10 @@ mod tests {
         })
         .expect("expands");
         assert!(has(&out, "::sittir_core::arena::PrepareRecord<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia> for StatementNode"));
-        assert!(has(&out, "::sittir_core::arena::RecordAt::of(prep, at, kind::EXPRESSION_STATEMENT, |word| match word { 2u32 => ::core::option::Option::Some(\"_content\"), _ => ::core::option::Option::None, })?; prepare_statement(&mut record, prep, ctx)"));
+        let trivia = "<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia";
+        assert!(has(&out, &format!("::sittir_core::arena::RecordAt::of(prep, at, kind::EXPRESSION_STATEMENT, |word| <Self as ::sittir_core::arena::PrepareRecord<{trivia}>>::slot_key(kind::EXPRESSION_STATEMENT, word))?; prepare_statement(&mut record, prep, ctx)")));
+        assert!(has(&out, "if kind != kind::EXPRESSION_STATEMENT { return ::core::option::Option::None; } match word { 2u32 => ::core::option::Option::Some(\"_content\"), _ => ::core::option::Option::None, }"));
+        assert!(has(&out, "if kind != kind::EXPRESSION_STATEMENT { return ::core::option::Option::None; } match key { \"_content\" => ::core::option::Option::Some(2u32), _ => ::core::option::Option::None, }"));
           assert!(has(&out, "::sittir_core::arena::own_seat(prep, at, kind::EXPRESSION_STATEMENT, table).or_else(|| ::sittir_core::arena::seat_through::<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, ExpressionNode>(prep, at, kind::EXPRESSION_STATEMENT, ::sittir_core::arena::CellShape { word: 2u32, width: 5u32, run: ::core::option::Option::None, inline: 0u32 }, table, ctx))"));
         assert!(has(&out, "::sittir_core::arena::view_kind_in::<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, StatementNodeRecord<'_>>(prep, at, kinds)"));
         assert!(has(&out, "impl<'r> StatementPrepare for ::sittir_core::arena::RecordAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia>"));

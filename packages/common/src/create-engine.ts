@@ -225,6 +225,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
+		querySlots: hooks.querySlots,
 		settle: settlerOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
@@ -344,7 +345,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const built = nativeBuiltRecords(native);
 	if (built !== undefined) {
 		recordConstruction.set(frozen, (records) => {
-			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, hooks.querySlots, handle);
+			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle);
 			handle.records = records;
 		});
 	}

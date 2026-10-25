@@ -16,13 +16,11 @@ import type {
 import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { adoptSideNesting, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
-import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { builtEntries, type BuiltRecords, type BuiltText } from './built-arena.ts';
+import { readEntries, readUnits, type BuiltRecords, type BuiltText } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
-import { treeBuiltArena } from './engine-scope.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -207,6 +205,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	): string;
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	builtUnitSides?(address: number): unknown[];
+	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
 	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
@@ -574,15 +574,11 @@ export function createNativeEngine<
 							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							triviaSide: (index, side) => {
-								const entries = builtEntries(treeBuiltArena(tree), engine.triviaSide(parsed.treeId, index, side));
-								holdReadTree(entries, liveToken);
-								return entries;
+								return readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken);
 							},
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							unitSides: (index) => {
-								const units = engine.unitSides(parsed.treeId, index);
-								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
-								return units;
+								return readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken);
 							},
 							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
@@ -628,8 +624,8 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = engine;
-	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined || holdBuiltArena === undefined)
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, holdBuiltArena } = engine;
+	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined || builtUnitSides === undefined || writeBuiltUnitSides === undefined || holdBuiltArena === undefined)
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	return {
 		format,
@@ -637,7 +633,9 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 		hold: (words, bytes, writtenWords, writtenBytes) => holdBuiltArena.call(engine, words, bytes, writtenWords, writtenBytes),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
-			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries)
+			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
+			unitSides: (at) => builtUnitSides.call(engine, at),
+			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units)
 		}
 	};
 }

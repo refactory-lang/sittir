@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { link } from '../link.ts';
@@ -27,7 +28,7 @@ describe('label provenance', () => {
 		const raw = await evaluatePackage(grammarPackage('python'));
 		const ids = await loadGeneratedIdTables('python');
 		nodeMap = assemble(AssembleCtx.from(normalizeGrammar(link(raw, { generatedIdTables: ids }))));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('carries an authored variant label to the assembled refs as authored', () => {
 		const refs = labelledRefsOf(nodeMap, '_match_block');

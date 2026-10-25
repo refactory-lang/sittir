@@ -34,7 +34,7 @@ arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
-napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
+napi = { version = "3", default-features = false, features = ["napi8", "serde-json"], optional = true }
 napi-derive = { version = "3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -284,6 +284,14 @@ sittir_core::records_codec! {
 
         fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
             <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
+        }
+
+        fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_key(kind, word)
+        }
+
+        fn slot_word(kind: sittir_core::types::KindId, key: &str) -> Option<u32> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_word(kind, key)
         }
     }
 }

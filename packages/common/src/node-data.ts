@@ -5,6 +5,8 @@ import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } f
 import { carrySourceStamp, stampSource } from './source-stamp.ts';
 import { builtRefOf } from './built-ref.ts';
 import { Source } from './source.ts';
+import { hydrateOn } from './engine-scope.ts';
+import { storedSlotValues } from './record-view.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -336,10 +338,12 @@ interface TableAt {
 	readonly index: number;
 }
 
+function writesSides(tree: TreeHandle | undefined): tree is TreeHandle & TableAt['tree'] {
+	return tree?.triviaSide !== undefined && tree.writeTriviaSide !== undefined;
+}
+
 function tableOf(tree: TreeHandle | undefined, index: number | undefined): TableAt | undefined {
-	return tree?.triviaSide === undefined || tree.writeTriviaSide === undefined || index === undefined
-		? undefined
-		: { tree: { triviaSide: tree.triviaSide, writeTriviaSide: tree.writeTriviaSide }, index };
+	return writesSides(tree) && index !== undefined ? { tree, index } : undefined;
 }
 
 export function tableAt(node: object): TableAt | undefined {
@@ -353,19 +357,21 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
 }
 
 /**
- * The sides of a node's unit children, by slot and item (`NodeLayout.units`): the ones it
- * holds, else its tree's for a parsed node, else those of the node it was rebuilt from
- * (`placeOf`); `undefined` when none answers.
+ * The sides of a node's unit children, by slot and item (`NodeLayout.units`): a built record's
+ * store's, else the ones it holds, else its tree's for a parsed node, else those of the node it
+ * was rebuilt from (`placeOf`); `undefined` when none answers.
  */
 export function unitSidesOf(node: object): readonly unknown[] | undefined {
-	const held = (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units;
+	const built = builtRefOf(node);
+	if (built !== undefined) return built.arena.tree.unitSides(built.at);
+	const held = heldUnitSides(node);
 	if (held !== undefined) return held;
 	const tree = treeOf(node);
 	const index = indexOf(node);
 	if (tree?.unitSides !== undefined && index !== undefined) return tree.unitSides(index);
 	const source = placeOf(node);
 	const from = source === undefined ? undefined : sourceTree(source);
-	return source === undefined || from === undefined ? undefined : carriedUnitSides(node as Record<string, unknown>, decodeIndex(source.treeHandle), from);
+	return source === undefined || from === undefined ? undefined : carriedUnitSides(node, decodeIndex(source.treeHandle), from);
 }
 
 /**
@@ -420,40 +426,48 @@ export interface UnitSidesData extends TriviaSides<unknown> {
 	readonly item: number;
 }
 
+export function heldUnitSides(node: object): readonly UnitSidesData[] | undefined {
+	return (node as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
+}
+
 export function setUnitSides(node: object, units: readonly UnitSidesData[]): void {
 	const record = node as { $_layout?: NodeDataLayout };
 	record.$_layout = { ...record.$_layout, units };
 }
 
-export function carryUnitSides(from: object, to: object): void {
-	const held = (from as { readonly $_layout?: NodeDataLayout }).$_layout?.units as readonly UnitSidesData[] | undefined;
-	if (held !== undefined && held.length > 0) setUnitSides(to, realignedUnits(held, from as Record<string, unknown>, to as Record<string, unknown>));
-}
-
-function carriedUnitSides(node: Record<string, unknown>, index: number, tree: TreeHandle): readonly unknown[] | undefined {
+function carriedUnitSides(node: object, index: number, tree: TreeHandle): readonly unknown[] | undefined {
 	const units = tree.unitSides?.(index) as readonly UnitSidesData[] | undefined;
 	if (units === undefined || units.length === 0) return units;
 	const read = tree.read?.(index, 1);
-	return isRecord(read) ? realignedUnits(units, read, node) : undefined;
+	return isRecord(read) ? realignedUnits(units, hydrateOn(tree, read) as object, node) : undefined;
 }
 
-function realignedUnits(units: readonly UnitSidesData[], before: Record<string, unknown>, after: Record<string, unknown>): UnitSidesData[] {
+export function realignedUnits(units: readonly UnitSidesData[], before: object, after: object): UnitSidesData[] {
 	const moved = new Map<string, ReadonlyMap<number, number>>();
-	const itemsAt = (holder: Record<string, unknown>, slot: string): readonly unknown[] => {
-		const value = holder[slot];
-		return value === undefined ? [] : Array.isArray(value) ? value : [value];
-	};
+	const [itemsBefore, itemsAfter] = [slotItemsOf(before), slotItemsOf(after)];
 	const carried: UnitSidesData[] = [];
 	for (const unit of units) {
 		let aligned = moved.get(unit.slot);
 		if (aligned === undefined) {
-			aligned = alignedItems(itemsAt(before, unit.slot), itemsAt(after, unit.slot));
+			aligned = alignedItems(itemsBefore(unit.slot), itemsAfter(unit.slot));
 			moved.set(unit.slot, aligned);
 		}
 		const item = aligned.get(unit.item);
-		if (item !== undefined && typeof itemsAt(after, unit.slot)[item] === 'number') carried.push({ ...unit, item });
+		if (item !== undefined && typeof itemsAfter(unit.slot)[item] === 'number') carried.push({ ...unit, item });
 	}
 	return carried;
+}
+
+function slotItemsOf(holder: object): (slot: string) => readonly unknown[] {
+	const items = new Map(storedSlotValues(holder).map(([slot, value]) => [slot, itemsOf(value)]));
+	return (slot) => items.get(slot) ?? [];
+}
+
+function itemsOf(value: unknown): readonly unknown[] {
+	if (value === undefined) return [];
+	if (Array.isArray(value)) return value;
+	const list = isRecord(value) && typeof value.$type !== 'number' && Symbol.iterator in value;
+	return list ? [...(value as Iterable<unknown>)] : [value];
 }
 
 function itemIdentity(item: unknown): unknown {
