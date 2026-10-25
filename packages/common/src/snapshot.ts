@@ -40,8 +40,34 @@ function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: 
 		const at = coordinateOf(value);
 		const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
 		if (at === undefined || tree === undefined) return copyOf(value, within, nesting);
-		return tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
+		const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
+		assertSidesWithinBound(read, nesting);
+		return read;
 	});
+}
+
+function assertSidesWithinBound(read: unknown, nesting: number): void {
+	const work: [unknown, number][] = [[read, nesting]];
+	const visit = (entry: unknown, inside: number) => {
+		work.push([entry, inside]);
+		return entry;
+	};
+	for (let next = work.pop(); next !== undefined; next = work.pop()) {
+		const [value, holder] = next;
+		if (Array.isArray(value)) {
+			for (const entry of value) work.push([entry, holder]);
+			continue;
+		}
+		if (!isRecord(value)) continue;
+		for (const key of Object.keys(value)) {
+			const held = value[key];
+			if (key !== '$_layout') work.push([held, holder]);
+			else if (isRecord(held)) {
+				if (isRecord(held.trivia)) mapSideEntries(held.trivia as TriviaSides<unknown>, holder, visit);
+				if (Array.isArray(held.units)) mapUnitSides(held.units, holder, visit);
+			}
+		}
+	}
 }
 
 function copyOf(value: Record<string, unknown>, within: Set<object>, nesting: number): Record<string, unknown> {

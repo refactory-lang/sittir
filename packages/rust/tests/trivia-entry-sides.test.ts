@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
+import { snapshotOf } from '@sittir/common';
 import { nestedComments, objects as rs, type Reported, type Route } from './side-nesting.mts';
 
 const b = rs.build;
@@ -165,20 +166,40 @@ describe("a side nests at most as deep as the addon's bound", () => {
 		}, 120_000);
 	});
 
+	const chain = (length: number) => {
+		const comments = Array.from({ length }, (_, at) => b.blockComment(b.blockCommentRegular(` ${at} `)) as unknown as Sided);
+		for (let at = 0; at + 1 < length; at += 1) comments[at]!.$trivia.leading(comments[at + 1] as never);
+		return comments[0]!;
+	};
+	const carrying = (length: number) => {
+		const { root, parsed } = parsedComment();
+		withSide(parsed, 'leading', [chain(length)]);
+		return { root, parsed };
+	};
+	const parsedStatement = () => {
+		const root = rs.parse('fn g() {\n    y;\n}\n');
+		const item = root.statements()[0];
+		if (item === undefined || !rs.is.functionItem(item)) throw new Error('expected a function');
+		return { root, y: item.body().statements()[0] as unknown as Sided };
+	};
+
 	it("counts a chain written into a parsed comment's side from the side the comment sits in", () => {
-		const chain = (length: number) => {
-			const comments = Array.from({ length }, (_, at) => b.blockComment(b.blockCommentRegular(` ${at} `)) as unknown as Sided);
-			for (let at = 0; at + 1 < length; at += 1) comments[at]!.$trivia.leading(comments[at + 1] as never);
-			return comments[0]!;
-		};
-		const written = (length: number) => {
-			const { root, parsed } = parsedComment();
-			withSide(parsed, 'leading', [chain(length)]);
-			return root;
-		};
-		expect(written(bound - 1).$render().split('/*').length - 1).toBe(bound);
-		const past = written(bound);
+		expect(carrying(bound - 1).root.$render().split('/*').length - 1).toBe(bound);
+		const past = carrying(bound).root;
 		expect(() => past.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
-		expect(() => written(bound + 1)).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => carrying(bound + 1)).toThrow(native.SIDE_NESTING_REFUSAL);
+	});
+
+	it('refuses at the write a parsed comment whose own sides nest past the bound where it is written, as it refuses a built one', () => {
+		const at = parsedStatement();
+		withSide(at.y, 'leading', [carrying(bound - 1).parsed]);
+		expect(at.root.$render().split('/*').length - 1).toBe(bound);
+		const { parsed } = carrying(bound);
+		expect(parsed.$snapshot()).toBeDefined();
+		expect(() => snapshotOf(parsed, 1)).toThrow(native.SIDE_NESTING_REFUSAL);
+		const refused = parsedStatement();
+		expect(() => withSide(refused.y, 'leading', [parsed])).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => withSide(refused.y, 'leading', [chain(bound + 1)])).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(refused.root.$render()).toBe('fn g() {\n    y;\n}\n');
 	});
 });
