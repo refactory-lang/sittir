@@ -1,111 +1,217 @@
 {
     "backend": "native",
     "baselineCounterChange": {
-        "reason": "Two authored forms take cases from the kinds they split off. The receiver lead gives a parameter list that opens with its receiver its own forms: in Rust the list's elements are `parameters_elements_receiver`, its receiver `attributed_parameter_receiver`, a typed receiver (`self: Box<Self>`) a `receiver_parameter_declaration` where it was a `parameter`, and the parameters after the receiver the elements of `parameters_elements_receiver_group`; in TypeScript the list's elements are `formal_parameters_elements_receiver` and a `this: T` receiver a `receiver_parameter_declaration` where it was a `required_parameter`. A case counts once per kind per corpus entry, so an entry whose only parameters are receivers counts those cases under the receiver forms, and a receiver list's parity fixtures carry the receiver forms' patterns. Every case Rust's factoryStorage (15), builtRenderParse (15 on the plain surface, 8 on the ir surface) and parityFixtures (26) lose, and four of the five fixtures TypeScript's parityFixtures lose, is counted in the same entry, or with the same expected output, under a receiver form, with the same outcome (pass). The fifth TypeScript fixture is the getter copy's, not the receiver lead's: a get accessor's parameter list is fixed punctuation under the authored accessor arity (`_formal_parameters_get_accessor_signature` is `(` and `)` alone), so the `()` of `abstract get readonlyProp(): string` is no longer a `formal_parameters` node, and its bytes are still checked through the getter's own fixture.",
         "grammars": {
-            "rust": {
-                "factoryStorage": {
+            "python": {
+                "builtRenderParse": {
+                    "cases": {
+                        "function_definition": {
+                            "from": 34,
+                            "to": 30
+                        },
+                        "import_list": {
+                            "from": 6,
+                            "to": 4
+                        }
+                    },
                     "from": {
-                        "pass": 1681,
-                        "total": 1681
+                        "pass": 2647,
+                        "total": 2647
                     },
                     "to": {
-                        "pass": 1692,
-                        "total": 1692
-                    },
-                    "cases": {
-                        "attributed_parameter": {
-                            "from": 25,
-                            "to": 18
-                        },
-                        "parameter": {
-                            "from": 18,
-                            "to": 17
-                        },
-                        "parameters_elements": {
-                            "from": 25,
-                            "to": 18
-                        }
+                        "pass": 2675,
+                        "total": 2675
                     }
                 },
-                "builtRenderParse": {
+                "factoryStorage": {
+                    "cases": {
+                        "function_definition": {
+                            "from": 17,
+                            "to": 15
+                        },
+                        "import_list": {
+                            "from": 3,
+                            "to": 2
+                        }
+                    },
                     "from": {
-                        "pass": 3064,
-                        "total": 3064
+                        "pass": 1385,
+                        "total": 1385
                     },
                     "to": {
-                        "pass": 3079,
-                        "total": 3079
-                    },
-                    "cases": {
-                        "attributed_parameter": {
-                            "from": 25,
-                            "to": 18
-                        },
-                        "parameter": {
-                            "from": 36,
-                            "to": 34
-                        },
-                        "parameters_elements": {
-                            "from": 50,
-                            "to": 36
-                        }
+                        "pass": 1392,
+                        "total": 1392
                     }
                 },
                 "parityFixtures": {
+                    "cases": {
+                        "block": {
+                            "from": 146,
+                            "to": 139
+                        },
+                        "decorated_definition": {
+                            "from": 4,
+                            "to": 2
+                        },
+                        "function_definition": {
+                            "from": 40,
+                            "to": 35
+                        },
+                        "import_list": {
+                            "from": 13,
+                            "to": 10
+                        },
+                        "interpolation": {
+                            "from": 35,
+                            "to": 31
+                        },
+                        "suite_block": {
+                            "from": 146,
+                            "to": 139
+                        }
+                    },
                     "from": {
-                        "pass": 3804,
-                        "total": 3804
+                        "pass": 3821,
+                        "total": 3821
                     },
                     "to": {
+                        "pass": 3814,
+                        "total": 3814
+                    }
+                }
+            },
+            "rust": {
+                "builtRenderParse": {
+                    "cases": {
+                        "declaration_list": {
+                            "from": 44,
+                            "to": 8
+                        },
+                        "function_item": {
+                            "from": 70,
+                            "to": 64
+                        },
+                        "function_signature_item": {
+                            "from": 10,
+                            "to": 2
+                        }
+                    },
+                    "from": {
+                        "pass": 3079,
+                        "total": 3079
+                    },
+                    "to": {
+                        "pass": 3084,
+                        "total": 3084
+                    }
+                },
+                "factoryStorage": {
+                    "cases": {
+                        "declaration_list": {
+                            "from": 22,
+                            "to": 4
+                        },
+                        "function_item": {
+                            "from": 35,
+                            "to": 32
+                        },
+                        "function_signature_item": {
+                            "from": 5,
+                            "to": 1
+                        }
+                    },
+                    "from": {
+                        "pass": 1692,
+                        "total": 1692
+                    },
+                    "to": {
+                        "pass": 1694,
+                        "total": 1694
+                    }
+                },
+                "parityFixtures": {
+                    "cases": {
+                        "declaration_list": {
+                            "from": 38,
+                            "to": 9
+                        },
+                        "function_item": {
+                            "from": 64,
+                            "to": 58
+                        },
+                        "function_signature_item": {
+                            "from": 5,
+                            "to": 1
+                        }
+                    },
+                    "from": {
                         "pass": 3810,
                         "total": 3810
                     },
-                    "cases": {
-                        "attributed_parameter": {
-                            "from": 58,
-                            "to": 44
-                        },
-                        "parameter": {
-                            "from": 37,
-                            "to": 36
-                        },
-                        "parameters_elements": {
-                            "from": 45,
-                            "to": 34
-                        }
+                    "to": {
+                        "pass": 3805,
+                        "total": 3805
                     }
                 }
             },
             "typescript": {
-                "parityFixtures": {
+                "builtRenderParse": {
+                    "cases": {
+                        "object_type": {
+                            "from": 50,
+                            "to": 38
+                        }
+                    },
                     "from": {
-                        "pass": 2903,
-                        "total": 2903
+                        "pass": 2497,
+                        "total": 2497
                     },
                     "to": {
+                        "pass": 2560,
+                        "total": 2560
+                    }
+                },
+                "factoryStorage": {
+                    "cases": {
+                        "object_type": {
+                            "from": 25,
+                            "to": 19
+                        }
+                    },
+                    "from": {
+                        "pass": 1326,
+                        "total": 1326
+                    },
+                    "to": {
+                        "pass": 1355,
+                        "total": 1355
+                    }
+                },
+                "parityFixtures": {
+                    "cases": {
+                        "method_definition_plain": {
+                            "from": 15,
+                            "to": 14
+                        },
+                        "object_type": {
+                            "from": 45,
+                            "to": 35
+                        }
+                    },
+                    "from": {
                         "pass": 2904,
                         "total": 2904
                     },
-                    "cases": {
-                        "formal_parameters": {
-                            "from": 90,
-                            "to": 89
-                        },
-                        "formal_parameters_elements": {
-                            "from": 49,
-                            "to": 48
-                        },
-                        "required_parameter": {
-                            "from": 58,
-                            "to": 56
-                        }
+                    "to": {
+                        "pass": 2990,
+                        "total": 2990
                     }
                 }
             }
-        }
+        },
+        "reason": "Class-body splits move cases from the kinds they split off, and a flat alias envelope counts one case where it counted two. Splits: a python class-body `function_definition` reads as `method_declaration` under the class-body clones (`block_class_declaration`, `suite_block_class_declaration`, `decorated_definition_class_declaration`), which take the class bodies' `block`, `suite_block` and `decorated_definition` cases; rust impl and trait bodies read as `extension_declaration_body` and `trait_interface_declaration_body` (from `declaration_list`), their functions as `method_declaration` (from `function_item`) and their signatures as `signature_method_declaration` (from `function_signature_item`); a TypeScript class constructor reads as `constructor_declaration` (from `method_definition_plain`), its name fixed text. Flat alias envelope: the rule is one record per parsed node, so an envelope is one node and its former content candidate is no longer a separate case: python `import_list` under `names` and `interpolation` under `format_expression`, TypeScript `object_type` under `interface_body`. The same spans are still built, rendered and compared under the envelope. No node goes untested."
     },
-    "commit": "b09499c",
+    "commit": "a3fe6a2",
     "grammars": {
         "python": {
             "kinds": [
@@ -125,6 +231,7 @@
                 "await",
                 "binary_operator",
                 "block",
+                "block_class_declaration",
                 "boolean_operator",
                 "call",
                 "case_as_pattern",
@@ -145,7 +252,9 @@
                 "concatenated_string",
                 "conditional_expression",
                 "constrained_type",
+                "constructor_declaration",
                 "decorated_definition",
+                "decorated_definition_class_declaration",
                 "decorator",
                 "default_parameter",
                 "delete_statement",
@@ -212,6 +321,7 @@
                 "match_block_empty",
                 "match_statement",
                 "member_type",
+                "method_declaration",
                 "module",
                 "named_expression",
                 "names",
@@ -247,6 +357,7 @@
                 "subscript",
                 "subscripts",
                 "suite_block",
+                "suite_block_class_declaration",
                 "suite_empty",
                 "suite_inline",
                 "try_statement",
@@ -289,7 +400,8 @@
                     "augmented_assignment": 13,
                     "await": 4,
                     "binary_operator": 29,
-                    "block": 146,
+                    "block": 139,
+                    "block_class_declaration": 7,
                     "boolean_operator": 12,
                     "call": 94,
                     "case_as_pattern": 4,
@@ -309,7 +421,8 @@
                     "concatenated_string": 3,
                     "conditional_expression": 4,
                     "constrained_type": 2,
-                    "decorated_definition": 4,
+                    "decorated_definition": 2,
+                    "decorated_definition_class_declaration": 2,
                     "decorator": 5,
                     "default_parameter": 7,
                     "delete_statement": 1,
@@ -339,7 +452,7 @@
                     "for_statement": 7,
                     "format_expression": 4,
                     "format_specifier": 10,
-                    "function_definition": 40,
+                    "function_definition": 35,
                     "future_import_statement": 3,
                     "generator_expression": 5,
                     "generic_type": 21,
@@ -347,12 +460,12 @@
                     "if_clause": 4,
                     "if_statement": 16,
                     "import_from_statement": 8,
-                    "import_list": 13,
+                    "import_list": 10,
                     "import_statement": 3,
                     "integer_binary": 3,
                     "integer_hex": 2,
                     "integer_octal": 3,
-                    "interpolation": 35,
+                    "interpolation": 31,
                     "key_value_pattern": 15,
                     "keyword_argument": 7,
                     "keyword_pattern": 16,
@@ -366,6 +479,7 @@
                     "list_splat_pattern": 10,
                     "match_block_block": 19,
                     "match_statement": 19,
+                    "method_declaration": 5,
                     "module": 115,
                     "named_expression": 11,
                     "names": 3,
@@ -398,7 +512,8 @@
                     "subjects": 19,
                     "subscript": 21,
                     "subscripts": 21,
-                    "suite_block": 146,
+                    "suite_block": 139,
+                    "suite_block_class_declaration": 7,
                     "suite_inline": 6,
                     "try_statement": 3,
                     "tuple": 18,
@@ -426,15 +541,15 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3821,
-                "total": 3821
+                "pass": 3814,
+                "total": 3814
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2647,
+                    "astMatchPass": 2675,
                     "casesByKind": {
                         "_simple_pattern": 38,
-                        "_simple_statements": 218,
+                        "_simple_statements": 230,
                         "aliased_import": 2,
                         "argument_list": 84,
                         "argument_list_elements": 66,
@@ -449,6 +564,7 @@
                         "await": 2,
                         "binary_operator": 24,
                         "block": 94,
+                        "block_class_declaration": 6,
                         "boolean_operator": 8,
                         "call": 80,
                         "case_as_pattern": 4,
@@ -469,6 +585,7 @@
                         "conditional_expression": 4,
                         "constrained_type": 2,
                         "decorated_definition": 2,
+                        "decorated_definition_class_declaration": 2,
                         "decorator": 2,
                         "default_parameter": 12,
                         "delete_statement": 2,
@@ -496,9 +613,9 @@
                         "float_scientific": 4,
                         "for_in_clause": 12,
                         "for_statement": 10,
-                        "format_expression": 1,
+                        "format_expression": 2,
                         "format_specifier": 6,
-                        "function_definition": 34,
+                        "function_definition": 30,
                         "future_import_statement": 2,
                         "generator_expression": 4,
                         "generic_type": 10,
@@ -506,7 +623,7 @@
                         "if_clause": 4,
                         "if_statement": 18,
                         "import_from_statement": 2,
-                        "import_list": 6,
+                        "import_list": 4,
                         "import_statement": 2,
                         "integer_binary": 2,
                         "integer_hex": 2,
@@ -525,9 +642,10 @@
                         "list_splat_pattern": 16,
                         "match_block_block": 38,
                         "match_statement": 38,
+                        "method_declaration": 6,
                         "module": 230,
                         "named_expression": 4,
-                        "names": 1,
+                        "names": 2,
                         "nonlocal_statement": 2,
                         "not_operator": 8,
                         "pair": 6,
@@ -558,6 +676,7 @@
                         "subscript": 22,
                         "subscripts": 22,
                         "suite_block": 94,
+                        "suite_block_class_declaration": 6,
                         "suite_inline": 6,
                         "try_statement": 2,
                         "tuple": 26,
@@ -584,8 +703,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2647,
-                    "total": 2647
+                    "pass": 2675,
+                    "total": 2675
                 },
                 "coverage": {
                     "casesByKind": {
@@ -605,6 +724,7 @@
                         "await": 1,
                         "binary_operator": 1,
                         "block": 1,
+                        "block_class_declaration": 1,
                         "boolean_operator": 1,
                         "call": 1,
                         "case_as_pattern": 1,
@@ -624,7 +744,9 @@
                         "concatenated_string": 1,
                         "conditional_expression": 1,
                         "constrained_type": 1,
+                        "constructor_declaration": 1,
                         "decorated_definition": 1,
+                        "decorated_definition_class_declaration": 1,
                         "decorator": 1,
                         "default_parameter": 1,
                         "delete_statement": 1,
@@ -678,6 +800,7 @@
                         "match_block_empty": 1,
                         "match_statement": 1,
                         "member_type": 1,
+                        "method_declaration": 1,
                         "module": 1,
                         "named_expression": 1,
                         "names": 1,
@@ -713,6 +836,7 @@
                         "subscript": 1,
                         "subscripts": 1,
                         "suite_block": 1,
+                        "suite_block_class_declaration": 1,
                         "suite_empty": 1,
                         "suite_inline": 1,
                         "try_statement": 1,
@@ -740,11 +864,11 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 148,
-                    "total": 148
+                    "pass": 153,
+                    "total": 153
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1385,
+                    "astMatchPass": 1392,
                     "casesByKind": {
                         "_simple_pattern": 19,
                         "_simple_statements": 115,
@@ -762,6 +886,7 @@
                         "await": 1,
                         "binary_operator": 12,
                         "block": 47,
+                        "block_class_declaration": 3,
                         "boolean_operator": 4,
                         "call": 40,
                         "case_as_pattern": 2,
@@ -782,6 +907,7 @@
                         "conditional_expression": 2,
                         "constrained_type": 1,
                         "decorated_definition": 1,
+                        "decorated_definition_class_declaration": 1,
                         "decorator": 1,
                         "default_parameter": 6,
                         "delete_statement": 1,
@@ -817,7 +943,7 @@
                         "for_statement": 5,
                         "format_expression": 1,
                         "format_specifier": 3,
-                        "function_definition": 17,
+                        "function_definition": 15,
                         "future_import_statement": 1,
                         "generator_expression": 2,
                         "generic_type": 5,
@@ -825,7 +951,7 @@
                         "if_clause": 2,
                         "if_statement": 9,
                         "import_from_statement": 1,
-                        "import_list": 3,
+                        "import_list": 2,
                         "import_statement": 1,
                         "integer_binary": 1,
                         "integer_hex": 1,
@@ -844,6 +970,7 @@
                         "list_splat_pattern": 8,
                         "match_block_block": 19,
                         "match_statement": 19,
+                        "method_declaration": 3,
                         "module": 115,
                         "named_expression": 2,
                         "names": 1,
@@ -878,6 +1005,7 @@
                         "subscript": 11,
                         "subscripts": 11,
                         "suite_block": 47,
+                        "suite_block_class_declaration": 3,
                         "suite_empty": 1,
                         "suite_inline": 3,
                         "try_statement": 1,
@@ -905,8 +1033,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1385,
-                    "total": 1385
+                    "pass": 1392,
+                    "total": 1392
                 },
                 "from": {
                     "casesByKind": {
@@ -924,6 +1052,7 @@
                         "await": 1,
                         "binary_operator": 1,
                         "block": 1,
+                        "block_class_declaration": 1,
                         "boolean_operator": 1,
                         "break_statement": 1,
                         "call": 1,
@@ -947,6 +1076,7 @@
                         "constrained_type": 1,
                         "continue_statement": 1,
                         "decorated_definition": 1,
+                        "decorated_definition_class_declaration": 1,
                         "decorator": 1,
                         "default_parameter": 1,
                         "delete_statement": 1,
@@ -1020,6 +1150,7 @@
                         "list_splat_pattern": 1,
                         "match_block_block": 1,
                         "match_statement": 1,
+                        "method_declaration": 1,
                         "module": 1,
                         "named_expression": 1,
                         "names": 1,
@@ -1061,6 +1192,7 @@
                         "subscript": 1,
                         "subscripts": 1,
                         "suite_block": 1,
+                        "suite_block_class_declaration": 1,
                         "suite_empty": 1,
                         "suite_inline": 1,
                         "true": 1,
@@ -1092,8 +1224,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 179,
-                    "total": 179
+                    "pass": 183,
+                    "total": 183
                 },
                 "roundtrip": {
                     "astMatchPass": 115,
@@ -1120,7 +1252,6 @@
                 "inline_flags_group_disable",
                 "inline_flags_group_enable",
                 "inline_flags_group_toggle",
-                "lazy",
                 "lookahead_assertion",
                 "lookaround_assertion",
                 "lookbehind_assertion",
@@ -1133,7 +1264,6 @@
                 "posix_character_class",
                 "term",
                 "term_group",
-                "unicode_property_name",
                 "unicode_property_value_expression",
                 "unicode_property_value_expression_group",
                 "zero_or_more"
@@ -1166,7 +1296,6 @@
                     "posix_character_class": 1,
                     "term": 57,
                     "term_group": 212,
-                    "unicode_property_name": 1,
                     "unicode_property_value_expression": 2,
                     "unicode_property_value_expression_group": 1,
                     "zero_or_more": 8
@@ -1174,12 +1303,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 451,
-                "total": 451
+                "pass": 450,
+                "total": 450
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 320,
+                    "astMatchPass": 319,
                     "casesByKind": {
                         "alternation": 6,
                         "anonymous_capturing_group": 4,
@@ -1207,15 +1336,14 @@
                         "posix_character_class": 2,
                         "term": 74,
                         "term_group": 37,
-                        "unicode_property_name": 1,
                         "unicode_property_value_expression": 4,
                         "unicode_property_value_expression_group": 1,
                         "zero_or_more": 10
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 320,
-                    "total": 320
+                    "pass": 319,
+                    "total": 319
                 },
                 "coverage": {
                     "casesByKind": {
@@ -1254,7 +1382,7 @@
                     "total": 28
                 },
                 "factoryStorage": {
-                    "astMatchPass": 183,
+                    "astMatchPass": 182,
                     "casesByKind": {
                         "alternation": 3,
                         "anonymous_capturing_group": 2,
@@ -1282,15 +1410,14 @@
                         "posix_character_class": 1,
                         "term": 37,
                         "term_group": 37,
-                        "unicode_property_name": 1,
                         "unicode_property_value_expression": 2,
                         "unicode_property_value_expression_group": 1,
                         "zero_or_more": 5
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 183,
-                    "total": 183
+                    "pass": 182,
+                    "total": 182
                 },
                 "from": {
                     "casesByKind": {
@@ -1406,7 +1533,6 @@
                 "const_item",
                 "const_parameter",
                 "continue_expression",
-                "crate_visibility_modifier",
                 "declaration_list",
                 "delim_token_tree_brace",
                 "delim_token_tree_bracket",
@@ -1424,6 +1550,7 @@
                 "expression_statement",
                 "expression_statement_with_semi",
                 "expressions",
+                "extension_declaration_body",
                 "extern_crate_declaration",
                 "extern_modifier",
                 "field_declaration",
@@ -1487,6 +1614,7 @@
                 "match_expression",
                 "match_pattern",
                 "metavariable",
+                "method_declaration",
                 "mod_item_external",
                 "mod_item_inline",
                 "mut_pattern",
@@ -1532,6 +1660,7 @@
                 "shebang",
                 "shorthand_field_identifier",
                 "shorthand_field_initializer",
+                "signature_method_declaration",
                 "slice_pattern",
                 "source_file",
                 "static_item",
@@ -1552,6 +1681,7 @@
                 "token_tree_pattern_bracket",
                 "token_tree_pattern_paren",
                 "trait_bounds",
+                "trait_interface_declaration_body",
                 "trait_item",
                 "try_block",
                 "try_expression",
@@ -1636,8 +1766,7 @@
                     "const_item": 8,
                     "const_parameter": 3,
                     "continue_expression": 3,
-                    "crate_visibility_modifier": 5,
-                    "declaration_list": 38,
+                    "declaration_list": 9,
                     "delim_token_tree_brace": 5,
                     "delim_token_tree_bracket": 3,
                     "delim_token_tree_paren": 47,
@@ -1652,6 +1781,7 @@
                     "expression_statement": 214,
                     "expression_statement_with_semi": 166,
                     "expressions": 6,
+                    "extension_declaration_body": 17,
                     "extern_crate_declaration": 3,
                     "extern_modifier": 8,
                     "field_declaration": 15,
@@ -1667,9 +1797,9 @@
                     "for_expression": 7,
                     "for_lifetimes": 1,
                     "foreign_mod_item_body": 3,
-                    "function_item": 64,
+                    "function_item": 58,
                     "function_modifiers": 9,
-                    "function_signature_item": 5,
+                    "function_signature_item": 1,
                     "function_type": 10,
                     "function_type_fn_form": 5,
                     "function_type_trait_form": 5,
@@ -1710,6 +1840,7 @@
                     "match_expression": 13,
                     "match_pattern": 40,
                     "metavariable": 10,
+                    "method_declaration": 6,
                     "mod_item_external": 3,
                     "mod_item_inline": 6,
                     "mut_pattern": 3,
@@ -1755,6 +1886,7 @@
                     "shebang": 2,
                     "shorthand_field_identifier": 4,
                     "shorthand_field_initializer": 3,
+                    "signature_method_declaration": 4,
                     "slice_pattern": 1,
                     "source_file": 149,
                     "static_item": 3,
@@ -1773,6 +1905,7 @@
                     "token_tree_pattern_bracket": 1,
                     "token_tree_pattern_paren": 7,
                     "trait_bounds": 31,
+                    "trait_interface_declaration_body": 12,
                     "trait_item": 12,
                     "try_block": 1,
                     "try_expression": 9,
@@ -1817,12 +1950,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3810,
-                "total": 3810
+                "pass": 3805,
+                "total": 3805
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 3079,
+                    "astMatchPass": 3084,
                     "casesByKind": {
                         "_let_chain": 6,
                         "abstract_type": 14,
@@ -1865,8 +1998,7 @@
                         "const_item": 12,
                         "const_parameter": 6,
                         "continue_expression": 4,
-                        "crate_visibility_modifier": 1,
-                        "declaration_list": 44,
+                        "declaration_list": 8,
                         "delim_token_tree_brace": 8,
                         "delim_token_tree_bracket": 6,
                         "delim_token_tree_paren": 30,
@@ -1881,6 +2013,7 @@
                         "expression_statement": 130,
                         "expression_statement_with_semi": 49,
                         "expressions": 8,
+                        "extension_declaration_body": 20,
                         "extern_crate_declaration": 2,
                         "extern_modifier": 6,
                         "field_declaration": 10,
@@ -1896,9 +2029,9 @@
                         "for_expression": 6,
                         "for_lifetimes": 2,
                         "foreign_mod_item_body": 2,
-                        "function_item": 70,
+                        "function_item": 64,
                         "function_modifiers": 10,
-                        "function_signature_item": 10,
+                        "function_signature_item": 2,
                         "function_type": 12,
                         "function_type_fn_form": 2,
                         "function_type_trait_form": 5,
@@ -1939,6 +2072,7 @@
                         "match_expression": 18,
                         "match_pattern": 18,
                         "metavariable": 2,
+                        "method_declaration": 6,
                         "mod_item_external": 4,
                         "mod_item_inline": 6,
                         "mut_pattern": 6,
@@ -1984,6 +2118,7 @@
                         "shebang": 4,
                         "shorthand_field_identifier": 2,
                         "shorthand_field_initializer": 4,
+                        "signature_method_declaration": 8,
                         "slice_pattern": 2,
                         "source_file": 296,
                         "static_item": 4,
@@ -2002,6 +2137,7 @@
                         "token_tree_pattern_bracket": 2,
                         "token_tree_pattern_paren": 2,
                         "trait_bounds": 30,
+                        "trait_interface_declaration_body": 22,
                         "trait_item": 22,
                         "try_block": 2,
                         "try_expression": 8,
@@ -2045,8 +2181,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 3079,
-                    "total": 3079
+                    "pass": 3084,
+                    "total": 3084
                 },
                 "coverage": {
                     "casesByKind": {
@@ -2103,6 +2239,7 @@
                         "expression_statement": 1,
                         "expression_statement_with_semi": 1,
                         "expressions": 1,
+                        "extension_declaration_body": 1,
                         "extern_crate_declaration": 1,
                         "extern_modifier": 1,
                         "field_declaration": 1,
@@ -2160,6 +2297,7 @@
                         "match_block_arms": 1,
                         "match_expression": 1,
                         "match_pattern": 1,
+                        "method_declaration": 1,
                         "mod_item_external": 1,
                         "mod_item_inline": 1,
                         "mut_pattern": 1,
@@ -2202,6 +2340,7 @@
                         "scoped_use_list": 1,
                         "self_parameter": 1,
                         "shorthand_field_initializer": 1,
+                        "signature_method_declaration": 1,
                         "slice_pattern": 1,
                         "source_file": 1,
                         "static_item": 1,
@@ -2222,6 +2361,7 @@
                         "token_tree_pattern_bracket": 1,
                         "token_tree_pattern_paren": 1,
                         "trait_bounds": 1,
+                        "trait_interface_declaration_body": 1,
                         "trait_item": 1,
                         "try_block": 1,
                         "try_expression": 1,
@@ -2264,11 +2404,11 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 211,
-                    "total": 211
+                    "pass": 215,
+                    "total": 215
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1692,
+                    "astMatchPass": 1694,
                     "casesByKind": {
                         "_let_chain": 3,
                         "abstract_type": 7,
@@ -2311,8 +2451,7 @@
                         "const_item": 6,
                         "const_parameter": 3,
                         "continue_expression": 2,
-                        "crate_visibility_modifier": 1,
-                        "declaration_list": 22,
+                        "declaration_list": 4,
                         "delim_token_tree_brace": 4,
                         "delim_token_tree_bracket": 3,
                         "delim_token_tree_paren": 15,
@@ -2327,6 +2466,7 @@
                         "expression_statement": 65,
                         "expression_statement_with_semi": 49,
                         "expressions": 4,
+                        "extension_declaration_body": 10,
                         "extern_crate_declaration": 1,
                         "extern_modifier": 3,
                         "field_declaration": 5,
@@ -2342,9 +2482,9 @@
                         "for_expression": 3,
                         "for_lifetimes": 1,
                         "foreign_mod_item_body": 1,
-                        "function_item": 35,
+                        "function_item": 32,
                         "function_modifiers": 5,
-                        "function_signature_item": 5,
+                        "function_signature_item": 1,
                         "function_type": 6,
                         "function_type_fn_form": 2,
                         "function_type_trait_form": 5,
@@ -2385,6 +2525,7 @@
                         "match_expression": 9,
                         "match_pattern": 9,
                         "metavariable": 1,
+                        "method_declaration": 3,
                         "mod_item_external": 2,
                         "mod_item_inline": 3,
                         "mut_pattern": 3,
@@ -2430,6 +2571,7 @@
                         "shebang": 2,
                         "shorthand_field_identifier": 2,
                         "shorthand_field_initializer": 2,
+                        "signature_method_declaration": 4,
                         "slice_pattern": 1,
                         "source_file": 148,
                         "static_item": 2,
@@ -2448,6 +2590,7 @@
                         "token_tree_pattern_bracket": 1,
                         "token_tree_pattern_paren": 1,
                         "trait_bounds": 15,
+                        "trait_interface_declaration_body": 11,
                         "trait_item": 11,
                         "try_block": 1,
                         "try_expression": 4,
@@ -2491,8 +2634,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1692,
-                    "total": 1692
+                    "pass": 1694,
+                    "total": 1694
                 },
                 "from": {
                     "casesByKind": {
@@ -2559,6 +2702,7 @@
                         "expression_statement": 1,
                         "expression_statement_with_semi": 1,
                         "expressions": 1,
+                        "extension_declaration_body": 1,
                         "extern_crate_declaration": 1,
                         "extern_modifier": 1,
                         "field_declaration": 1,
@@ -2626,6 +2770,7 @@
                         "match_expression": 1,
                         "match_pattern": 1,
                         "metavariable": 1,
+                        "method_declaration": 1,
                         "mod_item_external": 1,
                         "mod_item_inline": 1,
                         "mut_pattern": 1,
@@ -2681,6 +2826,7 @@
                         "shebang": 1,
                         "shorthand_field_identifier": 1,
                         "shorthand_field_initializer": 1,
+                        "signature_method_declaration": 1,
                         "slice_pattern": 1,
                         "source_file": 1,
                         "static_item": 1,
@@ -2703,6 +2849,7 @@
                         "token_tree_pattern_bracket": 1,
                         "token_tree_pattern_paren": 1,
                         "trait_bounds": 1,
+                        "trait_interface_declaration_body": 1,
                         "trait_item": 1,
                         "try_block": 1,
                         "try_expression": 1,
@@ -2749,8 +2896,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 250,
-                    "total": 250
+                    "pass": 254,
+                    "total": 254
                 },
                 "roundtrip": {
                     "astMatchPass": 149,
@@ -3004,6 +3151,7 @@
                 "conditional_type",
                 "constraint",
                 "construct_signature",
+                "constructor_declaration",
                 "constructor_type",
                 "continue_statement",
                 "debugger_statement",
@@ -3195,7 +3343,7 @@
             ],
             "parityFixtures": {
                 "casesByKind": {
-                    "_lhs_expression": 66,
+                    "_lhs_expression": 68,
                     "abstract_class_declaration": 5,
                     "abstract_method_signature_getter": 1,
                     "abstract_method_signature_plain": 3,
@@ -3216,7 +3364,7 @@
                     "break_statement": 6,
                     "call_expression_call": 19,
                     "call_expression_member": 1,
-                    "call_signature": 3,
+                    "call_signature": 4,
                     "catch_clause": 3,
                     "catch_clause_group": 3,
                     "class": 1,
@@ -3229,7 +3377,8 @@
                     "class_heritage_extends_clause": 12,
                     "class_static_block": 2,
                     "conditional_type": 17,
-                    "constraint": 6,
+                    "constraint": 7,
+                    "constructor_declaration": 1,
                     "constructor_type": 4,
                     "continue_statement": 2,
                     "debugger_statement": 2,
@@ -3258,13 +3407,14 @@
                     "expression_statement": 47,
                     "extends_clause": 12,
                     "extends_clause_single": 13,
+                    "extends_type_clause": 2,
                     "finally_clause": 3,
                     "flow_maybe_type": 4,
                     "for_header_lhs": 2,
                     "for_in_statement": 2,
                     "for_statement": 3,
-                    "formal_parameters": 89,
-                    "formal_parameters_elements": 48,
+                    "formal_parameters": 92,
+                    "formal_parameters_elements": 50,
                     "formal_parameters_elements_receiver": 2,
                     "formal_parameters_elements_receiver_group": 1,
                     "function_declaration": 16,
@@ -3272,7 +3422,7 @@
                     "function_signature": 15,
                     "function_type": 17,
                     "generator_function_declaration": 1,
-                    "generic_type": 32,
+                    "generic_type": 34,
                     "if_statement": 3,
                     "implements_clause": 5,
                     "import_alias": 3,
@@ -3285,13 +3435,13 @@
                     "import_specifiers": 11,
                     "import_statement": 13,
                     "import_statement_clause_from": 13,
-                    "index_signature_colon": 11,
+                    "index_signature_colon": 12,
                     "index_signature_mapped_type_clause": 6,
                     "index_type_query": 16,
                     "infer_type": 6,
                     "instantiation_expression": 3,
-                    "interface_body": 12,
-                    "interface_declaration": 12,
+                    "interface_body": 17,
+                    "interface_declaration": 17,
                     "internal_module": 6,
                     "intersection_type": 13,
                     "lexical_declaration": 36,
@@ -3300,8 +3450,8 @@
                     "lookup_type": 12,
                     "mapped_type_clause": 6,
                     "member_expression": 18,
-                    "method_definition_plain": 15,
-                    "method_signature_plain": 14,
+                    "method_definition_plain": 14,
+                    "method_signature_plain": 16,
                     "module": 10,
                     "named_imports": 11,
                     "namespace_export": 1,
@@ -3311,8 +3461,8 @@
                     "non_null_expression": 5,
                     "object": 6,
                     "object_pattern": 1,
-                    "object_type": 45,
-                    "object_type_content": 35,
+                    "object_type": 35,
+                    "object_type_content": 41,
                     "omitting_type_annotation": 1,
                     "opting_type_annotation": 1,
                     "optional_parameter": 6,
@@ -3322,13 +3472,13 @@
                     "parenthesized_expression_typed": 10,
                     "parenthesized_type": 11,
                     "private_property_identifier": 1,
-                    "program": 116,
-                    "property_identifier": 121,
-                    "property_signature": 27,
+                    "program": 118,
+                    "property_identifier": 130,
+                    "property_signature": 35,
                     "public_field_definition_plain": 19,
                     "readonly_type": 6,
                     "receiver_parameter_declaration": 2,
-                    "required_parameter": 56,
+                    "required_parameter": 58,
                     "rest_pattern": 3,
                     "rest_type": 1,
                     "return_statement": 11,
@@ -3353,14 +3503,14 @@
                     "tuple_parameter": 2,
                     "tuple_type": 8,
                     "tuple_type_members": 7,
-                    "type_alias_declaration": 69,
-                    "type_annotation": 182,
-                    "type_arguments": 55,
+                    "type_alias_declaration": 70,
+                    "type_annotation": 195,
+                    "type_arguments": 57,
                     "type_assertion": 2,
-                    "type_identifier": 425,
-                    "type_parameter": 46,
-                    "type_parameters": 32,
-                    "type_parameters_elements": 32,
+                    "type_identifier": 446,
+                    "type_parameter": 48,
+                    "type_parameters": 33,
+                    "type_parameters_elements": 33,
                     "type_predicate": 6,
                     "type_predicate_annotation": 4,
                     "type_query": 15,
@@ -3369,7 +3519,7 @@
                     "type_query_instantiation_expression": 1,
                     "type_query_member_expression": 3,
                     "type_query_member_expression_in_type_annotation": 1,
-                    "types": 55,
+                    "types": 57,
                     "unary_expression": 3,
                     "union_type": 18,
                     "update_expression_postfix": 3,
@@ -3381,14 +3531,14 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 2904,
-                "total": 2904
+                "pass": 2990,
+                "total": 2990
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2497,
+                    "astMatchPass": 2560,
                     "casesByKind": {
-                        "_lhs_expression": 52,
+                        "_lhs_expression": 56,
                         "abstract_class_declaration": 6,
                         "abstract_method_signature_getter": 2,
                         "abstract_method_signature_plain": 4,
@@ -3409,7 +3559,7 @@
                         "break_statement": 4,
                         "call_expression_call": 24,
                         "call_expression_member": 2,
-                        "call_signature": 4,
+                        "call_signature": 6,
                         "catch_clause": 6,
                         "catch_clause_group": 3,
                         "class": 2,
@@ -3422,7 +3572,8 @@
                         "class_heritage_extends_clause": 6,
                         "class_static_block": 2,
                         "conditional_type": 4,
-                        "constraint": 8,
+                        "constraint": 10,
+                        "constructor_declaration": 2,
                         "constructor_type": 6,
                         "continue_statement": 4,
                         "debugger_statement": 4,
@@ -3451,13 +3602,14 @@
                         "expression_statement": 50,
                         "extends_clause": 12,
                         "extends_clause_single": 12,
+                        "extends_type_clause": 2,
                         "finally_clause": 6,
                         "flow_maybe_type": 4,
                         "for_header_lhs": 4,
                         "for_in_statement": 4,
                         "for_statement": 4,
-                        "formal_parameters": 78,
-                        "formal_parameters_elements": 48,
+                        "formal_parameters": 82,
+                        "formal_parameters_elements": 52,
                         "formal_parameters_elements_receiver": 4,
                         "formal_parameters_elements_receiver_group": 1,
                         "function_declaration": 16,
@@ -3465,7 +3617,7 @@
                         "function_signature": 18,
                         "function_type": 20,
                         "generator_function_declaration": 2,
-                        "generic_type": 34,
+                        "generic_type": 36,
                         "if_statement": 6,
                         "implements_clause": 2,
                         "import_alias": 6,
@@ -3478,13 +3630,13 @@
                         "import_specifiers": 2,
                         "import_statement": 4,
                         "import_statement_clause_from": 2,
-                        "index_signature_colon": 10,
+                        "index_signature_colon": 12,
                         "index_signature_mapped_type_clause": 6,
                         "index_type_query": 12,
                         "infer_type": 4,
                         "instantiation_expression": 2,
-                        "interface_body": 9,
-                        "interface_declaration": 18,
+                        "interface_body": 20,
+                        "interface_declaration": 20,
                         "internal_module": 10,
                         "intersection_type": 16,
                         "lexical_declaration": 44,
@@ -3494,7 +3646,7 @@
                         "mapped_type_clause": 6,
                         "member_expression": 24,
                         "method_definition_plain": 20,
-                        "method_signature_plain": 12,
+                        "method_signature_plain": 14,
                         "module": 10,
                         "named_imports": 2,
                         "namespace_export": 2,
@@ -3504,8 +3656,8 @@
                         "non_null_expression": 4,
                         "object": 10,
                         "object_pattern": 2,
-                        "object_type": 50,
-                        "object_type_content": 42,
+                        "object_type": 38,
+                        "object_type_content": 46,
                         "omitting_type_annotation": 2,
                         "opting_type_annotation": 2,
                         "optional_parameter": 8,
@@ -3515,13 +3667,13 @@
                         "parenthesized_expression_typed": 10,
                         "parenthesized_type": 14,
                         "private_property_identifier": 2,
-                        "program": 232,
-                        "property_identifier": 44,
-                        "property_signature": 22,
+                        "program": 236,
+                        "property_identifier": 46,
+                        "property_signature": 26,
                         "public_field_definition_plain": 18,
                         "readonly_type": 4,
                         "receiver_parameter_declaration": 4,
-                        "required_parameter": 46,
+                        "required_parameter": 50,
                         "rest_pattern": 4,
                         "rest_type": 2,
                         "return_statement": 16,
@@ -3546,14 +3698,14 @@
                         "tuple_parameter": 2,
                         "tuple_type": 6,
                         "tuple_type_members": 6,
-                        "type_alias_declaration": 52,
-                        "type_annotation": 110,
-                        "type_arguments": 54,
+                        "type_alias_declaration": 54,
+                        "type_annotation": 114,
+                        "type_arguments": 56,
                         "type_assertion": 2,
-                        "type_identifier": 75,
-                        "type_parameter": 34,
-                        "type_parameters": 34,
-                        "type_parameters_elements": 34,
+                        "type_identifier": 77,
+                        "type_parameter": 36,
+                        "type_parameters": 36,
+                        "type_parameters_elements": 36,
                         "type_predicate": 6,
                         "type_predicate_annotation": 4,
                         "type_query": 12,
@@ -3562,7 +3714,7 @@
                         "type_query_instantiation_expression": 2,
                         "type_query_member_expression": 6,
                         "type_query_member_expression_in_type_annotation": 2,
-                        "types": 54,
+                        "types": 56,
                         "unary_expression": 2,
                         "union_type": 16,
                         "update_expression_postfix": 6,
@@ -3573,8 +3725,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2497,
-                    "total": 2497
+                    "pass": 2560,
+                    "total": 2560
                 },
                 "coverage": {
                     "casesByKind": {
@@ -3624,6 +3776,7 @@
                         "conditional_type": 1,
                         "constraint": 1,
                         "construct_signature": 1,
+                        "constructor_declaration": 1,
                         "constructor_type": 1,
                         "continue_statement": 1,
                         "debugger_statement": 1,
@@ -3797,13 +3950,13 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 216,
-                    "total": 216
+                    "pass": 217,
+                    "total": 217
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1326,
+                    "astMatchPass": 1355,
                     "casesByKind": {
-                        "_lhs_expression": 26,
+                        "_lhs_expression": 28,
                         "abstract_class_declaration": 3,
                         "abstract_method_signature_getter": 1,
                         "abstract_method_signature_plain": 2,
@@ -3824,7 +3977,7 @@
                         "break_statement": 2,
                         "call_expression_call": 12,
                         "call_expression_member": 1,
-                        "call_signature": 2,
+                        "call_signature": 3,
                         "catch_clause": 3,
                         "catch_clause_group": 3,
                         "class": 1,
@@ -3837,7 +3990,8 @@
                         "class_heritage_extends_clause": 6,
                         "class_static_block": 1,
                         "conditional_type": 2,
-                        "constraint": 4,
+                        "constraint": 5,
+                        "constructor_declaration": 1,
                         "constructor_type": 3,
                         "continue_statement": 2,
                         "debugger_statement": 2,
@@ -3866,13 +4020,14 @@
                         "expression_statement": 25,
                         "extends_clause": 6,
                         "extends_clause_single": 6,
+                        "extends_type_clause": 1,
                         "finally_clause": 3,
                         "flow_maybe_type": 2,
                         "for_header_lhs": 2,
                         "for_in_statement": 2,
                         "for_statement": 2,
-                        "formal_parameters": 39,
-                        "formal_parameters_elements": 24,
+                        "formal_parameters": 41,
+                        "formal_parameters_elements": 26,
                         "formal_parameters_elements_receiver": 2,
                         "formal_parameters_elements_receiver_group": 1,
                         "function_declaration": 8,
@@ -3880,7 +4035,7 @@
                         "function_signature": 9,
                         "function_type": 10,
                         "generator_function_declaration": 1,
-                        "generic_type": 17,
+                        "generic_type": 18,
                         "if_statement": 3,
                         "implements_clause": 1,
                         "import_alias": 3,
@@ -3893,13 +4048,13 @@
                         "import_specifiers": 1,
                         "import_statement": 2,
                         "import_statement_clause_from": 2,
-                        "index_signature_colon": 5,
+                        "index_signature_colon": 6,
                         "index_signature_mapped_type_clause": 3,
                         "index_type_query": 6,
                         "infer_type": 2,
                         "instantiation_expression": 1,
-                        "interface_body": 9,
-                        "interface_declaration": 9,
+                        "interface_body": 10,
+                        "interface_declaration": 10,
                         "internal_module": 5,
                         "intersection_type": 8,
                         "lexical_declaration": 22,
@@ -3909,7 +4064,7 @@
                         "mapped_type_clause": 3,
                         "member_expression": 12,
                         "method_definition_plain": 10,
-                        "method_signature_plain": 6,
+                        "method_signature_plain": 7,
                         "module": 5,
                         "named_imports": 1,
                         "namespace_export": 1,
@@ -3919,8 +4074,8 @@
                         "non_null_expression": 2,
                         "object": 5,
                         "object_pattern": 1,
-                        "object_type": 25,
-                        "object_type_content": 21,
+                        "object_type": 19,
+                        "object_type_content": 23,
                         "omitting_type_annotation": 1,
                         "opting_type_annotation": 1,
                         "optional_parameter": 4,
@@ -3930,13 +4085,13 @@
                         "parenthesized_expression_typed": 5,
                         "parenthesized_type": 7,
                         "private_property_identifier": 1,
-                        "program": 116,
-                        "property_identifier": 44,
-                        "property_signature": 11,
+                        "program": 118,
+                        "property_identifier": 46,
+                        "property_signature": 13,
                         "public_field_definition_plain": 9,
                         "readonly_type": 2,
                         "receiver_parameter_declaration": 2,
-                        "required_parameter": 23,
+                        "required_parameter": 25,
                         "rest_pattern": 2,
                         "rest_type": 1,
                         "return_statement": 8,
@@ -3961,14 +4116,14 @@
                         "tuple_parameter": 1,
                         "tuple_type": 3,
                         "tuple_type_members": 3,
-                        "type_alias_declaration": 26,
-                        "type_annotation": 55,
-                        "type_arguments": 27,
+                        "type_alias_declaration": 27,
+                        "type_annotation": 57,
+                        "type_arguments": 28,
                         "type_assertion": 1,
-                        "type_identifier": 75,
-                        "type_parameter": 17,
-                        "type_parameters": 17,
-                        "type_parameters_elements": 17,
+                        "type_identifier": 77,
+                        "type_parameter": 18,
+                        "type_parameters": 18,
+                        "type_parameters_elements": 18,
                         "type_predicate": 3,
                         "type_predicate_annotation": 2,
                         "type_query": 6,
@@ -3977,7 +4132,7 @@
                         "type_query_instantiation_expression": 1,
                         "type_query_member_expression": 3,
                         "type_query_member_expression_in_type_annotation": 1,
-                        "types": 27,
+                        "types": 28,
                         "unary_expression": 1,
                         "union_type": 8,
                         "update_expression_postfix": 3,
@@ -3988,8 +4143,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1326,
-                    "total": 1326
+                    "pass": 1355,
+                    "total": 1355
                 },
                 "from": {
                     "casesByKind": {
@@ -4030,6 +4185,7 @@
                         "comment_line": 1,
                         "conditional_type": 1,
                         "constraint": 1,
+                        "constructor_declaration": 1,
                         "constructor_type": 1,
                         "continue_statement": 1,
                         "debugger_statement": 1,
@@ -4060,6 +4216,7 @@
                         "expression_statement": 1,
                         "extends_clause": 1,
                         "extends_clause_single": 1,
+                        "extends_type_clause": 1,
                         "false": 1,
                         "finally_clause": 1,
                         "flow_maybe_type": 1,
@@ -4194,22 +4351,22 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 198,
-                    "total": 198
+                    "pass": 200,
+                    "total": 200
                 },
                 "roundtrip": {
-                    "astMatchPass": 116,
+                    "astMatchPass": 118,
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 116,
+                    "pass": 118,
                     "total": 119
                 }
             }
         }
     },
     "totals": {
-        "fail": 4,
-        "pass": 26693,
-        "total": 26697
+        "fail": 2,
+        "pass": 26920,
+        "total": 26922
     }
 }

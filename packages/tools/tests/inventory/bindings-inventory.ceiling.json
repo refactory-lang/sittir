@@ -2,5 +2,12 @@
 	"unmapped": 16,
 	"compiling": ["python", "rust", "typescript"],
 	"vocabularyDisagreements": [],
-	"unroutedScope": []
+	"unroutedScope": [],
+	"stoppedAtClones": [
+		"python: constructor_declaration @declaration.function",
+		"typescript: constructor_declaration @declaration.method.private",
+		"typescript: constructor_declaration @declaration.method.protected",
+		"typescript: constructor_declaration @declaration.method.public",
+		"typescript: constructor_declaration @declaration.method"
+	]
 }

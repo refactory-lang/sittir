@@ -2,7 +2,8 @@
  * Codemod helper for the US1 acceptance suite (T050 / T051).
  *
  * Reads each `.rs` file in a sample corpus, finds every short
- * (≤5-line) `function_item` whose attribute list does not already
+ * (≤5-line) function (`function_item`, or `method_declaration` inside an
+ * impl or trait) whose attribute list does not already
  * contain `#[inline]`, and inserts `#[inline]\n` before the function.
  *
  * Applies its insertions by splicing the text into the source at the
@@ -19,7 +20,9 @@ import { join } from 'node:path';
 import { loadLanguageForGrammar } from '../../packages/tools/src/validate/common.ts';
 import { inlineAnchor } from '../../packages/tools/src/exercise/codemod-corpus.ts';
 
-/** A function_item match marked for inlining. */
+const FUNCTION_KINDS = new Set(['function_item', 'method_declaration']);
+
+/** A function match marked for inlining. */
 interface InlineMatch {
 	/** String index of the first character of the function (or its
 	 *  first existing attribute, if any). The `#[inline]\n` is
@@ -63,7 +66,7 @@ export async function runCodemodOnSource(source: string): Promise<{ output: stri
 }
 
 /**
- * Walk the tree, collect every function_item whose body has ≤ 5 lines
+ * Walk the tree, collect every function whose body has ≤ 5 lines
  * AND whose existing attribute_item siblings don't already include
  * `#[inline]`. The byte offset returned is the start of the first
  * existing attribute (or the function itself when there are none) so
@@ -79,7 +82,7 @@ function findInlineCandidates(rootNode: any, source: string): InlineMatch[] {
 
 function visit(cursor: any, source: string, out: InlineMatch[]): void {
 	const node = cursor.currentNode;
-	if (node.type === 'function_item') {
+	if (FUNCTION_KINDS.has(node.type)) {
 		const candidate = considerFunction(node, source);
 		if (candidate !== null) out.push(candidate);
 		// Don't recurse into function bodies — nested fn defs are
@@ -93,11 +96,11 @@ function visit(cursor: any, source: string, out: InlineMatch[]): void {
 }
 
 /**
- * Decide whether a function_item is a codemod candidate. Returns the
+ * Decide whether a function is a codemod candidate. Returns the
  * splice-anchor + indent on success, null on skip. The selection itself is
  * the tool's (`inlineAnchor`), read through tree-sitter nodes. Attribute
  * items attach as siblings in the declaration_list / source_file parent, not
- * as children of function_item, so the siblings are the parent's named
+ * as children of the function, so the siblings are the parent's named
  * children.
  */
 function considerFunction(node: any, source: string): InlineMatch | null {

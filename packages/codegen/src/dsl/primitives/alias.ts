@@ -1,4 +1,7 @@
 import type { Rule } from '../../types/rule.ts';
+import { isSymbolType } from '../../types/runtime-shapes.ts';
+import { recordAlias } from '../transform/transform.ts';
+import { wireInPathEdit } from '../wire/wire.ts';
 import { namedCopy } from './copy.ts';
 
 export interface AliasPlaceholder {
@@ -9,6 +12,8 @@ export interface AliasPlaceholder {
 export function isAliasPlaceholder(v: unknown): v is AliasPlaceholder {
 	return !!v && typeof v === 'object' && (v as { __sittirPlaceholder?: unknown }).__sittirPlaceholder === 'alias';
 }
+
+const isSymbol = (rule: unknown): rule is { readonly type: 'SYMBOL'; readonly name: string } => isSymbolType((rule as { readonly type?: unknown } | null)?.type);
 
 export function alias(rule: Rule | string, value?: string | Rule): unknown {
 	if (typeof rule === 'string' && value === undefined) {
@@ -26,7 +31,11 @@ export function alias(rule: Rule | string, value?: string | Rule): unknown {
 	}
 
 	if (value !== undefined) {
-		return namedCopy(rule, value) ?? native(rule, value);
+		const copied = namedCopy(rule, value);
+		if (copied !== undefined) return copied;
+		const shown = native(rule, value) as { readonly named?: boolean; readonly value?: unknown };
+		if (wireInPathEdit() && isSymbol(rule) && shown.named === true && typeof shown.value === 'string') recordAlias(rule.name, shown.value);
+		return shown;
 	}
 
 	return native(rule, rule);

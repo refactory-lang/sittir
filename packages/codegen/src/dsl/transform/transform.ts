@@ -12,7 +12,7 @@ import {
 import type { PathSegment } from './transform-path.ts';
 import { isFieldPlaceholder, maybeKeywordSymbol } from '../primitives/field.ts';
 import type { FieldPlaceholder } from '../primitives/field.ts';
-import { isAliasPlaceholder } from '../primitives/alias.ts';
+import { alias, isAliasPlaceholder } from '../primitives/alias.ts';
 import { editedCopy, refuseSplitDisplays } from '../primitives/copy.ts';
 import type { AliasPlaceholder } from '../primitives/alias.ts';
 import { isRulePlaceholder, type RulePlaceholder } from '../primitives/rule.ts';
@@ -63,6 +63,7 @@ import {
 	wireQueueRename,
 	wireRefuse,
 	wireAliasTargetIssue,
+	wireAliasSite,
 	wireGetLiftBody,
 	wireElementSlotOf,
 	wireLiftRenamedTo,
@@ -906,12 +907,12 @@ function recordFieldEffect(name: string, member: RuntimeRule): void {
 }
 
 function aliasInPlace(member: RuntimeRule, name: string): RuntimeRule {
-	recordAlias((member as unknown as { name: string }).name, name);
-	return nativeRuleFn<(content: unknown, value: unknown) => RuntimeRule>('alias')(member, symbolRef(name));
+	return alias(member as never, symbolRef(name) as never) as RuntimeRule;
 }
 
 export function recordAlias(from: string, to: string): void {
-	wireRecordBindingEffect({ kind: 'alias', from, to });
+	const site = wireAliasSite();
+	wireRecordBindingEffect({ kind: 'alias', from, to, ...(site === undefined ? {} : { site }) });
 	refuseAliasTarget(from, to);
 }
 

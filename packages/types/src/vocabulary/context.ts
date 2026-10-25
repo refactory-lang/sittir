@@ -310,6 +310,13 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['statement'];
 		};
+		readonly 'declaration.constructor': {
+			readonly returnType:
+				| V.Clause.Bounds.Removed<G>
+				| V.Expression.Call.Macro<G>
+				| G['identifier']
+				| G['type'];
+		};
 		readonly 'declaration.enum_member': {
 			readonly body: V.Declaration.Field<G>;
 			readonly name: G['identifier'] | G['literal'] | string;

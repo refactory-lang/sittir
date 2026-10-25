@@ -1,0 +1,117 @@
+Each old path, and the files that spell it (as a path or as its qualified interface name), with counts
+
+clause.match.arm.last -> clause.case.match [NO7]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/clause.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+clause.match.arm -> clause.case.match [NO7]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/clause.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (6), packages/rust/src/portable.ts (11)
+
+clause.match -> clause.case.match [NO7]
+  source: packages/types/src/vocabulary/features/match-expressions/clause.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/portable.ts (8)
+
+pattern.as -> (removed) [NO8]
+  source: packages/python/bindings.scm (1), packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (2)
+  test: packages/tools/tests/portable/is.test.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+pattern.case.list -> pattern.list [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.tuple -> pattern.tuple [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.or -> pattern.or [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.splat -> pattern.rest [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.dictionary -> pattern.map [NO9 NT3]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.class -> pattern.struct [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.keyword -> pattern.struct.field [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case.complex -> pattern.complex [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/complex-numbers/pattern.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+pattern.case -> (removed) [NO9]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+identifier.property.shorthand -> identifier [ID1]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/identifier.ts (1), packages/typescript/bindings.scm (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9), packages/typescript/src/node-model-portable.json5 (4), packages/typescript/src/portable.ts (10)
+
+identifier.property -> identifier [ID1]
+  source: packages/types/src/vocabulary/identifier.ts (1), packages/typescript/bindings.scm (2)
+  test: packages/codegen/src/bindings/__tests__/routes.test.ts (2), packages/tools/tests/portable/is.test.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/portable.ts (8), packages/typescript/src/node-model-portable.json5 (4), packages/typescript/src/portable.ts (10)
+
+identifier.type -> identifier [ID1]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/identifier.ts (1), packages/typescript/bindings.scm (1)
+  test: packages/tools/tests/inventory/bindings-inventory.test.ts (1), packages/tools/tests/inventory/interface-extends.test.ts (1), packages/tools/tests/portable/is.test.ts (3)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9), packages/typescript/src/node-model-portable.json5 (2), packages/typescript/src/portable.ts (9)
+
+identifier.field -> identifier [ID1]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/identifier.ts (1)
+  test: packages/codegen/src/bindings/__tests__/routes.test.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+identifier.dotted -> identifier.qualified [ID2]
+  source: packages/python/bindings.scm (1), packages/types/src/vocabulary/identifier.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9)
+
+identifier.nested -> identifier.qualified [ID2]
+  source: packages/types/src/vocabulary/identifier.ts (1), packages/typescript/bindings.scm (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/typescript/src/node-model-portable.json5 (2), packages/typescript/src/portable.ts (9)
+
+identifier.scoped -> identifier.qualified [ID2]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/identifier.ts (2)
+  test: packages/codegen/src/bindings/__tests__/routes.test.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+type.path.expression -> identifier.qualified [ID2]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/type-annotations/type.ts (2)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+type.path -> identifier.qualified [ID2]
+  source: packages/python/bindings.scm (1), packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/type-annotations/type.ts (2), packages/typescript/bindings.scm (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/node-model-portable.json5 (2), packages/python/src/portable.ts (9), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9), packages/typescript/src/node-model-portable.json5 (2), packages/typescript/src/portable.ts (9)
+
+identifier.crate -> identifier [ID4]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/identifier.ts (1)
+  test: packages/codegen/src/bindings/__tests__/read.test.ts (2), packages/types/tests/vocabulary-consumers.test-d.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+type.named.prelude -> (removed) [ID8]
+  source: packages/rust/bindings.scm (2), packages/types/src/vocabulary/features/type-annotations/type.ts (1)
+  test: packages/codegen/src/emitters/overlays/portable/__tests__/read-tests.test.ts (3), packages/tools/tests/portable/is.test.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (1), packages/rust/src/portable.ts (9)
+
+type.named -> (removed) [ID8]
+  source: packages/types/src/vocabulary/features/type-annotations/type.ts (1)
+  test: packages/codegen/src/bindings/__tests__/grammar-bindings.test.ts (3), packages/python/tests/nodes.test.ts (1)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/python/src/factories/overlays/polymorphs.ts (1), packages/rust/src/portable.ts (8)
+
+pattern.match -> (removed) [NO7]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/match-expressions/pattern.ts (3)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)
+
+pattern.tuple.struct -> pattern.struct [NO9]
+  source: packages/rust/bindings.scm (1), packages/types/src/vocabulary/context.ts (1), packages/types/src/vocabulary/features/structs/pattern.ts (3)
+  generated: packages/common/src/portable/vocabulary-paths.ts (1), packages/rust/src/node-model-portable.json5 (2), packages/rust/src/portable.ts (9)

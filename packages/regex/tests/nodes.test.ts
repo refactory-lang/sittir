@@ -1321,8 +1321,7 @@ describe('unicode_property_value_expression sub-factories', () => {
 			unicodePropertyValueExpressionGroup: stampBuilt({
 				$type: TSKindId.UnicodePropertyName,
 				$text: 'test',
-				$named: true,
-				_content: stampBuilt({ $type: TSKindId.UnicodePropertyValue, $text: 'test', $named: true }) as any
+				$named: true
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.UnicodePropertyValueExpression);
@@ -1465,5 +1464,20 @@ describe('inline_flags_group_disable', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('lazy', () => {
+	it('is the kind id', () => {
+		expect(ir.lazy).toBe(TSKindId.Lazy);
+	});
+});
+
+describe('unicode_property_name', () => {
+	it('factory produces correct type', () => {
+		const node = ir.unicodePropertyName('test');
+		expect(node.$type).toBe(TSKindId.UnicodePropertyName);
+		expectBuiltNode(node);
+		expect(node.$text()).toBe('test');
 	});
 });

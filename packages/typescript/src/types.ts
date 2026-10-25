@@ -83,6 +83,7 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.ThisType]: 'this';
 	[TSKindId.Star]: '*';
 	[TSKindId.AsKeyword]: 'as';
 	[TSKindId.DefaultKeyword]: 'default';
@@ -229,6 +230,7 @@ export type LeafStringMap = {
 	[TSKindId.GetKeyword]: 'get';
 	[TSKindId.SetKeyword]: 'set';
 	[TSKindId.AccessorKeyword]: 'accessor';
+	[TSKindId.ConstructorKeyword]: 'constructor';
 	[TSKindId.AccessibilityModifier]: 'public' | 'private' | 'protected';
 	[TSKindId.PredefinedType]:
 		| 'any'
@@ -297,453 +299,457 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[51, 'await_keyword'],
 	[52, 'static_keyword'],
 	[53, 'let_keyword'],
-	[54, 'colon'],
-	[55, 'case_keyword'],
-	[56, 'catch_keyword'],
-	[57, 'finally_keyword'],
-	[58, 'yield_keyword'],
-	[59, 'eq'],
-	[60, 'lbrack'],
-	[61, 'rbrack'],
-	[62, 'dot'],
-	[63, 'class_keyword'],
-	[64, 'function_keyword'],
-	[65, 'eq_gt'],
-	[66, 'qmark_dot'],
-	[67, 'const_keyword'],
-	[68, 'delete_keyword'],
-	[69, 'extends_keyword'],
-	[70, 'false_keyword'],
-	[71, 'in_keyword'],
-	[72, 'instanceof_keyword'],
-	[73, 'null_keyword'],
-	[74, 'super_keyword'],
-	[75, 'this_keyword'],
-	[76, 'true_keyword'],
-	[77, 'void_keyword'],
-	[78, 'plus_eq'],
-	[79, 'dash_eq'],
-	[80, 'star_eq'],
-	[81, 'slash_eq'],
-	[82, 'percent_eq'],
-	[83, 'caret_eq'],
-	[84, 'amp_eq'],
-	[85, 'pipe_eq'],
-	[86, 'gt_gt_eq'],
-	[87, 'gt_gt_gt_eq'],
-	[88, 'lt_lt_eq'],
-	[89, 'star_star_eq'],
-	[90, 'amp_amp_eq'],
-	[91, 'pipe_pipe_eq'],
-	[92, 'qmark_qmark_eq'],
-	[93, 'dot_dot_dot'],
-	[94, 'amp_amp'],
-	[95, 'pipe_pipe'],
-	[96, 'gt_gt'],
-	[97, 'gt_gt_gt'],
-	[98, 'lt_lt'],
-	[99, 'amp'],
-	[100, 'caret'],
-	[101, 'pipe'],
-	[102, 'plus'],
-	[103, 'dash'],
-	[104, 'slash'],
-	[105, 'percent'],
-	[106, 'star_star'],
-	[107, 'lt'],
-	[108, 'lt_eq'],
-	[109, 'eq_eq'],
-	[110, 'eq_eq_eq'],
-	[111, 'bang_eq'],
-	[112, 'bang_eq_eq'],
-	[113, 'gt_eq'],
-	[114, 'gt'],
-	[115, 'qmark_qmark'],
-	[116, 'bang'],
-	[117, 'tilde'],
-	[118, 'unescaped_double_string_fragment'],
-	[119, 'unescaped_single_string_fragment'],
-	[120, 'escape_sequence'],
-	[121, 'bquote'],
-	[122, 'bquote2'],
-	[123, 'dollar_lbrace'],
-	[124, 'slash2'],
-	[125, 'regex_pattern'],
-	[126, 'regex_flags'],
-	[127, 'private_property_identifier'],
-	[128, 'undefined'],
-	[129, 'at'],
-	[130, 'satisfies_keyword'],
-	[131, 'require_keyword'],
-	[132, 'implements_keyword'],
-	[133, 'interface_keyword'],
-	[134, 'enum_keyword'],
-	[135, 'dash_qmark_colon'],
-	[136, 'plus_qmark_colon'],
-	[137, 'qmark_colon'],
-	[138, 'asserts_keyword'],
-	[139, 'qmark'],
-	[140, 'infer_keyword'],
-	[141, 'is_keyword'],
-	[142, 'keyof_keyword'],
-	[143, 'unique'],
-	[144, 'unknown_keyword'],
-	[145, 'never_keyword'],
-	[146, 'lbrace_pipe'],
-	[147, 'pipe_rbrace'],
-	[148, 'abstract_keyword'],
-	[149, 'accessor_keyword'],
-	[150, 'of_keyword'],
-	[151, 'global_keyword'],
-	[152, 'comment_line'],
-	[153, 'comment_block'],
-	[154, 'number_hex'],
-	[155, 'number_float_point'],
-	[156, 'number_float_leading_point'],
-	[157, 'number_float_scientific'],
-	[158, 'number_decimal'],
-	[159, 'number_binary'],
-	[160, 'number_octal'],
-	[161, 'number_bigint_hex'],
-	[162, 'number_bigint_binary'],
-	[163, 'number_bigint_octal'],
-	[164, 'number_bigint_decimal'],
-	[165, 'dquote'],
-	[166, 'dquote2'],
-	[167, 'squote'],
-	[168, 'squote2'],
-	[169, 'plus_plus'],
-	[170, 'dash_dash'],
-	[171, 'target_keyword'],
-	[172, 'meta_keyword'],
-	[173, '_automatic_semicolon'],
-	[174, '_template_chars'],
-	[175, '_ternary_qmark'],
-	[176, 'html_comment'],
-	[177, 'jsx_text'],
-	[178, '_function_signature_automatic_semicolon'],
-	[179, '__error_recovery'],
-	[180, '_tight'],
-	[181, '_space'],
-	[182, '_tab'],
-	[183, '_newline'],
-	[184, '_blankline'],
-	[185, '_double_blankline'],
-	[186, '_indent'],
-	[187, '_dedent'],
-	[188, 'program'],
-	[189, 'export_statement'],
-	[190, 'namespace_export'],
-	[191, 'export_clause'],
-	[192, 'export_specifier'],
-	[193, '_module_export_name'],
-	[194, 'declaration'],
-	[195, 'import'],
-	[196, 'import_statement'],
-	[197, 'import_clause'],
-	[198, '_from_clause'],
-	[199, 'namespace_import'],
-	[200, 'named_imports'],
-	[201, 'import_specifier'],
-	[202, 'import_attribute'],
-	[203, 'statement'],
-	[204, 'expression_statement'],
-	[205, 'variable_declaration'],
-	[206, 'lexical_declaration'],
-	[207, 'using_declaration'],
-	[208, 'variable_declarator'],
-	[209, 'statement_block'],
-	[210, 'else_clause'],
-	[211, 'if_statement'],
-	[212, 'switch_statement'],
-	[213, 'for_statement'],
-	[214, 'for_in_statement'],
-	[215, '_for_header'],
-	[216, 'while_statement'],
-	[217, 'do_statement'],
-	[218, 'try_statement'],
-	[219, 'with_statement'],
-	[220, 'break_statement'],
-	[221, 'continue_statement'],
-	[222, 'debugger_statement'],
-	[223, 'return_statement'],
-	[224, 'throw_statement'],
-	[225, 'empty_statement'],
-	[226, 'labeled_statement'],
-	[227, 'switch_body'],
-	[228, 'switch_case'],
-	[229, 'switch_default'],
-	[230, 'catch_clause'],
-	[231, 'finally_clause'],
-	[232, 'parenthesized_expression'],
-	[233, 'expression'],
-	[234, 'primary_expression'],
-	[235, 'yield_expression'],
-	[236, 'object'],
-	[237, 'object_pattern'],
-	[238, 'assignment_pattern'],
-	[239, 'object_assignment_pattern'],
-	[240, 'array'],
-	[241, 'array_pattern'],
-	[242, 'nested_identifier'],
-	[243, 'class'],
-	[244, 'class_declaration'],
-	[245, 'class_heritage'],
-	[246, 'function_expression'],
-	[247, 'function_declaration'],
-	[248, 'generator_function'],
-	[249, 'generator_function_declaration'],
-	[250, 'arrow_function'],
-	[251, '_call_signature'],
-	[252, '_formal_parameter'],
-	[253, 'optional_chain'],
-	[254, 'call_expression'],
-	[255, 'new_expression'],
-	[256, 'await_expression'],
-	[257, 'member_expression'],
-	[258, 'subscript_expression'],
-	[259, '_lhs_expression'],
-	[494, '_lhs_expression'],
-	[260, 'assignment_expression'],
-	[261, '_augmented_assignment_lhs'],
-	[262, 'augmented_assignment_expression'],
-	[263, '_initializer'],
-	[264, '_destructuring_pattern'],
-	[265, 'spread_element'],
-	[266, 'ternary_expression'],
-	[267, 'binary_expression'],
-	[268, 'unary_expression'],
-	[269, 'update_expression'],
-	[270, 'sequence_expression'],
-	[271, 'string'],
-	[272, 'template_string'],
-	[273, 'template_substitution'],
-	[274, 'regex'],
-	[275, 'number'],
-	[276, 'meta_property'],
-	[277, 'this'],
-	[278, 'super'],
-	[279, 'true'],
-	[280, 'false'],
-	[281, 'null'],
-	[282, 'arguments'],
-	[283, 'decorator'],
-	[284, 'decorator_member_expression'],
-	[285, 'decorator_call_expression'],
-	[286, 'class_body'],
-	[287, 'formal_parameters'],
-	[288, 'class_static_block'],
-	[289, 'pattern'],
-	[290, 'rest_pattern'],
-	[291, 'method_definition'],
-	[292, 'pair'],
-	[293, 'pair_pattern'],
-	[294, '_property_name'],
-	[295, 'computed_property_name'],
-	[296, 'public_field_definition'],
-	[297, '_import_identifier'],
-	[298, 'non_null_expression'],
-	[299, 'method_signature'],
-	[300, 'abstract_method_signature'],
-	[301, 'function_signature'],
-	[302, 'decorator_parenthesized_expression'],
-	[303, 'type_assertion'],
-	[304, 'as_expression'],
-	[305, 'satisfies_expression'],
-	[306, 'instantiation_expression'],
-	[307, 'import_require_clause'],
-	[308, 'extends_clause'],
-	[309, 'extends_clause_single'],
-	[310, 'implements_clause'],
-	[311, 'ambient_declaration'],
-	[312, 'abstract_class_declaration'],
-	[313, 'module'],
-	[314, 'internal_module'],
-	[315, '_module'],
-	[316, 'import_alias'],
-	[317, 'nested_type_identifier'],
-	[318, 'interface_declaration'],
-	[319, 'extends_type_clause'],
-	[320, 'enum_declaration'],
-	[321, 'enum_body'],
-	[322, 'enum_assignment'],
-	[323, 'type_alias_declaration'],
-	[324, 'accessibility_modifier'],
-	[325, 'override_modifier'],
-	[326, 'required_parameter'],
-	[327, 'optional_parameter'],
-	[328, '_parameter_name'],
-	[329, 'omitting_type_annotation'],
-	[330, 'adding_type_annotation'],
-	[331, 'opting_type_annotation'],
-	[332, 'type_annotation'],
-	[333, 'type_query_member_expression_in_type_annotation'],
-	[334, 'type_query_call_expression_in_type_annotation'],
-	[335, 'asserts'],
-	[336, 'asserts_annotation'],
-	[337, 'type'],
-	[338, 'tuple_parameter'],
-	[339, 'optional_tuple_parameter'],
-	[340, 'optional_type'],
-	[341, 'rest_type'],
-	[342, '_tuple_type_member'],
-	[343, 'constructor_type'],
-	[344, 'primary_type'],
-	[345, 'template_type'],
-	[346, 'template_literal_type'],
-	[347, 'infer_type'],
-	[348, 'conditional_type'],
-	[349, 'generic_type'],
-	[350, 'type_predicate'],
-	[351, 'type_predicate_annotation'],
-	[352, 'type_query_member_expression'],
-	[353, 'type_query_subscript_expression'],
-	[354, 'type_query_call_expression'],
-	[355, 'type_query_instantiation_expression'],
-	[356, 'type_query'],
-	[357, 'index_type_query'],
-	[358, 'lookup_type'],
-	[359, 'mapped_type_clause'],
-	[360, 'literal_type'],
-	[361, '_number'],
-	[362, 'existential_type'],
-	[363, 'flow_maybe_type'],
-	[364, 'parenthesized_type'],
-	[365, 'predefined_type'],
-	[366, 'type_arguments'],
-	[367, 'object_type'],
-	[368, 'call_signature'],
-	[369, 'property_signature'],
-	[370, 'type_parameters'],
-	[371, 'type_parameter'],
-	[372, 'default_type'],
-	[373, 'constraint'],
-	[374, 'construct_signature'],
-	[375, 'index_signature'],
-	[376, 'array_type'],
-	[377, 'tuple_type'],
-	[378, 'readonly_type'],
-	[379, 'union_type'],
-	[380, 'intersection_type'],
-	[381, 'function_type'],
-	[382, 'export_specifiers'],
-	[383, 'import_specifiers'],
-	[384, '_class_body_member'],
-	[385, 'formal_parameters_elements'],
-	[386, 'enum_body_element_name'],
-	[387, '_enum_body_element'],
-	[388, 'enum_body_elements'],
-	[389, 'types'],
-	[390, 'type_parameters_elements'],
-	[391, 'tuple_type_members'],
-	[392, 'import_clause_group'],
-	[393, 'using_declaration_arm'],
-	[394, 'catch_clause_group'],
-	[395, '_get_accessor_signature'],
-	[396, '_set_accessor_signature'],
-	[397, 'ambient_declaration_global'],
-	[398, 'ambient_declaration_module'],
-	[399, 'object_type_content'],
-	[400, 'export_statement_default'],
-	[401, 'export_statement_namespace_export'],
-	[402, 'export_statement_equals_export'],
-	[403, 'literal_type_negative_number'],
-	[404, 'number_bigint'],
-	[405, 'binary_expression_in'],
-	[406, 'empty_member'],
-	[407, 'class_body_member_method'],
-	[408, 'class_body_member_method_sig'],
-	[409, 'class_body_member_declaration'],
-	[410, 'index_signature_colon'],
-	[411, 'index_signature_mapped_type_clause'],
-	[412, 'import_statement_clause_from'],
-	[413, 'yield_expression_delegate'],
-	[414, 'optional_chain_marker'],
-	[415, 'import_specifier_name'],
-	[416, 'import_specifier_as'],
-	[417, 'parenthesized_expression_typed'],
-	[418, 'parenthesized_expression_sequence'],
-	[419, 'call_expression_call'],
-	[420, 'call_expression_template_call'],
-	[421, 'call_expression_member'],
-	[422, 'string_double'],
-	[423, 'string_single'],
-	[424, 'update_expression_postfix'],
-	[425, 'update_expression_prefix'],
-	[426, 'arrow_function_parameter'],
-	[427, 'class_heritage_extends_clause'],
-	[428, 'import_clause_default_import'],
-	[429, 'export_statement_default_from'],
-	[430, 'export_statement_default_declaration'],
-	[431, 'export_statement_default_from_star_from'],
-	[432, 'export_statement_default_from_ns_from'],
-	[433, 'export_statement_default_from_clause_from'],
-	[434, 'export_statement_default_declaration_default_kw'],
-	[435, 'export_statement_default_declaration_default_kw_value'],
-	[436, 'variable_declarator_plain'],
-	[437, 'variable_declarator_definite'],
-	[438, 'meta_property_new_target'],
-	[439, 'meta_property_import_meta'],
-	[440, 'for_header_lhs'],
-	[441, 'for_header_var_kind'],
-	[442, 'for_header_let_const_kind'],
-	[443, 'for_header_using_kind'],
-	[444, '_call_signature_get_accessor_signature'],
-	[445, '_formal_parameters_get_accessor_signature'],
-	[446, '_formal_parameters_set_accessor_signature'],
-	[447, '_formal_parameters_elements_set_accessor_signature'],
-	[448, 'setter_parameter'],
-	[449, '_parameter_name_set_accessor_signature'],
-	[450, '_pattern_0_set_accessor_signature'],
-	[451, 'method_definition_plain'],
-	[452, 'method_definition_getter'],
-	[453, 'method_definition_setter'],
-	[454, 'method_signature_plain'],
-	[455, 'method_signature_getter'],
-	[456, 'method_signature_setter'],
-	[457, 'abstract_method_signature_plain'],
-	[458, 'abstract_method_signature_getter'],
-	[459, 'abstract_method_signature_setter'],
-	[460, 'public_field_definition_plain'],
-	[461, 'public_field_definition_accessor'],
-	[462, '_parameter_name_receiver'],
-	[463, 'receiver_parameter_declaration'],
-	[464, '_parameter_name_formal_parameter'],
-	[465, 'formal_parameters_elements_receiver'],
-	[466, 'formal_parameters_elements_receiver_group'],
-	[467, 'program_repeat1'],
-	[468, 'variable_declaration_repeat1'],
-	[469, 'using_declaration_repeat1'],
-	[470, 'switch_body_repeat1'],
-	[471, 'object_repeat1'],
-	[472, 'object_pattern_repeat1'],
-	[473, 'array_repeat1'],
-	[474, 'array_pattern_repeat1'],
-	[475, 'class_repeat1'],
-	[476, 'sequence_expression_repeat1'],
-	[477, 'template_string_repeat1'],
-	[478, 'class_body_repeat1'],
-	[479, 'extends_clause_repeat1'],
-	[480, 'implements_clause_repeat1'],
-	[481, 'extends_type_clause_repeat1'],
-	[482, 'template_literal_type_repeat1'],
-	[483, 'export_specifiers_repeat1'],
-	[484, 'import_specifiers_repeat1'],
-	[485, 'formal_parameters_elements_repeat1'],
-	[486, 'enum_body_elements_repeat1'],
-	[487, 'types_repeat1'],
-	[488, 'type_parameters_elements_repeat1'],
-	[489, 'tuple_type_members_repeat1'],
-	[490, 'object_type_content_repeat1'],
-	[491, 'string_double_repeat1'],
-	[492, 'string_single_repeat1'],
-	[493, 'interface_body'],
-	[495, 'property_identifier'],
-	[496, 'shorthand_property_identifier'],
-	[497, 'shorthand_property_identifier_pattern'],
-	[498, 'statement_identifier'],
-	[499, 'this_type'],
-	[500, 'type_identifier'],
+	[54, 'constructor_keyword'],
+	[55, 'colon'],
+	[56, 'case_keyword'],
+	[57, 'catch_keyword'],
+	[58, 'finally_keyword'],
+	[59, 'yield_keyword'],
+	[60, 'eq'],
+	[61, 'lbrack'],
+	[62, 'rbrack'],
+	[63, 'dot'],
+	[64, 'class_keyword'],
+	[65, 'function_keyword'],
+	[66, 'eq_gt'],
+	[67, 'qmark_dot'],
+	[68, 'const_keyword'],
+	[69, 'delete_keyword'],
+	[70, 'extends_keyword'],
+	[71, 'false_keyword'],
+	[72, 'in_keyword'],
+	[73, 'instanceof_keyword'],
+	[74, 'null_keyword'],
+	[75, 'super_keyword'],
+	[76, 'this_keyword'],
+	[77, 'true_keyword'],
+	[78, 'void_keyword'],
+	[79, 'plus_eq'],
+	[80, 'dash_eq'],
+	[81, 'star_eq'],
+	[82, 'slash_eq'],
+	[83, 'percent_eq'],
+	[84, 'caret_eq'],
+	[85, 'amp_eq'],
+	[86, 'pipe_eq'],
+	[87, 'gt_gt_eq'],
+	[88, 'gt_gt_gt_eq'],
+	[89, 'lt_lt_eq'],
+	[90, 'star_star_eq'],
+	[91, 'amp_amp_eq'],
+	[92, 'pipe_pipe_eq'],
+	[93, 'qmark_qmark_eq'],
+	[94, 'dot_dot_dot'],
+	[95, 'amp_amp'],
+	[96, 'pipe_pipe'],
+	[97, 'gt_gt'],
+	[98, 'gt_gt_gt'],
+	[99, 'lt_lt'],
+	[100, 'amp'],
+	[101, 'caret'],
+	[102, 'pipe'],
+	[103, 'plus'],
+	[104, 'dash'],
+	[105, 'slash'],
+	[106, 'percent'],
+	[107, 'star_star'],
+	[108, 'lt'],
+	[109, 'lt_eq'],
+	[110, 'eq_eq'],
+	[111, 'eq_eq_eq'],
+	[112, 'bang_eq'],
+	[113, 'bang_eq_eq'],
+	[114, 'gt_eq'],
+	[115, 'gt'],
+	[116, 'qmark_qmark'],
+	[117, 'bang'],
+	[118, 'tilde'],
+	[119, 'unescaped_double_string_fragment'],
+	[120, 'unescaped_single_string_fragment'],
+	[121, 'escape_sequence'],
+	[122, 'bquote'],
+	[123, 'bquote2'],
+	[124, 'dollar_lbrace'],
+	[125, 'slash2'],
+	[126, 'regex_pattern'],
+	[127, 'regex_flags'],
+	[128, 'private_property_identifier'],
+	[129, 'undefined'],
+	[130, 'at'],
+	[131, 'satisfies_keyword'],
+	[132, 'require_keyword'],
+	[133, 'implements_keyword'],
+	[134, 'interface_keyword'],
+	[135, 'enum_keyword'],
+	[136, 'dash_qmark_colon'],
+	[137, 'plus_qmark_colon'],
+	[138, 'qmark_colon'],
+	[139, 'asserts_keyword'],
+	[140, 'qmark'],
+	[141, 'infer_keyword'],
+	[142, 'is_keyword'],
+	[143, 'keyof_keyword'],
+	[144, 'unique'],
+	[145, 'unknown_keyword'],
+	[146, 'never_keyword'],
+	[147, 'lbrace_pipe'],
+	[148, 'pipe_rbrace'],
+	[149, 'abstract_keyword'],
+	[150, 'accessor_keyword'],
+	[151, 'of_keyword'],
+	[152, 'global_keyword'],
+	[153, 'comment_line'],
+	[154, 'comment_block'],
+	[155, 'number_hex'],
+	[156, 'number_float_point'],
+	[157, 'number_float_leading_point'],
+	[158, 'number_float_scientific'],
+	[159, 'number_decimal'],
+	[160, 'number_binary'],
+	[161, 'number_octal'],
+	[162, 'number_bigint_hex'],
+	[163, 'number_bigint_binary'],
+	[164, 'number_bigint_octal'],
+	[165, 'number_bigint_decimal'],
+	[166, 'dquote'],
+	[167, 'dquote2'],
+	[168, 'squote'],
+	[169, 'squote2'],
+	[170, 'plus_plus'],
+	[171, 'dash_dash'],
+	[172, 'target_keyword'],
+	[173, 'meta_keyword'],
+	[174, '_automatic_semicolon'],
+	[175, '_template_chars'],
+	[176, '_ternary_qmark'],
+	[177, 'html_comment'],
+	[178, 'jsx_text'],
+	[179, '_function_signature_automatic_semicolon'],
+	[180, '__error_recovery'],
+	[181, '_tight'],
+	[182, '_space'],
+	[183, '_tab'],
+	[184, '_newline'],
+	[185, '_blankline'],
+	[186, '_double_blankline'],
+	[187, '_indent'],
+	[188, '_dedent'],
+	[189, 'program'],
+	[190, 'export_statement'],
+	[191, 'namespace_export'],
+	[192, 'export_clause'],
+	[193, 'export_specifier'],
+	[194, '_module_export_name'],
+	[195, 'declaration'],
+	[196, 'import'],
+	[197, 'import_statement'],
+	[198, 'import_clause'],
+	[199, '_from_clause'],
+	[200, 'namespace_import'],
+	[201, 'named_imports'],
+	[202, 'import_specifier'],
+	[203, 'import_attribute'],
+	[204, 'statement'],
+	[205, 'expression_statement'],
+	[206, 'variable_declaration'],
+	[207, 'lexical_declaration'],
+	[208, 'using_declaration'],
+	[209, 'variable_declarator'],
+	[210, 'statement_block'],
+	[211, 'else_clause'],
+	[212, 'if_statement'],
+	[213, 'switch_statement'],
+	[214, 'for_statement'],
+	[215, 'for_in_statement'],
+	[216, '_for_header'],
+	[217, 'while_statement'],
+	[218, 'do_statement'],
+	[219, 'try_statement'],
+	[220, 'with_statement'],
+	[221, 'break_statement'],
+	[222, 'continue_statement'],
+	[223, 'debugger_statement'],
+	[224, 'return_statement'],
+	[225, 'throw_statement'],
+	[226, 'empty_statement'],
+	[227, 'labeled_statement'],
+	[228, 'switch_body'],
+	[229, 'switch_case'],
+	[230, 'switch_default'],
+	[231, 'catch_clause'],
+	[232, 'finally_clause'],
+	[233, 'parenthesized_expression'],
+	[234, 'expression'],
+	[235, 'primary_expression'],
+	[236, 'yield_expression'],
+	[237, 'object'],
+	[238, 'object_pattern'],
+	[239, 'assignment_pattern'],
+	[240, 'object_assignment_pattern'],
+	[241, 'array'],
+	[242, 'array_pattern'],
+	[243, 'nested_identifier'],
+	[244, 'class'],
+	[245, 'class_declaration'],
+	[246, 'class_heritage'],
+	[247, 'function_expression'],
+	[248, 'function_declaration'],
+	[249, 'generator_function'],
+	[250, 'generator_function_declaration'],
+	[251, 'arrow_function'],
+	[252, '_call_signature'],
+	[253, '_formal_parameter'],
+	[254, 'optional_chain'],
+	[255, 'call_expression'],
+	[256, 'new_expression'],
+	[257, 'await_expression'],
+	[258, 'member_expression'],
+	[259, 'subscript_expression'],
+	[260, '_lhs_expression'],
+	[498, '_lhs_expression'],
+	[261, 'assignment_expression'],
+	[262, '_augmented_assignment_lhs'],
+	[263, 'augmented_assignment_expression'],
+	[264, '_initializer'],
+	[265, '_destructuring_pattern'],
+	[266, 'spread_element'],
+	[267, 'ternary_expression'],
+	[268, 'binary_expression'],
+	[269, 'unary_expression'],
+	[270, 'update_expression'],
+	[271, 'sequence_expression'],
+	[272, 'string'],
+	[273, 'template_string'],
+	[274, 'template_substitution'],
+	[275, 'regex'],
+	[276, 'number'],
+	[277, 'meta_property'],
+	[278, 'this'],
+	[279, 'super'],
+	[280, 'true'],
+	[281, 'false'],
+	[282, 'null'],
+	[283, 'arguments'],
+	[284, 'decorator'],
+	[285, 'decorator_member_expression'],
+	[286, 'decorator_call_expression'],
+	[287, 'class_body'],
+	[288, 'formal_parameters'],
+	[289, 'class_static_block'],
+	[290, 'pattern'],
+	[291, 'rest_pattern'],
+	[292, 'method_definition'],
+	[293, 'pair'],
+	[294, 'pair_pattern'],
+	[295, '_property_name'],
+	[296, 'computed_property_name'],
+	[297, 'public_field_definition'],
+	[298, '_import_identifier'],
+	[299, 'non_null_expression'],
+	[300, 'method_signature'],
+	[301, 'abstract_method_signature'],
+	[302, 'function_signature'],
+	[303, 'decorator_parenthesized_expression'],
+	[304, 'type_assertion'],
+	[305, 'as_expression'],
+	[306, 'satisfies_expression'],
+	[307, 'instantiation_expression'],
+	[308, 'import_require_clause'],
+	[309, 'extends_clause'],
+	[310, 'extends_clause_single'],
+	[311, 'implements_clause'],
+	[312, 'ambient_declaration'],
+	[313, 'abstract_class_declaration'],
+	[314, 'module'],
+	[315, 'internal_module'],
+	[316, '_module'],
+	[317, 'import_alias'],
+	[318, 'nested_type_identifier'],
+	[319, 'interface_declaration'],
+	[320, 'extends_type_clause'],
+	[321, 'enum_declaration'],
+	[322, 'enum_body'],
+	[323, 'enum_assignment'],
+	[324, 'type_alias_declaration'],
+	[325, 'accessibility_modifier'],
+	[326, 'override_modifier'],
+	[327, 'required_parameter'],
+	[328, 'optional_parameter'],
+	[329, '_parameter_name'],
+	[330, 'omitting_type_annotation'],
+	[331, 'adding_type_annotation'],
+	[332, 'opting_type_annotation'],
+	[333, 'type_annotation'],
+	[334, 'type_query_member_expression_in_type_annotation'],
+	[335, 'type_query_call_expression_in_type_annotation'],
+	[336, 'asserts'],
+	[337, 'asserts_annotation'],
+	[338, 'type'],
+	[339, 'tuple_parameter'],
+	[340, 'optional_tuple_parameter'],
+	[341, 'optional_type'],
+	[342, 'rest_type'],
+	[343, '_tuple_type_member'],
+	[344, 'constructor_type'],
+	[345, 'primary_type'],
+	[346, 'template_type'],
+	[347, 'template_literal_type'],
+	[348, 'infer_type'],
+	[349, 'conditional_type'],
+	[350, 'generic_type'],
+	[351, 'type_predicate'],
+	[352, 'type_predicate_annotation'],
+	[353, 'type_query_member_expression'],
+	[354, 'type_query_subscript_expression'],
+	[355, 'type_query_call_expression'],
+	[356, 'type_query_instantiation_expression'],
+	[357, 'type_query'],
+	[358, 'index_type_query'],
+	[359, 'lookup_type'],
+	[360, 'mapped_type_clause'],
+	[361, 'literal_type'],
+	[362, '_number'],
+	[363, 'existential_type'],
+	[364, 'flow_maybe_type'],
+	[365, 'parenthesized_type'],
+	[366, 'predefined_type'],
+	[367, 'type_arguments'],
+	[368, 'object_type'],
+	[369, 'call_signature'],
+	[370, 'property_signature'],
+	[371, 'type_parameters'],
+	[372, 'type_parameter'],
+	[373, 'default_type'],
+	[374, 'constraint'],
+	[375, 'construct_signature'],
+	[376, 'index_signature'],
+	[377, 'array_type'],
+	[378, 'tuple_type'],
+	[379, 'readonly_type'],
+	[380, 'union_type'],
+	[381, 'intersection_type'],
+	[382, 'function_type'],
+	[383, 'export_specifiers'],
+	[384, 'import_specifiers'],
+	[385, '_class_body_member'],
+	[386, 'formal_parameters_elements'],
+	[387, 'enum_body_element_name'],
+	[388, '_enum_body_element'],
+	[389, 'enum_body_elements'],
+	[390, 'types'],
+	[391, 'type_parameters_elements'],
+	[392, 'tuple_type_members'],
+	[393, 'import_clause_group'],
+	[394, 'using_declaration_arm'],
+	[395, 'catch_clause_group'],
+	[396, '_get_accessor_signature'],
+	[397, '_set_accessor_signature'],
+	[398, 'ambient_declaration_global'],
+	[399, 'ambient_declaration_module'],
+	[400, 'object_type_content'],
+	[401, 'export_statement_default'],
+	[402, 'export_statement_namespace_export'],
+	[403, 'export_statement_equals_export'],
+	[404, 'literal_type_negative_number'],
+	[405, 'number_bigint'],
+	[406, 'binary_expression_in'],
+	[407, 'empty_member'],
+	[408, 'class_body_member_method'],
+	[409, 'class_body_member_method_sig'],
+	[410, 'class_body_member_declaration'],
+	[411, 'index_signature_colon'],
+	[412, 'index_signature_mapped_type_clause'],
+	[413, 'import_statement_clause_from'],
+	[414, 'yield_expression_delegate'],
+	[415, 'optional_chain_marker'],
+	[416, 'import_specifier_name'],
+	[417, 'import_specifier_as'],
+	[418, 'parenthesized_expression_typed'],
+	[419, 'parenthesized_expression_sequence'],
+	[420, 'call_expression_call'],
+	[421, 'call_expression_template_call'],
+	[422, 'call_expression_member'],
+	[423, 'string_double'],
+	[424, 'string_single'],
+	[425, 'update_expression_postfix'],
+	[426, 'update_expression_prefix'],
+	[427, 'arrow_function_parameter'],
+	[428, 'class_heritage_extends_clause'],
+	[429, 'import_clause_default_import'],
+	[430, 'export_statement_default_from'],
+	[431, 'export_statement_default_declaration'],
+	[432, 'export_statement_default_from_star_from'],
+	[433, 'export_statement_default_from_ns_from'],
+	[434, 'export_statement_default_from_clause_from'],
+	[435, 'export_statement_default_declaration_default_kw'],
+	[436, 'export_statement_default_declaration_default_kw_value'],
+	[437, 'variable_declarator_plain'],
+	[438, 'variable_declarator_definite'],
+	[439, 'meta_property_new_target'],
+	[440, 'meta_property_import_meta'],
+	[441, 'for_header_lhs'],
+	[442, 'for_header_var_kind'],
+	[443, 'for_header_let_const_kind'],
+	[444, 'for_header_using_kind'],
+	[445, '_call_signature_get_accessor_signature'],
+	[446, '_formal_parameters_get_accessor_signature'],
+	[447, '_formal_parameters_set_accessor_signature'],
+	[448, '_formal_parameters_elements_set_accessor_signature'],
+	[449, 'setter_parameter'],
+	[450, '_parameter_name_set_accessor_signature'],
+	[451, '_pattern_0_set_accessor_signature'],
+	[452, 'method_definition_plain'],
+	[453, 'method_definition_getter'],
+	[454, 'method_definition_setter'],
+	[455, 'method_signature_plain'],
+	[456, 'method_signature_getter'],
+	[457, 'method_signature_setter'],
+	[458, 'abstract_method_signature_plain'],
+	[459, 'abstract_method_signature_getter'],
+	[460, 'abstract_method_signature_setter'],
+	[461, 'public_field_definition_plain'],
+	[462, 'public_field_definition_accessor'],
+	[463, 'constructor_declaration'],
+	[464, '_call_signature_class_body_member_method'],
+	[465, '_method_definition_class_body_member_method'],
+	[466, '_parameter_name_receiver'],
+	[467, 'receiver_parameter_declaration'],
+	[468, '_parameter_name_formal_parameter'],
+	[469, 'formal_parameters_elements_receiver'],
+	[470, 'formal_parameters_elements_receiver_group'],
+	[471, 'program_repeat1'],
+	[472, 'variable_declaration_repeat1'],
+	[473, 'using_declaration_repeat1'],
+	[474, 'switch_body_repeat1'],
+	[475, 'object_repeat1'],
+	[476, 'object_pattern_repeat1'],
+	[477, 'array_repeat1'],
+	[478, 'array_pattern_repeat1'],
+	[479, 'class_repeat1'],
+	[480, 'sequence_expression_repeat1'],
+	[481, 'template_string_repeat1'],
+	[482, 'class_body_repeat1'],
+	[483, 'extends_clause_repeat1'],
+	[484, 'implements_clause_repeat1'],
+	[485, 'extends_type_clause_repeat1'],
+	[486, 'template_literal_type_repeat1'],
+	[487, 'export_specifiers_repeat1'],
+	[488, 'import_specifiers_repeat1'],
+	[489, 'formal_parameters_elements_repeat1'],
+	[490, 'enum_body_elements_repeat1'],
+	[491, 'types_repeat1'],
+	[492, 'type_parameters_elements_repeat1'],
+	[493, 'tuple_type_members_repeat1'],
+	[494, 'object_type_content_repeat1'],
+	[495, 'string_double_repeat1'],
+	[496, 'string_single_repeat1'],
+	[497, 'interface_body'],
+	[499, 'property_identifier'],
+	[500, 'shorthand_property_identifier'],
+	[501, 'shorthand_property_identifier_pattern'],
+	[502, 'statement_identifier'],
+	[503, 'this_type'],
+	[504, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -802,453 +808,457 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[51, 'await'],
 	[52, 'static'],
 	[53, 'let'],
-	[54, ':'],
-	[55, 'case'],
-	[56, 'catch'],
-	[57, 'finally'],
-	[58, 'yield'],
-	[59, '='],
-	[60, '['],
-	[61, ']'],
-	[62, '.'],
-	[63, 'class'],
-	[64, 'function'],
-	[65, '=>'],
-	[66, '?.'],
-	[67, 'const'],
-	[68, 'delete'],
-	[69, 'extends'],
-	[70, 'false'],
-	[71, 'in'],
-	[72, 'instanceof'],
-	[73, 'null'],
-	[74, 'super'],
-	[75, 'this'],
-	[76, 'true'],
-	[77, 'void'],
-	[78, '+='],
-	[79, '-='],
-	[80, '*='],
-	[81, '/='],
-	[82, '%='],
-	[83, '^='],
-	[84, '&='],
-	[85, '|='],
-	[86, '>>='],
-	[87, '>>>='],
-	[88, '<<='],
-	[89, '**='],
-	[90, '&&='],
-	[91, '||='],
-	[92, '??='],
-	[93, '...'],
-	[94, '&&'],
-	[95, '||'],
-	[96, '>>'],
-	[97, '>>>'],
-	[98, '<<'],
-	[99, '&'],
-	[100, '^'],
-	[101, '|'],
-	[102, '+'],
-	[103, '-'],
-	[104, '/'],
-	[105, '%'],
-	[106, '**'],
-	[107, '<'],
-	[108, '<='],
-	[109, '=='],
-	[110, '==='],
-	[111, '!='],
-	[112, '!=='],
-	[113, '>='],
-	[114, '>'],
-	[115, '??'],
-	[116, '!'],
-	[117, '~'],
-	[118, 'string_fragment'],
+	[54, 'identifier'],
+	[55, ':'],
+	[56, 'case'],
+	[57, 'catch'],
+	[58, 'finally'],
+	[59, 'yield'],
+	[60, '='],
+	[61, '['],
+	[62, ']'],
+	[63, '.'],
+	[64, 'class'],
+	[65, 'function'],
+	[66, '=>'],
+	[67, '?.'],
+	[68, 'const'],
+	[69, 'delete'],
+	[70, 'extends'],
+	[71, 'false'],
+	[72, 'in'],
+	[73, 'instanceof'],
+	[74, 'null'],
+	[75, 'super'],
+	[76, 'this'],
+	[77, 'true'],
+	[78, 'void'],
+	[79, '+='],
+	[80, '-='],
+	[81, '*='],
+	[82, '/='],
+	[83, '%='],
+	[84, '^='],
+	[85, '&='],
+	[86, '|='],
+	[87, '>>='],
+	[88, '>>>='],
+	[89, '<<='],
+	[90, '**='],
+	[91, '&&='],
+	[92, '||='],
+	[93, '??='],
+	[94, '...'],
+	[95, '&&'],
+	[96, '||'],
+	[97, '>>'],
+	[98, '>>>'],
+	[99, '<<'],
+	[100, '&'],
+	[101, '^'],
+	[102, '|'],
+	[103, '+'],
+	[104, '-'],
+	[105, '/'],
+	[106, '%'],
+	[107, '**'],
+	[108, '<'],
+	[109, '<='],
+	[110, '=='],
+	[111, '==='],
+	[112, '!='],
+	[113, '!=='],
+	[114, '>='],
+	[115, '>'],
+	[116, '??'],
+	[117, '!'],
+	[118, '~'],
 	[119, 'string_fragment'],
-	[120, 'escape_sequence'],
-	[121, '`'],
+	[120, 'string_fragment'],
+	[121, 'escape_sequence'],
 	[122, '`'],
-	[123, '${'],
-	[124, '/'],
-	[125, 'regex_pattern'],
-	[126, 'regex_flags'],
-	[127, 'private_property_identifier'],
-	[128, 'undefined'],
-	[129, '@'],
-	[130, 'satisfies'],
-	[131, 'require'],
-	[132, 'implements'],
-	[133, 'interface'],
-	[134, 'enum'],
-	[135, '-?:'],
-	[136, '+?:'],
-	[137, '?:'],
-	[138, 'asserts'],
-	[139, '?'],
-	[140, 'infer'],
-	[141, 'is'],
-	[142, 'keyof'],
-	[143, 'unique symbol'],
-	[144, 'unknown'],
-	[145, 'never'],
-	[146, '{|'],
-	[147, '|}'],
-	[148, 'abstract'],
-	[149, 'accessor'],
-	[150, 'of'],
-	[151, 'global'],
-	[152, 'comment_line'],
-	[153, 'comment_block'],
-	[154, 'number_hex'],
-	[155, 'number_float_point'],
-	[156, 'number_float_leading_point'],
-	[157, 'number_float_scientific'],
-	[158, 'number_decimal'],
-	[159, 'number_binary'],
-	[160, 'number_octal'],
-	[161, 'number_bigint_hex'],
-	[162, 'number_bigint_binary'],
-	[163, 'number_bigint_octal'],
-	[164, 'number_bigint_decimal'],
-	[165, '"'],
+	[123, '`'],
+	[124, '${'],
+	[125, '/'],
+	[126, 'regex_pattern'],
+	[127, 'regex_flags'],
+	[128, 'private_property_identifier'],
+	[129, 'undefined'],
+	[130, '@'],
+	[131, 'satisfies'],
+	[132, 'require'],
+	[133, 'implements'],
+	[134, 'interface'],
+	[135, 'enum'],
+	[136, '-?:'],
+	[137, '+?:'],
+	[138, '?:'],
+	[139, 'asserts'],
+	[140, '?'],
+	[141, 'infer'],
+	[142, 'is'],
+	[143, 'keyof'],
+	[144, 'unique symbol'],
+	[145, 'unknown'],
+	[146, 'never'],
+	[147, '{|'],
+	[148, '|}'],
+	[149, 'abstract'],
+	[150, 'accessor'],
+	[151, 'of'],
+	[152, 'global'],
+	[153, 'comment_line'],
+	[154, 'comment_block'],
+	[155, 'number_hex'],
+	[156, 'number_float_point'],
+	[157, 'number_float_leading_point'],
+	[158, 'number_float_scientific'],
+	[159, 'number_decimal'],
+	[160, 'number_binary'],
+	[161, 'number_octal'],
+	[162, 'number_bigint_hex'],
+	[163, 'number_bigint_binary'],
+	[164, 'number_bigint_octal'],
+	[165, 'number_bigint_decimal'],
 	[166, '"'],
-	[167, "'"],
+	[167, '"'],
 	[168, "'"],
-	[169, '++'],
-	[170, '--'],
-	[171, 'target'],
-	[172, 'meta'],
-	[173, 'automatic_semicolon'],
-	[174, 'string_fragment'],
-	[175, '?'],
-	[176, 'html_comment'],
-	[177, 'jsx_text'],
-	[178, 'function_signature_automatic_semicolon'],
-	[179, '__error_recovery'],
-	[180, '_tight'],
-	[181, '_space'],
-	[182, '_tab'],
-	[183, '_newline'],
-	[184, '_blankline'],
-	[185, '_double_blankline'],
-	[186, '_indent'],
-	[187, '_dedent'],
-	[188, 'program'],
-	[189, 'export_statement'],
-	[190, 'namespace_export'],
-	[191, 'export_clause'],
-	[192, 'export_specifier'],
-	[193, '_module_export_name'],
-	[194, 'declaration'],
-	[195, 'import'],
-	[196, 'import_statement'],
-	[197, 'import_clause'],
-	[198, '_from_clause'],
-	[199, 'namespace_import'],
-	[200, 'named_imports'],
-	[201, 'import_specifier'],
-	[202, 'import_attribute'],
-	[203, 'statement'],
-	[204, 'expression_statement'],
-	[205, 'variable_declaration'],
-	[206, 'lexical_declaration'],
-	[207, 'using_declaration'],
-	[208, 'variable_declarator'],
-	[209, 'statement_block'],
-	[210, 'else_clause'],
-	[211, 'if_statement'],
-	[212, 'switch_statement'],
-	[213, 'for_statement'],
-	[214, 'for_in_statement'],
-	[215, '_for_header'],
-	[216, 'while_statement'],
-	[217, 'do_statement'],
-	[218, 'try_statement'],
-	[219, 'with_statement'],
-	[220, 'break_statement'],
-	[221, 'continue_statement'],
-	[222, 'debugger_statement'],
-	[223, 'return_statement'],
-	[224, 'throw_statement'],
-	[225, 'empty_statement'],
-	[226, 'labeled_statement'],
-	[227, 'switch_body'],
-	[228, 'switch_case'],
-	[229, 'switch_default'],
-	[230, 'catch_clause'],
-	[231, 'finally_clause'],
-	[232, 'parenthesized_expression'],
-	[233, 'expression'],
-	[234, 'primary_expression'],
-	[235, 'yield_expression'],
-	[236, 'object'],
-	[237, 'object_pattern'],
-	[238, 'assignment_pattern'],
-	[239, 'object_assignment_pattern'],
-	[240, 'array'],
-	[241, 'array_pattern'],
-	[242, 'nested_identifier'],
-	[243, 'class'],
-	[244, 'class_declaration'],
-	[245, 'class_heritage'],
-	[246, 'function_expression'],
-	[247, 'function_declaration'],
-	[248, 'generator_function'],
-	[249, 'generator_function_declaration'],
-	[250, 'arrow_function'],
-	[251, '_call_signature'],
-	[252, '_formal_parameter'],
-	[253, 'optional_chain'],
-	[254, 'call_expression'],
-	[255, 'new_expression'],
-	[256, 'await_expression'],
-	[257, 'member_expression'],
-	[258, 'subscript_expression'],
-	[259, '_lhs_expression'],
-	[494, 'lhs_expression'],
-	[260, 'assignment_expression'],
-	[261, '_augmented_assignment_lhs'],
-	[262, 'augmented_assignment_expression'],
-	[263, '_initializer'],
-	[264, '_destructuring_pattern'],
-	[265, 'spread_element'],
-	[266, 'ternary_expression'],
-	[267, 'binary_expression'],
-	[268, 'unary_expression'],
-	[269, 'update_expression'],
-	[270, 'sequence_expression'],
-	[271, 'string'],
-	[272, 'template_string'],
-	[273, 'template_substitution'],
-	[274, 'regex'],
-	[275, 'number'],
-	[276, 'meta_property'],
-	[277, 'this'],
-	[278, 'super'],
-	[279, 'true'],
-	[280, 'false'],
-	[281, 'null'],
-	[282, 'arguments'],
-	[283, 'decorator'],
-	[284, 'decorator_member_expression'],
-	[285, 'decorator_call_expression'],
-	[286, 'class_body'],
-	[287, 'formal_parameters'],
-	[288, 'class_static_block'],
-	[289, 'pattern'],
-	[290, 'rest_pattern'],
-	[291, 'method_definition'],
-	[292, 'pair'],
-	[293, 'pair_pattern'],
-	[294, '_property_name'],
-	[295, 'computed_property_name'],
-	[296, 'public_field_definition'],
-	[297, '_import_identifier'],
-	[298, 'non_null_expression'],
-	[299, 'method_signature'],
-	[300, 'abstract_method_signature'],
-	[301, 'function_signature'],
-	[302, 'decorator_parenthesized_expression'],
-	[303, 'type_assertion'],
-	[304, 'as_expression'],
-	[305, 'satisfies_expression'],
-	[306, 'instantiation_expression'],
-	[307, 'import_require_clause'],
-	[308, 'extends_clause'],
-	[309, 'extends_clause_single'],
-	[310, 'implements_clause'],
-	[311, 'ambient_declaration'],
-	[312, 'abstract_class_declaration'],
-	[313, 'module'],
-	[314, 'internal_module'],
-	[315, '_module'],
-	[316, 'import_alias'],
-	[317, 'nested_type_identifier'],
-	[318, 'interface_declaration'],
-	[319, 'extends_type_clause'],
-	[320, 'enum_declaration'],
-	[321, 'enum_body'],
-	[322, 'enum_assignment'],
-	[323, 'type_alias_declaration'],
-	[324, 'accessibility_modifier'],
-	[325, 'override_modifier'],
-	[326, 'required_parameter'],
-	[327, 'optional_parameter'],
-	[328, '_parameter_name'],
-	[329, 'omitting_type_annotation'],
-	[330, 'adding_type_annotation'],
-	[331, 'opting_type_annotation'],
-	[332, 'type_annotation'],
-	[333, 'type_query_member_expression_in_type_annotation'],
-	[334, 'type_query_call_expression_in_type_annotation'],
-	[335, 'asserts'],
-	[336, 'asserts_annotation'],
-	[337, 'type'],
-	[338, 'tuple_parameter'],
-	[339, 'optional_tuple_parameter'],
-	[340, 'optional_type'],
-	[341, 'rest_type'],
-	[342, '_tuple_type_member'],
-	[343, 'constructor_type'],
-	[344, 'primary_type'],
-	[345, 'template_type'],
-	[346, 'template_literal_type'],
-	[347, 'infer_type'],
-	[348, 'conditional_type'],
-	[349, 'generic_type'],
-	[350, 'type_predicate'],
-	[351, 'type_predicate_annotation'],
-	[352, 'type_query_member_expression'],
-	[353, 'type_query_subscript_expression'],
-	[354, 'type_query_call_expression'],
-	[355, 'type_query_instantiation_expression'],
-	[356, 'type_query'],
-	[357, 'index_type_query'],
-	[358, 'lookup_type'],
-	[359, 'mapped_type_clause'],
-	[360, 'literal_type'],
-	[361, '_number'],
-	[362, 'existential_type'],
-	[363, 'flow_maybe_type'],
-	[364, 'parenthesized_type'],
-	[365, 'predefined_type'],
-	[366, 'type_arguments'],
-	[367, 'object_type'],
-	[368, 'call_signature'],
-	[369, 'property_signature'],
-	[370, 'type_parameters'],
-	[371, 'type_parameter'],
-	[372, 'default_type'],
-	[373, 'constraint'],
-	[374, 'construct_signature'],
-	[375, 'index_signature'],
-	[376, 'array_type'],
-	[377, 'tuple_type'],
-	[378, 'readonly_type'],
-	[379, 'union_type'],
-	[380, 'intersection_type'],
-	[381, 'function_type'],
-	[382, 'export_specifiers'],
-	[383, 'import_specifiers'],
-	[384, '_class_body_member'],
-	[385, 'formal_parameters_elements'],
-	[386, 'enum_body_element_name'],
-	[387, '_enum_body_element'],
-	[388, 'enum_body_elements'],
-	[389, 'types'],
-	[390, 'type_parameters_elements'],
-	[391, 'tuple_type_members'],
-	[392, 'import_clause_group'],
-	[393, 'using_declaration_arm'],
-	[394, 'catch_clause_group'],
-	[395, '_get_accessor_signature'],
-	[396, '_set_accessor_signature'],
-	[397, 'ambient_declaration_global'],
-	[398, 'ambient_declaration_module'],
-	[399, 'object_type_content'],
-	[400, 'export_statement_default'],
-	[401, 'export_statement_namespace_export'],
-	[402, 'export_statement_equals_export'],
-	[403, 'literal_type_negative_number'],
-	[404, 'number_bigint'],
-	[405, 'binary_expression_in'],
-	[406, 'empty_member'],
-	[407, 'class_body_member_method'],
-	[408, 'class_body_member_method_sig'],
-	[409, 'class_body_member_declaration'],
-	[410, 'index_signature_colon'],
-	[411, 'index_signature_mapped_type_clause'],
-	[412, 'import_statement_clause_from'],
-	[413, 'yield_expression_delegate'],
-	[414, 'optional_chain_marker'],
-	[415, 'import_specifier_name'],
-	[416, 'import_specifier_as'],
-	[417, 'parenthesized_expression_typed'],
-	[418, 'parenthesized_expression_sequence'],
-	[419, 'call_expression_call'],
-	[420, 'call_expression_template_call'],
-	[421, 'call_expression_member'],
-	[422, 'string_double'],
-	[423, 'string_single'],
-	[424, 'update_expression_postfix'],
-	[425, 'update_expression_prefix'],
-	[426, 'arrow_function_parameter'],
-	[427, 'class_heritage_extends_clause'],
-	[428, 'import_clause_default_import'],
-	[429, 'export_statement_default_from'],
-	[430, 'export_statement_default_declaration'],
-	[431, 'export_statement_default_from_star_from'],
-	[432, 'export_statement_default_from_ns_from'],
-	[433, 'export_statement_default_from_clause_from'],
-	[434, 'export_statement_default_declaration_default_kw'],
-	[435, 'export_statement_default_declaration_default_kw_value'],
-	[436, 'variable_declarator_plain'],
-	[437, 'variable_declarator_definite'],
-	[438, 'meta_property_new_target'],
-	[439, 'meta_property_import_meta'],
-	[440, 'for_header_lhs'],
-	[441, 'for_header_var_kind'],
-	[442, 'for_header_let_const_kind'],
-	[443, 'for_header_using_kind'],
-	[444, '_call_signature_get_accessor_signature'],
-	[445, 'formal_parameters'],
+	[169, "'"],
+	[170, '++'],
+	[171, '--'],
+	[172, 'target'],
+	[173, 'meta'],
+	[174, 'automatic_semicolon'],
+	[175, 'string_fragment'],
+	[176, '?'],
+	[177, 'html_comment'],
+	[178, 'jsx_text'],
+	[179, 'function_signature_automatic_semicolon'],
+	[180, '__error_recovery'],
+	[181, '_tight'],
+	[182, '_space'],
+	[183, '_tab'],
+	[184, '_newline'],
+	[185, '_blankline'],
+	[186, '_double_blankline'],
+	[187, '_indent'],
+	[188, '_dedent'],
+	[189, 'program'],
+	[190, 'export_statement'],
+	[191, 'namespace_export'],
+	[192, 'export_clause'],
+	[193, 'export_specifier'],
+	[194, '_module_export_name'],
+	[195, 'declaration'],
+	[196, 'import'],
+	[197, 'import_statement'],
+	[198, 'import_clause'],
+	[199, '_from_clause'],
+	[200, 'namespace_import'],
+	[201, 'named_imports'],
+	[202, 'import_specifier'],
+	[203, 'import_attribute'],
+	[204, 'statement'],
+	[205, 'expression_statement'],
+	[206, 'variable_declaration'],
+	[207, 'lexical_declaration'],
+	[208, 'using_declaration'],
+	[209, 'variable_declarator'],
+	[210, 'statement_block'],
+	[211, 'else_clause'],
+	[212, 'if_statement'],
+	[213, 'switch_statement'],
+	[214, 'for_statement'],
+	[215, 'for_in_statement'],
+	[216, '_for_header'],
+	[217, 'while_statement'],
+	[218, 'do_statement'],
+	[219, 'try_statement'],
+	[220, 'with_statement'],
+	[221, 'break_statement'],
+	[222, 'continue_statement'],
+	[223, 'debugger_statement'],
+	[224, 'return_statement'],
+	[225, 'throw_statement'],
+	[226, 'empty_statement'],
+	[227, 'labeled_statement'],
+	[228, 'switch_body'],
+	[229, 'switch_case'],
+	[230, 'switch_default'],
+	[231, 'catch_clause'],
+	[232, 'finally_clause'],
+	[233, 'parenthesized_expression'],
+	[234, 'expression'],
+	[235, 'primary_expression'],
+	[236, 'yield_expression'],
+	[237, 'object'],
+	[238, 'object_pattern'],
+	[239, 'assignment_pattern'],
+	[240, 'object_assignment_pattern'],
+	[241, 'array'],
+	[242, 'array_pattern'],
+	[243, 'nested_identifier'],
+	[244, 'class'],
+	[245, 'class_declaration'],
+	[246, 'class_heritage'],
+	[247, 'function_expression'],
+	[248, 'function_declaration'],
+	[249, 'generator_function'],
+	[250, 'generator_function_declaration'],
+	[251, 'arrow_function'],
+	[252, '_call_signature'],
+	[253, '_formal_parameter'],
+	[254, 'optional_chain'],
+	[255, 'call_expression'],
+	[256, 'new_expression'],
+	[257, 'await_expression'],
+	[258, 'member_expression'],
+	[259, 'subscript_expression'],
+	[260, '_lhs_expression'],
+	[498, 'lhs_expression'],
+	[261, 'assignment_expression'],
+	[262, '_augmented_assignment_lhs'],
+	[263, 'augmented_assignment_expression'],
+	[264, '_initializer'],
+	[265, '_destructuring_pattern'],
+	[266, 'spread_element'],
+	[267, 'ternary_expression'],
+	[268, 'binary_expression'],
+	[269, 'unary_expression'],
+	[270, 'update_expression'],
+	[271, 'sequence_expression'],
+	[272, 'string'],
+	[273, 'template_string'],
+	[274, 'template_substitution'],
+	[275, 'regex'],
+	[276, 'number'],
+	[277, 'meta_property'],
+	[278, 'this'],
+	[279, 'super'],
+	[280, 'true'],
+	[281, 'false'],
+	[282, 'null'],
+	[283, 'arguments'],
+	[284, 'decorator'],
+	[285, 'decorator_member_expression'],
+	[286, 'decorator_call_expression'],
+	[287, 'class_body'],
+	[288, 'formal_parameters'],
+	[289, 'class_static_block'],
+	[290, 'pattern'],
+	[291, 'rest_pattern'],
+	[292, 'method_definition'],
+	[293, 'pair'],
+	[294, 'pair_pattern'],
+	[295, '_property_name'],
+	[296, 'computed_property_name'],
+	[297, 'public_field_definition'],
+	[298, '_import_identifier'],
+	[299, 'non_null_expression'],
+	[300, 'method_signature'],
+	[301, 'abstract_method_signature'],
+	[302, 'function_signature'],
+	[303, 'decorator_parenthesized_expression'],
+	[304, 'type_assertion'],
+	[305, 'as_expression'],
+	[306, 'satisfies_expression'],
+	[307, 'instantiation_expression'],
+	[308, 'import_require_clause'],
+	[309, 'extends_clause'],
+	[310, 'extends_clause_single'],
+	[311, 'implements_clause'],
+	[312, 'ambient_declaration'],
+	[313, 'abstract_class_declaration'],
+	[314, 'module'],
+	[315, 'internal_module'],
+	[316, '_module'],
+	[317, 'import_alias'],
+	[318, 'nested_type_identifier'],
+	[319, 'interface_declaration'],
+	[320, 'extends_type_clause'],
+	[321, 'enum_declaration'],
+	[322, 'enum_body'],
+	[323, 'enum_assignment'],
+	[324, 'type_alias_declaration'],
+	[325, 'accessibility_modifier'],
+	[326, 'override_modifier'],
+	[327, 'required_parameter'],
+	[328, 'optional_parameter'],
+	[329, '_parameter_name'],
+	[330, 'omitting_type_annotation'],
+	[331, 'adding_type_annotation'],
+	[332, 'opting_type_annotation'],
+	[333, 'type_annotation'],
+	[334, 'type_query_member_expression_in_type_annotation'],
+	[335, 'type_query_call_expression_in_type_annotation'],
+	[336, 'asserts'],
+	[337, 'asserts_annotation'],
+	[338, 'type'],
+	[339, 'tuple_parameter'],
+	[340, 'optional_tuple_parameter'],
+	[341, 'optional_type'],
+	[342, 'rest_type'],
+	[343, '_tuple_type_member'],
+	[344, 'constructor_type'],
+	[345, 'primary_type'],
+	[346, 'template_type'],
+	[347, 'template_literal_type'],
+	[348, 'infer_type'],
+	[349, 'conditional_type'],
+	[350, 'generic_type'],
+	[351, 'type_predicate'],
+	[352, 'type_predicate_annotation'],
+	[353, 'type_query_member_expression'],
+	[354, 'type_query_subscript_expression'],
+	[355, 'type_query_call_expression'],
+	[356, 'type_query_instantiation_expression'],
+	[357, 'type_query'],
+	[358, 'index_type_query'],
+	[359, 'lookup_type'],
+	[360, 'mapped_type_clause'],
+	[361, 'literal_type'],
+	[362, '_number'],
+	[363, 'existential_type'],
+	[364, 'flow_maybe_type'],
+	[365, 'parenthesized_type'],
+	[366, 'predefined_type'],
+	[367, 'type_arguments'],
+	[368, 'object_type'],
+	[369, 'call_signature'],
+	[370, 'property_signature'],
+	[371, 'type_parameters'],
+	[372, 'type_parameter'],
+	[373, 'default_type'],
+	[374, 'constraint'],
+	[375, 'construct_signature'],
+	[376, 'index_signature'],
+	[377, 'array_type'],
+	[378, 'tuple_type'],
+	[379, 'readonly_type'],
+	[380, 'union_type'],
+	[381, 'intersection_type'],
+	[382, 'function_type'],
+	[383, 'export_specifiers'],
+	[384, 'import_specifiers'],
+	[385, '_class_body_member'],
+	[386, 'formal_parameters_elements'],
+	[387, 'enum_body_element_name'],
+	[388, '_enum_body_element'],
+	[389, 'enum_body_elements'],
+	[390, 'types'],
+	[391, 'type_parameters_elements'],
+	[392, 'tuple_type_members'],
+	[393, 'import_clause_group'],
+	[394, 'using_declaration_arm'],
+	[395, 'catch_clause_group'],
+	[396, '_get_accessor_signature'],
+	[397, '_set_accessor_signature'],
+	[398, 'ambient_declaration_global'],
+	[399, 'ambient_declaration_module'],
+	[400, 'object_type_content'],
+	[401, 'export_statement_default'],
+	[402, 'export_statement_namespace_export'],
+	[403, 'export_statement_equals_export'],
+	[404, 'literal_type_negative_number'],
+	[405, 'number_bigint'],
+	[406, 'binary_expression_in'],
+	[407, 'empty_member'],
+	[408, 'class_body_member_method'],
+	[409, 'class_body_member_method_sig'],
+	[410, 'class_body_member_declaration'],
+	[411, 'index_signature_colon'],
+	[412, 'index_signature_mapped_type_clause'],
+	[413, 'import_statement_clause_from'],
+	[414, 'yield_expression_delegate'],
+	[415, 'optional_chain_marker'],
+	[416, 'import_specifier_name'],
+	[417, 'import_specifier_as'],
+	[418, 'parenthesized_expression_typed'],
+	[419, 'parenthesized_expression_sequence'],
+	[420, 'call_expression_call'],
+	[421, 'call_expression_template_call'],
+	[422, 'call_expression_member'],
+	[423, 'string_double'],
+	[424, 'string_single'],
+	[425, 'update_expression_postfix'],
+	[426, 'update_expression_prefix'],
+	[427, 'arrow_function_parameter'],
+	[428, 'class_heritage_extends_clause'],
+	[429, 'import_clause_default_import'],
+	[430, 'export_statement_default_from'],
+	[431, 'export_statement_default_declaration'],
+	[432, 'export_statement_default_from_star_from'],
+	[433, 'export_statement_default_from_ns_from'],
+	[434, 'export_statement_default_from_clause_from'],
+	[435, 'export_statement_default_declaration_default_kw'],
+	[436, 'export_statement_default_declaration_default_kw_value'],
+	[437, 'variable_declarator_plain'],
+	[438, 'variable_declarator_definite'],
+	[439, 'meta_property_new_target'],
+	[440, 'meta_property_import_meta'],
+	[441, 'for_header_lhs'],
+	[442, 'for_header_var_kind'],
+	[443, 'for_header_let_const_kind'],
+	[444, 'for_header_using_kind'],
+	[445, '_call_signature_get_accessor_signature'],
 	[446, 'formal_parameters'],
-	[447, 'formal_parameters_elements'],
-	[448, 'setter_parameter'],
-	[449, '_parameter_name_set_accessor_signature'],
-	[450, '_pattern_0_set_accessor_signature'],
-	[451, 'method_definition_plain'],
-	[452, 'method_definition_getter'],
-	[453, 'method_definition_setter'],
-	[454, 'method_signature_plain'],
-	[455, 'method_signature_getter'],
-	[456, 'method_signature_setter'],
-	[457, 'abstract_method_signature_plain'],
-	[458, 'abstract_method_signature_getter'],
-	[459, 'abstract_method_signature_setter'],
-	[460, 'public_field_definition_plain'],
-	[461, 'public_field_definition_accessor'],
-	[462, '_parameter_name_receiver'],
-	[463, 'receiver_parameter_declaration'],
-	[464, '_parameter_name_formal_parameter'],
-	[465, 'formal_parameters_elements_receiver'],
-	[466, 'formal_parameters_elements_receiver_group'],
-	[467, 'program_repeat1'],
-	[468, 'variable_declaration_repeat1'],
-	[469, 'using_declaration_repeat1'],
-	[470, 'switch_body_repeat1'],
-	[471, 'object_repeat1'],
-	[472, 'object_pattern_repeat1'],
-	[473, 'array_repeat1'],
-	[474, 'array_pattern_repeat1'],
-	[475, 'class_repeat1'],
-	[476, 'sequence_expression_repeat1'],
-	[477, 'template_string_repeat1'],
-	[478, 'class_body_repeat1'],
-	[479, 'extends_clause_repeat1'],
-	[480, 'implements_clause_repeat1'],
-	[481, 'extends_type_clause_repeat1'],
-	[482, 'template_literal_type_repeat1'],
-	[483, 'export_specifiers_repeat1'],
-	[484, 'import_specifiers_repeat1'],
-	[485, 'formal_parameters_elements_repeat1'],
-	[486, 'enum_body_elements_repeat1'],
-	[487, 'types_repeat1'],
-	[488, 'type_parameters_elements_repeat1'],
-	[489, 'tuple_type_members_repeat1'],
-	[490, 'object_type_content_repeat1'],
-	[491, 'string_double_repeat1'],
-	[492, 'string_single_repeat1'],
-	[493, 'interface_body'],
-	[495, 'property_identifier'],
-	[496, 'shorthand_property_identifier'],
-	[497, 'shorthand_property_identifier_pattern'],
-	[498, 'statement_identifier'],
-	[499, 'this_type'],
-	[500, 'type_identifier'],
+	[447, 'formal_parameters'],
+	[448, 'formal_parameters_elements'],
+	[449, 'setter_parameter'],
+	[450, '_parameter_name_set_accessor_signature'],
+	[451, '_pattern_0_set_accessor_signature'],
+	[452, 'method_definition_plain'],
+	[453, 'method_definition_getter'],
+	[454, 'method_definition_setter'],
+	[455, 'method_signature_plain'],
+	[456, 'method_signature_getter'],
+	[457, 'method_signature_setter'],
+	[458, 'abstract_method_signature_plain'],
+	[459, 'abstract_method_signature_getter'],
+	[460, 'abstract_method_signature_setter'],
+	[461, 'public_field_definition_plain'],
+	[462, 'public_field_definition_accessor'],
+	[463, 'constructor_declaration'],
+	[464, '_call_signature_class_body_member_method'],
+	[465, '_method_definition_class_body_member_method'],
+	[466, '_parameter_name_receiver'],
+	[467, 'receiver_parameter_declaration'],
+	[468, '_parameter_name_formal_parameter'],
+	[469, 'formal_parameters_elements_receiver'],
+	[470, 'formal_parameters_elements_receiver_group'],
+	[471, 'program_repeat1'],
+	[472, 'variable_declaration_repeat1'],
+	[473, 'using_declaration_repeat1'],
+	[474, 'switch_body_repeat1'],
+	[475, 'object_repeat1'],
+	[476, 'object_pattern_repeat1'],
+	[477, 'array_repeat1'],
+	[478, 'array_pattern_repeat1'],
+	[479, 'class_repeat1'],
+	[480, 'sequence_expression_repeat1'],
+	[481, 'template_string_repeat1'],
+	[482, 'class_body_repeat1'],
+	[483, 'extends_clause_repeat1'],
+	[484, 'implements_clause_repeat1'],
+	[485, 'extends_type_clause_repeat1'],
+	[486, 'template_literal_type_repeat1'],
+	[487, 'export_specifiers_repeat1'],
+	[488, 'import_specifiers_repeat1'],
+	[489, 'formal_parameters_elements_repeat1'],
+	[490, 'enum_body_elements_repeat1'],
+	[491, 'types_repeat1'],
+	[492, 'type_parameters_elements_repeat1'],
+	[493, 'tuple_type_members_repeat1'],
+	[494, 'object_type_content_repeat1'],
+	[495, 'string_double_repeat1'],
+	[496, 'string_single_repeat1'],
+	[497, 'interface_body'],
+	[499, 'property_identifier'],
+	[500, 'shorthand_property_identifier'],
+	[501, 'shorthand_property_identifier_pattern'],
+	[502, 'statement_identifier'],
+	[503, 'this_type'],
+	[504, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1256,7 +1266,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 export const KIND_LITERAL_TEXT: ReadonlyMap<number, string> = new Map([
 	[15, ','],
 	[22, ';'],
-	[173, '\n']
+	[174, '\n']
 ]);
 
 export function kindIdFromName(kindName: string): TSKindId {
@@ -1367,6 +1377,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.StaticKeyword;
 		case 'let_keyword':
 			return TSKindId.LetKeyword;
+		case 'constructor_keyword':
+			return TSKindId.ConstructorKeyword;
 		case 'colon':
 			return TSKindId.Colon;
 		case 'case_keyword':
@@ -2183,6 +2195,12 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PublicFieldDefinitionPlain;
 		case 'public_field_definition_accessor':
 			return TSKindId.PublicFieldDefinitionAccessor;
+		case 'constructor_declaration':
+			return TSKindId.ConstructorDeclaration;
+		case '_call_signature_class_body_member_method':
+			return TSKindId._CallSignatureClassBodyMemberMethod;
+		case '_method_definition_class_body_member_method':
+			return TSKindId.MethodDefinitionClassBodyMemberMethod;
 		case '_parameter_name_receiver':
 			return TSKindId._ParameterNameReceiver;
 		case 'receiver_parameter_declaration':
@@ -2807,7 +2825,7 @@ export enum PrimaryTypeKind {
 	FlowMaybeType = 'flow_maybe_type',
 	TypeQuery = 'type_query',
 	IndexTypeQuery = 'index_type_query',
-	This = 'this',
+	ThisType = 'this_type',
 	ExistentialType = 'existential_type',
 	LiteralType = 'literal_type',
 	LookupType = 'lookup_type',
@@ -2856,6 +2874,13 @@ export enum LayoutKind {
 	DoubleBlankline = '_double_blankline',
 	Indent = '_indent',
 	Dedent = '_dedent'
+}
+
+export enum MethodDefinitionClassBodyMemberMethodKind {
+	MethodDefinitionPlain = 'method_definition_plain',
+	ConstructorDeclaration = 'constructor_declaration',
+	MethodDefinitionGetter = 'method_definition_getter',
+	MethodDefinitionSetter = 'method_definition_setter'
 }
 
 // Node types — concrete interfaces
@@ -5242,6 +5267,7 @@ export interface AsExpression {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.ConstKeyword
 					| TSKindId.AnyKeyword
@@ -5254,6 +5280,7 @@ export interface AsExpression {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5298,6 +5325,7 @@ export interface SatisfiesExpression {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5309,6 +5337,7 @@ export interface SatisfiesExpression {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5444,6 +5473,7 @@ export interface ImplementsClause {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5455,6 +5485,7 @@ export interface ImplementsClause {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type
@@ -5614,13 +5645,12 @@ export interface InterfaceDeclaration {
 		readonly name: readonly Identifier[];
 		readonly type_parameters?: readonly TypeParameter[];
 		readonly extends_type_clause?: readonly (TypeIdentifier | NestedTypeIdentifier | GenericType)[];
-		readonly body: readonly ObjectType[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 		readonly typeParameters: SlotHint<T.TypeParameters, true>;
 		readonly extendsTypeClause: SlotHint<T.ExtendsTypeClause, true>;
-		readonly body: SlotHint<T.InterfaceBody | T.InterfaceBody.Types>;
+		readonly body: SlotHint<T.InterfaceBody>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<
 				T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
@@ -5759,6 +5789,7 @@ export interface TypeAliasDeclaration {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5770,6 +5801,7 @@ export interface TypeAliasDeclaration {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5935,6 +5967,7 @@ export interface OmittingTypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5946,6 +5979,7 @@ export interface OmittingTypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -5975,6 +6009,7 @@ export interface AddingTypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -5986,6 +6021,7 @@ export interface AddingTypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6015,6 +6051,7 @@ export interface OptingTypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6026,6 +6063,7 @@ export interface OptingTypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6055,6 +6093,7 @@ export interface TypeAnnotation {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6066,6 +6105,7 @@ export interface TypeAnnotation {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6215,6 +6255,7 @@ export interface OptionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6226,6 +6267,7 @@ export interface OptionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6255,6 +6297,7 @@ export interface RestType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6266,6 +6309,7 @@ export interface RestType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6302,6 +6346,7 @@ export interface ConstructorType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6313,6 +6358,7 @@ export interface ConstructorType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6358,6 +6404,7 @@ export interface TemplateType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6369,6 +6416,7 @@ export interface TemplateType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType
@@ -6413,6 +6461,7 @@ export interface InferType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6424,6 +6473,7 @@ export interface InferType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6464,6 +6514,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6475,6 +6526,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6490,6 +6542,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6501,6 +6554,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6516,6 +6570,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6527,6 +6582,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6542,6 +6598,7 @@ export interface ConditionalType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6553,6 +6610,7 @@ export interface ConditionalType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6654,6 +6712,7 @@ export interface TypePredicate {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6665,6 +6724,7 @@ export interface TypePredicate {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -6947,6 +7007,7 @@ export interface IndexTypeQuery {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -6958,6 +7019,7 @@ export interface IndexTypeQuery {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -6989,6 +7051,7 @@ export interface LookupType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7000,6 +7063,7 @@ export interface LookupType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -7015,6 +7079,7 @@ export interface LookupType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7026,6 +7091,7 @@ export interface LookupType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7061,6 +7127,7 @@ export interface MappedTypeClause {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7072,6 +7139,7 @@ export interface MappedTypeClause {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7087,6 +7155,7 @@ export interface MappedTypeClause {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7098,6 +7167,7 @@ export interface MappedTypeClause {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7186,6 +7256,7 @@ export interface FlowMaybeType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7197,6 +7268,7 @@ export interface FlowMaybeType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -7226,6 +7298,7 @@ export interface ParenthesizedType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7237,6 +7310,7 @@ export interface ParenthesizedType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7482,6 +7556,7 @@ export interface DefaultType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7493,6 +7568,7 @@ export interface DefaultType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7525,6 +7601,7 @@ export interface Constraint {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7536,6 +7613,7 @@ export interface Constraint {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7605,6 +7683,7 @@ export interface ArrayType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7616,6 +7695,7 @@ export interface ArrayType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| PrimaryType;
@@ -7670,6 +7750,7 @@ export interface ReadonlyType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7681,6 +7762,7 @@ export interface ReadonlyType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7712,6 +7794,7 @@ export interface UnionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7723,6 +7806,7 @@ export interface UnionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7738,6 +7822,7 @@ export interface UnionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7749,6 +7834,7 @@ export interface UnionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7782,6 +7868,7 @@ export interface IntersectionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7793,6 +7880,7 @@ export interface IntersectionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7808,6 +7896,7 @@ export interface IntersectionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7819,6 +7908,7 @@ export interface IntersectionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -7854,6 +7944,7 @@ export interface FunctionType {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -7865,6 +7956,7 @@ export interface FunctionType {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type
@@ -8123,6 +8215,7 @@ export interface AmbientDeclarationModule {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -8134,6 +8227,7 @@ export interface AmbientDeclarationModule {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -8496,7 +8590,7 @@ export interface BinaryExpressionIn {
 export interface ClassBodyMemberMethod {
 	readonly $type: TSKindId.ClassBodyMemberMethod;
 	readonly _decorator: readonly Decorator[];
-	readonly _method_definition: MethodDefinition;
+	readonly _method_definition: MethodDefinitionClassBodyMemberMethod;
 	readonly _terminator?: number;
 	readonly __slotNames__?: {
 		readonly _decorator: 'decorators';
@@ -8508,11 +8602,11 @@ export interface ClassBodyMemberMethod {
 	};
 	readonly __slotHints__?: {
 		readonly decorators: SlotHint<T.Decorator[], true, true>;
-		readonly methodDefinition: SlotHint<T.MethodDefinition>;
+		readonly methodDefinition: SlotHint<T.MethodDefinitionClassBodyMemberMethod>;
 		readonly terminator: SlotHint<NonNullable<T.ClassBodyMemberMethod.Options>['terminator'], true>;
 	};
 	readonly decorators: () => readonly Decorator[];
-	readonly methodDefinition: () => MethodDefinition;
+	readonly methodDefinition: () => MethodDefinitionClassBodyMemberMethod;
 	readonly terminator: () => number | undefined;
 }
 
@@ -8585,6 +8679,7 @@ export interface IndexSignatureColon {
 					| 'unknown'
 					| 'never'
 					| 'object'
+					| 'this'
 					| '*',
 					| TSKindId.AnyKeyword
 					| TSKindId.NumberKeyword
@@ -8596,6 +8691,7 @@ export interface IndexSignatureColon {
 					| TSKindId.UnknownKeyword
 					| TSKindId.NeverKeyword
 					| TSKindId.ObjectKeyword
+					| TSKindId.ThisKeyword
 					| TSKindId.Star
 			  >
 			| Type;
@@ -10188,6 +10284,39 @@ export interface PublicFieldDefinitionAccessor {
 	readonly value: () => Expression | undefined;
 }
 
+export interface ConstructorDeclaration {
+	readonly $type: TSKindId.ConstructorDeclaration;
+	readonly _accessibility_modifier?: number;
+	readonly _parameters: FormalParameters;
+	readonly _body: StatementBlock;
+	readonly __slotNames__?: {
+		readonly _accessibility_modifier: 'accessibilityModifier';
+		readonly _parameters: 'parameters';
+		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly accessibility_modifier?: KindEnum<
+			'public' | 'private' | 'protected',
+			TSKindId.PublicKeyword | TSKindId.PrivateKeyword | TSKindId.ProtectedKeyword
+		>;
+	};
+	readonly __looseHints__?: {
+		readonly parameters: readonly (FormalParametersElements | FormalParametersElementsReceiver)[];
+		readonly body: readonly Statement[];
+	};
+	readonly __slotHints__?: {
+		readonly accessibilityModifier: SlotHint<
+			NonNullable<T.ConstructorDeclaration.Config>['accessibilityModifier'],
+			true
+		>;
+		readonly parameters: SlotHint<T.FormalParameters>;
+		readonly body: SlotHint<T.StatementBlock>;
+	};
+	readonly accessibilityModifier: () => number | undefined;
+	readonly parameters: () => FormalParameters;
+	readonly body: () => StatementBlock;
+}
+
 export interface ReceiverParameterDeclaration {
 	readonly $type: TSKindId.ReceiverParameterDeclaration;
 	readonly _decorator: readonly Decorator[];
@@ -10363,15 +10492,50 @@ export interface TypeIdentifier {
 
 export interface InterfaceBody {
 	readonly $type: TSKindId.InterfaceBody;
-	readonly _content: ObjectType;
+	readonly _opening: number;
+	readonly _members?: ObjectTypeContent;
+	readonly _closing: number;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _opening: 'opening';
+		readonly _members: 'members';
+		readonly _closing: 'closing';
+	};
+	readonly __inputHints__?: {
+		readonly opening: KindEnum<'{' | '{|', TSKindId.Lbrace | TSKindId.LbracePipe>;
+		readonly closing: KindEnum<'}' | '|}', TSKindId.Rbrace | TSKindId.PipeRbrace>;
+	};
+	readonly __looseHints__?: {
+		readonly members?: readonly (
+			| ExportStatement
+			| PropertySignature
+			| CallSignature
+			| ConstructSignature
+			| IndexSignature
+			| MethodSignature
+		)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.ObjectType>;
+		readonly opening: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>;
+		readonly members: SlotHint<T.ObjectTypeContent, true>;
+		readonly closing: SlotHint<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>;
+		readonly $listSlots: {
+			readonly members: ListSlotHint<
+				| T.ExportStatement
+				| T.PropertySignature
+				| T.CallSignature
+				| T.ConstructSignature
+				| T.IndexSignature
+				| T.MethodSignature,
+				{
+					separator?: TSKindId.Comma | TSKindId.Semi | TSKindId.AutomaticSemicolon;
+					delimiter?: Delimiter.None | Delimiter.Leading | Delimiter.Trailing | Delimiter.Both;
+				}
+			>;
+		};
 	};
-	readonly __aliasContent__?: InterfaceBody.Types;
-	readonly content: () => ObjectType;
+	readonly opening: () => number;
+	readonly members: () => ObjectTypeContent | undefined;
+	readonly closing: () => number;
 }
 
 // Leaf node types
@@ -10425,6 +10589,7 @@ export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
 export type TernaryQmark = Terminal<TSKindId.TernaryQmark, string>;
 export type ErrorRecovery = Terminal<TSKindId.ErrorRecovery, string>;
+export type ThisType = TSKindId.ThisType;
 
 // Supertype unions
 export type ExportStatement = ExportStatementDefault | ExportStatementEqualsExport | ExportStatementNamespaceExport;
@@ -10572,7 +10737,7 @@ export type PrimaryType =
 	| FlowMaybeType
 	| TypeQuery
 	| IndexTypeQuery
-	| This
+	| ThisType
 	| ExistentialType
 	| LiteralType
 	| LookupType
@@ -10597,6 +10762,12 @@ export type ExportStatementDefault = ExportStatementDefaultFrom | ExportStatemen
 export type NumberBigint = NumberBigintHex | NumberBigintBinary | NumberBigintOctal | NumberBigintDecimal;
 
 export type Layout = Tight | Space | Tab | Newline | Blankline | DoubleBlankline | Indent | Dedent;
+
+export type MethodDefinitionClassBodyMemberMethod =
+	| MethodDefinitionPlain
+	| ConstructorDeclaration
+	| MethodDefinitionGetter
+	| MethodDefinitionSetter;
 
 export namespace ExportStatement {
 	export type Kind = 'export_statement';
@@ -10764,6 +10935,12 @@ export namespace Layout {
 	export type Kind = '_layout';
 	export type Bound = SupertypeSurface<Layout, BoundByKindId>;
 	export type Parsed = SupertypeSurface<Layout, ParsedByKindId>;
+}
+
+export namespace MethodDefinitionClassBodyMemberMethod {
+	export type Kind = '_method_definition_class_body_member_method';
+	export type Bound = SupertypeSurface<MethodDefinitionClassBodyMemberMethod, BoundByKindId>;
+	export type Parsed = SupertypeSurface<MethodDefinitionClassBodyMemberMethod, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -10976,6 +11153,7 @@ export interface OptionsHintMap {
 	abstractMethodSignatureSetter: AbstractMethodSignatureSetter.Hints;
 	publicFieldDefinitionPlain: PublicFieldDefinitionPlain.Hints;
 	publicFieldDefinitionAccessor: PublicFieldDefinitionAccessor.Hints;
+	constructorDeclaration: ConstructorDeclaration.Hints;
 	receiverParameterDeclaration: ReceiverParameterDeclaration.Hints;
 	formalParametersElementsReceiver: FormalParametersElementsReceiver.Hints;
 	formalParametersElementsReceiverGroup: FormalParametersElementsReceiverGroup.Hints;
@@ -12312,7 +12490,6 @@ export namespace ImplementsClause {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
-				readonly this?: { readonly after?: LayoutKindId };
 				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
@@ -13061,7 +13238,6 @@ export namespace Types {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
-				readonly this?: { readonly after?: LayoutKindId };
 				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
 				readonly typeQuery?: { readonly after?: LayoutKindId };
@@ -13128,7 +13304,6 @@ export namespace TupleTypeMembers {
 				readonly stringDouble?: { readonly after?: LayoutKindId };
 				readonly stringSingle?: { readonly after?: LayoutKindId };
 				readonly templateLiteralType?: { readonly after?: LayoutKindId };
-				readonly this?: { readonly after?: LayoutKindId };
 				readonly true?: { readonly after?: LayoutKindId };
 				readonly tupleParameter?: { readonly after?: LayoutKindId };
 				readonly tupleType?: { readonly after?: LayoutKindId };
@@ -13804,6 +13979,16 @@ export namespace PublicFieldDefinitionAccessor {
 			readonly eq?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly overrideKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 			readonly staticKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+		};
+	}
+}
+
+export namespace ConstructorDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly accessibilityModifier?: { readonly after?: LayoutKindId };
+			readonly after?: LayoutKindId;
+			readonly before?: LayoutKindId;
 		};
 	}
 }
@@ -17097,6 +17282,20 @@ export interface PublicFieldDefinitionAccessorNs extends NodeNs<
 	readonly BuildArgs: PublicFieldDefinitionAccessor.BuildArgs;
 	readonly LooseArgs: PublicFieldDefinitionAccessor.LooseArgs;
 }
+export interface ConstructorDeclarationNs extends NodeNs<
+	ConstructorDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ConstructorDeclaration.Bound,
+	never,
+	TSKindId.ConstructorDeclaration,
+	ConstructorDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: ConstructorDeclaration.BuildArgs;
+	readonly LooseArgs: ConstructorDeclaration.LooseArgs;
+}
 export interface ReceiverParameterDeclarationNs extends NodeNs<
 	ReceiverParameterDeclaration,
 	LeafScalarMap,
@@ -17215,7 +17414,7 @@ export interface InterfaceBodyNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	InterfaceBody.Bound,
-	'content',
+	never,
 	TSKindId.InterfaceBody,
 	InterfaceBody.Parsed,
 	never
@@ -17282,6 +17481,7 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface ThisTypeNs extends KeywordNs<TSKindId.ThisType, 'this', TSKindId.ThisType> {}
 export interface UnescapedDoubleStringFragmentNs extends LeafNs<
 	UnescapedDoubleStringFragment,
 	string,
@@ -17538,6 +17738,7 @@ export interface NamespaceMap {
 	[TSKindId.AbstractMethodSignatureSetter]: AbstractMethodSignatureSetterNs;
 	[TSKindId.PublicFieldDefinitionPlain]: PublicFieldDefinitionPlainNs;
 	[TSKindId.PublicFieldDefinitionAccessor]: PublicFieldDefinitionAccessorNs;
+	[TSKindId.ConstructorDeclaration]: ConstructorDeclarationNs;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclarationNs;
 	[TSKindId.FormalParametersElementsReceiver]: FormalParametersElementsReceiverNs;
 	[TSKindId.FormalParametersElementsReceiverGroup]: FormalParametersElementsReceiverGroupNs;
@@ -17574,6 +17775,7 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.ThisType]: ThisTypeNs;
 	[TSKindId.UnescapedDoubleStringFragment]: UnescapedDoubleStringFragmentNs;
 	[TSKindId.UnescapedSingleStringFragment]: UnescapedSingleStringFragmentNs;
 	[TSKindId.RegexPattern]: RegexPatternNs;
@@ -17816,6 +18018,7 @@ export interface BoundByKindId {
 	[TSKindId.AbstractMethodSignatureSetter]: AbstractMethodSignatureSetter.Bound;
 	[TSKindId.PublicFieldDefinitionPlain]: PublicFieldDefinitionPlain.Bound;
 	[TSKindId.PublicFieldDefinitionAccessor]: PublicFieldDefinitionAccessor.Bound;
+	[TSKindId.ConstructorDeclaration]: ConstructorDeclaration.Bound;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclaration.Bound;
 	[TSKindId.FormalParametersElementsReceiver]: FormalParametersElementsReceiver.Bound;
 	[TSKindId.FormalParametersElementsReceiverGroup]: FormalParametersElementsReceiverGroup.Bound;
@@ -18067,6 +18270,7 @@ export interface ParsedByKindId {
 	[TSKindId.AbstractMethodSignatureSetter]: AbstractMethodSignatureSetter.Parsed;
 	[TSKindId.PublicFieldDefinitionPlain]: PublicFieldDefinitionPlain.Parsed;
 	[TSKindId.PublicFieldDefinitionAccessor]: PublicFieldDefinitionAccessor.Parsed;
+	[TSKindId.ConstructorDeclaration]: ConstructorDeclaration.Parsed;
 	[TSKindId.ReceiverParameterDeclaration]: ReceiverParameterDeclaration.Parsed;
 	[TSKindId.FormalParametersElementsReceiver]: FormalParametersElementsReceiver.Parsed;
 	[TSKindId.FormalParametersElementsReceiverGroup]: FormalParametersElementsReceiverGroup.Parsed;
@@ -18116,6 +18320,7 @@ export type FixedTextKindId =
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
+	| TSKindId.ThisType
 	| TSKindId.Star
 	| TSKindId.AsKeyword
 	| TSKindId.DefaultKeyword
@@ -18261,7 +18466,8 @@ export type FixedTextKindId =
 	| TSKindId.OfKeyword
 	| TSKindId.GetKeyword
 	| TSKindId.SetKeyword
-	| TSKindId.AccessorKeyword;
+	| TSKindId.AccessorKeyword
+	| TSKindId.ConstructorKeyword;
 
 export interface TypeKeyOf {
 	[TSKindId.Program]: 'program';
@@ -18492,6 +18698,7 @@ export interface TypeKeyOf {
 	[TSKindId.AbstractMethodSignatureSetter]: 'abstractMethodSignatureSetter';
 	[TSKindId.PublicFieldDefinitionPlain]: 'publicFieldDefinitionPlain';
 	[TSKindId.PublicFieldDefinitionAccessor]: 'publicFieldDefinitionAccessor';
+	[TSKindId.ConstructorDeclaration]: 'constructorDeclaration';
 	[TSKindId.ReceiverParameterDeclaration]: 'receiverParameterDeclaration';
 	[TSKindId.FormalParametersElementsReceiver]: 'formalParametersElementsReceiver';
 	[TSKindId.FormalParametersElementsReceiverGroup]: 'formalParametersElementsReceiverGroup';
@@ -18528,6 +18735,7 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.ThisType]: 'thisType';
 	[TSKindId.UnescapedDoubleStringFragment]: 'unescapedDoubleStringFragment';
 	[TSKindId.UnescapedSingleStringFragment]: 'unescapedSingleStringFragment';
 	[TSKindId.RegexPattern]: 'regexPattern';
@@ -25216,6 +25424,31 @@ export namespace PublicFieldDefinitionAccessor {
 	export type LooseArgs = [config: T.PublicFieldDefinitionAccessor.Loose];
 	export type Kind = TSKindId.PublicFieldDefinitionAccessor;
 }
+export namespace ConstructorDeclaration {
+	export type Config = ConfigFor<TSKindId.ConstructorDeclaration>;
+	export interface Bound extends BoundOf<T.ConstructorDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ConstructorDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ConstructorDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ConstructorDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ConstructorDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ConstructorDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorDeclaration>;
+	export type BuildArgs = [config?: Partial<ConfigOf<T.ConstructorDeclaration>>];
+	export type LooseArgs = [config?: T.ConstructorDeclaration.Loose];
+	export type Kind = TSKindId.ConstructorDeclaration;
+}
 export namespace ReceiverParameterDeclaration {
 	export type Config = ConfigFor<TSKindId.ReceiverParameterDeclaration>;
 	export interface Bound extends BoundOf<T.ReceiverParameterDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
@@ -25439,8 +25672,50 @@ export namespace TypeIdentifier {
 	export type Kind = TSKindId.TypeIdentifier;
 }
 export namespace InterfaceBody {
-	export type Config = ConfigFor<TSKindId.InterfaceBody>;
-	export type Types = SupertypeSurface<ObjectType, BoundByKindId>;
+	export namespace Curly {
+		export type Config = Omit<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>;
+		export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.InterfaceBody, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.InterfaceBody['$type']>;
+		}
+		export type BuildArgs = [config?: T.InterfaceBody.Curly.Config];
+		export type LooseArgs = [config?: T.InterfaceBody.Curly.Config];
+	}
+	export namespace Flow {
+		export type Config = Omit<ConfigFor<TSKindId.InterfaceBody>, 'opening' | 'closing'>;
+		export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: BoundWithNode<this, BoundByKindId>;
+		}
+		export interface Parsed extends ParsedOf<T.InterfaceBody, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+			readonly $type: T.InterfaceBody['$type'];
+			readonly $with: WithNode<this, BoundByKindId>;
+			readonly $query: () => QueryFacet<
+				this,
+				ParsedByKindId,
+				PortableQueryIds<PortableReads>,
+				KindMembers,
+				FixedTextKindId
+			>;
+			readonly $snapshot: () => Snapshot<T.InterfaceBody['$type']>;
+		}
+		export type BuildArgs = [config?: T.InterfaceBody.Flow.Config];
+		export type LooseArgs = [config?: T.InterfaceBody.Flow.Config];
+	}
+	/** Default form: 'curly' (first-declared). */
+	export type Config = Curly.Config;
 	export interface Bound extends BoundOf<T.InterfaceBody, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.InterfaceBody['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -25459,8 +25734,8 @@ export namespace InterfaceBody {
 	}
 	export type Loose = LooseFor<TSKindId.InterfaceBody>;
 	export type LooseConfig = LooseConfigFor<TSKindId.InterfaceBody>;
-	export type BuildArgs = [value: Admit<T.ObjectType>];
-	export type LooseArgs = [value: T.InterfaceBody.Loose];
+	export type BuildArgs = [config: ConfigOf<T.InterfaceBody>];
+	export type LooseArgs = [config: T.InterfaceBody.Loose];
 	export type Kind = TSKindId.InterfaceBody;
 }
 export namespace Import {
@@ -25732,6 +26007,16 @@ export namespace Dedent {
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
+}
+export namespace ThisType {
+	export type Config = ThisTypeNs['Config'];
+	export type Bound = ThisTypeNs['Bound'];
+	export type Parsed = ThisTypeNs['Bound'];
+	export type Loose = ThisTypeNs['Loose'];
+	export type LooseConfig = ThisTypeNs['LooseConfig'];
+	export type BuildArgs = ThisTypeNs['BuildArgs'];
+	export type LooseArgs = ThisTypeNs['LooseArgs'];
+	export type Kind = TSKindId.ThisType;
 }
 export namespace UnescapedDoubleStringFragment {
 	export type Config = UnescapedDoubleStringFragmentNs['Config'];

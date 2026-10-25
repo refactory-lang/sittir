@@ -24,6 +24,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	text: null,
 	pattern: null,
 	variantOf: null,
+	splitFrom: null,
+	aliasStorage: null,
 	shownAs: []
 });
 
@@ -84,6 +86,17 @@ const testsOf = async (bindings: string, kind: string) => {
 describe('readTestOf', () => {
 	it('tests a plain claim by nothing', async () => {
 		expect(await testsOf('(boolean) @literal.boolean', 'boolean')).toEqual([['literal.boolean', []]]);
+	});
+
+	it('tests the clone a literal split named by its kind alone, though the clone has no slot for the literal', async () => {
+		const clone = { ...node('constructor_declaration', [slot('body', ['block'])]), splitFrom: 'function_definition' };
+		const model = new Map([...MODEL, [clone.kind, clone]]);
+		const bindings = await readBindings('((function_definition name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))');
+		const entries = resolveRoutes({ grammar: 'g', bindings, model, textTokens: new Set(), layoutSlots: [] }).readEntries;
+		const testOf = (kind: string) =>
+			entries.get(kind)!.map((entry) => readTestOf(entry, model, (owner, name) => BY_KEY[`${owner}.${name}`], presenceKeywordOf, (k) => TYPES[k]));
+		expect(testOf('constructor_declaration')).toEqual([[]]);
+		expect(testOf('function_definition')).toEqual([[{ up: 0, via: [], plan: { op: 'eq', text: '__init__', ...SLOTS['function_definition.name'] } }]]);
 	});
 
 	it('compares the claimed node\'s own text when the predicate tests the claim\'s capture', async () => {

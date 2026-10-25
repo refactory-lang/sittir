@@ -110,16 +110,16 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             displayed.extend(ids.iter().cloned());
         }
         if !shown.is_empty() {
-            by_display.push(quote!(if [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+            by_display.push(quote!(if [#(#shown),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         }
         if !ids.is_empty() && kinds.display {
-            by_display.push(quote!(if [#(#ids),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+            by_display.push(quote!(if [#(#ids),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         } else if !ids.is_empty() {
-            by_grammar.push(quote!(if [#(#ids),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
+            by_grammar.push(quote!(if [#(#ids),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         }
         let folded = &kinds.folded;
         if !folded.is_empty() {
-            by_folded.push(quote!(if [#(#folded),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
+            by_folded.push(quote!(if [#(#folded),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         }
         match &variant.fields {
             fields if form.edged || matches!(fields, Fields::Unit) => {
@@ -233,17 +233,30 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             }
         }
     });
+    let own_stamp = quote! {
+        #[allow(dead_code)]
+        fn __shows(display: ::sittir_core::types::KindId) -> bool {
+            [#(#displayed),*].contains(&display)
+        }
+        #[allow(dead_code)]
+        fn __stamp(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> ::sittir_core::types::KindId {
+            ::sittir_core::read::stamp(grammar, display, __shows, ::sittir_core::read::relaxes_nothing)
+        }
+    };
+    let stamp = attrs.stamp.as_ref().map_or_else(|| quote!(__stamp), |path| quote!(#path));
     if attrs.codec_only {
         return Ok(quote! {
             const _: () = {
                 use ::sittir_core::types::KindId as __Kind;
                 #[allow(dead_code)]
                 fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                    let kind = #stamp(grammar, display);
                     #(#by_display)*
                     #(#by_grammar)*
                     #(#by_folded)*
                     ::core::option::Option::None
                 }
+                #own_stamp
                 #codec
                 #writer
             };
@@ -279,7 +292,9 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
             const __UNITS: &[__rt::UnitId] = &[#(#units_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
+            #own_stamp
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                let kind = #stamp(grammar, display);
                 #(#by_display)*
                 #(#by_grammar)*
                 #(#by_folded)*
@@ -293,7 +308,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     __variant(grammar, display).is_some()
                 }
                 fn shows(display: __Kind) -> bool {
-                    [#(#displayed),*].contains(&display)
+                    __shows(display)
                 }
                 fn scalar(grammar: __Kind, display: __Kind) -> bool {
                     match __variant(grammar, display) {
@@ -431,6 +446,9 @@ pub(crate) enum Role {
     Layout,
     /// `#[text]`: a text leaf's text.
     Text,
+    /// `#[wire(key = "$type")]`: the id the node is shown as, its kind or
+    /// one of the displays its struct declares.
+    Kind,
     Slot(SlotAttrs),
     /// `#[flank(…)]`: a list's delimiters.
     Flank(FlankAttrs),
@@ -448,8 +466,11 @@ pub(crate) struct Field<'a> {
 }
 
 /// A field's role, from the one stamp it carries.
-fn role_of(field: &syn::Field, ident: &Ident) -> syn::Result<Role> {
+fn role_of(field: &syn::Field, ident: &Ident, key: Option<&LitStr>) -> syn::Result<Role> {
     let mut roles = Vec::new();
+    if key.is_some_and(crate::codec::is_kind_key) {
+        roles.push(Role::Kind);
+    }
     if let Some(slot) = attrs::slot_attrs(&field.attrs)? {
         roles.push(Role::Slot(slot));
     }
@@ -469,7 +490,7 @@ fn role_of(field: &syn::Field, ident: &Ident) -> syn::Result<Role> {
         roles.push(Role::Text);
     }
     let role = roles.pop().ok_or_else(|| {
-        syn::Error::new_spanned(ident, format!("`{ident}` has no stamp naming its role: `#[layout]`, `#[text]`, `#[slot]`, `#[flank]`, `#[separator_kind]` or `#[space]`"))
+        syn::Error::new_spanned(ident, format!("`{ident}` has no stamp naming its role: `#[layout]`, `#[text]`, `#[slot]`, `#[flank]`, `#[separator_kind]`, `#[space]` or the `$type` wire key"))
     })?;
     if !roles.is_empty() {
         return Err(syn::Error::new_spanned(ident, format!("`{ident}` has more than one role stamp")));
@@ -486,7 +507,8 @@ fn fields_of<'a>(owner: &Ident, data: &'a DataStruct) -> syn::Result<Vec<Field<'
         .iter()
         .map(|field| {
             let ident = field.ident.as_ref().expect("a named field");
-            Ok(Field { ident, ty: &field.ty, role: role_of(field, ident)?, key: attrs::wire_key(&field.attrs)? })
+            let key = attrs::wire_key(&field.attrs)?;
+            Ok(Field { ident, ty: &field.ty, role: role_of(field, ident, key.as_ref())?, key })
         })
         .collect()
 }
@@ -545,6 +567,13 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         Some(name) => crate::prepare::prepare_trait(ident, name, &fields, trivia.as_ref())?,
         None => TokenStream::new(),
     };
+    let kind_field = fields.iter().find(|field| matches!(field.role, Role::Kind));
+    match (kind_field, attrs.displays.is_empty()) {
+        (Some(field), true) => return Err(syn::Error::new_spanned(field.ident, "a `$type` field holds a display id: declare them with `#[node(displays = […])]`")),
+        (None, false) => return Err(syn::Error::new_spanned(ident, "a struct with `displays` holds the id it shows in a `#[wire(key = \"$type\")]` field")),
+        _ => {}
+    }
+    let displays = &attrs.displays;
     let folded = &attrs.folded;
     let admits = if attrs.display { quote!(display == #kind) } else { quote!(grammar == #kind #(|| grammar == #folded)*) };
     let layout: Vec<&Path> = attrs.layout.iter().flatten().collect();
@@ -607,6 +636,8 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             use ::sittir_core::types::KindId as __Kind;
             #[allow(dead_code)]
             const __KIND: __Kind = #kind;
+            #[allow(dead_code)]
+            const __DISPLAYS: &[__Kind] = &[#(#displays),*];
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
             #items
@@ -682,6 +713,10 @@ fn common_inits(fields: &[Field<'_>], skip: Option<&Ident>, units: bool) -> Vec<
                 Role::Layout if units => Some(quote!(#name: Some(ctx.layout_with_units(index, __at, true, __units)),)),
                 Role::Layout => Some(quote!(#name: Some(ctx.layout(index, __at, true)),)),
                 Role::Space(_) | Role::Text => Some(quote!(#name: ::core::default::Default::default(),)),
+                Role::Kind => Some(quote!(#name: {
+                    let __shown = __rt::display_id(&__node);
+                    if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
+                },)),
                 _ => None,
             }
         })

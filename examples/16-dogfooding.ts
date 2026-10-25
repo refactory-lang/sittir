@@ -25,7 +25,7 @@ export function emitIsModule(grammar: GrammarModel): string {
 		statements: [
 			ts.build.interfaceDeclaration({
 				name: 'IsGuards',
-				body: ts.build.objectType.curly(first === undefined ? {} : { members: ts.build.objectTypeContent(first, ...rest) }),
+				body: ts.build.interfaceBody.curly(first === undefined ? {} : { members: ts.build.objectTypeContent(first, ...rest) }),
 			}),
 		],
 	}).$render();

@@ -5,9 +5,11 @@ const { kinds } = py;
 
 /**
  * Read: each accessor returns a wrapped child, read lazily one level at a
- * time. Lists the top-level functions and classes, and each class's methods.
- * A class body is one of several suite forms, so reading into it narrows the
- * form first with the variant's guard.
+ * time. Lists the top-level functions and classes, and each class's
+ * constructor and methods. A class body is one of several suite forms, so
+ * reading into it narrows the form first with its guard. A class body's
+ * block, its constructor and each method in it are kinds of their own, and
+ * the constructor's name is fixed text, so it has no name to read.
  */
 export function outline(source: string) {
 	return py
@@ -17,10 +19,11 @@ export function outline(source: string) {
 			if (py.is.functionDefinition(statement)) return [`def ${statement.name().$text()}`];
 			if (!py.is.classDefinition(statement)) return [];
 			const body = statement.body();
-			const members = py.is.suite.block(body) ? body.block().statements() : [];
-			const methods = members.flatMap((member) =>
-				py.is.functionDefinition(member) ? [`  def ${member.name().$text()}`] : []
-			);
+			const members = py.is.suiteBlockClassDeclaration(body) ? body.blockClassDeclaration().statements() : [];
+			const methods = members.flatMap((member) => {
+				if (py.is.methodDeclaration(member)) return [`  def ${member.name().$text()}`];
+				return py.is.constructorDeclaration(member) ? ['  def __init__'] : [];
+			});
 			return [`class ${statement.name().$text()}`, ...methods];
 		});
 }
@@ -45,12 +48,12 @@ export function callsTo(source: string, callee: string) {
  * slot's text against a pattern. A view is lazy: `map` runs only on what the
  * condition kept.
  */
-export function privateHelpers(source: string) {
+export function privateMethods(source: string) {
 	return Array.from(
 		py
 			.parse(source)
 			.$query()
-			.$descendants.ofType(kinds.FunctionDefinition)
+			.$descendants.ofType(kinds.MethodDeclaration)
 			.where((fn) => fn.name.match(/^_/).and(fn.name.match(/^__/).not()))
 			.map((fn) => fn.name().$text())
 	);
@@ -58,8 +61,9 @@ export function privateHelpers(source: string) {
 
 /**
  * Query: `$children` takes one level, `$descendants` every level, and `find`
- * stops the walk at the first match. The class's functions are found without
- * narrowing the body's suite form, including any function nested in a method.
+ * stops the walk at the first match. The class's methods are found without
+ * narrowing the body's suite form. Its constructor, `__init__`, is a kind of
+ * its own, so it is not among them.
  */
 export function methodsOf(source: string, className: string) {
 	const cls = py
@@ -72,8 +76,8 @@ export function methodsOf(source: string, className: string) {
 	return Array.from(
 		cls
 			.$query()
-			.$descendants.ofType(kinds.FunctionDefinition)
-			.map((fn) => fn.name().$text())
+			.$descendants.ofType(kinds.MethodDeclaration)
+			.map((method) => method.name().$text())
 	);
 }
 

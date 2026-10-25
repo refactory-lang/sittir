@@ -640,16 +640,16 @@ const visibilityModifierPub: {
 });
 
 const visibilityModifier$crate =
-	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(...args: ArgsOf<CF>): ReturnType<PF> =>
-		_p<ReturnType<PF>>(parent)(_c(child)(...args));
+	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
+	(options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifier$crate$strict = visibilityModifier$crate(
 	F.buildVisibilityModifier,
-	F.buildCrateVisibilityModifier
+	TSKindId.CrateVisibilityModifier
 );
 const visibilityModifier$crate$coerce = visibilityModifier$crate(
-	F.buildVisibilityModifier,
-	C.coerceToCrateVisibilityModifier
+	C.coerceToVisibilityModifier,
+	TSKindId.CrateVisibilityModifier
 );
 const visibilityModifier$pub =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
@@ -753,12 +753,10 @@ export const visibilityModifier = Object.freeze({
 	}
 }) as unknown as typeof B.visibilityModifier & {
 	crate: {
-		strict: <const A extends ArgsOf<typeof F.buildCrateVisibilityModifier>>(
-			...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildCrateVisibilityModifier>>
-		) => ReturnType<typeof F.buildVisibilityModifier>;
-		coerce: <const A extends ArgsOf<typeof C.coerceToCrateVisibilityModifier>>(
-			...args: A & RefuseUndeclared<A, ArgsOf<typeof C.coerceToCrateVisibilityModifier>>
-		) => ReturnType<typeof F.buildVisibilityModifier>;
+		strict: (options?: OptionsArg<typeof F.buildVisibilityModifier>) => ReturnType<typeof F.buildVisibilityModifier>;
+		coerce: (
+			options?: OptionsArg<typeof C.coerceToVisibilityModifier>
+		) => ReturnType<typeof C.coerceToVisibilityModifier>;
 	};
 	pub: {
 		strict: <const A extends ArgsOf<typeof F.buildVisibilityModifierPub>>(

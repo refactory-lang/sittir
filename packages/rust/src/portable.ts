@@ -115,6 +115,7 @@ export interface PortableIds {
 		| TSKindId.MacroDefinitionBracket
 		| TSKindId.MacroDefinitionParen
 		| TSKindId.MacroInvocation
+		| TSKindId.MethodDeclaration
 		| TSKindId.ModItem
 		| TSKindId.ModItemExternal
 		| TSKindId.ModItemInline
@@ -132,6 +133,7 @@ export interface PortableIds {
 		| TSKindId.RemainingFieldPattern
 		| TSKindId.ScopedIdentifier
 		| TSKindId.SelfParameter
+		| TSKindId.SignatureMethodDeclaration
 		| TSKindId.SlicePattern
 		| TSKindId.StaticItem
 		| TSKindId.StringLiteral
@@ -202,16 +204,16 @@ export interface PortableIds {
 		| TSKindId.MacroDefinitionBrace
 		| TSKindId.MacroDefinitionBracket
 		| TSKindId.MacroDefinitionParen;
-	'declaration.method': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.method.private': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.method.public': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.method.public.internal': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.method.public.restricted': TSKindId.FunctionItem | TSKindId.FunctionSignatureItem;
-	'declaration.method.signature': TSKindId.FunctionSignatureItem;
-	'declaration.method.signature.private': TSKindId.FunctionSignatureItem;
-	'declaration.method.signature.public': TSKindId.FunctionSignatureItem;
-	'declaration.method.signature.public.internal': TSKindId.FunctionSignatureItem;
-	'declaration.method.signature.public.restricted': TSKindId.FunctionSignatureItem;
+	'declaration.method': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.private': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.public': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.public.internal': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.public.restricted': TSKindId.MethodDeclaration | TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature': TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature.private': TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature.public': TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature.public.internal': TSKindId.SignatureMethodDeclaration;
+	'declaration.method.signature.public.restricted': TSKindId.SignatureMethodDeclaration;
 	'declaration.module':
 		| TSKindId.ForeignModItem
 		| TSKindId.ForeignModItemBody
@@ -2977,6 +2979,7 @@ const table: PortableTable = {
 				TSKindId.MacroDefinitionBracket,
 				TSKindId.MacroDefinitionParen,
 				TSKindId.MacroInvocation,
+				TSKindId.MethodDeclaration,
 				TSKindId.ModItem,
 				TSKindId.ModItemExternal,
 				TSKindId.ModItemInline,
@@ -2994,6 +2997,7 @@ const table: PortableTable = {
 				TSKindId.RemainingFieldPattern,
 				TSKindId.ScopedIdentifier,
 				TSKindId.SelfParameter,
+				TSKindId.SignatureMethodDeclaration,
 				TSKindId.SlicePattern,
 				TSKindId.StaticItem,
 				TSKindId.StringLiteral,
@@ -3052,7 +3056,7 @@ const table: PortableTable = {
 			ids: [TSKindId.AttributedOrderedField, TSKindId.FieldDeclaration],
 			exact: false
 		},
-		'declaration.function': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: true },
 		'declaration.function.private': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.public': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.public.internal': {
@@ -3063,7 +3067,7 @@ const table: PortableTable = {
 			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
 			exact: false
 		},
-		'declaration.function.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.function.signature': { ids: [TSKindId.FunctionSignatureItem], exact: true },
 		'declaration.function.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
 		'declaration.function.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
@@ -3083,22 +3087,28 @@ const table: PortableTable = {
 			],
 			exact: true
 		},
-		'declaration.method': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.private': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.public': { ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method': { ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration], exact: true },
+		'declaration.method.private': {
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
+			exact: false
+		},
+		'declaration.method.public': {
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
+			exact: false
+		},
 		'declaration.method.public.internal': {
-			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
 		'declaration.method.public.restricted': {
-			ids: [TSKindId.FunctionItem, TSKindId.FunctionSignatureItem],
+			ids: [TSKindId.MethodDeclaration, TSKindId.SignatureMethodDeclaration],
 			exact: false
 		},
-		'declaration.method.signature': { ids: [TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.signature.private': { ids: [TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.signature.public': { ids: [TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.signature.public.internal': { ids: [TSKindId.FunctionSignatureItem], exact: false },
-		'declaration.method.signature.public.restricted': { ids: [TSKindId.FunctionSignatureItem], exact: false },
+		'declaration.method.signature': { ids: [TSKindId.SignatureMethodDeclaration], exact: true },
+		'declaration.method.signature.private': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.method.signature.public': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.method.signature.public.internal': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
+		'declaration.method.signature.public.restricted': { ids: [TSKindId.SignatureMethodDeclaration], exact: false },
 		'declaration.module': {
 			ids: [
 				TSKindId.ForeignModItem,
@@ -3963,7 +3973,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '432': 1 } } },
-					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '432': 1 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -4256,7 +4266,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '205': 0 } } },
-					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '205': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.constant', within: [], test: [] }
@@ -4336,7 +4346,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '198': 0 } } },
-					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '198': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.enum', within: [], test: [] }
@@ -4509,7 +4519,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } },
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
 			},
@@ -4527,7 +4537,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } },
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } },
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
 			},
@@ -4544,7 +4554,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '200': 0 } } },
-					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '200': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{
@@ -4630,7 +4640,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '204': 0 } } },
-					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '204': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import.package', within: [], test: [] }
@@ -4712,7 +4722,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '202': 0 } } },
-					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '202': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.field', within: [], test: [] }
@@ -4733,160 +4743,6 @@ const table: PortableTable = {
 		[TSKindId.ForeignModItemBody]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.ForeignModItemSemi]: [{ path: 'declaration.module.foreign', within: [], test: [] }],
 		[TSKindId.FunctionItem]: [
-			{
-				path: 'declaration.method',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{
-						up: 0,
-						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '349': 0 } }],
-						plan: { op: 'not', of: { op: 'is', types: [231], slots: { '429': 1 } } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [{ slots: { '208': 4 } }], plan: { op: 'is', types: [437], slots: { '230': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 4 } }, { slots: { '230': 0 } }, { slots: { '437': 0 } }],
-						plan: { op: 'is', types: [231], slots: { '436': 1 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.private',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [127], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public.restricted',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.private',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [127], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public.restricted',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.public',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.method.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.ImplItemBody],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.method.public',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.method.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
-				]
-			},
-			{ path: 'declaration.method', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
 			{
 				path: 'declaration.function.private',
 				within: [],
@@ -4949,78 +4805,12 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '208': 0 } } },
-					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '208': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function', within: [], test: [] }
 		],
 		[TSKindId.FunctionSignatureItem]: [
-			{
-				path: 'declaration.method.signature.private',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.signature.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }],
-						plan: { op: 'is', types: [380], slots: { '381': 0 } }
-					},
-					{
-						up: 0,
-						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [127], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.signature.public.restricted',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
-					{
-						up: 0,
-						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
-					}
-				]
-			},
-			{
-				path: 'declaration.method.signature.public',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.method.signature.public.internal',
-				within: [TSKindId.DeclarationList, TSKindId.TraitItem],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
-				]
-			},
-			{ path: 'declaration.method.signature', within: [TSKindId.DeclarationList, TSKindId.TraitItem], test: [] },
 			{
 				path: 'declaration.function.signature.private',
 				within: [],
@@ -5083,7 +4873,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '209': 0 } } },
-					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '209': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.function.signature', within: [], test: [] }
@@ -5196,6 +4986,97 @@ const table: PortableTable = {
 		[TSKindId.MatchPattern]: [{ path: 'pattern.match', within: [], test: [] }],
 		[TSKindId.MetaKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Metavariable]: [{ path: 'identifier.metavariable', within: [], test: [] }],
+		[TSKindId.MethodDeclaration]: [
+			{
+				path: 'declaration.method',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ slots: { '476': 4 } }],
+						plan: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method',
+				within: [],
+				test: [
+					{ up: 0, via: [{ slots: { '476': 4 } }], plan: { op: 'is', types: [439], slots: { '230': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '476': 4 } }, { slots: { '230': 0 } }, { slots: { '439': 0 } }],
+						plan: { op: 'is', types: [231], slots: { '438': 1 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '476': 0 } } },
+					{ up: 0, via: [{ slots: { '476': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '476': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '476': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '476': 0 } } },
+					{ up: 0, via: [{ slots: { '476': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '476': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '476': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '476': 0 } } },
+					{ up: 0, via: [{ slots: { '476': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '476': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '476': 0 } } },
+					{ up: 0, via: [{ slots: { '476': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
+				]
+			},
+			{
+				path: 'declaration.method.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '476': 0 } } },
+					{ up: 0, via: [{ slots: { '476': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
+				]
+			},
+			{ path: 'declaration.method', within: [], test: [] }
+		],
 		[TSKindId.ModItem]: [{ path: 'declaration.module', within: [], test: [] }],
 		[TSKindId.ModItemExternal]: [
 			{
@@ -5260,7 +5141,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '384': 0 } } },
-					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '384': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -5328,7 +5209,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '385': 0 } } },
-					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '385': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.module', within: [], test: [] }
@@ -5486,6 +5367,85 @@ const table: PortableTable = {
 		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.receiver', within: [], test: [] }],
 		[TSKindId.ShorthandFieldIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
+		[TSKindId.SignatureMethodDeclaration]: [
+			{
+				path: 'declaration.method.signature',
+				within: [],
+				test: [
+					{
+						up: 0,
+						via: [{ slots: { '478': 4 } }],
+						plan: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.private',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
+					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
+					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }],
+						plan: { op: 'is', types: [380], slots: { '381': 0 } }
+					},
+					{
+						up: 0,
+						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [127], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.restricted',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
+					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{
+						up: 0,
+						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
+					}
+				]
+			},
+			{
+				path: 'declaration.method.signature.public',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
+					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
+				]
+			},
+			{
+				path: 'declaration.method.signature.public.internal',
+				within: [],
+				test: [
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
+					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
+				]
+			},
+			{ path: 'declaration.method.signature', within: [], test: [] }
+		],
 		[TSKindId.SlicePattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
 			{ path: 'pattern.list', within: [], test: [] }
@@ -5554,7 +5514,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '206': 0 } } },
-					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '206': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -5639,7 +5599,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '423': 0 } } },
-					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '423': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct', within: [], test: [] }
@@ -5707,7 +5667,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '424': 0 } } },
-					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '424': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.tuple', within: [], test: [] },
@@ -5776,7 +5736,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '425': 0 } } },
-					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '425': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.struct.unit', within: [], test: [] },
@@ -5862,7 +5822,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '214': 0 } } },
-					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '214': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.interface.trait', within: [], test: [] }
@@ -5896,7 +5856,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '473': 0 } }],
+						via: [{ slots: { '479': 0 } }],
 						plan: { op: 'match', pattern: '^(Option|Result|String|Vec|Box)$', self: true }
 					}
 				]
@@ -5966,7 +5926,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '207': 0 } } },
-					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '207': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.type_alias', within: [], test: [] }
@@ -6073,7 +6033,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '197': 0 } } },
-					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '197': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.union', within: [], test: [] }
@@ -6146,7 +6106,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '224': 0 } } },
-					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [469], slots: { '235': 0 } } }
+					{ up: 0, via: [{ slots: { '224': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'statement.import', within: [], test: [] }
@@ -6226,6 +6186,7 @@ const table: PortableTable = {
 		[TSKindId.Newline]: '\n',
 		[TSKindId.Blankline]: '\n\n',
 		[TSKindId.DoubleBlankline]: '\n\n\n',
+		[TSKindId.CrateVisibilityModifier]: 'crate',
 		[TSKindId.Semi]: ';',
 		[TSKindId.EqGt]: '=>',
 		[TSKindId.Colon]: ':',
@@ -6389,8 +6350,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 		async: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
 		const: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
 		unsafe: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
-		default: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
-		static: null
+		default: { op: 'child', slots: { '208': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } }
 	},
 	[TSKindId.FunctionType]: {
 		unsafe: {
@@ -6403,15 +6363,25 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ImplItemBody]: { unsafe: { op: 'present', slots: { '377': 0 } } },
 	[TSKindId.ImplItemSemi]: { unsafe: { op: 'present', slots: { '378': 0 } } },
 	[TSKindId.LetDeclaration]: { mutable: { op: 'present', slots: { '223': 0 } } },
+	[TSKindId.MethodDeclaration]: {
+		async: { op: 'child', slots: { '476': 1 }, of: { op: 'eq', text: 'async', slots: { '210': 0 } } },
+		const: { op: 'child', slots: { '476': 1 }, of: { op: 'eq', text: 'const', slots: { '210': 0 } } },
+		unsafe: { op: 'child', slots: { '476': 1 }, of: { op: 'eq', text: 'unsafe', slots: { '210': 0 } } },
+		default: { op: 'child', slots: { '476': 1 }, of: { op: 'eq', text: 'default', slots: { '210': 0 } } },
+		static: { op: 'child', slots: { '476': 4 }, of: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } } }
+	},
 	[TSKindId.Parameter]: { mutable: { op: 'is', types: [58], slots: { '233': 0 } } },
 	[TSKindId.PointerTypeMut]: { writable: { op: 'and', of: [] } },
-	[TSKindId.ReceiverParameterDeclaration]: { mutable: { op: 'is', types: [58], slots: { '435': 0 } } },
+	[TSKindId.ReceiverParameterDeclaration]: { mutable: { op: 'is', types: [58], slots: { '437': 0 } } },
 	[TSKindId.ReferenceExpressionMut]: { exclusive: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawConst]: { raw: { op: 'and', of: [] } },
 	[TSKindId.ReferenceExpressionRawMut]: { writable: { op: 'and', of: [] }, raw: { op: 'and', of: [] } },
 	[TSKindId.ReferencePattern]: { exclusive: { op: 'is', types: [58], slots: { '326': 0 } } },
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [58], slots: { '252': 1 } } },
 	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [58], slots: { '231': 2 } } },
+	[TSKindId.SignatureMethodDeclaration]: {
+		static: { op: 'child', slots: { '478': 4 }, of: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } } }
+	},
 	[TSKindId.StaticItem]: {
 		mutable: { op: 'present', slots: { '206': 2 } },
 		byReference: { op: 'present', slots: { '206': 1 } }
@@ -6434,7 +6404,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			const: { types: [], kinds: [208] },
 			default: { types: [], kinds: [208] },
 			mutable: { types: [], kinds: [206, 223] },
-			static: { kind: 208 },
 			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
 		}
 	},
@@ -6452,7 +6421,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			const: { types: [], kinds: [208] },
 			default: { types: [], kinds: [208] },
 			mutable: { types: [], kinds: [206, 223] },
-			static: { kind: 208 },
 			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
 		}
 	},
@@ -7020,7 +6988,6 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			const: { types: [], kinds: [208] },
 			default: { types: [], kinds: [208] },
 			mutable: { types: [], kinds: [206, 223] },
-			static: { kind: 208 },
 			unsafe: { types: [], kinds: [208, 214, 377, 378, 395, 396] }
 		},
 		trailingExpression: {
@@ -7305,6 +7272,28 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	435: {
+		declarations: {
+			async: { types: [], kinds: [476] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [476] },
+			default: { types: [], kinds: [476] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { types: [], kinds: [476, 478] },
+			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 476] }
+		}
+	},
+	436: {
+		declarations: {
+			async: { types: [], kinds: [476] },
+			byReference: { types: [], kinds: [206] },
+			const: { types: [], kinds: [476] },
+			default: { types: [], kinds: [476] },
+			mutable: { types: [], kinds: [206, 223] },
+			static: { types: [], kinds: [476] },
+			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 476] }
+		}
+	},
+	437: {
 		type: {
 			exclusive: { types: [], kinds: [252] },
 			unsafe: { types: [], kinds: [242] },
@@ -7312,7 +7301,23 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [389], kinds: [] }
 		}
 	},
-	436: { content: { mutable: { types: [], kinds: [231, 435] } } }
+	438: { content: { mutable: { types: [], kinds: [231, 437] } } },
+	476: {
+		returnType: {
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
+		}
+	},
+	478: {
+		returnType: {
+			exclusive: { types: [], kinds: [252] },
+			unsafe: { types: [], kinds: [242] },
+			unsigned: { types: [59, 61, 63, 65, 67, 70], kinds: [] },
+			writable: { types: [389], kinds: [] }
+		}
+	}
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {
@@ -7371,6 +7376,9 @@ declare module './types.js' {
 	interface LetDeclaration {
 		readonly __flags__?: 'mutable';
 	}
+	interface MethodDeclaration {
+		readonly __flags__?: 'async' | 'const' | 'unsafe' | 'default' | 'static';
+	}
 	interface Parameter {
 		readonly __flags__?: 'mutable';
 	}
@@ -7397,6 +7405,9 @@ declare module './types.js' {
 	}
 	interface SelfParameter {
 		readonly __flags__?: 'mutable';
+	}
+	interface SignatureMethodDeclaration {
+		readonly __flags__?: 'static';
 	}
 	interface StaticItem {
 		readonly __flags__?: 'mutable' | 'byReference';
@@ -7800,10 +7811,26 @@ declare module './types.js' {
 	interface TypeArgument {
 		readonly __slotFlags__?: { readonly content: 'byte' | 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
+	interface TraitInterfaceDeclarationBody {
+		readonly __slotFlags__?: {
+			readonly declarations: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'static' | 'unsafe';
+		};
+	}
+	interface ExtensionDeclarationBody {
+		readonly __slotFlags__?: {
+			readonly declarations: 'async' | 'byReference' | 'const' | 'default' | 'mutable' | 'static' | 'unsafe';
+		};
+	}
 	interface ReceiverParameterDeclaration {
 		readonly __slotFlags__?: { readonly type: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 	interface AttributedParameterReceiver {
 		readonly __slotFlags__?: { readonly content: 'mutable' };
+	}
+	interface MethodDeclaration {
+		readonly __slotFlags__?: { readonly returnType: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
+	}
+	interface SignatureMethodDeclaration {
+		readonly __slotFlags__?: { readonly returnType: 'exclusive' | 'unsafe' | 'unsigned' | 'writable' };
 	}
 }

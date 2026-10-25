@@ -182,11 +182,15 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 	return stampBuilt(node) as unknown as T.SimpleStatements.Bound;
 }
 
-export function buildImportStatement<V extends Admit<T.Names | T.Names.Types>>(
+export function buildImportStatement<V extends Admit<T.Names>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildImportStatement>;
-export function buildImportStatement<V extends Admit<T.ImportList>>(
-	value: V & RefuseUndeclared<V>
+export function buildImportStatement<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildImportStatement>;
+export function buildImportStatement<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildImportStatement>;
 export function buildImportStatement(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -203,20 +207,27 @@ export function buildImportStatement(...args: unknown[]) {
 				(buildNames as (...a: unknown[]) => unknown)(...args) as Parameters<typeof _buildImportStatement>[0]
 			);
 }
-function _buildImportStatement(value: Admit<T.Names | T.Names.Types>): T.ImportStatement.Bound {
-	const _names = admitAliasContent<NonNullable<T.ImportStatement['_names']>>(value, [
-		[[135], (v: unknown) => buildNames(v as never)]
-	]);
+function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
+	const _names = hydrateStored(value);
+	const listView = ownerView(_names, '_name');
+	if (listView.length === undefined) refuseReadStub('_names');
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'import_statement', { names: _names });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImportStatement as const, { _names });
-	const record = arena.record(TSKindId.ImportStatement as const, 12);
+	const record = arena.record(TSKindId.ImportStatement as const, 8);
 	storeCell(arena, record.data, record.base + 2, _names);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			names: (value: Admit<T.Names | T.Names.Types>) => rebuilt(node, handle, () => _buildImportStatement(value))
+			names: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Names as const, optional: false, make: buildNames },
+						(value: Admit<T.Names>) => _buildImportStatement(value)
+					)
+				)
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1538,7 +1549,8 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 						(value?: Admit<T.ArgumentList>) => buildClassDefinition({ ...config, bases: value })
 					)
 				),
-			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildClassDefinition({ ...config, body: value }))
+			body: (value: Admit<T.SuiteClassDefinition>) =>
+				rebuilt(node, handle, () => buildClassDefinition({ ...config, body: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2659,8 +2671,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
-				232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224,
+				233, 238, 236, 239, 234, 240, 235, 242, 241, 64, 201, 246, 143, 203
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -4190,16 +4202,14 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 
 export const buildNotEscapeSequence: TSKindId.NotEscapeSequence = TSKindId.NotEscapeSequence;
 
-export function buildFormatSpecifier<
-	A extends Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
->(...children: A & RefuseUndeclared<A>): T.FormatSpecifier.Bound;
+export function buildFormatSpecifier<A extends Admit<(T.FormatSpecifierText | T.FormatExpression)[]>>(
+	...children: A & RefuseUndeclared<A>
+): T.FormatSpecifier.Bound;
 export function buildFormatSpecifier(
-	...children: Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
+	...children: Admit<(T.FormatSpecifierText | T.FormatExpression)[]>
 ): T.FormatSpecifier.Bound {
 	currentHandle()?.admit(TSKindId.FormatSpecifier, children);
-	const _elements = admitAliasContent<NonNullable<T.FormatSpecifier['_elements']>>(children, [
-		[[249], (v: unknown) => buildFormatExpression(v as never)]
-	]);
+	const _elements = children;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'format_specifier', { elements: _elements });
 	const arena = builtArenaOf(handle);
@@ -4209,7 +4219,7 @@ export function buildFormatSpecifier(
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			elements: (...vs: Admit<(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types>[]) =>
+			elements: (...vs: Admit<T.FormatSpecifierText | T.FormatExpression>[]) =>
 				rebuilt(node, handle, () => buildFormatSpecifier(...restItems('elements', vs)))
 		},
 		$trivia: {
@@ -6947,26 +6957,247 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export function buildNames<V extends Admit<T.ImportList>>(value: V & RefuseUndeclared<V>): T.Names.Bound;
-export function buildNames(value: Admit<T.ImportList>): T.Names.Bound {
-	const _content = value;
+export function buildConstructorDeclaration<
+	TypeParametersSlot extends T.ConstructorDeclaration.Config['typeParameters'],
+	ParametersSlot extends T.ConstructorDeclaration.Config['parameters'],
+	ReturnTypeSlot extends T.ConstructorDeclaration.Config['returnType'],
+	BodySlot extends T.ConstructorDeclaration.Config['body']
+>(
+	config: RefusingConfig<
+		T.ConstructorDeclaration.Config,
+		{ typeParameters: TypeParametersSlot; parameters: ParametersSlot; returnType: ReturnTypeSlot; body: BodySlot }
+	>
+): T.ConstructorDeclaration.Bound;
+export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Config): T.ConstructorDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [config]);
+	const _async = strictBooleanStorage(config.async);
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildParameters());
+	const _return_type = config.returnType;
+	const _body = config.body;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'names', { content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'constructor_declaration', {
+			async: _async,
+			typeParameters: _type_parameters,
+			parameters: _parameters,
+			returnType: _return_type,
+			body: _body
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Names as const, { _content });
-	const record = arena.record(TSKindId.Names as const, 8);
-	storeCell(arena, record.data, record.base + 2, _content);
+	handle?.verifyStored?.(TSKindId.ConstructorDeclaration as const, {
+		_async,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body
+	});
+	const record = arena.record(TSKindId.ConstructorDeclaration as const, 38);
+	if (_async) storeFlag(record.data, record.base + 2, 1);
+	storeCell(arena, record.data, record.base + 3, _type_parameters);
+	storeCell(arena, record.data, record.base + 13, _parameters);
+	storeCell(arena, record.data, record.base + 23, _return_type);
+	storeCell(arena, record.data, record.base + 28, _body);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			content: (...args: unknown[]) =>
+			async: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['async']>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, async: value })),
+			typeParameters: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
-						{ kind: TSKindId.ImportList as const, optional: false, make: buildImportList },
-						(value: Admit<T.ImportList>) => buildNames(value)
+						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+						(value?: Admit<T.TypeParameter>) => buildConstructorDeclaration({ ...config, typeParameters: value })
 					)
-				)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+						(value: Admit<T.Parameters>) => buildConstructorDeclaration({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, returnType: value })),
+			body: (value: Admit<T.Suite>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.ConstructorDeclaration.Bound;
+}
+
+export function buildBlockClassDeclaration<A extends Admit<T.StatementClassDefinition[]>>(
+	...children: A & RefuseUndeclared<A>
+): T.BlockClassDeclaration.Bound;
+export function buildBlockClassDeclaration(
+	...children: Admit<T.StatementClassDefinition[]>
+): T.BlockClassDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.BlockClassDeclaration, children);
+	const _statements = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'block_class_declaration', { statements: _statements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.BlockClassDeclaration as const, { _statements });
+	const record = arena.record(TSKindId.BlockClassDeclaration as const, 4);
+	storeList(arena, record.data, record.base + 2, _statements, 5);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			statements: (...vs: Admit<T.StatementClassDefinition>[]) =>
+				rebuilt(node, handle, () => buildBlockClassDeclaration(...restItems('statements', vs)))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.BlockClassDeclaration.Bound;
+}
+
+export function buildSuiteBlockClassDeclaration<V extends Admit<T.BlockClassDeclaration>>(
+	value: V & RefuseUndeclared<V>
+): ReturnType<typeof _buildSuiteBlockClassDeclaration>;
+export function buildSuiteBlockClassDeclaration<A extends Admit<T.StatementClassDefinition[]>>(
+	...children: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildSuiteBlockClassDeclaration>;
+export function buildSuiteBlockClassDeclaration(...args: unknown[]) {
+	if (args.length === 0) {
+		return _buildSuiteBlockClassDeclaration(
+			buildBlockClassDeclaration() as Parameters<typeof _buildSuiteBlockClassDeclaration>[0]
+		);
+	}
+	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
+		return _buildSuiteBlockClassDeclaration(args[0] as Parameters<typeof _buildSuiteBlockClassDeclaration>[0]);
+	}
+	const prebuilt =
+		args.length === 1 &&
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		(args[0] as { $type?: unknown }).$type === (TSKindId.BlockClassDeclaration as const);
+	return prebuilt
+		? _buildSuiteBlockClassDeclaration(args[0] as Parameters<typeof _buildSuiteBlockClassDeclaration>[0])
+		: _buildSuiteBlockClassDeclaration(
+				(buildBlockClassDeclaration as (...a: unknown[]) => unknown)(...args) as Parameters<
+					typeof _buildSuiteBlockClassDeclaration
+				>[0]
+			);
+}
+function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>): T.SuiteBlockClassDeclaration.Bound {
+	const _block_class_declaration = value;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'suite_block_class_declaration', { blockClassDeclaration: _block_class_declaration });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.SuiteBlockClassDeclaration as const, { _block_class_declaration });
+	const record = arena.record(TSKindId.SuiteBlockClassDeclaration as const, 8);
+	storeCell(arena, record.data, record.base + 2, _block_class_declaration);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			blockClassDeclaration: (value: Admit<T.BlockClassDeclaration>) =>
+				rebuilt(node, handle, () => _buildSuiteBlockClassDeclaration(value))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.SuiteBlockClassDeclaration.Bound;
+}
+
+export function buildDecoratedDefinitionClassDeclaration<
+	DecoratorsSlot extends T.DecoratedDefinitionClassDeclaration.Config['decorators'],
+	DefinitionSlot extends T.DecoratedDefinitionClassDeclaration.Config['definition']
+>(
+	config: RefusingConfig<
+		T.DecoratedDefinitionClassDeclaration.Config,
+		{ decorators: DecoratorsSlot; definition: DefinitionSlot }
+	>
+): T.DecoratedDefinitionClassDeclaration.Bound;
+export function buildDecoratedDefinitionClassDeclaration(
+	config: T.DecoratedDefinitionClassDeclaration.Config
+): T.DecoratedDefinitionClassDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.DecoratedDefinitionClassDeclaration, [config]);
+	const _decorator = listStorage<NonNullable<T.DecoratedDefinitionClassDeclaration['_decorator']>>(config.decorators);
+	const _definition = config.definition;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'decorated_definition_class_declaration', {
+			decorators: _decorator,
+			definition: _definition
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.DecoratedDefinitionClassDeclaration as const, { _decorator, _definition });
+	const record = arena.record(TSKindId.DecoratedDefinitionClassDeclaration as const, 49);
+	storeList(arena, record.data, record.base + 2, _decorator, 5);
+	storeCell(arena, record.data, record.base + 4, _definition);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			decorators: (...values: Admit<NonEmptyArray<T.Decorator>>) =>
+				rebuilt(node, handle, () =>
+					buildDecoratedDefinitionClassDeclaration({ ...config, decorators: restItems('decorators', values) })
+				),
+			definition: (value: Admit<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>) =>
+				rebuilt(node, handle, () => buildDecoratedDefinitionClassDeclaration({ ...config, definition: value }))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.DecoratedDefinitionClassDeclaration.Bound;
+}
+
+export function buildNames<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildNames>;
+export function buildNames<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildNames>;
+export function buildNames(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.DottedName | T.AliasedImport>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
+		Admit<T.DottedName | T.AliasedImport>
+	>;
+	return _buildNames(elements, options);
+}
+function _buildNames(
+	elements: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.Names.Bound {
+	currentHandle()?.admit(TSKindId.Names, elements);
+	const _name = elements;
+	const _delimiter = options.delimiter;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'names', { names: _name });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Names as const, { _name });
+	const record = arena.record(TSKindId.Names as const, 4);
+	storeList(arena, record.data, record.base + 2, _name, 5);
+	storeListOptions(arena, record, _delimiter, undefined);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			names: (...vs: NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>) =>
+				rebuilt(node, handle, () => buildNames(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildNames({ ...options, delimiter: v }, ...elements))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7000,21 +7231,53 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 	return stampBuilt(node) as unknown as T.AsPatternTarget.Bound;
 }
 
-export function buildFormatExpression<V extends Admit<T.Interpolation>>(
-	value: V & RefuseUndeclared<V>
+export function buildFormatExpression<
+	ExpressionSlot extends T.FormatExpression.Config['expression'],
+	TypeConversionSlot extends T.FormatExpression.Config['typeConversion'],
+	FormatSpecifierSlot extends T.FormatExpression.Config['formatSpecifier']
+>(
+	config: RefusingConfig<
+		T.FormatExpression.Config,
+		{ expression: ExpressionSlot; typeConversion: TypeConversionSlot; formatSpecifier: FormatSpecifierSlot }
+	>
 ): T.FormatExpression.Bound;
-export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatExpression.Bound {
-	const _content = value;
+export function buildFormatExpression(config: T.FormatExpression.Config): T.FormatExpression.Bound {
+	currentHandle()?.admit(TSKindId.FormatExpression, [config]);
+	const _expression = kindIdStorage<NonNullable<T.FormatExpression['_expression']>>(config.expression);
+	const _debug = strictBooleanStorage(config.debug);
+	const _type_conversion = config.typeConversion;
+	const _format_specifier = config.formatSpecifier;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'format_expression', { content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'format_expression', {
+			expression: _expression,
+			debug: _debug,
+			typeConversion: _type_conversion,
+			formatSpecifier: _format_specifier
+		});
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.FormatExpression as const, { _content });
-	const record = arena.record(TSKindId.FormatExpression as const, 23);
-	storeCell(arena, record.data, record.base + 2, _content);
+	handle?.verifyStored?.(TSKindId.FormatExpression as const, {
+		_expression,
+		_debug,
+		_type_conversion,
+		_format_specifier
+	});
+	const record = arena.record(TSKindId.FormatExpression as const, 19);
+	storeCell(arena, record.data, record.base + 3, _expression);
+	if (_debug) storeFlag(record.data, record.base + 2, 1);
+	storeCell(arena, record.data, record.base + 8, _type_conversion);
+	storeCell(arena, record.data, record.base + 13, _format_specifier);
 	const node = arena.view(record);
 	bindRow(node, {
 		$with: {
-			content: (value: Admit<T.Interpolation>) => rebuilt(node, handle, () => buildFormatExpression(value))
+			expression: (value: Admit<NonNullable<T.FormatExpression.Config>['expression']>) =>
+				rebuilt(node, handle, () => buildFormatExpression({ ...config, expression: value })),
+			debug: (value?: Admit<NonNullable<T.FormatExpression.Config>['debug']>) =>
+				rebuilt(node, handle, () => buildFormatExpression({ ...config, debug: value })),
+			typeConversion: (value?: Admit<T.TypeConversion>) =>
+				rebuilt(node, handle, () => buildFormatExpression({ ...config, typeConversion: value })),
+			formatSpecifier: (value?: Admit<T.FormatSpecifier>) =>
+				rebuilt(node, handle, () => buildFormatExpression({ ...config, formatSpecifier: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7022,6 +7285,93 @@ export function buildFormatExpression(value: Admit<T.Interpolation>): T.FormatEx
 		}
 	});
 	return stampBuilt(node) as unknown as T.FormatExpression.Bound;
+}
+
+export function buildMethodDeclaration<
+	NameSlot extends T.MethodDeclaration.Config['name'],
+	TypeParametersSlot extends T.MethodDeclaration.Config['typeParameters'],
+	ParametersSlot extends T.MethodDeclaration.Config['parameters'],
+	ReturnTypeSlot extends T.MethodDeclaration.Config['returnType'],
+	BodySlot extends T.MethodDeclaration.Config['body']
+>(
+	config: RefusingConfig<
+		T.MethodDeclaration.Config,
+		{
+			name: NameSlot;
+			typeParameters: TypeParametersSlot;
+			parameters: ParametersSlot;
+			returnType: ReturnTypeSlot;
+			body: BodySlot;
+		}
+	>
+): T.MethodDeclaration.Bound;
+export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.MethodDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.MethodDeclaration, [config]);
+	const _async = strictBooleanStorage(config.async);
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildParameters());
+	const _return_type = config.returnType;
+	const _body = config.body;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'method_declaration', {
+			async: _async,
+			name: _name,
+			typeParameters: _type_parameters,
+			parameters: _parameters,
+			returnType: _return_type,
+			body: _body
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MethodDeclaration as const, {
+		_async,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body
+	});
+	const record = arena.record(TSKindId.MethodDeclaration as const, 43);
+	if (_async) storeFlag(record.data, record.base + 2, 1);
+	storeCell(arena, record.data, record.base + 3, _name);
+	storeCell(arena, record.data, record.base + 8, _type_parameters);
+	storeCell(arena, record.data, record.base + 18, _parameters);
+	storeCell(arena, record.data, record.base + 28, _return_type);
+	storeCell(arena, record.data, record.base + 33, _body);
+	const node = arena.view(record);
+	bindRow(node, {
+		$with: {
+			async: (value?: Admit<NonNullable<T.MethodDeclaration.Config>['async']>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, async: value })),
+			name: (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+						(value?: Admit<T.TypeParameter>) => buildMethodDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+						(value: Admit<T.Parameters>) => buildMethodDeclaration({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, returnType: value })),
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildMethodDeclaration({ ...config, body: value }))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	});
+	return stampBuilt(node) as unknown as T.MethodDeclaration.Bound;
 }
 
 export type FluentKindMap = {
@@ -7218,9 +7568,14 @@ export type FluentKindMap = {
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
+	constructor_declaration: T.ConstructorDeclaration.Bound;
+	block_class_declaration: T.BlockClassDeclaration.Bound;
+	suite_block_class_declaration: T.SuiteBlockClassDeclaration.Bound;
+	decorated_definition_class_declaration: T.DecoratedDefinitionClassDeclaration.Bound;
 	names: T.Names.Bound;
 	as_pattern_target: T.AsPatternTarget.Bound;
 	format_expression: T.FormatExpression.Bound;
+	method_declaration: T.MethodDeclaration.Bound;
 };
 
 export const _factoryMap = {
@@ -7417,8 +7772,13 @@ export const _factoryMap = {
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
+	constructor_declaration: buildConstructorDeclaration,
+	block_class_declaration: buildBlockClassDeclaration,
+	suite_block_class_declaration: buildSuiteBlockClassDeclaration,
+	decorated_definition_class_declaration: buildDecoratedDefinitionClassDeclaration,
 	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
-	format_expression: buildFormatExpression
+	format_expression: buildFormatExpression,
+	method_declaration: buildMethodDeclaration
 } as const;
 export type _FactoryMap = typeof _factoryMap;

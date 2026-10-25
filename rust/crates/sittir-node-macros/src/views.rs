@@ -171,6 +171,11 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
                 accessor: quote!(fn #name(&self) -> #ty { self.#name }),
             }
         }
+        (Role::Kind, Shape::Value) => ViewField {
+            member: quote!(#name: #ty,),
+            init: quote!(#name: kind,),
+            accessor: quote!(fn #name(&self) -> #ty { self.#name }),
+        },
         _ => return Err(syn::Error::new_spanned(name, format!("`{name}` has no record view for its stamp and type"))),
     })
 }
@@ -193,6 +198,8 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         return Err(syn::Error::new_spanned(view, format!("`{ident}` names a record view, so it has a record, a kind and a fields trait")));
     };
     let trivia = record_trivia(ident, fields)?;
+    let displays = &attrs.displays;
+    let claims = quote!((kind == #kind #(|| kind == #displays)*));
     let text_leaf = attrs.text.is_some();
     let mut parts = Vec::new();
     for field in fields {
@@ -205,7 +212,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     }
     let reads_words = fields.iter().any(|field| matches!(field.role, Role::Slot(_)) && matches!(shape(field), Ok(Shape::Child | Shape::OptionalChild)));
     let members = parts.iter().map(|part| &part.member);
-    let inits = parts.iter().map(|part| &part.init);
+    let inits: Vec<&TokenStream> = parts.iter().map(|part| &part.init).collect();
     let accessors = parts.iter().map(|part| &part.accessor);
     let doc = format!("A record of `{ident}`, read in place.");
     let common = quote! {
@@ -218,19 +225,21 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             quote!(#common #(#members)*),
             quote! {
                 match cell {
-                    ::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if kind == #kind => {
+                    ::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if #claims => {
                         let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), ::sittir_core::slot::ChangedEdges::default(), ::core::option::Option::None),
                             #text: ctx.source_text(span)?,
+                            #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, record } if kind == #kind => {
-                        let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, #kind)?;
+                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, record } if #claims => {
+                        let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;
                         let place = ::sittir_core::arena::place_of(ctx, record, &side, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), side.changed, side.sides),
                             #text: ctx.string(text)?,
+                            #(#inits)*
                         })
                     }
                     _ => ::core::result::Result::Err(#refused),
@@ -246,18 +255,19 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         (
             quote!(#common #words_member #(#members)*),
             quote! {
-                let (ctx, at, held) = match cell {
-                    ::sittir_core::arena::Cell::Child { kind, at, link, changed } if kind == #kind => (
+                let (ctx, at, held, kind) = match cell {
+                    ::sittir_core::arena::Cell::Child { kind, at, link, changed } if #claims => (
                         match link {
                             ::core::option::Option::Some(tree) => ctx.linked(tree)?,
                             ::core::option::Option::None => ctx,
                         },
                         at,
                         changed,
+                        kind,
                     ),
                     _ => return ::core::result::Result::Err(#refused),
                 };
-                let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, #kind)?;
+                let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, kind)?;
                 let place = ::sittir_core::arena::place_of(ctx, at, &side, site)?;
                 let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), if site.is_some() { held } else { side.changed }, side.sides);
                 ::core::result::Result::Ok(Self {
@@ -288,12 +298,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         }
         impl ::sittir_core::arena::RecordCells for #ident {
             fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
-                (kind == #kind).then_some(::sittir_core::arena::RecordShape { words: #words, cells: &[#(#cells),*] })
+                #claims.then_some(::sittir_core::arena::RecordShape { words: #words, cells: &[#(#cells),*] })
             }
         }
         impl<'a> ::sittir_core::arena::RecordView<'a, #trivia> for #view<'a> {
             fn claims(kind: ::sittir_core::types::KindId) -> bool {
-                kind == #kind
+                #claims
             }
             #[allow(unused_variables, reason = "a record with no settings reads no side record past its header")]
             fn from_cell(
@@ -488,8 +498,8 @@ mod tests {
         .expect("expands");
         assert!(has(&out, "::sittir_core::records_codec! { #[doc = \"A record of `BlockNode`, read in place.\"] #[derive(Clone, Copy)] pub struct BlockNodeRecord<'a> {"));
         assert!(has(&out, "impl ::sittir_core::arena::HasRecord for BlockNode { type Record<'a> = BlockNodeRecord<'a>; }"));
-        assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { kind == kind::BLOCK }"));
-        assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, 12u32, kind::BLOCK)?;"));
+        assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::BLOCK) }"));
+        assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, 12u32, kind)?;"));
         assert!(has(&out, "match link { ::core::option::Option::Some(tree) => ctx.linked(tree)?, ::core::option::Option::None => ctx, }, at, changed,"));
         assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), if site.is_some() { held } else { side.changed }, side.sides);"));
         assert!(has(&out, "__layout: layout, __words: words,"));
@@ -502,6 +512,31 @@ mod tests {
         assert!(has(&out, "type Label<'b> = ::sittir_core::arena::RecordSlot<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <LabelNode as ::sittir_core::arena::HasRecord>::Record<'a>, false> where Self: 'b;"));
         assert!(has(&out, "let site = ::sittir_core::trivia_store::Site { holder: self.__layout.place(), word: 3u32, item: ::sittir_core::types::ItemIndex(0) }; ::sittir_core::arena::RecordSlot::of(self.__layout.context(), site, &self.__words[3usize..8usize])"));
         assert!(has(&out, "::sittir_core::arena::RecordItems<'a, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, <StatementNode as ::sittir_core::arena::HasRecord>::Record<'a>, true>"));
+    }
+
+    #[test]
+    fn a_struct_shown_as_a_display_claims_it_and_keeps_the_kind_its_cell_names() {
+        let out = expand(&parse_quote! {
+            #[node(kind = kind::FUNCTION_ITEM, displays = [kind::METHOD], words = 7, fields = FunctionItemFields, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item)]
+            pub struct FunctionItemNode {
+                #[wire(key = "$type")]
+                pub kind: KindId,
+                #[wire(key = "$_layout")]
+                #[layout]
+                pub layout: Option<Box<NodeLayout>>,
+                #[wire(key = "_name")]
+                #[slot(field = field::NAME, word = 2, width = 5)]
+                pub name: SlotValue<NameNode>,
+            }
+        })
+        .expect("expands");
+        let claims = "(kind == kind::FUNCTION_ITEM || kind == kind::METHOD)";
+        assert!(has(&out, &format!("fn claims(kind: ::sittir_core::types::KindId) -> bool {{ {claims} }}")));
+        assert!(has(&out, &format!("{claims}.then_some(::sittir_core::arena::RecordShape {{ words: 7u32,")));
+        assert!(has(&out, &format!("::sittir_core::arena::Cell::Child {{ kind, at, link, changed }} if {claims} =>")));
+        assert!(has(&out, "__layout: layout, __words: words, kind: kind,"));
+        assert!(has(&out, "fn kind(&self) -> KindId { self.kind }"));
+        assert!(has(&out, "::sittir_core::arena::write_record(__sink, self.kind, 7u32,"));
     }
 
     #[test]
@@ -540,10 +575,10 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if kind == kind::IDENTIFIER =>"));
+        assert!(has(&out, "::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if (kind == kind::IDENTIFIER) =>"));
         assert!(has(&out, "let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;"));
         assert!(has(&out, "text: ctx.source_text(span)?,"));
-        assert!(has(&out, "let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind::IDENTIFIER)?;"));
+        assert!(has(&out, "let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;"));
         assert!(has(&out, "text: ctx.string(text)?,"));
         assert!(has(&out, "fn text(&self) -> &str { self.text }"));
     }

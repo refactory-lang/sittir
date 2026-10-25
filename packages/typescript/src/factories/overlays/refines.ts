@@ -9,3 +9,9 @@ export const objectType = Object.freeze({
 	curly: bundle(F.buildObjectTypeCurly, undefined, { key: 'objectType.curly', max: 1 }),
 	flow: bundle(F.buildObjectTypeFlow, undefined, { key: 'objectType.flow', max: 1 })
 });
+
+export const interfaceBody = Object.freeze({
+	...B.interfaceBody,
+	curly: bundle(F.buildInterfaceBodyCurly, undefined, { key: 'interfaceBody.curly', max: 1 }),
+	flow: bundle(F.buildInterfaceBodyFlow, undefined, { key: 'interfaceBody.flow', max: 1 })
+});

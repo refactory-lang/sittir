@@ -44,13 +44,14 @@ describe('the shared portable guards read a rust node', () => {
 		expect(guard('declaration.function').length).toBe(1);
 	});
 
-	it('answer false where the classification depends on where the node sits, until placement is restated', () => {
+	it('read a method in an impl by its kind, the alias the parser gives it there', () => {
 		const method = engine
 			.parse('impl S { fn m(&self) {} }')
 			.$query()
-			.$descendants.ofType(rust.kinds.FunctionItem)
+			.$descendants.ofType(rust.kinds.MethodDeclaration)
 			.find();
 		expect(method).toBeDefined();
-		expect(guard('declaration.method')(method)).toBe(false);
+		expect(guard('declaration.method')(method)).toBe(true);
+		expect(guard('declaration.function')(method)).toBe(false);
 	});
 });

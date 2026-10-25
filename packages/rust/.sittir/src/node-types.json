@@ -2710,6 +2710,102 @@
     }
   },
   {
+    "type": "extension_declaration_body",
+    "named": true,
+    "fields": {
+      "declarations": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "associated_type",
+            "named": true
+          },
+          {
+            "type": "attribute_item",
+            "named": true
+          },
+          {
+            "type": "const_item",
+            "named": true
+          },
+          {
+            "type": "empty_statement",
+            "named": true
+          },
+          {
+            "type": "enum_item",
+            "named": true
+          },
+          {
+            "type": "extern_crate_declaration",
+            "named": true
+          },
+          {
+            "type": "foreign_mod_item",
+            "named": true
+          },
+          {
+            "type": "function_signature_item",
+            "named": true
+          },
+          {
+            "type": "impl_item",
+            "named": true
+          },
+          {
+            "type": "inner_attribute_item",
+            "named": true
+          },
+          {
+            "type": "let_declaration",
+            "named": true
+          },
+          {
+            "type": "macro_definition",
+            "named": true
+          },
+          {
+            "type": "macro_invocation",
+            "named": true
+          },
+          {
+            "type": "method_declaration",
+            "named": true
+          },
+          {
+            "type": "mod_item",
+            "named": true
+          },
+          {
+            "type": "static_item",
+            "named": true
+          },
+          {
+            "type": "struct_item",
+            "named": true
+          },
+          {
+            "type": "trait_item",
+            "named": true
+          },
+          {
+            "type": "type_item",
+            "named": true
+          },
+          {
+            "type": "union_item",
+            "named": true
+          },
+          {
+            "type": "use_declaration",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "extern_crate_declaration",
     "named": true,
     "fields": {
@@ -3680,7 +3776,7 @@
         "required": true,
         "types": [
           {
-            "type": "declaration_list",
+            "type": "extension_declaration_body",
             "named": true
           }
         ]
@@ -4630,6 +4726,96 @@
         "types": [
           {
             "type": "_pattern",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "method_declaration",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "function_modifiers": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "function_modifiers",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameters",
+            "named": true
+          }
+        ]
+      },
+      "visibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "where_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "where_clause",
             "named": true
           }
         ]
@@ -5906,6 +6092,86 @@
     }
   },
   {
+    "type": "signature_method_declaration",
+    "named": true,
+    "fields": {
+      "function_modifiers": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "function_modifiers",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          }
+        ]
+      },
+      "parameters": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "parameters",
+            "named": true
+          }
+        ]
+      },
+      "return_type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_type",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameters",
+            "named": true
+          }
+        ]
+      },
+      "visibility_modifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "visibility_modifier",
+            "named": true
+          }
+        ]
+      },
+      "where_clause": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "where_clause",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "slice_pattern",
     "named": true,
     "fields": {
@@ -6628,6 +6894,102 @@
     }
   },
   {
+    "type": "trait_interface_declaration_body",
+    "named": true,
+    "fields": {
+      "declarations": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "associated_type",
+            "named": true
+          },
+          {
+            "type": "attribute_item",
+            "named": true
+          },
+          {
+            "type": "const_item",
+            "named": true
+          },
+          {
+            "type": "empty_statement",
+            "named": true
+          },
+          {
+            "type": "enum_item",
+            "named": true
+          },
+          {
+            "type": "extern_crate_declaration",
+            "named": true
+          },
+          {
+            "type": "foreign_mod_item",
+            "named": true
+          },
+          {
+            "type": "impl_item",
+            "named": true
+          },
+          {
+            "type": "inner_attribute_item",
+            "named": true
+          },
+          {
+            "type": "let_declaration",
+            "named": true
+          },
+          {
+            "type": "macro_definition",
+            "named": true
+          },
+          {
+            "type": "macro_invocation",
+            "named": true
+          },
+          {
+            "type": "method_declaration",
+            "named": true
+          },
+          {
+            "type": "mod_item",
+            "named": true
+          },
+          {
+            "type": "signature_method_declaration",
+            "named": true
+          },
+          {
+            "type": "static_item",
+            "named": true
+          },
+          {
+            "type": "struct_item",
+            "named": true
+          },
+          {
+            "type": "trait_item",
+            "named": true
+          },
+          {
+            "type": "type_item",
+            "named": true
+          },
+          {
+            "type": "union_item",
+            "named": true
+          },
+          {
+            "type": "use_declaration",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "trait_item",
     "named": true,
     "fields": {
@@ -6636,7 +6998,7 @@
         "required": true,
         "types": [
           {
-            "type": "declaration_list",
+            "type": "trait_interface_declaration_body",
             "named": true
           }
         ]

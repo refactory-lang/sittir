@@ -110,8 +110,7 @@ import {
 	refuseUndeclared,
 	refusingParam,
 	withTrailingParam,
-	type RefusingParams,
-	slotUnreservedAliases
+	type RefusingParams
 } from './shared.ts';
 import {
 	collectRefineKindInfos,
@@ -159,7 +158,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (isListStorage(slot, nodeMap)) imports.add('listStorage');
 			if (!isMultiple(slot) && emptyDefaultOf(slot, nodeMap, kindEntries)) imports.add('orDefault');
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
-			if (slotUnreservedAliases(slot, nodeMap).length > 0) imports.add('rejectReservedText');
+			if (slot.checksReserved === true) imports.add('rejectReservedText');
 			if (slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
 		}
 		if (node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)

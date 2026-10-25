@@ -38,10 +38,10 @@ const SAMPLE_INPUTS: Readonly<Record<string, (scratch: string) => readonly unkno
 	'16-dogfooding:emitIsModule': () => [{ kinds: ['identifier', 'call_expression'] }],
 	'23-read-query-with:outline': () => [PYTHON_SOURCE],
 	'23-read-query-with:callsTo': () => [PYTHON_SOURCE, 'open'],
-	'23-read-query-with:privateHelpers': () => [PYTHON_SOURCE],
+	'23-read-query-with:privateMethods': () => [PYTHON_SOURCE],
 	'23-read-query-with:methodsOf': () => [PYTHON_SOURCE, 'Reader'],
 	'23-read-query-with:parameterTexts': () => [PYTHON_SOURCE, 'load'],
-	'23-read-query-with:renameFunction': () => [PYTHON_SOURCE, '_next', '_advance'],
+	'23-read-query-with:renameFunction': () => [PYTHON_SOURCE, '_parse', '_read'],
 	'23-read-query-with:renameInFile': () => [PYTHON_SOURCE, 'load', 'read_file']
 };
 
@@ -103,11 +103,11 @@ describe('the compile-checked examples run', () => {
 		const example = await import('../../examples/23-read-query-with.ts');
 		expect(example.outline(PYTHON_SOURCE)).toEqual(['def load', 'class Reader', '  def __init__', '  def _next', 'def _parse']);
 		expect(example.callsTo(PYTHON_SOURCE, 'open').map((call) => call.$render())).toEqual(['open(path)']);
-		expect(example.privateHelpers(PYTHON_SOURCE)).toEqual(['_next', '_parse']);
-		expect(example.methodsOf(PYTHON_SOURCE, 'Reader')).toEqual(['__init__', '_next']);
+		expect(example.privateMethods(PYTHON_SOURCE)).toEqual(['_next']);
+		expect(example.methodsOf(PYTHON_SOURCE, 'Reader')).toEqual(['_next']);
 		expect(example.parameterTexts(PYTHON_SOURCE, 'load')).toEqual(['path', '*', 'strict=False']);
-		const renamed = example.renameFunction(PYTHON_SOURCE, '_next', '_advance')?.$render();
-		expect(renamed).toBe('def _advance(self):\n    return self.source');
+		const renamed = example.renameFunction(PYTHON_SOURCE, '_parse', '_read')?.$render();
+		expect(renamed).toBe('def _read(text):\n    return text');
 		const { createEngine } = await import('@sittir/common');
 		const python = await createEngine((await import('@sittir/python')).default);
 		expect(python.parse(renamed ?? '').$errors).toEqual([]);

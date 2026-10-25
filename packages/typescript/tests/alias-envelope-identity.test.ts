@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { useRecordConstruction } from '@sittir/common/engine';
+import { writeUnitSides } from '@sittir/common/utils';
+import arena from '../src/arena.ts';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
@@ -40,11 +43,11 @@ describe('an alias envelope is seated by the kind the parser shows', () => {
 
 describe("a trivia write on a content that shares its envelope's parser node", () => {
 	it.each(['leading', 'trailing'] as const)('%s: the envelope unfolds and the written comment renders', (side) => {
-		const root = ts.parse('interface A { x: number }\nlet b = 1;\n');
+		const root = ts.parse('type T = A;\nlet b = 1;\n');
 		const declaration = root.statements()[0];
-		if (declaration === undefined || !ts.is.interfaceDeclaration(declaration))
-			throw new Error('expected an interface declaration');
-		const envelope = declaration.body();
+		if (declaration === undefined || !ts.is.typeAliasDeclaration(declaration)) throw new Error('expected a type alias');
+		const envelope = declaration.value();
+		if (!ts.is.typeIdentifier(envelope)) throw new Error('expected a type identifier');
 		const content = envelope.content();
 		expect(content).not.toBe(envelope);
 		content.$trivia[side]('// c');
@@ -60,22 +63,37 @@ describe("a trivia write on a content that shares its envelope's parser node", (
 	});
 });
 
-describe("edits on content that shares its envelope's parser row", () => {
-	it.each(['object', 'arena'] as const)('%s: edits the content through its own setters', async (nodeStorage) => {
+describe('edits on a flat alias display', () => {
+	it.each(['object', 'arena'] as const)('%s: edits the display through its own setters and keeps the id it shows', async (nodeStorage) => {
 		const engine = await createEngine(typescript, { nodeStorage });
 		try {
 			const root = engine.parse('interface A { x: number }\nlet b = 1;\n');
 			const declaration = root.statements()[0];
 			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
 				throw new Error('expected an interface declaration');
-			const content = declaration.body().content();
-			const edited = content.$with.members();
-			expect(edited.$type).toBe(engine.kinds.ObjectType);
+			const edited = declaration.body().$with.members();
+			expect(edited.$type).toBe(engine.kinds.InterfaceBody);
 			expect(edited.$render()).toBe('{}');
-			const out = declaration.$with.body(declaration.body().$with.content(edited)).$render();
-			expect(out).not.toContain('x: number');
+			const out = declaration.$with.body(edited).$render();
+			expect(out).toBe('interface A {}');
 			expect(engine.parse(out).$errors).toEqual([]);
 			expect(root.$render()).toBe('interface A { x: number }\nlet b = 1;\n');
+		} finally {
+			engine.dispose();
+		}
+	});
+
+	it.each(['objects', 'arena objects', 'records'] as const)('%s: a built display keeps the sides written on its unit', async (construction) => {
+		const engine = construction === 'objects' ? await createEngine(typescript) : await arena.createEngine();
+		if (construction === 'records') useRecordConstruction(engine, await import('../src/factories/records.ts'));
+		try {
+			const declaration = engine.parse('interface A { x: number }\n').statements()[0];
+			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
+				throw new Error('expected an interface declaration');
+			const built = engine.build.interfaceBody.curly({ members: declaration.body().members() });
+			expect(built.$type).toBe(engine.kinds.InterfaceBody);
+			writeUnitSides(built, [{ slot: '_opening', item: 0, trailing: [engine.build.commentBlock(' c ')] }]);
+			expect(built.$render()).toBe('{ /* c */ x: number }');
 		} finally {
 			engine.dispose();
 		}

@@ -21,7 +21,7 @@ using ts = await typescript.createEngine();
 
 const iface = ts.build.interfaceDeclaration({
 	name: 'User',
-	body: ts.build.objectType.curly()
+	body: ts.build.interfaceBody.curly()
 });
 
 iface.$render(); // "interface User {}"
@@ -55,7 +55,7 @@ using ts = await typescript.createEngine();
 
 const iface = ts.build.interfaceDeclaration({
 	name: 'User',
-	body: ts.build.objectType.curly()
+	body: ts.build.interfaceBody.curly()
 });
 
 iface.$trivia.leading('// the user').$render(); // "// the user\ninterface User {}"
@@ -71,7 +71,7 @@ import typescript from '@sittir/typescript';
 using ts = await typescript.createEngine();
 const built = ts.build.interfaceDeclaration({
 	name: 'User',
-	body: ts.build.objectType.curly()
+	body: ts.build.interfaceBody.curly()
 });
 
 ts.isNode(built); // true

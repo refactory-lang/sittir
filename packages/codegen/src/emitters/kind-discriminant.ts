@@ -1,26 +1,13 @@
 import type { KindParserMetadata, NodeMap } from '../compiler/types.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, modelKindOfEntry, symbolNameIsNotable } from '../dsl/symbol-table.ts';
+import type { GeneratedIdTables, GeneratedKindEntry } from '../dsl/symbol-table.ts';
+import { collectGeneratedKindEntries, findEntryForKindName, findEntryForLiteralText, findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
 import { kindIdText } from '../compiler/model/node-map.ts';
 import { compareOrdinal } from './shared.ts';
 import { kindTypeName } from '../compiler/model/casing.ts';
 
 
-export interface KindEnumEntry {
-	readonly kind: string;
+export interface KindEnumEntry extends GeneratedKindEntry {
 	readonly member: string;
-	readonly id: number;
-	readonly parseId?: number;
-	readonly parseName?: string;
-	readonly symbolName?: string;
-	readonly literalText?: string;
-	readonly anon?: boolean;
-	readonly literalRule?: boolean;
-	readonly alias?: boolean;
-	readonly hidden?: boolean;
-	readonly supertype?: boolean;
-	readonly visibleExternal?: boolean;
-	readonly lexicalRank?: number;
 }
 
 export function kindIdMemberName(nodeMap: NodeMap, kind: string): string {
@@ -35,19 +22,7 @@ export function collectCatalogKinds(generatedIdTables: GeneratedIdTables): reado
 }
 
 export function collectKindEntries(nodeMap: NodeMap, generatedIdTables: GeneratedIdTables): KindEnumEntry[] {
-	const rows: Omit<KindEnumEntry, 'member'>[] = [];
-	for (const [kind, row] of toCatalogMap(generatedIdTables.kindIds)) {
-		if (row.id === undefined) continue;
-		const literalRule = row.parser?.literalRule || undefined;
-		const symbolName = symbolNameIsNotable(row.parser?.symbolName, kind, literalRule) ? row.parser?.symbolName : undefined;
-		const literalText = row.parser?.literalText;
-		const anon = row.parser?.anon ?? false;
-		const alias = row.parser?.alias || undefined;
-		const hidden = row.parser?.hidden || undefined;
-		const supertype = row.parser?.supertype || undefined;
-		const visibleExternal = row.parser?.visibleExternal || undefined;
-		rows.push({ kind, id: row.id, parseId: row.parseId, parseName: row.parseName, symbolName, literalText, anon: anon || undefined, literalRule, alias, hidden, supertype, visibleExternal, lexicalRank: row.parser?.lexicalRank });
-	}
+	const rows = collectGeneratedKindEntries(generatedIdTables);
 	const entries: KindEnumEntry[] = [];
 	const seenMembers = new Map<string, string>();
 	for (const row of rows) {

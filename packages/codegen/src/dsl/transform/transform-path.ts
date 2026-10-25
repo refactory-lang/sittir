@@ -13,7 +13,7 @@ import { readRuleMetadata } from '../rule-metadata.ts';
 import { wireAtomic, wireCopy, wireCopyBody, wireCopyEdited, wireCopyOf, wireEnteringRule, wireGetLiftBody, wireSetLiftBody, wireWithLiftScope, withWireContext } from '../wire/wire.ts';
 import type { WireCopyRequest } from '../wire/wire.ts';
 import { copyReference, reachedCopyReference } from '../primitives/copy.ts';
-import { isEnrichedField, isParserHiddenName } from '../rule-patterns.ts';
+import { isBlank, isEnrichedField, isParserHiddenName } from '../rule-patterns.ts';
 
 interface RuntimeDsl {
 	seq?: (...members: RuntimeRule[]) => RuntimeRule;
@@ -206,11 +206,8 @@ function descendThroughPrecWrapper(
 	return reconstructPrec(rule, newContent);
 }
 
-export function isEnrichGroupLiftSymbol(rule: RuntimeRule): boolean {
-	const t = (rule as { type?: string }).type;
-	if (t !== 'SYMBOL') return false;
-	const meta = readRuleMetadata('metadata' in rule ? rule.metadata : undefined);
-	return meta?.symbolSource === 'group-lift';
+export function isEnrichGroupLiftSymbol(rule: object): boolean {
+	return 'type' in rule && rule.type === 'SYMBOL' && readRuleMetadata('metadata' in rule ? rule.metadata : undefined)?.symbolSource === 'group-lift';
 }
 
 function descendThroughGroupLiftSymbol(
@@ -464,10 +461,24 @@ function applyKindMatchToCopyReference(
 	const content = (rule as unknown as { content?: RuntimeRule }).content;
 	if (rule.type !== 'ALIAS' || content?.type !== 'SYMBOL') return undefined;
 	const reached = reachedRule((content as unknown as { name: string }).name);
-	if (reached.request.from === undefined) return undefined;
+	if (reached.request.from === undefined) return applyKindMatchToShownAlias(rule, segment, rest, patch, enclosing, insideNamedField);
 	if (reached.kind !== segment.name || insideNamedField) return { rule, matched: false };
 	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
 	return { rule: enteredCopy(rule, reached.request, (body) => applyPath(body, rest, patch), segment.as), matched: true };
+}
+
+function applyKindMatchToShownAlias(
+	rule: RuntimeRule,
+	segment: KindSegment,
+	rest: readonly PathSegment[],
+	patch: PathPatch,
+	enclosing: readonly RuntimeRule[] | undefined,
+	insideNamedField: boolean
+): WalkResult | undefined {
+	const shown = rule as unknown as { named?: boolean; value?: string };
+	if (shown.named !== true || shown.value !== segment.name || rest.length > 0 || segment.as !== undefined) return undefined;
+	if (insideNamedField) return { rule, matched: false };
+	return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
 }
 
 function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined, insideNamedField: boolean, leaf: WalkLeaf): WalkResult {
@@ -552,7 +563,7 @@ export function reconstructWrapper(rule: RuntimeRule, newContent: RuntimeRule): 
 		return carryOverProperties(rule, immediate(newContent));
 	}
 	if (isFieldType(t)) {
-		if (isFieldType(newContent.type)) return newContent;
+		if (isFieldType(newContent.type) || isBlank(newContent)) return newContent;
 		const name = (rule as unknown as { name: string }).name;
 		return carryOverProperties(rule, nativeRequired('field')(name, newContent));
 	}

@@ -278,6 +278,17 @@ describe('seamRenderRules', () => {
 		expect(originsWith(false).fn).toMatchObject({ arm: 'space', origin: 'fallback' });
 	});
 
+	it('gives a field holding a keyword literal its own seams, and a field holding the literal shown as a named kind none, spaced as that kind is', () => {
+		const namesWith = (name: RenderRule) => {
+			const config = { nodeMap: nodeMapOf({ ctor: seq(name, str('('), sym('params')) }, {}), kindEntries };
+			config.nodeMap.nodes.set('fn', new AssembledKeyword('fn', str('fn') as never, { kindEntries }) as never);
+			return memberNames(seamRenderRules(spaceRenderRules(config), config).rules.ctor!);
+		};
+		const keyword = sym('fn', { literal: 'fn', fieldName: 'name', nonterminal: false });
+		expect(namesWith(keyword)).toEqual(['fn', 'S(name_after)', 'S(lparen_before)', '(', 'S(lparen_after)', 'params']);
+		expect(namesWith({ ...keyword, aliasedTo: 'property_identifier' } as RenderRule)).toEqual(['fn', 'S(lparen_before)', '(', 'S(lparen_after)', 'params']);
+	});
+
 	it('seats a token seam inside a choice arm that references a visible punctuation kind, by the literal text, and leaves a keyword or hidden arm alone', () => {
 		const entries = [
 			...(kindEntries as never as object[]),

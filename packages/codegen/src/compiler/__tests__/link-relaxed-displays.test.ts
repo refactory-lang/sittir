@@ -67,4 +67,43 @@ describe('link relaxation of word-display aliases', () => {
 		);
 		expect(aliasValues(linked.rules.source!).sort()).toEqual(['property_name', 'statement_name']);
 	});
+
+	it('keeps a field whose whole content is the alias as fixed text, out of its display but read as it, and relaxes the same alias where it is one arm', () => {
+		const linked = link(
+			makeRaw(
+				{
+					fixed: { type: 'SEQ', members: [{ type: 'FIELD', name: 'name', content: alias('property_name', str('for')) }, str('(')] } as Rule<'evaluate'>,
+					armed: { type: 'CHOICE', members: [alias('property_name', str('while')), alias('property_name', sym('identifier'))] } as Rule<'evaluate'>,
+					keywords: { type: 'CHOICE', members: [str('for'), str('while'), str('(')] } as Rule<'evaluate'>,
+					identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
+				},
+				{ word: 'identifier' }
+			),
+			{ generatedIdTables: { ...idTables, kindIds: { ...idTables.kindIds, '(': anonEntry(9, '(') } } }
+		);
+		const fixed = linked.rules.fixed as Extract<Rule<'link'>, { type: 'SEQ' }>;
+		const name = fixed.members[0] as Extract<Rule<'link'>, { type: 'FIELD' }>;
+		expect(name.content).toMatchObject({ type: 'ALIAS', value: 'property_name', content: { type: 'SYMBOL', name: 'for', literal: 'for' } });
+		expect(linked.relaxedDisplayLiterals).toEqual({ property_name: ['while'] });
+		expect(linked.fixedNameLiterals).toEqual({ property_name: ['for'] });
+		expect((linked.displayUnions?.get('property_name') ?? []).filter((member) => member.literal)).toEqual([]);
+		expect(linked.terminalAliasWireIds?.get('property_name') ?? []).not.toContain(5);
+	});
+
+	it('reads a fixed reserved word as the word without relaxing it for the word anywhere else', () => {
+		const linked = link(
+			makeRaw(
+				{
+					fixed: { type: 'SEQ', members: [{ type: 'FIELD', name: 'name', content: alias('identifier', str('for')) }, str('(')] } as Rule<'evaluate'>,
+					plain: { type: 'SEQ', members: [{ type: 'FIELD', name: 'name', content: sym('identifier') }, str('(')] } as Rule<'evaluate'>,
+					keywords: { type: 'CHOICE', members: [str('for'), str('(')] } as Rule<'evaluate'>,
+					identifier: { type: 'PATTERN', value: '[a-z]+' } as Rule<'evaluate'>
+				},
+				{ word: 'identifier', reserved: { global: [str('for')] } as never }
+			),
+			{ generatedIdTables: { ...idTables, kindIds: { ...idTables.kindIds, '(': anonEntry(9, '('), identifier: aliasEntry(10, 'identifier') } } }
+		);
+		expect(linked.fixedNameLiterals).toEqual({ identifier: ['for'] });
+		expect(linked.relaxedLiterals ?? []).not.toContain('for');
+	});
 });

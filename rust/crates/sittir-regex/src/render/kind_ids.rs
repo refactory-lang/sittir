@@ -104,7 +104,7 @@ const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[],
-    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(40), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(82)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(19), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(40), KindId(47), KindId(48), KindId(49), KindId(50), KindId(54), KindId(82), KindId(89)],
     layout: &[],
     indent: KindId(0),
     dedent: KindId(0),

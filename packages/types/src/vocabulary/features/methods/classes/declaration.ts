@@ -13,6 +13,8 @@ export namespace Declaration {
 	export interface Constructor<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by pt
 		readonly $kind: 'declaration.constructor';
+		readonly body: V.Statement.Block<G>;
+		readonly parameters: V.Declaration.Parameter.Any<G>[];
 	}
 	export interface Field<G extends GrammarContext<G>> {
 		readonly static?: Flag;

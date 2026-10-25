@@ -61,7 +61,7 @@ export const buildTight = O.buildTight;
 export const buildNewline = O.buildNewline;
 export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
-export const buildLazy = dispatched(() => backend().buildLazy);
+export const buildLazy = O.buildLazy;
 export const buildUnicodePropertyName = dispatched(() => backend().buildUnicodePropertyName);
 
 export const _factoryMap = {

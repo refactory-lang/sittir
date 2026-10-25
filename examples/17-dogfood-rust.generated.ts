@@ -57,7 +57,7 @@ export function rebuildSpliceGenerated() {
 				name: rs.build.identifier("Display"),
 			}),
 			type: rs.build.identifier("SpliceError"),
-			body: rs.build.declarationList.strict(rs.build.functionItem.strict({
+			body: rs.build.extensionDeclarationBody.strict(rs.build.methodDeclaration.strict({
 				name: rs.build.identifier("fmt"),
 				parameters: rs.build.parameters.strict(rs.build.parametersElementsReceiver.strict({
 					content: rs.build.selfParameter.strict({
@@ -167,7 +167,7 @@ export function rebuildSpliceGenerated() {
 				name: rs.build.identifier("Error"),
 			}),
 			type: rs.build.identifier("SpliceError"),
-			body: rs.build.declarationList.strict(),
+			body: rs.build.extensionDeclarationBody.strict(),
 		}), rs.build.functionItem.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.strict(),
 			name: rs.build.identifier("apply_edits"),

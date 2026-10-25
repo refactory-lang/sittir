@@ -21,8 +21,10 @@ describe('the query flag table', () => {
 		});
 	});
 
-	it('marks a flag that depends on the node\'s context instead of lowering it', () => {
-		expect(queryFlags[TSKindId.FunctionItem]!['static']).toBeNull();
+	it('lowers a method\'s static on the method itself, and a function declares none', () => {
+		expect(queryFlags[TSKindId.FunctionItem]!['static']).toBeUndefined();
+		expect(queryFlags[TSKindId.MethodDeclaration]!['static']).toEqual(expect.objectContaining({ op: 'child' }));
+		expect(queryFlags[TSKindId.SignatureMethodDeclaration]!['static']).toEqual(expect.objectContaining({ op: 'child' }));
 	});
 
 	it('holds always for a flag a variant form spells, whether captured as a token or a node', () => {

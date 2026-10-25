@@ -425,12 +425,16 @@ export const publicFieldDefinitionPlain: Hoisted<typeof O.publicFieldDefinitionP
 export const publicFieldDefinitionAccessor: Hoisted<typeof O.publicFieldDefinitionAccessor> = hoistAs<
 	typeof O.publicFieldDefinitionAccessor
 >(O.publicFieldDefinitionAccessor);
+export const constructorDeclaration: Hoisted<typeof O.constructorDeclaration> = hoistAs<
+	typeof O.constructorDeclaration
+>(O.constructorDeclaration);
 export const receiverParameterDeclaration: Hoisted<typeof O.receiverParameterDeclaration> = hoistAs<
 	typeof O.receiverParameterDeclaration
 >(O.receiverParameterDeclaration);
 export const formalParametersElementsReceiver: Hoisted<typeof O.formalParametersElementsReceiver> = hoistAs<
 	typeof O.formalParametersElementsReceiver
 >(O.formalParametersElementsReceiver);
+export const interfaceBody: Hoisted<typeof O.interfaceBody> = hoistAs<typeof O.interfaceBody>(O.interfaceBody);
 export const declaration: Hoisted<typeof O.declaration> = hoistAs<typeof O.declaration>(O.declaration);
 export const importSpecifier: Hoisted<typeof O.importSpecifier> = hoistAs<typeof O.importSpecifier>(O.importSpecifier);
 export const variableDeclarator: Hoisted<typeof O.variableDeclarator> = hoistAs<typeof O.variableDeclarator>(

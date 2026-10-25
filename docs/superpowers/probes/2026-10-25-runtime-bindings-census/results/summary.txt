@@ -1,0 +1,31 @@
+604 vocabulary paths; 28 flags declared (abstract, async, byReference, byte, computed, const, debug, declare, default, definite, disposable, exclusive, generator, group, move, mutable, optional, optionalChain, override, privateName, raw, readonly, static, typeOnly, unique, unsafe, unsigned, writable)
+
+## rust
+kinds/is: 330 paths read (155 exact, 175 decided by the read entries); 249 kind ids with 479 read entries (169 conditional, 35 placed, 0 on an enclosing node); 150 fixed-text kind ids
+flags: 38 kind ids with a flag table, 53 (kind, flag) pairs, 0 with no plan; 13 flags read (async, byReference, byte, const, default, exclusive, move, mutable, raw, static, unsafe, unsigned, writable); not read: abstract, computed, debug, declare, definite, disposable, generator, group, optional, optionalChain, override, privateName, readonly, typeOnly, unique
+slot flags: 98 kind ids, 585 (kind, slot, flag) rows
+flag guards the grammar's composition (40 features) declares on the paths it reads: 142 (path, flag) pairs on 62 paths; 93 read by a kind at or under the path, 49 by none
+build: 300 paths with an own read entry (253 build one kind, 47 pick among several kinds or forms, 0 claim only hidden or supertype kinds), 30 paths read only beneath (no build of their own); 480 (kind, path) entries by refinement: child kind 131, literal 36, placed 35, plain 276, text 2
+build, several kinds at one path with the same member names and no refinement test: 19 groups; 9 of fixed-text leaves (one const string per kind), 2 of varying leaves, 8 with members
+members: 418 routes by route: kind 8, nested 57, presence 16, slot 337; 47 flag members; 1 with no build path
+scalar contracts: 10 literal.number / literal.boolean paths read, 8 grammar kinds claimed at them
+
+## python
+kinds/is: 220 paths read (140 exact, 80 decided by the read entries); 141 kind ids with 213 read entries (72 conditional, 0 placed, 0 on an enclosing node); 107 fixed-text kind ids
+flags: 8 kind ids with a flag table, 8 (kind, flag) pairs, 0 with no plan; 3 flags read (async, debug, group); not read: abstract, byReference, byte, computed, const, declare, default, definite, disposable, exclusive, generator, move, mutable, optional, optionalChain, override, privateName, raw, readonly, static, typeOnly, unique, unsafe, unsigned, writable
+slot flags: 8 kind ids, 8 (kind, slot, flag) rows
+flag guards the grammar's composition (37 features) declares on the paths it reads: 49 (path, flag) pairs on 34 paths; 9 read by a kind at or under the path, 40 by none
+build: 192 paths with an own read entry (184 build one kind, 8 pick among several kinds or forms, 0 claim only hidden or supertype kinds), 28 paths read only beneath (no build of their own); 216 (kind, path) entries by refinement: child kind 5, literal 43, plain 144, template 1, text 23
+build, several kinds at one path with the same member names and no refinement test: 3 groups; 0 of fixed-text leaves (one const string per kind), 0 of varying leaves, 3 with members
+members: 232 routes by route: nested 11, slot 221; 8 flag members; 3 with no build path
+scalar contracts: 13 literal.number / literal.boolean paths read, 11 grammar kinds claimed at them
+
+## typescript
+kinds/is: 322 paths read (210 exact, 112 decided by the read entries); 219 kind ids with 360 read entries (115 conditional, 0 placed, 0 on an enclosing node); 172 fixed-text kind ids
+flags: 43 kind ids with a flag table, 101 (kind, flag) pairs, 0 with no plan; 16 flags read (abstract, async, computed, const, declare, definite, disposable, generator, optional, optionalChain, override, privateName, readonly, static, typeOnly, unique); not read: byReference, byte, debug, default, exclusive, group, move, mutable, raw, unsafe, unsigned, writable
+slot flags: 112 kind ids, 507 (kind, slot, flag) rows
+flag guards the grammar's composition (46 features) declares on the paths it reads: 422 (path, flag) pairs on 115 paths; 301 read by a kind at or under the path, 121 by none
+build: 293 paths with an own read entry (265 build one kind, 28 pick among several kinds or forms, 0 claim only hidden or supertype kinds), 29 paths read only beneath (no build of their own); 362 (kind, path) entries by refinement: child kind 57, literal 57, plain 247, text 1
+build, several kinds at one path with the same member names and no refinement test: 11 groups; 4 of fixed-text leaves (one const string per kind), 3 of varying leaves, 4 with members
+members: 496 routes by route: kind 29, nested 70, presence 19, slot 378; 101 flag members; 0 with no build path
+scalar contracts: 16 literal.number / literal.boolean paths read, 16 grammar kinds claimed at them
