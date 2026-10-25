@@ -726,9 +726,9 @@ macro_rules! napi_engine {
                 }
 
                 /// The hydrated typed nodes below `index` in stored field
-                /// order, as JSON pairs `[coordinate, address | null]`. Nested
-                /// content sharing a row is included; units and captured
-                /// strings are omitted. Exports no node fields or words.
+                /// order, as a JSON list of their rows' coordinates. Units and
+                /// captured strings are omitted. Exports no node fields or
+                /// words.
                 #[::napi_derive::napi]
                 pub fn record_candidates(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<String> {
                     LIVE_TREES.with(|trees| {
@@ -738,7 +738,7 @@ macro_rules! napi_engine {
                         let candidates = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.record_candidates::<$any>(index)))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "record_candidates panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("record_candidates failed: {e}")))?;
-                        let wire = candidates.into_iter().map(|(coordinate, at)| ($crate::query::QueryCoordinate::from(coordinate), at.map(|at| at.0))).collect::<Vec<_>>();
+                        let wire = candidates.into_iter().map($crate::query::QueryCoordinate::from).collect::<Vec<_>>();
                         ::serde_json::to_string(&wire).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                     })
                 }
@@ -909,17 +909,16 @@ macro_rules! napi_engine {
                     self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
-                /// Renders a parsed candidate without exporting its data or its
-                /// outer trivia. A record address must belong to its row; a
-                /// recordless node renders through its native coordinate.
-                #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, address?: number | undefined | null, options?: object | undefined | null")]
-                pub fn render_candidate(&self, env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, address: Option<f64>, options: Option<$options>) -> ::napi::Result<String> {
-                    let address = address.map(|at| $crate::napi_engine::checked_whole(at, "address").map($crate::arena::Address)).transpose()?;
+                /// Renders the parsed candidate at row `index` without exporting
+                /// its data or its outer trivia: the row's record, or, for a
+                /// recordless node, its native coordinate.
+                #[::napi_derive::napi(ts_args_type = "treeId: number, index: number, options?: object | undefined | null")]
+                pub fn render_candidate(&self, env: ::napi::Env, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, options: Option<$options>) -> ::napi::Result<String> {
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                         let table = self.render_options(Some(parsed), options)?;
-                        let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate(index, address, &table, sources))))
+                        let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate(index, &table, sources))))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_candidate panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_candidate failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))

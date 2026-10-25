@@ -256,6 +256,13 @@ export function listItemSlot(node: AssembledNode): AssembledNonterminal | undefi
 	return flagged ? canonicalSeparatedListField(node) : undefined;
 }
 
+function refuseSharedRowContent(envelope: string, name: string, content: AssembledNode | undefined): void {
+	if (content instanceof AssembledSupertype) return;
+	if (content?.unit === true) throw new Error(`node read facts: the envelope ${envelope} holds the unit ${name}`);
+	if (content === undefined || !isTextLeaf(content))
+		throw new Error(`node read facts: the envelope ${envelope} shares its row with ${name}, which is not a text leaf`);
+}
+
 export function nodeArgs(
 	node: AssembledNode,
 	ownId: number | undefined,
@@ -263,7 +270,9 @@ export function nodeArgs(
 	slots: readonly AssembledNonterminal[]
 ): string {
 	if (node instanceof AssembledAlias) {
-		const wraps = node.slots.some((slot) => slotKindNames(slot).some((name) => ctx.nodeMap.nodes.get(name) instanceof AssembledSupertype));
+		const contents = node.slots.flatMap((slot) => slotKindNames(slot).map((name) => [name, ctx.nodeMap.nodes.get(name)] as const));
+		for (const [name, content] of contents) refuseSharedRowContent(node.kind, name, content);
+		const wraps = contents.some(([, content]) => content instanceof AssembledSupertype);
 		return `kind = ${ctx.names.kind(node.aliasTypeId)}, display, content = content${wraps ? ', wraps_hidden' : ''}`;
 	}
 	if (ownId === undefined) throw new Error(`node read facts: ${node.kind} has no parser symbol, so no reader can claim it`);

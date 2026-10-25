@@ -702,7 +702,7 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         .render_record(record, ChangedEdges::default(), &options, &tree)
         .expect("the ordinary render");
     assert_eq!(
-        tree.render_candidate(statement, at, &options, &tree)
+        tree.render_candidate(statement, &options, &tree)
             .expect("the candidate render"),
         "call(/* inside */ arg);"
     );
@@ -718,13 +718,8 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         .expect("a leaf read");
     assert_eq!(at, None);
     assert_eq!(
-        tree.render_candidate(leaf, at, &options, &tree)
+        tree.render_candidate(leaf, &options, &tree)
             .expect("a recordless candidate"),
         "arg"
-    );
-    assert!(
-        tree.render_candidate(NodeIndex::ROOT, Some(record), &options, &tree)
-            .is_err(),
-        "another row's record is refused"
     );
 }

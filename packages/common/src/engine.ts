@@ -209,7 +209,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
 	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
-	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
+	renderCandidate?(treeId: number, index: number, options?: object): string;
 	/**
 	 * The siblings that hold sides beside the node at descendant `index` of tree `treeId`, as JSON
 	 * `Siblings`.
@@ -398,10 +398,10 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 				throw new Error('native candidate enumeration needs an addon with recordCandidates');
 			return JSON.parse(engine.recordCandidates(treeId, index));
 		},
-		renderCandidate(index, address) {
+		renderCandidate(index) {
 			if (engine.renderCandidate === undefined)
 				throw new Error('native candidate rendering needs an addon with renderCandidate');
-			return engine.renderCandidate(treeId, index, address);
+			return engine.renderCandidate(treeId, index);
 		},
 		render: (address, leading, trailing) => renderRecord.call(engine, treeId, address, leading, trailing),
 		object: (index, depth = 1) => readObjectAt(index, depth),

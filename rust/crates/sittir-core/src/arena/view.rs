@@ -448,25 +448,18 @@ pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -
     Ok((ctx.row_record(row) == Some(at)).then_some(Place::Row { tree, row }))
 }
 
-/// The place of the record at `at` whose side record is `side`, held at
-/// `site`: a parsed record's row (`row_of`), a built record's address, or,
-/// for an envelope's content, its cell's site in its envelope.
+/// The place of the record at `at` whose side record is `side`: a parsed
+/// record's row (`row_of`), or a built record's address.
 ///
 /// # Errors
 ///
 /// `ArenaError::Malformed` for a parsed record whose side record names no
-/// row, or a content held by no envelope with a place in the store.
-pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
+/// row, or a row that holds another record.
+pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<PrepPlace, ArenaError> {
     if ctx.tree.is_none() {
         return Ok(Place::Record(at).into());
     }
-    if let Some(row) = row_of(ctx, at, side)? {
-        return Ok(row.into());
-    }
-    match site {
-        Some(Site { holder: PrepPlace::Stored(holder), word, item }) => Ok(PrepPlace::Content(Site { holder, word, item })),
-        _ => Err(malformed("enveloped content with no envelope", at.0)),
-    }
+    row_of(ctx, at, side)?.map(PrepPlace::from).ok_or(malformed("parsed record whose row holds another record", at.0))
 }
 
 /// The place of the parsed leaf at `row` of `ctx`'s tree, held at `site`:

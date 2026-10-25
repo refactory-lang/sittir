@@ -987,11 +987,10 @@ export async function validateReadRenderParse(
 					node: TypedNode;
 					displayKind: string;
 					coordinate?: NodeCoordinate;
-					address?: number;
 				}[]
 			>();
 			const seen = new Set<string>();
-			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate, address?: number): void => {
+			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate): void => {
 				if (node.$named === false) return;
 				const displayKind = kindNameFromId(node.$type);
 				const kind = canonicalKindNameFromId(node.$type);
@@ -1008,18 +1007,17 @@ export async function validateReadRenderParse(
 					end,
 					node,
 					displayKind,
-					...(coordinate === undefined ? {} : { coordinate }),
-					...(address === undefined ? {} : { address })
+					...(coordinate === undefined ? {} : { coordinate })
 				});
 				candidatesByKind.set(kind, list);
 			};
 			if (recursive === true && handle.records !== undefined) {
 				if (handle.id === undefined) throw new Error('native arena validation needs a tree id');
 				const root = encodeHandle(handle.id, 0);
-				for (const [metadata, address] of handle.records.candidates(0)) {
+				for (const metadata of handle.records.candidates(0)) {
 					const coordinate =
 						metadata.$treeHandle === root ? { ...metadata, $span: { start: 0, end: spans.byteLength } } : metadata;
-					visitCandidate(coordinate as unknown as TypedNode, coordinate, address ?? undefined);
+					visitCandidate(coordinate as unknown as TypedNode, coordinate);
 				}
 			} else if (handle.read) {
 				const wrappedRoot = deepRoot ?? (readNode(handle) as TypedNode);
@@ -1090,8 +1088,8 @@ export async function validateReadRenderParse(
 					let data: AnyUntypedNode | (() => string);
 					try {
 						if (cand.coordinate !== undefined) {
-							const at = measureRoundtrip(options.profile, 'read', () => cand.address);
-							data = () => handle.records!.renderCandidate(decodeIndex(cand.coordinate!.$treeHandle), at);
+							const index = measureRoundtrip(options.profile, 'read', () => decodeIndex(cand.coordinate!.$treeHandle));
+							data = () => handle.records!.renderCandidate(index);
 						} else {
 							const at = (cand.node as AnyUntypedNode).$_layout?.at;
 							data = measureRoundtrip(options.profile, 'read', () =>

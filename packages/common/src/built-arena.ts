@@ -555,9 +555,7 @@ function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: ob
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {
 	const record = records.record(index);
-	if (record === undefined || records.words(record, 1)[wordOf(record, records.format)] === kind) return record;
-	const content = records.candidates(index).find(([at]) => decodeIndex(at.$treeHandle) === index && at.$type === kind);
-	return content?.[1] ?? undefined;
+	return record !== undefined && records.words(record, 1)[wordOf(record, records.format)] === kind ? record : undefined;
 }
 
 function foreignValue(value: unknown, ref: BuiltRef | undefined): string {

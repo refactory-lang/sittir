@@ -29,7 +29,7 @@ import { evaluatePackage } from '../../dsl/evaluate-package.ts';
 import { grammarPackage } from '../../grammars.ts';
 import { generatedFieldIds } from '../../dsl/symbol-table.ts';
 import { listViewOwners } from '../factories.ts';
-import { isTextLeaf } from '../shared.ts';
+import { isTextLeaf, slotKindNames } from '../shared.ts';
 import { AbstractAssembledCompound, AssembledList, type AssembledNode, type AssembledNonterminal } from '../../compiler/model/node-map.ts';
 import { hasBlankArm } from '../../compiler/model/site-preferences.ts';
 import {
@@ -665,6 +665,18 @@ describe('node read facts', () => {
 			'kind = kind::INTEGER_LITERAL_DECIMAL, interior = "^(?<content>(?:[0-9][0-9_]*))(?<suffix>isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)?$"'
 		);
 		expect(args('TypeIdentifierNode')).toBe('kind = kind::_TYPE_IDENTIFIER, display, content = content');
+	});
+
+	it('refuses an envelope whose content is a unit, or a compound sharing its row', () => {
+		const envelope = node('TypeIdentifierNode');
+		const [content] = envelope.slots.flatMap((s) => slotKindNames(s));
+		const holding = (held: AssembledNode): ReadFactsCtx => ({ ...ctx, nodeMap: { ...ctx.nodeMap, nodes: new Map([...ctx.nodeMap.nodes, [content!, held]]) } });
+		expect(() => nodeArgs(envelope, ownId(envelope), holding(model.nodeMap.nodes.get('mutable_specifier')!), envelope.slots)).toThrow(
+			`node read facts: the envelope ${envelope.kind} holds the unit ${content}`
+		);
+		expect(() => nodeArgs(envelope, ownId(envelope), holding(node('ParametersNode')), envelope.slots)).toThrow(
+			`node read facts: the envelope ${envelope.kind} shares its row with ${content}, which is not a text leaf`
+		);
 	});
 
 	it('reads a leaf as its text', () => {
