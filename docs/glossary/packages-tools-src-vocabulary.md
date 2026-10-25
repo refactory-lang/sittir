@@ -139,3 +139,15 @@ The gate: the plan's issues, or the drift when there are none. Empty means the v
 - the issues, exiting 1 if there are any.
 
 `--write` writes the generated files. `--check` reports drift, exiting 1 if there is any.
+
+### `packages/tools/src/vocabulary/plan.ts::Kind::refines`
+
+The kind a vocabulary kind refines.
+
+### `packages/tools/src/vocabulary/plan.ts::Owned`
+
+A vocabulary entry owned by a kind.
+
+### `packages/tools/src/vocabulary/plan.ts::Plan`
+
+The plan that builds a vocabulary.
