@@ -13,14 +13,19 @@ const arenaOf = (): BuiltArena =>
 		{ rows: {}, leaves: {} }
 	);
 
+const placed = (arena: BuiltArena, node: object, words: number): number[] => {
+	const at = builtRecordOf(node, arena)!;
+	return Array.from(arena.words(at, words).subarray(wordOf(at, format!), wordOf(at, format!) + words));
+};
+
 describe('a built arena', () => {
 	it('never allocates address 0, and gives each record its kind and no side record', () => {
 		const arena = arenaOf();
 		const first = arena.record(7, 4);
 		first.data[first.base + 3] = 5;
-		const at = builtRecordOf(arena.view(first), arena)!;
-		expect(at).not.toBe(0);
-		expect(Array.from(arena.words(at, 4).subarray(wordOf(at, format!), wordOf(at, format!) + 4))).toEqual([7, 0, 0, 5]);
+		const node = arena.view(first);
+		expect(builtRecordOf(node, arena)).not.toBe(0);
+		expect(placed(arena, node, 4)).toEqual([7, 0, 0, 5]);
 		const second = arena.record(8, 4);
 		expect(Array.from(second.data.subarray(second.base, second.base + 4))).toEqual([8, 0, 0, 0]);
 	});
@@ -38,22 +43,31 @@ describe('a built arena', () => {
 
 	it('gives each draft words of its own, which no later draft shares', () => {
 		const arena = arenaOf();
-		const placed = (at: number, words: number): number[] => Array.from(arena.words(at, words).subarray(wordOf(at, format!), wordOf(at, format!) + words));
 		const outer = arena.record(9, 7);
 		const inner = arena.record(4, 2);
-		const innerAt = builtRecordOf(arena.view(inner), arena)!;
+		const innerNode = arena.view(inner);
 		const next = arena.record(8, 3);
 		inner.data[inner.base + 1] = 7;
 		outer.data[outer.base + 3] = 5;
-		expect(placed(builtRecordOf(arena.view(outer), arena)!, 7)).toEqual([9, 0, 0, 5, 0, 0, 0]);
-		expect(placed(builtRecordOf(arena.view(next), arena)!, 3)).toEqual([8, 0, 0]);
-		expect(placed(innerAt, 2)).toEqual([4, 0]);
+		expect(placed(arena, arena.view(outer), 7)).toEqual([9, 0, 0, 5, 0, 0, 0]);
+		expect(placed(arena, arena.view(next), 3)).toEqual([8, 0, 0]);
+		expect(placed(arena, innerNode, 2)).toEqual([4, 0]);
 		const first = arena.record(7, 4);
 		for (let n = 0; n < 3000; n++) arena.view(arena.record(1, 3));
 		const wide = arena.record(6, 5000);
 		first.data[first.base + 3] = 5;
-		expect(placed(builtRecordOf(arena.view(first), arena)!, 4)).toEqual([7, 0, 0, 5]);
-		expect(placed(builtRecordOf(arena.view(wide), arena)!, 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
+		expect(placed(arena, arena.view(first), 4)).toEqual([7, 0, 0, 5]);
+		expect(placed(arena, arena.view(wide), 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
+	});
+
+	it('refuses a draft of a length no record has, and keeps every other draft whole', () => {
+		const arena = arenaOf();
+		const outstanding = arena.record(9, 3);
+		for (const words of [Number.NaN, -1, 0, 2.5, Infinity]) expect(() => arena.record(4, words)).toThrow(/cannot allocate/);
+		const next = arena.record(8, 3);
+		outstanding.data[outstanding.base + 2] = 5;
+		expect(placed(arena, arena.view(outstanding), 3)).toEqual([9, 0, 5]);
+		expect(placed(arena, arena.view(next), 3)).toEqual([8, 0, 0]);
 	});
 
 	it('grows its shared chunks by doubling, and gives a run past a chunk its own', () => {

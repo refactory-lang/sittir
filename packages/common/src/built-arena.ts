@@ -53,6 +53,10 @@ const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0,
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
 
+function units(size: number, least: number): void {
+	if (!Number.isSafeInteger(size) || size < least) throw new Error(`a built arena cannot allocate ${size} units`);
+}
+
 class Chunks<A extends Uint32Array | Uint8Array> {
 	readonly #make: (length: number) => A;
 	readonly #pushed: () => void;
@@ -72,9 +76,8 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 		this.used = new Uint32Array(this.#most);
 	}
 
-	/** `size` units in one chunk: the open shared chunk while it has room, else a new one twice its size up to the address limit, or a chunk of their own when larger than that. */
 	alloc(size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
-		if (!Number.isSafeInteger(size) || size < 0) throw new Error(`a built arena cannot allocate ${size} units`);
+		units(size, 0);
 		if (size > this.#limit) {
 			const own = this.#push(size);
 			this.used[own] = size;
@@ -181,6 +184,7 @@ export class BuiltArena {
 	}
 
 	record(kind: number, words: number): BuiltDraft {
+		units(words, 1);
 		if (this.#drafted + words > this.#drafts.length) {
 			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
 			this.#drafted = 0;
