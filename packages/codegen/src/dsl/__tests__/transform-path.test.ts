@@ -524,6 +524,20 @@ describe('applyPath() — kind-match + negative index', () => {
 		});
 	});
 
+	it('kind-match ending a path addresses an alias that shows the kind, as a query sees the tree, and never sees through an alias to its content', () => {
+		const shown = (content: any, value: string): any => ({ type: 'ALIAS', named: true, value, content });
+		const rule = seq(shown(sym('function_definition'), 'method_declaration'), sym('method_declaration'), fld('name', shown(sym('function_definition'), 'method_declaration')), shown(sym('identifier'), 'property_identifier'));
+		const beside = (member: any): any => choice(member, sym('constructor_declaration'));
+		const at = (path: string, within: any = rule): any => withWireContext(null, () => applyPath(within, parsePath(path), beside)).result;
+		const r = at('(method_declaration)');
+		expect(r.members[0]).toEqual(choice(shown(sym('function_definition'), 'method_declaration'), sym('constructor_declaration')));
+		expect(r.members[1]).toEqual(choice(sym('method_declaration'), sym('constructor_declaration')));
+		expect(r.members[2]).toEqual(rule.members[2]);
+		expect(r.members[3]).toEqual(rule.members[3]);
+		expect(() => at('(function_definition)')).toThrow(/matched zero occurrences/);
+		expect(() => at('(method_declaration)/0', seq(rule.members[0]))).toThrow(/matched zero occurrences/);
+	});
+
 	it('negative index resolves from the end (-1 = last member)', async () => {
 		const { field: oneArgField } = await import('../primitives/field.ts');
 		// Use a symbol (not a bare string) as the last member so the

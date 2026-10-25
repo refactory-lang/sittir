@@ -461,10 +461,24 @@ function applyKindMatchToCopyReference(
 	const content = (rule as unknown as { content?: RuntimeRule }).content;
 	if (rule.type !== 'ALIAS' || content?.type !== 'SYMBOL') return undefined;
 	const reached = reachedRule((content as unknown as { name: string }).name);
-	if (reached.request.from === undefined) return undefined;
+	if (reached.request.from === undefined) return applyKindMatchToShownAlias(rule, segment, rest, patch, enclosing, insideNamedField);
 	if (reached.kind !== segment.name || insideNamedField) return { rule, matched: false };
 	if (rest.length === 0 && segment.as === undefined) return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
 	return { rule: enteredCopy(rule, reached.request, (body) => applyPath(body, rest, patch), segment.as), matched: true };
+}
+
+function applyKindMatchToShownAlias(
+	rule: RuntimeRule,
+	segment: KindSegment,
+	rest: readonly PathSegment[],
+	patch: PathPatch,
+	enclosing: readonly RuntimeRule[] | undefined,
+	insideNamedField: boolean
+): WalkResult | undefined {
+	const shown = rule as unknown as { named?: boolean; value?: string };
+	if (shown.named !== true || shown.value !== segment.name || rest.length > 0 || segment.as !== undefined) return undefined;
+	if (insideNamedField) return { rule, matched: false };
+	return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
 }
 
 function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined, insideNamedField: boolean, leaf: WalkLeaf): WalkResult {
