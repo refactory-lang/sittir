@@ -18,7 +18,10 @@ const remade = {
 	node: true,
 	leaf: 'y',
 	edited: 'z()',
-	sided: '{\n    y() /* c */;\n    x();\n}'
+	sided: '{\n    y() /* c */;\n    x();\n}',
+	parsedName: JSON.stringify({ $type: 'identifier', $text: 'f', trailingComments: [{ $type: 'block_comment', content: { $type: 'block_comment_regular', $text: ' kept ' } }] }),
+	parsed: true,
+	snapshots: true
 };
 
 describe('a built view its arena makes anew once its builder is collected', () => {

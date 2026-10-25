@@ -166,7 +166,7 @@ export function rowTrivia(
 }
 
 /** A parsed leaf as read data: its kind, its coordinate (`coordinateAt`) and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
-function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
+export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: number): object {
 	const text = tree.text;
 	if (text === undefined) throw new Error('a record view needs a tree that answers its text');
 	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };

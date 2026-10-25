@@ -8,7 +8,7 @@ import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
-import { RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
+import { leafData, RECORD, recordOf, recordStub, type RecordStub } from './record-view.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
@@ -300,9 +300,28 @@ export class BuiltArena {
 	leaf({ kind, offset, len, record }: { readonly kind: number; readonly offset: number; readonly len: number; readonly record: number }): object {
 		const known = this.#nodes.get(record)?.deref();
 		if (known !== undefined) return known;
+		const parsed = this.#parsedLeaf(kind, record);
+		if (parsed !== undefined) {
+			this.#nodes.set(record, new WeakRef(parsed));
+			this.#released.register(parsed, record);
+			return parsed;
+		}
 		const make = this.#views.leaves[kind];
 		if (make === undefined) throw new Error(`a built leaf of kind ${kind} has no maker in its records module`);
 		return this.#adopt(make(this.textOf(offset, len), this.#handle), record, { at: offset, len });
+	}
+
+	#parsedLeaf(kind: number, record: number): object | undefined {
+		const side = this.words(record, 2)[wordOf(record, this.format) + 1]!;
+		if (side === 0) return undefined;
+		const words = this.words(side, 1 + this.format.sideSides.words);
+		const at = wordOf(side, this.format);
+		if (words[at] !== this.format.sideSides.bit) return undefined;
+		const held = this.#trees.get(words[at + 1]!);
+		if (held === undefined) throw new Error(`a built record holds a leaf of parsed tree ${words[at + 1]}, which its arena does not hold`);
+		const data = leafData(held.tree, kind, { start: words[at + 4]!, end: words[at + 5]! }, words[at + 2]!);
+		holdReadTree(data, held.token);
+		return wrapRegistered(data, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, 'node');
 	}
 }
 

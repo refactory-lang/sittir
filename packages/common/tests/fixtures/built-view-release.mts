@@ -3,12 +3,14 @@
 // the block names that statement, so the block's arena makes its views anew
 // from the records. Reports the block's JSON, whether the statement's call is
 // a node, its function leaf, what the call's `$with` builds, and a side
-// written on the call.
+// written on the call. Then a parsed name, with a comment of its own, that
+// only a built call names: its JSON, whether it is still the parsed node, and
+// whether it still snapshots.
 // A child process, because a collection can only be forced under `--expose-gc`.
 import { createEngine } from '../../src/index.ts';
 import { useRecordConstruction } from '../../src/engine-boundary.ts';
 import { builtRefOf } from '../../src/built-ref.ts';
-import { isNode } from '../../src/utils.ts';
+import { isNode, isParsedNode } from '../../src/utils.ts';
 import arena from '../../../rust/src/arena.ts';
 import rust from '../../../rust/src/index.ts';
 
@@ -48,6 +50,7 @@ const attempt = (f: () => unknown): string => {
 	}
 };
 const before = attempt(() => JSON.stringify(block));
+const named = b.callExpression!({ function: (rs.parse('fn f /* kept */() {}\n').statements()[0] as unknown as { name(): unknown }).name() }) as Call;
 await settle();
 const json = attempt(() => JSON.stringify(block)) === before;
 const call = block.statements()[0]!.content().expression();
@@ -63,6 +66,9 @@ console.log(
 		leaf,
 		edited: edited === undefined ? editing : attempt(() => rs.render(edited as never).toString()),
 		editedBuilt: edited !== undefined && builtRefOf(edited) !== undefined,
-		sided: siding.startsWith('throws') ? siding : attempt(() => rs.render(block as never).toString())
+		sided: siding.startsWith('throws') ? siding : attempt(() => rs.render(block as never).toString()),
+		parsedName: attempt(() => JSON.stringify(named.function())),
+		parsed: isParsedNode(named.function()),
+		snapshots: typeof (named.function() as { $snapshot?: unknown }).$snapshot === 'function'
 	})
 );
