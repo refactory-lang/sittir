@@ -6466,6 +6466,33 @@ The grammar-level inputs of an `enrich()` call: the base rules, the supertype an
 
 The predicted `SymbolSource` of an `enrich()` call over a given rule set: the kind catalog tree-sitter would build from those rules and the ctx's lists (`symbol-table.ts::predictedSymbolSourceOf`). Wire, which runs after enrich, declares the visible externals, so enrich stands in for that declaration: an external with a visible name and no rule body is a visible external. Both of enrich's sources (`sourceSymbols` over the base rules, `enrichedSymbols` over the enriched ones) are built by it.
 
+### `packages/codegen/src/dsl/symbol-table.ts::GeneratedIdEntry::parseId`
+
+```text
+/**
+	 * PARSE kind id — the id a node actually carries at runtime when this
+	 * kind is produced through an alias occurrence whose display name isn't
+	 * covered by `id`'s own symbol (e.g. `_newline`'s storage id 101 vs its
+	 * `alias($._newline, $.newline)` occurrence's own id 294). Render/read
+	 * dispatch match arms MUST key on this when present — it's what
+	 * tree-sitter emits — falling back to `id` when there's no separate
+	 * alias occurrence. Absent for the common case where a kind's storage
+	 * id and its parse-time id are the same thing.
+	 */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::GeneratedKindEntry::parseId`
+
+```text
+/**
+ * The alias occurrence's own runtime symbol id, when this kind's ONLY
+ * visible identity comes from an `alias_sym_*` occurrence distinct from
+ * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
+ * `$type` dispatch tables must also map THIS id to the kind — it's what
+ * tree-sitter actually emits at the aliased position.
+ */
+```
+
 ### `packages/codegen/src/dsl/symbol-table.ts::ParserSymbolTable`
 
 A parser's symbol table as the kind catalog needs it: each symbol's C name with its id, in id order (`symbols`); the name `ts_symbol_names` gives each (`names`); and the per-symbol facts — visible, named, supertype, aliased non-terminal, and the token count (`facts`). The parser.c reader fills one from the generated C source; the catalog predictor fills one from the grammar.
