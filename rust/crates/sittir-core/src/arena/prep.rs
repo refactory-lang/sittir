@@ -219,11 +219,11 @@ struct RecordKey {
 }
 
 impl RecordKey {
-    /// The key of the `kind` record or leaf `at` names.
-    fn of<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId) -> Result<Self, ArenaError> {
+    /// The key of the record or leaf `at` names, of a kind `claims` claims.
+    fn of<T>(prep: &RecordPrep<'_, T>, at: CellAt, claims: impl Fn(KindId) -> bool) -> Result<Self, ArenaError> {
         let view = prep.view(at.tree)?;
         match at.cell {
-            Cell::Child { kind: named, at: record, link, changed } if named == kind => {
+            Cell::Child { kind, at: record, link, changed } if claims(kind) => {
                 let view = match link {
                     Some(tree) => view.linked(tree)?,
                     None => view,
@@ -232,15 +232,15 @@ impl RecordKey {
                 let place = place_of(view, record, &side, at.site)?;
                 Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: if at.site.is_some() { changed } else { side.changed } })
             }
-            Cell::BuiltLeaf { kind: named, record, .. } if named == kind => {
+            Cell::BuiltLeaf { kind, record, .. } if claims(kind) => {
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 Ok(Self { tree: None, at: Some(record), side_at: Address(words[1]), place: Place::Record(record).into(), changed: side.changed })
             }
-            Cell::ParsedLeaf { kind: named, row: leaf, .. } if named == kind => {
+            Cell::ParsedLeaf { kind, row: leaf, .. } if claims(kind) => {
                 let place = super::leaf_place(view, leaf, at.site)?;
                 Ok(Self { tree: view.tree(), at: None, side_at: Address::NONE, place, changed: ChangedEdges::default() })
             }
-            _ => Err(malformed("prepared cell", u32::from(kind.0))),
+            cell => Err(malformed("prepared cell", cell.kind().map_or(0, |kind| u32::from(kind.0)))),
         }
     }
 
@@ -255,7 +255,7 @@ impl RecordKey {
 /// fill at its site starts from; none for a unit or a parsed node.
 fn stored_edges<T>(prep: &RecordPrep<'_, T>, at: CellAt) -> Edges {
     let record = match at.cell {
-        Cell::Child { kind, .. } | Cell::BuiltLeaf { kind, .. } => RecordKey::of(prep, at, kind).ok(),
+        Cell::Child { kind, .. } | Cell::BuiltLeaf { kind, .. } => RecordKey::of(prep, at, |named| named == kind).ok(),
         _ => None,
     };
     record.and_then(|key| key.side(prep).ok()).and_then(|side| side.edges).unwrap_or_default()
@@ -271,15 +271,15 @@ pub struct RecordAt<'r, T> {
 }
 
 impl<'r, T> RecordAt<'r, T> {
-    /// The record of the `kind` node `at` names; `keys` gives each slot's
-    /// wire key by its stamped word.
+    /// The record `at` names, of a kind `claims` claims; `keys` gives each
+    /// slot's wire key by its stamped word.
     ///
     /// # Errors
     ///
     /// `CoordinateError::Record` for a cell of another kind or a record no
     /// writer writes.
-    pub fn of(prep: &RecordPrep<'r, T>, at: CellAt, kind: KindId, keys: fn(u32) -> Option<&'static str>) -> Result<Self, CoordinateError> {
-        Ok(Self { key: RecordKey::of(prep, at, kind)?, keys, overlay: PhantomData })
+    pub fn of(prep: &RecordPrep<'r, T>, at: CellAt, claims: fn(KindId) -> bool, keys: fn(u32) -> Option<&'static str>) -> Result<Self, CoordinateError> {
+        Ok(Self { key: RecordKey::of(prep, at, claims)?, keys, overlay: PhantomData })
     }
 
     /// The handle of the record's layout.
@@ -772,9 +772,9 @@ pub fn own_seat<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, table: &[
 /// content's seat (`coord_seat`) fills the wrapper's own edges; a built
 /// one's is its type's.
 #[must_use]
-pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, cell: super::CellShape, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
+pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool, cell: super::CellShape, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
     if cell.run.is_some() { return None; }
-    let key = RecordKey::of(prep, at, kind).ok()?;
+    let key = RecordKey::of(prep, at, claims).ok()?;
     let slot = SlotAt::<T, C> { key, word: cell.word, width: cell.width, run: None, inline: cell.inline, node: PhantomData };
     let content = *slot.present(prep).first()?;
     match content.row {
@@ -790,8 +790,8 @@ pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt
 /// the one it stores, else, while its neighbour before is still its
 /// source's, the one before the node it was rebuilt from.
 #[must_use]
-pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, ctx: &RenderContext<'_>) -> Option<KindId> {
-    let key = RecordKey::of(prep, at, kind).ok()?;
+pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool, ctx: &RenderContext<'_>) -> Option<KindId> {
+    let key = RecordKey::of(prep, at, claims).ok()?;
     let side = key.side(prep).ok()?;
     side.separator.or_else(|| {
         if key.changed.leading {
@@ -805,8 +805,8 @@ pub fn record_source_separator<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: Ki
 /// span and its stored sides, as a holder reads them before the record's own
 /// prepare.
 #[must_use]
-pub fn record_snapshot_edge<T: Prepare + Clone>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId) -> Option<SnapshotEdge> {
-    let key = RecordKey::of(prep, at, kind).ok()?;
+pub fn record_snapshot_edge<T: Prepare + Clone>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool) -> Option<SnapshotEdge> {
+    let key = RecordKey::of(prep, at, claims).ok()?;
     let side = key.side(prep).ok()?;
     crate::layout::snapshot_edge(side.span, key.place.stored().and_then(|place| prep.store.sides(place)).as_ref())
 }
@@ -860,7 +860,7 @@ mod tests {
             cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() },
             tree: None,
             site: None,
-        }, kind).expect("valid record");
+        }, |named| named == kind).expect("valid record");
         let reads = arena.reads.get();
         assert_eq!(key.side(&prep).expect("empty side"), super::super::SideRecord::default());
         assert_eq!(arena.reads.get(), reads);

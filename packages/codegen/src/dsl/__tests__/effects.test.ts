@@ -110,6 +110,15 @@ describe('rewriteInherited', () => {
 		});
 	});
 
+	it('gives a copy no source option at a field the copy removed, and keeps one at a field it reaches through a hidden rule or at a slot that is no field', () => {
+		const records = { options: { body: { 'gone:/before': before, 'kept:/after': after, 'items:/end': after } } };
+		const rules = { body: seq(field('gone', sym('a')), sym('_sig')), _sig: seq(field('kept', sym('b'))), context_body: seq(sym('_sig')) };
+		expect(rewriteInherited(records, { effects: [copyEffect('context_body', 'body', { kind: 'copy', owner: 'owner' })], rules }).options).toEqual({
+			body: { 'gone:/before': before, 'kept:/after': after, 'items:/end': after },
+			context_body: { 'kept:/after': after, 'items:/end': after }
+		});
+	});
+
 	it.each<CopyOrigin>([
 		{ kind: 'narrow', owner: 'owner', path: 'body:' },
 		{ kind: 'lead', list: 'body', item: 'item', field: 'receiver', admits: [] }

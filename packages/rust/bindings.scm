@@ -24,18 +24,19 @@
 (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.function.signature.public.crate
 (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.function.signature.public.restricted
 (trait_item (declaration_list (function_signature_item) @declaration.method.signature))
-(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.signature.private))
-(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.signature.public))
-(trait_item (declaration_list (function_signature_item (visibility_modifier (crate_visibility_modifier))) @declaration.method.signature.public.crate))
-(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.signature.public.crate))
-(trait_item (declaration_list (function_signature_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.signature.public.restricted))
+((signature_method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.signature.private)
+((signature_method_declaration (visibility_modifier (visibility_modifier_pub))) @declaration.method.signature.public)
+((signature_method_declaration (visibility_modifier (crate_visibility_modifier))) @declaration.method.signature.public.crate)
+((signature_method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.signature.public.crate)
+((signature_method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.signature.public.restricted)
 (impl_item_body (declaration_list (function_item (parameters (parameters_elements . (attributed_parameter (self_parameter)) @receiver))) @declaration.method))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.private))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.public))
-(impl_item_body (declaration_list (function_item (visibility_modifier (crate_visibility_modifier))) @declaration.method.public.crate))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.crate))
-(impl_item_body (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))
-(impl_item_body (declaration_list (function_item (parameters (parameters_elements (attributed_parameter (attribute_item)? (_) @_p)*)?)) @declaration.method.static) (#not-kind-eq? @_p "self_parameter"))
+((method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.private)
+((method_declaration (visibility_modifier (visibility_modifier_pub))) @declaration.method.public)
+((method_declaration (visibility_modifier (crate_visibility_modifier))) @declaration.method.public.crate)
+((method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.crate)
+((method_declaration (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted)
+((method_declaration (parameters (_)? @_list)) @declaration.method.static (#not-kind-eq? @_list "parameters_elements_receiver"))
+((signature_method_declaration (parameters (_)? @_list)) @declaration.method.signature.static (#not-kind-eq? @_list "parameters_elements_receiver"))
 (impl_item_body) @declaration.impl
 (impl_item_semi) @declaration.impl
 (impl_item_body trait_clause: (_ trait: (_) @implements)) @declaration.impl.conformance
@@ -47,11 +48,6 @@
 (trait_item (visibility_modifier (crate_visibility_modifier))) @declaration.interface.trait.public.crate
 (trait_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.interface.trait.public.crate
 (trait_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.interface.trait.public.restricted
-(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.method.private))
-(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub))) @declaration.method.public))
-(trait_item (declaration_list (function_item (visibility_modifier (crate_visibility_modifier))) @declaration.method.public.crate))
-(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.method.public.crate))
-(trait_item (declaration_list (function_item (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.method.public.restricted))
 (struct_item) @declaration.struct
 (struct_item_brace (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (self))))) @declaration.struct.private
 (struct_item_brace (visibility_modifier (visibility_modifier_pub))) @declaration.struct.public

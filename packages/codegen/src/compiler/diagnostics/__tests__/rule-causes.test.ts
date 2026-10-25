@@ -452,13 +452,15 @@ describe('unverifiedRuleNames counts a vocabulary helper only when every rule re
 	const raw = (
 		ruleCauses: Record<string, unknown>,
 		references: { from: string; to: string }[],
-		upstream: string[] = []
+		upstream: string[] = [],
+		splitFrom: Record<string, string> = {}
 	) =>
 		({
 			ruleCauses,
 			undeclaredRules: [],
 			references,
-			stages: { raw: { grammar: { rules: Object.fromEntries(upstream.map((name) => [name, {}])) } } }
+			stages: { raw: { grammar: { rules: Object.fromEntries(upstream.map((name) => [name, {}])) } } },
+			splitFrom
 		}) as never;
 
 	it('does not count a helper reached only through verified rules', () => {
@@ -494,6 +496,17 @@ describe('unverifiedRuleNames counts a vocabulary helper only when every rule re
 				)
 			)
 		).toEqual([]);
+	});
+
+	it('reads a hidden copy on the way up as the rule it copies, not as a minted rule to walk past', () => {
+		const references = [
+			{ from: 'verified', to: 'helper' },
+			{ from: '_verified_copy', to: 'helper' },
+			{ from: 'root', to: '_verified_copy' }
+		];
+		const causes = { verified, helper: { kind: 'vocabulary' } };
+		expect(unverifiedRuleNames(raw(causes, references, ['root'], { _verified_copy: 'verified' }))).toEqual([]);
+		expect(unverifiedRuleNames(raw(causes, references, ['root']))).toEqual(['helper']);
 	});
 });
 

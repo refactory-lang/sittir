@@ -412,7 +412,9 @@ disagree, this section wins.
 The bindings spec's §9 says an alias kind's builder "builds the aliased
 rule's node under the alias's kind id"; A.2 gave every display one
 `content` slot instead. This section settles it for the low-level surface.
-Three classes of alias site are told apart by structure, never by a list:
+Three classes of alias site are told apart by structure, never by a list,
+read from stamped facts: the link-pinned word rule and the model's
+supertype flag.
 
 - **A hidden-nonterminal envelope** (`AssembledEnvelope`, a hidden
   nonterminal the parser materializes under an alias: typescript
@@ -433,15 +435,15 @@ Three classes of alias site are told apart by structure, never by a list:
   `type_identifier`, and typescript `property_identifier`,
   `shorthand_property_identifier`, `shorthand_property_identifier_pattern`,
   `statement_identifier` and `type_identifier`.
-- **An alias envelope** is every other alias (`AssembledAlias`), and it is
-  flat.
+- **An alias envelope** is every other alias: its storage is neither the
+  word nor a supertype. It is flat.
 
 **The rule.** On every low-level surface an alias envelope is its storage's
 shape under the display's kind id. It has no `content` member, slot, wire
 key, record word or builder parameter. Its storage is a model fact link
 resolves once (a display → storage table) and the emitters consume at
-codegen. Every alias envelope in the three grammars and regex has one
-storage, so the table maps each display to one kind.
+codegen. An alias envelope has exactly one storage: one with several is a
+compile-time diagnostic, so the table maps each display to one kind.
 
 **Identity (A.2's paragraph kept).** `$type` is the display's type id, as
 the native read already stamps it. The storage keeps its identity inside:
@@ -493,10 +495,23 @@ word display's relaxed keywords, so no third shape is modelled.
 
 #### What stays internal, and what goes
 
-- The content step stays in the compiler model: `AssembledAlias` keeps its
-  storage reference, and the emitters derive the display's members,
-  template, struct, record and guard from it. Bindings routes through an
-  alias envelope start at the storage's slots, with no content step.
+- Link gives the display a copy of its storage's body, taken after the last
+  pass that shapes the storage's rule, and keeps the display → storage
+  table. The copy adds nothing the parser sees: no kind id, no enrich
+  change. It carries the body only (slots, shape, list facts);
+  memberships, variant parents, supertype rows and claims come from the
+  sites where the parser issues the display, never from the storage.
+  Assemble then derives the display's members, readers, builder, `$with`,
+  types, JSON and guard from its own rule like any kind's, and a
+  compile-time check holds each display's assembled slots equal to its
+  storage's, slot by slot. `AssembledAlias` remains for word displays and
+  as_pattern_target.
+- The native side has one layout, the storage's: the native struct, the
+  record layout, spacing sites, options addresses and every id that
+  crosses the native boundary are the storage's, reached through the
+  table. Ids the copy re-roots stay inside the model. Bindings routes
+  through an alias envelope start at the storage's slots, with no content
+  step.
 - For an alias envelope, the content step's surfaces go: the
   `__aliasContent__` brand and `<Alias>.Types`, `_content` and `content()`,
   admission of the storage's node at the display's slots
@@ -514,3 +529,5 @@ word display's relaxed keywords, so no third shape is modelled.
   entry.
 - Every word display's rows are unchanged, and a slot that holds one still
   takes `identifier`.
+- Each alias envelope's assembled slots equal its storage's, checked at
+  compile time.

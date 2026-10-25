@@ -1,7 +1,7 @@
 import { RuleWalker } from '../dsl/rule-walker.ts';
 import { ALIAS, SUPERTYPE, SYMBOL } from '../types/rule-types.ts';
 import type { AliasRule, LabelProvenance, Rule, RuleAnnotations, SymbolRef, SymbolRule } from '../types/rule.ts';
-import { automaticVariantKey, type AutomaticVariants } from '../dsl/automatic-variants.ts';
+import { automaticVariantKey, type AutomaticVariants, type CopyBase } from '../dsl/automatic-variants.ts';
 
 export function isAliasMintedRef(rule: Rule<'link'>, rules: Record<string, Rule<'link'>>): boolean {
 	if (rule.type === ALIAS) return true;
@@ -90,26 +90,34 @@ export function variantChildrenOf(parentKind: string, rule: Rule<'link'>): Varia
 	return out;
 }
 
-export function deriveVariantChildren(rules: Record<string, Rule<'link'>>): Map<string, VariantChild[]> {
+export function deriveVariantChildren(rules: Record<string, Rule<'link'>>, baseOf: CopyBase = (kind) => kind): Map<string, VariantChild[]> {
 	const out = new Map<string, VariantChild[]>();
 	for (const [kind, rule] of Object.entries(rules)) {
-		const children = variantChildrenOf(kind, rule);
-		if (children.length > 0) out.set(kind, children);
+		const owner = baseOf(kind);
+		const held = out.get(owner) ?? [];
+		const children = variantChildrenOf(owner, rule).filter((child) => !held.some((h) => h.kind === child.kind));
+		if (children.length > 0) out.set(owner, [...held, ...children]);
 	}
 	return out;
 }
 
 export function ownedVariants(
 	children: ReadonlyMap<string, readonly VariantChild[]>,
-	references: readonly SymbolRef[]
+	references: readonly SymbolRef[],
+	baseOf: CopyBase
 ): Readonly<Record<string, string>> | undefined {
-	const parents = new Map<string, string[]>();
-	for (const ref of references) (parents.get(ref.to) ?? parents.set(ref.to, []).get(ref.to)!).push(ref.from);
+	const parents = new Map<string, Map<string, number>>();
+	for (const ref of references) {
+		const counts = parents.get(ref.to) ?? parents.set(ref.to, new Map()).get(ref.to)!;
+		counts.set(ref.from, (counts.get(ref.from) ?? 0) + 1);
+	}
+	const soleOwner = (kind: string): string | undefined => {
+		const counts = [...(parents.get(kind) ?? [])];
+		const bases = new Set(counts.map(([from]) => baseOf(from)));
+		return bases.size === 1 && counts.every(([, count]) => count === 1) ? [...bases][0] : undefined;
+	};
 	const out: Record<string, string> = {};
 	for (const [owner, arms] of children)
-		for (const arm of arms) {
-			const from = parents.get(arm.kind);
-			if (from?.length === 1 && from[0] === owner) out[arm.kind] = owner;
-		}
+		for (const arm of arms) if (soleOwner(arm.kind) === owner) out[arm.kind] = owner;
 	return Object.keys(out).length > 0 ? out : undefined;
 }

@@ -1,0 +1,129 @@
+73 ruled renames; 27 old paths still in the vocabulary, 1 of them the target of another rename (the removal concerns the path's old meaning)
+
+clause.match.arm.last [NO7] -> clause.case.match (exists)
+  owner feature:match-expressions; members attributes, trailingComma, match, value
+  target members casePatterns, consequence, guard
+  rust:209 (last_match_arm pattern: _ @match) @clause.match.arm.last
+
+clause.match.arm [NO7] -> clause.case.match (exists)
+  owner feature:match-expressions; members attributes, match, value
+  target members casePatterns, consequence, guard
+  rust:208 (match_arm pattern: _ @match) @clause.match.arm
+
+clause.match [NO7] -> clause.case.match (exists)
+  owner feature:match-expressions; members none
+  target members casePatterns, consequence, guard
+
+pattern.as [NO8] kept: the target of another rename
+  owner feature:match-expressions; members name, pattern
+  python:199 (case_as_pattern) @pattern.as
+  rust:336 (captured_pattern) @pattern.as
+
+pattern.case.list [NO9] -> pattern.list (exists)
+  owner feature:match-expressions; members elements
+  target members elements
+  python:198 (case_list_pattern) @pattern.case.list
+
+pattern.case.tuple [NO9] -> pattern.tuple (exists)
+  owner feature:match-expressions; members elements
+  target members elements
+  python:197 (case_tuple_pattern) @pattern.case.tuple
+
+pattern.case.or [NO9] -> pattern.or (exists)
+  owner feature:match-expressions; members patterns
+  target members left, right
+  python:191 (union_pattern) @pattern.case.or
+
+pattern.case.splat [NO9] -> pattern.rest (exists)
+  owner feature:match-expressions; members name, operator
+  target members pattern
+  python:194 (splat_pattern) @pattern.case.splat
+
+pattern.case.dictionary [NO9 NT3] -> pattern.map (to add)
+  owner feature:match-expressions; members elements
+  python:192 (dict_pattern) @pattern.case.dictionary
+
+pattern.case.class [NO9] -> pattern.struct (exists)
+  owner feature:match-expressions; members arguments, name
+  target members fields, type
+  python:195 (class_pattern) @pattern.case.class
+
+pattern.case.keyword [NO9] -> pattern.struct.field (exists)
+  owner feature:match-expressions; members name, value
+  target members name, pattern
+  python:193 (keyword_pattern) @pattern.case.keyword
+
+pattern.case.complex [NO9] -> pattern.complex (to add)
+  owner feature:complex-numbers; members imaginary, operator, real, sign
+  python:196 (complex_pattern) @pattern.case.complex
+
+pattern.case [NO9] removed
+  owner feature:match-expressions; members content
+  python:190 (case_pattern) @pattern.case
+
+identifier.property.shorthand [ID1] -> identifier (exists)
+  owner base:identifier.ts; members none
+  target members none
+  rust:405 (shorthand_field_identifier) @identifier.property.shorthand
+  typescript:443 (shorthand_property_identifier) @identifier.property.shorthand
+  typescript:444 (shorthand_property_identifier_pattern) @identifier.property.shorthand
+
+identifier.property [ID1] -> identifier (exists)
+  owner base:identifier.ts; members none
+  target members none
+  typescript:441 (property_identifier) @identifier.property
+  typescript:442 (private_property_identifier) @identifier.property
+
+identifier.type [ID1] -> identifier (exists)
+  owner base:identifier.ts; members none
+  target members none
+  rust:403 (type_identifier) @identifier.type
+  typescript:440 (type_identifier) @identifier.type
+
+identifier.field [ID1] -> identifier (exists)
+  owner base:identifier.ts; members none
+  target members none
+  rust:404 (field_identifier) @identifier.field
+
+identifier.dotted [ID2] -> identifier.qualified (to add)
+  owner base:identifier.ts; members names
+  python:246 (dotted_name) @identifier.dotted
+
+identifier.nested [ID2] -> identifier.qualified (to add)
+  owner base:identifier.ts; members object, property
+  typescript:445 (nested_identifier) @identifier.nested
+
+identifier.scoped [ID2] -> identifier.qualified (to add)
+  owner base:identifier.ts; members name, path
+  rust:313 (scoped_identifier) @identifier.scoped
+
+type.path.expression [ID2] -> identifier.qualified (to add)
+  owner feature:type-annotations; members name, path
+  rust:381 (scoped_type_identifier_in_expression_position) @type.path.expression
+
+type.path [ID2] -> identifier.qualified (to add)
+  owner feature:type-annotations; members baseType, module, name, path
+  python:208 (member_type) @type.path
+  rust:380 (scoped_type_identifier) @type.path
+  typescript:446 (nested_type_identifier) @type.path
+
+identifier.crate [ID4] -> identifier (exists)
+  owner base:identifier.ts; members none
+  target members none
+  rust:411 (crate) @identifier.crate
+
+type.named.prelude [ID8] removed
+  owner feature:type-annotations; members none
+  rust:382 ((type_identifier) @type.named.prelude (#match? @type.named.prelude "^(Option|Result|String|Vec|Box)$"))
+
+type.named [ID8] removed
+  owner feature:type-annotations; members none
+
+pattern.match [NO7] removed
+  owner feature:match-expressions; members condition, pattern
+  rust:316 (match_pattern) @pattern.match
+
+pattern.tuple.struct [NO9] -> pattern.struct (exists)
+  owner feature:structs; members patterns, type
+  target members fields, type
+  rust:318 (tuple_struct_pattern) @pattern.tuple.struct

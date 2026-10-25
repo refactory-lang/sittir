@@ -57,9 +57,21 @@ describe('c.is(flag) in a where condition', () => {
 		expect(() => [...fns().where((c) => loose(c).is('mutable'))]).toThrow(/function_item declares no flag mutable/);
 	});
 
-	it('refuses a flag that depends on the node\'s context, by name', () => {
+	it('reads a method\'s static from its own parameter list: neither a self nor a typed self receiver', () => {
+		const METHODS = 'struct S;\nimpl S {\n    fn a() {}\n    fn b(&self) {}\n    fn c(self: Box<Self>) {}\n}\ntrait T {\n    fn d();\n    fn e(&self);\n}\n';
+		const nodes = () => rs.parse(METHODS).$query().$descendants;
+		const spelled = (node: unknown): string => {
+			const { start, end } = (node as Node).$_layout.at.$span;
+			return METHODS.slice(start, end);
+		};
+		expect([...nodes().ofType(rs.kinds.MethodDeclaration).where((c) => c.is('static'))].map(spelled)).toEqual(['fn a() {}']);
+		expect([...nodes().ofType(rs.kinds.MethodDeclaration).where((c) => c.is('static').not())].map(spelled)).toEqual(['fn b(&self) {}', 'fn c(self: Box<Self>) {}']);
+		expect([...nodes().ofType(rs.kinds.SignatureMethodDeclaration).where((c) => c.is('static'))].map(spelled)).toEqual(['fn d();']);
+	});
+
+	it('refuses static on a function, which declares no such flag', () => {
 		const loose = (c: unknown) => c as { is(flag: string): never };
-		expect(() => [...fns().where((c) => loose(c).is('static'))]).toThrow(/static on function_item depends on the node's context/);
+		expect(() => [...fns().where((c) => loose(c).is('static'))]).toThrow(/function_item declares no flag static/);
 	});
 
 	it('checks a flag before the view\'s kinds are known by the flags the grammar declares, and runs it per kind', () => {

@@ -19,8 +19,12 @@ use super::options;
 use super::{field_ids as field, kind_ids as kind};
 use ::sittir_core::VerbatimNode;
 
+pub fn stamp(grammar: KindId, display: KindId) -> KindId {
+    ::sittir_core::read::stamp(grammar, display, <AnyNode as ::sittir_core::read::ReadNode>::shows, kind::relaxes)
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = AnyNodeRecord)]
+#[node(choice, stamp = stamp, view = AnyNodeRecord)]
 pub enum AnyNode {
     #[kind(kind::PATTERN)]
     Pattern(PatternNode),
@@ -106,10 +110,8 @@ pub enum AnyNode {
     InlineFlagsGroupToggle(InlineFlagsGroupToggleNode),
     #[kind(kind::INLINE_FLAGS_GROUP_DISABLE)]
     InlineFlagsGroupDisable(InlineFlagsGroupDisableNode),
-    #[kind(kind::_LAZY, display)]
-    Lazy(LazyNode),
-    #[kind(kind::_UNICODE_PROPERTY_NAME, display)]
-    UnicodePropertyName(UnicodePropertyNameNode),
+    #[kind(display(kind::_UNICODE_PROPERTY_NAME))]
+    UnicodePropertyName(UnicodePropertyValueNode),
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
     #[kind(kind::START_ASSERTION)]
@@ -130,6 +132,8 @@ pub enum AnyNode {
     Blankline,
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
+    #[kind(display(kind::_LAZY))]
+    Lazy,
     #[kind(kind::CARET)]
     Caret,
     #[kind(kind::LPAREN_QMARK)]
@@ -231,7 +235,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::InlineFlagsGroupEnable(t) => t.prepare(ctx),
             AnyNode::InlineFlagsGroupToggle(t) => t.prepare(ctx),
             AnyNode::InlineFlagsGroupDisable(t) => t.prepare(ctx),
-            AnyNode::Lazy(t) => t.prepare(ctx),
             AnyNode::UnicodePropertyName(t) => t.prepare(ctx),
             AnyNode::AnyCharacter => Ok(()),
             AnyNode::StartAssertion => Ok(()),
@@ -243,6 +246,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Newline => Ok(()),
             AnyNode::Blankline => Ok(()),
             AnyNode::DoubleBlankline => Ok(()),
+            AnyNode::Lazy => Ok(()),
             AnyNode::Caret => Ok(()),
             AnyNode::LparenQmark => Ok(()),
             AnyNode::Eq => Ok(()),
@@ -316,7 +320,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::InlineFlagsGroupEnable(t) => t.gap_edges(),
             AnyNode::InlineFlagsGroupToggle(t) => t.gap_edges(),
             AnyNode::InlineFlagsGroupDisable(t) => t.gap_edges(),
-            AnyNode::Lazy(t) => t.gap_edges(),
             AnyNode::UnicodePropertyName(t) => t.gap_edges(),
             AnyNode::AnyCharacter => None,
             AnyNode::StartAssertion => None,
@@ -328,6 +331,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Newline => None,
             AnyNode::Blankline => None,
             AnyNode::DoubleBlankline => None,
+            AnyNode::Lazy => None,
             AnyNode::Caret => None,
             AnyNode::LparenQmark => None,
             AnyNode::Eq => None,
@@ -401,7 +405,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::InlineFlagsGroupEnable(t) => t.snapshot_edge(),
             AnyNode::InlineFlagsGroupToggle(t) => t.snapshot_edge(),
             AnyNode::InlineFlagsGroupDisable(t) => t.snapshot_edge(),
-            AnyNode::Lazy(t) => t.snapshot_edge(),
             AnyNode::UnicodePropertyName(t) => t.snapshot_edge(),
             AnyNode::AnyCharacter => None,
             AnyNode::StartAssertion => None,
@@ -413,6 +416,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Newline => None,
             AnyNode::Blankline => None,
             AnyNode::DoubleBlankline => None,
+            AnyNode::Lazy => None,
             AnyNode::Caret => None,
             AnyNode::LparenQmark => None,
             AnyNode::Eq => None,
@@ -486,7 +490,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::InlineFlagsGroupEnable(t) => t.source_coordinate(),
             AnyNode::InlineFlagsGroupToggle(t) => t.source_coordinate(),
             AnyNode::InlineFlagsGroupDisable(t) => t.source_coordinate(),
-            AnyNode::Lazy(t) => t.source_coordinate(),
             AnyNode::UnicodePropertyName(t) => t.source_coordinate(),
             AnyNode::AnyCharacter => None,
             AnyNode::StartAssertion => None,
@@ -498,6 +501,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Newline => None,
             AnyNode::Blankline => None,
             AnyNode::DoubleBlankline => None,
+            AnyNode::Lazy => None,
             AnyNode::Caret => None,
             AnyNode::LparenQmark => None,
             AnyNode::Eq => None,
@@ -571,7 +575,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::InlineFlagsGroupEnable(t) => t.source_separator(ctx),
             AnyNode::InlineFlagsGroupToggle(t) => t.source_separator(ctx),
             AnyNode::InlineFlagsGroupDisable(t) => t.source_separator(ctx),
-            AnyNode::Lazy(t) => t.source_separator(ctx),
             AnyNode::UnicodePropertyName(t) => t.source_separator(ctx),
             AnyNode::AnyCharacter => None,
             AnyNode::StartAssertion => None,
@@ -583,6 +586,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Newline => None,
             AnyNode::Blankline => None,
             AnyNode::DoubleBlankline => None,
+            AnyNode::Lazy => None,
             AnyNode::Caret => None,
             AnyNode::LparenQmark => None,
             AnyNode::Eq => None,
@@ -619,7 +623,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, codec_only)]
+#[node(choice, stamp = stamp, codec_only)]
 pub enum TriviaNode {
     #[kind(kind::_TIGHT)]
     Tight,
@@ -732,7 +736,7 @@ pub type NodeLayout = ::sittir_core::layout::NodeLayout<TriviaNode>;
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = PatternContentNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = PatternContentNodeSlotRecord)]
 pub enum PatternContentNodeSlot {
     #[kind(kind::ALTERNATION)]
     Alternation(AlternationNode),
@@ -815,7 +819,7 @@ impl ::sittir_core::render::Render for PatternContentNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = LookaroundAssertionContentNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = LookaroundAssertionContentNodeSlotRecord)]
 pub enum LookaroundAssertionContentNodeSlot {
     #[kind(kind::_LOOKAHEAD_ASSERTION)]
     LookaheadAssertion(LookaheadAssertionNode),
@@ -898,7 +902,7 @@ impl ::sittir_core::render::Render for LookaroundAssertionContentNodeSlotRecord<
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LookaheadAssertionContentNodeSlot {
     #[kind(kind::EQ)]
     Eq,
@@ -949,7 +953,7 @@ impl ::sittir_core::render::Render for LookaheadAssertionContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LookbehindAssertionContentNodeSlot {
     #[kind(kind::EQ)]
     Eq,
@@ -1000,7 +1004,7 @@ impl ::sittir_core::render::Render for LookbehindAssertionContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = CharacterClassClassAtomsNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = CharacterClassClassAtomsNodeSlotRecord)]
 pub enum CharacterClassClassAtomsNodeSlot {
     #[kind(kind::CLASS_CHARACTER, kind::DASH)]
     ClassCharacter(ClassCharacterNode),
@@ -1160,7 +1164,7 @@ impl ::sittir_core::render::Render for CharacterClassClassAtomsNodeSlotRecord<'_
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = ClassRangeStartNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = ClassRangeStartNodeSlotRecord)]
 pub enum ClassRangeStartNodeSlot {
     #[kind(kind::CLASS_CHARACTER)]
     ClassCharacter(ClassCharacterNode),
@@ -1288,7 +1292,7 @@ impl ::sittir_core::render::Render for ClassRangeStartNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NamedCapturingGroupContentNodeSlot {
     #[kind(kind::LPAREN_QMARK_LT)]
     LparenQmarkLt,
@@ -1339,7 +1343,7 @@ impl ::sittir_core::render::Render for NamedCapturingGroupContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = CountQuantifierContentNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = CountQuantifierContentNodeSlotRecord)]
 pub enum CountQuantifierContentNodeSlot {
     #[kind(kind::COUNT_QUANTIFIER_ARM)]
     CountQuantifierArm(CountQuantifierArmNode),
@@ -1433,7 +1437,7 @@ impl ::sittir_core::render::Render for CountQuantifierContentNodeSlotRecord<'_> 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = CharacterClassEscapeContentNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = CharacterClassEscapeContentNodeSlotRecord)]
 pub enum CharacterClassEscapeContentNodeSlot {
     #[kind(kind::CHARACTER_CLASS_ESCAPE_TEXT1)]
     CharacterClassEscapeText1(CharacterClassEscapeText1Node),
@@ -1538,7 +1542,7 @@ impl ::sittir_core::render::Render for CharacterClassEscapeContentNodeSlotRecord
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = TermGroupQuantifierNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = TermGroupQuantifierNodeSlotRecord)]
 pub enum TermGroupQuantifierNodeSlot {
     #[kind(kind::ZERO_OR_MORE)]
     ZeroOrMore(ZeroOrMoreNode),
@@ -1643,7 +1647,7 @@ impl ::sittir_core::render::Render for TermGroupQuantifierNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, view = TermGroupContentNodeSlotRecord)]
+#[node(choice, stamp = stamp, view = TermGroupContentNodeSlotRecord)]
 pub enum TermGroupContentNodeSlot {
     #[kind(kind::LOOKAROUND_ASSERTION)]
     LookaroundAssertion(LookaroundAssertionNode),
@@ -2006,40 +2010,6 @@ impl ::sittir_core::render::Render for TermGroupContentNodeSlotRecord<'_> {
 }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
-pub enum LazyContentNodeSlot {
-    #[kind(kind::QMARK)]
-    Qmark,
-}
-
-impl ::sittir_core::prepare::Prepare for LazyContentNodeSlot {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            LazyContentNodeSlot::Qmark => Ok(()),
-        }
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::view::KindOf for LazyContentNodeSlot {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        match self {
-            Self::Qmark => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
-        }
-    }
-}
-
-impl ::sittir_core::render::Render for LazyContentNodeSlot {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            LazyContentNodeSlot::Qmark => render_qmark(w),
-        }
-    }
-}
-
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(kind = kind::PATTERN, words = 8, fields = PatternFields, prepare = PatternPrepare, view = PatternNodeRecord, prepare_fn = prepare_pattern)]
@@ -2280,7 +2250,7 @@ fn prepare_term<N: TermPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AnyCharacterNode {
     #[kind(kind::ANY_CHARACTER)]
     AnyCharacter,
@@ -2308,7 +2278,7 @@ impl ::sittir_core::render::Render for AnyCharacterNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StartAssertionNode {
     #[kind(kind::START_ASSERTION)]
     StartAssertion,
@@ -2336,7 +2306,7 @@ impl ::sittir_core::render::Render for StartAssertionNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EndAssertionNode {
     #[kind(kind::END_ASSERTION)]
     EndAssertion,
@@ -2364,7 +2334,7 @@ impl ::sittir_core::render::Render for EndAssertionNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BoundaryAssertionNode {
     #[kind(kind::BOUNDARY_ASSERTION)]
     BoundaryAssertion,
@@ -2392,7 +2362,7 @@ impl ::sittir_core::render::Render for BoundaryAssertionNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NonBoundaryAssertionNode {
     #[kind(kind::NON_BOUNDARY_ASSERTION)]
     NonBoundaryAssertion,
@@ -2944,16 +2914,16 @@ fn prepare_posix_class_name<N: PosixClassNamePrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 72, fields = ClassRangeFields, prepare = ClassRangePrepare, view = ClassRangeNodeRecord, prepare_fn = prepare_class_range)]
+#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 64, fields = ClassRangeFields, prepare = ClassRangePrepare, view = ClassRangeNodeRecord, prepare_fn = prepare_class_range)]
 pub struct ClassRangeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_start")]
-    #[slot(field = field::START, word = 2, width = 35, inline = 33)]
+    #[slot(field = field::START, word = 2, width = 31, inline = 29)]
     pub start: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
     #[wire(key = "_end")]
-    #[slot(field = field::END, word = 37, width = 35, inline = 33)]
+    #[slot(field = field::END, word = 33, width = 31, inline = 29)]
     pub end: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
 }
 
@@ -3899,13 +3869,13 @@ fn prepare_decimal_escape<N: DecimalEscapePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 33, fields = CharacterClassEscapeFields, prepare = CharacterClassEscapePrepare, view = CharacterClassEscapeNodeRecord, prepare_fn = prepare_character_class_escape)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 29, fields = CharacterClassEscapeFields, prepare = CharacterClassEscapePrepare, view = CharacterClassEscapeNodeRecord, prepare_fn = prepare_character_class_escape)]
 pub struct CharacterClassEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 31, inline = 29)]
+    #[slot(word = 2, width = 27, inline = 25)]
     pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentNodeSlot>,
 }
 
@@ -4042,16 +4012,16 @@ fn prepare_unicode_character_escape<N: UnicodeCharacterEscapePrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 20, fields = UnicodePropertyValueExpressionFields, prepare = UnicodePropertyValueExpressionPrepare, view = UnicodePropertyValueExpressionNodeRecord, prepare_fn = prepare_unicode_property_value_expression)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 16, fields = UnicodePropertyValueExpressionFields, prepare = UnicodePropertyValueExpressionPrepare, view = UnicodePropertyValueExpressionNodeRecord, prepare_fn = prepare_unicode_property_value_expression)]
 pub struct UnicodePropertyValueExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_unicode_property_value_expression_group")]
-    #[slot(word = 2, width = 13, inline = 11)]
+    #[slot(word = 2, width = 9, inline = 7)]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupNode>>,
     #[wire(key = "_unicode_property_value")]
-    #[slot(word = 15, width = 5)]
+    #[slot(word = 11, width = 5)]
     pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
@@ -4119,8 +4089,10 @@ fn prepare_unicode_property_value_expression<N: UnicodePropertyValueExpressionPr
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE, text, words = 2, fields = UnicodePropertyValueFields, prepare = UnicodePropertyValuePrepare, view = UnicodePropertyValueNodeRecord, prepare_fn = prepare_unicode_property_value)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE, displays = [kind::_UNICODE_PROPERTY_NAME], text, words = 2, fields = UnicodePropertyValueFields, prepare = UnicodePropertyValuePrepare, view = UnicodePropertyValueNodeRecord, prepare_fn = prepare_unicode_property_value)]
 pub struct UnicodePropertyValueNode {
+    #[wire(key = "$type")]
+    pub kind: KindId,
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
@@ -4131,7 +4103,7 @@ pub struct UnicodePropertyValueNode {
 
 impl ::sittir_core::view::KindOf for UnicodePropertyValueNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
+        kinds.contains(&self.kind)
     }
 }
 
@@ -4150,7 +4122,7 @@ impl ::sittir_core::render::Render for UnicodePropertyValueNode {
 ::sittir_core::records_codec! {
 impl ::sittir_core::view::KindOf for UnicodePropertyValueNodeRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k))
+        kinds.contains(&self.kind)
     }
 }
 
@@ -4545,16 +4517,16 @@ fn prepare_decimal_digits<N: DecimalDigitsPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TERM_GROUP, words = 60, fields = TermGroupFields, prepare = TermGroupPrepare, view = TermGroupNodeRecord, prepare_fn = prepare_term_group)]
+#[node(kind = kind::TERM_GROUP, words = 56, fields = TermGroupFields, prepare = TermGroupPrepare, view = TermGroupNodeRecord, prepare_fn = prepare_term_group)]
 pub struct TermGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 35, inline = 33)]
+    #[slot(word = 2, width = 31, inline = 29)]
     pub content: ::sittir_core::SlotValue<TermGroupContentNodeSlot>,
     #[wire(key = "_quantifier")]
-    #[slot(field = field::QUANTIFIER, word = 37, width = 23, inline = 21)]
+    #[slot(field = field::QUANTIFIER, word = 33, width = 23, inline = 21)]
     pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierNodeSlot>>,
 }
 
@@ -4772,7 +4744,7 @@ fn prepare_count_quantifier_arm<N: CountQuantifierArmPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 29, fields = CharacterClassEscapeArmFields, prepare = CharacterClassEscapeArmPrepare, view = CharacterClassEscapeArmNodeRecord, prepare_fn = prepare_character_class_escape_arm)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 25, fields = CharacterClassEscapeArmFields, prepare = CharacterClassEscapeArmPrepare, view = CharacterClassEscapeArmNodeRecord, prepare_fn = prepare_character_class_escape_arm)]
 pub struct CharacterClassEscapeArmNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4781,7 +4753,7 @@ pub struct CharacterClassEscapeArmNode {
     #[slot(word = 2, width = 5)]
     pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Node>,
     #[wire(key = "_unicode_property_value_expression")]
-    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 7, width = 22, inline = 20)]
+    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 7, width = 18, inline = 16)]
     pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionNode>,
 }
 
@@ -4849,14 +4821,14 @@ fn prepare_character_class_escape_arm<N: CharacterClassEscapeArmPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 11, fields = UnicodePropertyValueExpressionGroupFields, prepare = UnicodePropertyValueExpressionGroupPrepare, view = UnicodePropertyValueExpressionGroupNodeRecord, prepare_fn = prepare_unicode_property_value_expression_group)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 7, fields = UnicodePropertyValueExpressionGroupFields, prepare = UnicodePropertyValueExpressionGroupPrepare, view = UnicodePropertyValueExpressionGroupNodeRecord, prepare_fn = prepare_unicode_property_value_expression_group)]
 pub struct UnicodePropertyValueExpressionGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_unicode_property_name")]
-    #[slot(word = 2, width = 9, inline = 7)]
-    pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyNameNode>,
+    #[slot(word = 2, width = 5)]
+    pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
 impl ::sittir_core::view::KindOf for UnicodePropertyValueExpressionGroupNode {
@@ -5064,7 +5036,7 @@ fn prepare_character_class_escape_text2<N: CharacterClassEscapeText2Prepare + ?S
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NegationNode {
     #[kind(kind::_NEGATION)]
     Negation,
@@ -5327,7 +5299,7 @@ fn prepare_inline_flags_group_disable<N: InlineFlagsGroupDisablePrepare + ?Sized
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TightNode {
     #[kind(kind::_TIGHT)]
     Tight,
@@ -5355,7 +5327,7 @@ impl ::sittir_core::render::Render for TightNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NewlineNode {
     #[kind(kind::_NEWLINE)]
     Newline,
@@ -5383,7 +5355,7 @@ impl ::sittir_core::render::Render for NewlineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BlanklineNode {
     #[kind(kind::_BLANKLINE)]
     Blankline,
@@ -5411,7 +5383,7 @@ impl ::sittir_core::render::Render for BlanklineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DoubleBlanklineNode {
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
@@ -5438,15 +5410,11 @@ impl ::sittir_core::render::Render for DoubleBlanklineNode {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LAZY, display, content = content, words = 7, fields = LazyFields, prepare = LazyPrepare, view = LazyNodeRecord, prepare_fn = prepare_lazy)]
-pub struct LazyNode {
-    #[wire(key = "$_layout")]
-    #[layout]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<LazyContentNodeSlot>,
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
+pub enum LazyNode {
+    #[kind(display(kind::_LAZY))]
+    Lazy,
 }
 
 impl ::sittir_core::view::KindOf for LazyNode {
@@ -5455,135 +5423,23 @@ impl ::sittir_core::view::KindOf for LazyNode {
     }
 }
 
-impl ::sittir_core::options::Edged for LazyNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(89) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+impl ::sittir_core::prepare::Prepare for LazyNode {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
 }
 
 impl ::sittir_core::render::Render for LazyNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lazy(self, w))
+        render_lazy(w)
     }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for LazyNodeRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for LazyNodeRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(LazyFields::layout(self), Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_lazy(self, w))
-    }
-}
-
-}
-
-impl ::sittir_core::prepare::Prepare for LazyNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_lazy(self, &mut (), ctx)
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-fn prepare_lazy<N: LazyPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-    let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
-    Ok(())
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_UNICODE_PROPERTY_NAME, display, content = content, words = 7, fields = UnicodePropertyNameFields, prepare = UnicodePropertyNamePrepare, view = UnicodePropertyNameNodeRecord, prepare_fn = prepare_unicode_property_name)]
-pub struct UnicodePropertyNameNode {
-    #[wire(key = "$_layout")]
-    #[layout]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
-}
-
-impl ::sittir_core::view::KindOf for UnicodePropertyNameNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for UnicodePropertyNameNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(90) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for UnicodePropertyNameNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_name(self, w))
-    }
-}
-
-::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for UnicodePropertyNameNodeRecord<'_> {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::render::Render for UnicodePropertyNameNodeRecord<'_> {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        ::sittir_core::arena::RecordLayout::render(UnicodePropertyNameFields::layout(self), Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_unicode_property_name(self, w))
-    }
-}
-
-}
-
-impl ::sittir_core::prepare::Prepare for UnicodePropertyNameNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        prepare_unicode_property_name(self, &mut (), ctx)
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-fn prepare_unicode_property_name<N: UnicodePropertyNamePrepare + ?Sized>(node: &mut N, overlay: &mut N::Overlay, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-    let mut parts = node.prepare_parts();
-    ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.content, overlay, ctx)?;
-    Ok(())
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CaretNode {
     #[kind(kind::CARET)]
     Caret,
@@ -5611,7 +5467,7 @@ impl ::sittir_core::render::Render for CaretNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenQmarkNode {
     #[kind(kind::LPAREN_QMARK)]
     LparenQmark,
@@ -5639,7 +5495,7 @@ impl ::sittir_core::render::Render for LparenQmarkNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqNode {
     #[kind(kind::EQ)]
     Eq,
@@ -5667,7 +5523,7 @@ impl ::sittir_core::render::Render for EqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BangNode {
     #[kind(kind::BANG)]
     Bang,
@@ -5695,7 +5551,7 @@ impl ::sittir_core::render::Render for BangNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RparenNode {
     #[kind(kind::RPAREN)]
     Rparen,
@@ -5723,7 +5579,7 @@ impl ::sittir_core::render::Render for RparenNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenQmarkLtNode {
     #[kind(kind::LPAREN_QMARK_LT)]
     LparenQmarkLt,
@@ -5751,7 +5607,7 @@ impl ::sittir_core::render::Render for LparenQmarkLtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbrackNode {
     #[kind(kind::LBRACK)]
     Lbrack,
@@ -5779,7 +5635,7 @@ impl ::sittir_core::render::Render for LbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashNode {
     #[kind(kind::DASH)]
     Dash,
@@ -5807,7 +5663,7 @@ impl ::sittir_core::render::Render for DashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BslashDashNode {
     #[kind(kind::BSLASH_DASH)]
     BslashDash,
@@ -5835,7 +5691,7 @@ impl ::sittir_core::render::Render for BslashDashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RbrackNode {
     #[kind(kind::RBRACK)]
     Rbrack,
@@ -5863,7 +5719,7 @@ impl ::sittir_core::render::Render for RbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbrackColonNode {
     #[kind(kind::LBRACK_COLON)]
     LbrackColon,
@@ -5891,7 +5747,7 @@ impl ::sittir_core::render::Render for LbrackColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ColonRbrackNode {
     #[kind(kind::COLON_RBRACK)]
     ColonRbrack,
@@ -5919,7 +5775,7 @@ impl ::sittir_core::render::Render for ColonRbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenNode {
     #[kind(kind::LPAREN)]
     Lparen,
@@ -5947,7 +5803,7 @@ impl ::sittir_core::render::Render for LparenNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenQmarkPLtNode {
     #[kind(kind::LPAREN_QMARK_P_LT)]
     LparenQmarkPLt,
@@ -5975,7 +5831,7 @@ impl ::sittir_core::render::Render for LparenQmarkPLtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtNode {
     #[kind(kind::GT)]
     Gt,
@@ -6003,7 +5859,7 @@ impl ::sittir_core::render::Render for GtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenQmarkColonNode {
     #[kind(kind::LPAREN_QMARK_COLON)]
     LparenQmarkColon,
@@ -6031,7 +5887,7 @@ impl ::sittir_core::render::Render for LparenQmarkColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarNode {
     #[kind(kind::STAR)]
     Star,
@@ -6059,7 +5915,7 @@ impl ::sittir_core::render::Render for StarNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkNode {
     #[kind(kind::QMARK)]
     Qmark,
@@ -6087,7 +5943,7 @@ impl ::sittir_core::render::Render for QmarkNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusNode {
     #[kind(kind::PLUS)]
     Plus,
@@ -6115,7 +5971,7 @@ impl ::sittir_core::render::Render for PlusNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbraceNode {
     #[kind(kind::LBRACE)]
     Lbrace,
@@ -6143,7 +5999,7 @@ impl ::sittir_core::render::Render for LbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RbraceNode {
     #[kind(kind::RBRACE)]
     Rbrace,
@@ -6171,7 +6027,7 @@ impl ::sittir_core::render::Render for RbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BslashkNode {
     #[kind(kind::BSLASHK)]
     Bslashk,
@@ -6199,7 +6055,7 @@ impl ::sittir_core::render::Render for BslashkNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtNode {
     #[kind(kind::LT)]
     Lt,
@@ -6227,7 +6083,7 @@ impl ::sittir_core::render::Render for LtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenQmarkPEqNode {
     #[kind(kind::LPAREN_QMARK_P_EQ)]
     LparenQmarkPEq,
@@ -6255,7 +6111,7 @@ impl ::sittir_core::render::Render for LparenQmarkPEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CommaNode {
     #[kind(kind::COMMA)]
     Comma,
@@ -6283,7 +6139,7 @@ impl ::sittir_core::render::Render for CommaNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ColonNode {
     #[kind(kind::COLON)]
     Colon,
@@ -6323,7 +6179,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::TermGroup(t) => t.seat_target(table, ctx),
-            Self::Pattern { .. } | Self::Alternation { .. } | Self::Term { .. } | Self::LookaroundAssertion { .. } | Self::LookaheadAssertion { .. } | Self::LookbehindAssertion { .. } | Self::PatternCharacter { .. } | Self::CharacterClass { .. } | Self::PosixCharacterClass { .. } | Self::PosixClassName { .. } | Self::ClassRange { .. } | Self::ClassCharacter { .. } | Self::AnonymousCapturingGroup { .. } | Self::NamedCapturingGroup { .. } | Self::NonCapturingGroup { .. } | Self::Flags { .. } | Self::ZeroOrMore { .. } | Self::OneOrMore { .. } | Self::Optional { .. } | Self::CountQuantifier { .. } | Self::BackreferenceEscape { .. } | Self::NamedGroupBackreference { .. } | Self::DecimalEscape { .. } | Self::CharacterClassEscape { .. } | Self::UnicodeCharacterEscape { .. } | Self::UnicodePropertyValueExpression { .. } | Self::UnicodePropertyValue { .. } | Self::ControlEscape { .. } | Self::ControlLetterEscape { .. } | Self::IdentityEscape { .. } | Self::GroupName { .. } | Self::DecimalDigits { .. } | Self::CountQuantifierGroup { .. } | Self::CountQuantifierArm { .. } | Self::CharacterClassEscapeArm { .. } | Self::UnicodePropertyValueExpressionGroup { .. } | Self::CharacterClassEscapeText1 { .. } | Self::CharacterClassEscapeText2 { .. } | Self::InlineFlagsGroupEnable { .. } | Self::InlineFlagsGroupToggle { .. } | Self::InlineFlagsGroupDisable { .. } | Self::Lazy { .. } | Self::UnicodePropertyName { .. } | Self::AnyCharacter { .. } | Self::StartAssertion { .. } | Self::EndAssertion { .. } | Self::BoundaryAssertion { .. } | Self::NonBoundaryAssertion { .. } | Self::Negation { .. } | Self::Tight { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Caret { .. } | Self::LparenQmark { .. } | Self::Eq { .. } | Self::Bang { .. } | Self::Rparen { .. } | Self::LparenQmarkLt { .. } | Self::Lbrack { .. } | Self::Dash { .. } | Self::BslashDash { .. } | Self::Rbrack { .. } | Self::LbrackColon { .. } | Self::ColonRbrack { .. } | Self::Lparen { .. } | Self::LparenQmarkPLt { .. } | Self::Gt { .. } | Self::LparenQmarkColon { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::Plus { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Bslashk { .. } | Self::Lt { .. } | Self::LparenQmarkPEq { .. } | Self::Comma { .. } | Self::Colon { .. } | Self::Verbatim { .. } => None,
+            Self::Pattern { .. } | Self::Alternation { .. } | Self::Term { .. } | Self::LookaroundAssertion { .. } | Self::LookaheadAssertion { .. } | Self::LookbehindAssertion { .. } | Self::PatternCharacter { .. } | Self::CharacterClass { .. } | Self::PosixCharacterClass { .. } | Self::PosixClassName { .. } | Self::ClassRange { .. } | Self::ClassCharacter { .. } | Self::AnonymousCapturingGroup { .. } | Self::NamedCapturingGroup { .. } | Self::NonCapturingGroup { .. } | Self::Flags { .. } | Self::ZeroOrMore { .. } | Self::OneOrMore { .. } | Self::Optional { .. } | Self::CountQuantifier { .. } | Self::BackreferenceEscape { .. } | Self::NamedGroupBackreference { .. } | Self::DecimalEscape { .. } | Self::CharacterClassEscape { .. } | Self::UnicodeCharacterEscape { .. } | Self::UnicodePropertyValueExpression { .. } | Self::UnicodePropertyValue { .. } | Self::ControlEscape { .. } | Self::ControlLetterEscape { .. } | Self::IdentityEscape { .. } | Self::GroupName { .. } | Self::DecimalDigits { .. } | Self::CountQuantifierGroup { .. } | Self::CountQuantifierArm { .. } | Self::CharacterClassEscapeArm { .. } | Self::UnicodePropertyValueExpressionGroup { .. } | Self::CharacterClassEscapeText1 { .. } | Self::CharacterClassEscapeText2 { .. } | Self::InlineFlagsGroupEnable { .. } | Self::InlineFlagsGroupToggle { .. } | Self::InlineFlagsGroupDisable { .. } | Self::UnicodePropertyName { .. } | Self::AnyCharacter { .. } | Self::StartAssertion { .. } | Self::EndAssertion { .. } | Self::BoundaryAssertion { .. } | Self::NonBoundaryAssertion { .. } | Self::Negation { .. } | Self::Tight { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Lazy { .. } | Self::Caret { .. } | Self::LparenQmark { .. } | Self::Eq { .. } | Self::Bang { .. } | Self::Rparen { .. } | Self::LparenQmarkLt { .. } | Self::Lbrack { .. } | Self::Dash { .. } | Self::BslashDash { .. } | Self::Rbrack { .. } | Self::LbrackColon { .. } | Self::ColonRbrack { .. } | Self::Lparen { .. } | Self::LparenQmarkPLt { .. } | Self::Gt { .. } | Self::LparenQmarkColon { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::Plus { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Bslashk { .. } | Self::Lt { .. } | Self::LparenQmarkPEq { .. } | Self::Comma { .. } | Self::Colon { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -6438,17 +6294,9 @@ fn render_character_class<N: CharacterClassFields + ?Sized>(node: &N, w: &mut dy
         negation.render(w)?;
         w.site_at(options::SITE_CHARACTER_CLASS_CARET_AFTER);
     }
-    if leading.is_present() {
-        w.site_at(options::SITE_CHARACTER_CLASS_LEADING_BEFORE);
-        leading.render(w)?;
-        w.site_at(options::SITE_CHARACTER_CLASS_LEADING_AFTER);
-    }
+    leading.render(w)?;
     class_atoms.render(w)?;
-    if trailing.is_present() {
-        w.site_at(options::SITE_CHARACTER_CLASS_TRAILING_BEFORE);
-        trailing.render(w)?;
-        w.site_at(options::SITE_CHARACTER_CLASS_TRAILING_AFTER);
-    }
+    trailing.render(w)?;
     w.site_at(options::SITE_CHARACTER_CLASS_RBRACK_BEFORE);
     w.text("]")?;
     w.edge(::sittir_core::types::KindId(58), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
@@ -6507,6 +6355,7 @@ fn render_named_capturing_group<N: NamedCapturingGroupFields + ?Sized>(node: &N,
     let pattern = node.pattern();
     w.edge(::sittir_core::types::KindId(63), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    w.seam(::sittir_core::layout_kinds::LayoutKinds::TIGHT);
     ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_group_name", ::sittir_core::types::ItemIndex(0), w, |w| group_name.render(w))?;
     w.site_at(options::SITE_NAMED_CAPTURING_GROUP_GT_BEFORE);
     w.text(">")?;
@@ -6786,18 +6635,6 @@ fn render_inline_flags_group_disable<N: InlineFlagsGroupDisableFields + ?Sized>(
     Ok(())
 }
 
-fn render_lazy<N: LazyFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
-    w.text("?")?;
-    Ok(())
-}
-
-fn render_unicode_property_name<N: UnicodePropertyNameFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let content = node.content();
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
-    Ok(())
-}
-
 fn render_any_character(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(2)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("."))
 }
@@ -6836,6 +6673,10 @@ fn render_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_c
 
 fn render_double_blankline(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Owner, w, |w| { w.seam(::sittir_core::layout_kinds::LayoutKinds::DOUBLE_BLANKLINE); Ok::<(), ::sittir_core::render::RenderError>(()) })
+}
+
+fn render_lazy(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("?"))
 }
 
 fn render_caret(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -6947,7 +6788,7 @@ static GRAMMAR_WORD_MATCHER: ::sittir_core::spacing::WordMatcher = ::sittir_core
     [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false],
     char::is_alphanumeric,
 )
-.with_literal_merge_pairs(&[(40, 63), (63, 60)]); // "(?" "?<"
+.with_literal_merge_pairs(&[]); // no multi-char punctuation transitions in this grammar
 
 /// Render a node tree to text. Takes the root's own `SlotValue`
 /// carrier, so the root renders through the SAME single `SpacingWriter`
@@ -7042,7 +6883,6 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::InlineFlagsGroupEnable(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupToggle(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupDisable(inner) => inner.kind_in(kinds),
-            Self::Lazy(inner) => inner.kind_in(kinds),
             Self::UnicodePropertyName(inner) => inner.kind_in(kinds),
             Self::AnyCharacter => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
             Self::StartAssertion => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
@@ -7054,6 +6894,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Newline => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::Blankline => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::DoubleBlankline => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Lazy => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
             Self::Caret => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
             Self::LparenQmark => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -7130,7 +6971,6 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::InlineFlagsGroupEnable(t) => t.render(w),
             AnyNode::InlineFlagsGroupToggle(t) => t.render(w),
             AnyNode::InlineFlagsGroupDisable(t) => t.render(w),
-            AnyNode::Lazy(t) => t.render(w),
             AnyNode::UnicodePropertyName(t) => t.render(w),
             AnyNode::AnyCharacter => render_any_character(w),
             AnyNode::StartAssertion => render_start_assertion(w),
@@ -7142,6 +6982,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::Newline => render_newline(w),
             AnyNode::Blankline => render_blankline(w),
             AnyNode::DoubleBlankline => render_double_blankline(w),
+            AnyNode::Lazy => render_lazy(w),
             AnyNode::Caret => render_caret(w),
             AnyNode::LparenQmark => render_lparen_qmark(w),
             AnyNode::Eq => render_eq(w),
@@ -7219,7 +7060,6 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::InlineFlagsGroupEnable(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupToggle(inner) => inner.kind_in(kinds),
             Self::InlineFlagsGroupDisable(inner) => inner.kind_in(kinds),
-            Self::Lazy(inner) => inner.kind_in(kinds),
             Self::UnicodePropertyName(inner) => inner.kind_in(kinds),
             Self::AnyCharacter => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
             Self::StartAssertion => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
@@ -7231,6 +7071,7 @@ impl ::sittir_core::view::KindOf for AnyNodeRecord<'_> {
             Self::Newline => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::Blankline => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
             Self::DoubleBlankline => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::Lazy => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
             Self::Caret => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
             Self::LparenQmark => [::sittir_core::types::KindId(7)].iter().any(|k| kinds.contains(k)),
             Self::Eq => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
@@ -7307,7 +7148,6 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::InlineFlagsGroupEnable(t) => t.render(w),
             AnyNodeRecord::InlineFlagsGroupToggle(t) => t.render(w),
             AnyNodeRecord::InlineFlagsGroupDisable(t) => t.render(w),
-            AnyNodeRecord::Lazy(t) => t.render(w),
             AnyNodeRecord::UnicodePropertyName(t) => t.render(w),
             AnyNodeRecord::AnyCharacter => render_any_character(w),
             AnyNodeRecord::StartAssertion => render_start_assertion(w),
@@ -7319,6 +7159,7 @@ impl ::sittir_core::render::Render for AnyNodeRecord<'_> {
             AnyNodeRecord::Newline => render_newline(w),
             AnyNodeRecord::Blankline => render_blankline(w),
             AnyNodeRecord::DoubleBlankline => render_double_blankline(w),
+            AnyNodeRecord::Lazy => render_lazy(w),
             AnyNodeRecord::Caret => render_caret(w),
             AnyNodeRecord::LparenQmark => render_lparen_qmark(w),
             AnyNodeRecord::Eq => render_eq(w),
@@ -7393,7 +7234,6 @@ const _: () = assert!(::core::mem::size_of::<IdentityEscapeNode>() <= 256, "Iden
 const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupDisableNode>() <= 256, "InlineFlagsGroupDisableNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupEnableNode>() <= 256, "InlineFlagsGroupEnableNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<InlineFlagsGroupToggleNode>() <= 256, "InlineFlagsGroupToggleNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<LazyNode>() <= 256, "LazyNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<LookaheadAssertionNode>() <= 256, "LookaheadAssertionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<LookaroundAssertionNode>() <= 256, "LookaroundAssertionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<LookbehindAssertionNode>() <= 256, "LookbehindAssertionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -7409,10 +7249,9 @@ const _: () = assert!(::core::mem::size_of::<PosixClassNameNode>() <= 256, "Posi
 const _: () = assert!(::core::mem::size_of::<TermGroupNode>() > 256, "TermGroupNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<TermNode>() <= 256, "TermNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<UnicodeCharacterEscapeNode>() <= 256, "UnicodeCharacterEscapeNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<UnicodePropertyNameNode>() <= 256, "UnicodePropertyNameNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionGroupNode>() <= 256, "UnicodePropertyValueExpressionGroupNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueExpressionNode>() <= 256, "UnicodePropertyValueExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<UnicodePropertyValueNode>() <= 256, "UnicodePropertyValueNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ZeroOrMoreNode>() <= 256, "ZeroOrMoreNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionContentNodeSlot, LookbehindAssertionContentNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupContentNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, LazyContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, LazyNode, UnicodePropertyNameNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, QmarkNode, PlusNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, PatternContentNodeSlot, LookaroundAssertionContentNodeSlot, LookaheadAssertionContentNodeSlot, LookbehindAssertionContentNodeSlot, CharacterClassClassAtomsNodeSlot, ClassRangeStartNodeSlot, NamedCapturingGroupContentNodeSlot, CountQuantifierContentNodeSlot, CharacterClassEscapeContentNodeSlot, TermGroupQuantifierNodeSlot, TermGroupContentNodeSlot, PatternNode, AlternationNode, TermNode, AnyCharacterNode, StartAssertionNode, EndAssertionNode, BoundaryAssertionNode, NonBoundaryAssertionNode, LookaroundAssertionNode, LookaheadAssertionNode, LookbehindAssertionNode, PatternCharacterNode, CharacterClassNode, PosixCharacterClassNode, PosixClassNameNode, ClassRangeNode, ClassCharacterNode, AnonymousCapturingGroupNode, NamedCapturingGroupNode, NonCapturingGroupNode, FlagsNode, ZeroOrMoreNode, OneOrMoreNode, OptionalNode, CountQuantifierNode, BackreferenceEscapeNode, NamedGroupBackreferenceNode, DecimalEscapeNode, CharacterClassEscapeNode, UnicodeCharacterEscapeNode, UnicodePropertyValueExpressionNode, UnicodePropertyValueNode, ControlEscapeNode, ControlLetterEscapeNode, IdentityEscapeNode, GroupNameNode, DecimalDigitsNode, TermGroupNode, CountQuantifierGroupNode, CountQuantifierArmNode, CharacterClassEscapeArmNode, UnicodePropertyValueExpressionGroupNode, CharacterClassEscapeText1Node, CharacterClassEscapeText2Node, NegationNode, InlineFlagsGroupEnableNode, InlineFlagsGroupToggleNode, InlineFlagsGroupDisableNode, TightNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, LazyNode, CaretNode, LparenQmarkNode, EqNode, BangNode, RparenNode, LparenQmarkLtNode, LbrackNode, DashNode, BslashDashNode, RbrackNode, LbrackColonNode, ColonRbrackNode, LparenNode, LparenQmarkPLtNode, GtNode, LparenQmarkColonNode, StarNode, QmarkNode, PlusNode, LbraceNode, RbraceNode, BslashkNode, LtNode, LparenQmarkPEqNode, CommaNode, ColonNode, TriviaNode);

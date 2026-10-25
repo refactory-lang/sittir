@@ -21,7 +21,7 @@ import {
 import { collectKindEntries, hasCatalogEntry, type KindEnumEntry } from '../../emitters/kind-discriminant.ts';
 import { lowerCamelCase } from './casing.ts';
 import { supertypeMemberName } from '../../dsl/arm-names.ts';
-import { classifyFactoryEmission, classifyFromEmission, isDeclaredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
+import { classifyFactoryEmission, classifyFromEmission, isAuthoredSupertype, isValidIdent, ownTextLeaf } from '../../emitters/shared.ts';
 import { stampReservedWordsets } from './reserved-wordsets.ts';
 import { subFactoriesOf, variantArmsOf, type SubFactory, type SubFactoryDiagnostic } from './sub-factories.ts';
 
@@ -466,7 +466,7 @@ function deriveIrPlan(
 
 	const groups: IrGroup[] = [];
 	for (const [kind, node] of nodeMap.nodes) {
-		if (!isDeclaredSupertype(node) || flattenedKinds.has(kind)) continue;
+		if (!isAuthoredSupertype(node) || flattenedKinds.has(kind)) continue;
 		const groupName = node.irKey;
 		if (groupName === undefined || !isValidIdent(groupName) || usedGroupNames.has(groupName)) continue;
 		const members: IrMember[] = [];

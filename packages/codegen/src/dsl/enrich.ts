@@ -99,7 +99,7 @@ import { enrichWhitespace, type EnrichedWhitespace } from './whitespace.ts';
 import { LAYOUT_SUPERTYPE } from './primitives/spacing.ts';
 import { compileWordMatcher, matchesWordShape } from '../util/word-matcher.ts';
 import { distributeLeafEnum, distributeTokenForms, factorSharedOptional } from './transform/token-forms.ts';
-import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, seedAutomaticVariants, stampAutomaticVariants, type AutomaticVariants } from './automatic-variants.ts';
+import { ENRICH_AUTOMATIC_VARIANTS_KEY, isSupertypeOwner, seedAutomaticVariants, stampAutomaticVariants, type AutomaticVariants, type CopyBase } from './automatic-variants.ts';
 import { predictedSymbolSourceOf } from './symbol-table.ts';
 import { armNameOf, undisplayedKindAddress } from './arm-names.ts';
 
@@ -311,7 +311,7 @@ export function enrich<B = GrammarResult>(baseInput: B, authored: EnrichAuthored
 	return result as unknown as EnrichedGrammar<B>;
 }
 
-export function stampWiredVariants(wired: unknown, base: unknown, automatic: AutomaticVariants, elementChoices: ReadonlySet<string>): void {
+export function stampWiredVariants(wired: unknown, base: unknown, automatic: AutomaticVariants, elementChoices: ReadonlySet<string>, baseOf: CopyBase): void {
 	const rules = baseRulesOf<Rule>(wired);
 	if (!rules) return;
 	const baseRules = baseRulesOf<Rule>(base) ?? {};
@@ -328,7 +328,7 @@ export function stampWiredVariants(wired: unknown, base: unknown, automatic: Aut
 		word: extractWordName(grammar.word)
 	});
 	const changed = new Set(Object.keys(rules).filter((name) => name !== LAYOUT_SUPERTYPE && JSON.stringify(rules[name]) !== JSON.stringify(baseRules[name])));
-	stampAutomaticVariants(rules, supertypeNames, inlineNames, elementChoices, symbols, automatic, changed);
+	stampAutomaticVariants(rules, supertypeNames, inlineNames, elementChoices, symbols, automatic, changed, baseOf);
 }
 
 export const ENRICH_RULE_ORIGINS_KEY = '__enrichedRuleOrigins__' as const;

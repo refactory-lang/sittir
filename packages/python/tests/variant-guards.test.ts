@@ -7,13 +7,13 @@ import { is } from '../src/is.ts';
 const py = await createEngine(python);
 const rs = await createEngine(rust);
 
-const SOURCE = 'class C:\n    def f(self):\n        pass\n\nclass D: pass\n';
+const SOURCE = 'def f():\n    pass\n\ndef g(): pass\n\nclass C:\n    def m(self):\n        pass\n';
 
 const bodies = () =>
 	py
 		.parse(SOURCE)
 		.statements()
-		.flatMap((statement) => (py.is.classDefinition(statement) ? [statement.body()] : []));
+		.flatMap((statement) => (py.is.functionDefinition(statement) ? [statement.body()] : []));
 
 describe('variant guards', () => {
 	it('sit on the variant parent guard and narrow to one form', () => {
@@ -23,6 +23,15 @@ describe('variant guards', () => {
 		expect(py.is.suite.inline(block!)).toBe(false);
 		expect(py.is.suite.inline(inline!)).toBe(true);
 		if (py.is.suite.block(block!)) expect(block.block().statements()).toHaveLength(1);
+	});
+
+	it('leave a class body to its own guard: the class-body block is a kind of its own, not a suite variant', () => {
+		const [classBody] = py
+			.parse(SOURCE)
+			.statements()
+			.flatMap((statement) => (py.is.classDefinition(statement) ? [statement.body()] : []));
+		expect(py.is.suite(classBody!)).toBe(false);
+		expect(py.is.suiteBlockClassDeclaration(classBody!)).toBe(true);
 	});
 
 	it('are on the package table too, without the language check', () => {

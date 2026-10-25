@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { type BindingFacts, type ClaimFact, bindFacts, refineClaims } from '../index.ts';
+import { boundNameAt } from '../../dsl/bind.ts';
 
 const claim = (vocab: string, kind: string | null, extra: Partial<ClaimFact> = {}): ClaimFact => ({
 	vocab,
@@ -9,6 +10,7 @@ const claim = (vocab: string, kind: string | null, extra: Partial<ClaimFact> = {
 	toplevel: true,
 	within: [],
 	fieldLiterals: {},
+	absent: [],
 	tokens: [],
 	children: [],
 	...extra
@@ -213,17 +215,18 @@ describe('refineClaims', () => {
 		expect(refineClaims([...claims].reverse(), SAME).map((c) => c.refines)).toEqual([...expected].reverse());
 	});
 
-	it('names how a refinement tells its nodes apart: predicate, field literal, token or child pattern', () => {
+	it('names how a refinement tells its nodes apart: predicate, field literal, token, negated field or child pattern', () => {
 		const claims = refineClaims(
 			[
 				claim('identifier', 'identifier'),
 				claim('identifier.receiver', 'identifier', { predicates: [{ operator: 'eq', capture: 'identifier.receiver', arguments: [{ text: 'self' }], subject: { up: 0, down: [] } }] }),
 				claim('identifier.receiver.token', 'identifier', { tokens: ['self'] }),
-				claim('identifier.receiver.token.child', 'identifier')
+				claim('identifier.receiver.token.child', 'identifier'),
+				claim('identifier.receiver.untyped', 'identifier', { absent: ['type'] })
 			],
 			SAME
 		);
-		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern']);
+		expect(claims.map((c) => c.refinement)).toEqual([null, 'predicate', 'token', 'child-pattern', 'negated-field']);
 	});
 
 	it("refines a form's claim by its supertype's claim: a claim with a test of its own is a refinement, a plain one names the form", () => {
@@ -244,5 +247,60 @@ describe('refineClaims', () => {
 	it("keeps an unrefined claim's own predicate, field literal or token as its refinement kind", () => {
 		const [claimed] = refineClaims([claim('identifier.receiver', 'identifier', { tokens: ['self'] })], SAME);
 		expect([claimed?.refines, claimed?.refinement]).toEqual([null, 'token']);
+	});
+});
+
+describe('bindFacts names a placed claim through the aliases at its sites', () => {
+	const aliases = [
+		{ kind: 'alias', from: 'declaration_list', to: 'impl_body', scope: 'impl_item' },
+		{ kind: 'alias', from: 'function_item', to: 'method_declaration', scope: 'impl_body' },
+		{ kind: 'alias', from: 'declaration_list', to: 'trait_body', scope: 'trait_item' },
+		{ kind: 'alias', from: 'function_item', to: 'method_declaration', scope: 'trait_body' }
+	] as const;
+	const same = (kind: string): string => kind;
+	const bound = bindFacts(
+		{
+			claims: [
+				claim('declaration.method', 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] }),
+				claim('declaration.method', 'function_item', { toplevel: false, within: ['declaration_list', 'trait_item'] }),
+				claim('declaration.method.private', 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] }),
+				claim('declaration.function', 'function_item')
+			],
+			members: [{ route: 'rename', owner: 'function_item', name: 'name', field: 'name', kind: 'identifier', after: null, anchor: null, claims: [0, 3] }],
+			containers: [],
+			templates: [],
+			unclaimed: []
+		},
+		same,
+		undefined,
+		boundNameAt(same, aliases)
+	);
+
+	it('unplaces the claim that named the alias as a claim at its pattern root, keeps every other placement in the names the sites give, and leaves an unplaced claim on its base kind', () => {
+		expect(bound.claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel])).toEqual([
+			['declaration.method', 'method_declaration', [], true],
+			['declaration.method', 'method_declaration', [], true],
+			['declaration.method.private', 'method_declaration', ['impl_body', 'impl_item'], false],
+			['declaration.function', 'function_item', [], true]
+		]);
+	});
+
+	it('names a claim at a site that shows its kind under two names by the name its own path binds to, and refuses one whose path names neither', () => {
+		const beside = [...aliases.slice(0, 2), { kind: 'alias', from: 'function_item', to: 'constructor_declaration', scope: 'impl_body' }] as const;
+		const placed = (vocab: string) => claim(vocab, 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] });
+		const bindAll = (vocabs: readonly string[]) =>
+			bindFacts({ claims: vocabs.map(placed), members: [], containers: [], templates: [], unclaimed: [] }, same, undefined, boundNameAt(same, beside));
+		expect(bindAll(['declaration.method', 'declaration.constructor']).claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel])).toEqual([
+			['declaration.method', 'method_declaration', [], true],
+			['declaration.constructor', 'constructor_declaration', [], true]
+		]);
+		expect(() => bindAll(['declaration.method.private'])).toThrow('bindings: function_item shows as method_declaration and constructor_declaration in impl_body; a claim placed there must name one of them by its own path');
+	});
+
+	it('gives a member shared by claims at different sites one fact per bound owner', () => {
+		expect(bound.members.map((m) => [m.owner, m.claims])).toEqual([
+			['method_declaration', [0]],
+			['function_item', [3]]
+		]);
 	});
 });

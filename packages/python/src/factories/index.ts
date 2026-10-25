@@ -230,6 +230,25 @@ export const matchBlockEmpty: Hoisted<typeof O.matchBlockEmpty> = hoistAs<typeof
 export const suiteInline: Hoisted<typeof O.suiteInline> = hoistAs<typeof O.suiteInline>(O.suiteInline);
 export const suiteBlock: Hoisted<typeof O.suiteBlock> = hoistAs<typeof O.suiteBlock>(O.suiteBlock);
 export const suiteEmpty: Hoisted<typeof O.suiteEmpty> = hoistAs<typeof O.suiteEmpty>(O.suiteEmpty);
+export const constructorDeclaration: Hoisted<typeof O.constructorDeclaration> = hoistAs<
+	typeof O.constructorDeclaration
+>(O.constructorDeclaration);
+export const blockClassDeclaration: Hoisted<typeof O.blockClassDeclaration> = hoistAs<typeof O.blockClassDeclaration>(
+	O.blockClassDeclaration
+);
+export const suiteBlockClassDeclaration: Hoisted<typeof O.suiteBlockClassDeclaration> = hoistAs<
+	typeof O.suiteBlockClassDeclaration
+>(O.suiteBlockClassDeclaration);
+export const decoratedDefinitionClassDeclaration: Hoisted<typeof O.decoratedDefinitionClassDeclaration> = hoistAs<
+	typeof O.decoratedDefinitionClassDeclaration
+>(O.decoratedDefinitionClassDeclaration);
+export const names: Hoisted<typeof O.names> = hoistAs<typeof O.names>(O.names);
+export const formatExpression: Hoisted<typeof O.formatExpression> = hoistAs<typeof O.formatExpression>(
+	O.formatExpression
+);
+export const methodDeclaration: Hoisted<typeof O.methodDeclaration> = hoistAs<typeof O.methodDeclaration>(
+	O.methodDeclaration
+);
 export const simpleStatement: Hoisted<typeof O.simpleStatement> = hoistAs<typeof O.simpleStatement>(O.simpleStatement);
 export const compoundStatement: Hoisted<typeof O.compoundStatement> = hoistAs<typeof O.compoundStatement>(
 	O.compoundStatement

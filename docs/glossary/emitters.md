@@ -6740,35 +6740,9 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 
 The kind ids a supertype's or an enum kind's guard admits, its row in `_members` and, as kind-id types, its entry in `KindMembers`: the kinds `membershipKindsOf` gives for it, each by its kind id, once. Empty on the legacy path without id tables, whose guards compare names.
 
-### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry::parseId`
+### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry::member`
 
-```text
-/**
-	 * The alias occurrence's own runtime symbol id, when this kind's ONLY
-	 * visible identity comes from an `alias_sym_*` occurrence distinct from
-	 * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
-	 * `$type` dispatch tables must also map THIS id to the kind — it's what
-	 * tree-sitter actually emits at the aliased position.
-	 */
-```
-
-### `packages/codegen/src/emitters/kind-discriminant.ts::symbolName`
-
-```text
-/**
-	 * Symbol name from `ts_symbol_names[]`, when distinct from `kind`.
-	 * Anonymous tokens (`anon_sym_PLUS`) carry the literal text (`"+"`)
-	 * here while `kind` is the parser symbol name (`"PLUS"`). Used to
-	 * emit additional `kindIdFromName` switch arms so JS callers passing
-	 * the literal text can also resolve to the correct id.
-	 */
-```
-
-### `packages/codegen/src/emitters/kind-discriminant.ts::anon`
-
-```text
-/** True when this entry came from an `anon_sym_*` parser symbol. */
-```
+The kind's generated enum member name, as `kindIdMemberName` derives it: the node map's `typeName` when set, else the kind's type name with its leading underscores kept as a prefix. Discriminant expressions name it as `TSKindId.<member>`.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::kindDiscriminantExprForId`
 
@@ -15354,3 +15328,55 @@ A literal carrying a tag that names its kind.
 ### `packages/codegen/src/emitters/shared.ts::UnreservedWordFactory`
 
 The factory for a word that is not reserved.
+
+### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta::separator`
+
+The separator a factory slot takes.
+
+### `packages/codegen/src/emitters/is.ts::EmitIsConfig`
+
+The options the is-guard emitter takes.
+
+### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry`
+
+One entry of the kind discriminant enum.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::EmitKindIdRustConfig`
+
+The options the Rust kind-id emitter takes.
+
+### `packages/codegen/src/emitters/kind-id-rust.ts::RelaxationTable`
+
+The table of relaxations the Rust kind ids apply.
+
+### `packages/codegen/src/emitters/node-model-read.ts::WrittenSlot::separator`
+
+The separator a written slot takes.
+
+### `packages/codegen/src/emitters/node-projection.ts::displayClaimedIds`
+
+The kind ids a display name claims.
+
+### `packages/codegen/src/emitters/node-projection.ts::NodeProjection`
+
+The projection of a node onto its emitted form.
+
+### `packages/codegen/src/emitters/node-projection.ts::ReadFactsCtx::displayIds`
+
+The display ids the facts read.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::EdgeArmRow`
+
+One row of the edge-arm table.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::SitePath`
+
+The path to a render site.
+
+### `packages/codegen/src/emitters/shared.ts::isAuthoredSupertype`
+
+Whether a supertype was authored, not synthesized.
+
+### `packages/codegen/src/emitters/types.ts::EmitTypesConfig`
+
+The options the types emitter takes.

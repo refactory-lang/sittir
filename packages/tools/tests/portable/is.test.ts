@@ -54,21 +54,39 @@ describe('portable is: python', async () => {
 	const { at, find } = await surfaces('python');
 	const SOURCE = 'class A:\n    @staticmethod\n    def s(): pass\n    @classmethod\n    def c(cls): pass\n    def __init__(self): pass\n    def m(self): pass\n';
 
-	it('reads no method in a class body yet: a placement-dependent reading answers false until it is restated as a kind of its own', () => {
-		const c = find(SOURCE, 'function_definition', undefined, 1);
-		expect(at('declaration.method')(c)).toBe(false);
+	it('reads a method in a class body as a method, a kind of its own, decorated or not', () => {
+		const c = find(SOURCE, 'method_declaration', undefined, 1);
+		const m = find(SOURCE, 'method_declaration', undefined, 2);
+		expect(at('declaration.method')(c)).toBe(true);
+		expect(at('declaration.method')(m)).toBe(true);
+	});
+
+	it('reads __init__ in a class body as the constructor, neither method, special method nor function', () => {
+		const init = find(SOURCE, 'constructor_declaration');
+		expect(at('declaration.constructor')(init)).toBe(true);
+		expect(at('declaration.method')(init)).toBe(false);
+		expect(at('declaration.method.special')(init)).toBe(false);
+		expect(at('declaration.function')(init)).toBe(false);
 	});
 
 	it.skip('reads a decorated method as static by its decorator (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
-		const s = find(SOURCE, 'function_definition');
-		const c = find(SOURCE, 'function_definition', undefined, 1);
+		const s = find(SOURCE, 'method_declaration');
+		const c = find(SOURCE, 'method_declaration', undefined, 1);
 		expect(at('declaration.method.static')(s)).toBe(true);
 		expect(at('declaration.method.static')(c)).toBe(false);
 	});
 
-	it('reads a decorated method in a class body as a function, the reading that needs no placement', () => {
-		const s = find(SOURCE, 'function_definition');
-		expect(at('declaration.function')(s)).toBe(true);
+	it('reads a decorated method in a class body as a method, not a function', () => {
+		const s = find(SOURCE, 'method_declaration');
+		expect(at('declaration.method')(s)).toBe(true);
+		expect(at('declaration.function')(s)).toBe(false);
+	});
+
+	it('reads a dunder outside a class body as a plain function, neither constructor nor special', () => {
+		const init = find('def __init__(self): pass\n', 'function_definition');
+		expect(at('declaration.function')(init)).toBe(true);
+		expect(at('declaration.constructor')(init)).toBe(false);
+		expect(at('declaration.method.special')(init)).toBe(false);
 	});
 
 	it('tests a string prefix through the hidden string_start capture', () => {
@@ -98,7 +116,7 @@ describe('portable is: python', async () => {
 	});
 
 	it('keeps the constructor and call paths though a function owns those names', () => {
-		const init = find(SOURCE, 'function_definition', undefined, 2);
+		const init = find(SOURCE, 'constructor_declaration');
 		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
 		expect(at('declaration.constructor')(init)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
@@ -274,11 +292,11 @@ describe('portable is: rust', async () => {
 		expect(at('identifier.type')(option)).toBe(false);
 	});
 
-	it('reads a method in an impl as a function yet: a placement-dependent reading answers false until it is restated as a kind of its own, and the node reads by its next entry', () => {
+	it('reads a method in an impl as a method by its kind, the alias the parser gives it there, and not as a function', () => {
 		const SOURCE = 'struct S;\nimpl S {\n    fn a(x: u8) {}\n    fn m(&self) {}\n    fn z() {}\n    fn n(&mut self, x: u8) {}\n}\n';
-		const [m, n] = [1, 3].map((nth) => find(SOURCE, 'function_item', undefined, nth));
-		for (const fn of [m!, n!]) expect(at('declaration.method')(fn)).toBe(false);
-		for (const fn of [m!, n!]) expect(at('declaration.function')(fn)).toBe(true);
+		const methods = [0, 1, 2, 3].map((nth) => find(SOURCE, 'method_declaration', undefined, nth));
+		for (const method of methods) expect(at('declaration.method')(method)).toBe(true);
+		for (const method of methods) expect(at('declaration.function')(method)).toBe(false);
 	});
 
 	it.skip('tells a method with a receiver from an associated function, whatever order the impl lists them in (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
@@ -506,6 +524,19 @@ describe('portable is: typescript', async () => {
 			expect(typeof at(path), path).toBe('function');
 			expect(at(path), path).not.toBe(owned);
 		}
+	});
+
+	it('reads a constructor as the constructor, and a method, field or overload named constructor as what it is', () => {
+		const SOURCE = 'class A {\n  private constructor(a: number) {}\n  static constructor() {}\n}\ndeclare class B {\n  constructor: Function;\n  constructor(a: string);\n}\n';
+		const declared = find(SOURCE, 'constructor_declaration');
+		expect(at('declaration.constructor')(declared)).toBe(true);
+		expect(at('declaration.constructor.private')(declared)).toBe(true);
+		expect(at('declaration.method')(declared)).toBe(false);
+		const method = find(SOURCE, 'method_definition_plain');
+		expect(at('declaration.method')(method)).toBe(true);
+		expect(at('declaration.constructor')(method)).toBe(false);
+		expect(at('declaration.constructor')(find(SOURCE, 'public_field_definition_plain'))).toBe(false);
+		expect(at('declaration.constructor')(find(SOURCE, 'method_signature_plain'))).toBe(false);
 	});
 
 	it('reads a catch clause as the one catch kind, with or without its binding', () => {
@@ -775,7 +806,7 @@ describe('portable is: each kind under its neutral name', () => {
 			['{1: 2}\n', 'dictionary', 'expression.collection.map'],
 			['"""x"""\n', 'string', 'literal.string.multiline'],
 			['for x in y:\n    pass\n', 'for_statement', 'statement.loop.for_each'],
-			['class A:\n    def __add__(self, o): pass\n', 'function_definition', 'declaration.method.special']
+			['class A:\n    def __add__(self, o): pass\n', 'method_declaration', 'declaration.method.special']
 		],
 		rust: [
 			['extern crate foo;\n', 'extern_crate_declaration', 'statement.import.package'],

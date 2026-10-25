@@ -119,16 +119,8 @@
 					"test": "leading",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "leading_before"
-						},
-						{
 							"kind": "slot",
 							"name": "leading"
-						},
-						{
-							"kind": "seam",
-							"field": "leading_after"
 						}
 					]
 				}
@@ -145,16 +137,8 @@
 					"test": "trailing",
 					"body": [
 						{
-							"kind": "seam",
-							"field": "trailing_before"
-						},
-						{
 							"kind": "slot",
 							"name": "trailing"
-						},
-						{
-							"kind": "seam",
-							"field": "trailing_after"
 						}
 					]
 				}
@@ -604,12 +588,6 @@
 			"field": "inline_flags_group_toggle_after"
 		}
 	],
-	"lazy": [
-		{
-			"kind": "text",
-			"text": "?"
-		}
-	],
 	"lookahead_assertion": [
 		{
 			"kind": "seam",
@@ -692,6 +670,9 @@
 		{
 			"kind": "slot",
 			"name": "content"
+		},
+		{
+			"kind": "adjacent"
 		},
 		{
 			"kind": "slot",
@@ -926,12 +907,6 @@
 		{
 			"kind": "seam",
 			"field": "term_group_after"
-		}
-	],
-	"unicode_property_name": [
-		{
-			"kind": "slot",
-			"name": "content"
 		}
 	],
 	"unicode_property_value_expression": [

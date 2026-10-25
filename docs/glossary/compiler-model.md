@@ -5300,7 +5300,7 @@ A closer that is a leaf rather than a literal has no closer text, so only the la
 
 | grammar | guard-excludes-closer | reserved-word | regular-token | unguarded |
 | --- | --- | --- | --- | --- |
-| python | 3 | 0 | 0 | 0 |
+| python | 4 | 0 | 0 | 0 |
 | regex | 16 | 0 | 0 | 0 |
 | rust | 25 | 0 | 1 | 0 |
 | scm | 7 | 0 | 1 | 0 |
@@ -6002,3 +6002,131 @@ The forms a seated route reaches inside its child, read from the host's own sett
 ### `packages/codegen/src/compiler/model/ir-surface.ts::formRouteOf`
 
 A route as a `FormRoute`: its name, child and seat, and, for a direct node arm, the forms nested under it (`nestedFormsOf`, keyed by the route's entry name).
+
+### `packages/codegen/src/compiler/model/ir-surface.ts::FlattenedVariantParent`
+
+A variant's parent after its flattening.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ArmFacts`
+
+The facts about a choice arm.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledEnum`
+
+A node that is an enum over its values.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledKeyword`
+
+A node that is a keyword: its text is a word.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::aliasDisplays`
+
+The display names an alias envelope shows.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::aliasStorage`
+
+The storage the node's alias envelope holds.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::aliasStorageNode`
+
+The node that holds the alias envelope's storage.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledPunctuation`
+
+A node that is punctuation: a single anonymous literal token.
+
+### `packages/codegen/src/compiler/model/node-map.ts::KindEdgeClasses`
+
+The classes of the edges between kinds.
+
+### `packages/codegen/src/compiler/model/node-map.ts::layoutDisplaysOf`
+
+The display names a node's layout shows.
+
+### `packages/codegen/src/compiler/model/node-map.ts::layoutNodeOf`
+
+The node a layout is taken from.
+
+### `packages/codegen/src/compiler/model/node-map.ts::LeftmostWalkCtx`
+
+The context of a walk that finds the leftmost node.
+
+### `packages/codegen/src/compiler/model/node-map.ts::ListSlotFactsCtx`
+
+The context in which a list slot's facts are read.
+
+### `packages/codegen/src/compiler/model/node-map.ts::NodeRef::copyOf`
+
+The copy a node reference points at, when it is a copy.
+
+### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSlot`
+
+One slot of a render template.
+
+### `packages/codegen/src/compiler/model/node-map.ts::RenderTemplateSurface`
+
+The surface a render template exposes.
+
+### `packages/codegen/src/compiler/model/node-map.ts::separatorCandidateTexts`
+
+The candidate texts a separator may take.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SeparatorTextCtx`
+
+The context in which a separator's text is read.
+
+### `packages/codegen/src/compiler/model/node-map.ts::SlotCardinality`
+
+How many values a slot holds.
+
+### `packages/codegen/src/compiler/model/node-map.ts::sourceKindOfRef`
+
+The kind a reference was written against.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::DeclaredArm`
+
+An arm the render rules declare.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::EdgeArmDefault`
+
+The default arm for an edge.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::Flanks`
+
+The flanks of a separator: the text on each side.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::RuleSpacingSite`
+
+A site where a rule spaces its tokens.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::SpacedSeparator`
+
+A separator that is spaced by its render rule.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::PreferenceArm`
+
+One arm of a site preference.
+
+### `packages/codegen/src/compiler/model/site-preferences.ts::SitePreferencesConfig`
+
+The configuration of the site preferences.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::FlattenedSeat`
+
+A seat after its flattening.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::FlattenKey`
+
+The key a flattened seat is named by.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::FlattenSeat`
+
+The function that flattens a seat.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::Seat`
+
+A seat of a node: a slot a sub-factory fills.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::SeatSource`
+
+Where a seat's value comes from.

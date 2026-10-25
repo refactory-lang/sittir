@@ -235,3 +235,46 @@ describe('classifierOf conditions through a list', () => {
 		expect(read(METHOD)).toBe('method');
 	});
 });
+
+describe('classifierOf refinements', () => {
+	const METHOD = 13;
+	const VISIBILITY = 14;
+	const read = classifierOf({
+		querySlots: {
+			[METHOD]: [
+				['name', 0, undefined, '_name'],
+				['visibility', 1, undefined, '_visibility']
+			]
+		},
+		table: {
+			paths: {
+				'declaration.method': { ids: [METHOD], exact: false },
+				'declaration.method.public': { ids: [METHOD], exact: false },
+				'declaration.constructor': { ids: [METHOD], exact: false }
+			},
+			fixedText: {},
+			entries: {
+				[METHOD]: [
+					{ path: 'declaration.constructor', within: [], test: [{ up: 0, via: [], plan: { op: 'eq', text: 'new', slots: { [METHOD]: 0 } } }] },
+					{ path: 'declaration.method', within: [], test: [{ up: 0, via: [], plan: { op: 'present', slots: { [METHOD]: 0 } } }] },
+					{ path: 'declaration.method.public', within: [], test: [{ up: 0, via: [], plan: { op: 'present', slots: { [METHOD]: 1 } } }] },
+					{ path: 'declaration.method', within: [], test: [] }
+				]
+			}
+		}
+	});
+	const method = (name: string, visibility?: string) => ({
+		$type: METHOD,
+		name: () => leaf(IDENTIFIER, name),
+		visibility: () => (visibility === undefined ? undefined : leaf(VISIBILITY, visibility))
+	});
+
+	it('reads a node as a refinement that holds, over an earlier entry it refines', () => {
+		expect(read(method('m', 'pub'))).toBe('declaration.method.public');
+		expect(read(method('m'))).toBe('declaration.method');
+	});
+
+	it('keeps the first entry that holds among paths that do not refine each other', () => {
+		expect(read(method('new', 'pub'))).toBe('declaration.constructor');
+	});
+});

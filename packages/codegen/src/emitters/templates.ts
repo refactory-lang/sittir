@@ -170,7 +170,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 					literalMergePairs(
 						getNodeProjection(config.nodeMap).literals,
 						config.kindEntries,
-						config.nodeMap.normalizedRules
+						config.nodeMap
 					).map(
 						([a, b]) => a * 128 + b
 					)
@@ -187,7 +187,7 @@ export class TemplateEmitter implements CodegenEmitter<EmittedTemplates> {
 				for (const [a, b] of literalMergePairs(
 					getNodeProjection(config.nodeMap).literals,
 					config.kindEntries,
-					config.nodeMap.normalizedRules
+					config.nodeMap
 				)) {
 					combos.add(`${cls(a)}\0${cls(b)}`);
 					lefts.add(String.fromCharCode(a));
