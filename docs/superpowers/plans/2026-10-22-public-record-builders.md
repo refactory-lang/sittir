@@ -46,10 +46,10 @@ public cutover evidence.
 
 ## Where slices land
 
-Each slice merges into `feat/records`, the arena-storage branch, not into
-master. Master is merged into `feat/records` by a merge commit, never a
-rebase, followed by regeneration and the gate, at the start of each slice and
-whenever master moves.
+Each slice is a PR stacked on the slice before it, and the stack lands in
+`feat/records`, the arena-storage branch, not in master. Master is merged into
+`feat/records` by a merge commit, never a rebase, followed by regeneration and
+the gate, at the start of each slice and whenever master moves.
 
 `feat/records` goes to master only when records are stable:
 
@@ -58,14 +58,16 @@ whenever master moves.
   builders at or above the eager probe in the `Arena benchmarks` workflow;
 - native parsed hydration writes records directly, without building typed
   Rust nodes first;
-- unreferenced built records and chunks are reclaimed.
+- unreferenced built records and chunks are reclaimed;
+- a deeply nested built tree renders, or refuses by name, on every storage, on
+  the main thread and in a Worker, and never ends the process.
 
 ## Slices, each a PR stacked on the arena-storage PR
 
 Each slice is green on its own. Arena engines keep building objects until
 the last slice.
 
-- [ ] **Record builders and parsed links.** `factories/records.ts`, generated
+- [x] **Record builders and parsed links.** `factories/records.ts`, generated
   from the same construction contract as `objects.ts`, and the dispatching
   `raw.ts`. `objects.ts` keeps today's builders. The shared runtime covers
   chunks, allocation and interning. Record stores cover every constructible
@@ -81,14 +83,28 @@ the last slice.
     without links.
   - Every non-render row must match object construction in all five grammars.
     The built-render-parse row fails until the render bridge.
-- [ ] **Native render bridge.** Every addon renders JS-owned chunks borrowed per call,
+- [x] **Native render bridge.** Every addon renders JS-owned chunks borrowed per call,
   with admission, including the parsed trees a built record links. Render bytes
   match the object path over the corpus.
-- [ ] **Trivia and edits.**
-  - Links to children read by another engine of the same language.
+  - A built record in a side is held by reference, its kind and address, and
+    renders where the side renders, from its arena, with its own sides as its
+    neighbours.
+  - Every render reads through one table that answers every live tree.
+  - Sides nest at most 64 deep, the addon's stack-safety bound, with one
+    refusal on every storage.
+- [x] **Trivia and edits.**
+  - Links to children read by another engine of the same language: a built
+    record holds such a child by link, renders it and rebuilds over it, and
+    renders after that engine is disposed.
+  - A built record written into a side of a node another engine of the
+    language holds names its owner, the engine whose arena wrote it. The side
+    renders it from that engine's arena, with the sides that engine wrote on
+    it, and reads it back as its builder's node. The holder's table keeps that
+    arena and its engine alive while the side holds the record; the store keeps
+    the other engine's store weakly.
   - Written sides go to the native store.
   - `$with` shares unchanged children and copies bounded ones.
-  - Cover disposal, growth and invalid buffers.
+  - Disposal, growth and invalid buffers are covered.
 - [x] **Record views for every compound kind.** A kind that seats a group
   has a record view. Each key the group lends its parent is a member, present
   only while the group's cell is set, that reads the group's field through the
@@ -99,6 +115,12 @@ the last slice.
   `use_wildcard`, typescript `catch_clause`, and python `slice`. Only a kind
   with a slot the layout gives no cell would still have no view, and no
   compound kind of the five grammars has one.
+- [ ] **Deep built trees.** Native prepare and render grow the stack on
+  demand at each node they descend into, so a deeply nested built tree renders
+  on the main thread and in a Worker. Render stays recursive descent and tracks
+  no depth. No napi or V8 call runs on a grown stack: a render borrows every
+  chunk it can reach before it can grow, as a fact of its types. The
+  side-nesting bound stays.
 - [ ] **Switch.** Arena engines load the record backend. Prove that construction calls no
   object builder or serializer. Benchmark metadata names the construction
   backend. Both storages' complete validation history must be unchanged, and
