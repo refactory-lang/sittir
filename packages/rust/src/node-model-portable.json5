@@ -3222,10 +3222,10 @@
       }
     },
     "crate": {
-      "vocab": "identifier.crate",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.crate",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6408,10 +6408,10 @@
       ]
     },
     "field_identifier": {
-      "vocab": "identifier.field",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.field",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13617,10 +13617,10 @@
       ]
     },
     "shorthand_field_identifier": {
-      "vocab": "identifier.property.shorthand",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property.shorthand",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -16292,10 +16292,10 @@
       }
     },
     "super": {
-      "vocab": "identifier.super",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.super",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17617,33 +17617,10 @@
       ]
     },
     "type_identifier": {
-      "vocab": "identifier.type",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "type.named.prelude",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "479": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "match",
-                "pattern": "^(Option|Result|String|Vec|Box)$",
-                "self": true
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "identifier.type",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -19975,19 +19952,19 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 3,
+        "kinds": 8,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 103,
-        "kinds": 159,
-        "refinements": 12
+        "paths": 97,
+        "kinds": 155,
+        "refinements": 7
       },
       {
         "depth": 3,
-        "paths": 109,
-        "kinds": 122,
+        "paths": 107,
+        "kinds": 120,
         "refinements": 81
       },
       {

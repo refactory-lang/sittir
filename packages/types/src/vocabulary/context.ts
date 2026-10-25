@@ -165,7 +165,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly types: unknown;
 		};
 		readonly 'clause.extends.type': {
-			readonly types: V.Identifier.Type<G> | G['type'];
+			readonly types: V.Identifier<G> | G['type'];
 		};
 		readonly 'clause.finally': {
 			readonly body: V.Declaration.TypeAlias<G> | G['statement'];
@@ -386,7 +386,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal'];
 		};
 		readonly 'declaration.field.signature': {
-			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier<G> | string;
 			readonly type: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.function': {
@@ -472,7 +472,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'declaration.method.signature.abstract': {
-			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier<G> | string;
 			readonly returnType: G['identifier'] | G['type'];
 		};
 		readonly 'declaration.module': {
@@ -530,7 +530,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly pattern: unknown;
 		};
 		readonly 'declaration.property': {
-			readonly name: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly name: G['expression'] | G['literal'] | V.Identifier<G> | string;
 			readonly optionality: string;
 			readonly type: G['identifier'] | G['type'];
 			readonly value:
@@ -991,7 +991,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Element.Spread.Any<G>;
 		};
 		readonly 'expression.collection.struct': {
-			readonly name: V.Identifier.Type<G> | G['type'];
+			readonly name: V.Identifier<G> | G['type'];
 		};
 		readonly 'expression.collection.tuple': {
 			readonly elements:
@@ -1380,7 +1380,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal'];
 		};
 		readonly 'pattern.object.pair': {
-			readonly key: G['expression'] | G['literal'] | V.Identifier.Property<G> | string;
+			readonly key: G['expression'] | G['literal'] | V.Identifier<G> | string;
 			readonly value:
 				| G['expression']
 				| G['identifier']
@@ -1645,7 +1645,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['type'];
 		};
 		readonly 'type.abstract': {
-			readonly trait: V.Clause.Bounds.Removed<G> | V.Identifier.Type<G> | G['type'];
+			readonly trait: V.Clause.Bounds.Removed<G> | V.Identifier<G> | G['type'];
 		};
 		readonly 'type.array': {
 			readonly element:
@@ -1686,7 +1686,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly right: G['identifier'] | G['type'];
 		};
 		readonly 'type.dynamic': {
-			readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier.Type<G> | G['type'];
+			readonly trait: V.Clause.Bounds.HigherRanked<G> | V.Identifier<G> | G['type'];
 		};
 		readonly 'type.function': {
 			readonly parameters:
@@ -1701,7 +1701,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Expression.Call.Macro<G>
 				| G['identifier']
 				| G['type'];
-			readonly trait: V.Identifier.Type<G> | V.Type.Path<G>;
+			readonly trait: V.Identifier<G> | V.Type.Path<G>;
 		};
 		readonly 'type.function.constructor': {
 			readonly type: G['identifier'] | G['type'];

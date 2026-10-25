@@ -7,7 +7,7 @@ export namespace Declaration {
 			// claimed by r
 			readonly $kind: 'declaration.type_alias.associated';
 			readonly bounds?: G['slots']['clause.bounds']['bounds'][];
-			readonly name: V.Identifier.Type<G>;
+			readonly name: V.Identifier<G>;
 		}
 	}
 }

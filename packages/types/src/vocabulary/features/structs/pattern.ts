@@ -6,7 +6,7 @@ export namespace Pattern {
 		// claimed by r
 		readonly $kind: 'pattern.struct';
 		readonly fields?: V.Pattern.Struct.Any<G>[];
-		readonly type?: V.Identifier.Type<G> | V.Type.Path<G>;
+		readonly type?: V.Identifier<G> | V.Type.Path<G>;
 	}
 	export namespace Struct {
 		export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Struct<G>> {

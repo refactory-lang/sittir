@@ -495,7 +495,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
 		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
-		const input = { ...(await grammar('(field_name) @identifier.field')), model };
+		const input = { ...(await grammar('(field_name) @identifier')), model };
 		expect(resolveRoutes(input).members.get('field_name')).toEqual([]);
 	});
 
@@ -754,7 +754,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it('refuses a capture on a slot that holds only text on a kind read as an identifier', async () => {
-		await expect(grammar('(private_name content: _ @content) @identifier.property').then(resolveRoutes)).rejects.toThrow(
+		await expect(grammar('(private_name content: _ @content) @identifier').then(resolveRoutes)).rejects.toThrow(
 			/private_name's capture @content.*content slot.*only text.*identifier/
 		);
 	});
@@ -781,7 +781,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
-		const routes = resolveRoutes(await grammar(['(private_name) @identifier.property', '(scoped_name) @identifier.scoped', '(char_text) @literal.character'].join('\n')));
+		const routes = resolveRoutes(await grammar(['(private_name) @identifier', '(scoped_name) @identifier.scoped', '(char_text) @literal.character'].join('\n')));
 		expect(routes.members.get('private_name')).toEqual([]);
 		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
 		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);

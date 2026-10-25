@@ -6,7 +6,7 @@ export namespace Declaration {
 		// claimed by r
 		readonly $kind: 'declaration.struct';
 		readonly body?: G['slots']['declaration.struct']['body'][];
-		readonly name: V.Identifier.Type<G>;
+		readonly name: V.Identifier<G>;
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		readonly whereClause?: V.Clause.Where<G>;
 	}

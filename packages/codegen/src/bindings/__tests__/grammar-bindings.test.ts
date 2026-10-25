@@ -42,7 +42,7 @@ const FACTS: BindingFacts = {
 		claim('declaration.variable', 'let_item'),
 		claim('expression.call', 'call'),
 		claim('expression.call.method', 'call', { tokens: ['.'] }),
-		claim('type.named', 'nope')
+		claim('type.unit', 'nope')
 	],
 	members: [{ route: 'rename', owner: 'let_item', name: 'name', field: 'left', kind: null, after: null, anchor: null }],
 	containers: [],
@@ -59,7 +59,7 @@ const ROUTES = {
 	vocabOf: new Map([
 		['let_item', 'declaration.variable'],
 		['call', 'expression.call'],
-		['nope', 'type.named']
+		['nope', 'type.unit']
 	])
 };
 const VOCABULARY = new Map([
@@ -142,7 +142,7 @@ describe('deriveGrammarBindings', () => {
 		const { report } = bind({ file: FILE, facts: FACTS, base, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL });
 		expect(report.residue).toEqual([
 			{ cause: 'token refinement', row: 'call → expression.call.method' },
-			{ cause: 'not a base rule', row: 'nope → type.named' }
+			{ cause: 'not a base rule', row: 'nope → type.unit' }
 		]);
 	});
 

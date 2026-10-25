@@ -281,15 +281,16 @@ describe('portable is: rust', async () => {
 		expect(at('expression.binary.arithmetic.add')(built)).toBe(false);
 	});
 
-	it('tells identifier from type_identifier, and a prelude type from another', () => {
-		const SOURCE = 'fn f() { let x: Foo = y; let o: Option<u8> = z; }\n';
-		const x = find(SOURCE, 'identifier', 'x');
-		const foo = find(SOURCE, 'type_identifier', 'Foo');
-		const option = find(SOURCE, 'type_identifier', 'Option');
-		expect(at('identifier.type')(foo)).toBe(true);
-		expect(at('identifier.type')(x)).toBe(false);
-		expect(at('type.named.prelude')(option)).toBe(true);
-		expect(at('identifier.type')(option)).toBe(false);
+	it('reads a type name, a field name and a path root as identifiers, as it reads a value name', () => {
+		const SOURCE = 'fn f() { let x: Option<u8> = s.y; crate::g(); super::h(); }\n';
+		const names = [
+			find(SOURCE, 'identifier', 'x'),
+			find(SOURCE, 'type_identifier', 'Option'),
+			find(SOURCE, 'field_identifier', 'y'),
+			find(SOURCE, 'crate'),
+			find(SOURCE, 'super')
+		];
+		for (const name of names) expect(at('identifier')(name)).toBe(true);
 	});
 
 	it('reads a method in an impl as a method by its kind, the alias the parser gives it there, and not as a function', () => {
@@ -694,12 +695,12 @@ describe('portable is: typescript', async () => {
 		expect(at('literal.number.negative')(negative)).toBe(true);
 	});
 
-	it('reads a private name as a property identifier, where it is declared and where it is read', () => {
+	it('reads a private name as an identifier, where it is declared and where it is read', () => {
 		const SOURCE = 'class C { #x = 1; m() { return this.#x; } }\n';
 		const declared = find(SOURCE, 'private_property_identifier');
 		const read = find(SOURCE, 'private_property_identifier', undefined, 1);
-		expect(at('identifier.property')(declared)).toBe(true);
-		expect(at('identifier.property')(read)).toBe(true);
+		expect(at('identifier')(declared)).toBe(true);
+		expect(at('identifier')(read)).toBe(true);
 	});
 	it('reads each predefined type, a kind id, by its keyword', () => {
 		const SOURCE = 'let a: any; let b: number; let c: boolean; let d: string; let e: symbol; let g: void; let h: unknown; let i: never; let j: object;\n';

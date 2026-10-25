@@ -2274,25 +2274,17 @@ declare module './identifier.ts' {
 		interface Metavariable<G extends GrammarContext<G>> extends syntacticMetaprogramming.Identifier.Metavariable<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Identifier.Metavariable<G>['attributes']>;
 		}
-		namespace Property {
-			type Any<G extends GrammarContext<G>> = V.Identifier.Property<G> | V.Identifier.Property.Shorthand<G>;
-		}
 		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
-			| V.Identifier.Crate<G>
 			| V.Identifier.Dotted<G>
-			| V.Identifier.Field<G>
 			| V.Identifier.Label<G>
 			| V.Identifier.Lifetime<G>
 			| V.Identifier.Metavariable<G>
 			| V.Identifier.Nested<G>
-			| V.Identifier.Property<G>
-			| V.Identifier.Property.Shorthand<G>
 			| V.Identifier.Receiver<G>
 			| V.Identifier.Scoped<G>
-			| V.Identifier.Super<G>
-			| V.Identifier.Type<G>;
+			| V.Identifier.Super<G>;
 	}
 }
 
@@ -2867,11 +2859,6 @@ declare module './type.ts' {
 		interface Intersection<G extends GrammarContext<G>> extends typeAnnotations.Type.Intersection<G> {}
 		interface Literal<G extends GrammarContext<G>> extends typeAnnotations.Type.Literal<G> {}
 		interface Lookup<G extends GrammarContext<G>> extends typeAnnotations.Type.Lookup<G> {}
-		interface Named<G extends GrammarContext<G>> extends typeAnnotations.Type.Named<G> {}
-		namespace Named {
-			interface Prelude<G extends GrammarContext<G>> extends typeAnnotations.Type.Named.Prelude<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Named<G> | V.Type.Named.Prelude<G>;
-		}
 		interface Nullable<G extends GrammarContext<G>> extends nullableTypes.Type.Nullable<G> {}
 		interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Object<G> {}
 		interface Optional<G extends GrammarContext<G>> extends typeAnnotations.Type.Optional<G> {}
@@ -2983,8 +2970,6 @@ declare module './type.ts' {
 			| V.Type.Intersection<G>
 			| V.Type.Literal<G>
 			| V.Type.Lookup<G>
-			| V.Type.Named<G>
-			| V.Type.Named.Prelude<G>
 			| V.Type.Nullable<G>
 			| V.Type.Object<G>
 			| V.Type.Optional<G>

@@ -152,7 +152,7 @@ describe('deriveVocabulary', () => {
 	it('keeps the bounds of a type argument (`Iterator<Item: Copy>`), a wrapper claimed as a kind of its own, as the list of bounds its clause holds', () => {
 		const argument = d.members.get('element.type_argument');
 		expect(argument?.has('constraint')).toBe(false);
-		expect(argument?.get('bounds')?.kinds.has('identifier.type')).toBe(true);
+		expect(argument?.get('bounds')?.kinds.has('identifier')).toBe(true);
 		expect(argument?.get('bounds')?.kinds.has('clause.bounds')).toBe(false);
 		expect(argument?.get('bounds')?.multiple).toBe(true);
 		expect(argument?.get('bounds')?.optional).toBe(true);

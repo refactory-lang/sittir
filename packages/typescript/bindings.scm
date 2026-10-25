@@ -437,11 +437,11 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(type_identifier) @identifier.type
-(property_identifier) @identifier.property
-(private_property_identifier) @identifier.property
-(shorthand_property_identifier) @identifier.property.shorthand
-(shorthand_property_identifier_pattern) @identifier.property.shorthand
+(type_identifier) @identifier
+(property_identifier) @identifier
+(private_property_identifier) @identifier
+(shorthand_property_identifier) @identifier
+(shorthand_property_identifier_pattern) @identifier
 (nested_identifier) @identifier.nested
 (nested_type_identifier) @type.path
 (statement_identifier) @identifier.label

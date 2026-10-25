@@ -11194,10 +11194,10 @@
       "members": []
     },
     "private_property_identifier": {
-      "vocab": "identifier.property",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11232,10 +11232,10 @@
       ]
     },
     "property_identifier": {
-      "vocab": "identifier.property",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12848,10 +12848,10 @@
       ]
     },
     "shorthand_property_identifier": {
-      "vocab": "identifier.property.shorthand",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property.shorthand",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12868,10 +12868,10 @@
       }
     },
     "shorthand_property_identifier_pattern": {
-      "vocab": "identifier.property.shorthand",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property.shorthand",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13730,10 +13730,10 @@
       ]
     },
     "type_identifier": {
-      "vocab": "identifier.type",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.type",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -14686,20 +14686,20 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 2,
+        "kinds": 7,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 112,
-        "kinds": 148,
-        "refinements": 6
+        "paths": 110,
+        "kinds": 145,
+        "refinements": 4
       },
       {
         "depth": 3,
-        "paths": 109,
-        "kinds": 95,
-        "refinements": 83
+        "paths": 108,
+        "kinds": 93,
+        "refinements": 82
       },
       {
         "depth": 4,
