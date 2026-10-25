@@ -294,6 +294,10 @@ export const decoratedDefinitionClassDeclaration = bundle(
 	C.coerceToDecoratedDefinitionClassDeclaration,
 	{ key: 'decoratedDefinitionClassDeclaration', max: 1 }
 );
+export const constructorDeclaration = bundle(F.buildConstructorDeclaration, C.coerceToConstructorDeclaration, {
+	key: 'constructorDeclaration',
+	max: 1
+});
 export const names = bundle(F.buildNames, C.coerceToNames);
 export const formatExpression = bundle(F.buildFormatExpression, C.coerceToFormatExpression, {
 	key: 'formatExpression',

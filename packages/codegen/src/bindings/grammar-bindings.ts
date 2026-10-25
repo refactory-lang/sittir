@@ -135,6 +135,14 @@ interface ReferenceField {
 	readonly whole: boolean;
 }
 
+interface PlacedSplit {
+	readonly kind: string;
+	readonly within: readonly string[];
+	readonly as: string;
+	readonly member: ReferenceField | undefined;
+	readonly literal?: LiteralSplit;
+}
+
 function reachesThroughHidden(rules: Readonly<Record<string, unknown>>, rule: unknown, child: string, entered: Set<string>): boolean {
 	if (Array.isArray(rule)) return rule.some((r) => reachesThroughHidden(rules, r, child, entered));
 	if (!isRecord(rule) || (OPAQUE_RULES.has(rule.type) && !isEnrichedField(rule))) return false;
@@ -299,7 +307,7 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 	const realizedByParent: string[] = [];
 	const wanted: { kind: string; to: string; row: string }[] = [];
 	const wantedAliases: { kind: string; to: string; row: string }[] = [];
-	const placedSplits: { kind: string; within: readonly string[]; as: string; member: ReferenceField | undefined; literal?: LiteralSplit }[] = [];
+	const placedSplits: PlacedSplit[] = [];
 	const wordMatcher = compileWordMatcher(base.word, base.rules);
 	const wordLeaves = new Set([...(base.word === null ? [] : [base.word]), ...wordDisplaysOf(base.rules, { word: base.word ?? undefined })]);
 	const literalDiagnostics: GrammarDiagnostic[] = [];
@@ -317,6 +325,20 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			details: { file: input.file, claim: row, leaf: literal.leaf, texts: literal.texts, reason }
 		});
 	};
+	const literalSplitAt = (c: RefinedClaim, kind: string, within: readonly string[], literal: LiteralText, as: string): PlacedSplit | string => {
+		if (!ruleNames.has(kind) || !within.every((w) => ruleNames.has(w))) return 'placed claim';
+		const absent = c.absent.flatMap((field) => {
+			const through = fieldThrough(rules, rules[kind], field, new Set([kind]), (symbol) => !isEnrichGroupLiftSymbol(symbol));
+			return through === undefined ? [] : [{ field, through }];
+		});
+		if (absent.length !== c.absent.length) return 'negated field is not a field of the split kind';
+		const outer = within[within.length - 1]!;
+		const reference = within[within.length - 2] ?? kind;
+		const family = relaxedFamilyOf(rules, kind, literal);
+		const relax = family.size === 0 ? [] : relaxSitesOf(input.layerRules as Readonly<Record<string, unknown>>, family, literal.texts);
+		return { kind, within, as, member: fieldOfReference(rules, outer, reference), literal: { ...literal, absent, relax } };
+	};
+	const mintedLiterals: { c: RefinedClaim; kind: string; literal: LiteralText; row: string }[] = [];
 	for (const c of claims) {
 		const row = `${c.kind ?? '(group)'} → ${c.vocab}`;
 		const kind = c.kind;
@@ -326,27 +348,20 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 				refuseLiteral(row, literal);
 				continue;
 			}
+			if (!placed(c) && !ruleNames.has(kind)) {
+				mintedLiterals.push({ c, kind, literal, row });
+				continue;
+			}
 			if (!placed(c)) {
 				left('literal split names no site', row);
 				continue;
 			}
-			if (!ruleNames.has(kind) || !c.within.every((w) => ruleNames.has(w))) {
-				left('placed claim', row);
+			const split = literalSplitAt(c, kind, c.within, literal, boundKindName(c.vocab, isParserHiddenName(kind)));
+			if (typeof split === 'string') {
+				left(split, row);
 				continue;
 			}
-			const absent = c.absent.flatMap((field) => {
-				const through = fieldThrough(rules, rules[kind], field, new Set([kind]), (symbol) => !isEnrichGroupLiftSymbol(symbol));
-				return through === undefined ? [] : [{ field, through }];
-			});
-			if (absent.length !== c.absent.length) {
-				left('negated field is not a field of the split kind', row);
-				continue;
-			}
-			const outer = c.within[c.within.length - 1]!;
-			const reference = c.within[c.within.length - 2] ?? kind;
-			const family = relaxedFamilyOf(rules, kind, literal);
-			const relax = family.size === 0 ? [] : relaxSitesOf(input.layerRules as Readonly<Record<string, unknown>>, family, literal.texts);
-			placedSplits.push({ kind, within: c.within, as: boundKindName(c.vocab, isParserHiddenName(kind)), member: fieldOfReference(rules, outer, reference), literal: { ...literal, absent, relax } });
+			placedSplits.push(split);
 			realizedKinds.push(row);
 			continue;
 		}
@@ -401,6 +416,17 @@ export function deriveGrammarBindings(input: GrammarBindingsInput): {
 			continue;
 		}
 		wanted.push({ kind: c.kind, to, row });
+	}
+	for (const { c, kind, literal, row } of mintedLiterals) {
+		const sites = placedSplits.filter((split) => split.literal === undefined && split.as === kind);
+		const at = sites.map((site) => literalSplitAt(c, site.kind, site.within, literal, boundKindName(c.vocab, isParserHiddenName(kind))));
+		const refused = sites.length === 0 ? 'literal split names no site' : at.find((split): split is string => typeof split === 'string');
+		if (refused !== undefined) {
+			left(refused, row);
+			continue;
+		}
+		placedSplits.push(...at.filter((split): split is PlacedSplit => typeof split !== 'string'));
+		realizedKinds.push(row);
 	}
 	for (let changed = true; changed; ) {
 		changed = false;

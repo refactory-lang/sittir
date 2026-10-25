@@ -995,6 +995,120 @@
 			"field": "constrained_type_after"
 		}
 	],
+	"constructor_declaration": [
+		{
+			"kind": "seam",
+			"field": "constructor_declaration_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "async",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "async"
+						},
+						{
+							"kind": "seam",
+							"field": "async_after"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "def_keyword_before"
+		},
+		{
+			"kind": "text",
+			"text": "def"
+		},
+		{
+			"kind": "seam",
+			"field": "def_keyword_after"
+		},
+		{
+			"kind": "text",
+			"text": "__init__"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "type_parameters",
+					"body": [
+						{
+							"kind": "slot",
+							"name": "type_parameters"
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "slot",
+			"name": "parameters"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "return_type",
+					"body": [
+						{
+							"kind": "seam",
+							"field": "dash_gt_before"
+						},
+						{
+							"kind": "text",
+							"text": "->"
+						},
+						{
+							"kind": "seam",
+							"field": "dash_gt_after"
+						},
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "return_type",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "return_type"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"kind": "seam",
+			"field": "colon_before"
+		},
+		{
+			"kind": "text",
+			"text": ":"
+		},
+		{
+			"kind": "seam",
+			"field": "colon_after"
+		},
+		{
+			"kind": "slot",
+			"name": "body"
+		},
+		{
+			"kind": "seam",
+			"field": "constructor_declaration_after"
+		}
+	],
 	"decorated_definition": [
 		{
 			"kind": "seam",

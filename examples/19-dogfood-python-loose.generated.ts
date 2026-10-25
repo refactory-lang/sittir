@@ -13,8 +13,7 @@ export function rebuildPython4spaceLoose() {
 		content: py.build.importList(py.build.dottedName("Optional")),
 	})), py.build.classDefinition({
 		name: "User",
-		body: py.build.suiteBlockClassDeclaration(py.build.methodDeclaration({
-			name: "__init__",
+		body: py.build.suiteBlockClassDeclaration(py.build.constructorDeclaration({
 			parameters: ["self", py.build.typedParameter({
 				name: "user_id",
 				type: "int",

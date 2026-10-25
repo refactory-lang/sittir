@@ -4,6 +4,10 @@ export namespace Declaration {
 		readonly type: G['slots']['declaration.constant']['type'];
 		// r only
 	}
+	export interface Constructor<G extends GrammarContext<G>> {
+		readonly returnType?: G['slots']['declaration.constructor']['returnType'];
+		// p only
+	}
 	export interface Field<G extends GrammarContext<G>> {
 		readonly type?: G['slots']['declaration.field']['type'];
 	}

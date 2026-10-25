@@ -369,7 +369,7 @@ const bindLeadMatch = (
 	fieldNameOf: FieldNameOf
 ): LeadLeadMatch => ('match' in lead ? { ...lead, match: bindMatch(lead.match, rename, fieldNameOf) } : lead);
 
-type NameAt = (kind: string, scope: string | undefined) => SitedName;
+type NameAt = (kind: string, scope: string | undefined, own?: string) => SitedName;
 
 const unsited =
 	(rename: (kind: string) => string): NameAt =>
@@ -392,15 +392,16 @@ function sitedPlacement(claim: ClaimFact, nameAt: NameAt): SitedPlacement {
 		})
 		.toReversed();
 	if (claim.kind === null || claim.kind === WILDCARD) return { kind: claim.kind, within, aliased: false };
-	const at = nameAt(claim.kind, scope);
+	const at = nameAt(claim.kind, scope, ownName(claim));
 	return { kind: at.name, within, aliased: at.scope !== claim.kind };
 }
+
+const ownName = (claim: ClaimFact): string => boundKindName(claim.vocab, isParserHiddenName(claim.kind!));
 
 const readsAbove = (claim: ClaimFact): boolean =>
 	claim.predicates.some((p) => p.subject !== null && p.subject.up > 0) || claim.children.some((child) => child.subject.up > 0);
 
-const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement): boolean =>
-	placed.aliased && !readsAbove(claim) && placed.kind === boundKindName(claim.vocab, isParserHiddenName(claim.kind!));
+const namesItsAlias = (claim: ClaimFact, placed: SitedPlacement): boolean => placed.aliased && !readsAbove(claim) && placed.kind === ownName(claim);
 
 function bindClaim(claim: ClaimFact, rename: (kind: string) => string, fieldNameOf: FieldNameOf, nameAt: NameAt): ClaimFact {
 	const placed = sitedPlacement(claim, nameAt);

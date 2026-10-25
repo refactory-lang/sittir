@@ -441,6 +441,26 @@ describe('deriveGrammarBindings', () => {
 			]);
 		});
 
+		it('splits a kind the placed claims mint at each site they mint it, checked against the rule it is minted from', () => {
+			const grammar = literalGrammar();
+			const rules = { ...grammar.rules, trait_m: { type: 'SEQ', members: [{ type: 'STRING', value: 'trait' }, { type: 'FIELD', name: 'body', content: { type: 'REPEAT', content: symbol('member_m') } }] } };
+			const minting = (owner: string) => claim('declaration.method', 'meth_plain', { toplevel: false, within: ['member_m', owner] });
+			const claims = [minting('class_m'), minting('trait_m'), literalClaim('method_declaration', [], 'prop_id', 'constructor')];
+			const { bindings, diagnostics, report } = bind({ file: FILE, facts: { ...FACTS, claims, members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			expect(diagnostics).toEqual([]);
+			expect(report.residue).toEqual([]);
+			const literal = { field: 'name', leaf: 'prop_id', texts: ['constructor'], absent: [], relax: [] };
+			const [classMethod, traitMethod, classInit, traitInit] = bindings.splits;
+			expect(bindings.splits).toHaveLength(4);
+			expect([classMethod, traitMethod].map((split) => [split!.owner, split!.as, split!.literal])).toEqual([
+				['class_m', 'method_declaration', undefined],
+				['trait_m', 'method_declaration', undefined]
+			]);
+			expect(classInit).toEqual({ ...classMethod, as: 'constructor_declaration', literal });
+			expect(traitInit).toEqual({ ...traitMethod, as: 'constructor_declaration', literal });
+			expect(derive([literalClaim('method_declaration', [], 'prop_id', 'constructor')]).report.residue).toContainEqual({ cause: 'literal split names no site', row: 'method_declaration → declaration.constructor' });
+		});
+
 		it('relaxes the literal back into each display at every site that relaxes the keywords its own site does, on the outermost choice a nested one sits in', () => {
 			const relaxed = (leaf: string, text: string) => ({ type: 'ALIAS', named: true, value: leaf, content: { type: 'STRING', value: text } });
 			const word = (leaf: string) => ({ type: 'ALIAS', named: true, value: leaf, content: symbol('identifier') });
@@ -579,6 +599,22 @@ export default grammar(
 		expect(text).toContain("import { alias, copy, edit, enrich, wire } from '../codegen/src/dsl/dsl-authoring.ts';");
 		expect(text).toContain(
 			'member_m: { "(meth_plain)": ($, member) => choice(member, alias(edit(copy("meth_plain"), { "name:": alias("constructor", $.prop_id), "static:": blank(), "(_sig)": edit(copy("_sig"), { "type_parameters:": blank() }) }), $.constructor_declaration)) }'
+		);
+	});
+
+	it('prints a split on a literal at a site a placed claim aliases after the alias, addressed at the kind the alias shows', () => {
+		const path = [
+			{ field: 'body', kind: 'block_m', as: 'block_class_m' },
+			{ field: null, kind: 'meth_plain', as: null }
+		];
+		const literal = { field: 'name', leaf: 'prop_id', texts: ['__init__'], absent: [], relax: [] };
+		const splits: Split[] = [
+			{ owner: 'class_m', path, as: 'constructor_declaration', literal },
+			{ owner: 'class_m', path, as: 'method_declaration' }
+		];
+		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
+		expect(text).toContain(
+			'class_m: { "body:/(block_m as block_class_m)/(meth_plain)": alias("method_declaration"), "body:/(block_m as block_class_m)/(method_declaration)": ($, member) => choice(member, alias(edit(copy("meth_plain"), { "name:": alias("__init__", $.prop_id) }), $.constructor_declaration)) }'
 		);
 	});
 

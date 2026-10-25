@@ -104,7 +104,7 @@ describe('the compile-checked examples run', () => {
 		expect(example.outline(PYTHON_SOURCE)).toEqual(['def load', 'class Reader', '  def __init__', '  def _next', 'def _parse']);
 		expect(example.callsTo(PYTHON_SOURCE, 'open').map((call) => call.$render())).toEqual(['open(path)']);
 		expect(example.privateMethods(PYTHON_SOURCE)).toEqual(['_next']);
-		expect(example.methodsOf(PYTHON_SOURCE, 'Reader')).toEqual(['__init__', '_next']);
+		expect(example.methodsOf(PYTHON_SOURCE, 'Reader')).toEqual(['_next']);
 		expect(example.parameterTexts(PYTHON_SOURCE, 'load')).toEqual(['path', '*', 'strict=False']);
 		const renamed = example.renameFunction(PYTHON_SOURCE, '_parse', '_read')?.$render();
 		expect(renamed).toBe('def _read(text):\n    return text');

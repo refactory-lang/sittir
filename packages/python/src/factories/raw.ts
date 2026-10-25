@@ -2963,8 +2963,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				212, 206, 207, 213, 256, 208, 1, 247, 246, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 209, 220, 221, 223,
-				232, 237, 235, 238, 233, 239, 234, 241, 240, 64, 200, 245, 142, 202
+				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224,
+				233, 238, 236, 239, 234, 240, 235, 242, 241, 64, 201, 246, 143, 203
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -7809,7 +7809,7 @@ export function buildDecoratedDefinitionClassDeclaration(
 				rebuilt(node, handle, () =>
 					buildDecoratedDefinitionClassDeclaration({ ...config, decorators: restItems('decorators', values) })
 				),
-			definition: (value: Admit<T.ClassDefinition | T.MethodDeclaration>) =>
+			definition: (value: Admit<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>) =>
 				rebuilt(node, handle, () => buildDecoratedDefinitionClassDeclaration({ ...config, definition: value }))
 		},
 		decorators: () => hydrateStoredSlots(node, '_decorator'),
@@ -7824,6 +7824,74 @@ export function buildDecoratedDefinitionClassDeclaration(
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.DecoratedDefinitionClassDeclaration.Bound;
+}
+
+export function buildConstructorDeclaration<
+	TypeParametersSlot extends T.ConstructorDeclaration.Config['typeParameters'],
+	ParametersSlot extends T.ConstructorDeclaration.Config['parameters'],
+	ReturnTypeSlot extends T.ConstructorDeclaration.Config['returnType'],
+	BodySlot extends T.ConstructorDeclaration.Config['body']
+>(
+	config: RefusingConfig<
+		T.ConstructorDeclaration.Config,
+		{ typeParameters: TypeParametersSlot; parameters: ParametersSlot; returnType: ReturnTypeSlot; body: BodySlot }
+	>
+): T.ConstructorDeclaration.Bound;
+export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Config): T.ConstructorDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [config]);
+	const _async = strictBooleanStorage(config.async);
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildParameters());
+	const _return_type = config.returnType;
+	const _body = config.body;
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ConstructorDeclaration as const,
+		$named: true as const,
+		_async,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_body,
+		$with: {
+			async: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['async']>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, async: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.TypeParameter as const, optional: true, make: buildTypeParameter },
+						(value?: Admit<T.TypeParameter>) => buildConstructorDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.Parameters as const, optional: false, make: buildParameters },
+						(value: Admit<T.Parameters>) => buildConstructorDeclaration({ ...config, parameters: value })
+					)
+				),
+			returnType: (value?: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, returnType: value })),
+			body: (value: Admit<T.Suite>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
+		},
+		async: () => _async,
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ConstructorDeclaration.Bound;
 }
 
 export function buildNames<A extends NonEmptyArray<Admit<T.DottedName | T.AliasedImport>>>(
@@ -8242,6 +8310,7 @@ export type FluentKindMap = {
 	block_class_declaration: T.BlockClassDeclaration.Bound;
 	suite_block_class_declaration: T.SuiteBlockClassDeclaration.Bound;
 	decorated_definition_class_declaration: T.DecoratedDefinitionClassDeclaration.Bound;
+	constructor_declaration: T.ConstructorDeclaration.Bound;
 	names: T.Names.Bound;
 	as_pattern_target: T.AsPatternTarget.Bound;
 	format_expression: T.FormatExpression.Bound;
@@ -8445,6 +8514,7 @@ export const _factoryMap = {
 	block_class_declaration: buildBlockClassDeclaration,
 	suite_block_class_declaration: buildSuiteBlockClassDeclaration,
 	decorated_definition_class_declaration: buildDecoratedDefinitionClassDeclaration,
+	constructor_declaration: buildConstructorDeclaration,
 	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
 	format_expression: buildFormatExpression,

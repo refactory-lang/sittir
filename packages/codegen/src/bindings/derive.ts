@@ -87,6 +87,7 @@ export interface Derivation {
 	readonly wildcardContainers: readonly string[];
 	readonly wildcardUnrouted: readonly string[];
 	readonly unenteredForms: readonly string[];
+	readonly stoppedReads: readonly string[];
 }
 
 const unmappedToken = (grammar: string, kind: string): string => `<${grammar}:${kind}>`;
@@ -190,11 +191,13 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 	const holes = new Map<string, Map<string, string>>();
 	const routed = new Map<string, GrammarRoutes>();
 	const unentered: string[] = [];
+	const stoppedReads: string[] = [];
 	for (const input of inputs) {
 		collect(input, allvocab, contentDerived, holes);
 		const routes = resolveRoutes(input);
 		routed.set(input.grammar, routes);
 		unentered.push(...unenteredForms(input, routes));
+		stoppedReads.push(...routes.stopped.map((s) => `${input.grammar}: ${s.kind} @${s.vocab}`));
 	}
 	const routesOf = (g: string): GrammarRoutes | undefined => routed.get(g);
 	const vocabOf = (g: string): ReadonlyMap<string, string> => routesOf(g)?.vocabOf ?? new Map<string, string>();
@@ -502,7 +505,8 @@ export function derive(inputs: readonly GrammarInput[]): Derivation {
 		unknownPredicates: unknownPredicates(inputs),
 		wildcardContainers: wildcardContainers(inputs, routesOf),
 		wildcardUnrouted: wildcardUnrouted(inputs, routesOf, members),
-		unenteredForms: unentered
+		unenteredForms: unentered,
+		stoppedReads
 	};
 }
 

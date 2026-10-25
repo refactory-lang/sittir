@@ -239,6 +239,9 @@ export const suiteBlockClassDeclaration: Hoisted<typeof O.suiteBlockClassDeclara
 export const decoratedDefinitionClassDeclaration: Hoisted<typeof O.decoratedDefinitionClassDeclaration> = hoistAs<
 	typeof O.decoratedDefinitionClassDeclaration
 >(O.decoratedDefinitionClassDeclaration);
+export const constructorDeclaration: Hoisted<typeof O.constructorDeclaration> = hoistAs<
+	typeof O.constructorDeclaration
+>(O.constructorDeclaration);
 export const names: Hoisted<typeof O.names> = hoistAs<typeof O.names>(O.names);
 export const formatExpression: Hoisted<typeof O.formatExpression> = hoistAs<typeof O.formatExpression>(
 	O.formatExpression

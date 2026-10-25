@@ -82,7 +82,8 @@ describe('traversal', () => {
 					.map((fn) => firstLine(SOURCE, fn))
 			)
 		).toEqual(['def a(x):', 'def _b():', 'def e():']);
-		expect(Array.from(descendants().ofType(K.MethodDeclaration).map((fn) => firstLine(SOURCE, fn)))).toEqual(['def __init__(self):', 'def _d(self, y):']);
+		expect(Array.from(descendants().ofType(K.MethodDeclaration).map((fn) => firstLine(SOURCE, fn)))).toEqual(['def _d(self, y):']);
+		expect(Array.from(descendants().ofType(K.ConstructorDeclaration).map((fn) => firstLine(SOURCE, fn)))).toEqual(['def __init__(self):']);
 	});
 
 	it('takes the direct structural children in source order', () => {

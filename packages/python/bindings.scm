@@ -13,6 +13,7 @@
 (class_definition body: (suite_block (block (function_definition) @declaration.method)))
 (class_definition body: (suite_block (block (decorated_definition definition: (function_definition) @declaration.method))))
 ((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))
+(constructor_declaration) @declaration.constructor
 ((method_declaration name: (identifier) @name) @declaration.method.special (#match? @name "^__(?<stem>.*)__$"))
 ((decorated_definition_class_declaration (decorator (identifier) @static) definition: (method_declaration) @element) (#eq? @static "staticmethod"))
 (decorated_definition (decorator)* @decorators definition: (_) @element)

@@ -9192,17 +9192,35 @@
           }
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "function_definition",
-            "annotations": {
-              "variant": "function",
-              "variantOf": "_compound_statement"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "function_definition",
+                "annotations": {
+                  "variant": "function",
+                  "variantOf": "_compound_statement"
+                }
+              },
+              "named": true,
+              "value": "method_declaration"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_function_definition_class_definition"
+              },
+              "named": true,
+              "value": "constructor_declaration"
             }
-          },
-          "named": true,
-          "value": "method_declaration"
+          ],
+          "annotations": {
+            "variantOf": "_compound_statement",
+            "variant": "function"
+          }
         },
         {
           "type": "SYMBOL",
@@ -9373,15 +9391,121 @@
                 "name": "class_definition"
               },
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "function_definition"
-                },
-                "named": true,
-                "value": "method_declaration"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "function_definition"
+                    },
+                    "named": true,
+                    "value": "method_declaration"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_function_definition_class_definition"
+                    },
+                    "named": true,
+                    "value": "constructor_declaration"
+                  }
+                ]
               }
             ]
+          }
+        }
+      ]
+    },
+    "_function_definition_class_definition": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "async",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_kw_async"
+              },
+              "metadata": {
+                "fieldSource": "enriched"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "def"
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "__init__"
+            },
+            "named": true,
+            "value": "identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type_parameters",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_parameter"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "parameters",
+          "content": {
+            "type": "SYMBOL",
+            "name": "parameters"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_function_definition_optional1",
+              "metadata": {
+                "symbolSource": "group-lift"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_suite"
           }
         }
       ]

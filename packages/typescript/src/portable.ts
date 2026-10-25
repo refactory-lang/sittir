@@ -142,22 +142,18 @@ export interface PortableIds {
 	'declaration.interface': TSKindId.InterfaceDeclaration;
 	'declaration.method':
 		| TSKindId.AbstractMethodSignaturePlain
-		| TSKindId.ConstructorDeclaration
 		| TSKindId.MethodDefinitionPlain
 		| TSKindId.MethodSignaturePlain;
 	'declaration.method.private':
 		| TSKindId.AbstractMethodSignaturePlain
-		| TSKindId.ConstructorDeclaration
 		| TSKindId.MethodDefinitionPlain
 		| TSKindId.MethodSignaturePlain;
 	'declaration.method.protected':
 		| TSKindId.AbstractMethodSignaturePlain
-		| TSKindId.ConstructorDeclaration
 		| TSKindId.MethodDefinitionPlain
 		| TSKindId.MethodSignaturePlain;
 	'declaration.method.public':
 		| TSKindId.AbstractMethodSignaturePlain
-		| TSKindId.ConstructorDeclaration
 		| TSKindId.MethodDefinitionPlain
 		| TSKindId.MethodSignaturePlain;
 	'declaration.method.signature': TSKindId.AbstractMethodSignaturePlain | TSKindId.MethodSignaturePlain;
@@ -2941,39 +2937,19 @@ const table: PortableTable = {
 		'declaration.function.signature': { ids: [TSKindId.FunctionSignature], exact: true },
 		'declaration.interface': { ids: [TSKindId.InterfaceDeclaration], exact: true },
 		'declaration.method': {
-			ids: [
-				TSKindId.AbstractMethodSignaturePlain,
-				TSKindId.ConstructorDeclaration,
-				TSKindId.MethodDefinitionPlain,
-				TSKindId.MethodSignaturePlain
-			],
-			exact: false
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
+			exact: true
 		},
 		'declaration.method.private': {
-			ids: [
-				TSKindId.AbstractMethodSignaturePlain,
-				TSKindId.ConstructorDeclaration,
-				TSKindId.MethodDefinitionPlain,
-				TSKindId.MethodSignaturePlain
-			],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.protected': {
-			ids: [
-				TSKindId.AbstractMethodSignaturePlain,
-				TSKindId.ConstructorDeclaration,
-				TSKindId.MethodDefinitionPlain,
-				TSKindId.MethodSignaturePlain
-			],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.public': {
-			ids: [
-				TSKindId.AbstractMethodSignaturePlain,
-				TSKindId.ConstructorDeclaration,
-				TSKindId.MethodDefinitionPlain,
-				TSKindId.MethodSignaturePlain
-			],
+			ids: [TSKindId.AbstractMethodSignaturePlain, TSKindId.MethodDefinitionPlain, TSKindId.MethodSignaturePlain],
 			exact: false
 		},
 		'declaration.method.signature': {
@@ -4115,32 +4091,7 @@ const table: PortableTable = {
 					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
 					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 0 } } }
 				]
-			},
-			{
-				path: 'declaration.method.private',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'private', slots: { '463': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.method.protected',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'protected', slots: { '463': 0 } } }
-				]
-			},
-			{
-				path: 'declaration.method.public',
-				within: [],
-				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [325, 34, 35, 36], slots: { '463': 0 } } },
-					{ up: 0, via: [], plan: { op: 'eq', text: 'public', slots: { '463': 0 } } }
-				]
-			},
-			{ path: 'declaration.method', within: [], test: [] }
+			}
 		],
 		[TSKindId.ConstructorType]: [{ path: 'type.function.constructor', within: [], test: [] }],
 		[TSKindId.ContinueStatement]: [{ path: 'statement.continue', within: [], test: [] }],

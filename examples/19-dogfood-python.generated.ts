@@ -13,8 +13,7 @@ export function rebuildPython4spaceGenerated() {
 		content: py.build.importList.strict(py.build.dottedName.strict(py.build.identifier("Optional"))),
 	})), py.build.classDefinition.strict({
 		name: py.build.identifier("User"),
-		body: py.build.suiteBlockClassDeclaration.strict(py.build.methodDeclaration.strict({
-			name: py.build.identifier("__init__"),
+		body: py.build.suiteBlockClassDeclaration.strict(py.build.constructorDeclaration.strict({
 			parameters: py.build.parameters.strict(py.build.identifier("self"), py.build.typedParameter.strict({
 				name: py.build.identifier("user_id"),
 				type: py.build.type.strict(py.build.identifier("int")),

@@ -1,9 +1,9 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import sittir from './grammar.sittir.ts';
-import { alias, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "e98ee01faff8a1a96d68d659e297ec6b213bf119893c815475009ff6511aafee";
+export const hash = "5ff9877e5cec654e4a08847a95027a4fc4739a8a70f1e2f4f74c2ab3e26af56c";
 
 export const renames = {
 	module: "file",
@@ -110,7 +110,7 @@ export default grammar(
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
 			case_clause: { "1": field("case_patterns") },
-			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": alias("method_declaration"), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": alias("method_declaration") }],
+			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": alias("method_declaration"), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": alias("method_declaration"), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(method_declaration)": ($, member) => choice(member, alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(method_declaration)": ($, member) => choice(member, alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
 			conditional_expression: { "0": field("consequence") },
 			default_parameter: { "2": field("default") },
 			dictionary_splat_pattern: { "1": field("pattern") },

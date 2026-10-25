@@ -203,11 +203,18 @@ export interface SitedName {
 export function boundNameAt(
 	nameOf: (name: string) => string,
 	aliases: readonly Extract<BindingEffect, { kind: 'alias' }>[] = []
-): (name: string, scope: string | undefined) => SitedName {
-	const sited = new Map<string, Map<string, string>>();
-	for (const { from, to, scope } of aliases) if (scope !== undefined) sited.set(scope, (sited.get(scope) ?? new Map<string, string>()).set(from, to));
-	return (name, scope) => {
-		const to = scope === undefined ? undefined : sited.get(scope)?.get(name);
+): (name: string, scope: string | undefined, own?: string) => SitedName {
+	const sited = new Map<string, Map<string, Set<string>>>();
+	for (const { from, to, scope } of aliases) {
+		if (scope === undefined) continue;
+		const names = sited.get(scope) ?? sited.set(scope, new Map()).get(scope)!;
+		names.set(from, (names.get(from) ?? new Set()).add(to));
+	}
+	return (name, scope, own) => {
+		const names = [...((scope === undefined ? undefined : sited.get(scope)?.get(name)) ?? [])];
+		if (names.length > 1 && (own === undefined || !names.includes(own)))
+			throw new Error(`bindings: ${name} shows as ${names.join(' and ')} in ${scope}; a claim placed there must name one of them by its own path`);
+		const to = names.length > 1 ? own : names[0];
 		return to === undefined ? { name: nameOf(name), scope: name } : { name: to, scope: to };
 	};
 }

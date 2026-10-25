@@ -285,6 +285,18 @@ describe('bindFacts names a placed claim through the aliases at its sites', () =
 		]);
 	});
 
+	it('names a claim at a site that shows its kind under two names by the name its own path binds to, and refuses one whose path names neither', () => {
+		const beside = [...aliases.slice(0, 2), { kind: 'alias', from: 'function_item', to: 'constructor_declaration', scope: 'impl_body' }] as const;
+		const placed = (vocab: string) => claim(vocab, 'function_item', { toplevel: false, within: ['declaration_list', 'impl_item'] });
+		const bindAll = (vocabs: readonly string[]) =>
+			bindFacts({ claims: vocabs.map(placed), members: [], containers: [], templates: [], unclaimed: [] }, same, undefined, boundNameAt(same, beside));
+		expect(bindAll(['declaration.method', 'declaration.constructor']).claims.map((c) => [c.vocab, c.kind, c.within, c.toplevel])).toEqual([
+			['declaration.method', 'method_declaration', [], true],
+			['declaration.constructor', 'constructor_declaration', [], true]
+		]);
+		expect(() => bindAll(['declaration.method.private'])).toThrow('bindings: function_item shows as method_declaration and constructor_declaration in impl_body; a claim placed there must name one of them by its own path');
+	});
+
 	it('gives a member shared by claims at different sites one fact per bound owner', () => {
 		expect(bound.members.map((m) => [m.owner, m.claims])).toEqual([
 			['method_declaration', [0]],

@@ -83,12 +83,19 @@ export interface ContainerUnwrap {
 	readonly list: boolean;
 }
 
+export interface StoppedRead {
+	readonly kind: string;
+	readonly vocab: string;
+	readonly index: number;
+}
+
 export interface GrammarRoutes {
 	readonly grammar: string;
 	readonly readEntries: ReadonlyMap<string, readonly ReadEntry[]>;
 	readonly vocabOf: ReadonlyMap<string, string>;
 	readonly members: ReadonlyMap<string, readonly MemberRoute[]>;
 	readonly containers: ReadonlyMap<string, ContainerUnwrap>;
+	readonly stopped: readonly StoppedRead[];
 }
 
 export function slotByField(slots: readonly ModelSlot[], field: string): ModelSlot | undefined {
@@ -360,8 +367,13 @@ function childTestsOf(model: SlotModel, kind: string, fact: ChildFact, facts: re
 const claimChildTests = (model: SlotModel, kind: string, claim: ClaimFact): ChildTest[] =>
 	modelNode(model, kind)?.modelType === 'supertype' ? [] : claim.children.flatMap((child) => childTestsOf(model, kind, child, claim.children));
 
+const atOrUnder = (path: string, other: string): boolean => path === other || path.startsWith(`${other}.`);
+
 const inheritedClaims = (entry: { readonly vocab: string }, entries: readonly { readonly vocab: string; readonly index: number }[]): ReadonlySet<number> =>
-	new Set(entries.filter((other) => entry.vocab === other.vocab || entry.vocab.startsWith(`${other.vocab}.`)).map((other) => other.index));
+	new Set(entries.filter((other) => atOrUnder(entry.vocab, other.vocab)).map((other) => other.index));
+
+const unconditional = (entry: ReadEntry): boolean =>
+	entry.claim.toplevel && entry.claim.within.length === 0 && entry.claim.predicates.length === 0 && entry.pins.length === 0 && entry.children.length === 0;
 
 const attaches = (member: MemberFact, inherited: ReadonlySet<number>): boolean => member.claims === undefined || member.claims.some((index) => inherited.has(index));
 
@@ -862,6 +874,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 
 	const readEntries = new Map<string, ReadEntry[]>();
 	const inherited = new Set<ReadEntry>();
+	const cloned = new Set<ReadEntry>();
 	for (const [kind, at] of reads)
 		readEntries.set(
 			kind,
@@ -880,6 +893,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 					...(decided ? { decided: true as const } : {})
 				};
 				if (form !== claimed) inherited.add(entry);
+				if (form !== claimed && modelNode(input.model, form)?.splitFrom != null) cloned.add(entry);
 				return entry;
 			})
 		);
@@ -888,6 +902,13 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 	const rank = (e: ReadEntry): number => (inherited.has(e) ? 1 : 0);
 	for (const entries of readEntries.values())
 		entries.sort((a, b) => specificity(a) - specificity(b) || rank(a) - rank(b) || testCount(b) - testCount(a) || a.index - b.index);
+	const stopped: StoppedRead[] = [];
+	for (const [kind, entries] of readEntries) {
+		const own = entries.filter((entry) => !inherited.has(entry) && unconditional(entry));
+		const stops = (entry: ReadEntry): boolean => cloned.has(entry) && own.some((o) => !atOrUnder(entry.vocab, o.vocab) && !atOrUnder(o.vocab, entry.vocab));
+		for (const entry of entries.filter(stops)) stopped.push({ kind, vocab: entry.vocab, index: entry.index });
+		readEntries.set(kind, entries.filter((entry) => !stops(entry)));
+	}
 
 	const members = new Map<string, MemberRoute[]>();
 	for (const [kind, entries] of readEntries) {
@@ -911,7 +932,7 @@ export function resolveRoutes(input: GrammarInput): GrammarRoutes {
 		if (unwrap !== undefined) containers.set(node.kind, unwrap);
 	}
 
-	return { grammar: input.grammar, readEntries, vocabOf, members, containers };
+	return { grammar: input.grammar, readEntries, vocabOf, members, containers, stopped };
 }
 
 export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): string[] {
@@ -920,7 +941,11 @@ export function unenteredForms(input: GrammarInput, routes: GrammarRoutes): stri
 		if (owner === null || owner === WILDCARD) return [];
 		return formsOf(input.model, owner)
 			.filter((form) => form !== owner)
-			.flatMap((form) => readKinds(input.model, form, claim).flatMap(({ kind }) => ((routes.readEntries.get(kind) ?? []).some((e) => e.index === index) ? [] : [kind])))
+			.flatMap((form) =>
+				readKinds(input.model, form, claim).flatMap(({ kind }) =>
+					(routes.readEntries.get(kind) ?? []).some((e) => e.index === index) || routes.stopped.some((s) => s.kind === kind && s.index === index) ? [] : [kind]
+				)
+			)
 			.map((kind) => `${input.grammar}: ${kind} has no entry for its supertype ${owner}'s claim @${claim.vocab}, so it reads by no path there when no claim of its own holds`);
 	});
 }

@@ -179,6 +179,30 @@ describe('unenteredForms', () => {
 	});
 });
 
+describe("a base's claim on its clones", () => {
+	const cloned = async (bindings: readonly string[]): Promise<GrammarInput> => {
+		const input = await grammar(bindings.join('\n'));
+		const base = input.model.get('function_definition')!;
+		const model = new Map(input.model);
+		for (const kind of ['constructor_declaration', 'lambda_definition']) model.set(kind, { ...base, kind, splitFrom: 'function_definition' });
+		return { ...input, model };
+	};
+
+	it("stops at a clone whose own unconditional claim sits at an unrelated path, and still reaches it from an ancestor or a refinement, and reaches a clone without a claim of its own", async () => {
+		const input = await cloned([
+			'(function_definition) @declaration.function',
+			'(function_definition) @declaration',
+			'((function_definition name: (_) @n) @declaration.constructor.special (#eq? @n "x"))',
+			'(constructor_declaration) @declaration.constructor'
+		]);
+		const routes = resolveRoutes(input);
+		expect(routes.stopped).toEqual([{ kind: 'constructor_declaration', vocab: 'declaration.function', index: 0 }]);
+		expect(routes.readEntries.get('constructor_declaration')?.map((e) => e.vocab).sort()).toEqual(['declaration', 'declaration.constructor', 'declaration.constructor.special']);
+		expect(routes.readEntries.get('lambda_definition')?.map((e) => e.vocab)).toContain('declaration.function');
+		expect(unenteredForms(input, routes)).toEqual([]);
+	});
+});
+
 describe('resolveRoutes', () => {
 	it('reads a receiver claimed once per arm exactly: a first parameter not named self is no method', async () => {
 		const routes = resolveRoutes(

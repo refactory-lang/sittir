@@ -33,8 +33,10 @@ function matchCall(m: LeadMatch): string {
 	return `match(${[q(m.kind), ...within, ...as].join(', ')})`;
 }
 
-const splitPath = (split: Split): string =>
-	split.path.map((step) => `${step.field === null ? '' : `${step.field}:/`}(${step.kind}${step.as === null ? '' : ` as ${step.as}`})`).join('/');
+const splitPath = (split: Split, shown?: string): string =>
+	split.path
+		.map((step, i) => `${step.field === null ? '' : `${step.field}:/`}(${i === split.path.length - 1 && shown !== undefined ? shown : step.kind}${step.as === null ? '' : ` as ${step.as}`})`)
+		.join('/');
 
 function narrowedCopy(source: string, edits: readonly (readonly [string, string])[], absent: readonly AbsentField[]): string {
 	const blanked = absent.filter((a) => a.through.length === 0).map((a) => [`${a.field}:`, 'blank()'] as const);
@@ -61,7 +63,11 @@ function splitEdit(split: Split): string {
 	return `($, member) => choice(member, ${split.literal.relax.length === 0 ? arm : `prec.dynamic(1, ${arm})`})`;
 }
 
-const splitSet = (splits: readonly Split[]): string => `{ ${splits.map((s) => `${q(splitPath(s))}: ${splitEdit(s)}`).join(', ')} }`;
+function splitSet(splits: readonly Split[]): string {
+	const ordered = [...splits.filter((s) => s.literal === undefined), ...splits.filter((s) => s.literal !== undefined)];
+	const shownAt = new Map(ordered.filter((s) => s.literal === undefined).map((s) => [splitPath(s), s.as]));
+	return `{ ${ordered.map((s) => `${q(splitPath(s, s.literal === undefined ? undefined : shownAt.get(splitPath(s))))}: ${splitEdit(s)}`).join(', ')} }`;
+}
 
 function relaxSets(splits: readonly Split[]): Map<string, string> {
 	const arms = new Map<string, Map<string, string[]>>();

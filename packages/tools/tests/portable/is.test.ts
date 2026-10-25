@@ -56,9 +56,17 @@ describe('portable is: python', async () => {
 
 	it('reads a method in a class body as a method, a kind of its own, decorated or not', () => {
 		const c = find(SOURCE, 'method_declaration', undefined, 1);
-		const m = find(SOURCE, 'method_declaration', undefined, 3);
+		const m = find(SOURCE, 'method_declaration', undefined, 2);
 		expect(at('declaration.method')(c)).toBe(true);
 		expect(at('declaration.method')(m)).toBe(true);
+	});
+
+	it('reads __init__ in a class body as the constructor, neither method, special method nor function', () => {
+		const init = find(SOURCE, 'constructor_declaration');
+		expect(at('declaration.constructor')(init)).toBe(true);
+		expect(at('declaration.method')(init)).toBe(false);
+		expect(at('declaration.method.special')(init)).toBe(false);
+		expect(at('declaration.function')(init)).toBe(false);
 	});
 
 	it.skip('reads a decorated method as static by its decorator (pending: `static` is a flag of declaration.method, and the runtime flag is-guards come with the runtime-bindings stage)', () => {
@@ -108,7 +116,7 @@ describe('portable is: python', async () => {
 	});
 
 	it('keeps the constructor and call paths though a function owns those names', () => {
-		const init = find(SOURCE, 'method_declaration', undefined, 2);
+		const init = find(SOURCE, 'constructor_declaration');
 		expect(at('declaration.constructor')).not.toBe(Function.prototype.constructor);
 		expect(at('declaration.constructor')(init)).toBe(true);
 		expect(at('expression.call')).not.toBe(Function.prototype.call);
