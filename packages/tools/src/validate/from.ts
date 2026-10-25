@@ -35,7 +35,6 @@ import {
 	nodeToConfig,
 	loadNodeModel,
 	loadScopedFactoryMap,
-	isUnitModelType,
 	type FactoryEntry,
 	type TSNode,
 	type TSTree,
@@ -188,7 +187,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 	let fromMap: Record<string, (input: object) => unknown> = {};
 	let factoryMap: Record<string, FactoryEntry> = {};
 	let factoryShapes: Record<string, FactoryShape> = {};
-	let modelTypes: Record<string, string> = {};
+	let unitKinds: ReadonlySet<string> = new Set();
 	let factoryFields: Record<string, readonly string[]> = {};
 	let factorySlots: Record<string, Record<string, FactorySlotMeta>> = {};
 	let fieldAliasMap: Record<string, Record<string, string>> = {};
@@ -211,7 +210,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		// factorySlots) lives in node-model.json5.
 		const model = await loadNodeModel(grammar);
 		factoryShapes = model.factoryShapes;
-		modelTypes = model.modelTypes;
+		unitKinds = model.unitKinds;
 		factoryFields = model.factoryFields;
 		factorySlots = model.factorySlots;
 		fieldAliasMap = model.fieldAliasMap;
@@ -267,7 +266,7 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 		if (insideExtra(node)) return 'native-read-dropped-extra';
 		if (node.parent !== null && factoryShapes[storageKindOf(node.parent.typeId)] === 'text')
 			return 'folded-into-parent-text';
-		if (isUnitModelType(modelTypes[storageKindOf(node.grammarId)])) return 'read-as-unit-variant';
+		if (unitKinds.has(storageKindOf(node.grammarId))) return 'read-as-unit-variant';
 		return undefined;
 	};
 	const excludedKinds = new Set<string>();

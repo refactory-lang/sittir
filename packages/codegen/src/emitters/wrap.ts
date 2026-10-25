@@ -33,7 +33,7 @@ export function listKindIds(nodeMap: NodeMap): number[] {
 
 function unitKindIdsWhere(nodeMap: NodeMap, keep: (node: AssembledNode) => boolean): number[] {
 	return [...nodeMap.nodes.values()]
-		.flatMap((node) => ((node.modelType === 'keyword' || node.modelType === 'punctuation') && node.kindId !== undefined && keep(node) ? [node.kindId] : []))
+		.flatMap((node) => (node.unit && node.kindId !== undefined && keep(node) ? [node.kindId] : []))
 		.sort((a, b) => a - b);
 }
 

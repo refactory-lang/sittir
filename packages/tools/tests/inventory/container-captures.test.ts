@@ -24,6 +24,7 @@ const flag = (name: string, text: string): ModelSlot => ({
 const node = (kind: string, slots: readonly ModelSlot[] = [], subtypes: readonly string[] = []): ModelNode => ({
 	kind,
 	modelType: 'branch',
+	unit: false,
 	slots,
 	subtypes,
 	elementKinds: [],

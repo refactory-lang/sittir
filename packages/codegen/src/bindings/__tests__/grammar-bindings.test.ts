@@ -171,6 +171,7 @@ describe('deriveGrammarBindings', () => {
 		const form = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 			kind,
 			modelType: 'branch',
+			unit: false,
 			slots: [],
 			subtypes: [],
 			elementKinds: [],
@@ -204,6 +205,7 @@ describe('deriveGrammarBindings', () => {
 		const form = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 			kind,
 			modelType: 'branch',
+			unit: false,
 			slots: [],
 			subtypes: [],
 			elementKinds: [],
@@ -765,6 +767,7 @@ describe('a child that shares a union slot', () => {
 				{
 					kind: "call",
 					modelType: "branch",
+					unit: false,
 					slots: [{ name: "content", propertyName: "content", required: true, multiple: false, storage: "verbatim", kinds, terminals: [] }],
 					subtypes: [],
 					elementKinds: [],
@@ -839,6 +842,7 @@ describe('a claim on a supertype owner', () => {
 	const node = (kind: string, extra: Partial<ModelNode> = {}): ModelNode => ({
 		kind,
 		modelType: 'branch',
+		unit: false,
 		slots: [],
 		subtypes: [],
 		elementKinds: [],

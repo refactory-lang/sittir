@@ -172,6 +172,7 @@ export interface EnumMember {
 export interface ModelNode {
 	readonly kind: string;
 	readonly modelType: string;
+	readonly unit: boolean;
 	readonly slots: readonly ModelSlot[];
 	readonly subtypes: readonly string[];
 	readonly elementKinds: readonly string[];
@@ -184,10 +185,8 @@ export interface ModelNode {
 	readonly shownAs: readonly string[];
 }
 
-const FIXED_TEXT_MODEL_TYPES: ReadonlySet<string> = new Set(['keyword', 'punctuation']);
-
 export const isFixedText = (node: ModelNode | undefined): node is ModelNode & { readonly text: string } =>
-	node !== undefined && FIXED_TEXT_MODEL_TYPES.has(node.modelType) && node.text !== null;
+	node !== undefined && node.unit && node.text !== null;
 
 const IDENTIFIER = 'identifier';
 

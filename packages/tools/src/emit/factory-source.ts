@@ -36,7 +36,6 @@ export interface PrintContext {
 	readonly leafFindings?: string[];
 	readonly enumKinds?: ReadonlySet<string>;
 	readonly aliasKinds?: ReadonlySet<string>;
-	readonly keywordKinds?: ReadonlySet<string>;
 	readonly slotStorage?: Record<string, Record<string, string>>;
 	readonly memberIdOfText?: (text: string) => number | undefined;
 	readonly source?: string;
@@ -56,6 +55,7 @@ export interface ModelFacts {
 	readonly listElementKinds: Record<string, readonly string[]>;
 	readonly hoistedKinds: ReadonlySet<string>;
 	readonly oneSurfaceKinds: ReadonlySet<string>;
+	readonly unitKinds: ReadonlySet<string>;
 	readonly kindIdOfName: (kind: string) => number | undefined;
 }
 
@@ -237,7 +237,7 @@ function printVerbatimText(
 	storage?: string
 ): unknown {
 	if (leaf !== undefined) return new Printed(kindIdOf(leaf, ctx.facts.kindIdOfName), `${builderOf(leaf, ctx)}(${JSON.stringify(text)})`, leaf);
-	if (slotKinds.length === 1 && ctx.keywordKinds?.has(slotKinds[0]!)) return true;
+	if (slotKinds.length === 1 && ctx.facts.unitKinds.has(slotKinds[0]!)) return true;
 	if (slotKinds.length === 0 && storage === 'verbatim') return text;
 	const id = storesKindId(storage) ? ctx.memberIdOfText?.(text) : undefined;
 	if (id !== undefined) return id;
@@ -343,8 +343,7 @@ function admitsDirectly(kinds: readonly string[], node: Printed, facts: ModelFac
 }
 
 function buildsUntypedNode(kind: string, facts: ModelFacts): boolean {
-	const modelType = facts.modelTypes[kind];
-	return modelType !== 'enum' && modelType !== 'keyword' && modelType !== 'punctuation';
+	return facts.modelTypes[kind] !== 'enum' && !facts.unitKinds.has(kind);
 }
 
 function isFlatKind(kind: string, ctx: PrintContext): boolean {
@@ -632,7 +631,7 @@ export function printingFactoryMap(
 						return new Printed(id, member === undefined ? JSON.stringify(text) : printValue(member, ctx, 0), kind);
 					}
 					if (kind.startsWith('_')) return text;
-					if (ctx.keywordKinds?.has(kind))
+					if (ctx.facts.unitKinds.has(kind))
 						return new Printed(id, printValue(id, ctx, 0), kind);
 					return new Printed(id, `${spelled().path}(${JSON.stringify(text)})`, kind, undefined, { text });
 				}
@@ -709,11 +708,7 @@ function constantsAsValues(
 	return values;
 }
 
-export function printingIrSurface(
-	map: Record<string, PrintingEntry>,
-	modelTypes: Record<string, string>,
-	ctx: PrintContext
-): IrSurface {
+export function printingIrSurface(map: Record<string, PrintingEntry>, ctx: PrintContext): IrSurface {
 	const entries: Record<string, IrEntry> = {};
 	for (const [kind, strict] of Object.entries(map)) {
 		const path = ctx.irPathOfKind(kind);
@@ -722,7 +717,7 @@ export function printingIrSurface(
 		mountArmPrinters(entry, path, kind, kind, strict.kindId, ctx, new Set([kind]));
 		entries[kind] = entry as IrEntry;
 	}
-	return { entries, seats: ctx.seats ?? {}, modelTypes };
+	return { entries, seats: ctx.seats ?? {}, modelTypes: ctx.facts.modelTypes, unitKinds: ctx.facts.unitKinds };
 }
 
 function mountArmPrinters(
@@ -1059,11 +1054,6 @@ export async function emitFactorySourceText(
 		enumKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'enum')),
 		aliasKinds: new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'alias')),
 		slotStorage: withPublicNames(model.slotStorage),
-		keywordKinds: new Set(
-			Object.keys(model.modelTypes).filter(
-				(k) => model.modelTypes[k] === 'keyword' || model.modelTypes[k] === 'punctuation'
-			)
-		),
 		memberIdOfText: (text) => findEntryForLiteralText(catalog, text)?.id,
 		source,
 		delimiterArmOfId: (id) => {
@@ -1084,6 +1074,7 @@ export async function emitFactorySourceText(
 			listElementKinds: model.listElementKinds,
 			hoistedKinds: model.hoistedKinds,
 			oneSurfaceKinds: model.oneSurfaceKinds,
+			unitKinds: model.unitKinds,
 			kindIdOfName: (kind) => idOfName.get(kind)
 		}
 	};
@@ -1091,7 +1082,7 @@ export async function emitFactorySourceText(
 	const factoryMap = printingFactoryMap(model.factoryShapes, (kind) => idOfName.get(kind), ctx);
 	const artifacts: FactoryDispatchArtifacts = {
 		factoryMap: constantsAsValues(factoryMap, model.factoryShapes, ctx),
-		surface: printingIrSurface(factoryMap, model.modelTypes, ctx),
+		surface: printingIrSurface(factoryMap, ctx),
 		factoryShapes,
 		fieldAliasMap: withPublicNames(model.fieldAliasMap),
 		factoryFields: withPublicNames(model.factoryFields),

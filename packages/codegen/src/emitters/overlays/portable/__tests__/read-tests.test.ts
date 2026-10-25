@@ -17,6 +17,7 @@ const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> 
 const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	kind,
 	modelType: 'branch',
+	unit: false,
 	slots,
 	subtypes: [],
 	elementKinds: [],
