@@ -861,3 +861,31 @@ One blocking record per rule `dsl/eof-placement.ts::eofPlacements` refuses, nami
 ### `packages/codegen/src/compiler/diagnostics/grammar-diagnostics.ts::fromMissingParserTables`
 
 The `missing-parser-tables` record: a generated grammar's package has no parser.c to read its id tables from. It names the path and the `gen` command that writes it. It cannot proceed, and `loadPackageIdTables` throws it directly rather than through the gate, so no `--allow-diagnostic` can waive it.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES::accepts-invalid-syntax`
+
+The cause code for a rule that accepts invalid syntax.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES::accepts-other-kind`
+
+The cause code for a rule that accepts another kind's syntax.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES::alias-shape`
+
+The cause code for a rule whose alias has the wrong shape.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES::rejects-valid-syntax`
+
+The cause code for a rule that rejects valid syntax.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES::ruled-narrowing`
+
+The cause code for a rule that narrows a kind by rule.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::PROVOKING_CODES::semantic-gap`
+
+The cause code for a rule with a gap in its semantics.
+
+### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::RuleCausesInput`
+
+The input the rule-causes diagnostics read.
