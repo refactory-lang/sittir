@@ -92,7 +92,7 @@ the last slice.
   - Every render reads through one table that answers every live tree.
   - Sides nest at most 64 deep, the addon's stack-safety bound, with one
     refusal on every storage.
-- [x] **Trivia and edits.**
+- [ ] **Trivia and edits.**
   - Links to children read by another engine of the same language: a built
     record holds such a child by link, renders it and rebuilds over it, and
     renders after that engine is disposed.
@@ -106,6 +106,16 @@ the last slice.
     from a JSON revival or a rebuild, which carries them realigned to where
     their units moved; the store is the only copy, and the holder's table
     keeps the arena of any record they hold.
+  - A parsed entry of a live tree crosses into any native table as its
+    coordinate, and the table holds that tree, so the entry's own sides are
+    read at render and it reads back as its parsed view. A parsed entry of
+    another language is refused by name at the write.
+  - **Open:** a view the arena makes of a record without its builder
+    (`BuiltArena.node` once the builder's object is collected) is complete:
+    the built stamp, `$with` from the record's stored slots, and `$trivia`,
+    with no builder closure. Red first: after collection, `JSON.stringify` of
+    a block rebuilt with a fresh built child throws (`not y;`), and the
+    record's `$with` rebuilds as an object node.
   - `$with` shares unchanged children and copies bounded ones.
   - Disposal, growth and invalid buffers are covered.
 - [x] **Record views for every compound kind.** A kind that seats a group
@@ -128,6 +138,12 @@ the last slice.
   object builder or serializer. Benchmark metadata names the construction
   backend. Both storages' complete validation history must be unchanged, and
   the corpus comparison runs in CI.
+  - A parsed `$with` on records that mixes a kept parsed child with a
+    records-built item throws `Missing field _content on BlockNode._statements`,
+    where both object storages render it: a parsed record view rebuilds as an
+    object node (`rowWith`), which then holds a record. Recheck once master's
+    alias-envelope change is carried up, since `_content` is the envelope
+    shape it removes.
 
 ## Measurement
 

@@ -1,11 +1,10 @@
 import type { Snapshot } from '@sittir/types';
-import { decodeIndex, type TreeHandle } from './read.ts';
+import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
 import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf, withinSides } from './node-data.ts';
-import { treeOf } from './tree-token.ts';
+import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
-import { builtEntryNode, isBuiltEntry } from './built-arena.ts';
+import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
 import { storedSlotValues } from './record-view.ts';
-import { treeBuiltArena } from './engine-scope.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -48,21 +47,28 @@ function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: 
 		const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
 		if (at === undefined || tree === undefined) return copyOf(value, within, nesting);
 		const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
-		return treeBuiltArena(tree) === undefined ? read : detached(read, within, nesting);
+		return detached(read, { tree, own: treeTokenOf(value), within }, nesting);
 	});
 }
 
-function detached(value: unknown, within: Set<object>, nesting: number): unknown {
-	if (Array.isArray(value)) return value.map((entry) => detached(entry, within, nesting));
+interface Detaching {
+	readonly tree: SnapshotTree;
+	readonly own: TreeToken | undefined;
+	readonly within: Set<object>;
+}
+
+function detached(value: unknown, from: Detaching, nesting: number): unknown {
+	if (Array.isArray(value)) return value.map((entry) => detached(entry, from, nesting));
 	if (!isRecord(value)) return value;
-	if (isBuiltEntry(value)) return snapshotIn(builtEntryNode(value), undefined, undefined, within, nesting);
-	for (const key of Object.keys(value)) value[key] = key === '$_layout' ? detachedLayout(value[key], within, nesting) : detached(value[key], within, nesting);
+	if (isBuiltEntry(value)) return snapshotIn(builtEntryNode(value), undefined, undefined, from.within, nesting);
+	if (isCoordinate(value)) return snapshotIn(readCoordinate(from.tree, value, from.own), undefined, undefined, from.within, nesting);
+	for (const key of Object.keys(value)) value[key] = key === '$_layout' ? detachedLayout(value[key], from, nesting) : detached(value[key], from, nesting);
 	return value;
 }
 
-function detachedLayout(layout: unknown, within: Set<object>, holder: number): unknown {
+function detachedLayout(layout: unknown, from: Detaching, holder: number): unknown {
 	if (!isRecord(layout)) return layout;
-	const each = (entry: unknown, nesting: number) => detached(entry, within, nesting);
+	const each = (entry: unknown, nesting: number) => detached(entry, from, nesting);
 	const { trivia, units } = layout;
 	return {
 		...layout,

@@ -4,8 +4,9 @@
 // side of its own that engine wrote, once nothing but that side names the
 // record or its engine. `unit` holds it in a side of a unit of a built block,
 // which the holder then rebuilds with an item before the unit, and clears on
-// the block it rebuilt from. One holder per run, so neither holder's hold
-// covers the other.
+// the block it rebuilt from. `read` holds, in a built node's side, a comment
+// the other engine parsed, once nothing else names that comment or its tree.
+// One holder per run, so neither holder's hold covers the other.
 import { useRecordConstruction } from '../../src/engine-boundary.ts';
 import { unitSidesOf } from '../../src/node-data.ts';
 import { writeUnitSides } from '../../src/utils.ts';
@@ -34,7 +35,7 @@ type Sided = { $trivia: { trailing(entry?: unknown): unknown } };
 type Block = { statements(): Iterable<unknown>; $with: { statements(...items: unknown[]): object } };
 
 const kind = process.argv[2];
-if (kind !== 'parsed' && kind !== 'built' && kind !== 'unit') throw new Error('name the holder: parsed, built or unit');
+if (kind !== 'parsed' && kind !== 'built' && kind !== 'unit' && kind !== 'read') throw new Error('name the holder: parsed, built, unit or read');
 const holder = await recordEngine();
 
 const attempt = (read: () => unknown) => {
@@ -86,7 +87,22 @@ function inUnitSide(): { root: object; read: () => unknown; written: () => Promi
 	};
 }
 
-const holding = kind === 'unit' ? inUnitSide() : inSide();
+function inSideRead(): { root: object; read: () => unknown; written: () => Promise<WeakRef<object>> } {
+	const root = holder.build.expressionStatement(holder.build.identifier('x')) as unknown as Sided;
+	return {
+		root,
+		read: () => (root.$trivia.trailing() as readonly { $render(): string }[]).map((entry) => entry.$render()).join(' '),
+		written: async () => {
+			const reader = await recordEngine();
+			const parsed = reader.parse('fn f() {\n    g(); /* c */\n}\n');
+			const comment = ((parsed.statements()[0] as unknown as { body(): { statements(): readonly Sided[] } }).body().statements()[0]!.$trivia.trailing() as readonly object[])[0]!;
+			root.$trivia.trailing(comment);
+			return new WeakRef(comment);
+		}
+	};
+}
+
+const holding = kind === 'unit' ? inUnitSide() : kind === 'read' ? inSideRead() : inSide();
 const render = () => ({ render: attempt(() => holder.render(holding.root as never)), read: attempt(holding.read) });
 
 const comment = await holding.written();

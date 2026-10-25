@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
 import { treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
-import { builtEntryOf } from '../../common/src/built-arena.ts';
+import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
@@ -33,7 +33,7 @@ function arenaEngine() {
 
 const words = (...values: number[]) => new Uint32Array([0, ...values]);
 
-const writtenEntry = (node: object) => builtEntryOf(node, builtRefOf(node)!.arena)!;
+const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
 
 const recordEngine = async () => {
 	const engine = await arena.createEngine();
@@ -167,17 +167,18 @@ describe('a built arena rendered natively', () => {
 		});
 
 		it.each([
-			['parsed', 'fn f() {\n    g(); /* d */ /* c */\n}\n'],
-			['built', 'x; /* d */ /* c */'],
-			['unit', '{\n    y;\n    /* d */ /* c */ ;\n    x();\n}']
-		])('renders in a %s holder, and reads back, once nothing else names its builder or the record', (holder, render) => {
+			['parsed', 'fn f() {\n    g(); /* d */ /* c */\n}\n', '/* d */ /* c */'],
+			['built', 'x; /* d */ /* c */', '/* d */ /* c */'],
+			['unit', '{\n    y;\n    /* d */ /* c */ ;\n    x();\n}', '/* d */ /* c */'],
+			['read', 'x; /* c */', '/* c */']
+		])('renders in a %s holder, and reads back, once nothing else names its source or the entry', (holder, render, read) => {
 			const fixture = fileURLToPath(new URL('../../common/tests/fixtures/foreign-side-release.mts', import.meta.url));
 			const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture, holder], {
 				cwd: fileURLToPath(new URL('..', import.meta.url)),
 				encoding: 'utf8',
 				env: { ...process.env, SITTIR_BACKEND: 'native' }
 			});
-			const rendered = { render, read: '/* d */ /* c */' };
+			const rendered = { render, read };
 			expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ collected: true, before: rendered, after: rendered });
 		}, 60_000);
 

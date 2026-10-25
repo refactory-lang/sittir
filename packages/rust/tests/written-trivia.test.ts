@@ -12,8 +12,8 @@ function commentOf(statement: { $trivia: { leading(): unknown } }): object {
 	return comment as object;
 }
 
-describe('a parsed comment written into a tree is detached data there', () => {
-	it("keeps rendering once the comment's own tree is released", () => {
+describe('a parsed comment written into a tree is held there by reference', () => {
+	it("keeps rendering once nothing else names the comment's own tree, which the tree it was written into holds", () => {
 		// A collection can only be forced under `--expose-gc`, so the case runs
 		// in a child process that reports the render before and after.
 		const fixture = fileURLToPath(new URL('../../common/tests/fixtures/written-trivia-release.mts', import.meta.url));
@@ -22,7 +22,7 @@ describe('a parsed comment written into a tree is detached data there', () => {
 			encoding: 'utf8',
 			env: { ...process.env, SITTIR_BACKEND: 'native' }
 		});
-		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ before: '// c\nfn r() {}\n', after: '// c\nfn r() {}\n', live: 1 });
+		expect(JSON.parse(out.trim().split('\n').at(-1) ?? '')).toEqual({ before: '// c\nfn r() {}\n', after: '// c\nfn r() {}\n', live: 2 });
 	}, 60_000);
 
 	it('snapshots without a coordinate, and the snapshot renders as the tree does, after a JSON round trip too', () => {

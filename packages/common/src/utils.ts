@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setUnitSides, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { entrySnapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
-import { builtEntryOf, holdSideArenas, isBuiltNode, refuseBuiltEntries } from './built-arena.ts';
+import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -114,7 +114,7 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 		const entries = trivia[side];
 		if (entries === undefined) continue;
 		at.tree.writeTriviaSide(at.index, side, entries.map(wire));
-		holdSideArenas(at.tree, `${at.index}:${side}`, entries);
+		holdSideEntries(at.tree, `${at.index}:${side}`, entries);
 	}
 }
 
@@ -127,7 +127,7 @@ export function writeUnitSides(node: object, units: readonly UnitSidesData[]): v
 	}
 	const wire = entryWire(node);
 	built.arena.tree.writeUnitSides(built.at, units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<TriviaEntry>, (entries) => entries.map(wire)) })));
-	holdSideArenas(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
+	holdSideEntries(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
 }
 
 function carryUnitSides(from: object, to: object): void {
@@ -137,8 +137,10 @@ function carryUnitSides(from: object, to: object): void {
 
 function entryWire(node: object): (entry: TriviaEntry) => unknown {
 	const tree = treeOf(node);
-	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
-	return (entry) => (typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
+	const built = builtRefOf(node)?.arena;
+	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));
+	const holder = built?.engine ?? engineOf(node);
+	return (entry) => (typeof entry === 'number' ? entry : (sideEntryOf(entry, arena, holder) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
 }
 
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
@@ -152,7 +154,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		return hydratedEntries(entries, tree);
 	};
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
-		writeTrivia(node, { [side]: scoped(() => items.map((item) => triviaEntryOf(item, facts))) });
+		writeTrivia(node, { [side]: scoped(() => items.map((item) => triviaEntryOf(item, handle.current))) });
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -235,11 +237,13 @@ export function triviaInner(
 }
 
 /** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
-function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
+function triviaEntryOf(item: unknown, holder: EngineIdentity): TriviaEntry {
+	const facts: TriviaFacts = holder.trivia;
 	if (typeof item === 'string') return textEntryOf(item, facts);
 	if (typeof item !== 'number' && !isNode(item)) {
 		throw new Error(`trivia: an entry is a node, a whitespace kind or a comment's text, not ${JSON.stringify(item)}`);
 	}
+	if (typeof item !== 'number') refuseForeignEntry(item, holder);
 	if (isErrorNode(item)) return item;
 	const type = typeof item === 'number' ? item : item.$type;
 	const kind = facts.kindName(type);

@@ -16,11 +16,10 @@ import type {
 import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { adoptSideNesting, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
-import { forEachTriviaList, type TriviaSides } from './trivia.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { builtEntries, builtUnits, type BuiltRecords, type BuiltText } from './built-arena.ts';
+import { readEntries, readUnits, type BuiltRecords, type BuiltText } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -575,15 +574,11 @@ export function createNativeEngine<
 							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
 							triviaSide: (index, side) => {
-								const entries = builtEntries(engine.triviaSide(parsed.treeId, index, side));
-								holdReadTree(entries, liveToken);
-								return entries;
+								return readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken);
 							},
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
 							unitSides: (index) => {
-								const units = builtUnits(engine.unitSides(parsed.treeId, index));
-								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
-								return units;
+								return readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken);
 							},
 							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
