@@ -30,12 +30,6 @@ export interface BuiltChunks {
 	readonly bytes: readonly Uint8Array[];
 }
 
-/**
- * What an engine that reads trees as records gives its built arena: the cell format, the trivia table its records'
- * sides are written to, by record address, the native engine that holds that table, whose sides a render of one of
- * the arena's records takes through whichever engine of the language renders it, and `hold`, which gives that engine
- * the arena's chunks and how much of each is written, so a record written into a side renders from them.
- */
 export interface BuiltRecords {
 	readonly format: CellFormat;
 	readonly owner: object;
@@ -118,10 +112,8 @@ class Chunks<A extends Uint32Array | Uint8Array> {
  */
 export class BuiltArena {
 	readonly format: CellFormat;
-	/** The native engine that holds this arena's records' written sides ({@link BuiltRecords.owner}). */
 	readonly owner: object;
 	readonly slots: QuerySlots;
-	/** The tree a built record's view reads through: its records are this arena's, and its trivia table is keyed by their addresses. */
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide'>>;
 	readonly #wrap: Wrap;
 	readonly #words: Chunks<Uint32Array>;
@@ -310,7 +302,6 @@ export function isBuiltNode(value: object): boolean {
 	return builtRefOf(value) !== undefined;
 }
 
-/** The arena whose record `value` is the node of, `undefined` for a node no builder of an arena made. */
 export function builtArenaOf(value: object): BuiltArena | undefined {
 	return builtRefOf(value)?.arena;
 }

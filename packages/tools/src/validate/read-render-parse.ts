@@ -444,10 +444,6 @@ export interface ReadRenderParseResult {
  * first (`storageOf`, `materializeShallow`). A copy keeps
  * the node's source identity. Both are measured without trailing whitespace,
  * which only the outer edge contributes.
- *
- * A record view measures 0: as a candidate (`candidateData`) it renders none
- * of its outer sides, and a copy of it with a side emptied renders the same
- * record, or for a built record no node at all.
  */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,

@@ -10,7 +10,7 @@ import { registered, wrapRegistered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
-import { snapshotOf } from './snapshot.ts';
+import { entrySnapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
 import { builtEntryOf, isBuiltNode } from './built-arena.ts';
@@ -109,12 +109,6 @@ export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] 
 
 const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
 
-/**
- * Gives `node` the sides `trivia` holds, each in place of the one it held: in the table that holds
- * its sides (`tableAt`), a parsed node's tree's or a built record's arena's, else in its own data.
- * A table takes each entry as detached data (`snapshotOf`): it outlives any other tree an entry was
- * read from, and a snapshot of the tree returns its sides as they are.
- */
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const at = tableAt(node);
 	if (at === undefined) {
@@ -125,19 +119,13 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const tree = treeOf(node);
 	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
 	const wire = (entry: TriviaEntry): unknown =>
-		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(snapshotOf(entry, 1) as AnyUntypedNode, PLAIN_KINDS));
+		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
 		if (entries !== undefined) at.tree.writeTriviaSide(at.index, side, entries.map(wire));
 	}
 }
 
-/**
- * The writes of a node's trivia, bound to its engine. An item is an extra kind's node, or a
- * loose string built through `ir.comment`: its full spelling (`'// note'`) or its interior
- * (`' note'`). `inner` writes only to an empty node of a kind with an inner site. Each write goes
- * where the node's sides are held (`writeTrivia`).
- */
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const node = target as AnyUntypedNode;
 	if (handle === undefined) throw new Error(NO_ENGINE);
@@ -406,11 +394,6 @@ export function listSeparatorOf(node: object): unknown {
 	return chosenSeparatorOf(node) ?? slotSeparatorOf(node);
 }
 
-/**
- * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the
- * list's separator (`listSeparatorOf`). An owner names the accessor that returns its list and
- * answers that list's `separator`.
- */
 export function defineListSeparator(node: object, accessor?: string): void {
 	let getter = SEPARATOR_GETTERS.get(accessor);
 	if (getter === undefined) {

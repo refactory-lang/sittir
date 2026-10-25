@@ -82,11 +82,6 @@ export function withinSides<T>(value: object, within: Set<object>, read: () => T
 	}
 }
 
-/**
- * A trivia entry of a side at `nesting` as native reads it: each `$text` method in it, its own, its slots' and its sides', as the string it returns. Every other key crosses as the entry holds it. A coordinate crosses as it is.
- *
- * @throws when the entry is among its own slots or sides, at any depth, and when a side in it nests past the addon's bound.
- */
 function entryData(value: unknown, within: Set<object>, nesting: number): unknown {
 	if (Array.isArray(value)) return value.map((entry) => entryData(entry, within, nesting));
 	if (!isRecord(value) || isCoordinate(value)) return value;
@@ -347,7 +342,6 @@ function tableOf(tree: TreeHandle | undefined, index: number | undefined): Table
 		: { tree: { triviaSide: tree.triviaSide, writeTriviaSide: tree.writeTriviaSide }, index };
 }
 
-/** The table that holds a node's sides: a parsed node's live tree's, at its own index, and a built record's arena's, at its record's address; `undefined` for an object node. */
 export function tableAt(node: object): TableAt | undefined {
 	const built = builtRefOf(node);
 	return built === undefined ? tableOf(treeOf(node), indexOf(node)) : { tree: built.arena.tree, index: built.at };
@@ -553,12 +547,6 @@ export interface SideRead {
 
 const NO_SIDE: SideRead = { entries: [], tree: undefined };
 
-/**
- * One side of `node` and the tree that holds it: its live table's (a parsed node's, or a built record's once a
- * write gave it that side), else the side it holds as its own data, else the table of the node it was rebuilt
- * from (`placeOf`) while that tree lives. An alias envelope's content (`envelopeKindOf`) reads nothing from a
- * table, whose entries for that parser node are the envelope's.
- */
 export function sideRead(node: object, side: TriviaSideName): SideRead {
 	const at = tableAt(node);
 	if (at !== undefined && envelopeKindOf(node) !== undefined) return NO_SIDE;
@@ -582,7 +570,6 @@ export function sidesOf(node: object): NodeTrivia | undefined {
 	return Object.keys(sides).length === 0 ? undefined : sides;
 }
 
-/** The sides a write gave `node` itself, which a rebuild of it carries: a built record's from its arena's table, any other node's from its data; `undefined` when it holds none. */
 export function writtenSides(node: object): NodeTrivia | undefined {
 	const built = builtRefOf(node);
 	if (built === undefined) return triviaOf(node);

@@ -130,8 +130,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	 */
 	triviaSide(treeId: number, index: number, side: TriviaSideName): unknown[];
 	/**
-	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`. A built record among them
-	 * (`{ $type, $record }`) renders from the engine's built arena ({@link holdBuiltArena}) wherever the side renders.
+	 * Replaces `side` of the node at descendant `index` of tree `treeId` with `entries`.
 	 *
 	 * @throws as {@link triviaSide} does.
 	 */
@@ -198,16 +197,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
-	/**
-	 * The built node at `address` of the built arena `owner` holds ({@link holdBuiltArena}) rendered as a render root
-	 * whose `leading` and `trailing` edges have no neighbour, under this engine's options, with the sides `owner` holds:
-	 * the engine that built the arena, which its records' side writes went to. A leaf passes the `text` its cells hold;
-	 * a compound record passes `null`. The arena's chunks are borrowed for the call, never copied. Present when the
-	 * addon carries the record codec.
-	 *
-	 * @throws when `owner` no longer holds its arena, the words at `address` are no record the arena admits, a parsed
-	 * tree a record links is not live, or the record's render refuses.
-	 */
 	renderBuilt?(
 		owner: object,
 		address: number,
@@ -216,26 +205,8 @@ export interface NativeEngineLike<TNode = unknown> {
 		trailing: boolean,
 		options?: object
 	): string;
-	/**
-	 * The entries a write gave `side` of the built record at `address`, or `null` when no write did. Present when the
-	 * addon carries the record codec.
-	 *
-	 * @throws when `address` is 0 or `side` is none of the three.
-	 */
 	builtTriviaSide?(address: number, side: TriviaSideName): unknown[] | null;
-	/**
-	 * Replaces `side` of the built record at `address` with `entries`, which {@link renderBuilt} then writes; a built
-	 * record among them renders as {@link writeTriviaSide} says. Present when the addon carries the record codec.
-	 *
-	 * @throws as {@link builtTriviaSide} does.
-	 */
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
-	/**
-	 * Holds the chunks of the built arena whose records this engine's builders write, in place of the ones it held:
-	 * `words` and `bytes`, and `writtenWords` and `writtenBytes`, how much of each chunk is written, which the arena
-	 * keeps current. Each is held weakly. A trivia entry this engine's sides hold renders from them, until
-	 * {@link dispose}. Present when the addon carries the record codec.
-	 */
 	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, address?: number, options?: object): string;
@@ -375,7 +346,6 @@ export interface SittirEngine<
 	IndentChar extends string = never
 > extends RenderEngine<O, IndentChar> {
 	readonly diagnostics: NativeEngineDiagnostics<TRoot>;
-	/** What the built arena of an engine reading trees as records (`nodeStorage: 'arena'`) is made with; `undefined` for objects. */
 	readonly builtRecords?: BuiltRecords;
 }
 
@@ -665,7 +635,6 @@ export function createNativeEngine<
 
 const nativeRecords = new WeakMap<object, BuiltRecords>();
 
-/** What the built arena of the language engine `native` is made with when it reads trees as records, `undefined` otherwise. */
 export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 	return nativeRecords.get(native);
 }

@@ -925,7 +925,6 @@ function accessorThrown(node: TypedNode, onAccessorThrow?: (rec: AccessorThrowRe
 	};
 }
 
-/** A kind and its slots: its rows of the grammar's slot table, each storage key to the accessor that reads it, and whether it is a list whose separator is chosen per instance. */
 export interface KindSlots {
 	readonly kind: string;
 	readonly slots: readonly QuerySlotEntry[];

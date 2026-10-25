@@ -56,7 +56,6 @@ function wordsAt(
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
-/** The words of the side record at `side`, long enough for every field before a list's settings and the settings it holds: its delimiters and its chosen separator. */
 function sideWordsAt(records: RecordWords, side: number): { readonly words: Uint32Array; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;

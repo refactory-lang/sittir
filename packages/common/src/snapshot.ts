@@ -30,11 +30,14 @@ function snapshotTreeOf(value: object, fallback: SnapshotTree | undefined): Snap
  *   those of the node it was rebuilt from. A tree-backed node under it is measured from its own
  *   start, since a built node has no points.
  *
- * @param nesting - The nesting of the side `value` is an entry of, 0 for a node outside every side.
  * @throws when a node is among its own sides, at any depth, and when a side in it nests past the addon's bound.
  */
-export function snapshotOf(value: object, nesting = 0): Snapshot {
-	return snapshotIn(value, undefined, undefined, new Set(), nesting) as Snapshot;
+export function snapshotOf(value: object): Snapshot {
+	return snapshotIn(value, undefined, undefined, new Set(), 0) as Snapshot;
+}
+
+export function entrySnapshotOf(entry: object): Snapshot {
+	return snapshotIn(entry, undefined, undefined, new Set(), 1) as Snapshot;
 }
 
 function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: SnapshotTree | undefined, within: Set<object>, nesting: number): unknown {
