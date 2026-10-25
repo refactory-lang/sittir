@@ -804,7 +804,6 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	}
 	const layout = out.$_layout as NodeDataLayout | undefined;
 	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
-	// A storage-bearing node rebuilds from its slots.
 	if (holdsSlots(out)) delete out.$text;
 	return out;
 }

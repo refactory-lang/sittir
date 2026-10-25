@@ -495,13 +495,7 @@ export function createNativeEngine<
 					return renderRecord.call(engine, treeId, record, changed.leading, changed.trailing, perCall);
 				});
 			}
-			// The projection is the one place a node's storage wins over the
-			// coordinate it read in with: it crosses here, on every render
-			// path, so a caller handing over raw read data cannot slice a
-			// pre-edit span past a rebuilt slot.
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
-			// The tree the node was read from, or rebuilt from, is the layer of
-			// options its source inferred; a built node has none.
 			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
 			const treeId = handle === undefined ? undefined : decodeTree(handle);
 			// The handle renders lazily, and the data's coordinates are
@@ -554,9 +548,6 @@ export function createNativeEngine<
 							return node;
 						};
 						const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
-						// Under arena storage a node with a record reads as its
-						// record's stub, which the wrap table makes a view; a
-						// leaf or an ERROR node has none and reads as an object.
 						const readAt = (index: number, depth: number): TNode => {
 							const at = records?.record(index, depth);
 							if (at === undefined) return readObjectAt(index, depth);
@@ -564,8 +555,6 @@ export function createNativeEngine<
 							holdReadTree(stub, liveToken);
 							return stub as TNode;
 						};
-						// One root per depth: the first root read seeds it, and a
-						// root asked for at another depth is read once.
 						const roots = new Map<number, unknown>();
 						const tree: TreeHandle = {
 							id: parsed.treeId,
@@ -616,7 +605,6 @@ export function createNativeEngine<
 								planHolds: (addresses, plan) => engine.planHolds(JSON.stringify(addresses), JSON.stringify(plan))
 							}
 						};
-						// The parse's error regions ride beside the root and are stamped here.
 						registerTree(liveToken, tree);
 						return {
 							get root() {
