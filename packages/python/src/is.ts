@@ -724,6 +724,9 @@ export interface IsGuards {
 	yieldFromClause<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.YieldFromClause };
+	constructorDeclaration<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstructorDeclaration };
 	blockClassDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockClassDeclaration };
@@ -733,9 +736,6 @@ export interface IsGuards {
 	decoratedDefinitionClassDeclaration<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.DecoratedDefinitionClassDeclaration };
-	constructorDeclaration<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ConstructorDeclaration };
 	names<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Names };
@@ -1225,12 +1225,12 @@ const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	344, 151, 157, 158, 159, 162, 304, 174, 303, 154
+	344, 151, 157, 158, 159, 162, 300, 174, 304, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 344, 151, 157, 158, 159, 162, 304, 174, 303, 154
+	130, 344, 151, 157, 158, 159, 162, 300, 174, 304, 154
 ]);
-const _supertype_suiteClassDefinition_ids = new Set<number>([295, 302, 297]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([295, 303, 297]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
@@ -1467,10 +1467,10 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
 	const _kind_ComparisonOperatorComparator_guard = _g(TSKindId.ComparisonOperatorComparator);
+	const _kind_ConstructorDeclaration_guard = _g(TSKindId.ConstructorDeclaration);
 	const _kind_BlockClassDeclaration_guard = _g(TSKindId.BlockClassDeclaration);
 	const _kind_SuiteBlockClassDeclaration_guard = _g(TSKindId.SuiteBlockClassDeclaration);
 	const _kind_DecoratedDefinitionClassDeclaration_guard = _g(TSKindId.DecoratedDefinitionClassDeclaration);
-	const _kind_ConstructorDeclaration_guard = _g(TSKindId.ConstructorDeclaration);
 	const _kind_Names_guard = _g(TSKindId.Names);
 	const _kind_AsPatternTarget_guard = _g(TSKindId.AsPatternTarget);
 	const _kind_FormatExpression_guard = _g(TSKindId.FormatExpression);
@@ -1880,10 +1880,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		suiteEmpty: _kind_SuiteEmpty_guard,
 		comparisonOperatorComparator: _kind_ComparisonOperatorComparator_guard,
 		yieldFromClause: _kind_YieldFromClause_guard,
+		constructorDeclaration: _kind_ConstructorDeclaration_guard,
 		blockClassDeclaration: _kind_BlockClassDeclaration_guard,
 		suiteBlockClassDeclaration: _kind_SuiteBlockClassDeclaration_guard,
 		decoratedDefinitionClassDeclaration: _kind_DecoratedDefinitionClassDeclaration_guard,
-		constructorDeclaration: _kind_ConstructorDeclaration_guard,
 		names: _kind_Names_guard,
 		asPatternTarget: _kind_AsPatternTarget_guard,
 		formatExpression: _kind_FormatExpression_guard,

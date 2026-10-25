@@ -286,7 +286,7 @@ describe('Phase 1 — single-concrete-kind field slots (rust grammar)', () => {
 
 	it('a fixed-text kind decodes its numeric kind id into its unit, which writes the kind text', async () => {
 		const src = await getTypescriptNodeRs();
-		expect(src).toContain('#[node(choice)]\npub enum PlusNode {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
+		expect(src).toContain('#[node(choice, stamp = stamp)]\npub enum PlusNode {\n    #[kind(kind::PLUS)]\n    Plus,\n}');
 		expect(src).toMatch(
 			/fn render_plus\(w: &mut dyn ::sittir_core::render::RenderSink\) -> ::sittir_core::render::RenderResult \{\n    NodeLayout::render\(None, Some\(::sittir_core::types::KindId\(\d+\)\), ::sittir_core::layout::TriviaRole::Token, w, \|w\| w\.text\("\+"\)\)/
 		);
@@ -724,7 +724,7 @@ describe('node attributes', () => {
 	it("gives a choice's variants the ids today's decode claims for them", async () => {
 		const src = await getRustTemplatesRs();
 		const typeEnum = src.slice(src.indexOf('pub enum TypeNode {'));
-		expect(src).toMatch(/#\[node\(choice\)\]\npub enum TypeNode \{/);
+		expect(src).toMatch(/#\[node\(choice, stamp = stamp\)\]\npub enum TypeNode \{/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::NEVER_TYPE[^\]]*\)\]\n    #\[node\(edged\)\]\n    NeverType\(::sittir_core::options::Edges\),/);
 		expect(typeEnum).toMatch(/    #\[kind\(kind::_PRIMITIVE_TYPE[^\]]*kind::U8_KEYWORD[^\]]*\)\]\n    PrimitiveType\(PrimitiveTypeEnum\),/);
 		expect(src).toMatch(/#\[node\(kind = kind::_PRIMITIVE_TYPE, spelled\)\]\npub enum PrimitiveTypeEnum \{\n    #\[kind\(kind::U8_KEYWORD\)\]\n    U8,/);
@@ -812,7 +812,7 @@ describe('the wire codec facts', () => {
 
 	it('derives the codec alone for trivia', async () => {
 		const src = await getRustTemplatesRs();
-		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(choice, codec_only\)\]\npub enum TriviaNode \{/);
+		expect(src).toMatch(/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(choice, stamp = stamp, codec_only\)\]\npub enum TriviaNode \{/);
 		expect(src).toMatch(/    #\[node\(text\)\]\n    #\[kind\([^\n]*\)\]\n    Text\(::sittir_core::trivia::TriviaText\),/);
 		expect(src).toMatch(/    #\[node\(verbatim\)\]\n    Verbatim\(VerbatimNode\),\n    #\[node\(text\)\]/);
 	});

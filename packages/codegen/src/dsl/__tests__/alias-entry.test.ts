@@ -37,4 +37,12 @@ describe('alias(name) in an entry aliases a symbol member in place', () => {
 		expect(withoutIds(named.rules)).toEqual(inPlace(base.rules as unknown as Rules, 1, 'w'));
 		expect(named.bindingEffects).toEqual([{ kind: 'alias', from: 'y', to: 'w', scope: 'k' }]);
 	}, 60_000);
+
+	it('records the same alias effect for alias(member, $.name) in a function entry as for alias(name)', async () => {
+		const rules = "k: ($) => choice($.a, $.y), a: () => 'a', y: () => /y/";
+		const placeholder = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { k: { '-1': alias('w') } }" });
+		const explicit = await evaluateTempGrammar({ extras: '', rules }, '', { bindings: "edits: { k: { '-1': ($, member) => alias(member, $.w) } }" });
+		expect(withoutIds(explicit.rules)).toEqual(withoutIds(placeholder.rules));
+		expect(explicit.bindingEffects).toEqual(placeholder.bindingEffects);
+	}, 60_000);
 });

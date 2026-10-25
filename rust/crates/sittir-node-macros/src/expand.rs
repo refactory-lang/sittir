@@ -110,16 +110,16 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             displayed.extend(ids.iter().cloned());
         }
         if !shown.is_empty() {
-            by_display.push(quote!(if [#(#shown),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+            by_display.push(quote!(if [#(#shown),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         }
         if !ids.is_empty() && kinds.display {
-            by_display.push(quote!(if [#(#ids),*].contains(&display) { return ::core::option::Option::Some(#i); }));
+            by_display.push(quote!(if [#(#ids),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         } else if !ids.is_empty() {
-            by_grammar.push(quote!(if [#(#ids),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
+            by_grammar.push(quote!(if [#(#ids),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         }
         let folded = &kinds.folded;
         if !folded.is_empty() {
-            by_folded.push(quote!(if [#(#folded),*].contains(&grammar) { return ::core::option::Option::Some(#i); }));
+            by_folded.push(quote!(if [#(#folded),*].contains(&kind) { return ::core::option::Option::Some(#i); }));
         }
         match &variant.fields {
             fields if form.edged || matches!(fields, Fields::Unit) => {
@@ -230,17 +230,30 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             }
         }
     });
+    let own_stamp = quote! {
+        #[allow(dead_code)]
+        fn __shows(display: ::sittir_core::types::KindId) -> bool {
+            [#(#displayed),*].contains(&display)
+        }
+        #[allow(dead_code)]
+        fn __stamp(grammar: ::sittir_core::types::KindId, display: ::sittir_core::types::KindId) -> ::sittir_core::types::KindId {
+            ::sittir_core::read::stamp(grammar, display, __shows, ::sittir_core::read::relaxes_nothing)
+        }
+    };
+    let stamp = attrs.stamp.as_ref().map_or_else(|| quote!(__stamp), |path| quote!(#path));
     if attrs.codec_only {
         return Ok(quote! {
             const _: () = {
                 use ::sittir_core::types::KindId as __Kind;
                 #[allow(dead_code)]
                 fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                    let kind = #stamp(grammar, display);
                     #(#by_display)*
                     #(#by_grammar)*
                     #(#by_folded)*
                     ::core::option::Option::None
                 }
+                #own_stamp
                 #codec
             };
             #from_kind_id
@@ -273,7 +286,9 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             const __ROUTERS: &[fn(__Kind, __Kind) -> ::core::option::Option<__rt::Router>] = &[#(#routers_table),*];
             const __UNITS: &[__rt::UnitId] = &[#(#units_table),*];
             const __READS_BOXED: &[__Read<::std::boxed::Box<#ident>>] = &[#(#boxed_table),*];
+            #own_stamp
             fn __variant(grammar: __Kind, display: __Kind) -> ::core::option::Option<u16> {
+                let kind = #stamp(grammar, display);
                 #(#by_display)*
                 #(#by_grammar)*
                 #(#by_folded)*
@@ -287,7 +302,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                     __variant(grammar, display).is_some()
                 }
                 fn shows(display: __Kind) -> bool {
-                    [#(#displayed),*].contains(&display)
+                    __shows(display)
                 }
                 fn scalar(grammar: __Kind, display: __Kind) -> bool {
                     match __variant(grammar, display) {

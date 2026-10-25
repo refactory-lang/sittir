@@ -201,6 +201,12 @@ describe("a base's claim on its clones", () => {
 		expect(routes.readEntries.get('lambda_definition')?.map((e) => e.vocab)).toContain('declaration.function');
 		expect(unenteredForms(input, routes)).toEqual([]);
 	});
+
+	it('keeps reaching a clone whose own claim tests a field absent, since that claim does not always hold', async () => {
+		const routes = resolveRoutes(await cloned(['(function_definition) @declaration.function', '(constructor_declaration !modifiers) @declaration.constructor']));
+		expect(routes.stopped).toEqual([]);
+		expect(routes.readEntries.get('constructor_declaration')?.map((e) => e.vocab)).toContain('declaration.function');
+	});
 });
 
 describe('resolveRoutes', () => {

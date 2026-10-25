@@ -373,7 +373,12 @@ const inheritedClaims = (entry: { readonly vocab: string }, entries: readonly { 
 	new Set(entries.filter((other) => atOrUnder(entry.vocab, other.vocab)).map((other) => other.index));
 
 const unconditional = (entry: ReadEntry): boolean =>
-	entry.claim.toplevel && entry.claim.within.length === 0 && entry.claim.predicates.length === 0 && entry.pins.length === 0 && entry.children.length === 0;
+	entry.claim.toplevel &&
+	entry.claim.within.length === 0 &&
+	entry.claim.predicates.length === 0 &&
+	entry.claim.absent.length === 0 &&
+	entry.pins.length === 0 &&
+	entry.children.length === 0;
 
 const attaches = (member: MemberFact, inherited: ReadonlySet<number>): boolean => member.claims === undefined || member.claims.some((index) => inherited.has(index));
 

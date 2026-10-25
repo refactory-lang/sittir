@@ -23,6 +23,22 @@ pub use regex::Captures;
 /// Opt-in parser/model drift diagnostics after typed slot routing.
 pub const DEBUG_READ_CHECKS: bool = cfg!(feature = "read-debug-checks");
 
+/// The kind a node with these grammar and display ids stamps: the display id
+/// where the grammar claims the node by it (`shows`) or where the node is a
+/// relaxed keyword read as its word rule (`relaxes`), the grammar id
+/// everywhere else. `ReadCtx::stamped_kind` and every choice's variant
+/// dispatch call it, so a node's `$type` and the variant it reads as agree.
+#[must_use]
+pub fn stamp(grammar: KindId, display: KindId, shows: fn(KindId) -> bool, relaxes: fn(KindId, KindId) -> bool) -> KindId {
+    if display != grammar && (shows(display) || relaxes(grammar, display)) { display } else { grammar }
+}
+
+/// A grammar with no relaxed keywords (`stamp`).
+#[must_use]
+pub const fn relaxes_nothing(_grammar: KindId, _display: KindId) -> bool {
+    false
+}
+
 /// The kind `node` has in the grammar, the key of every flag, edge and seat
 /// table. The one call of `Node::grammar_id`.
 #[allow(clippy::disallowed_methods, reason = "wraps `Node::grammar_id`, which clippy.toml disallows outside this module")]
@@ -236,7 +252,7 @@ pub enum Origin {
 
 impl<'s> ReadCtx<'s> {
     pub fn new(source: &'s str, tree_id: crate::types::TreeId, shows: fn(KindId) -> bool) -> Self {
-        Self { source, tree_id, shows, relaxes: |_, _| false, snapshot: None, sides: None, changed: None, inline_units: false }
+        Self { source, tree_id, shows, relaxes: relaxes_nothing, snapshot: None, sides: None, changed: None, inline_units: false }
     }
 
     /// This context, reading a relaxed keyword as the word rule it displays.
@@ -401,7 +417,7 @@ impl<'s> ReadCtx<'s> {
     /// the grammar id everywhere else.
     #[must_use]
     pub fn stamped_kind(&self, grammar: KindId, display: KindId) -> KindId {
-        if display != grammar && ((self.shows)(display) || (self.relaxes)(grammar, display)) { display } else { grammar }
+        stamp(grammar, display, self.shows, self.relaxes)
     }
 
     /// [`Self::stamped_kind`] of a parsed node.

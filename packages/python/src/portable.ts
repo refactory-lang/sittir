@@ -2922,7 +2922,7 @@ const table: PortableTable = {
 export const rows: PortableRows = Object.freeze({ table, querySlots });
 
 export const queryFlags: QueryFlags = Object.freeze({
-	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '304': 0 } } },
+	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '300': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
 	[TSKindId.ForInClause]: { async: { op: 'present', slots: { '244': 0 } } },
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
@@ -2939,8 +2939,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	282: { contents: { async: { types: [], kinds: [244] } } },
-	301: { statements: { async: { types: [], kinds: [157, 162, 304, 344] } } },
-	303: { definition: { async: { types: [], kinds: [304, 344] } } }
+	302: { statements: { async: { types: [], kinds: [157, 162, 300, 344] } } },
+	304: { definition: { async: { types: [], kinds: [300, 344] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

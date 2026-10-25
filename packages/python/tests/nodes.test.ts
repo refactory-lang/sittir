@@ -5512,6 +5512,45 @@ describe('_newline', () => {
 	});
 });
 
+describe('constructor_declaration', () => {
+	it('factory produces correct type', () => {
+		const node = ir.constructorDeclaration({
+			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any,
+			body: stampBuilt({
+				$type: TSKindId.SuiteInline,
+				$text: 'test',
+				$named: true,
+				_elements: stampBuilt({
+					$type: TSKindId.SimpleStatementsElements,
+					$text: 'test',
+					$named: true,
+					_item: [stampBuilt({ $type: TSKindId.PassStatement, $text: 'pass', $named: true }) as any]
+				}) as any
+			}) as any
+		});
+		expect(node.$type).toBe(TSKindId.ConstructorDeclaration);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.constructorDeclaration({
+			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any,
+			body: stampBuilt({
+				$type: TSKindId.SuiteInline,
+				$text: 'test',
+				$named: true,
+				_elements: stampBuilt({
+					$type: TSKindId.SimpleStatementsElements,
+					$text: 'test',
+					$named: true,
+					_item: [stampBuilt({ $type: TSKindId.PassStatement, $text: 'pass', $named: true }) as any]
+				}) as any
+			}) as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
 describe('block_class_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.blockClassDeclaration();
@@ -5597,45 +5636,6 @@ describe('decorated_definition_class_declaration', () => {
 						$named: true,
 						_item: [stampBuilt({ $type: TSKindId.PassStatement, $text: 'pass', $named: true }) as any]
 					}) as any
-				}) as any
-			}) as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
-	});
-});
-
-describe('constructor_declaration', () => {
-	it('factory produces correct type', () => {
-		const node = ir.constructorDeclaration({
-			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any,
-			body: stampBuilt({
-				$type: TSKindId.SuiteInline,
-				$text: 'test',
-				$named: true,
-				_elements: stampBuilt({
-					$type: TSKindId.SimpleStatementsElements,
-					$text: 'test',
-					$named: true,
-					_item: [stampBuilt({ $type: TSKindId.PassStatement, $text: 'pass', $named: true }) as any]
-				}) as any
-			}) as any
-		});
-		expect(node.$type).toBe(TSKindId.ConstructorDeclaration);
-		expectBuiltNode(node);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.constructorDeclaration({
-			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any,
-			body: stampBuilt({
-				$type: TSKindId.SuiteInline,
-				$text: 'test',
-				$named: true,
-				_elements: stampBuilt({
-					$type: TSKindId.SimpleStatementsElements,
-					$text: 'test',
-					$named: true,
-					_item: [stampBuilt({ $type: TSKindId.PassStatement, $text: 'pass', $named: true }) as any]
 				}) as any
 			}) as any
 		});

@@ -461,7 +461,7 @@ describe('deriveGrammarBindings', () => {
 			expect(derive([literalClaim('method_declaration', [], 'prop_id', 'constructor')]).report.residue).toContainEqual({ cause: 'literal split names no site', row: 'method_declaration → declaration.constructor' });
 		});
 
-		it('relaxes the literal back into each display at every site that relaxes the keywords its own site does, on the outermost choice a nested one sits in', () => {
+		it('relaxes the literal back into each display at every site that relaxes the keywords its own site does and admits the display, on the outermost choice a nested one sits in', () => {
 			const relaxed = (leaf: string, text: string) => ({ type: 'ALIAS', named: true, value: leaf, content: { type: 'STRING', value: text } });
 			const word = (leaf: string) => ({ type: 'ALIAS', named: true, value: leaf, content: symbol('identifier') });
 			const grammar = literalGrammar();
@@ -471,7 +471,11 @@ describe('deriveGrammarBindings', () => {
 				pair_m: { type: 'SEQ', members: [{ type: 'FIELD', name: 'key', content: { type: 'CHOICE', members: [word('prop_id'), relaxed('prop_id', 'get')] } }, { type: 'STRING', value: ':' }] },
 				expr_m: { type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'get')] },
 				let_m: { type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'let')] },
-				nested_m: { type: 'CHOICE', members: [{ type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'get')] }, symbol('string_m')] }
+				nested_m: { type: 'CHOICE', members: [{ type: 'CHOICE', members: [symbol('identifier'), relaxed('identifier', 'get')] }, symbol('string_m')] },
+				hidden_m: { type: 'CHOICE', members: [{ type: 'CHOICE', members: [relaxed('identifier', 'get'), symbol('string_m')] }, { type: 'PREC', value: 1, content: symbol('_ident') }] },
+				_ident: { type: 'CHOICE', members: [symbol('string_m'), symbol('identifier')] },
+				closed_m: { type: 'CHOICE', members: [relaxed('prop_id', 'get'), relaxed('prop_id', 'set')] },
+				seq_m: { type: 'CHOICE', members: [{ type: 'SEQ', members: [{ type: 'STRING', value: '(' }, symbol('identifier'), { type: 'STRING', value: ')' }] }, relaxed('identifier', 'get')] }
 			};
 			const { bindings, diagnostics } = bind({ file: FILE, facts: { ...FACTS, claims: [literalClaim('meth_plain', ['member_m'], 'prop_id', 'constructor')], members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
 			expect(diagnostics).toEqual([]);
@@ -480,8 +484,22 @@ describe('deriveGrammarBindings', () => {
 					{ kind: 'meth_plain', path: '1/name:', display: 'prop_id' },
 					{ kind: 'pair_m', path: '0/key:', display: 'prop_id' },
 					{ kind: 'expr_m', path: '.', display: 'identifier' },
-					{ kind: 'nested_m', path: '.', display: 'identifier' }
+					{ kind: 'nested_m', path: '.', display: 'identifier' },
+					{ kind: 'hidden_m', path: '.', display: 'identifier' }
 				]
+			]);
+		});
+
+		it('refuses a placement whose container reaches a kind on its path through several fields', () => {
+			const grammar = literalGrammar();
+			const both = (child: string) => ({ type: 'SEQ', members: [{ type: 'FIELD', name: 'left', content: symbol(child) }, { type: 'STRING', value: '=' }, { type: 'FIELD', name: 'right', content: symbol(child) }] });
+			const rules = { ...grammar.rules, assign_m: both('meth_plain'), texts_m: both('text_m') };
+			const claims = [literalClaim('meth_plain', ['assign_m'], 'prop_id', 'constructor'), claim('declaration.method', 'text_m', { toplevel: false, within: ['texts_m'] })];
+			const { bindings, report } = bind({ file: FILE, facts: { ...FACTS, claims, members: [] }, base: { ...grammar, rules }, vocabMembers: VOCABULARY, routes: ROUTES, model: NO_MODEL } as never);
+			expect(bindings.splits).toEqual([]);
+			expect(report.residue).toEqual([
+				{ cause: 'placement reaches a kind through several fields', row: 'meth_plain → declaration.constructor' },
+				{ cause: 'placement reaches a kind through several fields', row: 'text_m → declaration.method' }
 			]);
 		});
 
@@ -602,7 +620,7 @@ export default grammar(
 		);
 	});
 
-	it('prints a split on a literal at a site a placed claim aliases after the alias, addressed at the kind the alias shows', () => {
+	it('prints a split on a literal at a site a placed claim aliases as one edit that aliases the member beside the copy', () => {
 		const path = [
 			{ field: 'body', kind: 'block_m', as: 'block_class_m' },
 			{ field: null, kind: 'meth_plain', as: null }
@@ -614,7 +632,7 @@ export default grammar(
 		];
 		const text = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
 		expect(text).toContain(
-			'class_m: { "body:/(block_m as block_class_m)/(meth_plain)": alias("method_declaration"), "body:/(block_m as block_class_m)/(method_declaration)": ($, member) => choice(member, alias(edit(copy("meth_plain"), { "name:": alias("__init__", $.prop_id) }), $.constructor_declaration)) }'
+			'class_m: { "body:/(block_m as block_class_m)/(meth_plain)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("meth_plain"), { "name:": alias("__init__", $.prop_id) }), $.constructor_declaration)) }'
 		);
 	});
 
@@ -676,6 +694,43 @@ describe('the printed layer', () => {
 		expect(JSON.stringify(raw.rules.let_item)).toContain('"name":"name"');
 		expect(JSON.stringify(raw.rules.let_item)).not.toContain('"name":"left"');
 		expect(JSON.stringify(raw.rules.call)).toContain('"value":"callee"');
+	}, 60_000);
+
+	it('splits a literal only at the site its placed claim aliases, not at an alias the grammar already shows by that name', async () => {
+		const pkg = mkdtempSync(join(dir, 'pkg-'));
+		const shownBase = join(dir, 'shown.mjs');
+		writeFileSync(
+			shownBase,
+			`export default grammar({
+	name: 'bindtest',
+	word: $ => $.identifier,
+	rules: {
+		source_file: $ => repeat($.cls),
+		cls: $ => seq('class', $.meth, alias($.meth, $.method_declaration)),
+		meth: $ => seq('def', field('name', $.identifier)),
+		identifier: _ => /[a-z_]+/
+	}
+});
+`
+		);
+		writeSittirGrammarPackage(pkg, shownBase, 'bindtest');
+		const path = [{ field: null, kind: 'meth', as: null }];
+		const literal = { field: 'name', leaf: 'identifier', texts: ['init'], absent: [], relax: [] };
+		const splits: Split[] = [
+			{ owner: 'cls', path, as: 'method_declaration' },
+			{ owner: 'cls', path, as: 'constructor_declaration', literal }
+		];
+		const printed = printBindingsModule({ patches: new Map(), renames: {}, leads: [], splits }, 'h');
+		writeFileSync(
+			join(pkg, BINDINGS_MODULE),
+			printed.replace("'../codegen/src/dsl/dsl-authoring.ts'", JSON.stringify(join(__dirname, '../../dsl/dsl-authoring.ts'))).replace(/^\/\/\/ <reference.*\n/m, '')
+		);
+		const raw = await evaluate(layerPath({ dir: pkg }, 'top'), NO_FILE_TYPES);
+		const [, enriched, shown] = (raw.rules.cls as unknown as { readonly members: readonly { readonly content?: unknown }[] }).members;
+		expect(enriched).toMatchObject({ type: 'FIELD', metadata: { fieldSource: 'enriched' } });
+		expect(enriched!.content).toMatchObject({ type: 'CHOICE', members: [{ type: 'ALIAS', value: 'method_declaration' }, { type: 'ALIAS', value: 'constructor_declaration' }] });
+		expect(shown).toMatchObject({ type: 'ALIAS', value: 'method_declaration', content: { type: 'SYMBOL', name: 'meth' } });
+		expect(raw.bindingEffects).toContainEqual({ kind: 'alias', from: 'meth', to: 'method_declaration', scope: 'cls' });
 	}, 60_000);
 });
 

@@ -225,10 +225,10 @@ export const _fromMap = {
 	_newline: coerceToNewline,
 	_blankline: coerceToBlankline,
 	_double_blankline: coerceToDoubleBlankline,
+	constructor_declaration: coerceToConstructorDeclaration,
 	block_class_declaration: coerceToBlockClassDeclaration,
 	suite_block_class_declaration: coerceToSuiteBlockClassDeclaration,
 	decorated_definition_class_declaration: coerceToDecoratedDefinitionClassDeclaration,
-	constructor_declaration: coerceToConstructorDeclaration,
 	names: coerceToNames,
 	as_pattern_target: coerceToAsPatternTarget,
 	format_expression: coerceToFormatExpression,
@@ -797,7 +797,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
 		214, 220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 269, 272, 299
 	]),
-	suite_block_class_declaration: new Set([301]),
+	suite_block_class_declaration: new Set([302]),
 	names: new Set([137, 182]),
 	as_pattern_target: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -7711,6 +7711,54 @@ export function coerceToDoubleBlankline(_input?: T.DoubleBlankline.Loose): typeo
 	return F.buildDoubleBlankline;
 }
 
+export function resolveConstructorDeclaration_async(
+	value: T.ConstructorDeclaration.LooseConfig['async']
+): Admit<T.ConstructorDeclaration['_async']> {
+	return _resolveBooleanKeyword(value);
+}
+
+export function resolveConstructorDeclaration_typeParameters(
+	value: T.ConstructorDeclaration.LooseConfig['typeParameters']
+): Admit<T.ConstructorDeclaration['_type_parameters']> {
+	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter', undefined, true);
+}
+
+export function resolveConstructorDeclaration_parameters(
+	value: T.ConstructorDeclaration.LooseConfig['parameters']
+): Admit<T.ConstructorDeclaration['_parameters']> {
+	return _resolveOneBranch<T.Parameters>(value, 'parameters');
+}
+
+export function resolveConstructorDeclaration_returnType(
+	value: T.ConstructorDeclaration.LooseConfig['returnType']
+): Admit<T.ConstructorDeclaration['_return_type']> {
+	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
+}
+
+export function resolveConstructorDeclaration_body(
+	value: T.ConstructorDeclaration.LooseConfig['body']
+): Admit<T.ConstructorDeclaration['_body']> {
+	return _resolveOne<T.Suite>(value, _K0, _super_suite);
+}
+
+export function coerceToConstructorDeclaration<const I extends T.ConstructorDeclaration.Loose>(
+	input: I & RefuseUndeclared<I, T.ConstructorDeclaration.Loose>
+): ReturnType<typeof F.buildConstructorDeclaration>;
+export function coerceToConstructorDeclaration(
+	input: T.ConstructorDeclaration.Loose
+): ReturnType<typeof F.buildConstructorDeclaration> {
+	if (!_isLooseConfig<T.ConstructorDeclaration.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildConstructorDeclaration>;
+	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [input]);
+	return F.buildConstructorDeclaration({
+		async: resolveConstructorDeclaration_async(input.async),
+		typeParameters: resolveConstructorDeclaration_typeParameters(input.typeParameters),
+		parameters: resolveConstructorDeclaration_parameters(input.parameters) ?? F.buildParameters(),
+		returnType: resolveConstructorDeclaration_returnType(input.returnType),
+		body: resolveConstructorDeclaration_body(input.body)
+	});
+}
+
 export function coerceToBlockClassDeclaration<const A extends T.BlockClassDeclaration.LooseArgs>(
 	...input: A & RefuseUndeclared<A, T.BlockClassDeclaration.LooseArgs>
 ): ReturnType<typeof F.buildBlockClassDeclaration>;
@@ -7801,54 +7849,6 @@ export function coerceToDecoratedDefinitionClassDeclaration(
 	return F.buildDecoratedDefinitionClassDeclaration({
 		decorators: resolveDecoratedDefinitionClassDeclaration_decorators(input.decorators),
 		definition: resolveDecoratedDefinitionClassDeclaration_definition(input.definition)
-	});
-}
-
-export function resolveConstructorDeclaration_async(
-	value: T.ConstructorDeclaration.LooseConfig['async']
-): Admit<T.ConstructorDeclaration['_async']> {
-	return _resolveBooleanKeyword(value);
-}
-
-export function resolveConstructorDeclaration_typeParameters(
-	value: T.ConstructorDeclaration.LooseConfig['typeParameters']
-): Admit<T.ConstructorDeclaration['_type_parameters']> {
-	return _resolveOneBranch<T.TypeParameter>(value, 'type_parameter', undefined, true);
-}
-
-export function resolveConstructorDeclaration_parameters(
-	value: T.ConstructorDeclaration.LooseConfig['parameters']
-): Admit<T.ConstructorDeclaration['_parameters']> {
-	return _resolveOneBranch<T.Parameters>(value, 'parameters');
-}
-
-export function resolveConstructorDeclaration_returnType(
-	value: T.ConstructorDeclaration.LooseConfig['returnType']
-): Admit<T.ConstructorDeclaration['_return_type']> {
-	return _resolveOneBranch<T.Type>(value, 'type', undefined, true);
-}
-
-export function resolveConstructorDeclaration_body(
-	value: T.ConstructorDeclaration.LooseConfig['body']
-): Admit<T.ConstructorDeclaration['_body']> {
-	return _resolveOne<T.Suite>(value, _K0, _super_suite);
-}
-
-export function coerceToConstructorDeclaration<const I extends T.ConstructorDeclaration.Loose>(
-	input: I & RefuseUndeclared<I, T.ConstructorDeclaration.Loose>
-): ReturnType<typeof F.buildConstructorDeclaration>;
-export function coerceToConstructorDeclaration(
-	input: T.ConstructorDeclaration.Loose
-): ReturnType<typeof F.buildConstructorDeclaration> {
-	if (!_isLooseConfig<T.ConstructorDeclaration.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildConstructorDeclaration>;
-	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [input]);
-	return F.buildConstructorDeclaration({
-		async: resolveConstructorDeclaration_async(input.async),
-		typeParameters: resolveConstructorDeclaration_typeParameters(input.typeParameters),
-		parameters: resolveConstructorDeclaration_parameters(input.parameters) ?? F.buildParameters(),
-		returnType: resolveConstructorDeclaration_returnType(input.returnType),
-		body: resolveConstructorDeclaration_body(input.body)
 	});
 }
 

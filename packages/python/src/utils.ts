@@ -26,7 +26,7 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270,
-		281, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 302, 342
+		281, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 303, 342
 	]),
 	listKinds: new Set<number>([
 		136, 181, 193, 194, 218, 243, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 271, 272, 276, 277, 290, 291, 345
@@ -459,18 +459,18 @@ export const querySlots: QuerySlots = Object.freeze({
 		['primaryExpression', 1, undefined, '_primary_expression']
 	],
 	299: [['expression', 0, undefined, '_expression']],
-	301: [['statements', 0, undefined, '_statements']],
-	302: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
-	303: [
-		['decorators', 0, undefined, '_decorator'],
-		['definition', 1, undefined, '_definition']
-	],
-	304: [
+	300: [
 		['async', 0, 'async', '_async'],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['parameters', 2, undefined, '_parameters'],
 		['returnType', 3, undefined, '_return_type'],
 		['body', 4, undefined, '_body']
+	],
+	302: [['statements', 0, undefined, '_statements']],
+	303: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
+	304: [
+		['decorators', 0, undefined, '_decorator'],
+		['definition', 1, undefined, '_definition']
 	],
 	342: [['content', 0, undefined, '_content']],
 	343: [
@@ -497,7 +497,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	layout: triviaFacts.layout,
 	spread: new Set<number>([
 		128, 136, 141, 170, 171, 180, 181, 182, 186, 193, 194, 218, 243, 247, 249, 254, 260, 261, 262, 263, 264, 265, 266,
-		267, 268, 269, 271, 272, 276, 277, 282, 285, 290, 291, 293, 301, 345
+		267, 268, 269, 271, 272, 276, 277, 282, 285, 290, 291, 293, 302, 345
 	]),
 	leaves: new Set<number>([1, 66, 89, 93, 94, 95, 106, 119, 120, 121, 122, 132]),
 	textEnvelopes: new Map<number, number>([]),
@@ -1819,40 +1819,7 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'YieldFromClause.expression', 'a built Expression', [205]]]
 	},
-	301: {
-		kind: 'block_class_declaration',
-		nodeOnly: [['_statements', 'BlockClassDeclaration.statements', 'a built StatementClassDefinition', [300]]],
-		lists: [['statements', false, 0]]
-	},
-	302: {
-		kind: 'suite_block_class_declaration',
-		required: [['_block_class_declaration', 'blockClassDeclaration']],
-		nodeOnly: [
-			[
-				'_block_class_declaration',
-				'SuiteBlockClassDeclaration.blockClassDeclaration',
-				'a built BlockClassDeclaration',
-				[301]
-			]
-		]
-	},
-	303: {
-		kind: 'decorated_definition_class_declaration',
-		required: [['_definition', 'definition']],
-		nonEmpty: [['_decorator', 'decorated_definition_class_declaration.decorators']],
-		nodeOnly: [
-			['_decorator', 'DecoratedDefinitionClassDeclaration.decorators', 'a built Decorator', [179]],
-			[
-				'_definition',
-				'DecoratedDefinitionClassDeclaration.definition',
-				'a built ClassDefinition / MethodDeclaration / ConstructorDeclaration',
-				[174, 304, 344]
-			]
-		],
-		config: ['decorators', 'definition'],
-		lists: [['decorators', false, 'key']]
-	},
-	304: {
+	300: {
 		kind: 'constructor_declaration',
 		required: [
 			['_parameters', 'parameters'],
@@ -1866,6 +1833,39 @@ export const structure: StructureTable = Object.freeze({
 		],
 		booleans: [['_async', 'ConstructorDeclaration.async']],
 		config: ['async', 'typeParameters', 'parameters', 'returnType', 'body']
+	},
+	302: {
+		kind: 'block_class_declaration',
+		nodeOnly: [['_statements', 'BlockClassDeclaration.statements', 'a built StatementClassDefinition', [301]]],
+		lists: [['statements', false, 0]]
+	},
+	303: {
+		kind: 'suite_block_class_declaration',
+		required: [['_block_class_declaration', 'blockClassDeclaration']],
+		nodeOnly: [
+			[
+				'_block_class_declaration',
+				'SuiteBlockClassDeclaration.blockClassDeclaration',
+				'a built BlockClassDeclaration',
+				[302]
+			]
+		]
+	},
+	304: {
+		kind: 'decorated_definition_class_declaration',
+		required: [['_definition', 'definition']],
+		nonEmpty: [['_decorator', 'decorated_definition_class_declaration.decorators']],
+		nodeOnly: [
+			['_decorator', 'DecoratedDefinitionClassDeclaration.decorators', 'a built Decorator', [179]],
+			[
+				'_definition',
+				'DecoratedDefinitionClassDeclaration.definition',
+				'a built ClassDefinition / MethodDeclaration / ConstructorDeclaration',
+				[174, 300, 344]
+			]
+		],
+		config: ['decorators', 'definition'],
+		lists: [['decorators', false, 'key']]
 	},
 	342: {
 		kind: 'as_pattern_target',

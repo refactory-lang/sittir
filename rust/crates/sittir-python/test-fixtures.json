@@ -215430,9 +215430,9 @@
             "$text": "A"
           },
           "_body": {
-            "$type": 302,
+            "$type": 303,
             "_block_class_declaration": {
-              "$type": 301,
+              "$type": 302,
               "_statements": [
                 {
                   "$type": 344,
@@ -215493,9 +215493,9 @@
             "$type": 177
           },
           "_body": {
-            "$type": 302,
+            "$type": 303,
             "_block_class_declaration": {
-              "$type": 301,
+              "$type": 302,
               "_statements": [
                 {
                   "$type": 130,
@@ -215538,9 +215538,9 @@
             }
           },
           "_body": {
-            "$type": 302,
+            "$type": 303,
             "_block_class_declaration": {
-              "$type": 301,
+              "$type": 302,
               "_statements": [
                 {
                   "$type": 344,
@@ -215631,9 +215631,9 @@
             }
           },
           "_body": {
-            "$type": 302,
+            "$type": 303,
             "_block_class_declaration": {
-              "$type": 301,
+              "$type": 302,
               "_statements": [
                 {
                   "$type": 130,
@@ -215693,9 +215693,9 @@
             }
           },
           "_body": {
-            "$type": 302,
+            "$type": 303,
             "_block_class_declaration": {
-              "$type": 301,
+              "$type": 302,
               "_statements": [
                 {
                   "$type": 130,
@@ -215753,9 +215753,9 @@
         "$text": "A"
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
               "$type": 344,
@@ -215841,9 +215841,9 @@
         "$type": 177
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
               "$type": 130,
@@ -215904,9 +215904,9 @@
         }
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
               "$type": 344,
@@ -216015,9 +216015,9 @@
         }
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
               "$type": 130,
@@ -216095,9 +216095,9 @@
         }
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
               "$type": 130,
@@ -216139,9 +216139,9 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
             "$type": 344,
@@ -216217,9 +216217,9 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
             "$type": 130,
@@ -216260,9 +216260,9 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
             "$type": 344,
@@ -216334,9 +216334,9 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
             "$type": 130,
@@ -216377,9 +216377,9 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
             "$type": 130,
@@ -216420,7 +216420,7 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
           "$type": 344,
@@ -216495,7 +216495,7 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
           "$type": 130,
@@ -216535,7 +216535,7 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
           "$type": 344,
@@ -216606,7 +216606,7 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
           "$type": 130,
@@ -216646,7 +216646,7 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
           "$type": 130,
@@ -218064,9 +218064,9 @@
             }
           },
           "_body": {
-            "$type": 302,
+            "$type": 303,
             "_block_class_declaration": {
-              "$type": 301,
+              "$type": 302,
               "_statements": [
                 {
                   "$type": 344,
@@ -218159,9 +218159,9 @@
         }
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
               "$type": 344,
@@ -218309,9 +218309,9 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
             "$type": 344,
@@ -218377,7 +218377,7 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
           "$type": 344,
@@ -218763,12 +218763,12 @@
               "$text": "C"
             },
             "_body": {
-              "$type": 302,
+              "$type": 303,
               "_block_class_declaration": {
-                "$type": 301,
+                "$type": 302,
                 "_statements": [
                   {
-                    "$type": 303,
+                    "$type": 304,
                     "_decorator": [
                       {
                         "$type": 179,
@@ -218865,7 +218865,7 @@
                     }
                   },
                   {
-                    "$type": 303,
+                    "$type": 304,
                     "_decorator": [
                       {
                         "$type": 179,
@@ -219060,12 +219060,12 @@
           "$text": "C"
         },
         "_body": {
-          "$type": 302,
+          "$type": 303,
           "_block_class_declaration": {
-            "$type": 301,
+            "$type": 302,
             "_statements": [
               {
-                "$type": 303,
+                "$type": 304,
                 "_decorator": [
                   {
                     "$type": 179,
@@ -219162,7 +219162,7 @@
                 }
               },
               {
-                "$type": 303,
+                "$type": 304,
                 "_decorator": [
                   {
                     "$type": 179,
@@ -219843,12 +219843,12 @@
         "$text": "C"
       },
       "_body": {
-        "$type": 302,
+        "$type": 303,
         "_block_class_declaration": {
-          "$type": 301,
+          "$type": 302,
           "_statements": [
             {
-              "$type": 303,
+              "$type": 304,
               "_decorator": [
                 {
                   "$type": 179,
@@ -219945,7 +219945,7 @@
               }
             },
             {
-              "$type": 303,
+              "$type": 304,
               "_decorator": [
                 {
                   "$type": 179,
@@ -220034,12 +220034,12 @@
     "grammar": "python",
     "pattern": "suite_block_class_declaration",
     "input": {
-      "$type": 302,
+      "$type": 303,
       "_block_class_declaration": {
-        "$type": 301,
+        "$type": 302,
         "_statements": [
           {
-            "$type": 303,
+            "$type": 304,
             "_decorator": [
               {
                 "$type": 179,
@@ -220136,7 +220136,7 @@
             }
           },
           {
-            "$type": 303,
+            "$type": 304,
             "_decorator": [
               {
                 "$type": 179,
@@ -220224,10 +220224,10 @@
     "grammar": "python",
     "pattern": "block_class_declaration",
     "input": {
-      "$type": 301,
+      "$type": 302,
       "_statements": [
         {
-          "$type": 303,
+          "$type": 304,
           "_decorator": [
             {
               "$type": 179,
@@ -220324,7 +220324,7 @@
           }
         },
         {
-          "$type": 303,
+          "$type": 304,
           "_decorator": [
             {
               "$type": 179,
@@ -220411,7 +220411,7 @@
     "grammar": "python",
     "pattern": "decorated_definition_class_declaration",
     "input": {
-      "$type": 303,
+      "$type": 304,
       "_decorator": [
         {
           "$type": 179,
@@ -220533,7 +220533,7 @@
     "grammar": "python",
     "pattern": "decorated_definition_class_declaration",
     "input": {
-      "$type": 303,
+      "$type": 304,
       "_decorator": [
         {
           "$type": 179,

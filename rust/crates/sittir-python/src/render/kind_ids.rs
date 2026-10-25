@@ -307,11 +307,11 @@ pub const SUITE_BLOCK: KindId = KindId(296);
 pub const SUITE_EMPTY: KindId = KindId(297);
 pub const _COMPARISON_OPERATOR_COMPARATOR: KindId = KindId(298);
 pub const _YIELD_FROM_CLAUSE: KindId = KindId(299);
-pub const _STATEMENT_CLASS_DEFINITION: KindId = KindId(300);
-pub const _BLOCK_CLASS_DECLARATION: KindId = KindId(301);
-pub const _SUITE_BLOCK_CLASS_DECLARATION: KindId = KindId(302);
-pub const _DECORATED_DEFINITION_CLASS_DECLARATION: KindId = KindId(303);
-pub const _CONSTRUCTOR_DECLARATION: KindId = KindId(304);
+pub const _CONSTRUCTOR_DECLARATION: KindId = KindId(300);
+pub const _STATEMENT_CLASS_DEFINITION: KindId = KindId(301);
+pub const _BLOCK_CLASS_DECLARATION: KindId = KindId(302);
+pub const _SUITE_BLOCK_CLASS_DECLARATION: KindId = KindId(303);
+pub const _DECORATED_DEFINITION_CLASS_DECLARATION: KindId = KindId(304);
 pub const MODULE_REPEAT1: KindId = KindId(305);
 pub const IMPORT_PREFIX_REPEAT1: KindId = KindId(306);
 pub const _IMPORT_LIST_REPEAT1: KindId = KindId(307);
@@ -372,7 +372,7 @@ pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_co
 pub const ROOT_KINDS: &[KindId] = &[KindId(128)];
 
 /// The keyword tokens the grammar aliases to its word rule: a node of one of them, displayed as the word rule, reads as the word rule.
-pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(67), KindId(38), KindId(68), KindId(69), KindId(22)];
+pub const RELAXED_KEYWORDS: &[KindId] = &[KindId(39), KindId(67), KindId(38), KindId(68), KindId(69), KindId(22), KindId(115)];
 
 /// The display ids that stand for the word rule (an alias of it) and the keyword tokens aliased to each.
 pub const RELAXED_DISPLAYS: &[(KindId, &[KindId])] = &[];
@@ -689,11 +689,11 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         297 => "suite_empty", // "suite_empty"
         298 => "comparison_operator_comparator", // "_comparison_operator_comparator"
         299 => "yield_from_clause", // "_yield_from_clause"
-        300 => "_statement_class_definition", // "_statement_class_definition"
-        301 => "block_class_declaration", // "_block_class_definition"
-        302 => "suite_block_class_declaration", // "_suite_block_class_definition"
-        303 => "decorated_definition_class_declaration", // "_decorated_definition_class_definition"
-        304 => "constructor_declaration", // "_function_definition_class_definition"
+        300 => "constructor_declaration", // "_function_definition_class_definition"
+        301 => "_statement_class_definition", // "_statement_class_definition"
+        302 => "block_class_declaration", // "_block_class_definition"
+        303 => "suite_block_class_declaration", // "_suite_block_class_definition"
+        304 => "decorated_definition_class_declaration", // "_decorated_definition_class_definition"
         305 => "module_repeat1", // "module_repeat1"
         306 => "import_prefix_repeat1", // "import_prefix_repeat1"
         307 => "_import_list_repeat1", // "_import_list_repeat1"

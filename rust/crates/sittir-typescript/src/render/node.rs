@@ -19,8 +19,12 @@ use super::options;
 use super::{field_ids as field, kind_ids as kind};
 use ::sittir_core::VerbatimNode;
 
+pub fn stamp(grammar: KindId, display: KindId) -> KindId {
+    ::sittir_core::read::stamp(grammar, display, <AnyNode as ::sittir_core::read::ReadNode>::shows, kind::relaxes)
+}
+
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AnyNode {
     #[kind(kind::PROGRAM)]
     Program(ProgramNode),
@@ -2621,7 +2625,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, codec_only)]
+#[node(choice, stamp = stamp, codec_only)]
 pub enum TriviaNode {
     #[kind(kind::COMMENT_LINE)]
     CommentLine(CommentLineNode),
@@ -2813,7 +2817,7 @@ pub type NodeLayout = ::sittir_core::layout::NodeLayout<TriviaNode>;
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementNode {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM, kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, kind::EXPORT_STATEMENT_DEFAULT)]
     ExportStatementDefault(ExportStatementDefaultNode),
@@ -2882,7 +2886,7 @@ impl ::sittir_core::render::Render for ExportStatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DeclarationNode {
     #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(Box<FunctionDeclarationNode>),
@@ -3047,7 +3051,7 @@ impl ::sittir_core::render::Render for DeclarationNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportSpecifierNode {
     #[kind(kind::IMPORT_SPECIFIER_NAME)]
     ImportSpecifierName(ImportSpecifierNameNode),
@@ -3101,7 +3105,7 @@ impl ::sittir_core::render::Render for ImportSpecifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StatementNode {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM, kind::EXPORT_STATEMENT_DEFAULT_DECLARATION, kind::EXPORT_STATEMENT_EQUALS_EXPORT, kind::EXPORT_STATEMENT_NAMESPACE_EXPORT, kind::EXPORT_STATEMENT, kind::EXPORT_STATEMENT_DEFAULT)]
     ExportStatement(ExportStatementNode),
@@ -3282,7 +3286,7 @@ impl ::sittir_core::render::Render for StatementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VariableDeclaratorNode {
     #[kind(kind::VARIABLE_DECLARATOR_PLAIN)]
     VariableDeclaratorPlain(Box<VariableDeclaratorPlainNode>),
@@ -3336,7 +3340,7 @@ impl ::sittir_core::render::Render for VariableDeclaratorNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForHeaderNode {
     #[kind(kind::FOR_HEADER_LHS)]
     ForHeaderLhs(Box<ForHeaderLhsNode>),
@@ -3404,7 +3408,7 @@ impl ::sittir_core::render::Render for ForHeaderNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ParenthesizedExpressionNode {
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedNode),
@@ -3465,7 +3469,7 @@ impl ::sittir_core::render::Render for ParenthesizedExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExpressionNode {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -3617,7 +3621,7 @@ impl ::sittir_core::render::Render for ExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PrimaryExpressionNode {
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionNode),
@@ -3860,7 +3864,7 @@ impl ::sittir_core::render::Render for PrimaryExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CallExpressionNode {
     #[kind(kind::CALL_EXPRESSION_CALL)]
     CallExpressionCall(CallExpressionCallNode),
@@ -3929,7 +3933,7 @@ impl ::sittir_core::render::Render for CallExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UpdateExpressionNode {
     #[kind(kind::UPDATE_EXPRESSION_POSTFIX)]
     UpdateExpressionPostfix(UpdateExpressionPostfixNode),
@@ -3990,7 +3994,7 @@ impl ::sittir_core::render::Render for UpdateExpressionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StringNode {
     #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleNode),
@@ -4051,7 +4055,7 @@ impl ::sittir_core::render::Render for StringNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NumberNode {
     #[kind(kind::NUMBER_HEX)]
     NumberHex(NumberHexNode),
@@ -4168,7 +4172,7 @@ impl ::sittir_core::render::Render for NumberNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MetaPropertyNode {
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
     #[node(edged)]
@@ -4231,7 +4235,7 @@ impl ::sittir_core::render::Render for MetaPropertyNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PatternNode {
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionNode),
@@ -4285,7 +4289,7 @@ impl ::sittir_core::render::Render for PatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MethodSignatureNode {
     #[kind(kind::METHOD_SIGNATURE_PLAIN)]
     MethodSignaturePlain(Box<MethodSignaturePlainNode>),
@@ -4346,7 +4350,7 @@ impl ::sittir_core::render::Render for MethodSignatureNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeNode {
     #[kind(kind::PARENTHESIZED_TYPE, kind::PREDEFINED_TYPE, kind::NESTED_TYPE_IDENTIFIER, kind::GENERIC_TYPE, kind::OBJECT_TYPE, kind::ARRAY_TYPE, kind::TUPLE_TYPE, kind::FLOW_MAYBE_TYPE, kind::TYPE_QUERY, kind::INDEX_TYPE_QUERY, kind::EXISTENTIAL_TYPE, kind::LITERAL_TYPE, kind::LOOKUP_TYPE, kind::CONDITIONAL_TYPE, kind::TEMPLATE_LITERAL_TYPE, kind::INTERSECTION_TYPE, kind::UNION_TYPE, kind::PRIMARY_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD, display(kind::_TYPE_IDENTIFIER), display(kind::_THIS_TYPE))]
     PrimaryType(PrimaryTypeNode),
@@ -4435,7 +4439,7 @@ impl ::sittir_core::render::Render for TypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PrimaryTypeNode {
     #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeNode),
@@ -4633,7 +4637,7 @@ impl ::sittir_core::render::Render for PrimaryTypeNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassBodyMemberNode {
     #[kind(kind::CLASS_BODY_MEMBER_METHOD)]
     ClassBodyMemberMethod(ClassBodyMemberMethodNode),
@@ -4709,7 +4713,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EnumBodyElementNode {
     #[kind(kind::ENUM_BODY_ELEMENT_NAME)]
     EnumBodyElementName(EnumBodyElementNameNode),
@@ -4763,7 +4767,7 @@ impl ::sittir_core::render::Render for EnumBodyElementNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementDefaultNode {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM)]
     ExportStatementDefaultFrom(ExportStatementDefaultFromNode),
@@ -4824,7 +4828,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NumberBigintNode {
     #[kind(kind::NUMBER_BIGINT_HEX)]
     NumberBigintHex(NumberBigintHexNode),
@@ -4901,7 +4905,7 @@ impl ::sittir_core::render::Render for NumberBigintNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MethodDefinitionClassBodyMemberMethodNode {
     #[kind(kind::METHOD_DEFINITION_PLAIN)]
     MethodDefinitionPlain(Box<MethodDefinitionPlainNode>),
@@ -4970,7 +4974,7 @@ impl ::sittir_core::render::Render for MethodDefinitionClassBodyMemberMethodNode
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NamespaceExportModuleExportNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -5056,7 +5060,7 @@ impl ::sittir_core::render::Render for NamespaceExportModuleExportNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportSpecifierTypeOnlyNodeSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
@@ -5105,7 +5109,7 @@ impl ::sittir_core::render::Render for ExportSpecifierTypeOnlyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportSpecifierNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -5192,7 +5196,7 @@ impl ::sittir_core::render::Render for ExportSpecifierNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportStatementTypeOnlyNodeSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
@@ -5243,7 +5247,7 @@ impl ::sittir_core::render::Render for ImportStatementTypeOnlyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportStatementFromClauseNodeSlot {
     #[kind(kind::IMPORT_STATEMENT_CLAUSE_FROM)]
     ImportStatementClauseFrom(ImportStatementClauseFromNode),
@@ -5316,7 +5320,7 @@ impl ::sittir_core::render::Render for ImportStatementFromClauseNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -5360,7 +5364,7 @@ impl ::sittir_core::render::Render for ImportStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportClauseContentNodeSlot {
     #[kind(kind::NAMESPACE_IMPORT)]
     NamespaceImport(NamespaceImportNode),
@@ -5425,7 +5429,7 @@ impl ::sittir_core::render::Render for ImportClauseContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportAttributeAttributeKindNodeSlot {
     #[kind(kind::WITH_KEYWORD)]
     WithKeyword,
@@ -5474,7 +5478,7 @@ impl ::sittir_core::render::Render for ImportAttributeAttributeKindNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExpressionStatementExpressionNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -5963,7 +5967,7 @@ impl ::sittir_core::render::Render for ExpressionStatementExpressionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExpressionStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -6007,7 +6011,7 @@ impl ::sittir_core::render::Render for ExpressionStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VariableDeclarationTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -6051,7 +6055,7 @@ impl ::sittir_core::render::Render for VariableDeclarationTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LexicalDeclarationKindNodeSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
@@ -6100,7 +6104,7 @@ impl ::sittir_core::render::Render for LexicalDeclarationKindNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LexicalDeclarationTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -6144,7 +6148,7 @@ impl ::sittir_core::render::Render for LexicalDeclarationTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UsingDeclarationKindNodeSlot {
     #[kind(kind::USING_KEYWORD)]
     UsingKeyword,
@@ -6188,7 +6192,7 @@ impl ::sittir_core::render::Render for UsingDeclarationKindNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UsingDeclarationAutomaticSemicolonNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -6232,7 +6236,7 @@ impl ::sittir_core::render::Render for UsingDeclarationAutomaticSemicolonNodeSlo
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StatementBlockTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -6271,7 +6275,7 @@ impl ::sittir_core::render::Render for StatementBlockTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForStatementInitializerNodeSlot {
     #[kind(kind::LEXICAL_DECLARATION)]
     LexicalDeclaration(LexicalDeclarationNode),
@@ -6791,7 +6795,7 @@ impl ::sittir_core::render::Render for ForStatementInitializerNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForStatementConditionNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -7295,7 +7299,7 @@ impl ::sittir_core::render::Render for ForStatementConditionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DoStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -7344,7 +7348,7 @@ impl ::sittir_core::render::Render for DoStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BreakStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -7388,7 +7392,7 @@ impl ::sittir_core::render::Render for BreakStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ContinueStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -7432,7 +7436,7 @@ impl ::sittir_core::render::Render for ContinueStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DebuggerStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -7476,7 +7480,7 @@ impl ::sittir_core::render::Render for DebuggerStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ReturnStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -7520,7 +7524,7 @@ impl ::sittir_core::render::Render for ReturnStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ThrowStatementTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -7564,7 +7568,7 @@ impl ::sittir_core::render::Render for ThrowStatementTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SwitchBodyCasesNodeSlot {
     #[kind(kind::SWITCH_CASE)]
     SwitchCase(SwitchCaseNode),
@@ -7621,7 +7625,7 @@ impl ::sittir_core::render::Render for SwitchBodyCasesNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum YieldExpressionExpressionNodeSlot {
     #[kind(kind::YIELD_EXPRESSION_DELEGATE)]
     YieldExpressionDelegate(YieldExpressionDelegateNode),
@@ -8110,7 +8114,7 @@ impl ::sittir_core::render::Render for YieldExpressionExpressionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectPropertiesNodeSlot {
     #[kind(kind::PAIR)]
     Pair(Box<PairNode>),
@@ -8199,7 +8203,7 @@ impl ::sittir_core::render::Render for ObjectPropertiesNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectPatternPropertiesNodeSlot {
     #[kind(kind::PAIR_PATTERN)]
     PairPattern(Box<PairPatternNode>),
@@ -8272,7 +8276,7 @@ impl ::sittir_core::render::Render for ObjectPatternPropertiesNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectAssignmentPatternLeftNodeSlot {
     #[kind(kind::_SHORTHAND_PROPERTY_IDENTIFIER_PATTERN, display)]
     ShorthandPropertyIdentifierPattern(ShorthandPropertyIdentifierPatternNode),
@@ -8337,7 +8341,7 @@ impl ::sittir_core::render::Render for ObjectAssignmentPatternLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ArrayElementsNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -8826,7 +8830,7 @@ impl ::sittir_core::render::Render for ArrayElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ArrayPatternElementsNodeSlot {
     #[kind(kind::_LHS_EXPRESSION)]
     LhsExpression(LhsExpressionNode),
@@ -8891,7 +8895,7 @@ impl ::sittir_core::render::Render for ArrayPatternElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NestedIdentifierObjectNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -8956,7 +8960,7 @@ impl ::sittir_core::render::Render for NestedIdentifierObjectNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassHeritageContentNodeSlot {
     #[kind(kind::CLASS_HERITAGE_EXTENDS_CLAUSE)]
     ClassHeritageExtendsClause(ClassHeritageExtendsClauseNode),
@@ -9013,7 +9017,7 @@ impl ::sittir_core::render::Render for ClassHeritageContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionExpressionReturnTypeNodeSlot {
     #[kind(kind::TYPE_ANNOTATION)]
     TypeAnnotation(TypeAnnotationNode),
@@ -9078,7 +9082,7 @@ impl ::sittir_core::render::Render for FunctionExpressionReturnTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ArrowFunctionBodyNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -9567,7 +9571,7 @@ impl ::sittir_core::render::Render for ArrowFunctionBodyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ArrowFunctionContentNodeSlot {
     #[kind(kind::ARROW_FUNCTION_PARAMETER)]
     ArrowFunctionParameter(ArrowFunctionParameterNode),
@@ -9624,7 +9628,7 @@ impl ::sittir_core::render::Render for ArrowFunctionContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MemberExpressionObjectNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -10113,7 +10117,7 @@ impl ::sittir_core::render::Render for MemberExpressionObjectNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MemberExpressionOptionalChainNodeSlot {
     #[kind(kind::DOT)]
     Dot,
@@ -10164,7 +10168,7 @@ impl ::sittir_core::render::Render for MemberExpressionOptionalChainNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MemberExpressionPropertyNodeSlot {
     #[kind(kind::PRIVATE_PROPERTY_IDENTIFIER)]
     PrivatePropertyIdentifier(PrivatePropertyIdentifierNode),
@@ -10221,7 +10225,7 @@ impl ::sittir_core::render::Render for MemberExpressionPropertyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SubscriptExpressionObjectNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -10702,7 +10706,7 @@ impl ::sittir_core::render::Render for SubscriptExpressionObjectNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LhsExpressionContentNodeSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionNode),
@@ -10808,7 +10812,7 @@ impl ::sittir_core::render::Render for LhsExpressionContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AssignmentExpressionLeftNodeSlot {
     #[kind(kind::PARENTHESIZED_EXPRESSION_TYPED)]
     ParenthesizedExpressionTyped(ParenthesizedExpressionTypedNode),
@@ -10873,7 +10877,7 @@ impl ::sittir_core::render::Render for AssignmentExpressionLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AugmentedAssignmentExpressionLeftNodeSlot {
     #[kind(kind::MEMBER_EXPRESSION)]
     MemberExpression(MemberExpressionNode),
@@ -10970,7 +10974,7 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionLeftNodeSlot
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AugmentedAssignmentExpressionOperatorNodeSlot {
     #[kind(kind::PLUS_EQ)]
     PlusEq,
@@ -11074,7 +11078,7 @@ impl ::sittir_core::render::Render for AugmentedAssignmentExpressionOperatorNode
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BinaryExpressionOperatorNodeSlot {
     #[kind(kind::AMP_AMP)]
     AmpAmp,
@@ -11223,7 +11227,7 @@ impl ::sittir_core::render::Render for BinaryExpressionOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnaryExpressionOperatorNodeSlot {
     #[kind(kind::BANG)]
     Bang,
@@ -11322,7 +11326,7 @@ impl ::sittir_core::render::Render for UnaryExpressionOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TemplateStringElementsNodeSlot {
     #[kind(kind::_TEMPLATE_CHARS, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     TemplateChars(TemplateCharsNode),
@@ -11395,7 +11399,7 @@ impl ::sittir_core::render::Render for TemplateStringElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DecoratorContentNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11476,7 +11480,7 @@ impl ::sittir_core::render::Render for DecoratorContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DecoratorMemberExpressionObjectNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11550,7 +11554,7 @@ impl ::sittir_core::render::Render for DecoratorMemberExpressionObjectNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DecoratorCallExpressionFunctionNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11615,7 +11619,7 @@ impl ::sittir_core::render::Render for DecoratorCallExpressionFunctionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FormalParametersElementsNodeSlot {
     #[kind(kind::FORMAL_PARAMETERS_ELEMENTS)]
     FormalParametersElements(FormalParametersElementsNode),
@@ -11672,7 +11676,7 @@ impl ::sittir_core::render::Render for FormalParametersElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PairKeyNodeSlot {
     #[kind(kind::_PROPERTY_IDENTIFIER, display)]
     PropertyIdentifier(PropertyIdentifierNode),
@@ -11849,7 +11853,7 @@ impl ::sittir_core::render::Render for PairKeyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionSignatureTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -11898,7 +11902,7 @@ impl ::sittir_core::render::Render for FunctionSignatureTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DecoratorParenthesizedExpressionExpressionNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -11971,7 +11975,7 @@ impl ::sittir_core::render::Render for DecoratorParenthesizedExpressionExpressio
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AsExpressionTypeNodeSlot {
     #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeNode),
@@ -12226,7 +12230,7 @@ impl ::sittir_core::render::Render for AsExpressionTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmbientDeclarationContentNodeSlot {
     #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(Box<FunctionDeclarationNode>),
@@ -12403,7 +12407,7 @@ impl ::sittir_core::render::Render for AmbientDeclarationContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ModuleNameNodeSlot {
     #[kind(kind::STRING_DOUBLE)]
     StringDouble(StringDoubleNode),
@@ -12484,7 +12488,7 @@ impl ::sittir_core::render::Render for ModuleNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportAliasTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -12528,7 +12532,7 @@ impl ::sittir_core::render::Render for ImportAliasTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExtendsTypeClauseTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -12593,7 +12597,7 @@ impl ::sittir_core::render::Render for ExtendsTypeClauseTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeAliasDeclarationTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -12637,7 +12641,7 @@ impl ::sittir_core::render::Render for TypeAliasDeclarationTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OptionalParameterNameNodeSlot {
     #[kind(kind::_LHS_EXPRESSION)]
     LhsExpression(LhsExpressionNode),
@@ -12703,7 +12707,7 @@ impl ::sittir_core::render::Render for OptionalParameterNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQueryMemberExpressionInTypeAnnotationObjectNodeSlot {
     #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationNode),
@@ -12768,7 +12772,7 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionInTypeAnnotation
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQueryCallExpressionInTypeAnnotationFunctionNodeSlot {
     #[kind(kind::_TYPE_QUERY_MEMBER_EXPRESSION_IN_TYPE_ANNOTATION)]
     TypeQueryMemberExpressionInTypeAnnotation(TypeQueryMemberExpressionInTypeAnnotationNode),
@@ -12825,7 +12829,7 @@ impl ::sittir_core::render::Render for TypeQueryCallExpressionInTypeAnnotationFu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AssertsValueNodeSlot {
     #[kind(kind::TYPE_PREDICATE)]
     TypePredicate(TypePredicateNode),
@@ -12899,7 +12903,7 @@ impl ::sittir_core::render::Render for AssertsValueNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TupleParameterNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -12964,7 +12968,7 @@ impl ::sittir_core::render::Render for TupleParameterNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TemplateTypeTypeNodeSlot {
     #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeNode),
@@ -13166,7 +13170,7 @@ impl ::sittir_core::render::Render for TemplateTypeTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TemplateLiteralTypeElementsNodeSlot {
     #[kind(kind::_TEMPLATE_CHARS, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     TemplateChars(TemplateCharsNode),
@@ -13231,7 +13235,7 @@ impl ::sittir_core::render::Render for TemplateLiteralTypeElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GenericTypeNameNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
@@ -13288,7 +13292,7 @@ impl ::sittir_core::render::Render for GenericTypeNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypePredicateNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -13362,7 +13366,7 @@ impl ::sittir_core::render::Render for TypePredicateNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQueryMemberExpressionObjectNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -13452,7 +13456,7 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionObjectNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQueryMemberExpressionContentNodeSlot {
     #[kind(kind::DOT)]
     Dot,
@@ -13503,7 +13507,7 @@ impl ::sittir_core::render::Render for TypeQueryMemberExpressionContentNodeSlot 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQuerySubscriptExpressionIndexNodeSlot {
     #[kind(kind::PREDEFINED_TYPE, kind::ANY_KEYWORD, kind::NUMBER_KEYWORD, kind::BOOLEAN_KEYWORD, kind::STRING_KEYWORD, kind::SYMBOL_KEYWORD, kind::UNIQUE, kind::VOID_KEYWORD, kind::UNKNOWN_KEYWORD, kind::NEVER_KEYWORD, kind::OBJECT_KEYWORD)]
     PredefinedType(PredefinedTypeEnum),
@@ -13664,7 +13668,7 @@ impl ::sittir_core::render::Render for TypeQuerySubscriptExpressionIndexNodeSlot
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQueryCallExpressionFunctionNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -13745,7 +13749,7 @@ impl ::sittir_core::render::Render for TypeQueryCallExpressionFunctionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeQueryExpressionNodeSlot {
     #[kind(kind::_TYPE_QUERY_SUBSCRIPT_EXPRESSION)]
     TypeQuerySubscriptExpression(TypeQuerySubscriptExpressionNode),
@@ -13843,7 +13847,7 @@ impl ::sittir_core::render::Render for TypeQueryExpressionNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LiteralTypeContentNodeSlot {
     #[kind(kind::LITERAL_TYPE_NEGATIVE_NUMBER)]
     LiteralTypeNegativeNumber(LiteralTypeNegativeNumberNode),
@@ -14040,7 +14044,7 @@ impl ::sittir_core::render::Render for LiteralTypeContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectTypeOpeningNodeSlot {
     #[kind(kind::LBRACE)]
     Lbrace,
@@ -14089,7 +14093,7 @@ impl ::sittir_core::render::Render for ObjectTypeOpeningNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectTypeClosingNodeSlot {
     #[kind(kind::RBRACE)]
     Rbrace,
@@ -14138,7 +14142,7 @@ impl ::sittir_core::render::Render for ObjectTypeClosingNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ConstraintContentNodeSlot {
     #[kind(kind::EXTENDS_KEYWORD)]
     ExtendsKeyword,
@@ -14189,7 +14193,7 @@ impl ::sittir_core::render::Render for ConstraintContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionTypeReturnTypeNodeSlot {
     #[kind(kind::PARENTHESIZED_TYPE)]
     ParenthesizedType(ParenthesizedTypeNode),
@@ -14447,7 +14451,7 @@ impl ::sittir_core::render::Render for FunctionTypeReturnTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FormalParametersElementsItemNodeSlot {
     #[kind(kind::REQUIRED_PARAMETER)]
     RequiredParameter(Box<RequiredParameterNode>),
@@ -14504,7 +14508,7 @@ impl ::sittir_core::render::Render for FormalParametersElementsItemNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TupleTypeMembersItemNodeSlot {
     #[kind(kind::TUPLE_PARAMETER)]
     TupleParameter(TupleParameterNode),
@@ -14778,7 +14782,7 @@ impl ::sittir_core::render::Render for TupleTypeMembersItemNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportClauseGroupContentNodeSlot {
     #[kind(kind::NAMESPACE_IMPORT)]
     NamespaceImport(NamespaceImportNode),
@@ -14835,7 +14839,7 @@ impl ::sittir_core::render::Render for ImportClauseGroupContentNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CatchClauseGroupParameterNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -14908,7 +14912,7 @@ impl ::sittir_core::render::Render for CatchClauseGroupParameterNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmbientDeclarationModuleTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -14957,7 +14961,7 @@ impl ::sittir_core::render::Render for AmbientDeclarationModuleTerminatorNodeSlo
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectTypeContentItemNodeSlot {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM)]
     ExportStatementDefaultFrom(ExportStatementDefaultFromNode),
@@ -15094,7 +15098,7 @@ impl ::sittir_core::render::Render for ObjectTypeContentItemNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementNamespaceExportTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -15138,7 +15142,7 @@ impl ::sittir_core::render::Render for ExportStatementNamespaceExportTerminatorN
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementEqualsExportTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -15182,7 +15186,7 @@ impl ::sittir_core::render::Render for ExportStatementEqualsExportTerminatorNode
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BinaryExpressionInLeftNodeSlot {
     #[kind(kind::AS_EXPRESSION)]
     AsExpression(AsExpressionNode),
@@ -15671,7 +15675,7 @@ impl ::sittir_core::render::Render for BinaryExpressionInLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassBodyMemberMethodTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -15720,7 +15724,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberMethodTerminatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassBodyMemberMethodSigTerminatorNodeSlot {
     #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
@@ -15764,7 +15768,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberMethodSigTerminatorNodeSlo
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassBodyMemberDeclarationMemberNodeSlot {
     #[kind(kind::ABSTRACT_METHOD_SIGNATURE_PLAIN)]
     AbstractMethodSignaturePlain(Box<AbstractMethodSignaturePlainNode>),
@@ -15885,7 +15889,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationMemberNodeSlot 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassBodyMemberDeclarationTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -15939,7 +15943,7 @@ impl ::sittir_core::render::Render for ClassBodyMemberDeclarationTerminatorNodeS
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IndexSignatureColonSignNodeSlot {
     #[kind(kind::DASH)]
     Dash,
@@ -15978,7 +15982,7 @@ impl ::sittir_core::render::Render for IndexSignatureColonSignNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IndexSignatureColonTypeNodeSlot {
     #[kind(kind::TYPE_ANNOTATION)]
     TypeAnnotation(TypeAnnotationNode),
@@ -16051,7 +16055,7 @@ impl ::sittir_core::render::Render for IndexSignatureColonTypeNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportSpecifierNameTypeOnlyNodeSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
@@ -16100,7 +16104,7 @@ impl ::sittir_core::render::Render for ImportSpecifierNameTypeOnlyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportSpecifierAsTypeOnlyNodeSlot {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
@@ -16149,7 +16153,7 @@ impl ::sittir_core::render::Render for ImportSpecifierAsTypeOnlyNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportSpecifierAsNameNodeSlot {
     #[kind(kind::IDENTIFIER, folded(kind::CONSTRUCTOR_KEYWORD), folded(kind::DECLARE_KEYWORD), folded(kind::NAMESPACE_KEYWORD), folded(kind::TYPE_KEYWORD), folded(kind::PUBLIC_KEYWORD), folded(kind::PRIVATE_KEYWORD), folded(kind::PROTECTED_KEYWORD), folded(kind::OVERRIDE_KEYWORD), folded(kind::READONLY_KEYWORD), folded(kind::MODULE_KEYWORD), folded(kind::ANY_KEYWORD), folded(kind::NUMBER_KEYWORD), folded(kind::BOOLEAN_KEYWORD), folded(kind::STRING_KEYWORD), folded(kind::SYMBOL_KEYWORD), folded(kind::EXPORT_KEYWORD), folded(kind::OBJECT_KEYWORD), folded(kind::NEW_KEYWORD), folded(kind::GET_KEYWORD), folded(kind::SET_KEYWORD), folded(kind::ASYNC_KEYWORD), folded(kind::AWAIT_KEYWORD), folded(kind::STATIC_KEYWORD), folded(kind::LET_KEYWORD), folded(kind::OF_KEYWORD), folded(kind::BREAK_KEYWORD), folded(kind::CASE_KEYWORD), folded(kind::CATCH_KEYWORD), folded(kind::CLASS_KEYWORD), folded(kind::CONST_KEYWORD), folded(kind::CONTINUE_KEYWORD), folded(kind::DEBUGGER_KEYWORD), folded(kind::DEFAULT_KEYWORD), folded(kind::DELETE_KEYWORD), folded(kind::DO_KEYWORD), folded(kind::ELSE_KEYWORD), folded(kind::EXTENDS_KEYWORD), folded(kind::FALSE_KEYWORD), folded(kind::FINALLY_KEYWORD), folded(kind::FOR_KEYWORD), folded(kind::FUNCTION_KEYWORD), folded(kind::IF_KEYWORD), folded(kind::IMPORT_KEYWORD), folded(kind::IN_KEYWORD), folded(kind::INSTANCEOF_KEYWORD), folded(kind::NULL_KEYWORD), folded(kind::RETURN_KEYWORD), folded(kind::SUPER_KEYWORD), folded(kind::SWITCH_KEYWORD), folded(kind::THIS_KEYWORD), folded(kind::THROW_KEYWORD), folded(kind::TRUE_KEYWORD), folded(kind::TRY_KEYWORD), folded(kind::TYPEOF_KEYWORD), folded(kind::VAR_KEYWORD), folded(kind::VOID_KEYWORD), folded(kind::WHILE_KEYWORD), folded(kind::WITH_KEYWORD))]
     Identifier(IdentifierNode),
@@ -16236,7 +16240,7 @@ impl ::sittir_core::render::Render for ImportSpecifierAsNameNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CallExpressionTemplateCallFunctionNodeSlot {
     #[kind(kind::SUBSCRIPT_EXPRESSION)]
     SubscriptExpression(SubscriptExpressionNode),
@@ -16605,7 +16609,7 @@ impl ::sittir_core::render::Render for CallExpressionTemplateCallFunctionNodeSlo
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StringDoubleElementsNodeSlot {
     #[kind(kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     UnescapedDoubleStringFragment(UnescapedDoubleStringFragmentNode),
@@ -16670,7 +16674,7 @@ impl ::sittir_core::render::Render for StringDoubleElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StringSingleElementsNodeSlot {
     #[kind(kind::UNESCAPED_SINGLE_STRING_FRAGMENT, kind::UNESCAPED_DOUBLE_STRING_FRAGMENT)]
     UnescapedSingleStringFragment(UnescapedSingleStringFragmentNode),
@@ -16735,7 +16739,7 @@ impl ::sittir_core::render::Render for StringSingleElementsNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UpdateExpressionPostfixOperatorNodeSlot {
     #[kind(kind::PLUS_PLUS)]
     PlusPlus,
@@ -16784,7 +16788,7 @@ impl ::sittir_core::render::Render for UpdateExpressionPostfixOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UpdateExpressionPrefixOperatorNodeSlot {
     #[kind(kind::PLUS_PLUS)]
     PlusPlus,
@@ -16833,7 +16837,7 @@ impl ::sittir_core::render::Render for UpdateExpressionPrefixOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementDefaultFromTerminatorNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -16877,7 +16881,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromTerminatorNodeS
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementDefaultFromContentNodeSlot {
     #[kind(kind::EXPORT_STATEMENT_DEFAULT_FROM_STAR_FROM)]
     ExportStatementDefaultFromStarFrom(ExportStatementDefaultFromStarFromNode),
@@ -16942,7 +16946,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultFromContentNodeSlot
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementDefaultDeclarationContentNodeSlot {
     #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(Box<FunctionDeclarationNode>),
@@ -17111,7 +17115,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationContentN
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementDefaultDeclarationDefaultKwContentNodeSlot {
     #[kind(kind::FUNCTION_DECLARATION)]
     FunctionDeclaration(Box<FunctionDeclarationNode>),
@@ -17280,7 +17284,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -17324,7 +17328,7 @@ impl ::sittir_core::render::Render for ExportStatementDefaultDeclarationDefaultK
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForHeaderLhsLeftNodeSlot {
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionNode),
@@ -17389,7 +17393,7 @@ impl ::sittir_core::render::Render for ForHeaderLhsLeftNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForHeaderLhsOperatorNodeSlot {
     #[kind(kind::IN_KEYWORD)]
     InKeyword,
@@ -17428,7 +17432,7 @@ impl ::sittir_core::render::Render for ForHeaderLhsOperatorNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForHeaderLetConstKindKindNodeSlot {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
@@ -17467,7 +17471,7 @@ impl ::sittir_core::render::Render for ForHeaderLetConstKindKindNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForHeaderUsingKindKindNodeSlot {
     #[kind(kind::USING_KEYWORD)]
     UsingKeyword,
@@ -17512,7 +17516,7 @@ impl ::sittir_core::render::Render for ForHeaderUsingKindKindNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SetterParameterPatternNodeSlot {
     #[kind(kind::_LHS_EXPRESSION, kind::LHS_EXPRESSION)]
     LhsExpression(LhsExpressionNode),
@@ -17570,7 +17574,7 @@ impl ::sittir_core::render::Render for SetterParameterPatternNodeSlot {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PublicFieldDefinitionPlainOptionalityNodeSlot {
     #[kind(kind::QMARK, folded(kind::_TERNARY_QMARK))]
     Qmark,
@@ -17877,7 +17881,7 @@ impl ::sittir_core::prepare::Prepare for ExportSpecifierNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportNode {
     #[kind(kind::IMPORT)]
     Import,
@@ -19244,7 +19248,7 @@ impl ::sittir_core::prepare::Prepare for ThrowStatementNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EmptyStatementNode {
     #[kind(kind::EMPTY_STATEMENT)]
     #[node(edged)]
@@ -20585,7 +20589,7 @@ impl ::sittir_core::prepare::Prepare for ArrowFunctionNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OptionalChainNode {
     #[kind(kind::OPTIONAL_CHAIN)]
     OptionalChain,
@@ -21753,7 +21757,7 @@ impl ::sittir_core::prepare::Prepare for PrivatePropertyIdentifierNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ThisNode {
     #[kind(kind::THIS)]
     #[node(edged)]
@@ -21801,7 +21805,7 @@ impl ::sittir_core::render::Render for ThisNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SuperNode {
     #[kind(kind::SUPER)]
     #[node(edged)]
@@ -21849,7 +21853,7 @@ impl ::sittir_core::render::Render for SuperNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TrueNode {
     #[kind(kind::TRUE)]
     #[node(edged)]
@@ -21897,7 +21901,7 @@ impl ::sittir_core::render::Render for TrueNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FalseNode {
     #[kind(kind::FALSE)]
     #[node(edged)]
@@ -21945,7 +21949,7 @@ impl ::sittir_core::render::Render for FalseNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NullNode {
     #[kind(kind::NULL)]
     #[node(edged)]
@@ -21993,7 +21997,7 @@ impl ::sittir_core::render::Render for NullNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UndefinedNode {
     #[kind(kind::UNDEFINED)]
     #[node(edged)]
@@ -23933,7 +23937,7 @@ impl ::sittir_core::render::Render for AccessibilityModifierEnum {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OverrideModifierNode {
     #[kind(kind::OVERRIDE_MODIFIER)]
     OverrideModifier,
@@ -25626,7 +25630,7 @@ impl ::sittir_core::prepare::Prepare for LiteralTypeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExistentialTypeNode {
     #[kind(kind::EXISTENTIAL_TYPE)]
     #[node(edged)]
@@ -27193,7 +27197,7 @@ impl ::sittir_core::prepare::Prepare for ImportClauseGroupNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UsingDeclarationArmNode {
     #[kind(kind::USING_DECLARATION_ARM)]
     UsingDeclarationArm,
@@ -28383,7 +28387,7 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionInNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EmptyMemberNode {
     #[kind(kind::_EMPTY_MEMBER)]
     #[node(edged)]
@@ -28829,7 +28833,7 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionDelegateNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OptionalChainMarkerNode {
     #[kind(kind::_OPTIONAL_CHAIN_MARKER)]
     OptionalChainMarker,
@@ -30087,7 +30091,7 @@ impl ::sittir_core::prepare::Prepare for VariableDeclaratorDefiniteNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MetaPropertyNewTargetNode {
     #[kind(kind::META_PROPERTY_NEW_TARGET)]
     #[node(edged)]
@@ -30135,7 +30139,7 @@ impl ::sittir_core::render::Render for MetaPropertyNewTargetNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MetaPropertyImportMetaNode {
     #[kind(kind::META_PROPERTY_IMPORT_META)]
     #[node(edged)]
@@ -30432,7 +30436,7 @@ impl ::sittir_core::prepare::Prepare for ForHeaderUsingKindNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FormalParametersGetAccessorSignatureNode {
     #[kind(kind::_FORMAL_PARAMETERS_GET_ACCESSOR_SIGNATURE)]
     FormalParametersGetAccessorSignature,
@@ -31593,7 +31597,7 @@ impl ::sittir_core::prepare::Prepare for TemplateCharsNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AutomaticSemicolonNode {
     #[kind(kind::_AUTOMATIC_SEMICOLON)]
     AutomaticSemicolon,
@@ -31621,7 +31625,7 @@ impl ::sittir_core::render::Render for AutomaticSemicolonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionSignatureAutomaticSemicolonNode {
     #[kind(kind::_FUNCTION_SIGNATURE_AUTOMATIC_SEMICOLON)]
     FunctionSignatureAutomaticSemicolon,
@@ -31649,7 +31653,7 @@ impl ::sittir_core::render::Render for FunctionSignatureAutomaticSemicolonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TightNode {
     #[kind(kind::_TIGHT)]
     Tight,
@@ -31677,7 +31681,7 @@ impl ::sittir_core::render::Render for TightNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SpaceNode {
     #[kind(kind::_SPACE)]
     Space,
@@ -31705,7 +31709,7 @@ impl ::sittir_core::render::Render for SpaceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TabNode {
     #[kind(kind::_TAB)]
     Tab,
@@ -31733,7 +31737,7 @@ impl ::sittir_core::render::Render for TabNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NewlineNode {
     #[kind(kind::_NEWLINE)]
     Newline,
@@ -31761,7 +31765,7 @@ impl ::sittir_core::render::Render for NewlineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BlanklineNode {
     #[kind(kind::_BLANKLINE)]
     Blankline,
@@ -31789,7 +31793,7 @@ impl ::sittir_core::render::Render for BlanklineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DoubleBlanklineNode {
     #[kind(kind::_DOUBLE_BLANKLINE)]
     DoubleBlankline,
@@ -31817,7 +31821,7 @@ impl ::sittir_core::render::Render for DoubleBlanklineNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IndentNode {
     #[kind(kind::_INDENT)]
     Indent,
@@ -31845,7 +31849,7 @@ impl ::sittir_core::render::Render for IndentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DedentNode {
     #[kind(kind::_DEDENT)]
     Dedent,
@@ -32438,7 +32442,7 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ThisTypeNode {
     #[kind(display(kind::_THIS_TYPE))]
     ThisType,
@@ -32466,7 +32470,7 @@ impl ::sittir_core::render::Render for ThisTypeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarNode {
     #[kind(kind::STAR)]
     Star,
@@ -32494,7 +32498,7 @@ impl ::sittir_core::render::Render for StarNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AsKeywordNode {
     #[kind(kind::AS_KEYWORD)]
     AsKeyword,
@@ -32522,7 +32526,7 @@ impl ::sittir_core::render::Render for AsKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DefaultKeywordNode {
     #[kind(kind::DEFAULT_KEYWORD)]
     DefaultKeyword,
@@ -32550,7 +32554,7 @@ impl ::sittir_core::render::Render for DefaultKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbraceNode {
     #[kind(kind::LBRACE)]
     Lbrace,
@@ -32578,7 +32582,7 @@ impl ::sittir_core::render::Render for LbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RbraceNode {
     #[kind(kind::RBRACE)]
     Rbrace,
@@ -32606,7 +32610,7 @@ impl ::sittir_core::render::Render for RbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeKeywordNode {
     #[kind(kind::TYPE_KEYWORD)]
     TypeKeyword,
@@ -32634,7 +32638,7 @@ impl ::sittir_core::render::Render for TypeKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TypeofKeywordNode {
     #[kind(kind::TYPEOF_KEYWORD)]
     TypeofKeyword,
@@ -32662,7 +32666,7 @@ impl ::sittir_core::render::Render for TypeofKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImportKeywordNode {
     #[kind(kind::IMPORT_KEYWORD)]
     ImportKeyword,
@@ -32690,7 +32694,7 @@ impl ::sittir_core::render::Render for ImportKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SemiNode {
     #[kind(kind::SEMI)]
     Semi,
@@ -32718,7 +32722,7 @@ impl ::sittir_core::render::Render for SemiNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum WithKeywordNode {
     #[kind(kind::WITH_KEYWORD)]
     WithKeyword,
@@ -32746,7 +32750,7 @@ impl ::sittir_core::render::Render for WithKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AssertKeywordNode {
     #[kind(kind::ASSERT_KEYWORD)]
     AssertKeyword,
@@ -32774,7 +32778,7 @@ impl ::sittir_core::render::Render for AssertKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VarKeywordNode {
     #[kind(kind::VAR_KEYWORD)]
     VarKeyword,
@@ -32802,7 +32806,7 @@ impl ::sittir_core::render::Render for VarKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LetKeywordNode {
     #[kind(kind::LET_KEYWORD)]
     LetKeyword,
@@ -32830,7 +32834,7 @@ impl ::sittir_core::render::Render for LetKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ConstKeywordNode {
     #[kind(kind::CONST_KEYWORD)]
     ConstKeyword,
@@ -32858,7 +32862,7 @@ impl ::sittir_core::render::Render for ConstKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UsingKeywordNode {
     #[kind(kind::USING_KEYWORD)]
     UsingKeyword,
@@ -32886,7 +32890,7 @@ impl ::sittir_core::render::Render for UsingKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ElseKeywordNode {
     #[kind(kind::ELSE_KEYWORD)]
     ElseKeyword,
@@ -32914,7 +32918,7 @@ impl ::sittir_core::render::Render for ElseKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IfKeywordNode {
     #[kind(kind::IF_KEYWORD)]
     IfKeyword,
@@ -32942,7 +32946,7 @@ impl ::sittir_core::render::Render for IfKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SwitchKeywordNode {
     #[kind(kind::SWITCH_KEYWORD)]
     SwitchKeyword,
@@ -32970,7 +32974,7 @@ impl ::sittir_core::render::Render for SwitchKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ForKeywordNode {
     #[kind(kind::FOR_KEYWORD)]
     ForKeyword,
@@ -32998,7 +33002,7 @@ impl ::sittir_core::render::Render for ForKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LparenNode {
     #[kind(kind::LPAREN)]
     Lparen,
@@ -33026,7 +33030,7 @@ impl ::sittir_core::render::Render for LparenNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RparenNode {
     #[kind(kind::RPAREN)]
     Rparen,
@@ -33054,7 +33058,7 @@ impl ::sittir_core::render::Render for RparenNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AwaitKeywordNode {
     #[kind(kind::AWAIT_KEYWORD)]
     AwaitKeyword,
@@ -33082,7 +33086,7 @@ impl ::sittir_core::render::Render for AwaitKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum WhileKeywordNode {
     #[kind(kind::WHILE_KEYWORD)]
     WhileKeyword,
@@ -33110,7 +33114,7 @@ impl ::sittir_core::render::Render for WhileKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DoKeywordNode {
     #[kind(kind::DO_KEYWORD)]
     DoKeyword,
@@ -33138,7 +33142,7 @@ impl ::sittir_core::render::Render for DoKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TryKeywordNode {
     #[kind(kind::TRY_KEYWORD)]
     TryKeyword,
@@ -33166,7 +33170,7 @@ impl ::sittir_core::render::Render for TryKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BreakKeywordNode {
     #[kind(kind::BREAK_KEYWORD)]
     BreakKeyword,
@@ -33194,7 +33198,7 @@ impl ::sittir_core::render::Render for BreakKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ContinueKeywordNode {
     #[kind(kind::CONTINUE_KEYWORD)]
     ContinueKeyword,
@@ -33222,7 +33226,7 @@ impl ::sittir_core::render::Render for ContinueKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DebuggerKeywordNode {
     #[kind(kind::DEBUGGER_KEYWORD)]
     DebuggerKeyword,
@@ -33250,7 +33254,7 @@ impl ::sittir_core::render::Render for DebuggerKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ReturnKeywordNode {
     #[kind(kind::RETURN_KEYWORD)]
     ReturnKeyword,
@@ -33278,7 +33282,7 @@ impl ::sittir_core::render::Render for ReturnKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ThrowKeywordNode {
     #[kind(kind::THROW_KEYWORD)]
     ThrowKeyword,
@@ -33306,7 +33310,7 @@ impl ::sittir_core::render::Render for ThrowKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ColonNode {
     #[kind(kind::COLON)]
     Colon,
@@ -33334,7 +33338,7 @@ impl ::sittir_core::render::Render for ColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CaseKeywordNode {
     #[kind(kind::CASE_KEYWORD)]
     CaseKeyword,
@@ -33362,7 +33366,7 @@ impl ::sittir_core::render::Render for CaseKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CatchKeywordNode {
     #[kind(kind::CATCH_KEYWORD)]
     CatchKeyword,
@@ -33390,7 +33394,7 @@ impl ::sittir_core::render::Render for CatchKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FinallyKeywordNode {
     #[kind(kind::FINALLY_KEYWORD)]
     FinallyKeyword,
@@ -33418,7 +33422,7 @@ impl ::sittir_core::render::Render for FinallyKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum YieldKeywordNode {
     #[kind(kind::YIELD_KEYWORD)]
     YieldKeyword,
@@ -33446,7 +33450,7 @@ impl ::sittir_core::render::Render for YieldKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqNode {
     #[kind(kind::EQ)]
     Eq,
@@ -33474,7 +33478,7 @@ impl ::sittir_core::render::Render for EqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbrackNode {
     #[kind(kind::LBRACK)]
     Lbrack,
@@ -33502,7 +33506,7 @@ impl ::sittir_core::render::Render for LbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RbrackNode {
     #[kind(kind::RBRACK)]
     Rbrack,
@@ -33530,7 +33534,7 @@ impl ::sittir_core::render::Render for RbrackNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DotNode {
     #[kind(kind::DOT)]
     Dot,
@@ -33558,7 +33562,7 @@ impl ::sittir_core::render::Render for DotNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ClassKeywordNode {
     #[kind(kind::CLASS_KEYWORD)]
     ClassKeyword,
@@ -33586,7 +33590,7 @@ impl ::sittir_core::render::Render for ClassKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AsyncKeywordNode {
     #[kind(kind::ASYNC_KEYWORD)]
     AsyncKeyword,
@@ -33614,7 +33618,7 @@ impl ::sittir_core::render::Render for AsyncKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FunctionKeywordNode {
     #[kind(kind::FUNCTION_KEYWORD)]
     FunctionKeyword,
@@ -33642,7 +33646,7 @@ impl ::sittir_core::render::Render for FunctionKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqGtNode {
     #[kind(kind::EQ_GT)]
     EqGt,
@@ -33670,7 +33674,7 @@ impl ::sittir_core::render::Render for EqGtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkDotNode {
     #[kind(kind::QMARK_DOT)]
     QmarkDot,
@@ -33698,7 +33702,7 @@ impl ::sittir_core::render::Render for QmarkDotNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NewKeywordNode {
     #[kind(kind::NEW_KEYWORD)]
     NewKeyword,
@@ -33726,7 +33730,7 @@ impl ::sittir_core::render::Render for NewKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusEqNode {
     #[kind(kind::PLUS_EQ)]
     PlusEq,
@@ -33754,7 +33758,7 @@ impl ::sittir_core::render::Render for PlusEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashEqNode {
     #[kind(kind::DASH_EQ)]
     DashEq,
@@ -33782,7 +33786,7 @@ impl ::sittir_core::render::Render for DashEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarEqNode {
     #[kind(kind::STAR_EQ)]
     StarEq,
@@ -33810,7 +33814,7 @@ impl ::sittir_core::render::Render for StarEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SlashEqNode {
     #[kind(kind::SLASH_EQ)]
     SlashEq,
@@ -33838,7 +33842,7 @@ impl ::sittir_core::render::Render for SlashEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PercentEqNode {
     #[kind(kind::PERCENT_EQ)]
     PercentEq,
@@ -33866,7 +33870,7 @@ impl ::sittir_core::render::Render for PercentEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CaretEqNode {
     #[kind(kind::CARET_EQ)]
     CaretEq,
@@ -33894,7 +33898,7 @@ impl ::sittir_core::render::Render for CaretEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpEqNode {
     #[kind(kind::AMP_EQ)]
     AmpEq,
@@ -33922,7 +33926,7 @@ impl ::sittir_core::render::Render for AmpEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipeEqNode {
     #[kind(kind::PIPE_EQ)]
     PipeEq,
@@ -33950,7 +33954,7 @@ impl ::sittir_core::render::Render for PipeEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtGtEqNode {
     #[kind(kind::GT_GT_EQ)]
     GtGtEq,
@@ -33978,7 +33982,7 @@ impl ::sittir_core::render::Render for GtGtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtGtGtEqNode {
     #[kind(kind::GT_GT_GT_EQ)]
     GtGtGtEq,
@@ -34006,7 +34010,7 @@ impl ::sittir_core::render::Render for GtGtGtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtLtEqNode {
     #[kind(kind::LT_LT_EQ)]
     LtLtEq,
@@ -34034,7 +34038,7 @@ impl ::sittir_core::render::Render for LtLtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarStarEqNode {
     #[kind(kind::STAR_STAR_EQ)]
     StarStarEq,
@@ -34062,7 +34066,7 @@ impl ::sittir_core::render::Render for StarStarEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpAmpEqNode {
     #[kind(kind::AMP_AMP_EQ)]
     AmpAmpEq,
@@ -34090,7 +34094,7 @@ impl ::sittir_core::render::Render for AmpAmpEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipePipeEqNode {
     #[kind(kind::PIPE_PIPE_EQ)]
     PipePipeEq,
@@ -34118,7 +34122,7 @@ impl ::sittir_core::render::Render for PipePipeEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkQmarkEqNode {
     #[kind(kind::QMARK_QMARK_EQ)]
     QmarkQmarkEq,
@@ -34146,7 +34150,7 @@ impl ::sittir_core::render::Render for QmarkQmarkEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DotDotDotNode {
     #[kind(kind::DOT_DOT_DOT)]
     DotDotDot,
@@ -34174,7 +34178,7 @@ impl ::sittir_core::render::Render for DotDotDotNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkNode {
     #[kind(kind::QMARK, folded(kind::_TERNARY_QMARK))]
     Qmark,
@@ -34202,7 +34206,7 @@ impl ::sittir_core::render::Render for QmarkNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpAmpNode {
     #[kind(kind::AMP_AMP)]
     AmpAmp,
@@ -34230,7 +34234,7 @@ impl ::sittir_core::render::Render for AmpAmpNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipePipeNode {
     #[kind(kind::PIPE_PIPE)]
     PipePipe,
@@ -34258,7 +34262,7 @@ impl ::sittir_core::render::Render for PipePipeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtGtNode {
     #[kind(kind::GT_GT)]
     GtGt,
@@ -34286,7 +34290,7 @@ impl ::sittir_core::render::Render for GtGtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtGtGtNode {
     #[kind(kind::GT_GT_GT)]
     GtGtGt,
@@ -34314,7 +34318,7 @@ impl ::sittir_core::render::Render for GtGtGtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtLtNode {
     #[kind(kind::LT_LT)]
     LtLt,
@@ -34342,7 +34346,7 @@ impl ::sittir_core::render::Render for LtLtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AmpNode {
     #[kind(kind::AMP)]
     Amp,
@@ -34370,7 +34374,7 @@ impl ::sittir_core::render::Render for AmpNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CaretNode {
     #[kind(kind::CARET)]
     Caret,
@@ -34398,7 +34402,7 @@ impl ::sittir_core::render::Render for CaretNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipeNode {
     #[kind(kind::PIPE)]
     Pipe,
@@ -34426,7 +34430,7 @@ impl ::sittir_core::render::Render for PipeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusNode {
     #[kind(kind::PLUS)]
     Plus,
@@ -34454,7 +34458,7 @@ impl ::sittir_core::render::Render for PlusNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashNode {
     #[kind(kind::DASH)]
     Dash,
@@ -34482,7 +34486,7 @@ impl ::sittir_core::render::Render for DashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SlashNode {
     #[kind(kind::SLASH, folded(kind::SLASH2))]
     Slash,
@@ -34510,7 +34514,7 @@ impl ::sittir_core::render::Render for SlashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PercentNode {
     #[kind(kind::PERCENT)]
     Percent,
@@ -34538,7 +34542,7 @@ impl ::sittir_core::render::Render for PercentNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StarStarNode {
     #[kind(kind::STAR_STAR)]
     StarStar,
@@ -34566,7 +34570,7 @@ impl ::sittir_core::render::Render for StarStarNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtNode {
     #[kind(kind::LT)]
     Lt,
@@ -34594,7 +34598,7 @@ impl ::sittir_core::render::Render for LtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LtEqNode {
     #[kind(kind::LT_EQ)]
     LtEq,
@@ -34622,7 +34626,7 @@ impl ::sittir_core::render::Render for LtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqEqNode {
     #[kind(kind::EQ_EQ)]
     EqEq,
@@ -34650,7 +34654,7 @@ impl ::sittir_core::render::Render for EqEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EqEqEqNode {
     #[kind(kind::EQ_EQ_EQ)]
     EqEqEq,
@@ -34678,7 +34682,7 @@ impl ::sittir_core::render::Render for EqEqEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BangEqNode {
     #[kind(kind::BANG_EQ)]
     BangEq,
@@ -34706,7 +34710,7 @@ impl ::sittir_core::render::Render for BangEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BangEqEqNode {
     #[kind(kind::BANG_EQ_EQ)]
     BangEqEq,
@@ -34734,7 +34738,7 @@ impl ::sittir_core::render::Render for BangEqEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtEqNode {
     #[kind(kind::GT_EQ)]
     GtEq,
@@ -34762,7 +34766,7 @@ impl ::sittir_core::render::Render for GtEqNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GtNode {
     #[kind(kind::GT)]
     Gt,
@@ -34790,7 +34794,7 @@ impl ::sittir_core::render::Render for GtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkQmarkNode {
     #[kind(kind::QMARK_QMARK)]
     QmarkQmark,
@@ -34818,7 +34822,7 @@ impl ::sittir_core::render::Render for QmarkQmarkNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InstanceofKeywordNode {
     #[kind(kind::INSTANCEOF_KEYWORD)]
     InstanceofKeyword,
@@ -34846,7 +34850,7 @@ impl ::sittir_core::render::Render for InstanceofKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BangNode {
     #[kind(kind::BANG)]
     Bang,
@@ -34874,7 +34878,7 @@ impl ::sittir_core::render::Render for BangNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TildeNode {
     #[kind(kind::TILDE)]
     Tilde,
@@ -34902,7 +34906,7 @@ impl ::sittir_core::render::Render for TildeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum VoidKeywordNode {
     #[kind(kind::VOID_KEYWORD)]
     VoidKeyword,
@@ -34930,7 +34934,7 @@ impl ::sittir_core::render::Render for VoidKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DeleteKeywordNode {
     #[kind(kind::DELETE_KEYWORD)]
     DeleteKeyword,
@@ -34958,7 +34962,7 @@ impl ::sittir_core::render::Render for DeleteKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BquoteNode {
     #[kind(kind::BQUOTE, folded(kind::BQUOTE2))]
     Bquote,
@@ -34986,7 +34990,7 @@ impl ::sittir_core::render::Render for BquoteNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DollarLbraceNode {
     #[kind(kind::DOLLAR_LBRACE)]
     DollarLbrace,
@@ -35014,7 +35018,7 @@ impl ::sittir_core::render::Render for DollarLbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ThisKeywordNode {
     #[kind(kind::THIS_KEYWORD)]
     ThisKeyword,
@@ -35042,7 +35046,7 @@ impl ::sittir_core::render::Render for ThisKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SuperKeywordNode {
     #[kind(kind::SUPER_KEYWORD)]
     SuperKeyword,
@@ -35070,7 +35074,7 @@ impl ::sittir_core::render::Render for SuperKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TrueKeywordNode {
     #[kind(kind::TRUE_KEYWORD)]
     TrueKeyword,
@@ -35098,7 +35102,7 @@ impl ::sittir_core::render::Render for TrueKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FalseKeywordNode {
     #[kind(kind::FALSE_KEYWORD)]
     FalseKeyword,
@@ -35126,7 +35130,7 @@ impl ::sittir_core::render::Render for FalseKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NullKeywordNode {
     #[kind(kind::NULL_KEYWORD)]
     NullKeyword,
@@ -35154,7 +35158,7 @@ impl ::sittir_core::render::Render for NullKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AtNode {
     #[kind(kind::AT)]
     At,
@@ -35182,7 +35186,7 @@ impl ::sittir_core::render::Render for AtNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StaticKeywordNode {
     #[kind(kind::STATIC_KEYWORD)]
     StaticKeyword,
@@ -35210,7 +35214,7 @@ impl ::sittir_core::render::Render for StaticKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SatisfiesKeywordNode {
     #[kind(kind::SATISFIES_KEYWORD)]
     SatisfiesKeyword,
@@ -35238,7 +35242,7 @@ impl ::sittir_core::render::Render for SatisfiesKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum RequireKeywordNode {
     #[kind(kind::REQUIRE_KEYWORD)]
     RequireKeyword,
@@ -35266,7 +35270,7 @@ impl ::sittir_core::render::Render for RequireKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExtendsKeywordNode {
     #[kind(kind::EXTENDS_KEYWORD)]
     ExtendsKeyword,
@@ -35294,7 +35298,7 @@ impl ::sittir_core::render::Render for ExtendsKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ImplementsKeywordNode {
     #[kind(kind::IMPLEMENTS_KEYWORD)]
     ImplementsKeyword,
@@ -35322,7 +35326,7 @@ impl ::sittir_core::render::Render for ImplementsKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DeclareKeywordNode {
     #[kind(kind::DECLARE_KEYWORD)]
     DeclareKeyword,
@@ -35350,7 +35354,7 @@ impl ::sittir_core::render::Render for DeclareKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AbstractKeywordNode {
     #[kind(kind::ABSTRACT_KEYWORD)]
     AbstractKeyword,
@@ -35378,7 +35382,7 @@ impl ::sittir_core::render::Render for AbstractKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ModuleKeywordNode {
     #[kind(kind::MODULE_KEYWORD)]
     ModuleKeyword,
@@ -35406,7 +35410,7 @@ impl ::sittir_core::render::Render for ModuleKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NamespaceKeywordNode {
     #[kind(kind::NAMESPACE_KEYWORD)]
     NamespaceKeyword,
@@ -35434,7 +35438,7 @@ impl ::sittir_core::render::Render for NamespaceKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InterfaceKeywordNode {
     #[kind(kind::INTERFACE_KEYWORD)]
     InterfaceKeyword,
@@ -35462,7 +35466,7 @@ impl ::sittir_core::render::Render for InterfaceKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum EnumKeywordNode {
     #[kind(kind::ENUM_KEYWORD)]
     EnumKeyword,
@@ -35490,7 +35494,7 @@ impl ::sittir_core::render::Render for EnumKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PublicKeywordNode {
     #[kind(kind::PUBLIC_KEYWORD)]
     PublicKeyword,
@@ -35518,7 +35522,7 @@ impl ::sittir_core::render::Render for PublicKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PrivateKeywordNode {
     #[kind(kind::PRIVATE_KEYWORD)]
     PrivateKeyword,
@@ -35546,7 +35550,7 @@ impl ::sittir_core::render::Render for PrivateKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ProtectedKeywordNode {
     #[kind(kind::PROTECTED_KEYWORD)]
     ProtectedKeyword,
@@ -35574,7 +35578,7 @@ impl ::sittir_core::render::Render for ProtectedKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OverrideKeywordNode {
     #[kind(kind::OVERRIDE_KEYWORD)]
     OverrideKeyword,
@@ -35602,7 +35606,7 @@ impl ::sittir_core::render::Render for OverrideKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ReadonlyKeywordNode {
     #[kind(kind::READONLY_KEYWORD)]
     ReadonlyKeyword,
@@ -35630,7 +35634,7 @@ impl ::sittir_core::render::Render for ReadonlyKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashQmarkColonNode {
     #[kind(kind::DASH_QMARK_COLON)]
     DashQmarkColon,
@@ -35658,7 +35662,7 @@ impl ::sittir_core::render::Render for DashQmarkColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusQmarkColonNode {
     #[kind(kind::PLUS_QMARK_COLON)]
     PlusQmarkColon,
@@ -35686,7 +35690,7 @@ impl ::sittir_core::render::Render for PlusQmarkColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum QmarkColonNode {
     #[kind(kind::QMARK_COLON)]
     QmarkColon,
@@ -35714,7 +35718,7 @@ impl ::sittir_core::render::Render for QmarkColonNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AssertsKeywordNode {
     #[kind(kind::ASSERTS_KEYWORD)]
     AssertsKeyword,
@@ -35742,7 +35746,7 @@ impl ::sittir_core::render::Render for AssertsKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InferKeywordNode {
     #[kind(kind::INFER_KEYWORD)]
     InferKeyword,
@@ -35770,7 +35774,7 @@ impl ::sittir_core::render::Render for InferKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum IsKeywordNode {
     #[kind(kind::IS_KEYWORD)]
     IsKeyword,
@@ -35798,7 +35802,7 @@ impl ::sittir_core::render::Render for IsKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum KeyofKeywordNode {
     #[kind(kind::KEYOF_KEYWORD)]
     KeyofKeyword,
@@ -35826,7 +35830,7 @@ impl ::sittir_core::render::Render for KeyofKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum InKeywordNode {
     #[kind(kind::IN_KEYWORD)]
     InKeyword,
@@ -35854,7 +35858,7 @@ impl ::sittir_core::render::Render for InKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AnyKeywordNode {
     #[kind(kind::ANY_KEYWORD)]
     AnyKeyword,
@@ -35882,7 +35886,7 @@ impl ::sittir_core::render::Render for AnyKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NumberKeywordNode {
     #[kind(kind::NUMBER_KEYWORD)]
     NumberKeyword,
@@ -35910,7 +35914,7 @@ impl ::sittir_core::render::Render for NumberKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum BooleanKeywordNode {
     #[kind(kind::BOOLEAN_KEYWORD)]
     BooleanKeyword,
@@ -35938,7 +35942,7 @@ impl ::sittir_core::render::Render for BooleanKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum StringKeywordNode {
     #[kind(kind::STRING_KEYWORD)]
     StringKeyword,
@@ -35966,7 +35970,7 @@ impl ::sittir_core::render::Render for StringKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SymbolKeywordNode {
     #[kind(kind::SYMBOL_KEYWORD)]
     SymbolKeyword,
@@ -35994,7 +35998,7 @@ impl ::sittir_core::render::Render for SymbolKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UniqueNode {
     #[kind(kind::UNIQUE)]
     Unique,
@@ -36022,7 +36026,7 @@ impl ::sittir_core::render::Render for UniqueNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum UnknownKeywordNode {
     #[kind(kind::UNKNOWN_KEYWORD)]
     UnknownKeyword,
@@ -36050,7 +36054,7 @@ impl ::sittir_core::render::Render for UnknownKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum NeverKeywordNode {
     #[kind(kind::NEVER_KEYWORD)]
     NeverKeyword,
@@ -36078,7 +36082,7 @@ impl ::sittir_core::render::Render for NeverKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ObjectKeywordNode {
     #[kind(kind::OBJECT_KEYWORD)]
     ObjectKeyword,
@@ -36106,7 +36110,7 @@ impl ::sittir_core::render::Render for ObjectKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum LbracePipeNode {
     #[kind(kind::LBRACE_PIPE)]
     LbracePipe,
@@ -36134,7 +36138,7 @@ impl ::sittir_core::render::Render for LbracePipeNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PipeRbraceNode {
     #[kind(kind::PIPE_RBRACE)]
     PipeRbrace,
@@ -36162,7 +36166,7 @@ impl ::sittir_core::render::Render for PipeRbraceNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum CommaNode {
     #[kind(kind::COMMA)]
     Comma,
@@ -36190,7 +36194,7 @@ impl ::sittir_core::render::Render for CommaNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GlobalKeywordNode {
     #[kind(kind::GLOBAL_KEYWORD)]
     GlobalKeyword,
@@ -36218,7 +36222,7 @@ impl ::sittir_core::render::Render for GlobalKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ExportKeywordNode {
     #[kind(kind::EXPORT_KEYWORD)]
     ExportKeyword,
@@ -36246,7 +36250,7 @@ impl ::sittir_core::render::Render for ExportKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum FromKeywordNode {
     #[kind(kind::FROM_KEYWORD)]
     FromKeyword,
@@ -36274,7 +36278,7 @@ impl ::sittir_core::render::Render for FromKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DquoteNode {
     #[kind(kind::DQUOTE, folded(kind::DQUOTE2))]
     Dquote,
@@ -36302,7 +36306,7 @@ impl ::sittir_core::render::Render for DquoteNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SquoteNode {
     #[kind(kind::SQUOTE, folded(kind::SQUOTE2))]
     Squote,
@@ -36330,7 +36334,7 @@ impl ::sittir_core::render::Render for SquoteNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum PlusPlusNode {
     #[kind(kind::PLUS_PLUS)]
     PlusPlus,
@@ -36358,7 +36362,7 @@ impl ::sittir_core::render::Render for PlusPlusNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum DashDashNode {
     #[kind(kind::DASH_DASH)]
     DashDash,
@@ -36386,7 +36390,7 @@ impl ::sittir_core::render::Render for DashDashNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum TargetKeywordNode {
     #[kind(kind::TARGET_KEYWORD)]
     TargetKeyword,
@@ -36414,7 +36418,7 @@ impl ::sittir_core::render::Render for TargetKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum MetaKeywordNode {
     #[kind(kind::META_KEYWORD)]
     MetaKeyword,
@@ -36442,7 +36446,7 @@ impl ::sittir_core::render::Render for MetaKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum OfKeywordNode {
     #[kind(kind::OF_KEYWORD)]
     OfKeyword,
@@ -36470,7 +36474,7 @@ impl ::sittir_core::render::Render for OfKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum GetKeywordNode {
     #[kind(kind::GET_KEYWORD)]
     GetKeyword,
@@ -36498,7 +36502,7 @@ impl ::sittir_core::render::Render for GetKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum SetKeywordNode {
     #[kind(kind::SET_KEYWORD)]
     SetKeyword,
@@ -36526,7 +36530,7 @@ impl ::sittir_core::render::Render for SetKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum AccessorKeywordNode {
     #[kind(kind::ACCESSOR_KEYWORD)]
     AccessorKeyword,
@@ -36554,7 +36558,7 @@ impl ::sittir_core::render::Render for AccessorKeywordNode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice)]
+#[node(choice, stamp = stamp)]
 pub enum ConstructorKeywordNode {
     #[kind(kind::CONSTRUCTOR_KEYWORD)]
     ConstructorKeyword,

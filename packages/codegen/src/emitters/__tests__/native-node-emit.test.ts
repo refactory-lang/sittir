@@ -408,7 +408,7 @@ describe('native node emission', () => {
 		);
 
 		expect(emitted.nodeRs.contents).toContain('pub enum AnyNode');
-		expect(emitted.nodeRs.contents).toContain('#[node(choice)]\npub enum AnyNode {');
+		expect(emitted.nodeRs.contents).toContain('#[node(choice, stamp = stamp)]\npub enum AnyNode {');
 		expect(emitted.nodeRs.contents).toContain('CallExpression(Box<CallExpressionNode>),');
 		expect(emitted.nodeRs.contents).toContain('pub struct CallExpressionNode');
 		expect(emitted.nodeRs.contents).toContain('pub callee: ::sittir_core::SlotValue<ExpressionNode>,');

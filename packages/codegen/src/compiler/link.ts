@@ -908,18 +908,16 @@ function stampParserVisibility(raw: RawGrammar, ctx: KindCatalogCtx): RawGrammar
 	const wordDisplays = wordDisplaysOf(raw.rules, { word: raw.word ?? undefined });
 	const fixedNames = fixedNamesOf(raw.rules);
 	const relaxedWord = (rule: Rule<'evaluate'>): Rule<'evaluate'> | undefined => {
-		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING || fixedNames.has(rule)) return undefined;
+		if (rule.type !== ALIAS || !rule.named || raw.word === undefined || rule.content.type !== STRING) return undefined;
 		const stands = rule.value === raw.word || wordDisplays.has(rule.value);
 		if (!stands) return undefined;
 		const literal = rule.content.value;
 		if (!matchesWordShape(literal, wordMatcher) || findEntryForLiteralText(ctx.kindEntries, literal) === undefined) return undefined;
+		if (rule.value === raw.word) relaxedLiterals.add(literal);
+		else relaxedDisplayLiterals.set(rule.value, (relaxedDisplayLiterals.get(rule.value) ?? new Set<string>()).add(literal));
+		if (fixedNames.has(rule)) return undefined;
 		const word = { type: SYMBOL, name: raw.word, inline: false } as SymbolRule<'evaluate'>;
-		if (rule.value === raw.word) {
-			relaxedLiterals.add(literal);
-			return word;
-		}
-		relaxedDisplayLiterals.set(rule.value, (relaxedDisplayLiterals.get(rule.value) ?? new Set<string>()).add(literal));
-		return { ...rule, content: word };
+		return rule.value === raw.word ? word : { ...rule, content: word };
 	};
 	const dedupeWordArms = (rule: Rule<'evaluate'>): Rule<'evaluate'> => {
 		if (rule.type !== CHOICE) return rule;

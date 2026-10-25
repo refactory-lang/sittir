@@ -68,7 +68,7 @@ describe('link relaxation of word-display aliases', () => {
 		expect(aliasValues(linked.rules.source!).sort()).toEqual(['property_name', 'statement_name']);
 	});
 
-	it('keeps a field whose whole content is the alias as fixed text, out of its display, and relaxes the same alias where it is one arm', () => {
+	it('keeps a field whose whole content is the alias as fixed text, out of its display but read as it, and relaxes the same alias where it is one arm', () => {
 		const linked = link(
 			makeRaw(
 				{
@@ -84,7 +84,7 @@ describe('link relaxation of word-display aliases', () => {
 		const fixed = linked.rules.fixed as Extract<Rule<'link'>, { type: 'SEQ' }>;
 		const name = fixed.members[0] as Extract<Rule<'link'>, { type: 'FIELD' }>;
 		expect(name.content).toMatchObject({ type: 'ALIAS', value: 'property_name', content: { type: 'SYMBOL', name: 'for', literal: 'for' } });
-		expect(linked.relaxedDisplayLiterals).toEqual({ property_name: ['while'] });
+		expect(linked.relaxedDisplayLiterals).toEqual({ property_name: ['for', 'while'] });
 		expect((linked.displayUnions?.get('property_name') ?? []).filter((member) => member.literal)).toEqual([]);
 		expect(linked.terminalAliasWireIds?.get('property_name') ?? []).not.toContain(5);
 	});

@@ -318,6 +318,10 @@ export function wireRecordBindingEffect(effect: RecordedBindingEffect): void {
 	currentContext?.bindingEffects.push(effect);
 }
 
+export function wireInPathEdit(): boolean {
+	return (currentContext?.activeEntryPath ?? null) !== null;
+}
+
 export function wireWithPatchSites<T>(sites: readonly PatchSite[], fn: () => T): T {
 	const context = currentContext;
 	if (!context) return fn();

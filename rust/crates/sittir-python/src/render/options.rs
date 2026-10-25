@@ -2333,10 +2333,10 @@ pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[
     ::sittir_core::options::EdgeSite { before: Some(SiteId(927)), after: Some(SiteId(928)), before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(226)), after: Some(SiteId(227)), before_arms: &[::sittir_core::options::ArmSite { arm: KindId(111), site: SiteId(215) }, ::sittir_core::options::ArmSite { arm: KindId(108), site: SiteId(216) }, ::sittir_core::options::ArmSite { arm: KindId(109), site: SiteId(217) }, ::sittir_core::options::ArmSite { arm: KindId(114), site: SiteId(218) }, ::sittir_core::options::ArmSite { arm: KindId(110), site: SiteId(219) }, ::sittir_core::options::ArmSite { arm: KindId(113), site: SiteId(220) }, ::sittir_core::options::ArmSite { arm: KindId(112), site: SiteId(221) }, ::sittir_core::options::ArmSite { arm: KindId(25), site: SiteId(222) }, ::sittir_core::options::ArmSite { arm: KindId(61), site: SiteId(223) }, ::sittir_core::options::ArmSite { arm: KindId(212), site: SiteId(224) }, ::sittir_core::options::ArmSite { arm: KindId(211), site: SiteId(225) }], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(1093)), after: Some(SiteId(1094)), before_arms: &[], after_arms: &[] },
+    ::sittir_core::options::EdgeSite { before: Some(SiteId(257)), after: Some(SiteId(258)), before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(134)), after: Some(SiteId(135)), before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(929)), after: Some(SiteId(930)), before_arms: &[], after_arms: &[] },
     ::sittir_core::options::EdgeSite { before: Some(SiteId(265)), after: Some(SiteId(266)), before_arms: &[], after_arms: &[] },
-    ::sittir_core::options::EdgeSite { before: Some(SiteId(257)), after: Some(SiteId(258)), before_arms: &[], after_arms: &[] },
 ];
 
 /// Per kind id, its row in `EDGE_SITES`.
@@ -2359,7 +2359,7 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(80)), Some(EdgeRow(81)), Some(EdgeRow(82)), None, Some(EdgeRow(83)), Some(EdgeRow(84)), Some(EdgeRow(85)), Some(EdgeRow(86)), Some(EdgeRow(87)), None, Some(EdgeRow(88)), None, None, None, Some(EdgeRow(89)), None,
     None, Some(EdgeRow(90)), None, None, None, None, None, None, None, None, None, None, None, None, Some(EdgeRow(91)), None,
     None, Some(EdgeRow(92)), Some(EdgeRow(93)), Some(EdgeRow(94)), None, None, Some(EdgeRow(95)), Some(EdgeRow(96)), None, Some(EdgeRow(97)), None, None, Some(EdgeRow(98)), None, None, Some(EdgeRow(99)),
-    Some(EdgeRow(100)), Some(EdgeRow(101)), None, None, Some(EdgeRow(102)), Some(EdgeRow(103)), None, Some(EdgeRow(104)), Some(EdgeRow(105)), None, Some(EdgeRow(106)), Some(EdgeRow(107)), None, Some(EdgeRow(108)), Some(EdgeRow(109)), Some(EdgeRow(110)),
+    Some(EdgeRow(100)), Some(EdgeRow(101)), None, None, Some(EdgeRow(102)), Some(EdgeRow(103)), None, Some(EdgeRow(104)), Some(EdgeRow(105)), None, Some(EdgeRow(106)), Some(EdgeRow(107)), Some(EdgeRow(108)), None, Some(EdgeRow(109)), Some(EdgeRow(110)),
     Some(EdgeRow(111)),
 ];
 
@@ -2427,7 +2427,7 @@ pub static DEPTH_SITES: &[(&str, &[SiteId])] = &[
 pub static DEPTH_REGIONS: &[::sittir_core::trivia_table::DepthRegion] = &[
     ::sittir_core::trivia_table::DepthRegion { kind: KindId(293), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
     ::sittir_core::trivia_table::DepthRegion { kind: KindId(296), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
-    ::sittir_core::trivia_table::DepthRegion { kind: KindId(302), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
+    ::sittir_core::trivia_table::DepthRegion { kind: KindId(303), open: ::sittir_core::trivia_table::DepthAnchor::Start, close: ::sittir_core::trivia_table::DepthAnchor::End },
 ];
 
 #[must_use]
@@ -3633,8 +3633,8 @@ pub static SEATS_BLOCK_CLASS_DECLARATION_STATEMENTS: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
-    None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(125)),
-    Some(SiteId(124)),
+    None, None, None, None, None, None, None, None, None, None, None, None, Some(SiteId(124)), None, None, None,
+    Some(SiteId(125)),
 ];
 
 /// Per kind id, the site a seated element's after gap reads.

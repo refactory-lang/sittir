@@ -33,10 +33,7 @@ function matchCall(m: LeadMatch): string {
 	return `match(${[q(m.kind), ...within, ...as].join(', ')})`;
 }
 
-const splitPath = (split: Split, shown?: string): string =>
-	split.path
-		.map((step, i) => `${step.field === null ? '' : `${step.field}:/`}(${i === split.path.length - 1 && shown !== undefined ? shown : step.kind}${step.as === null ? '' : ` as ${step.as}`})`)
-		.join('/');
+const splitPath = (split: Split): string => split.path.map((step) => `${step.field === null ? '' : `${step.field}:/`}(${step.kind}${step.as === null ? '' : ` as ${step.as}`})`).join('/');
 
 function narrowedCopy(source: string, edits: readonly (readonly [string, string])[], absent: readonly AbsentField[]): string {
 	const blanked = absent.filter((a) => a.through.length === 0).map((a) => [`${a.field}:`, 'blank()'] as const);
@@ -54,19 +51,25 @@ function narrowedCopy(source: string, edits: readonly (readonly [string, string]
 	return `edit(copy(${q(source)}), { ${[...edits, ...blanked, ...hidden].map(([path, rule]) => `${q(path)}: ${rule}`).join(', ')} })`;
 }
 
-function splitEdit(split: Split): string {
-	if (split.literal === undefined) return `alias(${q(split.as)})`;
-	const { field, leaf, texts, absent } = split.literal;
+function literalArm(split: Split & { readonly literal: NonNullable<Split['literal']> }): string {
+	const { field, leaf, texts, absent, relax } = split.literal;
 	const text = texts.length === 1 ? q(texts[0]!) : `choice(${texts.map(q).join(', ')})`;
 	const source = split.path[split.path.length - 1]!.kind;
 	const arm = `alias(${narrowedCopy(source, [[`${field}:`, `alias(${text}, $.${leaf})`]], absent)}, $.${split.as})`;
-	return `($, member) => choice(member, ${split.literal.relax.length === 0 ? arm : `prec.dynamic(1, ${arm})`})`;
+	return relax.length === 0 ? arm : `prec.dynamic(1, ${arm})`;
+}
+
+function siteEdit(splits: readonly Split[]): string {
+	const shown = splits.find((s) => s.literal === undefined);
+	const arms = splits.filter((s): s is Split & { readonly literal: NonNullable<Split['literal']> } => s.literal !== undefined).map(literalArm);
+	if (arms.length === 0) return `alias(${q(shown!.as)})`;
+	return `($, member) => choice(${shown === undefined ? 'member' : `alias(member, $.${shown.as})`}, ${arms.join(', ')})`;
 }
 
 function splitSet(splits: readonly Split[]): string {
-	const ordered = [...splits.filter((s) => s.literal === undefined), ...splits.filter((s) => s.literal !== undefined)];
-	const shownAt = new Map(ordered.filter((s) => s.literal === undefined).map((s) => [splitPath(s), s.as]));
-	return `{ ${ordered.map((s) => `${q(splitPath(s, s.literal === undefined ? undefined : shownAt.get(splitPath(s))))}: ${splitEdit(s)}`).join(', ')} }`;
+	const sites = new Map<string, Split[]>();
+	for (const split of [...splits.filter((s) => s.literal === undefined), ...splits.filter((s) => s.literal !== undefined)]) sites.set(splitPath(split), [...(sites.get(splitPath(split)) ?? []), split]);
+	return `{ ${[...sites].map(([path, at]) => `${q(path)}: ${siteEdit(at)}`).join(', ')} }`;
 }
 
 function relaxSets(splits: readonly Split[]): Map<string, string> {
