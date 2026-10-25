@@ -58,6 +58,46 @@ impl<G: EngineGrammar> Engine<G> {
 }
 
 impl<G: RecordGrammar> Engine<G> {
+    /// The sides writes gave each unit the built record at `at` in `arena`
+    /// holds: by the unit's slot and its item there.
+    ///
+    /// # Errors
+    ///
+    /// What `ArenaRead::header_kind` refuses, and `ArenaError::Malformed` for
+    /// a unit at a word the record's kind holds no slot at.
+    pub fn built_unit_sides(&self, arena: &impl ArenaRead, at: Address) -> Result<Vec<crate::layout::UnitSides<G::Trivia>>, ArenaError> {
+        let kind = arena.header_kind(at)?;
+        let units = self.written().units(at);
+        units
+            .into_iter()
+            .map(|(word, item, trivia)| {
+                let slot = G::slot_key(kind, word).ok_or(ArenaError::Malformed { what: "unit slot word", word })?;
+                Ok(crate::layout::UnitSides { slot: slot.to_owned(), item, trivia })
+            })
+            .collect()
+    }
+
+    /// The units the built record at `at` in `arena` holds have the sides
+    /// `units` gives, in place of every unit side it had; its render then
+    /// writes them.
+    ///
+    /// # Errors
+    ///
+    /// What `ArenaRead::header_kind` refuses, and `ArenaError::UnknownSlot`
+    /// for a slot the record's kind has no cell for.
+    pub fn write_built_unit_sides(&self, arena: &impl ArenaRead, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
+        let kind = arena.header_kind(at)?;
+        let units = units
+            .into_iter()
+            .map(|unit| {
+                let word = G::slot_word(kind, &unit.slot).ok_or_else(|| ArenaError::UnknownSlot(unit.slot.clone().into_boxed_str()))?;
+                Ok((word, unit.item, unit.trivia))
+            })
+            .collect::<Result<Vec<_>, ArenaError>>()?;
+        self.written().write_units(at, units);
+        Ok(())
+    }
+
     /// The built node `root` names, of the built arena `arena`, rendered as
     /// a render root whose `changed` edges have no neighbour, under `ctx`,
     /// its line endings unspelled. The records it reaches are admitted

@@ -102,7 +102,10 @@ the last slice.
     it, and reads it back as its builder's node. The holder's table keeps that
     arena and its engine alive while the side holds the record; the store keeps
     the other engine's store weakly.
-  - Written sides go to the native store.
+  - Written sides go to the native store. So do a built record's unit sides,
+    from a JSON revival or a rebuild, which carries them realigned to where
+    their units moved; the store is the only copy, and the holder's table
+    keeps the arena of any record they hold.
   - `$with` shares unchanged children and copies bounded ones.
   - Disposal, growth and invalid buffers are covered.
 - [x] **Record views for every compound kind.** A kind that seats a group

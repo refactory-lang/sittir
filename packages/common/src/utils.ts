@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
-import { mapTriviaEntries, TRIVIA_SIDES } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, writtenSides } from './node-data.ts';
+import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
+import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setUnitSides, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, type EngineHandle } from './engine-scope.ts';
@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { entrySnapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
-import { builtEntryOf, holdSideArenas, isBuiltNode, refuseRecordEntries } from './built-arena.ts';
+import { builtEntryOf, holdSideArenas, isBuiltNode, refuseBuiltEntries } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -104,21 +104,41 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const at = tableAt(node);
 	if (at === undefined) {
-		refuseRecordEntries(trivia);
+		refuseBuiltEntries(trivia);
 		const own = triviaOf(node);
 		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
 	}
-	const tree = treeOf(node);
-	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
-	const wire = (entry: TriviaEntry): unknown =>
-		typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
+	const wire = entryWire(node);
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
 		if (entries === undefined) continue;
 		at.tree.writeTriviaSide(at.index, side, entries.map(wire));
-		holdSideArenas(at.tree, at.index, side, entries);
+		holdSideArenas(at.tree, `${at.index}:${side}`, entries);
 	}
+}
+
+export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
+	const built = builtRefOf(node);
+	if (built === undefined) {
+		for (const unit of units) refuseBuiltEntries(unit);
+		setUnitSides(node, units);
+		return;
+	}
+	const wire = entryWire(node);
+	built.arena.tree.writeUnitSides(built.at, units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<TriviaEntry>, (entries) => entries.map(wire)) })));
+	holdSideArenas(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
+}
+
+function carryUnitSides(from: object, to: object): void {
+	const units = (builtRefOf(to) === undefined ? heldUnitSides(from) : unitSidesOf(from)) as readonly UnitSidesData[] | undefined;
+	if (units !== undefined && units.length > 0) writeUnitSides(to, realignedUnits(units, from, to));
+}
+
+function entryWire(node: object): (entry: TriviaEntry) => unknown {
+	const tree = treeOf(node);
+	const arena = builtRefOf(node)?.arena ?? (tree === undefined ? undefined : treeBuiltArena(tree));
+	return (entry) => (typeof entry === 'number' ? entry : (builtEntryOf(entry, arena) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
 }
 
 function triviaWriter(target: object, handle: EngineHandle | undefined) {

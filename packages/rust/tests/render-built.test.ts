@@ -168,7 +168,8 @@ describe('a built arena rendered natively', () => {
 
 		it.each([
 			['parsed', 'fn f() {\n    g(); /* d */ /* c */\n}\n'],
-			['built', 'x; /* d */ /* c */']
+			['built', 'x; /* d */ /* c */'],
+			['unit', '{\n    y;\n    /* d */ /* c */ ;\n    x();\n}']
 		])('renders in a %s holder, and reads back, once nothing else names its builder or the record', (holder, render) => {
 			const fixture = fileURLToPath(new URL('../../common/tests/fixtures/foreign-side-release.mts', import.meta.url));
 			const out = execFileSync(process.execPath, ['--expose-gc', '--import', 'tsx', fixture, holder], {

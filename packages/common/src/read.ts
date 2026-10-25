@@ -25,6 +25,8 @@ export interface TreeHandle {
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/** The sides of the unit children of the node at descendant `index`, by slot and item (`NodeLayout.units`). */
 	unitSides?(index: number): unknown[];
+	/** Replaces every side of the unit children of the node at descendant `index` with `units`, by slot and item (`NodeLayout.units`). */
+	writeUnitSides?(index: number, units: readonly unknown[]): void;
 	/** The stored layout of each list slot of the node at descendant `index` that stores any (`NodeLayout.slots`). */
 	slotLayouts?(index: number): unknown[];
 	/** The separator the list at descendant `index` writes between its items: its slot's stored one, else the read-time options'. */

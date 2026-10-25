@@ -42,6 +42,14 @@ pub trait RecordGrammar: EngineGrammar {
     /// The record a node of `kind` is written as, `None` for a kind that has
     /// no record (`RecordCells::shape` of the grammar's node).
     fn shape(kind: KindId) -> Option<super::RecordShape>;
+
+    /// The storage key of the slot a record of `kind` holds at `word`
+    /// (`PrepareRecord::slot_key` of the grammar's node).
+    fn slot_key(kind: KindId, word: u32) -> Option<&'static str>;
+
+    /// The word a record of `kind` holds the slot `key` at
+    /// (`PrepareRecord::slot_word` of the grammar's node).
+    fn slot_word(kind: KindId, key: &str) -> Option<u32>;
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {

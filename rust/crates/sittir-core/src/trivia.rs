@@ -912,7 +912,7 @@ impl<'e, T> WireEntry<'e, T> {
     ///
     /// What `store_of` refuses.
     #[cfg_attr(not(feature = "arena"), allow(unused_variables, reason = "an entry names a built record only in the arena build"))]
-    pub fn resolve(self, store_of: impl FnOnce(::napi::Unknown<'e>) -> ::napi::Result<crate::trivia_store::TriviaStore<T>>) -> ::napi::Result<TriviaEntry<T>> {
+    pub fn resolve(self, store_of: &impl Fn(::napi::Unknown<'e>) -> ::napi::Result<crate::trivia_store::TriviaStore<T>>) -> ::napi::Result<TriviaEntry<T>> {
         match (self.entry, self.owner) {
             #[cfg(feature = "arena")]
             (TriviaEntry::Record(record), Some(owner)) => Ok(TriviaEntry::Record(RecordEntry { store: Some(store_of(owner)?), ..record })),

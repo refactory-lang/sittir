@@ -280,6 +280,23 @@ holdBuiltArena(words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Ar
  */
 builtTriviaSide(address: number, side: string): object[] | null
 /**
+ * r" The sides writes gave each unit the record at `address` in
+ * r" the arena this engine built holds: `{ slot, item, leading?,
+ * r" trailing?, inner? }`. Refuses an arena this engine no
+ * r" longer holds and an address naming no record in it.
+ */
+builtUnitSides(address: number): object[]
+/**
+ * r" The units the record at `address` in the arena this engine
+ * r" built holds have the sides `units` gives (`{ slot, item,
+ * r" leading?, trailing?, inner? }`), in place of every unit
+ * r" side it had; `renderBuilt` then writes them, and a built
+ * r" record among them renders as `writeTriviaSide` says.
+ * r" Refuses as `builtUnitSides` does, and a slot the record's
+ * r" kind has no cell for.
+ */
+writeBuiltUnitSides(address: number, units: object[]): void
+/**
  * r" Replace `side` of the built record at `address` with
  * r" `entries`, which `renderBuilt` then writes; a built record
  * r" among them renders as `writeTriviaSide` says. Refuses as

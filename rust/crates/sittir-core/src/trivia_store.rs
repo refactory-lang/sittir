@@ -244,6 +244,29 @@ impl<T: Clone> TriviaStore<T> {
         units
     }
 
+    /// The units `holder`'s record holds have the sides `units` gives, each by
+    /// its slot word and its item there, in place of every unit side the
+    /// holder had.
+    #[cfg(feature = "arena")]
+    pub fn write_units(&self, holder: crate::arena::Address, units: Vec<(u32, crate::types::ItemIndex, crate::trivia::NodeTrivia<T>)>) {
+        {
+            let mut sides = self.write();
+            let first = (Place::Unit(Site { holder, word: 0, item: crate::types::ItemIndex(0) }), TriviaSide::Leading);
+            let held: Vec<_> = sides.range(first..).take_while(|((place, _), _)| matches!(place, Place::Unit(site) if site.holder == holder)).map(|(&key, _)| key).collect();
+            for key in held {
+                sides.remove(&key);
+            }
+        }
+        for (word, item, trivia) in units {
+            let place = Place::Unit(Site { holder, word, item });
+            for (side, entries) in [(TriviaSide::Leading, trivia.leading), (TriviaSide::Trailing, trivia.trailing), (TriviaSide::Inner, trivia.inner)] {
+                if let Some(entries) = entries {
+                    self.write_side(place, side, entries);
+                }
+            }
+        }
+    }
+
     /// `side` of the node at `place` holds `entries`, in place of what it held.
     /// A built record keeps the store it names when that is another store's,
     /// and this one's when it names this store or none.
@@ -391,6 +414,27 @@ mod tests {
             ]
         );
         assert_eq!(store.units(Address(4)), []);
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn writing_a_holder_s_units_replaces_all_of_them_and_no_other_holder_s() {
+        use crate::arena::Address;
+        use crate::trivia::NodeTrivia;
+        use crate::types::ItemIndex;
+        let store = TriviaStore::<TriviaText>::new();
+        let unit = |holder, word, item| Place::Unit(Site { holder: Address(holder), word, item: ItemIndex(item) });
+        store.write_side(unit(5, 2, 0), TriviaSide::Leading, vec![entry("// gone")]);
+        store.write_side(unit(5, 7, 1), TriviaSide::Inner, Vec::new());
+        store.write_side(unit(6, 2, 0), TriviaSide::Leading, vec![entry("// other")]);
+        store.write_side(Place::Record(Address(5)), TriviaSide::Leading, vec![entry("// own")]);
+        let kept = NodeTrivia { leading: None, trailing: Some(vec![entry("// b")]), inner: None };
+        store.write_units(Address(5), vec![(7, ItemIndex(0), kept.clone())]);
+        assert_eq!(store.units(Address(5)), [(7, ItemIndex(0), kept)]);
+        assert_eq!(store.units(Address(6)), [(2, ItemIndex(0), NodeTrivia { leading: Some(vec![entry("// other")]), trailing: None, inner: None })]);
+        assert_eq!(store.side(Place::Record(Address(5)), TriviaSide::Leading), Some(vec![entry("// own")]), "the holder's own sides are not its units'");
+        store.write_units(Address(5), Vec::new());
+        assert_eq!(store.units(Address(5)), []);
     }
 
     #[cfg(feature = "arena")]

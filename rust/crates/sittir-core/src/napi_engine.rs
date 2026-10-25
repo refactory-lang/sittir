@@ -548,7 +548,7 @@ macro_rules! napi_engine {
                 env: &::napi::Env,
                 entries: Vec<$crate::trivia::WireEntry<'_, <$grammar as $crate::engine::EngineGrammar>::Trivia>>,
             ) -> ::napi::Result<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
-                entries.into_iter().map(|entry| entry.resolve(|owner| Self::store_of(env, owner))).collect()
+                entries.into_iter().map(|entry| entry.resolve(&|owner| Self::store_of(env, owner))).collect()
             }
 
             /// The store of `owner`, an engine of this language, which holds
@@ -854,6 +854,41 @@ macro_rules! napi_engine {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                     self.engine.built_trivia_side(address, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// The sides writes gave each unit the record at `address` in
+                /// the arena this engine built holds: `{ slot, item, leading?,
+                /// trailing?, inner? }`. Refuses an arena this engine no
+                /// longer holds and an address naming no record in it.
+                #[::napi_derive::napi(ts_args_type = "address: number", ts_return_type = "object[]")]
+                pub fn built_unit_sides(&self, env: ::napi::Env, address: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let chunks = self.engine.written().built();
+                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    self.engine.built_unit_sides(&arena, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// The units the record at `address` in the arena this engine
+                /// built holds have the sides `units` gives (`{ slot, item,
+                /// leading?, trailing?, inner? }`), in place of every unit
+                /// side it had; `renderBuilt` then writes them, and a built
+                /// record among them renders as `writeTriviaSide` says.
+                /// Refuses as `builtUnitSides` does, and a slot the record's
+                /// kind has no cell for.
+                #[::napi_derive::napi(ts_args_type = "address: number, units: object[]")]
+                pub fn write_built_unit_sides(
+                    &self,
+                    env: ::napi::Env,
+                    address: f64,
+                    units: Vec<$crate::layout::WireUnit<'_, <$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                ) -> ::napi::Result<()> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let units = units.into_iter().map(|unit| unit.resolve(&|owner| Self::store_of(&env, owner))).collect::<::napi::Result<Vec<_>>>()?;
+                    let chunks = self.engine.written().built();
+                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    self.engine.write_built_unit_sides(&arena, address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
                 /// Replace `side` of the built record at `address` with

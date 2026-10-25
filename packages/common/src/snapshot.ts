@@ -3,7 +3,7 @@ import { decodeIndex, type TreeHandle } from './read.ts';
 import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf, withinSides } from './node-data.ts';
 import { treeOf } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
-import { builtArenaOf, builtEntryNode, isBuiltEntry } from './built-arena.ts';
+import { builtEntryNode, isBuiltEntry } from './built-arena.ts';
 import { storedSlotValues } from './record-view.ts';
 import { treeBuiltArena } from './engine-scope.ts';
 
@@ -82,7 +82,7 @@ function copyOf(value: Record<string, unknown>, within: Set<object>, nesting: nu
 		if (isStorageKey(key) || !isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
 		out[key] = raw;
 	}
-	for (const [key, stored] of storedSlotValues(value, (kind) => builtArenaOf(value)?.slots[kind] ?? [])) out[key] = snapshotIn(stored, undefined, undefined, within, nesting);
+	for (const [key, stored] of storedSlotValues(value)) out[key] = snapshotIn(stored, undefined, undefined, within, nesting);
 	const each = (entry: unknown, inside: number) => snapshotIn(entry, undefined, undefined, within, inside);
 	const sides = sidesOf(value);
 	const unitSides = unitSidesOf(value);
