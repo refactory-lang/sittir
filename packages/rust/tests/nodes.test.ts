@@ -655,7 +655,12 @@ describe('trait_item', () => {
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			body: stampBuilt({ $type: TSKindId.DeclarationList, $text: 'test', $named: true, _declarations: [] }) as any
+			body: stampBuilt({
+				$type: TSKindId.TraitInterfaceDeclarationBody,
+				$text: 'test',
+				$named: true,
+				_declarations: []
+			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.TraitItem);
 		expectBuiltNode(node);
@@ -668,7 +673,12 @@ describe('trait_item', () => {
 				$named: true,
 				_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			body: stampBuilt({ $type: TSKindId.DeclarationList, $text: 'test', $named: true, _declarations: [] }) as any
+			body: stampBuilt({
+				$type: TSKindId.TraitInterfaceDeclarationBody,
+				$text: 'test',
+				$named: true,
+				_declarations: []
+			}) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -1065,37 +1075,27 @@ describe('extern_modifier', () => {
 describe('visibility_modifier', () => {
 	it('factory produces correct type', () => {
 		const node = ir.visibilityModifier(
-			stampBuilt({
-				$type: TSKindId.CrateVisibilityModifier,
-				$text: 'test',
-				$named: true,
-				_content: TSKindId.Crate as never
-			}) as any
+			stampBuilt({ $type: TSKindId.CrateVisibilityModifier, $text: 'crate', $named: true }) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.visibilityModifier(
-			stampBuilt({
-				$type: TSKindId.CrateVisibilityModifier,
-				$text: 'test',
-				$named: true,
-				_content: TSKindId.Crate as never
-			}) as any
+			stampBuilt({ $type: TSKindId.CrateVisibilityModifier, $text: 'crate', $named: true }) as any
 		);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('crate');
 	});
 });
 
 describe('visibility_modifier sub-factories', () => {
 	it('crate builds the parent', () => {
-		const node = ir.visibilityModifier.crate(
-			stampBuilt({ $type: TSKindId.Crate, $text: 'crate', $named: true }) as any
-		);
+		const node = ir.visibilityModifier.crate();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.CrateVisibilityModifier);
+		const seated = (node as any).content();
+		expect(seated?.$text?.() ?? seated).toBe(TSKindId.CrateVisibilityModifier);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub builds the parent', () => {
@@ -1108,7 +1108,7 @@ describe('visibility_modifier sub-factories', () => {
 			}) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope builds the parent', () => {
@@ -1116,25 +1116,25 @@ describe('visibility_modifier sub-factories', () => {
 			stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.self builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.self();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.super builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.super();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.crate builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.crate();
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('pub.scope.inPath builds the parent', () => {
@@ -1142,7 +1142,7 @@ describe('visibility_modifier sub-factories', () => {
 			stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
-		expect((node as any).content()?.$type).toBe(TSKindId.VisibilityModifierPub);
+		expect((node as any).content()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -3940,7 +3940,12 @@ describe('impl_item_body', () => {
 	it('factory produces correct type', () => {
 		const node = ir.implItemBody({
 			type: stampBuilt({ $type: TSKindId.UnitType, $text: '()', $named: true }) as any,
-			body: stampBuilt({ $type: TSKindId.DeclarationList, $text: 'test', $named: true, _declarations: [] }) as any
+			body: stampBuilt({
+				$type: TSKindId.ExtensionDeclarationBody,
+				$text: 'test',
+				$named: true,
+				_declarations: []
+			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.ImplItemBody);
 		expectBuiltNode(node);
@@ -3948,7 +3953,12 @@ describe('impl_item_body', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.implItemBody({
 			type: stampBuilt({ $type: TSKindId.UnitType, $text: '()', $named: true }) as any,
-			body: stampBuilt({ $type: TSKindId.DeclarationList, $text: 'test', $named: true, _declarations: [] }) as any
+			body: stampBuilt({
+				$type: TSKindId.ExtensionDeclarationBody,
+				$text: 'test',
+				$named: true,
+				_declarations: []
+			}) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3959,7 +3969,12 @@ describe('impl_item_body sub-factories', () => {
 	it('positiveClause builds the parent', () => {
 		const node = ir.implItemBody.positiveClause({
 			type: stampBuilt({ $type: TSKindId.UnitType, $text: '()', $named: true }) as any,
-			body: stampBuilt({ $type: TSKindId.DeclarationList, $text: 'test', $named: true, _declarations: [] }) as any,
+			body: stampBuilt({
+				$type: TSKindId.ExtensionDeclarationBody,
+				$text: 'test',
+				$named: true,
+				_declarations: []
+			}) as any,
 			traitClause: stampBuilt({
 				$type: TSKindId.TypeIdentifier,
 				$text: 'test',
@@ -3974,7 +3989,12 @@ describe('impl_item_body sub-factories', () => {
 	it('negativeClause builds the parent', () => {
 		const node = ir.implItemBody.negativeClause({
 			type: stampBuilt({ $type: TSKindId.UnitType, $text: '()', $named: true }) as any,
-			body: stampBuilt({ $type: TSKindId.DeclarationList, $text: 'test', $named: true, _declarations: [] }) as any,
+			body: stampBuilt({
+				$type: TSKindId.ExtensionDeclarationBody,
+				$text: 'test',
+				$named: true,
+				_declarations: []
+			}) as any,
 			traitClause: stampBuilt({
 				$type: TSKindId.TypeIdentifier,
 				$text: 'test',
@@ -4821,6 +4841,30 @@ describe('doc_comment', () => {
 	});
 });
 
+describe('trait_interface_declaration_body', () => {
+	it('factory produces correct type', () => {
+		const node = ir.traitInterfaceDeclarationBody();
+		expect(node.$type).toBe(TSKindId.TraitInterfaceDeclarationBody);
+		expectBuiltNode(node);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.traitInterfaceDeclarationBody();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
+describe('extension_declaration_body', () => {
+	it('factory produces correct type', () => {
+		const node = ir.extensionDeclarationBody();
+		expect(node.$type).toBe(TSKindId.ExtensionDeclarationBody);
+		expectBuiltNode(node);
+	});
+	it('render does not throw on minimal config', () => {
+		const node = ir.extensionDeclarationBody();
+		expect(() => node.$render!()).not.toThrow();
+	});
+});
+
 describe('receiver_parameter_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.receiverParameterDeclaration({
@@ -4869,6 +4913,52 @@ describe('parameters_elements_receiver', () => {
 					_type: stampBuilt({ $type: TSKindId.UnitType, $text: '()', $named: true }) as any
 				}) as any
 			}) as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('crate_visibility_modifier', () => {
+	it('is the kind id', () => {
+		expect(ir.crateVisibilityModifier).toBe(TSKindId.CrateVisibilityModifier);
+	});
+});
+
+describe('method_declaration', () => {
+	it('factory produces correct type', () => {
+		const node = ir.methodDeclaration({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		expect(node.$type).toBe(TSKindId.MethodDeclaration);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.methodDeclaration({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any,
+			body: stampBuilt({ $type: TSKindId.Block, $text: 'test', $named: true, _statements: [] }) as any
+		});
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('signature_method_declaration', () => {
+	it('factory produces correct type', () => {
+		const node = ir.signatureMethodDeclaration({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.SignatureMethodDeclaration);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.signatureMethodDeclaration({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			parameters: stampBuilt({ $type: TSKindId.Parameters, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);

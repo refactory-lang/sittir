@@ -50,9 +50,19 @@ describe('c.<slot>.is(flag) in a where condition', () => {
 		);
 	});
 
-	it('refuses a flag a held kind declares by its context, naming the kind and the flag', () => {
+	it('refuses static on a module\'s declarations, whose kinds declare no such flag', () => {
 		expect(() => [...lists().where((c) => (c.declarations.is as (flag: string) => ReturnType<typeof c.declarations.is>)('static'))]).toThrow(
-			"query: static on function_item, which declaration_list.declarations holds, depends on the node's context"
+			'query: no kind declaration_list.declarations holds declares the flag static'
 		);
+	});
+
+	it('selects the impl bodies declaring a static method, by the method\'s own flag', () => {
+		const IMPLS = 'struct S;\nimpl S { fn a() {} }\nimpl S { fn b(&self) {} }\n';
+		const bodies = () => rs.parse(IMPLS).$query().$descendants.ofType(rs.kinds.ExtensionDeclarationBody);
+		const spelled = (node: unknown): string => {
+			const { start, end } = (node as Node).$_layout.at.$span;
+			return IMPLS.slice(start, end);
+		};
+		expect([...bodies().where((c) => c.declarations.is('static'))].map(spelled)).toEqual(['{ fn a() {} }']);
 	});
 });

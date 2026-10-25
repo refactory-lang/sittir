@@ -6466,6 +6466,33 @@ The grammar-level inputs of an `enrich()` call: the base rules, the supertype an
 
 The predicted `SymbolSource` of an `enrich()` call over a given rule set: the kind catalog tree-sitter would build from those rules and the ctx's lists (`symbol-table.ts::predictedSymbolSourceOf`). Wire, which runs after enrich, declares the visible externals, so enrich stands in for that declaration: an external with a visible name and no rule body is a visible external. Both of enrich's sources (`sourceSymbols` over the base rules, `enrichedSymbols` over the enriched ones) are built by it.
 
+### `packages/codegen/src/dsl/symbol-table.ts::GeneratedIdEntry::parseId`
+
+```text
+/**
+	 * PARSE kind id — the id a node actually carries at runtime when this
+	 * kind is produced through an alias occurrence whose display name isn't
+	 * covered by `id`'s own symbol (e.g. `_newline`'s storage id 101 vs its
+	 * `alias($._newline, $.newline)` occurrence's own id 294). Render/read
+	 * dispatch match arms MUST key on this when present — it's what
+	 * tree-sitter emits — falling back to `id` when there's no separate
+	 * alias occurrence. Absent for the common case where a kind's storage
+	 * id and its parse-time id are the same thing.
+	 */
+```
+
+### `packages/codegen/src/dsl/symbol-table.ts::GeneratedKindEntry::parseId`
+
+```text
+/**
+ * The alias occurrence's own runtime symbol id, when this kind's ONLY
+ * visible identity comes from an `alias_sym_*` occurrence distinct from
+ * its plain `sym_*` storage id (see `GeneratedIdEntry.parseId`). Runtime
+ * `$type` dispatch tables must also map THIS id to the kind — it's what
+ * tree-sitter actually emits at the aliased position.
+ */
+```
+
 ### `packages/codegen/src/dsl/symbol-table.ts::ParserSymbolTable`
 
 A parser's symbol table as the kind catalog needs it: each symbol's C name with its id, in id order (`symbols`); the name `ts_symbol_names` gives each (`names`); and the per-symbol facts — visible, named, supertype, aliased non-terminal, and the token count (`facts`). The parser.c reader fills one from the generated C source; the catalog predictor fills one from the grammar.
@@ -7675,10 +7702,6 @@ A field's name from its C name when the name table has no entry for it: the C na
 ### `packages/codegen/src/dsl/symbol-table.ts::spelledTokenText`
 
 A token's text spelled as a name, the way a punctuation token's kind key is spelled: word characters stay, and each punctuation character becomes its lower-cased word, joined with `_` (`*` is `star`, `?.` is `qmark_dot`), through `sanitizeCIdentifier`. `deriveSymbolRuntimeName` spells a punctuation kind key with it, and `wire/keyword-names.ts::spelledKeywordRuleName` a keyword rule's name.
-
-### `packages/codegen/src/dsl/bind.ts::split`
-
-The `Split` primitive: `split(kind, as, { within, containers })` mints `as` from `kind` where it sits under the placement `within` (innermost first, the placement's owner last), with a container rule per intermediate ancestor named and fielded as `containers` gives.
 
 ### `packages/codegen/src/dsl/bind.ts::Split`
 
@@ -9207,3 +9230,99 @@ A shape the `symbol-to-field` pass rewrites: a node kind in a sequence with no f
 ### `packages/codegen/src/dsl/enrich-shapes.ts::ENRICH_SHAPES::unlabeled-choice-arm`
 
 A shape the `automatic variants` pass rewrites: a choice arm that is not labeled as a variant.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::CopyBase`
+
+The base a copy of an automatic variant is taken from.
+
+### `packages/codegen/src/dsl/automatic-variants.ts::copyBaseOf`
+
+The base an automatic variant's copy is taken from.
+
+### `packages/codegen/src/dsl/bind.ts::AbsentField`
+
+A field that is absent from a binding.
+
+### `packages/codegen/src/dsl/bind.ts::AbsentField::through`
+
+The path an absent field is reached through.
+
+### `packages/codegen/src/dsl/bind.ts::boundNameAt`
+
+The name a binding holds at a site. It refuses a site it cannot name, so no binding is guessed.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit`
+
+A split of a literal into the parts a binding names.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::absent`
+
+The absent fields a literal split leaves out.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::leaf`
+
+The leaf a literal split ends at.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::relax`
+
+The relaxation a literal split applies.
+
+### `packages/codegen/src/dsl/bind.ts::LiteralSplit::texts`
+
+The texts a literal split produces.
+
+### `packages/codegen/src/dsl/bind.ts::RelaxSite`
+
+A site where a literal is relaxed.
+
+### `packages/codegen/src/dsl/bind.ts::RelaxSite::display`
+
+The display name the relaxed site shows.
+
+### `packages/codegen/src/dsl/bind.ts::RelaxSite::path`
+
+The path to the relaxed site.
+
+### `packages/codegen/src/dsl/bind.ts::SitedName`
+
+A name bound at a site.
+
+### `packages/codegen/src/dsl/bind.ts::SitedName::scope`
+
+The scope the site's name is bound in.
+
+### `packages/codegen/src/dsl/bind.ts::Split::literal`
+
+The literal the split holds.
+
+### `packages/codegen/src/dsl/bind.ts::Split::path`
+
+The path the split takes.
+
+### `packages/codegen/src/dsl/bind.ts::SplitStep`
+
+One step of a split.
+
+### `packages/codegen/src/dsl/rule-attrs.ts::reownRuleIds`
+
+Gives each rule id a new owner.
+
+### `packages/codegen/src/dsl/rule-metadata.ts::aliasStorageOf`
+
+The storage a rule's alias envelope holds.
+
+### `packages/codegen/src/dsl/rule-metadata.ts::RuleMetadataShape::aliasStorage`
+
+The alias storage a rule's metadata records.
+
+### `packages/codegen/src/dsl/rule-patterns.ts::fieldThrough`
+
+The field a rule reaches through another rule.
+
+### `packages/codegen/src/dsl/symbol-table.ts::CEnumEntry`
+
+One entry of the C enum table.
+
+### `packages/codegen/src/dsl/symbol-table.ts::ReservedWordset`
+
+A reserved word set.

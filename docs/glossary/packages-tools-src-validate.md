@@ -1654,3 +1654,43 @@ A node with a kind id and its slots.
 ### `packages/tools/src/validate/common.ts::TypedNode::$type`
 
 The node's kind id.
+
+### `packages/tools/src/validate/common.ts::findSpanNode`
+
+The node that covers a given span.
+
+### `packages/tools/src/validate/factory-storage.ts::FactoryStorageResult`
+
+The result of the factory-storage check.
+
+### `packages/tools/src/validate/from.ts::FromValidationError`
+
+An error the from-check reports.
+
+### `packages/tools/src/validate/from.ts::FromValidationResult`
+
+The result of the from-check.
+
+### `packages/tools/src/validate/read-render-parse.ts::AstTolerance`
+
+How far a read-render-parse AST may differ and still count as a match.
+
+### `packages/tools/src/validate/read-render-parse.ts::Placement`
+
+Where a fixture is placed in the render.
+
+### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseFailure`
+
+A failure of the read-render-parse check.
+
+### `packages/tools/src/validate/read-render-parse.ts::ReadRenderParseResult`
+
+The result of the read-render-parse check.
+
+### `packages/tools/src/validate/read-render-parse.ts::RenderFixture`
+
+A fixture the render check reads.
+
+### `packages/tools/src/validate/read-render-parse.ts::RenderReparseContext`
+
+The context in which a render is reparsed.

@@ -5067,9 +5067,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 	);
 	const _type_parameters = config.typeParameters;
 	const _extends_type_clause = config.extendsTypeClause;
-	const _body = admitAliasContent<NonNullable<T.InterfaceDeclaration['_body']>>(config.body, [
-		[[367], (v: unknown) => buildInterfaceBody(v as never)]
-	]);
+	const _body = config.body;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'interface_declaration', {
@@ -5085,7 +5083,7 @@ export function buildInterfaceDeclaration(config: T.InterfaceDeclaration.Config)
 		_extends_type_clause,
 		_body
 	});
-	const record = arena.record(TSKindId.InterfaceDeclaration as const, 51);
+	const record = arena.record(TSKindId.InterfaceDeclaration as const, 47);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 11, _type_parameters);
 	storeCell(arena, record.data, record.base + 21, _extends_type_clause);
@@ -5111,7 +5109,7 @@ function rowInterfaceDeclaration(node: object, handle: EngineHandle | undefined)
 				),
 			extendsTypeClause: (value?: Admit<T.ExtendsTypeClause>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, extendsTypeClause: value })),
-			body: (value: Admit<T.InterfaceBody | T.InterfaceBody.Types>) =>
+			body: (value: Admit<T.InterfaceBody>) =>
 				rebuilt(node, handle, () => buildInterfaceDeclaration({ ...config, body: value }))
 		},
 		$trivia: {
@@ -9695,7 +9693,7 @@ function rowClassBodyMemberMethod(node: object, handle: EngineHandle | undefined
 				rebuilt(node, handle, () =>
 					buildClassBodyMemberMethod({ ...config, decorators: restItems('decorators', values) }, options)
 				),
-			methodDefinition: (value: Admit<T.MethodDefinition>) =>
+			methodDefinition: (value: Admit<T.MethodDefinitionClassBodyMemberMethod>) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod({ ...config, methodDefinition: value }, options)),
 			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi | null) =>
 				rebuilt(node, handle, () => buildClassBodyMemberMethod(config, { ...options, terminator: spelling }))
@@ -12726,6 +12724,57 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
+export function buildConstructorDeclaration<
+	ParametersSlot extends T.ConstructorDeclaration.Config['parameters'],
+	BodySlot extends T.ConstructorDeclaration.Config['body']
+>(
+	config?: RefusingConfig<Partial<T.ConstructorDeclaration.Config>, { parameters: ParametersSlot; body: BodySlot }>
+): T.ConstructorDeclaration.Bound;
+export function buildConstructorDeclaration(
+	config: Partial<T.ConstructorDeclaration.Config> = {}
+): T.ConstructorDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.ConstructorDeclaration, [config]);
+	const _accessibility_modifier = kindIdStorage<NonNullable<T.ConstructorDeclaration['_accessibility_modifier']>>(
+		config.accessibilityModifier
+	);
+	const _parameters = orDefault(config.parameters, () => buildFormalParameters());
+	const _body = orDefault(config.body, () => buildStatementBlock());
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'constructor_declaration', {
+			accessibilityModifier: _accessibility_modifier,
+			parameters: _parameters,
+			body: _body
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ConstructorDeclaration as const, { _accessibility_modifier, _parameters, _body });
+	const record = arena.record(TSKindId.ConstructorDeclaration as const, 23);
+	storeCell(arena, record.data, record.base + 2, _accessibility_modifier);
+	storeCell(arena, record.data, record.base + 7, _parameters);
+	storeCell(arena, record.data, record.base + 12, _body);
+	const node = arena.view(record);
+	return node as unknown as T.ConstructorDeclaration.Bound;
+}
+
+function rowConstructorDeclaration(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.ConstructorDeclaration.Config;
+	return {
+		$with: {
+			accessibilityModifier: (value?: Admit<NonNullable<T.ConstructorDeclaration.Config>['accessibilityModifier']>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, accessibilityModifier: value })),
+			parameters: (value: Admit<T.FormalParameters>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, parameters: value })),
+			body: (value: Admit<T.StatementBlock>) =>
+				rebuilt(node, handle, () => buildConstructorDeclaration({ ...config, body: value }))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	};
+}
+
 export function buildReceiverParameterDeclaration<
 	DecoratorsSlot extends T.ReceiverParameterDeclaration.Config['decorators'],
 	TypeSlot extends T.ReceiverParameterDeclaration.Config['type'],
@@ -13168,25 +13217,44 @@ function rowTypeIdentifier(node: object, handle: EngineHandle | undefined): Buil
 	};
 }
 
-export function buildInterfaceBody<V extends Admit<T.ObjectType>>(
-	value: V & RefuseUndeclared<V>
+export function buildInterfaceBody<MembersSlot extends ConfigOf<T.InterfaceBody>['members']>(
+	config: RefusingConfig<ConfigOf<T.InterfaceBody>, { members: MembersSlot }>
 ): T.InterfaceBody.Bound;
-export function buildInterfaceBody(value: Admit<T.ObjectType>): T.InterfaceBody.Bound {
-	const _content = value;
+export function buildInterfaceBody(config: ConfigOf<T.InterfaceBody>): T.InterfaceBody.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceBody, [config]);
+	const _opening = kindIdStorage<NonNullable<T.InterfaceBody['_opening']>>(config.opening);
+	const _members = config.members;
+	const _closing = kindIdStorage<NonNullable<T.InterfaceBody['_closing']>>(config.closing);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'interface_body', { content: _content });
+	if (handle !== undefined)
+		admitChildren(handle, 'interface_body', { opening: _opening, members: _members, closing: _closing });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.InterfaceBody as const, { _content });
-	const record = arena.record(TSKindId.InterfaceBody as const, 22);
-	storeCell(arena, record.data, record.base + 2, _content);
+	handle?.verifyStored?.(TSKindId.InterfaceBody as const, { _opening, _members, _closing });
+	const record = arena.record(TSKindId.InterfaceBody as const, 18);
+	storeCell(arena, record.data, record.base + 2, _opening);
+	storeCell(arena, record.data, record.base + 7, _members);
+	storeCell(arena, record.data, record.base + 13, _closing);
 	const node = arena.view(record);
 	return node as unknown as T.InterfaceBody.Bound;
 }
 
 function rowInterfaceBody(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as ConfigOf<T.InterfaceBody>;
 	return {
 		$with: {
-			content: (value: Admit<T.ObjectType>) => rebuilt(node, handle, () => buildInterfaceBody(value))
+			opening: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['opening']>) =>
+				rebuilt(node, handle, () => buildInterfaceBody({ ...config, opening: value })),
+			members: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.ObjectTypeContent as const, optional: true, make: buildObjectTypeContent },
+						(value?: Admit<T.ObjectTypeContent>) => buildInterfaceBody({ ...config, members: value })
+					)
+				),
+			closing: (value: Admit<NonNullable<ConfigOf<T.InterfaceBody>>['closing']>) =>
+				rebuilt(node, handle, () => buildInterfaceBody({ ...config, closing: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -13194,6 +13262,50 @@ function rowInterfaceBody(node: object, handle: EngineHandle | undefined): Built
 		}
 	};
 }
+
+export function buildInterfaceBodyCurly<MembersSlot extends T.InterfaceBody.Curly.Config['members']>(
+	config?: RefusingConfig<T.InterfaceBody.Curly.Config, { members: MembersSlot }>
+): T.InterfaceBody.Curly.Bound;
+export function buildInterfaceBodyCurly(config?: T.InterfaceBody.Curly.Config): T.InterfaceBody.Curly.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceBody, [config], ['members']);
+	const _opening = TSKindId.Lbrace as const;
+	const _members = config?.members;
+	const _closing = TSKindId.Rbrace as const;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'interface_body', { opening: _opening, members: _members, closing: _closing });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.InterfaceBody as const, { _opening, _members, _closing });
+	const record = arena.record(TSKindId.InterfaceBody as const, 18);
+	storeCell(arena, record.data, record.base + 2, _opening);
+	storeCell(arena, record.data, record.base + 7, _members);
+	storeCell(arena, record.data, record.base + 13, _closing);
+	const node = arena.view(record);
+	return node as unknown as T.InterfaceBody.Curly.Bound;
+}
+
+export function buildInterfaceBodyFlow<MembersSlot extends T.InterfaceBody.Flow.Config['members']>(
+	config?: RefusingConfig<T.InterfaceBody.Flow.Config, { members: MembersSlot }>
+): T.InterfaceBody.Flow.Bound;
+export function buildInterfaceBodyFlow(config?: T.InterfaceBody.Flow.Config): T.InterfaceBody.Flow.Bound {
+	currentHandle()?.admit(TSKindId.InterfaceBody, [config], ['members']);
+	const _opening = TSKindId.LbracePipe as const;
+	const _members = config?.members;
+	const _closing = TSKindId.PipeRbrace as const;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'interface_body', { opening: _opening, members: _members, closing: _closing });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.InterfaceBody as const, { _opening, _members, _closing });
+	const record = arena.record(TSKindId.InterfaceBody as const, 18);
+	storeCell(arena, record.data, record.base + 2, _opening);
+	storeCell(arena, record.data, record.base + 7, _members);
+	storeCell(arena, record.data, record.base + 13, _closing);
+	const node = arena.view(record);
+	return node as unknown as T.InterfaceBody.Flow.Bound;
+}
+
+export const buildThisType: TSKindId.ThisType = TSKindId.ThisType;
 
 export type FluentKindMap = {
 	program: T.Program.Bound;
@@ -13460,6 +13572,7 @@ export type FluentKindMap = {
 	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	constructor_declaration: T.ConstructorDeclaration.Bound;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	formal_parameters_elements_receiver: T.FormalParametersElementsReceiver.Bound;
 	formal_parameters_elements_receiver_group: T.FormalParametersElementsReceiverGroup.Bound;
@@ -13471,6 +13584,7 @@ export type FluentKindMap = {
 	property_identifier: T.PropertyIdentifier.Bound;
 	type_identifier: T.TypeIdentifier.Bound;
 	interface_body: T.InterfaceBody.Bound;
+	this_type: T.ThisType;
 };
 
 export const _factoryMap = {
@@ -13738,6 +13852,7 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	constructor_declaration: buildConstructorDeclaration,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	formal_parameters_elements_receiver: buildFormalParametersElementsReceiver,
 	formal_parameters_elements_receiver_group: buildFormalParametersElementsReceiverGroup,
@@ -13748,261 +13863,263 @@ export const _factoryMap = {
 	shorthand_property_identifier_pattern: buildShorthandPropertyIdentifierPattern,
 	property_identifier: buildPropertyIdentifier,
 	type_identifier: buildTypeIdentifier,
-	interface_body: buildInterfaceBody
+	interface_body: buildInterfaceBody,
+	this_type: buildThisType
 } as const;
 export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	rows: Object.freeze({
 		2: rowHashBangLine,
-		120: rowEscapeSequence,
-		127: rowPrivatePropertyIdentifier,
-		152: rowCommentLine,
-		153: rowCommentBlock,
-		154: rowNumberHex,
-		155: rowNumberFloatPoint,
-		156: rowNumberFloatLeadingPoint,
-		157: rowNumberFloatScientific,
-		159: rowNumberBinary,
-		160: rowNumberOctal,
-		161: rowNumberBigintHex,
-		162: rowNumberBigintBinary,
-		163: rowNumberBigintOctal,
-		164: rowNumberBigintDecimal,
-		188: rowProgram,
-		190: rowNamespaceExport,
-		191: rowExportClause,
-		192: rowExportSpecifier,
-		196: rowImportStatement,
-		197: rowImportClause,
-		199: rowNamespaceImport,
-		200: rowNamedImports,
-		202: rowImportAttribute,
-		204: rowExpressionStatement,
-		205: rowVariableDeclaration,
-		206: rowLexicalDeclaration,
-		207: rowUsingDeclaration,
-		209: rowStatementBlock,
-		210: rowElseClause,
-		211: rowIfStatement,
-		212: rowSwitchStatement,
-		213: rowForStatement,
-		214: rowForInStatement,
-		216: rowWhileStatement,
-		217: rowDoStatement,
-		218: rowTryStatement,
-		219: rowWithStatement,
-		220: rowBreakStatement,
-		221: rowContinueStatement,
-		222: rowDebuggerStatement,
-		223: rowReturnStatement,
-		224: rowThrowStatement,
-		226: rowLabeledStatement,
-		227: rowSwitchBody,
-		228: rowSwitchCase,
-		229: rowSwitchDefault,
-		230: rowCatchClause,
-		231: rowFinallyClause,
-		235: rowYieldExpression,
-		236: rowObject,
-		237: rowObjectPattern,
-		238: rowAssignmentPattern,
-		239: rowObjectAssignmentPattern,
-		240: rowArray,
-		241: rowArrayPattern,
-		242: rowNestedIdentifier,
-		243: rowClass,
-		244: rowClassDeclaration,
-		245: rowClassHeritage,
-		246: rowFunctionExpression,
-		247: rowFunctionDeclaration,
-		248: rowGeneratorFunction,
-		249: rowGeneratorFunctionDeclaration,
-		250: rowArrowFunction,
-		255: rowNewExpression,
-		256: rowAwaitExpression,
-		257: rowMemberExpression,
-		258: rowSubscriptExpression,
-		259: rowLhsExpression,
-		260: rowAssignmentExpression,
-		262: rowAugmentedAssignmentExpression,
-		265: rowSpreadElement,
-		266: rowTernaryExpression,
-		267: rowBinaryExpression,
-		268: rowUnaryExpression,
-		270: rowSequenceExpression,
-		272: rowTemplateString,
-		273: rowTemplateSubstitution,
-		274: rowRegex,
-		282: rowArguments,
-		283: rowDecorator,
-		284: rowDecoratorMemberExpression,
-		285: rowDecoratorCallExpression,
-		286: rowClassBody,
-		287: rowFormalParameters,
-		288: rowClassStaticBlock,
-		290: rowRestPattern,
-		292: rowPair,
-		293: rowPairPattern,
-		295: rowComputedPropertyName,
-		298: rowNonNullExpression,
-		301: rowFunctionSignature,
-		302: rowDecoratorParenthesizedExpression,
-		303: rowTypeAssertion,
-		304: rowAsExpression,
-		305: rowSatisfiesExpression,
-		306: rowInstantiationExpression,
-		307: rowImportRequireClause,
-		308: rowExtendsClause,
-		309: rowExtendsClauseSingle,
-		310: rowImplementsClause,
-		311: rowAmbientDeclaration,
-		312: rowAbstractClassDeclaration,
-		313: rowModule,
-		314: rowInternalModule,
-		316: rowImportAlias,
-		317: rowNestedTypeIdentifier,
-		318: rowInterfaceDeclaration,
-		319: rowExtendsTypeClause,
-		320: rowEnumDeclaration,
-		321: rowEnumBody,
-		322: rowEnumAssignment,
-		323: rowTypeAliasDeclaration,
-		326: rowRequiredParameter,
-		327: rowOptionalParameter,
-		329: rowOmittingTypeAnnotation,
-		330: rowAddingTypeAnnotation,
-		331: rowOptingTypeAnnotation,
-		332: rowTypeAnnotation,
-		333: rowTypeQueryMemberExpressionInTypeAnnotation,
-		334: rowTypeQueryCallExpressionInTypeAnnotation,
-		335: rowAsserts,
-		336: rowAssertsAnnotation,
-		338: rowTupleParameter,
-		339: rowOptionalTupleParameter,
-		340: rowOptionalType,
-		341: rowRestType,
-		343: rowConstructorType,
-		345: rowTemplateType,
-		346: rowTemplateLiteralType,
-		347: rowInferType,
-		348: rowConditionalType,
-		349: rowGenericType,
-		350: rowTypePredicate,
-		351: rowTypePredicateAnnotation,
-		352: rowTypeQueryMemberExpression,
-		353: rowTypeQuerySubscriptExpression,
-		354: rowTypeQueryCallExpression,
-		355: rowTypeQueryInstantiationExpression,
-		356: rowTypeQuery,
-		357: rowIndexTypeQuery,
-		358: rowLookupType,
-		359: rowMappedTypeClause,
-		360: rowLiteralType,
-		363: rowFlowMaybeType,
-		364: rowParenthesizedType,
-		366: rowTypeArguments,
-		367: rowObjectType,
-		368: rowCallSignature,
-		369: rowPropertySignature,
-		370: rowTypeParameters,
-		371: rowTypeParameter,
-		372: rowDefaultType,
-		373: rowConstraint,
-		374: rowConstructSignature,
-		376: rowArrayType,
-		377: rowTupleType,
-		378: rowReadonlyType,
-		379: rowUnionType,
-		380: rowIntersectionType,
-		381: rowFunctionType,
-		382: rowExportSpecifiers,
-		383: rowImportSpecifiers,
-		385: rowFormalParametersElements,
-		386: rowEnumBodyElementName,
-		388: rowEnumBodyElements,
-		389: rowTypes,
-		390: rowTypeParametersElements,
-		391: rowTupleTypeMembers,
-		392: rowImportClauseGroup,
-		394: rowCatchClauseGroup,
-		395: rowGetAccessorSignature,
-		397: rowAmbientDeclarationGlobal,
-		398: rowAmbientDeclarationModule,
-		399: rowObjectTypeContent,
-		401: rowExportStatementNamespaceExport,
-		402: rowExportStatementEqualsExport,
-		403: rowLiteralTypeNegativeNumber,
-		405: rowBinaryExpressionIn,
-		407: rowClassBodyMemberMethod,
-		408: rowClassBodyMemberMethodSig,
-		409: rowClassBodyMemberDeclaration,
-		410: rowIndexSignatureColon,
-		411: rowIndexSignatureMappedTypeClause,
-		412: rowImportStatementClauseFrom,
-		413: rowYieldExpressionDelegate,
-		415: rowImportSpecifierName,
-		416: rowImportSpecifierAs,
-		417: rowParenthesizedExpressionTyped,
-		418: rowParenthesizedExpressionSequence,
-		419: rowCallExpressionCall,
-		420: rowCallExpressionTemplateCall,
-		421: rowCallExpressionMember,
-		422: rowStringDouble,
-		423: rowStringSingle,
-		424: rowUpdateExpressionPostfix,
-		425: rowUpdateExpressionPrefix,
-		426: rowArrowFunctionParameter,
-		427: rowClassHeritageExtendsClause,
-		428: rowImportClauseDefaultImport,
-		429: rowExportStatementDefaultFrom,
-		430: rowExportStatementDefaultDeclaration,
-		431: rowExportStatementDefaultFromStarFrom,
-		432: rowExportStatementDefaultFromNsFrom,
-		433: rowExportStatementDefaultFromClauseFrom,
-		434: rowExportStatementDefaultDeclarationDefaultKw,
-		435: rowExportStatementDefaultDeclarationDefaultKwValue,
-		436: rowVariableDeclaratorPlain,
-		437: rowVariableDeclaratorDefinite,
-		440: rowForHeaderLhs,
-		441: rowForHeaderVarKind,
-		442: rowForHeaderLetConstKind,
-		443: rowForHeaderUsingKind,
-		446: rowFormalParametersSetAccessorSignature,
-		447: rowFormalParametersElementsSetAccessorSignature,
-		448: rowSetterParameter,
-		451: rowMethodDefinitionPlain,
-		452: rowMethodDefinitionGetter,
-		453: rowMethodDefinitionSetter,
-		454: rowMethodSignaturePlain,
-		455: rowMethodSignatureGetter,
-		456: rowMethodSignatureSetter,
-		457: rowAbstractMethodSignaturePlain,
-		458: rowAbstractMethodSignatureGetter,
-		459: rowAbstractMethodSignatureSetter,
-		460: rowPublicFieldDefinitionPlain,
-		461: rowPublicFieldDefinitionAccessor,
-		463: rowReceiverParameterDeclaration,
-		465: rowFormalParametersElementsReceiver,
-		466: rowFormalParametersElementsReceiverGroup,
-		493: rowInterfaceBody,
-		495: rowPropertyIdentifier,
-		496: rowShorthandPropertyIdentifier,
-		497: rowShorthandPropertyIdentifierPattern,
-		498: rowStatementIdentifier,
-		500: rowTypeIdentifier
+		121: rowEscapeSequence,
+		128: rowPrivatePropertyIdentifier,
+		153: rowCommentLine,
+		154: rowCommentBlock,
+		155: rowNumberHex,
+		156: rowNumberFloatPoint,
+		157: rowNumberFloatLeadingPoint,
+		158: rowNumberFloatScientific,
+		160: rowNumberBinary,
+		161: rowNumberOctal,
+		162: rowNumberBigintHex,
+		163: rowNumberBigintBinary,
+		164: rowNumberBigintOctal,
+		165: rowNumberBigintDecimal,
+		189: rowProgram,
+		191: rowNamespaceExport,
+		192: rowExportClause,
+		193: rowExportSpecifier,
+		197: rowImportStatement,
+		198: rowImportClause,
+		200: rowNamespaceImport,
+		201: rowNamedImports,
+		203: rowImportAttribute,
+		205: rowExpressionStatement,
+		206: rowVariableDeclaration,
+		207: rowLexicalDeclaration,
+		208: rowUsingDeclaration,
+		210: rowStatementBlock,
+		211: rowElseClause,
+		212: rowIfStatement,
+		213: rowSwitchStatement,
+		214: rowForStatement,
+		215: rowForInStatement,
+		217: rowWhileStatement,
+		218: rowDoStatement,
+		219: rowTryStatement,
+		220: rowWithStatement,
+		221: rowBreakStatement,
+		222: rowContinueStatement,
+		223: rowDebuggerStatement,
+		224: rowReturnStatement,
+		225: rowThrowStatement,
+		227: rowLabeledStatement,
+		228: rowSwitchBody,
+		229: rowSwitchCase,
+		230: rowSwitchDefault,
+		231: rowCatchClause,
+		232: rowFinallyClause,
+		236: rowYieldExpression,
+		237: rowObject,
+		238: rowObjectPattern,
+		239: rowAssignmentPattern,
+		240: rowObjectAssignmentPattern,
+		241: rowArray,
+		242: rowArrayPattern,
+		243: rowNestedIdentifier,
+		244: rowClass,
+		245: rowClassDeclaration,
+		246: rowClassHeritage,
+		247: rowFunctionExpression,
+		248: rowFunctionDeclaration,
+		249: rowGeneratorFunction,
+		250: rowGeneratorFunctionDeclaration,
+		251: rowArrowFunction,
+		256: rowNewExpression,
+		257: rowAwaitExpression,
+		258: rowMemberExpression,
+		259: rowSubscriptExpression,
+		260: rowLhsExpression,
+		261: rowAssignmentExpression,
+		263: rowAugmentedAssignmentExpression,
+		266: rowSpreadElement,
+		267: rowTernaryExpression,
+		268: rowBinaryExpression,
+		269: rowUnaryExpression,
+		271: rowSequenceExpression,
+		273: rowTemplateString,
+		274: rowTemplateSubstitution,
+		275: rowRegex,
+		283: rowArguments,
+		284: rowDecorator,
+		285: rowDecoratorMemberExpression,
+		286: rowDecoratorCallExpression,
+		287: rowClassBody,
+		288: rowFormalParameters,
+		289: rowClassStaticBlock,
+		291: rowRestPattern,
+		293: rowPair,
+		294: rowPairPattern,
+		296: rowComputedPropertyName,
+		299: rowNonNullExpression,
+		302: rowFunctionSignature,
+		303: rowDecoratorParenthesizedExpression,
+		304: rowTypeAssertion,
+		305: rowAsExpression,
+		306: rowSatisfiesExpression,
+		307: rowInstantiationExpression,
+		308: rowImportRequireClause,
+		309: rowExtendsClause,
+		310: rowExtendsClauseSingle,
+		311: rowImplementsClause,
+		312: rowAmbientDeclaration,
+		313: rowAbstractClassDeclaration,
+		314: rowModule,
+		315: rowInternalModule,
+		317: rowImportAlias,
+		318: rowNestedTypeIdentifier,
+		319: rowInterfaceDeclaration,
+		320: rowExtendsTypeClause,
+		321: rowEnumDeclaration,
+		322: rowEnumBody,
+		323: rowEnumAssignment,
+		324: rowTypeAliasDeclaration,
+		327: rowRequiredParameter,
+		328: rowOptionalParameter,
+		330: rowOmittingTypeAnnotation,
+		331: rowAddingTypeAnnotation,
+		332: rowOptingTypeAnnotation,
+		333: rowTypeAnnotation,
+		334: rowTypeQueryMemberExpressionInTypeAnnotation,
+		335: rowTypeQueryCallExpressionInTypeAnnotation,
+		336: rowAsserts,
+		337: rowAssertsAnnotation,
+		339: rowTupleParameter,
+		340: rowOptionalTupleParameter,
+		341: rowOptionalType,
+		342: rowRestType,
+		344: rowConstructorType,
+		346: rowTemplateType,
+		347: rowTemplateLiteralType,
+		348: rowInferType,
+		349: rowConditionalType,
+		350: rowGenericType,
+		351: rowTypePredicate,
+		352: rowTypePredicateAnnotation,
+		353: rowTypeQueryMemberExpression,
+		354: rowTypeQuerySubscriptExpression,
+		355: rowTypeQueryCallExpression,
+		356: rowTypeQueryInstantiationExpression,
+		357: rowTypeQuery,
+		358: rowIndexTypeQuery,
+		359: rowLookupType,
+		360: rowMappedTypeClause,
+		361: rowLiteralType,
+		364: rowFlowMaybeType,
+		365: rowParenthesizedType,
+		367: rowTypeArguments,
+		368: rowObjectType,
+		369: rowCallSignature,
+		370: rowPropertySignature,
+		371: rowTypeParameters,
+		372: rowTypeParameter,
+		373: rowDefaultType,
+		374: rowConstraint,
+		375: rowConstructSignature,
+		377: rowArrayType,
+		378: rowTupleType,
+		379: rowReadonlyType,
+		380: rowUnionType,
+		381: rowIntersectionType,
+		382: rowFunctionType,
+		383: rowExportSpecifiers,
+		384: rowImportSpecifiers,
+		386: rowFormalParametersElements,
+		387: rowEnumBodyElementName,
+		389: rowEnumBodyElements,
+		390: rowTypes,
+		391: rowTypeParametersElements,
+		392: rowTupleTypeMembers,
+		393: rowImportClauseGroup,
+		395: rowCatchClauseGroup,
+		396: rowGetAccessorSignature,
+		398: rowAmbientDeclarationGlobal,
+		399: rowAmbientDeclarationModule,
+		400: rowObjectTypeContent,
+		402: rowExportStatementNamespaceExport,
+		403: rowExportStatementEqualsExport,
+		404: rowLiteralTypeNegativeNumber,
+		406: rowBinaryExpressionIn,
+		408: rowClassBodyMemberMethod,
+		409: rowClassBodyMemberMethodSig,
+		410: rowClassBodyMemberDeclaration,
+		411: rowIndexSignatureColon,
+		412: rowIndexSignatureMappedTypeClause,
+		413: rowImportStatementClauseFrom,
+		414: rowYieldExpressionDelegate,
+		416: rowImportSpecifierName,
+		417: rowImportSpecifierAs,
+		418: rowParenthesizedExpressionTyped,
+		419: rowParenthesizedExpressionSequence,
+		420: rowCallExpressionCall,
+		421: rowCallExpressionTemplateCall,
+		422: rowCallExpressionMember,
+		423: rowStringDouble,
+		424: rowStringSingle,
+		425: rowUpdateExpressionPostfix,
+		426: rowUpdateExpressionPrefix,
+		427: rowArrowFunctionParameter,
+		428: rowClassHeritageExtendsClause,
+		429: rowImportClauseDefaultImport,
+		430: rowExportStatementDefaultFrom,
+		431: rowExportStatementDefaultDeclaration,
+		432: rowExportStatementDefaultFromStarFrom,
+		433: rowExportStatementDefaultFromNsFrom,
+		434: rowExportStatementDefaultFromClauseFrom,
+		435: rowExportStatementDefaultDeclarationDefaultKw,
+		436: rowExportStatementDefaultDeclarationDefaultKwValue,
+		437: rowVariableDeclaratorPlain,
+		438: rowVariableDeclaratorDefinite,
+		441: rowForHeaderLhs,
+		442: rowForHeaderVarKind,
+		443: rowForHeaderLetConstKind,
+		444: rowForHeaderUsingKind,
+		447: rowFormalParametersSetAccessorSignature,
+		448: rowFormalParametersElementsSetAccessorSignature,
+		449: rowSetterParameter,
+		452: rowMethodDefinitionPlain,
+		453: rowMethodDefinitionGetter,
+		454: rowMethodDefinitionSetter,
+		455: rowMethodSignaturePlain,
+		456: rowMethodSignatureGetter,
+		457: rowMethodSignatureSetter,
+		458: rowAbstractMethodSignaturePlain,
+		459: rowAbstractMethodSignatureGetter,
+		460: rowAbstractMethodSignatureSetter,
+		461: rowPublicFieldDefinitionPlain,
+		462: rowPublicFieldDefinitionAccessor,
+		463: rowConstructorDeclaration,
+		467: rowReceiverParameterDeclaration,
+		469: rowFormalParametersElementsReceiver,
+		470: rowFormalParametersElementsReceiverGroup,
+		497: rowInterfaceBody,
+		499: rowPropertyIdentifier,
+		500: rowShorthandPropertyIdentifier,
+		501: rowShorthandPropertyIdentifierPattern,
+		502: rowStatementIdentifier,
+		504: rowTypeIdentifier
 	}),
 	leaves: Object.freeze({
 		1: leafIdentifier,
-		118: leafUnescapedDoubleStringFragment,
-		119: leafUnescapedSingleStringFragment,
-		125: leafRegexPattern,
-		126: leafRegexFlags,
-		158: leafNumberDecimal,
-		174: leafTemplateChars,
-		175: leafTernaryQmark,
-		176: leafHtmlComment,
-		177: leafJsxText,
-		179: leafErrorRecovery
+		119: leafUnescapedDoubleStringFragment,
+		120: leafUnescapedSingleStringFragment,
+		126: leafRegexPattern,
+		127: leafRegexFlags,
+		159: leafNumberDecimal,
+		175: leafTemplateChars,
+		176: leafTernaryQmark,
+		177: leafHtmlComment,
+		178: leafJsxText,
+		180: leafErrorRecovery
 	})
 });

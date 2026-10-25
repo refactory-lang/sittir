@@ -16,6 +16,9 @@ pub struct KindAttrs {
     pub min_depth: Option<u32>,
     pub layout: Vec<TokenGroup>,
     pub folded: Vec<Path>,
+    /// On a struct: the display ids its kind is also shown as, which its
+    /// `$type` field holds when the node shows one of them.
+    pub displays: Vec<Path>,
     pub wraps_hidden: bool,
     /// `text`, or `text = "…"`: a leaf read as its text, with the fixed text
     /// it reads as when its span is empty or its tokens do not tile it.
@@ -52,6 +55,10 @@ pub struct KindAttrs {
     /// (`SeatTarget`), which codegen stamps where the wrapper's seat follows
     /// its content.
     pub seat_through: Option<Ident>,
+    /// On a choice: the function that stamps a node's kind from its grammar
+    /// and display ids, which picks the variant; absent, the choice stamps
+    /// with its own displays and no relaxed keywords.
+    pub stamp: Option<Path>,
 }
 
 /// A slot's record cell, as codegen stamps it on `#[slot(…)]`: `word` and
@@ -188,6 +195,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "min_depth" => out.min_depth = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
                 "layout" => out.layout = token_groups(meta.value()?)?,
                 "folded" => out.folded = paths(meta.value()?)?,
+                "displays" => out.displays = paths(meta.value()?)?,
                 "wraps_hidden" => out.wraps_hidden = true,
                 "text" => out.text = Some(if meta.input.peek(Token![=]) { Some(meta.value()?.parse()?) } else { None }),
                 "interior" => out.interior = Some(meta.value()?.parse()?),
@@ -203,6 +211,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "view" => out.view = Some(meta.value()?.parse()?),
                 "prepare_fn" => out.prepare_fn = Some(meta.value()?.parse()?),
                 "seat_through" => out.seat_through = Some(meta.value()?.parse()?),
+                "stamp" => out.stamp = Some(meta.value()?.parse()?),
                 _ => return Err(meta.error("unknown `node` attribute")),
             }
             Ok(())

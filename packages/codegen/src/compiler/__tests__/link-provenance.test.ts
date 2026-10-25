@@ -56,6 +56,23 @@ describe('link carries each kind\'s provenance', () => {
 		expect(linked.provenance?.variantOf).toEqual({ pointer_const: 'pointer' });
 	});
 
+	it('stamps a reference to a hidden copy with the visible kind the copy chain starts from', () => {
+		const linked = linkPredicted(
+			raw(
+				{
+					root: { type: SEQ, members: [{ type: SYMBOL, name: '_method_inner' }, { type: SYMBOL, name: 'method' }] },
+					method: word('fn'),
+					_method_outer: word('fn'),
+					_method_inner: word('fn')
+				},
+				{ splitFrom: { _method_outer: 'method', _method_inner: '_method_outer' } }
+			)
+		);
+		const root = linked.rules.root as Extract<Rule<'link'>, { type: 'SEQ' }>;
+
+		expect(root.members.map((member) => (member as { copyOf?: string }).copyOf)).toEqual(['method', undefined]);
+	});
+
 	it('carries no provenance for a grammar without grammar bindings', () => {
 		const linked = linkPredicted(raw({ root: word('x') }));
 

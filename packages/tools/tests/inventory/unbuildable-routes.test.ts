@@ -7,7 +7,8 @@ import { grammarPackageDir } from '@sittir/codegen/grammars';
 const CEILING: Readonly<Record<string, readonly string[]>> = {
 	python: [
 		'class_definition.doc',
-		'function_definition.doc'
+		'function_definition.doc',
+		'method_declaration.doc'
 	],
 	rust: ['impl_item_body.implements'],
 	typescript: []

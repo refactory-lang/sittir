@@ -1,91 +1,3 @@
-/**
- * check-baseline-regression.ts — the validation ratchet.
- *
- * Reads two `BackendBaseline` JSONs (the PR's base and head versions of
- * `packages/tools/baselines/<backend>.json`) and applies the verdict
- * rules below.
- *
- * Exits 0 when the head is at-or-better than the base on every tracked
- * metric; exits 1 otherwise. On failure, prints a JSON object naming
- * the offending field path so the CI log points reviewers at the regression.
- *
- * Every row the head records is compared: each validator and the parity
- * fixtures of each grammar. A row the base does not record (a validator
- * or grammar the change adds) is compared against zero counts, so it
- * has nothing to lose and each failure it brings is a rise.
- *
- * The six fail conditions:
- *   1. Pass-count drop — any of `validators.{from,coverage,roundtrip,
- *      factoryStorage,builtRenderParse}.pass`, `validators.{roundtrip,
- *      factoryStorage,builtRenderParse}.astMatchPass`, `parityFixtures.pass`,
- *      per grammar. This is what
- *      actually guards regressions; rule 2 below is a coarser tripwire on
- *      top of it. A kind departs by name: it is in the base's `kinds` and
- *      missing from the head's; with no `kinds` on either side, no kind
- *      departs. In a row whose base records its cases by kind
- *      (`casesByKind`), every kind is compared on its own, whether or not
- *      the row's pass fell, and the head must record them too: a kind that
- *      did not depart (one still in `kinds`, or a key that is not one of
- *      the base's kinds) may not lose a case unless `baselineCounterChange`
- *      declares the row and names each such kind in its `cases`, with the
- *      base's and the head's counts (`case-loss`). A departed kind's lost
- *      cases are allowed and listed in the passing verdict. A gain never
- *      offsets a loss. A pass drop is a regression unless the row's fail
- *      count (`total - pass`) did not rise and every lost case belongs to
- *      a departed kind; a declaration does not excuse it. `roundtrip`
- *      counts corpus rows and records no cases by kind, so no departure
- *      explains its drop. The aggregate `totals` are sums of the rows and
- *      are not compared.
- *   2. Total drop — a row whose base records no cases by kind
- *      (`roundtrip`, or any row of a base collected before inventories)
- *      lost cases while its pass held, so failing cases left it, unless
- *      `baselineCounterChange` declares that row with `from` equal to the
- *      base's counters and `to` equal to the head's. A row that lost a
- *      pass is rule 1's, which no declaration excuses. A row whose base
- *      records cases by kind is held case by case under rule 1, so a
- *      departed kind takes its cases, failing ones included, with no
- *      declaration.
- *      The head record's declaration is read from the head itself, or,
- *      for a freshly collected head, from the committed record named by
- *      `--declared`. Once the head merges, the base equals `to` and the
- *      declaration is inert.
- *   3. Fail rise — a row's fail count (`total - pass`, and for a roundtrip
- *      validator `total - astMatchPass`) rose, for any validator or the
- *      parity fixtures of any grammar, unless `baselineCounterChange`
- *      declares that row with `from` equal to the base's counters and `to`
- *      equal to the head's. A row the base does not record is declared
- *      `from` `{ pass: 0, total: 0 }`. A pass that falls alongside the
- *      rise is already a pass-count drop under rule 1, which runs first.
- *      `totals.fail` is the sum of the rows, so it cannot rise unless a
- *      row does.
- *   4. Schema violation — missing keys, unsorted arrays, missing
- *      `formatDeferredKinds` / `formatDeferredByKind`.
- *   5. Format-deferred-count rise — for any validator the base records,
- *      `length(failingKinds) + length(formatDeferredKinds)`, and for the
- *      parity fixtures the number of `failingByKind` and
- *      `formatDeferredByKind` ids, may grow by no more than the row's
- *      total did, and only while its pass held: new cases that fail,
- *      whose count rule 3 holds to a declaration. Items may MOVE from the
- *      failing list into the format-deferred one; only the SUM is
- *      checked. A kind the head adds (in its `kinds`, not the base's) is
- *      not counted in the head's list: a kind that splits or is renamed
- *      lists its failing parts under new names, and rule 3 holds their
- *      failures. A row whose fail rise rule 3 finds declared is not held
- *      to the allowance: one new failing case can list several kinds.
- *   6. Left-out rise — the PER-GRAMMAR SUM of `parityFixtures.
- *      leftOutByKind` may not grow: a render fixture the regen leaves out
- *      is a kind whose template no longer reproduces its source, and it
- *      must fail here rather than vanish from the fixture set. The sum,
- *      not each kind individually, is tracked — a kind rename moves
- *      fixtures between keys without changing how many don't reproduce.
- *      A grammar the base does not record starts from zero, so a grammar
- *      a change adds enters with no fixture left out.
- *
- * Importable surface: `checkRegression(base, head): RegressionVerdict`.
- * The CLI wrapper (bottom of file) reads `--base <path>` and `--head <path>`
- * and calls the same function.
- */
-
 import { stableGrammars } from '@sittir/codegen/grammars';
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -94,6 +6,7 @@ import { kindOfLabel } from '../validate/surface-label.ts';
 import type {
 	BackendBaseline,
 	CounterPair,
+	DeclaredCounters,
 	DeclaredRowChange,
 	GrammarEntry,
 	ParityFixtures,
@@ -389,6 +302,16 @@ function validateBaselineShape(b: unknown, label: string): RegressionVerdict | n
 			details: { path: `${label}.commit`, after: obj['commit'] }
 		};
 	}
+	const declared = obj['baselineCounterChange'] as { readonly reason?: unknown } | null | undefined;
+	const declaredReason = declared?.reason;
+	if (declared !== undefined && (typeof declaredReason !== 'string' || declaredReason.trim() === '')) {
+		return {
+			ok: false,
+			reason: 'schema-violation',
+			summary: `schema violation: ${label}.baselineCounterChange states no reason`,
+			details: { path: `${label}.baselineCounterChange.reason`, after: declaredReason, note: 'a declaration states why its rows change' }
+		};
+	}
 	const grammars = obj['grammars'];
 	if (grammars === null || typeof grammars !== 'object') {
 		return {
@@ -585,9 +508,12 @@ function unexplainedDrop({ b, h }: ComparedRow, { before, after }: ComparedMetri
 	const failAfter = h.total - after;
 	if (failAfter > failBefore) return `its fail count rose ${failBefore} → ${failAfter}`;
 	if (losses === undefined) return 'no kind departure explains it: the base records no cases by kind for this row';
-	if (losses.kept.length === 0) return undefined;
-	const departed = losses.departed.length === 0 ? '' : `; departed ${lossText(losses.departed)}`;
-	return `cases lost by kinds that did not depart: ${lossText(losses.kept)}${departed}`;
+	if (failAfter === 0) return undefined;
+	const lost = [
+		...(losses.kept.length === 0 ? [] : [`cases lost by kinds that did not depart: ${lossText(losses.kept)}`]),
+		...(losses.departed.length === 0 ? [] : [`departed ${lossText(losses.departed)}`])
+	];
+	return `${lost.join('; ')}, from a row that still fails ${casesText(failAfter)}, so a kept case may have begun to fail`;
 }
 
 function checkDroppedGrammars(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
@@ -690,19 +616,30 @@ function checkLeftOutRise(base: BackendBaseline, head: BackendBaseline): Regress
 	return null;
 }
 
-function declarationMismatch(declared: DeclaredRowChange | undefined, row: string, b: CounterPair, h: CounterPair): string | undefined {
+function declaredCount(counters: DeclaredCounters, metric: ComparedMetric['name']): number {
+	return metric === 'astMatchPass' ? (counters.astMatchPass ?? counters.pass) : counters.pass;
+}
+
+function countersText(total: number, counts: readonly (readonly [ComparedMetric['name'], number])[]): string {
+	return counts.map(([metric, count]) => (metric === 'pass' ? `${count}/${total}` : ` (${metric} ${count})`)).join('');
+}
+
+function declarationMismatch(declared: DeclaredRowChange | undefined, { row, b, h, metrics }: ComparedRow): string | undefined {
 	if (declared === undefined) return `${row} has no baselineCounterChange declaration`;
-	if (declared.from.total !== b.total || declared.from.pass !== b.pass) {
-		return `${row} base ${b.pass}/${b.total} is not the declared from ${declared.from.pass}/${declared.from.total}`;
-	}
-	if (declared.to.total !== h.total || declared.to.pass !== h.pass) {
-		return `${row} head ${h.pass}/${h.total} is not the declared to ${declared.to.pass}/${declared.to.total}`;
+	for (const [side, label, total, at] of [['from', 'base', b.total, 'before'], ['to', 'head', h.total, 'after']] as const) {
+		const counters = declared[side];
+		const actual = metrics.map(({ name, [at]: count }) => [name, count] as const);
+		const stated = metrics.map(({ name }) => [name, declaredCount(counters, name)] as const);
+		if (counters.total !== total || actual.some(([, count], i) => count !== stated[i]![1])) {
+			return `${row} ${label} ${countersText(total, actual)} is not the declared ${side} ${countersText(counters.total, stated)}`;
+		}
 	}
 	return undefined;
 }
 
-function caseLossMismatch(declared: DeclaredRowChange | undefined, { row, b, h }: ComparedRow, kept: readonly KindLoss[]): string | undefined {
-	const counters = declarationMismatch(declared, row, b, h);
+function caseLossMismatch(declared: DeclaredRowChange | undefined, row: ComparedRow, kept: readonly KindLoss[]): string | undefined {
+	const { b, h } = row;
+	const counters = declarationMismatch(declared, row);
 	if (counters !== undefined || declared === undefined) return counters;
 	const undeclared = kept
 		.map(([kind]): KindChange => [kind, ownEntry(b.casesByKind, kind) ?? 0, ownEntry(h.casesByKind, kind) ?? 0])
@@ -711,7 +648,7 @@ function caseLossMismatch(declared: DeclaredRowChange | undefined, { row, b, h }
 			return change?.from !== from || change.to !== to;
 		});
 	if (undeclared.length === 0) return undefined;
-	return `${row}'s declaration does not name ${undeclared.map(([kind, from, to]) => `${kind} ${from} → ${to}`).join(', ')} in its cases`;
+	return `${row.row}'s declaration does not name ${undeclared.map(([kind, from, to]) => `${kind} ${from} → ${to}`).join(', ')} in its cases`;
 }
 
 type KindChange = readonly [kind: string, from: number, to: number];
@@ -734,9 +671,10 @@ function checkHeadKeepsInventories(base: BackendBaseline, head: BackendBaseline)
 
 function checkTotalDrop(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {
 	for (const [g, baseGrammar, headGrammar] of comparedGrammars(base, head)) {
-		for (const { row, path, b, h } of comparedRows(g, baseGrammar, headGrammar)) {
+		for (const compared of comparedRows(g, baseGrammar, headGrammar)) {
+			const { row, path, b, h } = compared;
 			if (b.casesByKind !== undefined || h.total >= b.total || h.pass < b.pass) continue;
-			const note = declarationMismatch(declaredRow(head, g, row), row, b, h);
+			const note = declarationMismatch(declaredRow(head, g, row), compared);
 			if (note === undefined) continue;
 			return {
 				ok: false,
@@ -756,7 +694,7 @@ function checkFailRise(base: BackendBaseline, head: BackendBaseline): Regression
 				const before = row.b.total - metric.before;
 				const after = row.h.total - metric.after;
 				if (after <= before) continue;
-				const note = declarationMismatch(declaredRow(head, g, row.row), row.row, row.b, row.h);
+				const note = declarationMismatch(declaredRow(head, g, row.row), row);
 				if (note === undefined) continue;
 				const path = `${row.path}.${metric.name}`;
 				return {
@@ -802,9 +740,10 @@ function failureListSizes(
 	return [validatorSum(baseGE.validators[row]), validatorSum(headGE.validators[row], arrived)];
 }
 
-function failRiseDeclared(head: BackendBaseline, g: string, { row, b, h, metrics }: ComparedRow): boolean {
+function failRiseDeclared(head: BackendBaseline, g: string, compared: ComparedRow): boolean {
+	const { row, b, h, metrics } = compared;
 	const rose = metrics.some(({ before, after }) => h.total - after > b.total - before);
-	return rose && declarationMismatch(declaredRow(head, g, row), row, b, h) === undefined;
+	return rose && declarationMismatch(declaredRow(head, g, row), compared) === undefined;
 }
 
 function checkFormatDeferredRise(base: BackendBaseline, head: BackendBaseline): RegressionVerdict | null {

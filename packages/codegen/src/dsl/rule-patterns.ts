@@ -685,6 +685,30 @@ export function fieldNames(rule: unknown, out: Set<string> = new Set()): Set<str
 	return out;
 }
 
+export function fieldThrough(
+	rules: Readonly<Record<string, unknown>>,
+	rule: unknown,
+	field: string,
+	entered: ReadonlySet<string>,
+	enters: (symbol: GrammarRecord) => boolean = () => true
+): readonly string[] | undefined {
+	const first = (values: readonly unknown[]): readonly string[] | undefined => {
+		for (const value of values) {
+			const found = fieldThrough(rules, value, field, entered, enters);
+			if (found !== undefined) return found;
+		}
+		return undefined;
+	};
+	if (Array.isArray(rule)) return first(rule);
+	if (!isRecord(rule)) return undefined;
+	if (rule.type === 'FIELD' && rule.name === field) return [];
+	if (OPAQUE_RULES.has(rule.type) && !isEnrichedField(rule)) return undefined;
+	if (rule.type !== 'SYMBOL' || typeof rule.name !== 'string') return first(Object.values(rule));
+	if (!isParserHiddenName(rule.name) || entered.has(rule.name) || !enters(rule)) return undefined;
+	const rest = fieldThrough(rules, rules[rule.name], field, new Set([...entered, rule.name]), enters);
+	return rest === undefined ? undefined : [rule.name, ...rest];
+}
+
 export const listEntryName = (entry: unknown): string | undefined =>
 	typeof entry === 'string' ? entry : isRecord(entry) && typeof entry.name === 'string' ? entry.name : undefined;
 

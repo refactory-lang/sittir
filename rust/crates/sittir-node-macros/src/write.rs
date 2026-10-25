@@ -75,6 +75,10 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         })
     };
     let layout_of = quote!(::sittir_core::arena::LayoutField::layout(&self.#layout_name));
+    let kind = fields.iter().find(|field| matches!(field.role, Role::Kind)).map_or_else(|| quote!(__KIND), |field| {
+        let name = field.ident;
+        quote!(self.#name)
+    });
     if attrs.text.is_some() {
         let text = fields
             .iter()
@@ -82,7 +86,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             .ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf has a `#[text]` field"))?
             .ident;
         return Ok(writer(
-            quote!(::sittir_core::arena::leaf_cell(__sink, __KIND, &self.#text, #layout_of)),
+            quote!(::sittir_core::arena::leaf_cell(__sink, #kind, &self.#text, #layout_of)),
             TokenStream::new(),
         ));
     }
@@ -120,7 +124,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     }
                 });
             }
-            Role::Layout | Role::Text => {}
+            Role::Layout | Role::Text | Role::Kind => {}
         }
     }
     let spans = (!captures.is_empty()).then(|| {
@@ -135,7 +139,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             #spans
             ::sittir_core::arena::write_record(
                 __sink,
-                __KIND,
+                #kind,
                 #words,
                 #layout_of,
                 |key: &str| match key {

@@ -2,7 +2,7 @@ import { CHOICE } from '../types/rule-types.ts'; // @rule-type-consts
 import type { AnyRule, Rule, RuleBase, Multiplicity, RuleId, RuleAnnotations } from '../types/rule.ts';
 import { RuleWalker } from './rule-walker.ts';
 import { separatorFactsEqual } from './rule-patterns.ts';
-import { ruleIdPath } from '../compiler/rule-catalog.ts';
+import { reownedRuleId, ruleIdPath } from '../compiler/rule-catalog.ts';
 
 export function withAttrsFrom<R extends AnyRule>(original: AnyRule, result: R): R {
 	const src = original as StampedAttrs & { id?: string };
@@ -101,6 +101,11 @@ export function sharedArmAttrs(rule: AnyRule): SharedArmAttrs {
 
 export function withId<R extends AnyRule>(rule: R, id: RuleId | undefined): R {
 	return id !== undefined ? { ...rule, id } : rule;
+}
+
+export function reownRuleIds<R extends AnyRule>(body: R, owner: string): R {
+	const reown = (r: R): R => (r.id === undefined ? r : { ...r, id: reownedRuleId(r.id, owner) });
+	return reown(new RuleWalker<R>().map(body, reown));
 }
 
 export function rebaseRuleIds<R extends AnyRule>(body: R, hostId: RuleId | undefined): R {

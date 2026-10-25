@@ -271,6 +271,8 @@ export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
 export const buildIndent = O.buildIndent;
 export const buildDedent = O.buildDedent;
+export const buildTraitInterfaceDeclarationBody = dispatched(() => backend().buildTraitInterfaceDeclarationBody);
+export const buildExtensionDeclarationBody = dispatched(() => backend().buildExtensionDeclarationBody);
 export const buildReceiverParameterDeclaration = dispatched(() => backend().buildReceiverParameterDeclaration);
 export const buildAttributedParameterReceiver = dispatched(() => backend().buildAttributedParameterReceiver);
 export const buildParametersElementsReceiver = dispatched(() => backend().buildParametersElementsReceiver);
@@ -279,8 +281,10 @@ export const buildStringClose = dispatched(() => backend().buildStringClose);
 export const buildErrorSentinel = dispatched(() => backend().buildErrorSentinel);
 export const buildTypeIdentifier = dispatched(() => backend().buildTypeIdentifier);
 export const buildFieldIdentifier = dispatched(() => backend().buildFieldIdentifier);
-export const buildCrateVisibilityModifier = dispatched(() => backend().buildCrateVisibilityModifier);
+export const buildCrateVisibilityModifier = O.buildCrateVisibilityModifier;
 export const buildShorthandFieldIdentifier = dispatched(() => backend().buildShorthandFieldIdentifier);
+export const buildMethodDeclaration = dispatched(() => backend().buildMethodDeclaration);
+export const buildSignatureMethodDeclaration = dispatched(() => backend().buildSignatureMethodDeclaration);
 
 export const _factoryMap = {
 	source_file: buildSourceFile,
@@ -543,6 +547,8 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	trait_interface_declaration_body: buildTraitInterfaceDeclarationBody,
+	extension_declaration_body: buildExtensionDeclarationBody,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
@@ -552,6 +558,8 @@ export const _factoryMap = {
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
 	crate_visibility_modifier: buildCrateVisibilityModifier,
-	shorthand_field_identifier: buildShorthandFieldIdentifier
+	shorthand_field_identifier: buildShorthandFieldIdentifier,
+	method_declaration: buildMethodDeclaration,
+	signature_method_declaration: buildSignatureMethodDeclaration
 } as const;
 export type _FactoryMap = typeof _factoryMap;

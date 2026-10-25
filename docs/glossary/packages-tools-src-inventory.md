@@ -108,3 +108,15 @@ bindings.scm names fields and kinds before grammar.bindings applies its edits.
 ### `packages/tools/src/inventory/bindings.ts::loadSourceLanguage`
 
 Loads the tree-sitter language of a grammar's source parser: it builds the parser for the grammar's package and loads it through web-tree-sitter.
+
+### `packages/tools/src/inventory/bindings.ts::CompiledQuery`
+
+A bindings query compiled for inventory.
+
+### `packages/tools/src/inventory/index.ts::BindingsInventoryOptions`
+
+The options of the bindings inventory.
+
+### `packages/tools/src/inventory/index.ts::CompileReport`
+
+The report a bindings compile produces.

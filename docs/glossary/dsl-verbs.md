@@ -841,3 +841,27 @@ The nesting depth of the rename scope.
 ### `packages/codegen/src/dsl/verbs/rename.ts::RenameScope::factoryInline`
 
 The kinds the scope inlines into their factories.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::AliasEffect::scope`
+
+The scope an alias effect applies in.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::AliasSite`
+
+A site where an alias is applied.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RecordedAlias`
+
+An alias the layer recorded.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RecordedAlias::site`
+
+The site the recorded alias was applied at.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::RecordedBindingEffect`
+
+A binding effect the layer recorded.
+
+### `packages/codegen/src/dsl/verbs/effects.ts::scopedAlias`
+
+The alias applied within a scope.

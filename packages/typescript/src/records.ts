@@ -294,11 +294,11 @@ export const records = {
 	},
 	NestedTypeIdentifierNode: { words: 16, module: { word: 2, width: 5 }, name: { word: 7, width: 9, inline: 7 } },
 	InterfaceDeclarationNode: {
-		words: 51,
+		words: 47,
 		name: { word: 2, width: 9, inline: 7 },
 		type_parameters: { word: 11, width: 10, inline: 8 },
 		extends_type_clause: { word: 21, width: 6, inline: 4 },
-		body: { word: 27, width: 24, inline: 22 }
+		body: { word: 27, width: 20, inline: 18 }
 	},
 	ExtendsTypeClauseNode: { words: 4, type_: { word: 2, width: 2, run: 5 } },
 	EnumDeclarationNode: {
@@ -789,6 +789,12 @@ export const records = {
 	HtmlCommentNode: { words: 2 },
 	JsxTextNode: { words: 2 },
 	TemplateCharsNode: { words: 2 },
+	ConstructorDeclarationNode: {
+		words: 23,
+		accessibility_modifier: { word: 2, width: 5 },
+		parameters: { word: 7, width: 5 },
+		body: { word: 12, width: 11, inline: 9 }
+	},
 	ReceiverParameterDeclarationNode: {
 		words: 20,
 		decorator: { word: 3, width: 2, run: 5 },
@@ -810,6 +816,5 @@ export const records = {
 	ShorthandPropertyIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
 	ShorthandPropertyIdentifierPatternNode: { words: 7, content: { word: 2, width: 5 } },
 	PropertyIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
-	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
-	InterfaceBodyNode: { words: 22, content: { word: 2, width: 20, inline: 18 } }
+	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

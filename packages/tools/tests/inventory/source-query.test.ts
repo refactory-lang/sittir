@@ -29,3 +29,12 @@ it('compiles the complete authored Python query against its source parser', asyn
 	const source = readFileSync(join(grammarPackageDir('python'), 'bindings.scm'), 'utf8');
 	expect((await compileQuery('python', source)).patterns).toBeGreaterThan(0);
 }, 120000);
+
+it('compiles a claim on a kind the bindings mint as the kind it is minted from, keeping that kind\'s fields and leaving an unminted name unknown', async () => {
+	expect(await compileQuery('python', '((method_declaration name: (identifier) @name) @declaration.constructor (#eq? @name "__init__"))')).toMatchObject({
+		captureNames: ['name', 'declaration.constructor']
+	});
+	expect(await bindingIssues('python', '(decorated_definition_class_declaration definition: (method_declaration) @element)')).toEqual([]);
+	expect(await bindingIssues('python', '(method_declaration superclasses: (_) @bases)')).toEqual([expect.objectContaining({ message: expect.stringContaining('superclasses') })]);
+	expect(await bindingIssues('python', '(method_declarations) @declaration.method')).toEqual([expect.objectContaining({ message: 'unknown node method_declarations' })]);
+}, 120000);

@@ -15,11 +15,9 @@ import {
 	triviaInner,
 	describeValue,
 	restItems,
-	admitAliasContent,
 	kindIdStorage,
 	listStorage,
 	numberText,
-	orDefault,
 	strictBooleanStorage,
 	unaffixed,
 	builtArenaOf,
@@ -44,6 +42,7 @@ import {
 	_leafRe_buildDecimalDigits,
 	_leafRe_buildCharacterClassEscapeText1,
 	_leafRe_buildCharacterClassEscapeText2,
+	_leafRe_buildUnicodePropertyName,
 	_slotRe_buildIdentityEscape_content
 } from './objects.js';
 
@@ -401,9 +400,9 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 	if (handle !== undefined) admitChildren(handle, 'class_range', { start: _start, end: _end });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ClassRange as const, { _start, _end });
-	const record = arena.record(TSKindId.ClassRange as const, 72);
+	const record = arena.record(TSKindId.ClassRange as const, 64);
 	storeCell(arena, record.data, record.base + 2, _start);
-	storeCell(arena, record.data, record.base + 37, _end);
+	storeCell(arena, record.data, record.base + 33, _end);
 	const node = arena.view(record);
 	return node as unknown as T.ClassRange.Bound;
 }
@@ -834,7 +833,7 @@ export function buildCharacterClassEscape(
 	if (handle !== undefined) admitChildren(handle, 'character_class_escape', { content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CharacterClassEscape as const, { _content });
-	const record = arena.record(TSKindId.CharacterClassEscape as const, 33);
+	const record = arena.record(TSKindId.CharacterClassEscape as const, 29);
 	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	return node as unknown as T.CharacterClassEscape.Bound;
@@ -915,9 +914,9 @@ export function buildUnicodePropertyValueExpression(
 		_unicode_property_value_expression_group,
 		_unicode_property_value
 	});
-	const record = arena.record(TSKindId.UnicodePropertyValueExpression as const, 20);
+	const record = arena.record(TSKindId.UnicodePropertyValueExpression as const, 16);
 	storeCell(arena, record.data, record.base + 2, _unicode_property_value_expression_group);
-	storeCell(arena, record.data, record.base + 15, _unicode_property_value);
+	storeCell(arena, record.data, record.base + 11, _unicode_property_value);
 	const node = arena.view(record);
 	return node as unknown as T.UnicodePropertyValueExpression.Bound;
 }
@@ -1149,9 +1148,9 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	if (handle !== undefined) admitChildren(handle, 'term_group', { content: _content, quantifier: _quantifier });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TermGroup as const, { _content, _quantifier });
-	const record = arena.record(TSKindId.TermGroup as const, 60);
+	const record = arena.record(TSKindId.TermGroup as const, 56);
 	storeCell(arena, record.data, record.base + 2, _content);
-	storeCell(arena, record.data, record.base + 37, _quantifier);
+	storeCell(arena, record.data, record.base + 33, _quantifier);
 	const node = arena.view(record);
 	return node as unknown as T.TermGroup.Bound;
 }
@@ -1274,7 +1273,7 @@ export function buildCharacterClassEscapeArm(
 		_character_class_escape_text2,
 		_unicode_property_value_expression
 	});
-	const record = arena.record(TSKindId.CharacterClassEscapeArm as const, 29);
+	const record = arena.record(TSKindId.CharacterClassEscapeArm as const, 25);
 	storeCell(arena, record.data, record.base + 2, _character_class_escape_text2);
 	storeCell(arena, record.data, record.base + 7, _unicode_property_value_expression);
 	const node = arena.view(record);
@@ -1298,45 +1297,19 @@ function rowCharacterClassEscapeArm(node: object, handle: EngineHandle | undefin
 	};
 }
 
-export function buildUnicodePropertyValueExpressionGroup<
-	V extends Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
->(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
-export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyValue>>(
+export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyName>>(
 	value: V & RefuseUndeclared<V>
-): ReturnType<typeof _buildUnicodePropertyValueExpressionGroup>;
-export function buildUnicodePropertyValueExpressionGroup(...args: unknown[]) {
-	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
-		return _buildUnicodePropertyValueExpressionGroup(
-			args[0] as Parameters<typeof _buildUnicodePropertyValueExpressionGroup>[0]
-		);
-	}
-	const prebuilt =
-		args.length === 1 &&
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.UnicodePropertyName as const);
-	return prebuilt
-		? _buildUnicodePropertyValueExpressionGroup(
-				args[0] as Parameters<typeof _buildUnicodePropertyValueExpressionGroup>[0]
-			)
-		: _buildUnicodePropertyValueExpressionGroup(
-				(buildUnicodePropertyName as (...a: unknown[]) => unknown)(...args) as Parameters<
-					typeof _buildUnicodePropertyValueExpressionGroup
-				>[0]
-			);
-}
-function _buildUnicodePropertyValueExpressionGroup(
-	value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>
+): T.UnicodePropertyValueExpressionGroup.Bound;
+export function buildUnicodePropertyValueExpressionGroup(
+	value: Admit<T.UnicodePropertyName>
 ): T.UnicodePropertyValueExpressionGroup.Bound {
-	const _unicode_property_name = admitAliasContent<
-		NonNullable<T.UnicodePropertyValueExpressionGroup['_unicode_property_name']>
-	>(value, [[[35], (v: unknown) => buildUnicodePropertyName(v as never)]]);
+	const _unicode_property_name = value;
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'unicode_property_value_expression_group', { unicodePropertyName: _unicode_property_name });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.UnicodePropertyValueExpressionGroup as const, { _unicode_property_name });
-	const record = arena.record(TSKindId.UnicodePropertyValueExpressionGroup as const, 11);
+	const record = arena.record(TSKindId.UnicodePropertyValueExpressionGroup as const, 7);
 	storeCell(arena, record.data, record.base + 2, _unicode_property_name);
 	const node = arena.view(record);
 	return node as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
@@ -1345,8 +1318,8 @@ function _buildUnicodePropertyValueExpressionGroup(
 function rowUnicodePropertyValueExpressionGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
 	return {
 		$with: {
-			unicodePropertyName: (value: Admit<T.UnicodePropertyName | T.UnicodePropertyName.Types>) =>
-				rebuilt(node, handle, () => _buildUnicodePropertyValueExpressionGroup(value))
+			unicodePropertyName: (value: Admit<T.UnicodePropertyName>) =>
+				rebuilt(node, handle, () => buildUnicodePropertyValueExpressionGroup(value))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -1556,56 +1529,37 @@ export const buildBlankline: TSKindId.Blankline = TSKindId.Blankline;
 
 export const buildDoubleBlankline: TSKindId.DoubleBlankline = TSKindId.DoubleBlankline;
 
-export function buildLazy<V extends Admit<TSKindId.Qmark>>(...value: [value?: V] & RefuseUndeclared<V>): T.Lazy.Bound;
-export function buildLazy(value?: Admit<TSKindId.Qmark>): T.Lazy.Bound {
-	const _content = kindIdStorage<NonNullable<T.Lazy['_content']>>(orDefault(value, () => TSKindId.Qmark as const));
+export const buildLazy: TSKindId.Lazy = TSKindId.Lazy;
+
+export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bound {
+	if (typeof text !== 'string') throw new Error(`unicode_property_name: text must be a string: ${describeValue(text)}`);
+	if (text.length === 0) throw new Error(`unicode_property_name: text must be non-empty`);
+	if (!_leafRe_buildUnicodePropertyName.test(text))
+		throw new Error(`unicode_property_name: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'lazy', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.Lazy as const, { _content });
-	const record = arena.record(TSKindId.Lazy as const, 7);
-	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
-	return node as unknown as T.Lazy.Bound;
+	return builtArenaOf(handle).adoptLeaf(
+		leafUnicodePropertyName(text, handle),
+		TSKindId.UnicodePropertyName as const,
+		2,
+		text
+	) as unknown as T.UnicodePropertyName.Bound;
 }
 
-function rowLazy(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<NonNullable<TSKindId.Qmark>>) => rebuilt(node, handle, () => buildLazy(value))
-		},
+function leafUnicodePropertyName(text: string, handle: EngineHandle | undefined): object {
+	const node = {
+		$type: TSKindId.UnicodePropertyName as const,
+		$named: true as const,
+		$text: () => text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
 			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
-}
-
-export function buildUnicodePropertyName<V extends Admit<T.UnicodePropertyValue>>(
-	value: V & RefuseUndeclared<V>
-): T.UnicodePropertyName.Bound;
-export function buildUnicodePropertyName(value: Admit<T.UnicodePropertyValue>): T.UnicodePropertyName.Bound {
-	const _content = value;
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'unicode_property_name', { content: _content });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UnicodePropertyName as const, { _content });
-	const record = arena.record(TSKindId.UnicodePropertyName as const, 7);
-	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
-	return node as unknown as T.UnicodePropertyName.Bound;
-}
-
-function rowUnicodePropertyName(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<T.UnicodePropertyValue>) => rebuilt(node, handle, () => buildUnicodePropertyName(value))
 		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
+		$engine: handle && (() => handle.current)
 	};
+	return node;
 }
 
 export type FluentKindMap = {
@@ -1661,8 +1615,8 @@ export type FluentKindMap = {
 	_newline: T.Newline;
 	_blankline: T.Blankline;
 	_double_blankline: T.DoubleBlankline;
-	lazy: T.Lazy.Bound;
-	unicode_property_name: T.UnicodePropertyName.Bound;
+	lazy: T.Lazy;
+	unicode_property_name: T.UnicodePropertyName;
 };
 
 export const _factoryMap = {
@@ -1753,9 +1707,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		81: rowUnicodePropertyValueExpressionGroup,
 		83: rowInlineFlagsGroupEnable,
 		84: rowInlineFlagsGroupToggle,
-		85: rowInlineFlagsGroupDisable,
-		89: rowLazy,
-		90: rowUnicodePropertyName
+		85: rowInlineFlagsGroupDisable
 	}),
 	leaves: Object.freeze({
 		12: leafPatternCharacter,
@@ -1770,6 +1722,7 @@ export const builtViews: BuiltViews = Object.freeze({
 		60: leafPosixClassName,
 		66: leafFlags,
 		74: leafUnicodeCharacterEscape,
-		76: leafControlEscape
+		76: leafControlEscape,
+		90: leafUnicodePropertyName
 	})
 });

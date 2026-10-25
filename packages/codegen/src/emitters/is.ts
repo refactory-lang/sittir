@@ -2,7 +2,7 @@ import { findOwnKindEntry } from '../dsl/symbol-table.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { AssembledEnum, isFixedTextLeaf, isPatternLeaf, type AssembledNode } from '../compiler/model/node-map.ts';
-import { isDeclaredSupertype } from './shared.ts';
+import { isAuthoredSupertype, isDeclaredSupertype } from './shared.ts';
 import { membershipKindsOf } from './membership.ts';
 import { collectKindEntries, findKindEntry, kindDiscriminantExpr, type KindEnumEntry } from './kind-discriminant.ts';
 import { flattenedVariantParents, formRoutesOf, seatedFormKinds, type FlattenedVariantRoute, type FormRoute } from '../compiler/model/ir-surface.ts';
@@ -84,6 +84,7 @@ export function emitIs(config: EmitIsConfig): string {
 		memberIds: number[];
 		memberKindIds: string[];
 		variants: readonly FlattenedVariantRoute[];
+		guarded: boolean;
 	}> = [];
 	for (const [kind, node] of nodeMap.nodes) {
 		if (!isDeclaredSupertype(node)) continue;
@@ -100,10 +101,11 @@ export function emitIs(config: EmitIsConfig): string {
 			memberKindIds.push(`TSKindId.${entry.member}`);
 		}
 		if (memberKinds.length === 0) continue;
-		const guardKey = claimGuardKey(st);
+		const guarded = isAuthoredSupertype(st);
+		const guardKey = guarded ? claimGuardKey(st) : node.typeKey!;
 		const variants = variantParents.find((parent) => parent.node === st)?.variants ?? [];
 		const own = findOwnKindEntry(kindEntries, kind);
-		supertypes.push({ kind, id: own?.id, member: own?.member, typeName, guardKey, memberKinds, memberIds, memberKindIds, variants });
+		supertypes.push({ kind, id: own?.id, member: own?.member, typeName, guardKey, memberKinds, memberIds, memberKindIds, variants, guarded });
 	}
 
 	const leafGuards: Array<{
@@ -242,7 +244,7 @@ export function emitIs(config: EmitIsConfig): string {
 	lines.push(
 		`    kind<K extends keyof NamespaceMap>(v: { readonly $type: number }, kind: K): v is { readonly $type: number };`
 	);
-	for (const s of supertypes) {
+	for (const s of supertypes.filter((candidate) => candidate.guarded)) {
 		const predicate = supertypePredicate(membersOfKey(supertypeKey(s), s.memberKindIds.length > 0 ? s.memberKindIds.join(' | ') : 'number'));
 		if (s.variants.length === 0) {
 			lines.push(`    ${s.guardKey}${predicate};`);
@@ -297,7 +299,7 @@ export function emitIs(config: EmitIsConfig): string {
 	const table: string[] = [];
 	for (const s of structuralKinds) table.push(`        ${s.guardKey}: ${selfTest(s.kind)},`);
 	table.push("        kind: (v: { readonly $type: number }, k: number): boolean => typeof v !== 'number' && test(v, _kinds(k)),");
-	for (const s of supertypes) {
+	for (const s of supertypes.filter((candidate) => candidate.guarded)) {
 		if (s.variants.length > 0) table.push(`        ${s.guardKey}: _supertype_${s.guardKey}_guard,`);
 		else if (s.memberIds.length > 0) table.push(`        ${s.guardKey}: ${s.id !== undefined ? `_mg(${s.id})` : `_sg(_supertype_${s.guardKey}_ids)`},`);
 		else table.push(`        ${s.guardKey}: _sg(new Set<number>()),`);

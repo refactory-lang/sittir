@@ -2198,7 +2198,7 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 	const _type_parameters = config.typeParameters;
 	const _bounds = config.bounds;
 	const _where_clause = config.whereClause;
-	const _body = orDefault(config.body, () => buildDeclarationList());
+	const _body = orDefault(config.body, () => buildTraitInterfaceDeclarationBody());
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'trait_item', {
@@ -2250,7 +2250,8 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 						(value?: Admit<T.WhereClause>) => buildTraitItem({ ...config, whereClause: value })
 					)
 				),
-			body: (value: Admit<T.DeclarationList>) => rebuilt(node, handle, () => buildTraitItem({ ...config, body: value }))
+			body: (value: Admit<T.TraitInterfaceDeclarationBody>) =>
+				rebuilt(node, handle, () => buildTraitItem({ ...config, body: value }))
 		},
 		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
 		unsafe: () => _unsafe,
@@ -3235,15 +3236,13 @@ function _buildExternModifier(value?: Admit<T.StringLiteral>): T.ExternModifier.
 	return stampBuilt(node) as unknown as T.ExternModifier.Bound;
 }
 
-export function buildVisibilityModifier<
-	V extends Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
->(value: V & RefuseUndeclared<V>): T.VisibilityModifier.Bound;
+export function buildVisibilityModifier<V extends Admit<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>>(
+	value: V & RefuseUndeclared<V>
+): T.VisibilityModifier.Bound;
 export function buildVisibilityModifier(
-	value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
+	value: Admit<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>
 ): T.VisibilityModifier.Bound {
-	const _content = admitAliasContent<NonNullable<T.VisibilityModifier['_content']>>(value, [
-		[[127], (v: unknown) => buildCrateVisibilityModifier(v as never)]
-	]);
+	const _content = kindIdStorage<NonNullable<T.VisibilityModifier['_content']>>(value);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'visibility_modifier', { content: _content });
 	const node = {
@@ -3251,9 +3250,8 @@ export function buildVisibilityModifier(
 		$named: true as const,
 		_content,
 		$with: {
-			content: (
-				value: Admit<(T.CrateVisibilityModifier | T.VisibilityModifierPub) | T.CrateVisibilityModifier.Types>
-			) => rebuilt(node, handle, () => buildVisibilityModifier(value))
+			content: (value: Admit<NonNullable<TSKindId.CrateVisibilityModifier | T.VisibilityModifierPub>>) =>
+				rebuilt(node, handle, () => buildVisibilityModifier(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
 		$render: () => renderText(handle, node),
@@ -9470,7 +9468,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const _where_clause = config.whereClause;
-	const _body = orDefault(config.body, () => buildDeclarationList());
+	const _body = orDefault(config.body, () => buildExtensionDeclarationBody());
 	const handle = currentHandle();
 	if (handle !== undefined)
 		admitChildren(handle, 'impl_item_body', {
@@ -9518,7 +9516,7 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 						(value?: Admit<T.WhereClause>) => buildImplItemBody({ ...config, whereClause: value })
 					)
 				),
-			body: (value: Admit<T.DeclarationList>) =>
+			body: (value: Admit<T.ExtensionDeclarationBody>) =>
 				rebuilt(node, handle, () => buildImplItemBody({ ...config, body: value }))
 		},
 		unsafe: () => _unsafe,
@@ -12106,6 +12104,72 @@ export const buildIndent: TSKindId.Indent = TSKindId.Indent;
 
 export const buildDedent: TSKindId.Dedent = TSKindId.Dedent;
 
+export function buildTraitInterfaceDeclarationBody(): T.EmptyTraitInterfaceDeclarationBody;
+export function buildTraitInterfaceDeclarationBody<A extends Admit<T.DeclarationStatementTraitItem[]>>(
+	...children: A & RefuseUndeclared<A>
+): T.TraitInterfaceDeclarationBody.Bound;
+export function buildTraitInterfaceDeclarationBody(
+	...children: Admit<T.DeclarationStatementTraitItem[]>
+): T.TraitInterfaceDeclarationBody.Bound {
+	currentHandle()?.admit(TSKindId.TraitInterfaceDeclarationBody, children);
+	const _declarations = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'trait_interface_declaration_body', { declarations: _declarations });
+	const node = {
+		$type: TSKindId.TraitInterfaceDeclarationBody as const,
+		$named: true as const,
+		_declarations,
+		$with: {
+			declarations: (...vs: Admit<T.DeclarationStatementTraitItem>[]) =>
+				rebuilt(node, handle, () => buildTraitInterfaceDeclarationBody(...restItems('declarations', vs)))
+		},
+		declarations: () => hydrateStoredSlots(node, '_declarations'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.TraitInterfaceDeclarationBody.Bound;
+}
+
+export function buildExtensionDeclarationBody(): T.EmptyExtensionDeclarationBody;
+export function buildExtensionDeclarationBody<A extends Admit<T.DeclarationStatementImplItemBody[]>>(
+	...children: A & RefuseUndeclared<A>
+): T.ExtensionDeclarationBody.Bound;
+export function buildExtensionDeclarationBody(
+	...children: Admit<T.DeclarationStatementImplItemBody[]>
+): T.ExtensionDeclarationBody.Bound {
+	currentHandle()?.admit(TSKindId.ExtensionDeclarationBody, children);
+	const _declarations = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'extension_declaration_body', { declarations: _declarations });
+	const node = {
+		$type: TSKindId.ExtensionDeclarationBody as const,
+		$named: true as const,
+		_declarations,
+		$with: {
+			declarations: (...vs: Admit<T.DeclarationStatementImplItemBody>[]) =>
+				rebuilt(node, handle, () => buildExtensionDeclarationBody(...restItems('declarations', vs)))
+		},
+		declarations: () => hydrateStoredSlots(node, '_declarations'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
+			inner: (...items: unknown[]) => triviaInner(node, handle, items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ExtensionDeclarationBody.Bound;
+}
+
 export function buildReceiverParameterDeclaration<TypeSlot extends T.ReceiverParameterDeclaration.Config['type']>(
 	config: RefusingConfig<T.ReceiverParameterDeclaration.Config, { type: TypeSlot }>
 ): T.ReceiverParameterDeclaration.Bound;
@@ -12475,35 +12539,7 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 	return stampBuilt(node) as unknown as T.FieldIdentifier.Bound;
 }
 
-export function buildCrateVisibilityModifier<V extends Admit<TSKindId.Crate>>(
-	...value: [value?: V] & RefuseUndeclared<V>
-): T.CrateVisibilityModifier.Bound;
-export function buildCrateVisibilityModifier(value?: Admit<TSKindId.Crate>): T.CrateVisibilityModifier.Bound {
-	const _content = kindIdStorage<NonNullable<T.CrateVisibilityModifier['_content']>>(
-		orDefault(value, () => TSKindId.Crate as const)
-	);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'crate_visibility_modifier', { content: _content });
-	const node = {
-		$type: TSKindId.CrateVisibilityModifier as const,
-		$named: true as const,
-		_content,
-		$with: {
-			content: (value: Admit<NonNullable<TSKindId.Crate>>) =>
-				rebuilt(node, handle, () => buildCrateVisibilityModifier(value))
-		},
-		content: () => _content,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.CrateVisibilityModifier.Bound;
-}
+export const buildCrateVisibilityModifier: TSKindId.CrateVisibilityModifier = TSKindId.CrateVisibilityModifier;
 
 export function buildShorthandFieldIdentifier<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
@@ -12530,6 +12566,229 @@ export function buildShorthandFieldIdentifier(value: Admit<T.Identifier>): T.Sho
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.ShorthandFieldIdentifier.Bound;
+}
+
+export function buildMethodDeclaration<
+	VisibilityModifierSlot extends T.MethodDeclaration.Config['visibilityModifier'],
+	FunctionModifiersSlot extends T.MethodDeclaration.Config['functionModifiers'],
+	NameSlot extends T.MethodDeclaration.Config['name'],
+	TypeParametersSlot extends T.MethodDeclaration.Config['typeParameters'],
+	ParametersSlot extends T.MethodDeclaration.Config['parameters'],
+	ReturnTypeSlot extends T.MethodDeclaration.Config['returnType'],
+	WhereClauseSlot extends T.MethodDeclaration.Config['whereClause'],
+	BodySlot extends T.MethodDeclaration.Config['body']
+>(
+	config: RefusingConfig<
+		T.MethodDeclaration.Config,
+		{
+			visibilityModifier: VisibilityModifierSlot;
+			functionModifiers: FunctionModifiersSlot;
+			name: NameSlot;
+			typeParameters: TypeParametersSlot;
+			parameters: ParametersSlot;
+			returnType: ReturnTypeSlot;
+			whereClause: WhereClauseSlot;
+			body: BodySlot;
+		}
+	>
+): T.MethodDeclaration.Bound;
+export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.MethodDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.MethodDeclaration, [config]);
+	const _visibility_modifier = config.visibilityModifier;
+	const _function_modifiers = config.functionModifiers;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildParameters());
+	const _return_type = admitAliasContent<NonNullable<T.MethodDeclaration['_return_type']>>(
+		kindIdStorage<NonNullable<T.MethodDeclaration['_return_type']>>(config.returnType),
+		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+	);
+	const _where_clause = config.whereClause;
+	const _body = orDefault(config.body, () => buildBlock());
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'method_declaration', {
+			visibilityModifier: _visibility_modifier,
+			functionModifiers: _function_modifiers,
+			name: _name,
+			typeParameters: _type_parameters,
+			parameters: _parameters,
+			returnType: _return_type,
+			whereClause: _where_clause,
+			body: _body
+		});
+	const node = {
+		$type: TSKindId.MethodDeclaration as const,
+		$named: true as const,
+		_visibility_modifier,
+		_function_modifiers,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_where_clause,
+		_body,
+		$with: {
+			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, visibilityModifier: value })),
+			functionModifiers: (value?: Admit<T.FunctionModifiers>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, functionModifiers: value })),
+			name: (value: Admit<T.Identifier | T.Metavariable>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: Admit<T.TypeParameters>) => buildMethodDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, parameters: value })),
+			returnType: (value?: Admit<NonNullable<T.MethodDeclaration.Config>['returnType']>) =>
+				rebuilt(node, handle, () => buildMethodDeclaration({ ...config, returnType: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: Admit<T.WhereClause>) => buildMethodDeclaration({ ...config, whereClause: value })
+					)
+				),
+			body: (value: Admit<T.Block>) => rebuilt(node, handle, () => buildMethodDeclaration({ ...config, body: value }))
+		},
+		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
+		functionModifiers: () => hydrateStoredSlot(node, '_function_modifiers'),
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
+		body: () => hydrateStoredSlot(node, '_body'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.MethodDeclaration.Bound;
+}
+
+export function buildSignatureMethodDeclaration<
+	VisibilityModifierSlot extends T.SignatureMethodDeclaration.Config['visibilityModifier'],
+	FunctionModifiersSlot extends T.SignatureMethodDeclaration.Config['functionModifiers'],
+	NameSlot extends T.SignatureMethodDeclaration.Config['name'],
+	TypeParametersSlot extends T.SignatureMethodDeclaration.Config['typeParameters'],
+	ParametersSlot extends T.SignatureMethodDeclaration.Config['parameters'],
+	ReturnTypeSlot extends T.SignatureMethodDeclaration.Config['returnType'],
+	WhereClauseSlot extends T.SignatureMethodDeclaration.Config['whereClause']
+>(
+	config: RefusingConfig<
+		T.SignatureMethodDeclaration.Config,
+		{
+			visibilityModifier: VisibilityModifierSlot;
+			functionModifiers: FunctionModifiersSlot;
+			name: NameSlot;
+			typeParameters: TypeParametersSlot;
+			parameters: ParametersSlot;
+			returnType: ReturnTypeSlot;
+			whereClause: WhereClauseSlot;
+		}
+	>
+): T.SignatureMethodDeclaration.Bound;
+export function buildSignatureMethodDeclaration(
+	config: T.SignatureMethodDeclaration.Config
+): T.SignatureMethodDeclaration.Bound {
+	currentHandle()?.admit(TSKindId.SignatureMethodDeclaration, [config]);
+	const _visibility_modifier = config.visibilityModifier;
+	const _function_modifiers = config.functionModifiers;
+	const _name = config.name;
+	const _type_parameters = config.typeParameters;
+	const _parameters = orDefault(config.parameters, () => buildParameters());
+	const _return_type = admitAliasContent<NonNullable<T.SignatureMethodDeclaration['_return_type']>>(
+		kindIdStorage<NonNullable<T.SignatureMethodDeclaration['_return_type']>>(config.returnType),
+		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
+	);
+	const _where_clause = config.whereClause;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'signature_method_declaration', {
+			visibilityModifier: _visibility_modifier,
+			functionModifiers: _function_modifiers,
+			name: _name,
+			typeParameters: _type_parameters,
+			parameters: _parameters,
+			returnType: _return_type,
+			whereClause: _where_clause
+		});
+	const node = {
+		$type: TSKindId.SignatureMethodDeclaration as const,
+		$named: true as const,
+		_visibility_modifier,
+		_function_modifiers,
+		_name,
+		_type_parameters,
+		_parameters,
+		_return_type,
+		_where_clause,
+		$with: {
+			visibilityModifier: (value?: Admit<T.VisibilityModifier>) =>
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, visibilityModifier: value })),
+			functionModifiers: (value?: Admit<T.FunctionModifiers>) =>
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, functionModifiers: value })),
+			name: (value: Admit<T.Identifier | T.Metavariable>) =>
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, name: value })),
+			typeParameters: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{
+							kind: TSKindId.TypeParameters as const,
+							optional: true,
+							make: buildTypeParameters,
+							element: { keys: ['attributeItems', 'content'], make: buildAttributedTypeParameter }
+						},
+						(value?: Admit<T.TypeParameters>) => buildSignatureMethodDeclaration({ ...config, typeParameters: value })
+					)
+				),
+			parameters: (value: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, parameters: value })),
+			returnType: (value?: Admit<NonNullable<T.SignatureMethodDeclaration.Config>['returnType']>) =>
+				rebuilt(node, handle, () => buildSignatureMethodDeclaration({ ...config, returnType: value })),
+			whereClause: (...args: unknown[]) =>
+				rebuilt(node, handle, () =>
+					listSlotWith(
+						args,
+						{ kind: TSKindId.WhereClause as const, optional: true, make: buildWhereClause },
+						(value?: Admit<T.WhereClause>) => buildSignatureMethodDeclaration({ ...config, whereClause: value })
+					)
+				)
+		},
+		visibilityModifier: () => hydrateStoredSlot(node, '_visibility_modifier'),
+		functionModifiers: () => hydrateStoredSlot(node, '_function_modifiers'),
+		name: () => hydrateStoredSlot(node, '_name'),
+		typeParameters: () => hydrateStoredSlot(node, '_type_parameters'),
+		parameters: () => hydrateStoredSlot(node, '_parameters'),
+		returnType: () => hydrateStoredSlot(node, '_return_type'),
+		whereClause: () => hydrateStoredSlot(node, '_where_clause'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.SignatureMethodDeclaration.Bound;
 }
 
 export type FluentKindMap = {
@@ -12793,6 +13052,8 @@ export type FluentKindMap = {
 	_double_blankline: T.DoubleBlankline;
 	_indent: T.Indent;
 	_dedent: T.Dedent;
+	trait_interface_declaration_body: T.TraitInterfaceDeclarationBody.Bound;
+	extension_declaration_body: T.ExtensionDeclarationBody.Bound;
 	receiver_parameter_declaration: T.ReceiverParameterDeclaration.Bound;
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
@@ -12801,8 +13062,10 @@ export type FluentKindMap = {
 	_error_sentinel: T.ErrorSentinel;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
-	crate_visibility_modifier: T.CrateVisibilityModifier.Bound;
+	crate_visibility_modifier: T.CrateVisibilityModifier;
 	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
+	method_declaration: T.MethodDeclaration.Bound;
+	signature_method_declaration: T.SignatureMethodDeclaration.Bound;
 };
 
 export const _factoryMap = {
@@ -13066,6 +13329,8 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	trait_interface_declaration_body: buildTraitInterfaceDeclarationBody,
+	extension_declaration_body: buildExtensionDeclarationBody,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
@@ -13075,6 +13340,8 @@ export const _factoryMap = {
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
 	crate_visibility_modifier: buildCrateVisibilityModifier,
-	shorthand_field_identifier: buildShorthandFieldIdentifier
+	shorthand_field_identifier: buildShorthandFieldIdentifier,
+	method_declaration: buildMethodDeclaration,
+	signature_method_declaration: buildSignatureMethodDeclaration
 } as const;
 export type _FactoryMap = typeof _factoryMap;

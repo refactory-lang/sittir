@@ -504,8 +504,12 @@ export const ir: {
 	readonly structItemBrace: typeof F.structItemBrace;
 	readonly structItemTuple: typeof F.structItemTuple;
 	readonly structItemUnit: typeof F.structItemUnit;
+	readonly traitInterfaceDeclarationBody: typeof F.traitInterfaceDeclarationBody;
+	readonly extensionDeclarationBody: typeof F.extensionDeclarationBody;
 	readonly receiverParameterDeclaration: typeof F.receiverParameterDeclaration;
 	readonly parametersElementsReceiver: typeof F.parametersElementsReceiver;
+	readonly methodDeclaration: typeof F.methodDeclaration;
+	readonly signatureMethodDeclaration: typeof F.signatureMethodDeclaration;
 	readonly macroDefinition: typeof F.macroDefinition;
 	readonly tokenTreePattern: typeof F.tokenTreePattern;
 	readonly tokenTree: typeof F.tokenTree;
@@ -544,6 +548,7 @@ export const ir: {
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly outerDocCommentMarker: typeof F.buildOuterDocCommentMarker;
 	readonly innerDocCommentMarker: typeof F.buildInnerDocCommentMarker;
+	readonly crateVisibilityModifier: typeof F.buildCrateVisibilityModifier;
 	readonly shebang: typeof F.buildShebang;
 	readonly metavariable: typeof F.buildMetavariable;
 	readonly escapeSequenceSimple: typeof F.buildEscapeSequenceSimple;
@@ -766,8 +771,12 @@ export const ir: {
 	structItemBrace: F.structItemBrace,
 	structItemTuple: F.structItemTuple,
 	structItemUnit: F.structItemUnit,
+	traitInterfaceDeclarationBody: F.traitInterfaceDeclarationBody,
+	extensionDeclarationBody: F.extensionDeclarationBody,
 	receiverParameterDeclaration: F.receiverParameterDeclaration,
 	parametersElementsReceiver: F.parametersElementsReceiver,
+	methodDeclaration: F.methodDeclaration,
+	signatureMethodDeclaration: F.signatureMethodDeclaration,
 	macroDefinition: F.macroDefinition,
 	tokenTreePattern: F.tokenTreePattern,
 	tokenTree: F.tokenTree,
@@ -808,6 +817,7 @@ export const ir: {
 	wildcardPattern: F.buildWildcardPattern,
 	outerDocCommentMarker: F.buildOuterDocCommentMarker,
 	innerDocCommentMarker: F.buildInnerDocCommentMarker,
+	crateVisibilityModifier: F.buildCrateVisibilityModifier,
 
 	// Leaves whose one slot is their own text
 	shebang: F.buildShebang,

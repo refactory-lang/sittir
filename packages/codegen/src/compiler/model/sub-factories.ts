@@ -6,6 +6,7 @@ import {
 	AssembledSupertype,
 	isNodeRef,
 	isMultiple,
+	sourceKindOfRef,
 	storageKindOfRef,
 	type AssembledNode,
 	type AssembledNonterminal,
@@ -101,7 +102,7 @@ function seatsInlinedLabel(slot: AssembledNonterminal, value: LabelledValue, nod
 function armValuesOf(slot: AssembledNonterminal, nodeMap: NodeMap): readonly LabelledValue[] {
 	const out: LabelledValue[] = [];
 	for (const value of slot.values) {
-		const child = isNodeRef(value) ? nodeMap.nodes.get(storageKindOfRef(value.node)) : undefined;
+		const child = isNodeRef(value) ? nodeMap.nodes.get(sourceKindOfRef(value)) : undefined;
 		const variants = child instanceof AssembledSupertype ? child.variantSubtypes : undefined;
 		const mounts = isLabelled(value) ? !isInlinedMember(value, nodeMap) && seatsInlinedLabel(slot, value, nodeMap) : variants !== undefined && slot.isUnnamed;
 		if (!mounts) continue;

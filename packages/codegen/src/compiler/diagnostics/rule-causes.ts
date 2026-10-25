@@ -10,6 +10,7 @@ import {
 	type Witnesses
 } from '../../dsl/primitives/rule-cause.ts';
 import type { Rule } from '../../types/rule.ts';
+import { copyBaseOf } from '../../dsl/automatic-variants.ts';
 import {
 	ALIAS,
 	CHOICE,
@@ -84,12 +85,13 @@ export function authoredRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclar
 	return [...Object.keys(raw.ruleCauses ?? {}), ...(raw.undeclaredRules ?? [])];
 }
 
-export function unverifiedRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'references' | 'stages'>): string[] {
+export function unverifiedRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undeclaredRules' | 'references' | 'stages' | 'splitFrom'>): string[] {
 	const causes = raw.ruleCauses ?? {};
 	const authored = new Set(authoredRuleNames(raw));
 	const upstream = new Set(Object.keys(raw.stages?.raw.grammar.rules ?? {}));
 	const referrers = new Map<string, string[]>();
 	for (const { from, to } of raw.references) referrers.set(to, [...(referrers.get(to) ?? []), from]);
+	const copyBase = copyBaseOf(raw.splitFrom);
 	const reachers = (name: string): string[] => {
 		const found: string[] = [];
 		const seen = new Set([name]);
@@ -98,7 +100,8 @@ export function unverifiedRuleNames(raw: Pick<RawGrammar, 'ruleCauses' | 'undecl
 			for (const from of referrers.get(next) ?? []) {
 				if (seen.has(from)) continue;
 				seen.add(from);
-				if (authored.has(from) || upstream.has(from)) found.push(from);
+				const base = copyBase(from);
+				if (authored.has(base) || upstream.has(base)) found.push(base);
 				else pending.push(from);
 			}
 		}

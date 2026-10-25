@@ -2307,8 +2307,13 @@
           "type": "FIELD",
           "name": "body",
           "content": {
-            "type": "SYMBOL",
-            "name": "declaration_list"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_declaration_list_trait_item"
+            },
+            "named": true,
+            "value": "trait_interface_declaration_body"
           }
         }
       ]
@@ -12518,8 +12523,13 @@
           "type": "FIELD",
           "name": "body",
           "content": {
-            "type": "SYMBOL",
-            "name": "declaration_list"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_declaration_list_impl_item_body"
+            },
+            "named": true,
+            "value": "extension_declaration_body"
           },
           "metadata": {
             "fieldSource": "override"
@@ -15089,6 +15099,421 @@
       "type": "STRING",
       "value": "raw"
     },
+    "_declaration_statement_trait_item": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "const_item",
+          "annotations": {
+            "variant": "const",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "macro_invocation",
+          "annotations": {
+            "variant": "macro_invocation",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "macro_definition",
+          "annotations": {
+            "variant": "macro",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "empty_statement",
+          "annotations": {
+            "variant": "empty",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "attribute_item",
+          "annotations": {
+            "variant": "attribute",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inner_attribute_item",
+          "annotations": {
+            "variant": "inner_attribute",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "mod_item",
+          "annotations": {
+            "variant": "mod",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "foreign_mod_item",
+          "annotations": {
+            "variant": "foreign_mod",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "struct_item",
+          "annotations": {
+            "variant": "struct",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "union_item",
+          "annotations": {
+            "variant": "union",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_item",
+          "annotations": {
+            "variant": "enum",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_item",
+          "annotations": {
+            "variant": "type",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "function_item",
+            "annotations": {
+              "variant": "function",
+              "variantOf": "_declaration_statement"
+            }
+          },
+          "named": true,
+          "value": "method_declaration"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "function_signature_item",
+            "annotations": {
+              "variant": "function_signature",
+              "variantOf": "_declaration_statement"
+            }
+          },
+          "named": true,
+          "value": "signature_method_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "impl_item",
+          "annotations": {
+            "variant": "impl",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "trait_item",
+          "annotations": {
+            "variant": "trait",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "associated_type",
+          "annotations": {
+            "variant": "associated",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "let_declaration",
+          "annotations": {
+            "variant": "let",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "use_declaration",
+          "annotations": {
+            "variant": "use",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "extern_crate_declaration",
+          "annotations": {
+            "variant": "extern_crate",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "static_item",
+          "annotations": {
+            "variant": "static",
+            "variantOf": "_declaration_statement"
+          }
+        }
+      ]
+    },
+    "_declaration_list_trait_item": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "FIELD",
+          "name": "declarations",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_declaration_statement_trait_item"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "_declaration_statement_impl_item_body": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "const_item",
+          "annotations": {
+            "variant": "const",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "macro_invocation",
+          "annotations": {
+            "variant": "macro_invocation",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "macro_definition",
+          "annotations": {
+            "variant": "macro",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "empty_statement",
+          "annotations": {
+            "variant": "empty",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "attribute_item",
+          "annotations": {
+            "variant": "attribute",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inner_attribute_item",
+          "annotations": {
+            "variant": "inner_attribute",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "mod_item",
+          "annotations": {
+            "variant": "mod",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "foreign_mod_item",
+          "annotations": {
+            "variant": "foreign_mod",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "struct_item",
+          "annotations": {
+            "variant": "struct",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "union_item",
+          "annotations": {
+            "variant": "union",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_item",
+          "annotations": {
+            "variant": "enum",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "type_item",
+          "annotations": {
+            "variant": "type",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "function_item",
+            "annotations": {
+              "variant": "function",
+              "variantOf": "_declaration_statement"
+            }
+          },
+          "named": true,
+          "value": "method_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "function_signature_item",
+          "annotations": {
+            "variant": "function_signature",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "impl_item",
+          "annotations": {
+            "variant": "impl",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "trait_item",
+          "annotations": {
+            "variant": "trait",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "associated_type",
+          "annotations": {
+            "variant": "associated",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "let_declaration",
+          "annotations": {
+            "variant": "let",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "use_declaration",
+          "annotations": {
+            "variant": "use",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "extern_crate_declaration",
+          "annotations": {
+            "variant": "extern_crate",
+            "variantOf": "_declaration_statement"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "static_item",
+          "annotations": {
+            "variant": "static",
+            "variantOf": "_declaration_statement"
+          }
+        }
+      ]
+    },
+    "_declaration_list_impl_item_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "FIELD",
+          "name": "declarations",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_declaration_statement_impl_item_body"
+            }
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
     "_parameter_receiver": {
       "type": "SEQ",
       "members": [
@@ -15416,7 +15841,9 @@
     "_kw_in",
     "_kw_operator",
     "_kw_reference",
-    "_kw_raw"
+    "_kw_raw",
+    "_declaration_statement_trait_item",
+    "_declaration_statement_impl_item_body"
   ],
   "supertypes": [
     "_expression",
@@ -15448,7 +15875,9 @@
     "field_pattern",
     "macro_definition",
     "range_pattern",
-    "struct_item"
+    "struct_item",
+    "_declaration_statement_trait_item",
+    "_declaration_statement_impl_item_body"
   ],
   "reserved": {}
 }

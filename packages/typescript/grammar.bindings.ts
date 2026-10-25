@@ -1,9 +1,9 @@
 // Generated from bindings.scm and the vocabulary by `pnpm exec tsx packages/cli/src/cli.ts tool bindings-inventory --write`. Do not edit.
 /// <reference path="../codegen/src/dsl/authoring-globals.d.ts" />
 import sittir from './grammar.sittir.ts';
-import { enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
+import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "ef80d699c6ef8b1a0dcdfa0acef01c64c0350f9beee4e8579f5318e2bae82f4a";
+export const hash = "48c11776a13d58b25090c44e8ff377cef9c5a20e578c58f625fc5ed4f9b53f57";
 
 export const renames = {
 	program: "file",
@@ -156,7 +156,18 @@ export default grammar(
 			tuple_type: { "1/0": field("tuple_type_members") },
 			type_parameter: { "3": field("default") },
 			variable_declarator_definite: { "1": field("definite") },
-			formal_parameters_elements: { ".": lead("formal_parameter", "receiver", match("required_parameter", { "pattern": [match("this")] }, "receiver_parameter_declaration")) }
+			formal_parameters_elements: { ".": lead("formal_parameter", "receiver", match("required_parameter", { "pattern": [match("this")] }, "receiver_parameter_declaration")) },
+			class_body_member_method: { "(method_definition)/(method_definition_plain)": ($, member) => choice(member, prec.dynamic(1, alias(edit(copy("method_definition_plain"), { "name:": alias("constructor", $.property_identifier), "static:": blank(), "override:": blank(), "readonly:": blank(), "async:": blank(), "generator:": blank(), "optional:": blank(), "(_call_signature)": edit(copy("_call_signature"), { "type_parameters:": blank(), "return_type:": blank() }) }), $.constructor_declaration))) },
+			labeled_statement: { "0/label:": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.statement_identifier)] }) },
+			primary_expression: { ".": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.identifier)] }) },
+			object: { "1/properties:/0/0/0": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.shorthand_property_identifier)] }), "1/properties:/0/1/0/1/0": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.shorthand_property_identifier)] }) },
+			object_pattern: { "1/properties:/0/0/0": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.shorthand_property_identifier_pattern)] }), "1/properties:/0/1/0/1/0": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.shorthand_property_identifier_pattern)] }) },
+			object_assignment_pattern: { "0/left:": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.shorthand_property_identifier_pattern)] }) },
+			_lhs_expression: { ".": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.identifier)] }) },
+			_augmented_assignment_lhs: { ".": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.identifier)] }) },
+			_property_name: { ".": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.property_identifier)] }) },
+			index_signature_colon: { "2/0/name:": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.identifier)] }) },
+			arrow_function_parameter: { "parameter:": ($, member) => ({ ...member, members: [...member.members, alias("constructor", $.identifier)] }) }
 		}
 	})
 );

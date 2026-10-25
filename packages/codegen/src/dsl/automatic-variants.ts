@@ -19,6 +19,16 @@ export interface AutomaticVariants {
 	readonly supertypeOwners: ReadonlySet<string>;
 }
 
+export type CopyBase = (owner: string) => string;
+
+export function copyBaseOf(splitFrom: Readonly<Record<string, string>> | undefined): CopyBase {
+	const baseOf = (owner: string): string => {
+		const source = isParserHiddenName(owner) ? splitFrom?.[owner] : undefined;
+		return source === undefined ? owner : baseOf(source);
+	};
+	return baseOf;
+}
+
 interface ArmShape {
 	readonly type?: string;
 	readonly name?: string;
@@ -149,10 +159,13 @@ export function stampAutomaticVariants(
 	elementChoices: ReadonlySet<string>,
 	symbols: SymbolSource,
 	into?: AutomaticVariants,
-	owners?: ReadonlySet<string>
+	owners?: ReadonlySet<string>,
+	baseOf: CopyBase = (owner) => owner
 ): AutomaticVariants {
 	const supertypeOwners = new Set(
-		Object.keys(rules).filter((owner) => (owners === undefined || owners.has(owner)) && isSupertypeOwner(owner, rules, supertypeNames, inlineNames))
+		Object.keys(rules)
+			.filter((owner) => (owners === undefined || owners.has(owner)) && isSupertypeOwner(owner, rules, supertypeNames, inlineNames))
+			.map(baseOf)
 	);
 	const automatic: AutomaticVariants =
 		into === undefined
@@ -162,8 +175,9 @@ export function stampAutomaticVariants(
 		const rule = rules[owner];
 		if (rule === undefined || (owners !== undefined && !owners.has(owner))) continue;
 		const stamped = automatic.keys.size;
-		rules[owner] = stampRuleVariants(owner, rule, (name) => rules[name], automatic, elementChoices, symbols) as Rule;
-		if (into !== undefined && automatic.keys.size > stamped && supertypeOwners.has(owner)) (into.supertypeOwners as Set<string>).add(owner);
+		const labelOwner = baseOf(owner);
+		rules[owner] = stampRuleVariants(labelOwner, rule, (name) => rules[name], automatic, elementChoices, symbols) as Rule;
+		if (into !== undefined && automatic.keys.size > stamped && supertypeOwners.has(labelOwner)) (into.supertypeOwners as Set<string>).add(labelOwner);
 	}
 	return automatic;
 }

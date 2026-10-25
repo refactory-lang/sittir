@@ -42,10 +42,11 @@
 (method_definition_setter (accessibility_modifier "private")) @declaration.property.setter.private
 (method_definition_setter (accessibility_modifier "protected")) @declaration.property.setter.protected
 (method_definition_setter (accessibility_modifier "public")) @declaration.property.setter.public
-((method_definition_plain name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor"))
-((method_definition_plain (accessibility_modifier "private") name: (property_identifier) @name) @declaration.constructor.private (#eq? @name "constructor"))
-((method_definition_plain (accessibility_modifier "protected") name: (property_identifier) @name) @declaration.constructor.protected (#eq? @name "constructor"))
-((method_definition_plain (accessibility_modifier "public") name: (property_identifier) @name) @declaration.constructor.public (#eq? @name "constructor"))
+(class_body_member_method ((method_definition_plain !static !override !readonly !async !accessor_kind !optional !type_parameters !return_type name: (property_identifier) @name) @declaration.constructor (#eq? @name "constructor")))
+(constructor_declaration) @declaration.constructor
+((constructor_declaration (accessibility_modifier "private")) @declaration.constructor.private)
+((constructor_declaration (accessibility_modifier "protected")) @declaration.constructor.protected)
+((constructor_declaration (accessibility_modifier "public")) @declaration.constructor.public)
 (method_signature_plain) @declaration.method.signature
 (method_signature_plain accessor_kind: "*" @generator)
 (method_signature_plain name: (private_property_identifier) @name @privateName)
@@ -150,6 +151,7 @@
 (abstract_method_signature_setter (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
 (call_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
 (construct_signature (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
+(constructor_declaration (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
 (constructor_type (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
 (function_declaration (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
 (function_expression (formal_parameters (formal_parameters_elements item: (_)* @parameters)?))
@@ -164,6 +166,7 @@
 (abstract_method_signature_plain (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 (call_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 ((construct_signature (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @dropped))) (#set! reason "a construct signature does not declare a receiver"))
+((constructor_declaration (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @dropped))) (#set! reason "a constructor does not declare a receiver"))
 (constructor_type (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 (function_declaration (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))
 (function_expression (formal_parameters (formal_parameters_elements . (required_parameter pattern: (this)) @receiver)))

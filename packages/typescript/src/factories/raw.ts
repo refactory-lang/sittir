@@ -292,6 +292,7 @@ export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
 export const buildIndent = O.buildIndent;
 export const buildDedent = O.buildDedent;
+export const buildConstructorDeclaration = dispatched(() => backend().buildConstructorDeclaration);
 export const buildReceiverParameterDeclaration = dispatched(() => backend().buildReceiverParameterDeclaration);
 export const buildFormalParametersElementsReceiver = dispatched(() => backend().buildFormalParametersElementsReceiver);
 export const buildFormalParametersElementsReceiverGroup = dispatched(
@@ -308,6 +309,9 @@ export const buildPropertyIdentifierContent = dispatched(() => backend().buildPr
 export const buildPropertyIdentifier = dispatched(() => backend().buildPropertyIdentifier);
 export const buildTypeIdentifier = dispatched(() => backend().buildTypeIdentifier);
 export const buildInterfaceBody = dispatched(() => backend().buildInterfaceBody);
+export const buildInterfaceBodyCurly = dispatched(() => backend().buildInterfaceBodyCurly);
+export const buildInterfaceBodyFlow = dispatched(() => backend().buildInterfaceBodyFlow);
+export const buildThisType = O.buildThisType;
 
 export const _factoryMap = {
 	program: buildProgram,
@@ -574,6 +578,7 @@ export const _factoryMap = {
 	_double_blankline: buildDoubleBlankline,
 	_indent: buildIndent,
 	_dedent: buildDedent,
+	constructor_declaration: buildConstructorDeclaration,
 	receiver_parameter_declaration: buildReceiverParameterDeclaration,
 	formal_parameters_elements_receiver: buildFormalParametersElementsReceiver,
 	formal_parameters_elements_receiver_group: buildFormalParametersElementsReceiverGroup,
@@ -584,6 +589,7 @@ export const _factoryMap = {
 	shorthand_property_identifier_pattern: buildShorthandPropertyIdentifierPattern,
 	property_identifier: buildPropertyIdentifier,
 	type_identifier: buildTypeIdentifier,
-	interface_body: buildInterfaceBody
+	interface_body: buildInterfaceBody,
+	this_type: buildThisType
 } as const;
 export type _FactoryMap = typeof _factoryMap;

@@ -392,6 +392,7 @@ export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, n
 	);
 	const mintSources = new Map<string, { readonly owner: string; readonly arm: number }>();
 	const aliasStorage = new Map<string, string>();
+	const aliasLiterals = new Map<string, { readonly owner: string; readonly content: GrammarJsonRule }>();
 	for (const owner of ruleNames) {
 		let arm = 0;
 		const walk = (node: GrammarJsonRule | undefined): void => {
@@ -413,6 +414,9 @@ export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, n
 				!aliasStorage.has(node.value)
 			) {
 				aliasStorage.set(node.value, node.content.name);
+			}
+			if (node.type === 'ALIAS' && node.named === true && typeof node.value === 'string' && isFixedTextRule(node.content) && !aliasLiterals.has(node.value)) {
+				aliasLiterals.set(node.value, { owner, content: node.content! });
 			}
 			walk(node.content);
 			for (const member of node.members ?? []) walk(member);
@@ -445,6 +449,9 @@ export function collectLexicalRanks(grammarJson: unknown): ReadonlyMap<string, n
 	for (const [display, storage] of aliasStorage) {
 		const storageKey = keys.get(storage);
 		if (!(display in rules) && storageKey !== undefined) keys.set(display, storageKey);
+	}
+	for (const [display, { owner, content }] of aliasLiterals) {
+		if (!(display in rules) && !keys.has(display)) keys.set(display, [1, -tokenLexicalPrec(content), 0, ...positionOf(owner, new Set())]);
 	}
 	const ordered = [...keys].sort(([a, ka], [b, kb]) => compareLexicalKeys(ka, kb) || (a < b ? -1 : a > b ? 1 : 0));
 	return new Map(ordered.map(([name], rank) => [name, rank]));

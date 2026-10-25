@@ -5,6 +5,13 @@ export namespace Declaration {
 	export interface Class<G extends GrammarContext<G>> {
 		readonly typeParameters?: V.Declaration.TypeParameter<G> | V.Declaration.TypeParameter<G>[];
 	}
+	export interface Constructor<G extends GrammarContext<G>> {
+		readonly typeParameters?:
+			| V.Identifier.Metavariable<G>
+			| V.Declaration.TypeParameter.Any<G>
+			| (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
+		// p only
+	}
 	export interface Enum<G extends GrammarContext<G>> {
 		readonly typeParameters?: (V.Identifier.Metavariable<G> | V.Declaration.TypeParameter.Any<G>)[];
 		// r only

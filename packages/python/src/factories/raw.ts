@@ -200,9 +200,16 @@ export const buildTab = O.buildTab;
 export const buildNewline = O.buildNewline;
 export const buildBlankline = O.buildBlankline;
 export const buildDoubleBlankline = O.buildDoubleBlankline;
+export const buildConstructorDeclaration = dispatched(() => backend().buildConstructorDeclaration);
+export const buildBlockClassDeclaration = dispatched(() => backend().buildBlockClassDeclaration);
+export const buildSuiteBlockClassDeclaration = dispatched(() => backend().buildSuiteBlockClassDeclaration);
+export const buildDecoratedDefinitionClassDeclaration = dispatched(
+	() => backend().buildDecoratedDefinitionClassDeclaration
+);
 export const buildNames = dispatched(() => backend().buildNames);
 export const buildAsPatternTarget = dispatched(() => backend().buildAsPatternTarget);
 export const buildFormatExpression = dispatched(() => backend().buildFormatExpression);
+export const buildMethodDeclaration = dispatched(() => backend().buildMethodDeclaration);
 
 export const _factoryMap = {
 	module: buildModule,
@@ -398,8 +405,13 @@ export const _factoryMap = {
 	_newline: buildNewline,
 	_blankline: buildBlankline,
 	_double_blankline: buildDoubleBlankline,
+	constructor_declaration: buildConstructorDeclaration,
+	block_class_declaration: buildBlockClassDeclaration,
+	suite_block_class_declaration: buildSuiteBlockClassDeclaration,
+	decorated_definition_class_declaration: buildDecoratedDefinitionClassDeclaration,
 	names: buildNames,
 	as_pattern_target: buildAsPatternTarget,
-	format_expression: buildFormatExpression
+	format_expression: buildFormatExpression,
+	method_declaration: buildMethodDeclaration
 } as const;
 export type _FactoryMap = typeof _factoryMap;

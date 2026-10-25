@@ -26,9 +26,20 @@ describe('a relaxed keyword used as a name reads and builds as the word rule', (
 			expect(kinds.filter((kind) => kind.endsWith('Keyword'))).toEqual([]);
 			expect(root.$render()).toBe(source);
 		});
+		it(`queries \`${word} = 1\` with the word as an identifier, not a keyword unit`, () => {
+			const nodes = Array.from(py.parse(`${word} = 1\n`).$query().$descendants);
+			expect(nodes.flatMap((node) => (typeof node !== 'number' && node.$type === py.kinds.Identifier ? [node.$text()] : []))).toEqual([word]);
+			expect(nodes.filter((node) => typeof node === 'number' && kindNames.get(node)?.endsWith('Keyword'))).toEqual([]);
+		});
 		it(`builds identifier('${word}') where the grammar relaxes it`, () => {
 			const built = py.build.assignmentEq({ name: py.build.identifier(word), value: py.build.integer('1') });
 			expect(built.$render().toString()).toBe(`${word} = 1`);
 		});
 	}
+});
+
+describe('a unit the parser shows as itself', () => {
+	it('queries as its unit kind', () => {
+		expect(Array.from(py.parse('pass\n').$query().$descendants).filter((node) => typeof node === 'number')).toContain(py.kinds.PassStatement);
+	});
 });

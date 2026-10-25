@@ -9689,11 +9689,8 @@
                   "_unicode_property_value_expression_group": {
                     "$type": 81,
                     "_unicode_property_name": {
-                      "$type": 90,
-                      "_content": {
-                        "$text": "General_Category",
-                        "$type": 35
-                      }
+                      "$text": "General_Category",
+                      "$type": 90
                     }
                   }
                 }
@@ -9742,11 +9739,8 @@
                 "_unicode_property_value_expression_group": {
                   "$type": 81,
                   "_unicode_property_name": {
-                    "$type": 90,
-                    "_content": {
-                      "$text": "General_Category",
-                      "$type": 35
-                    }
+                    "$text": "General_Category",
+                    "$type": 90
                   }
                 }
               }
@@ -9791,11 +9785,8 @@
             "_unicode_property_value_expression_group": {
               "$type": 81,
               "_unicode_property_name": {
-                "$type": 90,
-                "_content": {
-                  "$text": "General_Category",
-                  "$type": 35
-                }
+                "$text": "General_Category",
+                "$type": 90
               }
             }
           }
@@ -9836,11 +9827,8 @@
           "_unicode_property_value_expression_group": {
             "$type": 81,
             "_unicode_property_name": {
-              "$type": 90,
-              "_content": {
-                "$text": "General_Category",
-                "$type": 35
-              }
+              "$text": "General_Category",
+              "$type": 90
             }
           }
         }
@@ -9878,11 +9866,8 @@
         "_unicode_property_value_expression_group": {
           "$type": 81,
           "_unicode_property_name": {
-            "$type": 90,
-            "_content": {
-              "$text": "General_Category",
-              "$type": 35
-            }
+            "$text": "General_Category",
+            "$type": 90
           }
         }
       }
@@ -9913,11 +9898,8 @@
       "_unicode_property_value_expression_group": {
         "$type": 81,
         "_unicode_property_name": {
-          "$type": 90,
-          "_content": {
-            "$text": "General_Category",
-            "$type": 35
-          }
+          "$text": "General_Category",
+          "$type": 90
         }
       }
     },
@@ -9941,11 +9923,8 @@
     "input": {
       "$type": 81,
       "_unicode_property_name": {
-        "$type": 90,
-        "_content": {
-          "$text": "General_Category",
-          "$type": 35
-        }
+        "$text": "General_Category",
+        "$type": 90
       }
     },
     "kind": "render",
@@ -9959,30 +9938,6 @@
     "kind": "roundtrip",
     "pattern": "unicode_property_value_expression_group",
     "sourceIn": "General_Category=",
-    "wrappedOffset": 3,
-    "wrappedText": "\\p{General_Category=Decimal_Number}"
-  },
-  {
-    "expectedOutput": "General_Category",
-    "grammar": "regex",
-    "input": {
-      "$type": 90,
-      "_content": {
-        "$text": "General_Category",
-        "$type": 35
-      }
-    },
-    "kind": "render",
-    "pattern": "unicode_property_name"
-  },
-  {
-    "edits": [],
-    "expectedReparseTree": "(unicode_property_name)",
-    "expectedSourceOut": "General_Category",
-    "grammar": "regex",
-    "kind": "roundtrip",
-    "pattern": "unicode_property_name",
-    "sourceIn": "General_Category",
     "wrappedOffset": 3,
     "wrappedText": "\\p{General_Category=Decimal_Number}"
   },

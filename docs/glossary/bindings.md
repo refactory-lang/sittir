@@ -1781,3 +1781,163 @@ The span of an item in the source, or `undefined` when it has none.
 ### `packages/codegen/src/bindings/pinned-typescript.ts::TypescriptSource::spelled`
 
 The source text an item spells.
+
+### `packages/codegen/src/bindings/derive.ts::Derivation::stoppedReads`
+
+The reads the derivation stopped at, which a later pass does not extend.
+
+### `packages/codegen/src/bindings/facts.ts::ClaimFact::absent`
+
+Whether the claim asserts the absence of its member.
+
+### `packages/codegen/src/bindings/facts.ts::literalClaimOf`
+
+The literal claim a pattern makes, or `undefined` when it makes none.
+
+### `packages/codegen/src/bindings/facts.ts::LiteralText`
+
+The literal text a claim matches.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::aliasStorage`
+
+The storage the model node's alias envelope holds.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::splitFrom`
+
+The kind this node was split from, when the bindings split it.
+
+### `packages/codegen/src/bindings/facts.ts::PatternReference::at`
+
+The position in the pattern the reference sits at.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::aliasStorage`
+
+The storage the node model records for the node's alias envelope.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::splitFrom`
+
+The kind the node model records this node as split from.
+
+### `packages/codegen/src/bindings/routes.ts::aliasContentSlot`
+
+The slot an alias envelope's content lands in.
+
+### `packages/codegen/src/bindings/routes.ts::capturePaths`
+
+The paths each capture takes through the model.
+
+### `packages/codegen/src/bindings/routes.ts::captureReaches`
+
+The kinds each capture reaches.
+
+### `packages/codegen/src/bindings/routes.ts::envelopeStorage`
+
+The storage of an alias envelope, by its kind.
+
+### `packages/codegen/src/bindings/routes.ts::EnvelopeStorage`
+
+The storage an alias envelope holds.
+
+### `packages/codegen/src/bindings/routes.ts::EnvelopeStorage::storage`
+
+The storage the envelope holds.
+
+### `packages/codegen/src/bindings/routes.ts::envelopeTargets`
+
+The targets an alias envelope routes its content to.
+
+### `packages/codegen/src/bindings/routes.ts::GrammarRoutes::stopped`
+
+The routes the derivation stopped at.
+
+### `packages/codegen/src/bindings/routes.ts::HeldStep`
+
+A step of a route that a node holds.
+
+### `packages/codegen/src/bindings/routes.ts::heldSteps`
+
+The steps of a route each node holds.
+
+### `packages/codegen/src/bindings/routes.ts::kindVocabs`
+
+The vocabulary of each kind.
+
+### `packages/codegen/src/bindings/routes.ts::memberTargets`
+
+The targets each member routes to.
+
+### `packages/codegen/src/bindings/routes.ts::ReadEntry::decided`
+
+Whether the read has already been decided.
+
+### `packages/codegen/src/bindings/routes.ts::readsByKind`
+
+The reads grouped by kind.
+
+### `packages/codegen/src/bindings/routes.ts::shownSlots`
+
+The slots a route shows under a display name.
+
+### `packages/codegen/src/bindings/routes.ts::StoppedRead`
+
+A read the derivation stopped at, with the reason.
+
+### `packages/codegen/src/bindings/vocabulary.ts::canonicalFacts`
+
+The facts of a vocabulary member in its canonical spelling.
+
+### `packages/codegen/src/bindings/vocabulary.ts::canonicalPaths`
+
+The paths of a vocabulary member in its canonical spelling.
+
+### `packages/codegen/src/bindings/vocabulary.ts::lineageOf`
+
+The chain of kinds a vocabulary member descends from.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Member::literals`
+
+The literal spellings a vocabulary member accepts.
+
+### `packages/codegen/src/bindings/vocabulary.ts::pathChildren`
+
+The child paths of a vocabulary path.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Synonyms`
+
+The synonyms a vocabulary resolves, by canonical name.
+
+### `packages/codegen/src/bindings/vocabulary.ts::SYNONYMS`
+
+The synonym tables the bindings vocabulary resolves.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Synonyms::levels`
+
+The levels of synonyms a name is resolved through.
+
+### `packages/codegen/src/bindings/vocabulary.ts::SynonymTable`
+
+A table mapping each synonym to its canonical name.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary`
+
+The vocabulary the bindings read claims against.
+
+### `packages/codegen/src/bindings/vocabulary.ts::Vocabulary::synonyms`
+
+The synonyms the vocabulary resolves.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyKind`
+
+The kind of a vocabulary entry.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularyMember`
+
+A member of a vocabulary kind.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularySource`
+
+Where a vocabulary is read from.
+
+### `packages/codegen/src/bindings/vocabulary.ts::VocabularySource::synonyms`
+
+The synonyms the vocabulary source declares.

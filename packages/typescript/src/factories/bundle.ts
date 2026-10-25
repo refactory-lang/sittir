@@ -590,6 +590,10 @@ export const publicFieldDefinitionAccessor = bundle(
 	C.coerceToPublicFieldDefinitionAccessor,
 	{ key: 'publicFieldDefinitionAccessor', max: 1 }
 );
+export const constructorDeclaration = bundle(F.buildConstructorDeclaration, C.coerceToConstructorDeclaration, {
+	key: 'constructorDeclaration',
+	max: 1
+});
 export const receiverParameterDeclaration = bundle(
 	F.buildReceiverParameterDeclaration,
 	C.coerceToReceiverParameterDeclaration,
@@ -600,3 +604,4 @@ export const formalParametersElementsReceiver = bundle(
 	C.coerceToFormalParametersElementsReceiver,
 	{ key: 'formalParametersElementsReceiver', max: 1 }
 );
+export const interfaceBody = bundle(F.buildInterfaceBody, C.coerceToInterfaceBody, { key: 'interfaceBody', max: 1 });

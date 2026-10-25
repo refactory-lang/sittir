@@ -10,7 +10,6 @@ import {
 	hydrateWith,
 	hydrateSlotWith,
 	hydrateSlotsWith,
-	contentRole,
 	inTreeEngine,
 	currentHandle,
 	elementsWith,
@@ -1242,65 +1241,6 @@ export function wrapInlineFlagsGroupDisable(
 	return node as unknown as T.InlineFlagsGroupDisable.Parsed;
 }
 
-export function wrapLazy(data: T.Lazy, tree: TreeHandle): T.Lazy.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.Lazy as const,
-		content() {
-			return this._content;
-		},
-		$with: {
-			content: (v: NonNullable<T.Lazy['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapLazy({ ...$edited(data), _content: admitSlot(handle, 'lazy', 'content', v) }, tree)
-				)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.Lazy.Parsed;
-}
-
-export function wrapUnicodePropertyName(data: T.UnicodePropertyName, tree: TreeHandle): T.UnicodePropertyName.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.UnicodePropertyName as const,
-		content() {
-			return hydrateSlot<T.UnicodePropertyValue>(this, '_content', tree, contentRole(this, this._content));
-		},
-		$with: {
-			content: (v: NonNullable<T.UnicodePropertyName['_content']>) =>
-				rebuilt(node, handle, () =>
-					wrapUnicodePropertyName(
-						{ ...$edited(data), _content: admitSlot(handle, 'unicode_property_name', 'content', v) },
-						tree
-					)
-				)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.UnicodePropertyName.Parsed;
-}
-
 function viewPattern(data: RecordStub, tree: TreeHandle): T.Pattern.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -1541,17 +1481,17 @@ function viewClassRange(data: RecordStub, tree: TreeHandle): T.ClassRange.Parsed
 				this,
 				tree,
 				2,
-				35,
-				33
+				31,
+				29
 			);
 		},
 		end() {
 			return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(
 				this,
 				tree,
-				37,
-				35,
-				33
+				33,
+				31,
+				29
 			);
 		},
 		$with: {
@@ -1819,8 +1759,8 @@ function viewCharacterClassEscape(data: RecordStub, tree: TreeHandle): T.Charact
 				this,
 				tree,
 				2,
-				31,
-				29
+				27,
+				25
 			);
 		},
 		$with: {
@@ -1849,10 +1789,10 @@ function viewUnicodePropertyValueExpression(
 		...data,
 		$type: TSKindId.UnicodePropertyValueExpression as const,
 		unicodePropertyValueExpressionGroup() {
-			return viewSlot<T.UnicodePropertyValueExpressionGroup | undefined>(this, tree, 2, 13, 11);
+			return viewSlot<T.UnicodePropertyValueExpressionGroup | undefined>(this, tree, 2, 9, 7);
 		},
 		unicodePropertyValue() {
-			return viewSlot<T.UnicodePropertyValue>(this, tree, 15, 5, 0);
+			return viewSlot<T.UnicodePropertyValue>(this, tree, 11, 5, 0);
 		},
 		$with: {
 			unicodePropertyValueExpressionGroup: (...args: unknown[]) =>
@@ -1925,10 +1865,10 @@ function viewTermGroup(data: RecordStub, tree: TreeHandle): T.TermGroup.Parsed {
 				| T.NamedCapturingGroup
 				| T.NonCapturingGroup
 				| T.InlineFlagsGroup
-			>(this, tree, 2, 35, 33);
+			>(this, tree, 2, 31, 29);
 		},
 		quantifier() {
-			return viewSlot<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier | undefined>(this, tree, 37, 23, 21);
+			return viewSlot<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier | undefined>(this, tree, 33, 23, 21);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args),
@@ -2011,7 +1951,7 @@ function viewCharacterClassEscapeArm(data: RecordStub, tree: TreeHandle): T.Char
 			return viewSlot<T.CharacterClassEscapeText2>(this, tree, 2, 5, 0);
 		},
 		unicodePropertyValueExpression() {
-			return viewSlot<T.UnicodePropertyValueExpression>(this, tree, 7, 22, 20);
+			return viewSlot<T.UnicodePropertyValueExpression>(this, tree, 7, 18, 16);
 		},
 		$with: {
 			characterClassEscapeText2: (...args: unknown[]) => rowWith(node, tree, _wrap, 'characterClassEscapeText2', args),
@@ -2041,7 +1981,7 @@ function viewUnicodePropertyValueExpressionGroup(
 		...data,
 		$type: TSKindId.UnicodePropertyValueExpressionGroup as const,
 		unicodePropertyName() {
-			return viewSlot<T.UnicodePropertyName>(this, tree, 2, 9, 7);
+			return viewSlot<T.UnicodePropertyName>(this, tree, 2, 5, 0);
 		},
 		$with: {
 			unicodePropertyName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'unicodePropertyName', args)
@@ -2151,56 +2091,6 @@ function viewInlineFlagsGroupDisable(data: RecordStub, tree: TreeHandle): T.Inli
 	return node as unknown as T.InlineFlagsGroupDisable.Parsed;
 }
 
-function viewLazy(data: RecordStub, tree: TreeHandle): T.Lazy.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.Lazy as const,
-		content() {
-			return recordSlot(this, tree, 2, 5, 0);
-		},
-		$with: {
-			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.Lazy.Parsed;
-}
-
-function viewUnicodePropertyName(data: RecordStub, tree: TreeHandle): T.UnicodePropertyName.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.UnicodePropertyName as const,
-		content() {
-			return viewSlot<T.UnicodePropertyValue>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
-		},
-		$with: {
-			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.UnicodePropertyName.Parsed;
-}
-
 function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 	const handle = currentHandle();
 	const node = {
@@ -2256,8 +2146,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.InlineFlagsGroupToggle]: (d, t) => wrapInlineFlagsGroupToggle(d as unknown as T.InlineFlagsGroupToggle, t),
 	[TSKindId.InlineFlagsGroupDisable]: (d, t) =>
 		wrapInlineFlagsGroupDisable(d as unknown as T.InlineFlagsGroupDisable, t),
-	[TSKindId.Lazy]: (d, t) => wrapLazy(d as unknown as T.Lazy, t),
-	[TSKindId.UnicodePropertyName]: (d, t) => wrapUnicodePropertyName(d as unknown as T.UnicodePropertyName, t),
 	[TSKindId.PatternCharacter]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.PosixClassName]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.ClassCharacter]: (d, t) => wrapLeaf(d, t),
@@ -2270,7 +2158,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.GroupName]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.DecimalDigits]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.CharacterClassEscapeText1]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t)
+	[TSKindId.CharacterClassEscapeText2]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.UnicodePropertyName]: (d, t) => wrapLeaf(d, t)
 };
 
 const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {
@@ -2302,9 +2191,7 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.UnicodePropertyValueExpressionGroup]: viewUnicodePropertyValueExpressionGroup,
 	[TSKindId.InlineFlagsGroupEnable]: viewInlineFlagsGroupEnable,
 	[TSKindId.InlineFlagsGroupToggle]: viewInlineFlagsGroupToggle,
-	[TSKindId.InlineFlagsGroupDisable]: viewInlineFlagsGroupDisable,
-	[TSKindId.Lazy]: viewLazy,
-	[TSKindId.UnicodePropertyName]: viewUnicodePropertyName
+	[TSKindId.InlineFlagsGroupDisable]: viewInlineFlagsGroupDisable
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */

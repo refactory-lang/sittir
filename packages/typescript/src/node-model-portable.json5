@@ -199,13 +199,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "458": 0
+                  "459": 0
                 }
               }
             },
@@ -216,7 +216,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "458": 0
+                  "459": 0
                 }
               }
             }
@@ -234,13 +234,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "458": 0
+                  "459": 0
                 }
               }
             },
@@ -251,7 +251,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "458": 0
+                  "459": 0
                 }
               }
             }
@@ -269,13 +269,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "458": 0
+                  "459": 0
                 }
               }
             },
@@ -286,7 +286,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "458": 0
+                  "459": 0
                 }
               }
             }
@@ -376,13 +376,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "457": 0
+                  "458": 0
                 }
               }
             },
@@ -393,7 +393,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "457": 0
+                  "458": 0
                 }
               }
             }
@@ -411,13 +411,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "457": 0
+                  "458": 0
                 }
               }
             },
@@ -428,7 +428,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "457": 0
+                  "458": 0
                 }
               }
             }
@@ -446,13 +446,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "457": 0
+                  "458": 0
                 }
               }
             },
@@ -463,7 +463,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "457": 0
+                  "458": 0
                 }
               }
             }
@@ -714,13 +714,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "459": 0
+                  "460": 0
                 }
               }
             },
@@ -731,7 +731,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "459": 0
+                  "460": 0
                 }
               }
             }
@@ -749,13 +749,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "459": 0
+                  "460": 0
                 }
               }
             },
@@ -766,7 +766,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "459": 0
+                  "460": 0
                 }
               }
             }
@@ -784,13 +784,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "459": 0
+                  "460": 0
                 }
               }
             },
@@ -801,7 +801,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "459": 0
+                  "460": 0
                 }
               }
             }
@@ -1540,7 +1540,7 @@
                 "op": "eq",
                 "text": "+=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1565,7 +1565,7 @@
                 "op": "eq",
                 "text": "-=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1590,7 +1590,7 @@
                 "op": "eq",
                 "text": "*=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1615,7 +1615,7 @@
                 "op": "eq",
                 "text": "/=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1640,7 +1640,7 @@
                 "op": "eq",
                 "text": "%=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1665,7 +1665,7 @@
                 "op": "eq",
                 "text": "**=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1690,7 +1690,7 @@
                 "op": "eq",
                 "text": "&=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1715,7 +1715,7 @@
                 "op": "eq",
                 "text": "|=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1740,7 +1740,7 @@
                 "op": "eq",
                 "text": "^=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1765,7 +1765,7 @@
                 "op": "eq",
                 "text": "<<=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1790,7 +1790,7 @@
                 "op": "eq",
                 "text": ">>=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1815,7 +1815,7 @@
                 "op": "eq",
                 "text": ">>>=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1840,7 +1840,7 @@
                 "op": "eq",
                 "text": "&&=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1865,7 +1865,7 @@
                 "op": "eq",
                 "text": "||=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1890,7 +1890,7 @@
                 "op": "eq",
                 "text": "??=",
                 "slots": {
-                  "262": 1
+                  "263": 1
                 }
               }
             }
@@ -1976,10 +1976,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  405
+                  406
                 ],
                 "slots": {
-                  "267": 3
+                  "268": 3
                 }
               }
             }
@@ -2004,7 +2004,7 @@
                 "op": "eq",
                 "text": "+",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2029,7 +2029,7 @@
                 "op": "eq",
                 "text": "-",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2054,7 +2054,7 @@
                 "op": "eq",
                 "text": "*",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2079,7 +2079,7 @@
                 "op": "eq",
                 "text": "/",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2104,7 +2104,7 @@
                 "op": "eq",
                 "text": "%",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2129,7 +2129,7 @@
                 "op": "eq",
                 "text": "**",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2154,7 +2154,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2179,7 +2179,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2204,7 +2204,7 @@
                 "op": "eq",
                 "text": "===",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2229,7 +2229,7 @@
                 "op": "eq",
                 "text": "!==",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2254,7 +2254,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2279,7 +2279,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2304,7 +2304,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2329,7 +2329,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2354,7 +2354,7 @@
                 "op": "eq",
                 "text": "&",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2379,7 +2379,7 @@
                 "op": "eq",
                 "text": "|",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2404,7 +2404,7 @@
                 "op": "eq",
                 "text": "^",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2429,7 +2429,7 @@
                 "op": "eq",
                 "text": "<<",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2454,7 +2454,7 @@
                 "op": "eq",
                 "text": ">>",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2479,7 +2479,7 @@
                 "op": "eq",
                 "text": ">>>",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2504,7 +2504,7 @@
                 "op": "eq",
                 "text": "&&",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2529,7 +2529,7 @@
                 "op": "eq",
                 "text": "||",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2554,7 +2554,7 @@
                 "op": "eq",
                 "text": "??",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2579,7 +2579,7 @@
                 "op": "eq",
                 "text": "instanceof",
                 "slots": {
-                  "267": 1
+                  "268": 1
                 }
               }
             }
@@ -2728,10 +2728,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  257
+                  258
                 ],
                 "slots": {
-                  "419": 0
+                  "420": 0
                 }
               }
             }
@@ -3261,7 +3261,7 @@
     "class_body_member_method": {
       "container": {
         "kinds": [
-          "method_definition"
+          "_method_definition_class_body_member_method"
         ],
         "terminals": [],
         "list": false
@@ -3714,6 +3714,233 @@
           "path": [
             {
               "owner": "construct_signature",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver",
+              "slot": "formal_parameters_elements_receiver_group"
+            },
+            {
+              "owner": "formal_parameters_elements_receiver_group",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        }
+      ]
+    },
+    "constructor_declaration": {
+      "vocab": "declaration.constructor",
+      "read": [
+        {
+          "vocab": "declaration.constructor",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "declaration.constructor.private",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  325,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "463": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "private",
+                "slots": {
+                  "463": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor.protected",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  325,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "463": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "protected",
+                "slots": {
+                  "463": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor.public",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "is",
+                "types": [
+                  325,
+                  34,
+                  35,
+                  36
+                ],
+                "slots": {
+                  "463": 0
+                }
+              }
+            },
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "public",
+                "slots": {
+                  "463": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "declaration.constructor",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": null,
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "constructor_declaration",
+              "slot": "parameters"
+            },
+            {
+              "owner": "formal_parameters",
+              "slot": "elements"
+            },
+            {
+              "owner": "formal_parameters_elements",
+              "slot": "item"
+            }
+          ]
+        },
+        {
+          "name": "parameters",
+          "route": "nested",
+          "via": [
+            {
+              "field": "elements",
+              "kind": "formal_parameters_elements",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver_group",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters_elements_receiver",
+              "after": null,
+              "anchor": null
+            },
+            {
+              "field": null,
+              "kind": "formal_parameters",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "formal_parameters_elements",
+          "slot": "item",
+          "multiple": true,
+          "path": [
+            {
+              "owner": "constructor_declaration",
               "slot": "parameters"
             },
             {
@@ -4412,7 +4639,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "192": 0
+                  "193": 0
                 }
               }
             }
@@ -4514,10 +4741,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  434
+                  435
                 ],
                 "slots": {
-                  "430": 1
+                  "431": 1
                 }
               }
             }
@@ -4644,10 +4871,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  431
+                  432
                 ],
                 "slots": {
-                  "429": 1
+                  "430": 1
                 }
               }
             }
@@ -6702,7 +6929,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "416": 0
+                  "417": 0
                 }
               }
             }
@@ -6776,7 +7003,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "415": 0
+                  "416": 0
                 }
               }
             }
@@ -6848,7 +7075,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "196": 0
+                  "197": 0
                 }
               }
             }
@@ -7206,15 +7433,6 @@
         }
       ]
     },
-    "interface_body": {
-      "container": {
-        "kinds": [
-          "object_type"
-        ],
-        "terminals": [],
-        "list": false
-      }
-    },
     "interface_declaration": {
       "vocab": "declaration.interface",
       "read": [
@@ -7417,7 +7635,7 @@
                 "op": "eq",
                 "text": "const",
                 "slots": {
-                  "206": 0
+                  "207": 0
                 }
               }
             }
@@ -7442,7 +7660,7 @@
                 "op": "eq",
                 "text": "let",
                 "slots": {
-                  "206": 0
+                  "207": 0
                 }
               }
             }
@@ -7737,13 +7955,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "452": 0
+                  "453": 0
                 }
               }
             },
@@ -7754,7 +7972,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "452": 0
+                  "453": 0
                 }
               }
             }
@@ -7772,13 +7990,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "452": 0
+                  "453": 0
                 }
               }
             },
@@ -7789,7 +8007,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "452": 0
+                  "453": 0
                 }
               }
             }
@@ -7807,13 +8025,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "452": 0
+                  "453": 0
                 }
               }
             },
@@ -7824,7 +8042,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "452": 0
+                  "453": 0
                 }
               }
             }
@@ -7926,251 +8144,6 @@
       "vocab": "declaration.method",
       "read": [
         {
-          "vocab": "declaration.constructor.private",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "451": 6
-                  }
-                },
-                {
-                  "slots": {
-                    "495": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "constructor",
-                "self": true
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "451": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "private",
-                "slots": {
-                  "451": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  495
-                ],
-                "slots": {
-                  "451": 6
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.constructor.protected",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "451": 6
-                  }
-                },
-                {
-                  "slots": {
-                    "495": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "constructor",
-                "self": true
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "451": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "protected",
-                "slots": {
-                  "451": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  495
-                ],
-                "slots": {
-                  "451": 6
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.constructor.public",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "451": 6
-                  }
-                },
-                {
-                  "slots": {
-                    "495": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "constructor",
-                "self": true
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  324,
-                  34,
-                  35,
-                  36
-                ],
-                "slots": {
-                  "451": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "eq",
-                "text": "public",
-                "slots": {
-                  "451": 0
-                }
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  495
-                ],
-                "slots": {
-                  "451": 6
-                }
-              }
-            }
-          ]
-        },
-        {
-          "vocab": "declaration.constructor",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": [
-            {
-              "up": 0,
-              "via": [
-                {
-                  "slots": {
-                    "451": 6
-                  }
-                },
-                {
-                  "slots": {
-                    "495": 0
-                  }
-                }
-              ],
-              "plan": {
-                "op": "eq",
-                "text": "constructor",
-                "self": true
-              }
-            },
-            {
-              "up": 0,
-              "via": [],
-              "plan": {
-                "op": "is",
-                "types": [
-                  495
-                ],
-                "slots": {
-                  "451": 6
-                }
-              }
-            }
-          ]
-        },
-        {
           "vocab": "declaration.method.private",
           "toplevel": true,
           "within": [],
@@ -8182,13 +8155,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "451": 0
+                  "452": 0
                 }
               }
             },
@@ -8199,7 +8172,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "451": 0
+                  "452": 0
                 }
               }
             }
@@ -8217,13 +8190,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "451": 0
+                  "452": 0
                 }
               }
             },
@@ -8234,7 +8207,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "451": 0
+                  "452": 0
                 }
               }
             }
@@ -8252,13 +8225,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "451": 0
+                  "452": 0
                 }
               }
             },
@@ -8269,7 +8242,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "451": 0
+                  "452": 0
                 }
               }
             }
@@ -8580,13 +8553,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "453": 0
+                  "454": 0
                 }
               }
             },
@@ -8597,7 +8570,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "453": 0
+                  "454": 0
                 }
               }
             }
@@ -8615,13 +8588,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "453": 0
+                  "454": 0
                 }
               }
             },
@@ -8632,7 +8605,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "453": 0
+                  "454": 0
                 }
               }
             }
@@ -8650,13 +8623,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "453": 0
+                  "454": 0
                 }
               }
             },
@@ -8667,7 +8640,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "453": 0
+                  "454": 0
                 }
               }
             }
@@ -8870,13 +8843,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "455": 0
+                  "456": 0
                 }
               }
             },
@@ -8887,7 +8860,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "455": 0
+                  "456": 0
                 }
               }
             }
@@ -8905,13 +8878,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "455": 0
+                  "456": 0
                 }
               }
             },
@@ -8922,7 +8895,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "455": 0
+                  "456": 0
                 }
               }
             }
@@ -8940,13 +8913,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "455": 0
+                  "456": 0
                 }
               }
             },
@@ -8957,7 +8930,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "455": 0
+                  "456": 0
                 }
               }
             }
@@ -9059,13 +9032,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "454": 0
+                  "455": 0
                 }
               }
             },
@@ -9076,7 +9049,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "454": 0
+                  "455": 0
                 }
               }
             }
@@ -9094,13 +9067,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "454": 0
+                  "455": 0
                 }
               }
             },
@@ -9111,7 +9084,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "454": 0
+                  "455": 0
                 }
               }
             }
@@ -9129,13 +9102,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "454": 0
+                  "455": 0
                 }
               }
             },
@@ -9146,7 +9119,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "454": 0
+                  "455": 0
                 }
               }
             }
@@ -9433,13 +9406,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "456": 0
+                  "457": 0
                 }
               }
             },
@@ -9450,7 +9423,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "456": 0
+                  "457": 0
                 }
               }
             }
@@ -9468,13 +9441,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "456": 0
+                  "457": 0
                 }
               }
             },
@@ -9485,7 +9458,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "456": 0
+                  "457": 0
                 }
               }
             }
@@ -9503,13 +9476,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "456": 0
+                  "457": 0
                 }
               }
             },
@@ -9520,7 +9493,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "456": 0
+                  "457": 0
                 }
               }
             }
@@ -10742,13 +10715,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "327": 1
+                  "328": 1
                 }
               }
             },
@@ -10759,7 +10732,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "327": 1
+                  "328": 1
                 }
               }
             }
@@ -10777,13 +10750,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "327": 1
+                  "328": 1
                 }
               }
             },
@@ -10794,7 +10767,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "327": 1
+                  "328": 1
                 }
               }
             }
@@ -10812,13 +10785,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "327": 1
+                  "328": 1
                 }
               }
             },
@@ -10829,7 +10802,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "327": 1
+                  "328": 1
                 }
               }
             }
@@ -11293,13 +11266,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "369": 0
+                  "370": 0
                 }
               }
             },
@@ -11310,7 +11283,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "369": 0
+                  "370": 0
                 }
               }
             }
@@ -11328,13 +11301,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "369": 0
+                  "370": 0
                 }
               }
             },
@@ -11345,7 +11318,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "369": 0
+                  "370": 0
                 }
               }
             }
@@ -11363,13 +11336,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "369": 0
+                  "370": 0
                 }
               }
             },
@@ -11380,7 +11353,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "369": 0
+                  "370": 0
                 }
               }
             }
@@ -11526,13 +11499,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "461": 1
+                  "462": 1
                 }
               }
             },
@@ -11543,7 +11516,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "461": 1
+                  "462": 1
                 }
               }
             }
@@ -11561,13 +11534,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "461": 1
+                  "462": 1
                 }
               }
             },
@@ -11578,7 +11551,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "461": 1
+                  "462": 1
                 }
               }
             }
@@ -11596,13 +11569,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "461": 1
+                  "462": 1
                 }
               }
             },
@@ -11613,7 +11586,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "461": 1
+                  "462": 1
                 }
               }
             }
@@ -11637,7 +11610,7 @@
               "plan": {
                 "op": "present",
                 "slots": {
-                  "461": 3
+                  "462": 3
                 }
               }
             }
@@ -11761,13 +11734,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "460": 2
+                  "461": 2
                 }
               }
             },
@@ -11778,7 +11751,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "460": 2
+                  "461": 2
                 }
               }
             }
@@ -11796,13 +11769,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "460": 2
+                  "461": 2
                 }
               }
             },
@@ -11813,7 +11786,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "460": 2
+                  "461": 2
                 }
               }
             }
@@ -11831,13 +11804,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "460": 2
+                  "461": 2
                 }
               }
             },
@@ -11848,7 +11821,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "460": 2
+                  "461": 2
                 }
               }
             }
@@ -12097,13 +12070,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "463": 1
+                  "467": 1
                 }
               }
             },
@@ -12114,7 +12087,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "463": 1
+                  "467": 1
                 }
               }
             }
@@ -12132,13 +12105,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "463": 1
+                  "467": 1
                 }
               }
             },
@@ -12149,7 +12122,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "463": 1
+                  "467": 1
                 }
               }
             }
@@ -12167,13 +12140,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "463": 1
+                  "467": 1
                 }
               }
             },
@@ -12184,7 +12157,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "463": 1
+                  "467": 1
                 }
               }
             }
@@ -12342,13 +12315,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "326": 1
+                  "327": 1
                 }
               }
             },
@@ -12359,7 +12332,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "326": 1
+                  "327": 1
                 }
               }
             }
@@ -12377,13 +12350,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "326": 1
+                  "327": 1
                 }
               }
             },
@@ -12394,7 +12367,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "326": 1
+                  "327": 1
                 }
               }
             }
@@ -12412,13 +12385,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "326": 1
+                  "327": 1
                 }
               }
             },
@@ -12429,7 +12402,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "326": 1
+                  "327": 1
                 }
               }
             }
@@ -12447,10 +12420,10 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  277
+                  278
                 ],
                 "slots": {
-                  "326": 4
+                  "327": 4
                 }
               }
             }
@@ -12713,13 +12686,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "448": 1
+                  "449": 1
                 }
               }
             },
@@ -12730,7 +12703,7 @@
                 "op": "eq",
                 "text": "private",
                 "slots": {
-                  "448": 1
+                  "449": 1
                 }
               }
             }
@@ -12748,13 +12721,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "448": 1
+                  "449": 1
                 }
               }
             },
@@ -12765,7 +12738,7 @@
                 "op": "eq",
                 "text": "protected",
                 "slots": {
-                  "448": 1
+                  "449": 1
                 }
               }
             }
@@ -12783,13 +12756,13 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  324,
+                  325,
                   34,
                   35,
                   36
                 ],
                 "slots": {
-                  "448": 1
+                  "449": 1
                 }
               }
             },
@@ -12800,7 +12773,7 @@
                 "op": "eq",
                 "text": "public",
                 "slots": {
-                  "448": 1
+                  "449": 1
                 }
               }
             }
@@ -13968,7 +13941,7 @@
                 "op": "eq",
                 "text": "-",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -13993,7 +13966,7 @@
                 "op": "eq",
                 "text": "+",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -14018,7 +13991,7 @@
                 "op": "eq",
                 "text": "!",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -14043,7 +14016,7 @@
                 "op": "eq",
                 "text": "~",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -14068,7 +14041,7 @@
                 "op": "eq",
                 "text": "typeof",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -14093,7 +14066,7 @@
                 "op": "eq",
                 "text": "void",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -14118,7 +14091,7 @@
                 "op": "eq",
                 "text": "delete",
                 "slots": {
-                  "268": 0
+                  "269": 0
                 }
               }
             }
@@ -14283,7 +14256,7 @@
                 "op": "eq",
                 "text": "++",
                 "slots": {
-                  "424": 1
+                  "425": 1
                 }
               }
             }
@@ -14308,7 +14281,7 @@
                 "op": "eq",
                 "text": "--",
                 "slots": {
-                  "424": 1
+                  "425": 1
                 }
               }
             }
@@ -14358,7 +14331,7 @@
                 "op": "eq",
                 "text": "++",
                 "slots": {
-                  "425": 0
+                  "426": 0
                 }
               }
             }
@@ -14383,7 +14356,7 @@
                 "op": "eq",
                 "text": "--",
                 "slots": {
-                  "425": 0
+                  "426": 0
                 }
               }
             }
@@ -14496,11 +14469,11 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  241,
-                  237
+                  242,
+                  238
                 ],
                 "slots": {
-                  "436": 0
+                  "437": 0
                 }
               }
             }
@@ -14719,13 +14692,13 @@
       {
         "depth": 2,
         "paths": 112,
-        "kinds": 147,
+        "kinds": 148,
         "refinements": 6
       },
       {
         "depth": 3,
         "paths": 109,
-        "kinds": 94,
+        "kinds": 95,
         "refinements": 83
       },
       {

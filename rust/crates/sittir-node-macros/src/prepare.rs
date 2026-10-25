@@ -76,7 +76,7 @@ fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenS
             let (word, before) = (space.slot, space.before);
             setting(quote!(Space { word: #word, before: #before }))
         }
-        Role::Text => Err(syn::Error::new_spanned(field.ident, "text is no place a prepare writes")),
+        Role::Text | Role::Kind => Err(syn::Error::new_spanned(field.ident, "text and the kind shown are no place a prepare writes")),
     }
 }
 
@@ -102,7 +102,7 @@ pub fn prepare_trait(owner: &Ident, name: &Ident, fields: &[Field<'_>], record: 
     for field in fields {
         let bound = match &field.role {
             Role::Layout => Some(quote!(::sittir_core::prepare::LayoutTarget<Self::Overlay>)),
-            Role::Text => None,
+            Role::Text | Role::Kind => None,
             Role::Slot(slot) => slot_bound(field, slot)?,
             Role::Flank(_) | Role::SeparatorKind(_) => Some(setting_bound(field)?),
             Role::Space(space) => {

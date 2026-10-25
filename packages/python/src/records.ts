@@ -8,7 +8,7 @@ export const RECORD_HEADER_WORDS = 2;
 export const records = {
 	ModuleNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
 	SimpleStatementsNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
-	ImportStatementNode: { words: 12, names: { word: 2, width: 10, inline: 8 } },
+	ImportStatementNode: { words: 8, names: { word: 2, width: 6, inline: 4 } },
 	ImportPrefixNode: { words: 2 },
 	RelativeImportNode: { words: 13, prefix: { word: 2, width: 5 }, name: { word: 7, width: 6, inline: 4 } },
 	FutureImportStatementNode: { words: 12, content: { word: 2, width: 10, inline: 8 } },
@@ -331,7 +331,20 @@ export const records = {
 	StringFragmentNode: { words: 2 },
 	EscapeInterpolationNode: { words: 2 },
 	StringEndNode: { words: 2 },
-	NamesNode: { words: 8, content: { word: 2, width: 6, inline: 4 } },
-	AsPatternTargetNode: { words: 7, content: { word: 2, width: 5 } },
-	FormatExpressionNode: { words: 23, content: { word: 2, width: 21, inline: 19 } }
+	ConstructorDeclarationNode: {
+		words: 38,
+		async_: { word: 2, bit: 0 },
+		type_parameters: { word: 3, width: 10, inline: 8 },
+		parameters: { word: 13, width: 10, inline: 8 },
+		return_type: { word: 23, width: 5 },
+		body: { word: 28, width: 10, inline: 8 }
+	},
+	BlockClassDeclarationNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
+	SuiteBlockClassDeclarationNode: { words: 8, block_class_declaration: { word: 2, width: 6, inline: 4 } },
+	DecoratedDefinitionClassDeclarationNode: {
+		words: 49,
+		decorator: { word: 2, width: 2, run: 5 },
+		definition: { word: 4, width: 45, inline: 43 }
+	},
+	AsPatternTargetNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

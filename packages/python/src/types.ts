@@ -166,6 +166,7 @@ export type LeafStringMap = {
 	[TSKindId.NotIn]: 'not in';
 	[TSKindId.IsKeyword]: 'is';
 	[TSKindId.IsNot]: 'is not';
+	[TSKindId.InitUKeyword]: '__init__';
 };
 
 export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
@@ -283,231 +284,239 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[112, 'gt_eq'],
 	[113, 'gt'],
 	[114, 'lt_gt'],
-	[115, '_newline'],
-	[116, '_indent'],
-	[117, '_dedent'],
-	[118, 'string_start'],
-	[119, 'string_fragment'],
-	[120, 'escape_interpolation'],
-	[121, 'string_end'],
-	[122, '_tight'],
-	[123, '_space'],
-	[124, '_tab'],
-	[125, '_blankline'],
-	[126, '_double_blankline'],
-	[127, 'module'],
-	[128, '_statement'],
-	[129, '_simple_statements'],
-	[339, '_simple_statements'],
-	[130, 'import_statement'],
-	[131, 'import_prefix'],
-	[132, 'relative_import'],
-	[133, 'future_import_statement'],
-	[134, 'import_from_statement'],
-	[135, 'import_list'],
-	[136, 'aliased_import'],
-	[137, 'wildcard_import'],
-	[138, 'print_statement'],
-	[139, 'chevron'],
-	[140, 'assert_statement'],
-	[141, 'expression_statement'],
-	[142, 'named_expression'],
-	[143, '_named_expression_lhs'],
-	[144, 'return_statement'],
-	[145, 'delete_statement'],
-	[146, 'raise_statement'],
-	[147, 'pass_statement'],
-	[148, 'break_statement'],
-	[149, 'continue_statement'],
-	[150, 'if_statement'],
-	[151, 'elif_clause'],
-	[152, 'else_clause'],
-	[153, 'match_statement'],
-	[154, '_match_block'],
-	[155, 'case_clause'],
-	[156, 'for_statement'],
-	[157, 'while_statement'],
-	[158, 'try_statement'],
-	[159, 'except_clause'],
-	[160, 'finally_clause'],
-	[161, 'with_statement'],
-	[162, 'with_clause'],
-	[163, 'with_item'],
-	[164, 'function_definition'],
-	[165, 'parameters'],
-	[166, 'lambda_parameters'],
-	[167, 'list_splat'],
-	[168, 'dictionary_splat'],
-	[169, 'global_statement'],
-	[170, 'nonlocal_statement'],
-	[171, 'exec_statement'],
-	[172, 'type_alias_statement'],
-	[173, 'class_definition'],
-	[174, 'type_parameter'],
-	[175, 'parenthesized_list_splat'],
-	[176, 'argument_list'],
-	[177, 'decorated_definition'],
-	[178, 'decorator'],
-	[179, 'block'],
-	[180, 'expression_list'],
-	[181, 'dotted_name'],
-	[182, 'case_pattern'],
-	[183, '_simple_pattern'],
-	[338, '_simple_pattern'],
-	[184, 'case_as_pattern'],
-	[185, 'union_pattern'],
-	[186, 'dict_pattern'],
-	[187, 'key_value_pattern'],
-	[188, 'keyword_pattern'],
-	[189, 'splat_pattern'],
-	[190, 'class_pattern'],
-	[191, 'complex_pattern'],
-	[192, 'parameters_elements'],
-	[193, 'patterns'],
-	[194, 'parameter'],
-	[195, 'pattern'],
-	[196, 'tuple_pattern'],
-	[197, 'list_pattern'],
-	[198, 'default_parameter'],
-	[199, 'typed_default_parameter'],
-	[200, 'list_splat_pattern'],
-	[201, 'dictionary_splat_pattern'],
-	[202, 'as_pattern'],
-	[203, '_expression_within_for_in_clause'],
-	[204, 'expression'],
-	[205, 'primary_expression'],
-	[206, 'not_operator'],
-	[207, 'boolean_operator'],
-	[208, 'binary_operator'],
-	[209, 'unary_operator'],
-	[210, '_not_in'],
-	[211, '_is_not'],
-	[212, 'comparison_operator'],
-	[213, 'lambda'],
-	[214, 'lambda_within_for_in_clause'],
-	[215, 'assignment'],
-	[216, 'augmented_assignment'],
-	[217, 'pattern_list'],
-	[218, '_right_hand_side'],
-	[219, 'yield'],
-	[220, 'attribute'],
-	[221, 'subscript'],
-	[222, 'slice'],
-	[223, 'call'],
-	[224, 'typed_parameter'],
-	[225, 'type'],
-	[226, 'splat_type'],
-	[227, 'generic_type'],
-	[228, 'union_type'],
-	[229, 'constrained_type'],
-	[230, 'member_type'],
-	[231, 'keyword_argument'],
-	[232, 'list'],
-	[233, 'set'],
-	[234, 'tuple'],
-	[235, 'dictionary'],
-	[236, 'pair'],
-	[237, 'list_comprehension'],
-	[238, 'dictionary_comprehension'],
-	[239, 'set_comprehension'],
-	[240, 'generator_expression'],
-	[241, 'parenthesized_expression'],
-	[242, 'collection_elements'],
-	[243, 'for_in_clause'],
-	[244, 'if_clause'],
-	[245, 'conditional_expression'],
-	[246, 'concatenated_string'],
-	[247, 'string'],
-	[248, 'string_content'],
-	[249, 'interpolation'],
-	[250, '_f_expression'],
-	[251, 'escape_sequence'],
-	[252, 'not_escape_sequence'],
-	[253, 'format_specifier'],
-	[254, 'integer'],
-	[255, 'float'],
-	[256, 'await'],
-	[257, 'positional_separator'],
-	[258, 'keyword_separator'],
-	[259, 'simple_statements_elements'],
-	[260, 'subjects'],
-	[261, 'case_patterns'],
-	[262, 'with_clause_with_items'],
-	[263, 'types'],
-	[264, 'argument_list_elements'],
-	[265, 'list_pattern_case_patterns'],
-	[266, 'dict_pattern_elements'],
-	[267, 'subscripts'],
-	[268, 'dictionary_elements'],
-	[269, 'slice_group'],
-	[270, 'tuple_pattern_elements'],
-	[271, 'tuple_elements'],
-	[272, 'except_clause_exception_as'],
-	[273, 'case_tuple_pattern'],
-	[274, 'case_list_pattern'],
-	[275, 'print_arguments'],
-	[276, 'print_chevron_arguments'],
-	[277, 'print_statement_chevron'],
-	[278, 'print_statement_plain'],
-	[279, 'wildcard_pattern'],
-	[280, 'parenthesized_import_list'],
-	[281, 'comprehension_clauses'],
-	[282, 'integer_decimal'],
-	[283, 'simple_pattern_negative'],
-	[284, 'except_clause_exception_list'],
-	[285, 'except_clause_exception'],
-	[286, 'assignment_eq'],
-	[287, 'assignment_type'],
-	[288, 'assignment_typed'],
-	[289, 'expression_statement_tuple'],
-	[290, 'with_clause_bare'],
-	[291, 'with_clause_paren'],
-	[292, 'match_block_block'],
-	[293, 'match_block_empty'],
-	[294, 'suite_inline'],
-	[295, 'suite_block'],
-	[296, 'suite_empty'],
-	[297, 'comparison_operator_comparator'],
-	[298, 'yield_from_clause'],
-	[299, 'module_repeat1'],
-	[300, 'import_prefix_repeat1'],
-	[301, '_import_list_repeat1'],
-	[302, 'assert_statement_repeat1'],
-	[303, 'if_statement_repeat1'],
-	[304, 'try_statement_repeat1'],
-	[305, 'global_statement_repeat1'],
-	[306, 'decorated_definition_repeat1'],
-	[307, 'expression_list_repeat1'],
-	[308, 'dotted_name_repeat1'],
-	[309, 'union_pattern_repeat1'],
-	[310, '_parameters_repeat1'],
-	[311, '_patterns_repeat1'],
-	[312, 'comparison_operator_repeat1'],
-	[313, '_collection_elements_repeat1'],
-	[314, 'for_in_clause_repeat1'],
-	[315, 'concatenated_string_repeat1'],
-	[316, 'string_repeat1'],
-	[317, 'string_content_repeat1'],
-	[318, 'format_specifier_repeat1'],
-	[319, 'simple_statements_elements_repeat1'],
-	[320, 'subjects_repeat1'],
-	[321, 'case_patterns_repeat1'],
-	[322, 'with_clause_with_items_repeat1'],
-	[323, '_exec_statement_optional1_repeat1'],
-	[324, 'types_repeat1'],
-	[325, 'argument_list_elements_repeat1'],
-	[326, 'dict_pattern_elements_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_tuple_pattern_elements_repeat1'],
-	[330, '_tuple_elements_repeat1'],
-	[331, 'comprehension_clauses_repeat1'],
-	[332, 'except_clause_exception_list_repeat1'],
-	[333, 'with_clause_bare_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[115, '__init___keyword'],
+	[116, '_newline'],
+	[117, '_indent'],
+	[118, '_dedent'],
+	[119, 'string_start'],
+	[120, 'string_fragment'],
+	[121, 'escape_interpolation'],
+	[122, 'string_end'],
+	[123, '_tight'],
+	[124, '_space'],
+	[125, '_tab'],
+	[126, '_blankline'],
+	[127, '_double_blankline'],
+	[128, 'module'],
+	[129, '_statement'],
+	[130, '_simple_statements'],
+	[347, '_simple_statements'],
+	[131, 'import_statement'],
+	[132, 'import_prefix'],
+	[133, 'relative_import'],
+	[134, 'future_import_statement'],
+	[135, 'import_from_statement'],
+	[136, 'import_list'],
+	[137, 'aliased_import'],
+	[138, 'wildcard_import'],
+	[139, 'print_statement'],
+	[140, 'chevron'],
+	[141, 'assert_statement'],
+	[142, 'expression_statement'],
+	[143, 'named_expression'],
+	[144, '_named_expression_lhs'],
+	[145, 'return_statement'],
+	[146, 'delete_statement'],
+	[147, 'raise_statement'],
+	[148, 'pass_statement'],
+	[149, 'break_statement'],
+	[150, 'continue_statement'],
+	[151, 'if_statement'],
+	[152, 'elif_clause'],
+	[153, 'else_clause'],
+	[154, 'match_statement'],
+	[155, '_match_block'],
+	[156, 'case_clause'],
+	[157, 'for_statement'],
+	[158, 'while_statement'],
+	[159, 'try_statement'],
+	[160, 'except_clause'],
+	[161, 'finally_clause'],
+	[162, 'with_statement'],
+	[163, 'with_clause'],
+	[164, 'with_item'],
+	[165, 'function_definition'],
+	[166, 'parameters'],
+	[167, 'lambda_parameters'],
+	[168, 'list_splat'],
+	[169, 'dictionary_splat'],
+	[170, 'global_statement'],
+	[171, 'nonlocal_statement'],
+	[172, 'exec_statement'],
+	[173, 'type_alias_statement'],
+	[174, 'class_definition'],
+	[175, 'type_parameter'],
+	[176, 'parenthesized_list_splat'],
+	[177, 'argument_list'],
+	[178, 'decorated_definition'],
+	[179, 'decorator'],
+	[180, 'block'],
+	[181, 'expression_list'],
+	[182, 'dotted_name'],
+	[183, 'case_pattern'],
+	[184, '_simple_pattern'],
+	[346, '_simple_pattern'],
+	[185, 'case_as_pattern'],
+	[186, 'union_pattern'],
+	[187, 'dict_pattern'],
+	[188, 'key_value_pattern'],
+	[189, 'keyword_pattern'],
+	[190, 'splat_pattern'],
+	[191, 'class_pattern'],
+	[192, 'complex_pattern'],
+	[193, 'parameters_elements'],
+	[194, 'patterns'],
+	[195, 'parameter'],
+	[196, 'pattern'],
+	[197, 'tuple_pattern'],
+	[198, 'list_pattern'],
+	[199, 'default_parameter'],
+	[200, 'typed_default_parameter'],
+	[201, 'list_splat_pattern'],
+	[202, 'dictionary_splat_pattern'],
+	[203, 'as_pattern'],
+	[204, '_expression_within_for_in_clause'],
+	[205, 'expression'],
+	[206, 'primary_expression'],
+	[207, 'not_operator'],
+	[208, 'boolean_operator'],
+	[209, 'binary_operator'],
+	[210, 'unary_operator'],
+	[211, '_not_in'],
+	[212, '_is_not'],
+	[213, 'comparison_operator'],
+	[214, 'lambda'],
+	[215, 'lambda_within_for_in_clause'],
+	[216, 'assignment'],
+	[217, 'augmented_assignment'],
+	[218, 'pattern_list'],
+	[219, '_right_hand_side'],
+	[220, 'yield'],
+	[221, 'attribute'],
+	[222, 'subscript'],
+	[223, 'slice'],
+	[224, 'call'],
+	[225, 'typed_parameter'],
+	[226, 'type'],
+	[227, 'splat_type'],
+	[228, 'generic_type'],
+	[229, 'union_type'],
+	[230, 'constrained_type'],
+	[231, 'member_type'],
+	[232, 'keyword_argument'],
+	[233, 'list'],
+	[234, 'set'],
+	[235, 'tuple'],
+	[236, 'dictionary'],
+	[237, 'pair'],
+	[238, 'list_comprehension'],
+	[239, 'dictionary_comprehension'],
+	[240, 'set_comprehension'],
+	[241, 'generator_expression'],
+	[242, 'parenthesized_expression'],
+	[243, 'collection_elements'],
+	[244, 'for_in_clause'],
+	[245, 'if_clause'],
+	[246, 'conditional_expression'],
+	[247, 'concatenated_string'],
+	[248, 'string'],
+	[249, 'string_content'],
+	[250, 'interpolation'],
+	[251, '_f_expression'],
+	[252, 'escape_sequence'],
+	[253, 'not_escape_sequence'],
+	[254, 'format_specifier'],
+	[255, 'integer'],
+	[256, 'float'],
+	[257, 'await'],
+	[258, 'positional_separator'],
+	[259, 'keyword_separator'],
+	[260, 'simple_statements_elements'],
+	[261, 'subjects'],
+	[262, 'case_patterns'],
+	[263, 'with_clause_with_items'],
+	[264, 'types'],
+	[265, 'argument_list_elements'],
+	[266, 'list_pattern_case_patterns'],
+	[267, 'dict_pattern_elements'],
+	[268, 'subscripts'],
+	[269, 'dictionary_elements'],
+	[270, 'slice_group'],
+	[271, 'tuple_pattern_elements'],
+	[272, 'tuple_elements'],
+	[273, 'except_clause_exception_as'],
+	[274, 'case_tuple_pattern'],
+	[275, 'case_list_pattern'],
+	[276, 'print_arguments'],
+	[277, 'print_chevron_arguments'],
+	[278, 'print_statement_chevron'],
+	[279, 'print_statement_plain'],
+	[280, 'wildcard_pattern'],
+	[281, 'parenthesized_import_list'],
+	[282, 'comprehension_clauses'],
+	[283, 'integer_decimal'],
+	[284, 'simple_pattern_negative'],
+	[285, 'except_clause_exception_list'],
+	[286, 'except_clause_exception'],
+	[287, 'assignment_eq'],
+	[288, 'assignment_type'],
+	[289, 'assignment_typed'],
+	[290, 'expression_statement_tuple'],
+	[291, 'with_clause_bare'],
+	[292, 'with_clause_paren'],
+	[293, 'match_block_block'],
+	[294, 'match_block_empty'],
+	[295, 'suite_inline'],
+	[296, 'suite_block'],
+	[297, 'suite_empty'],
+	[298, 'comparison_operator_comparator'],
+	[299, 'yield_from_clause'],
+	[300, 'constructor_declaration'],
+	[301, '_statement_class_definition'],
+	[302, 'block_class_declaration'],
+	[303, 'suite_block_class_declaration'],
+	[304, 'decorated_definition_class_declaration'],
+	[305, 'module_repeat1'],
+	[306, 'import_prefix_repeat1'],
+	[307, '_import_list_repeat1'],
+	[308, 'assert_statement_repeat1'],
+	[309, 'if_statement_repeat1'],
+	[310, 'try_statement_repeat1'],
+	[311, 'global_statement_repeat1'],
+	[312, 'decorated_definition_repeat1'],
+	[313, 'expression_list_repeat1'],
+	[314, 'dotted_name_repeat1'],
+	[315, 'union_pattern_repeat1'],
+	[316, '_parameters_repeat1'],
+	[317, '_patterns_repeat1'],
+	[318, 'comparison_operator_repeat1'],
+	[319, '_collection_elements_repeat1'],
+	[320, 'for_in_clause_repeat1'],
+	[321, 'concatenated_string_repeat1'],
+	[322, 'string_repeat1'],
+	[323, 'string_content_repeat1'],
+	[324, 'format_specifier_repeat1'],
+	[325, 'simple_statements_elements_repeat1'],
+	[326, 'subjects_repeat1'],
+	[327, 'case_patterns_repeat1'],
+	[328, 'with_clause_with_items_repeat1'],
+	[329, '_exec_statement_optional1_repeat1'],
+	[330, 'types_repeat1'],
+	[331, 'argument_list_elements_repeat1'],
+	[332, 'dict_pattern_elements_repeat1'],
+	[333, 'subscripts_repeat1'],
+	[334, 'dictionary_elements_repeat1'],
+	[335, '_tuple_pattern_elements_repeat1'],
+	[336, '_tuple_elements_repeat1'],
+	[337, 'comprehension_clauses_repeat1'],
+	[338, 'except_clause_exception_list_repeat1'],
+	[339, 'with_clause_bare_repeat1'],
+	[340, 'match_block_block_repeat1'],
+	[341, '_block_class_definition_repeat1'],
+	[342, 'as_pattern_target'],
+	[343, 'format_expression'],
+	[344, 'method_declaration'],
+	[345, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -627,231 +636,239 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[112, '>='],
 	[113, '>'],
 	[114, '<>'],
-	[115, 'newline'],
-	[116, 'indent'],
-	[117, 'dedent'],
-	[118, 'string_start'],
-	[119, 'string_fragment'],
-	[120, 'escape_interpolation'],
-	[121, 'string_end'],
-	[122, '_tight'],
-	[123, '_space'],
-	[124, '_tab'],
-	[125, '_blankline'],
-	[126, '_double_blankline'],
-	[127, 'module'],
-	[128, '_statement'],
-	[129, '_simple_statements'],
-	[339, 'simple_statements'],
-	[130, 'import_statement'],
-	[131, 'import_prefix'],
-	[132, 'relative_import'],
-	[133, 'future_import_statement'],
-	[134, 'import_from_statement'],
-	[135, 'import_list'],
-	[136, 'aliased_import'],
-	[137, 'wildcard_import'],
-	[138, 'print_statement'],
-	[139, 'chevron'],
-	[140, 'assert_statement'],
-	[141, 'expression_statement'],
-	[142, 'named_expression'],
-	[143, '_named_expression_lhs'],
-	[144, 'return_statement'],
-	[145, 'delete_statement'],
-	[146, 'raise_statement'],
-	[147, 'pass_statement'],
-	[148, 'break_statement'],
-	[149, 'continue_statement'],
-	[150, 'if_statement'],
-	[151, 'elif_clause'],
-	[152, 'else_clause'],
-	[153, 'match_statement'],
-	[154, '_match_block'],
-	[155, 'case_clause'],
-	[156, 'for_statement'],
-	[157, 'while_statement'],
-	[158, 'try_statement'],
-	[159, 'except_clause'],
-	[160, 'finally_clause'],
-	[161, 'with_statement'],
-	[162, 'with_clause'],
-	[163, 'with_item'],
-	[164, 'function_definition'],
-	[165, 'parameters'],
-	[166, 'lambda_parameters'],
-	[167, 'list_splat'],
-	[168, 'dictionary_splat'],
-	[169, 'global_statement'],
-	[170, 'nonlocal_statement'],
-	[171, 'exec_statement'],
-	[172, 'type_alias_statement'],
-	[173, 'class_definition'],
-	[174, 'type_parameter'],
-	[175, 'parenthesized_list_splat'],
-	[176, 'argument_list'],
-	[177, 'decorated_definition'],
-	[178, 'decorator'],
-	[179, 'block'],
-	[180, 'expression_list'],
-	[181, 'dotted_name'],
-	[182, 'case_pattern'],
-	[183, '_simple_pattern'],
-	[338, 'simple_pattern'],
-	[184, 'case_as_pattern'],
-	[185, 'union_pattern'],
-	[186, 'dict_pattern'],
-	[187, 'key_value_pattern'],
-	[188, 'keyword_pattern'],
-	[189, 'splat_pattern'],
-	[190, 'class_pattern'],
-	[191, 'complex_pattern'],
-	[192, 'parameters_elements'],
-	[193, 'patterns'],
-	[194, 'parameter'],
-	[195, 'pattern'],
-	[196, 'tuple_pattern'],
-	[197, 'list_pattern'],
-	[198, 'default_parameter'],
-	[199, 'typed_default_parameter'],
-	[200, 'list_splat_pattern'],
-	[201, 'dictionary_splat_pattern'],
-	[202, 'as_pattern'],
-	[203, '_expression_within_for_in_clause'],
-	[204, 'expression'],
-	[205, 'primary_expression'],
-	[206, 'not_operator'],
-	[207, 'boolean_operator'],
-	[208, 'binary_operator'],
-	[209, 'unary_operator'],
-	[210, 'not in'],
-	[211, 'is not'],
-	[212, 'comparison_operator'],
-	[213, 'lambda_expression'],
+	[115, 'identifier'],
+	[116, 'newline'],
+	[117, 'indent'],
+	[118, 'dedent'],
+	[119, 'string_start'],
+	[120, 'string_fragment'],
+	[121, 'escape_interpolation'],
+	[122, 'string_end'],
+	[123, '_tight'],
+	[124, '_space'],
+	[125, '_tab'],
+	[126, '_blankline'],
+	[127, '_double_blankline'],
+	[128, 'module'],
+	[129, '_statement'],
+	[130, '_simple_statements'],
+	[347, 'simple_statements'],
+	[131, 'import_statement'],
+	[132, 'import_prefix'],
+	[133, 'relative_import'],
+	[134, 'future_import_statement'],
+	[135, 'import_from_statement'],
+	[136, 'import_list'],
+	[137, 'aliased_import'],
+	[138, 'wildcard_import'],
+	[139, 'print_statement'],
+	[140, 'chevron'],
+	[141, 'assert_statement'],
+	[142, 'expression_statement'],
+	[143, 'named_expression'],
+	[144, '_named_expression_lhs'],
+	[145, 'return_statement'],
+	[146, 'delete_statement'],
+	[147, 'raise_statement'],
+	[148, 'pass_statement'],
+	[149, 'break_statement'],
+	[150, 'continue_statement'],
+	[151, 'if_statement'],
+	[152, 'elif_clause'],
+	[153, 'else_clause'],
+	[154, 'match_statement'],
+	[155, '_match_block'],
+	[156, 'case_clause'],
+	[157, 'for_statement'],
+	[158, 'while_statement'],
+	[159, 'try_statement'],
+	[160, 'except_clause'],
+	[161, 'finally_clause'],
+	[162, 'with_statement'],
+	[163, 'with_clause'],
+	[164, 'with_item'],
+	[165, 'function_definition'],
+	[166, 'parameters'],
+	[167, 'lambda_parameters'],
+	[168, 'list_splat'],
+	[169, 'dictionary_splat'],
+	[170, 'global_statement'],
+	[171, 'nonlocal_statement'],
+	[172, 'exec_statement'],
+	[173, 'type_alias_statement'],
+	[174, 'class_definition'],
+	[175, 'type_parameter'],
+	[176, 'parenthesized_list_splat'],
+	[177, 'argument_list'],
+	[178, 'decorated_definition'],
+	[179, 'decorator'],
+	[180, 'block'],
+	[181, 'expression_list'],
+	[182, 'dotted_name'],
+	[183, 'case_pattern'],
+	[184, '_simple_pattern'],
+	[346, 'simple_pattern'],
+	[185, 'case_as_pattern'],
+	[186, 'union_pattern'],
+	[187, 'dict_pattern'],
+	[188, 'key_value_pattern'],
+	[189, 'keyword_pattern'],
+	[190, 'splat_pattern'],
+	[191, 'class_pattern'],
+	[192, 'complex_pattern'],
+	[193, 'parameters_elements'],
+	[194, 'patterns'],
+	[195, 'parameter'],
+	[196, 'pattern'],
+	[197, 'tuple_pattern'],
+	[198, 'list_pattern'],
+	[199, 'default_parameter'],
+	[200, 'typed_default_parameter'],
+	[201, 'list_splat_pattern'],
+	[202, 'dictionary_splat_pattern'],
+	[203, 'as_pattern'],
+	[204, '_expression_within_for_in_clause'],
+	[205, 'expression'],
+	[206, 'primary_expression'],
+	[207, 'not_operator'],
+	[208, 'boolean_operator'],
+	[209, 'binary_operator'],
+	[210, 'unary_operator'],
+	[211, 'not in'],
+	[212, 'is not'],
+	[213, 'comparison_operator'],
 	[214, 'lambda_expression'],
-	[215, 'assignment'],
-	[216, 'augmented_assignment'],
-	[217, 'pattern_list'],
-	[218, '_right_hand_side'],
-	[219, 'yield'],
-	[220, 'attribute'],
-	[221, 'subscript'],
-	[222, 'slice'],
-	[223, 'call'],
-	[224, 'typed_parameter'],
-	[225, 'type'],
-	[226, 'splat_type'],
-	[227, 'generic_type'],
-	[228, 'union_type'],
-	[229, 'constrained_type'],
-	[230, 'member_type'],
-	[231, 'keyword_argument'],
-	[232, 'list'],
-	[233, 'set'],
-	[234, 'tuple'],
-	[235, 'dictionary'],
-	[236, 'pair'],
-	[237, 'list_comprehension'],
-	[238, 'dictionary_comprehension'],
-	[239, 'set_comprehension'],
-	[240, 'generator_expression'],
-	[241, 'parenthesized_expression'],
-	[242, 'collection_elements'],
-	[243, 'for_in_clause'],
-	[244, 'if_clause'],
-	[245, 'conditional_expression'],
-	[246, 'concatenated_string'],
-	[247, 'string'],
-	[248, 'string_content'],
-	[249, 'interpolation'],
-	[250, '_f_expression'],
-	[251, 'escape_sequence'],
-	[252, 'not_escape_sequence'],
-	[253, 'format_specifier'],
-	[254, 'integer'],
-	[255, 'float'],
-	[256, 'await'],
-	[257, 'positional_separator'],
-	[258, 'keyword_separator'],
-	[259, 'simple_statements_elements'],
-	[260, 'subjects'],
-	[261, 'case_patterns'],
-	[262, 'with_clause_with_items'],
-	[263, 'types'],
-	[264, 'argument_list_elements'],
-	[265, 'list_pattern_case_patterns'],
-	[266, 'dict_pattern_elements'],
-	[267, 'subscripts'],
-	[268, 'dictionary_elements'],
-	[269, 'slice_group'],
-	[270, 'tuple_pattern_elements'],
-	[271, 'tuple_elements'],
-	[272, 'except_clause_exception_as'],
-	[273, 'case_tuple_pattern'],
-	[274, 'case_list_pattern'],
-	[275, 'print_arguments'],
-	[276, 'print_chevron_arguments'],
-	[277, 'print_statement_chevron'],
-	[278, 'print_statement_plain'],
-	[279, 'wildcard_pattern'],
-	[280, 'parenthesized_import_list'],
-	[281, 'comprehension_clauses'],
-	[282, 'integer_decimal'],
-	[283, 'simple_pattern_negative'],
-	[284, 'except_clause_exception_list'],
-	[285, 'except_clause_exception'],
-	[286, 'assignment_eq'],
-	[287, 'assignment_type'],
-	[288, 'assignment_typed'],
-	[289, 'expression_statement_tuple'],
-	[290, 'with_clause_bare'],
-	[291, 'with_clause_paren'],
-	[292, 'match_block_block'],
-	[293, 'match_block_empty'],
-	[294, 'suite_inline'],
-	[295, 'suite_block'],
-	[296, 'suite_empty'],
-	[297, 'comparison_operator_comparator'],
-	[298, 'yield_from_clause'],
-	[299, 'module_repeat1'],
-	[300, 'import_prefix_repeat1'],
-	[301, '_import_list_repeat1'],
-	[302, 'assert_statement_repeat1'],
-	[303, 'if_statement_repeat1'],
-	[304, 'try_statement_repeat1'],
-	[305, 'global_statement_repeat1'],
-	[306, 'decorated_definition_repeat1'],
-	[307, 'expression_list_repeat1'],
-	[308, 'dotted_name_repeat1'],
-	[309, 'union_pattern_repeat1'],
-	[310, '_parameters_repeat1'],
-	[311, '_patterns_repeat1'],
-	[312, 'comparison_operator_repeat1'],
-	[313, '_collection_elements_repeat1'],
-	[314, 'for_in_clause_repeat1'],
-	[315, 'concatenated_string_repeat1'],
-	[316, 'string_repeat1'],
-	[317, 'string_content_repeat1'],
-	[318, 'format_specifier_repeat1'],
-	[319, 'simple_statements_elements_repeat1'],
-	[320, 'subjects_repeat1'],
-	[321, 'case_patterns_repeat1'],
-	[322, 'with_clause_with_items_repeat1'],
-	[323, '_exec_statement_optional1_repeat1'],
-	[324, 'types_repeat1'],
-	[325, 'argument_list_elements_repeat1'],
-	[326, 'dict_pattern_elements_repeat1'],
-	[327, 'subscripts_repeat1'],
-	[328, 'dictionary_elements_repeat1'],
-	[329, '_tuple_pattern_elements_repeat1'],
-	[330, '_tuple_elements_repeat1'],
-	[331, 'comprehension_clauses_repeat1'],
-	[332, 'except_clause_exception_list_repeat1'],
-	[333, 'with_clause_bare_repeat1'],
-	[334, 'match_block_block_repeat1'],
-	[335, 'as_pattern_target'],
-	[336, 'format_expression'],
-	[337, 'names'],
+	[215, 'lambda_expression'],
+	[216, 'assignment'],
+	[217, 'augmented_assignment'],
+	[218, 'pattern_list'],
+	[219, '_right_hand_side'],
+	[220, 'yield'],
+	[221, 'attribute'],
+	[222, 'subscript'],
+	[223, 'slice'],
+	[224, 'call'],
+	[225, 'typed_parameter'],
+	[226, 'type'],
+	[227, 'splat_type'],
+	[228, 'generic_type'],
+	[229, 'union_type'],
+	[230, 'constrained_type'],
+	[231, 'member_type'],
+	[232, 'keyword_argument'],
+	[233, 'list'],
+	[234, 'set'],
+	[235, 'tuple'],
+	[236, 'dictionary'],
+	[237, 'pair'],
+	[238, 'list_comprehension'],
+	[239, 'dictionary_comprehension'],
+	[240, 'set_comprehension'],
+	[241, 'generator_expression'],
+	[242, 'parenthesized_expression'],
+	[243, 'collection_elements'],
+	[244, 'for_in_clause'],
+	[245, 'if_clause'],
+	[246, 'conditional_expression'],
+	[247, 'concatenated_string'],
+	[248, 'string'],
+	[249, 'string_content'],
+	[250, 'interpolation'],
+	[251, '_f_expression'],
+	[252, 'escape_sequence'],
+	[253, 'not_escape_sequence'],
+	[254, 'format_specifier'],
+	[255, 'integer'],
+	[256, 'float'],
+	[257, 'await'],
+	[258, 'positional_separator'],
+	[259, 'keyword_separator'],
+	[260, 'simple_statements_elements'],
+	[261, 'subjects'],
+	[262, 'case_patterns'],
+	[263, 'with_clause_with_items'],
+	[264, 'types'],
+	[265, 'argument_list_elements'],
+	[266, 'list_pattern_case_patterns'],
+	[267, 'dict_pattern_elements'],
+	[268, 'subscripts'],
+	[269, 'dictionary_elements'],
+	[270, 'slice_group'],
+	[271, 'tuple_pattern_elements'],
+	[272, 'tuple_elements'],
+	[273, 'except_clause_exception_as'],
+	[274, 'case_tuple_pattern'],
+	[275, 'case_list_pattern'],
+	[276, 'print_arguments'],
+	[277, 'print_chevron_arguments'],
+	[278, 'print_statement_chevron'],
+	[279, 'print_statement_plain'],
+	[280, 'wildcard_pattern'],
+	[281, 'parenthesized_import_list'],
+	[282, 'comprehension_clauses'],
+	[283, 'integer_decimal'],
+	[284, 'simple_pattern_negative'],
+	[285, 'except_clause_exception_list'],
+	[286, 'except_clause_exception'],
+	[287, 'assignment_eq'],
+	[288, 'assignment_type'],
+	[289, 'assignment_typed'],
+	[290, 'expression_statement_tuple'],
+	[291, 'with_clause_bare'],
+	[292, 'with_clause_paren'],
+	[293, 'match_block_block'],
+	[294, 'match_block_empty'],
+	[295, 'suite_inline'],
+	[296, 'suite_block'],
+	[297, 'suite_empty'],
+	[298, 'comparison_operator_comparator'],
+	[299, 'yield_from_clause'],
+	[300, 'constructor_declaration'],
+	[301, '_statement_class_definition'],
+	[302, 'block_class_declaration'],
+	[303, 'suite_block_class_declaration'],
+	[304, 'decorated_definition_class_declaration'],
+	[305, 'module_repeat1'],
+	[306, 'import_prefix_repeat1'],
+	[307, '_import_list_repeat1'],
+	[308, 'assert_statement_repeat1'],
+	[309, 'if_statement_repeat1'],
+	[310, 'try_statement_repeat1'],
+	[311, 'global_statement_repeat1'],
+	[312, 'decorated_definition_repeat1'],
+	[313, 'expression_list_repeat1'],
+	[314, 'dotted_name_repeat1'],
+	[315, 'union_pattern_repeat1'],
+	[316, '_parameters_repeat1'],
+	[317, '_patterns_repeat1'],
+	[318, 'comparison_operator_repeat1'],
+	[319, '_collection_elements_repeat1'],
+	[320, 'for_in_clause_repeat1'],
+	[321, 'concatenated_string_repeat1'],
+	[322, 'string_repeat1'],
+	[323, 'string_content_repeat1'],
+	[324, 'format_specifier_repeat1'],
+	[325, 'simple_statements_elements_repeat1'],
+	[326, 'subjects_repeat1'],
+	[327, 'case_patterns_repeat1'],
+	[328, 'with_clause_with_items_repeat1'],
+	[329, '_exec_statement_optional1_repeat1'],
+	[330, 'types_repeat1'],
+	[331, 'argument_list_elements_repeat1'],
+	[332, 'dict_pattern_elements_repeat1'],
+	[333, 'subscripts_repeat1'],
+	[334, 'dictionary_elements_repeat1'],
+	[335, '_tuple_pattern_elements_repeat1'],
+	[336, '_tuple_elements_repeat1'],
+	[337, 'comprehension_clauses_repeat1'],
+	[338, 'except_clause_exception_list_repeat1'],
+	[339, 'with_clause_bare_repeat1'],
+	[340, 'match_block_block_repeat1'],
+	[341, '_block_class_definition_repeat1'],
+	[342, 'as_pattern_target'],
+	[343, 'format_expression'],
+	[344, 'method_declaration'],
+	[345, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1088,6 +1105,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Gt;
 		case 'lt_gt':
 			return TSKindId.LtGt;
+		case '__init___keyword':
+			return TSKindId.InitUKeyword;
 		case '_newline':
 			return TSKindId.Newline;
 		case '_indent':
@@ -1456,6 +1475,16 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ComparisonOperatorComparator;
 		case 'yield_from_clause':
 			return TSKindId.YieldFromClause;
+		case 'constructor_declaration':
+			return TSKindId.ConstructorDeclaration;
+		case '_statement_class_definition':
+			return TSKindId.StatementClassDefinition;
+		case 'block_class_declaration':
+			return TSKindId.BlockClassDeclaration;
+		case 'suite_block_class_declaration':
+			return TSKindId.SuiteBlockClassDeclaration;
+		case 'decorated_definition_class_declaration':
+			return TSKindId.DecoratedDefinitionClassDeclaration;
 		case 'module_repeat1':
 			return TSKindId.ModuleRepeat1;
 		case 'import_prefix_repeat1':
@@ -1528,10 +1557,14 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.WithClauseBareRepeat1;
 		case 'match_block_block_repeat1':
 			return TSKindId.MatchBlockBlockRepeat1;
+		case '_block_class_definition_repeat1':
+			return TSKindId._BlockClassDefinitionRepeat1;
 		case 'as_pattern_target':
 			return TSKindId.AsPatternTarget;
 		case 'format_expression':
 			return TSKindId.FormatExpression;
+		case 'method_declaration':
+			return TSKindId.MethodDeclaration;
 		case 'names':
 			return TSKindId.Names;
 		case 'ERROR':
@@ -1940,6 +1973,40 @@ export enum LayoutKind {
 	DoubleBlankline = '_double_blankline'
 }
 
+export enum CompoundStatementClassDefinitionKind {
+	IfStatement = 'if_statement',
+	ForStatement = 'for_statement',
+	WhileStatement = 'while_statement',
+	TryStatement = 'try_statement',
+	WithStatement = 'with_statement',
+	MethodDeclaration = 'method_declaration',
+	ConstructorDeclaration = 'constructor_declaration',
+	ClassDefinition = 'class_definition',
+	DecoratedDefinitionClassDeclaration = 'decorated_definition_class_declaration',
+	MatchStatement = 'match_statement'
+}
+
+export enum StatementClassDefinitionKind {
+	SimpleStatements = '_simple_statements',
+	CompoundStatementClassDefinition = '_compound_statement_class_definition',
+	IfStatement = 'if_statement',
+	ForStatement = 'for_statement',
+	WhileStatement = 'while_statement',
+	TryStatement = 'try_statement',
+	WithStatement = 'with_statement',
+	MethodDeclaration = 'method_declaration',
+	ConstructorDeclaration = 'constructor_declaration',
+	ClassDefinition = 'class_definition',
+	DecoratedDefinitionClassDeclaration = 'decorated_definition_class_declaration',
+	MatchStatement = 'match_statement'
+}
+
+export enum SuiteClassDefinitionKind {
+	SuiteInline = 'suite_inline',
+	SuiteBlockClassDeclaration = 'suite_block_class_declaration',
+	SuiteEmpty = 'suite_empty'
+}
+
 // Node types — concrete interfaces
 export interface Module {
 	readonly $type: TSKindId.Module;
@@ -1979,10 +2046,17 @@ export interface ImportStatement {
 		readonly _names: 'names';
 	};
 	readonly __looseHints__?: {
-		readonly names: readonly ImportList[];
+		readonly names: readonly (DottedName | AliasedImport)[];
 	};
 	readonly __slotHints__?: {
-		readonly names: SlotHint<T.Names | T.Names.Types>;
+		readonly names: SlotHint<T.Names>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+		readonly $listSlots: {
+			readonly names: ListSlotHint<T.DottedName | T.AliasedImport, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
 	};
 	readonly names: () => Names;
 }
@@ -2704,7 +2778,7 @@ export interface ClassDefinition {
 	readonly _name: Identifier;
 	readonly _type_parameters?: TypeParameter;
 	readonly _bases?: ArgumentList;
-	readonly _body: Suite;
+	readonly _body: SuiteClassDefinition;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _type_parameters: 'typeParameters';
@@ -2719,7 +2793,7 @@ export interface ClassDefinition {
 		readonly name: SlotHint<T.Identifier>;
 		readonly typeParameters: SlotHint<T.TypeParameter, true>;
 		readonly bases: SlotHint<T.ArgumentList, true>;
-		readonly body: SlotHint<T.Suite>;
+		readonly body: SlotHint<T.SuiteClassDefinition>;
 		readonly $listSlots: {
 			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 			readonly bases: ListSlotHint<
@@ -2731,7 +2805,7 @@ export interface ClassDefinition {
 	readonly name: () => Identifier;
 	readonly typeParameters: () => TypeParameter | undefined;
 	readonly bases: () => ArgumentList | undefined;
-	readonly body: () => Suite;
+	readonly body: () => SuiteClassDefinition;
 }
 
 export interface TypeParameter {
@@ -4426,11 +4500,7 @@ export interface FormatSpecifier {
 		readonly _elements: 'elements';
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<
-			((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[],
-			false,
-			true
-		>;
+		readonly elements: SlotHint<(T.FormatSpecifierText | T.FormatExpression)[], false, true>;
 	};
 	readonly elements: () => readonly (FormatSpecifierText | FormatExpression)[];
 }
@@ -5385,26 +5455,105 @@ export interface YieldFromClause {
 	readonly expression: () => Expression;
 }
 
-export interface Names {
-	readonly $type: TSKindId.Names;
-	readonly _content: ImportList;
+export interface ConstructorDeclaration {
+	readonly $type: TSKindId.ConstructorDeclaration;
+	readonly _async: boolean;
+	readonly _type_parameters?: TypeParameter;
+	readonly _parameters: Parameters;
+	readonly _return_type?: Type;
+	readonly _body: Suite;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _async: 'async';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly async?: BaseBooleanKeyword<'async'>;
 	};
 	readonly __looseHints__?: {
-		readonly content: readonly (DottedName | AliasedImport)[];
+		readonly type_parameters?: readonly Type[];
+		readonly parameters: readonly Parameter[];
+		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.ImportList>;
+		readonly async: SlotHint<NonNullable<T.ConstructorDeclaration.Config>['async'], true>;
+		readonly typeParameters: SlotHint<T.TypeParameter, true>;
+		readonly parameters: SlotHint<T.Parameters>;
+		readonly returnType: SlotHint<T.Type, true>;
+		readonly body: SlotHint<T.Suite>;
 		readonly $listSlots: {
-			readonly content: ListSlotHint<
-				T.DottedName | T.AliasedImport,
-				{ delimiter?: Delimiter.None | Delimiter.Trailing }
-			>;
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly __aliasContent__?: Names.Types;
-	readonly content: () => ImportList;
+	readonly async: () => boolean;
+	readonly typeParameters: () => TypeParameter | undefined;
+	readonly parameters: () => Parameters;
+	readonly returnType: () => Type | undefined;
+	readonly body: () => Suite;
+}
+
+export interface BlockClassDeclaration {
+	readonly $type: TSKindId.BlockClassDeclaration;
+	readonly _statements: readonly StatementClassDefinition[];
+	readonly __slotNames__?: {
+		readonly _statements: 'statements';
+	};
+	readonly __slotHints__?: {
+		readonly statements: SlotHint<T.StatementClassDefinition[], false, true>;
+	};
+	readonly statements: () => readonly StatementClassDefinition[];
+}
+
+export interface SuiteBlockClassDeclaration {
+	readonly $type: TSKindId.SuiteBlockClassDeclaration;
+	readonly _block_class_declaration: BlockClassDeclaration;
+	readonly __slotNames__?: {
+		readonly _block_class_declaration: 'blockClassDeclaration';
+	};
+	readonly __looseHints__?: {
+		readonly block_class_declaration: readonly StatementClassDefinition[];
+	};
+	readonly __slotHints__?: {
+		readonly blockClassDeclaration: SlotHint<T.BlockClassDeclaration>;
+	};
+	readonly blockClassDeclaration: () => BlockClassDeclaration;
+}
+
+export interface DecoratedDefinitionClassDeclaration {
+	readonly $type: TSKindId.DecoratedDefinitionClassDeclaration;
+	readonly _decorator: NonEmptyArray<Decorator>;
+	readonly _definition: ClassDefinition | MethodDeclaration | ConstructorDeclaration;
+	readonly __slotNames__?: {
+		readonly _decorator: 'decorators';
+		readonly _definition: 'definition';
+	};
+	readonly __slotHints__?: {
+		readonly decorators: SlotHint<NonEmptyArray<T.Decorator>, false, true>;
+		readonly definition: SlotHint<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>;
+	};
+	readonly decorators: () => NonEmptyArray<Decorator>;
+	readonly definition: () => ClassDefinition | MethodDeclaration | ConstructorDeclaration;
+}
+
+export interface Names {
+	readonly $type: TSKindId.Names;
+	readonly _name: NonEmptyArray<DottedName | AliasedImport>;
+	readonly _delimiter?: Delimiter;
+	readonly __slotNames__?: {
+		readonly _name: 'names';
+	};
+	readonly __slotHints__?: {
+		readonly names: SlotHint<NonEmptyArray<T.DottedName | T.AliasedImport>, false, true>;
+		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
+		readonly $listView: ListViewHint<
+			T.DottedName | T.AliasedImport,
+			{ delimiter?: Delimiter.None | Delimiter.Trailing }
+		>;
+	};
+	readonly names: () => NonEmptyArray<DottedName | AliasedImport>;
 }
 
 export interface AsPatternTarget {
@@ -5427,15 +5576,82 @@ export interface AsPatternTarget {
 
 export interface FormatExpression {
 	readonly $type: TSKindId.FormatExpression;
-	readonly _content: Interpolation;
+	readonly _expression: Expression | ExpressionList | PatternList | Yield;
+	readonly _debug: boolean;
+	readonly _type_conversion?: TypeConversion;
+	readonly _format_specifier?: FormatSpecifier;
 	readonly __slotNames__?: {
-		readonly _content: 'content';
+		readonly _expression: 'expression';
+		readonly _debug: 'debug';
+		readonly _type_conversion: 'typeConversion';
+		readonly _format_specifier: 'formatSpecifier';
+	};
+	readonly __inputHints__?: {
+		readonly expression:
+			| KindEnum<'True' | 'False' | 'None' | '...', TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.Ellipsis>
+			| Expression
+			| ExpressionList
+			| PatternList
+			| Yield;
+		readonly debug?: BaseBooleanKeyword<'='>;
+	};
+	readonly __looseHints__?: {
+		readonly format_specifier?: readonly (FormatSpecifierText | FormatExpression)[];
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<T.Interpolation>;
+		readonly expression: SlotHint<NonNullable<T.FormatExpression.Config>['expression']>;
+		readonly debug: SlotHint<NonNullable<T.FormatExpression.Config>['debug'], true>;
+		readonly typeConversion: SlotHint<T.TypeConversion, true>;
+		readonly formatSpecifier: SlotHint<T.FormatSpecifier, true>;
 	};
-	readonly __aliasContent__?: FormatExpression.Types;
-	readonly content: () => Interpolation;
+	readonly expression: () => Expression | ExpressionList | PatternList | Yield;
+	readonly debug: () => boolean;
+	readonly typeConversion: () => TypeConversion | undefined;
+	readonly formatSpecifier: () => FormatSpecifier | undefined;
+}
+
+export interface MethodDeclaration {
+	readonly $type: TSKindId.MethodDeclaration;
+	readonly _async: boolean;
+	readonly _name: Identifier;
+	readonly _type_parameters?: TypeParameter;
+	readonly _parameters: Parameters;
+	readonly _return_type?: Type;
+	readonly _body: Suite;
+	readonly __slotNames__?: {
+		readonly _async: 'async';
+		readonly _name: 'name';
+		readonly _type_parameters: 'typeParameters';
+		readonly _parameters: 'parameters';
+		readonly _return_type: 'returnType';
+		readonly _body: 'body';
+	};
+	readonly __inputHints__?: {
+		readonly async?: BaseBooleanKeyword<'async'>;
+	};
+	readonly __looseHints__?: {
+		readonly type_parameters?: readonly Type[];
+		readonly parameters: readonly Parameter[];
+		readonly return_type?: readonly (Expression | SplatType | GenericType | UnionType | ConstrainedType | MemberType)[];
+	};
+	readonly __slotHints__?: {
+		readonly async: SlotHint<NonNullable<T.MethodDeclaration.Config>['async'], true>;
+		readonly name: SlotHint<T.Identifier>;
+		readonly typeParameters: SlotHint<T.TypeParameter, true>;
+		readonly parameters: SlotHint<T.Parameters>;
+		readonly returnType: SlotHint<T.Type, true>;
+		readonly body: SlotHint<T.Suite>;
+		readonly $listSlots: {
+			readonly typeParameters: ListSlotHint<T.Type, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly parameters: ListSlotHint<T.Parameter, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+		};
+	};
+	readonly async: () => boolean;
+	readonly name: () => Identifier;
+	readonly typeParameters: () => TypeParameter | undefined;
+	readonly parameters: () => Parameters;
+	readonly returnType: () => Type | undefined;
+	readonly body: () => Suite;
 }
 
 // Leaf node types
@@ -5593,6 +5809,34 @@ export type IntegerDecimal = IntegerDecimalLong | IntegerDecimalImaginary | Inte
 
 export type Layout = Tight | Space | Tab | Newline | Blankline | DoubleBlankline;
 
+export type CompoundStatementClassDefinition =
+	| IfStatement
+	| ForStatement
+	| WhileStatement
+	| TryStatement
+	| WithStatement
+	| MethodDeclaration
+	| ConstructorDeclaration
+	| ClassDefinition
+	| DecoratedDefinitionClassDeclaration
+	| MatchStatement;
+
+export type StatementClassDefinition =
+	| SimpleStatements
+	| CompoundStatementClassDefinition
+	| IfStatement
+	| ForStatement
+	| WhileStatement
+	| TryStatement
+	| WithStatement
+	| MethodDeclaration
+	| ConstructorDeclaration
+	| ClassDefinition
+	| DecoratedDefinitionClassDeclaration
+	| MatchStatement;
+
+export type SuiteClassDefinition = SuiteInline | SuiteBlockClassDeclaration | SuiteEmpty;
+
 export namespace Statement {
 	export type Kind = '_statement';
 	export type Bound = SupertypeSurface<Statement, BoundByKindId>;
@@ -5693,6 +5937,24 @@ export namespace Layout {
 	export type Kind = '_layout';
 	export type Bound = SupertypeSurface<Layout, BoundByKindId>;
 	export type Parsed = SupertypeSurface<Layout, ParsedByKindId>;
+}
+
+export namespace CompoundStatementClassDefinition {
+	export type Kind = '_compound_statement_class_definition';
+	export type Bound = SupertypeSurface<CompoundStatementClassDefinition, BoundByKindId>;
+	export type Parsed = SupertypeSurface<CompoundStatementClassDefinition, ParsedByKindId>;
+}
+
+export namespace StatementClassDefinition {
+	export type Kind = '_statement_class_definition';
+	export type Bound = SupertypeSurface<StatementClassDefinition, BoundByKindId>;
+	export type Parsed = SupertypeSurface<StatementClassDefinition, ParsedByKindId>;
+}
+
+export namespace SuiteClassDefinition {
+	export type Kind = '_suite_class_definition';
+	export type Bound = SupertypeSurface<SuiteClassDefinition, BoundByKindId>;
+	export type Parsed = SupertypeSurface<SuiteClassDefinition, ParsedByKindId>;
 }
 
 // Token type aliases (only tokens referenced in field/child unions)
@@ -5833,6 +6095,10 @@ export interface OptionsHintMap {
 	suiteBlock: SuiteBlock.Hints;
 	comparisonOperatorComparator: ComparisonOperatorComparator.Hints;
 	yieldFromClause: YieldFromClause.Hints;
+	constructorDeclaration: ConstructorDeclaration.Hints;
+	blockClassDeclaration: BlockClassDeclaration.Hints;
+	suiteBlockClassDeclaration: SuiteBlockClassDeclaration.Hints;
+	decoratedDefinitionClassDeclaration: DecoratedDefinitionClassDeclaration.Hints;
 }
 
 export namespace Module {
@@ -7884,6 +8150,60 @@ export namespace YieldFromClause {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly fromKeyword?: { readonly after?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace ConstructorDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly asyncKeyword?: { readonly after?: WhitespaceKindId };
+			readonly before?: WhitespaceKindId;
+			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly dashGt?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+			readonly defKeyword?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace BlockClassDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly statements?: {
+				readonly classDefinition?: { readonly after?: WhitespaceKindId };
+				readonly constructorDeclaration?: { readonly after?: WhitespaceKindId };
+				readonly decoratedDefinitionClassDeclaration?: { readonly after?: WhitespaceKindId };
+				readonly forStatement?: { readonly after?: WhitespaceKindId };
+				readonly ifStatement?: { readonly after?: WhitespaceKindId };
+				readonly matchStatement?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+				readonly simpleStatements?: { readonly after?: WhitespaceKindId };
+				readonly tryStatement?: { readonly after?: WhitespaceKindId };
+				readonly whileStatement?: { readonly after?: WhitespaceKindId };
+				readonly withStatement?: { readonly after?: WhitespaceKindId };
+			};
+		};
+	}
+}
+
+export namespace SuiteBlockClassDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+	}
+}
+
+export namespace DecoratedDefinitionClassDeclaration {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly decorator?: {
+				readonly decorator?: { readonly after?: WhitespaceKindId };
+				readonly separator?: WhitespaceKindId;
+			};
 		};
 	}
 }
@@ -10129,13 +10449,69 @@ export interface YieldFromClauseNs extends NodeNs<
 	readonly BuildArgs: YieldFromClause.BuildArgs;
 	readonly LooseArgs: YieldFromClause.LooseArgs;
 }
+export interface ConstructorDeclarationNs extends NodeNs<
+	ConstructorDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ConstructorDeclaration.Bound,
+	never,
+	TSKindId.ConstructorDeclaration,
+	ConstructorDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: ConstructorDeclaration.BuildArgs;
+	readonly LooseArgs: ConstructorDeclaration.LooseArgs;
+}
+export interface BlockClassDeclarationNs extends NodeNs<
+	BlockClassDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	BlockClassDeclaration.Bound,
+	never,
+	TSKindId.BlockClassDeclaration,
+	BlockClassDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: BlockClassDeclaration.BuildArgs;
+	readonly LooseArgs: BlockClassDeclaration.LooseArgs;
+}
+export interface SuiteBlockClassDeclarationNs extends NodeNs<
+	SuiteBlockClassDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SuiteBlockClassDeclaration.Bound,
+	'block_class_declaration',
+	TSKindId.SuiteBlockClassDeclaration,
+	SuiteBlockClassDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: SuiteBlockClassDeclaration.BuildArgs;
+	readonly LooseArgs: SuiteBlockClassDeclaration.LooseArgs;
+}
+export interface DecoratedDefinitionClassDeclarationNs extends NodeNs<
+	DecoratedDefinitionClassDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	DecoratedDefinitionClassDeclaration.Bound,
+	never,
+	TSKindId.DecoratedDefinitionClassDeclaration,
+	DecoratedDefinitionClassDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: DecoratedDefinitionClassDeclaration.BuildArgs;
+	readonly LooseArgs: DecoratedDefinitionClassDeclaration.LooseArgs;
+}
 export interface NamesNs extends NodeNs<
 	Names,
 	LeafScalarMap,
 	LeafStringMap,
 	NamespaceMap,
 	Names.Bound,
-	'content',
+	'name',
 	TSKindId.Names,
 	Names.Parsed,
 	never
@@ -10163,13 +10539,27 @@ export interface FormatExpressionNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	FormatExpression.Bound,
-	'content',
+	never,
 	TSKindId.FormatExpression,
 	FormatExpression.Parsed,
 	never
 > {
 	readonly BuildArgs: FormatExpression.BuildArgs;
 	readonly LooseArgs: FormatExpression.LooseArgs;
+}
+export interface MethodDeclarationNs extends NodeNs<
+	MethodDeclaration,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	MethodDeclaration.Bound,
+	never,
+	TSKindId.MethodDeclaration,
+	MethodDeclaration.Parsed,
+	never
+> {
+	readonly BuildArgs: MethodDeclaration.BuildArgs;
+	readonly LooseArgs: MethodDeclaration.LooseArgs;
 }
 export interface WildcardImportNs extends KeywordNs<TSKindId.WildcardImport, '*', TSKindId.WildcardImport> {}
 export interface PassStatementNs extends KeywordNs<TSKindId.PassStatement, 'pass', TSKindId.PassStatement> {}
@@ -10418,9 +10808,14 @@ export interface NamespaceMap {
 	[TSKindId.SuiteEmpty]: SuiteEmptyNs;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparatorNs;
 	[TSKindId.YieldFromClause]: YieldFromClauseNs;
+	[TSKindId.ConstructorDeclaration]: ConstructorDeclarationNs;
+	[TSKindId.BlockClassDeclaration]: BlockClassDeclarationNs;
+	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclarationNs;
+	[TSKindId.DecoratedDefinitionClassDeclaration]: DecoratedDefinitionClassDeclarationNs;
 	[TSKindId.Names]: NamesNs;
 	[TSKindId.AsPatternTarget]: AsPatternTargetNs;
 	[TSKindId.FormatExpression]: FormatExpressionNs;
+	[TSKindId.MethodDeclaration]: MethodDeclarationNs;
 	[TSKindId.WildcardImport]: WildcardImportNs;
 	[TSKindId.PassStatement]: PassStatementNs;
 	[TSKindId.BreakStatement]: BreakStatementNs;
@@ -10617,9 +11012,14 @@ export interface BoundByKindId {
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Bound;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparator.Bound;
 	[TSKindId.YieldFromClause]: YieldFromClause.Bound;
+	[TSKindId.ConstructorDeclaration]: ConstructorDeclaration.Bound;
+	[TSKindId.BlockClassDeclaration]: BlockClassDeclaration.Bound;
+	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclaration.Bound;
+	[TSKindId.DecoratedDefinitionClassDeclaration]: DecoratedDefinitionClassDeclaration.Bound;
 	[TSKindId.Names]: Names.Bound;
 	[TSKindId.AsPatternTarget]: AsPatternTarget.Bound;
 	[TSKindId.FormatExpression]: FormatExpression.Bound;
+	[TSKindId.MethodDeclaration]: MethodDeclaration.Bound;
 	[TSKindId.ImportPrefix]: ImportPrefix.Bound;
 	[TSKindId.TypeConversion]: TypeConversion.Bound;
 	[TSKindId.Identifier]: Identifier.Bound;
@@ -10795,9 +11195,14 @@ export interface ParsedByKindId {
 	[TSKindId.SuiteEmpty]: SuiteEmpty.Parsed;
 	[TSKindId.ComparisonOperatorComparator]: ComparisonOperatorComparator.Parsed;
 	[TSKindId.YieldFromClause]: YieldFromClause.Parsed;
+	[TSKindId.ConstructorDeclaration]: ConstructorDeclaration.Parsed;
+	[TSKindId.BlockClassDeclaration]: BlockClassDeclaration.Parsed;
+	[TSKindId.SuiteBlockClassDeclaration]: SuiteBlockClassDeclaration.Parsed;
+	[TSKindId.DecoratedDefinitionClassDeclaration]: DecoratedDefinitionClassDeclaration.Parsed;
 	[TSKindId.Names]: Names.Parsed;
 	[TSKindId.AsPatternTarget]: AsPatternTarget.Parsed;
 	[TSKindId.FormatExpression]: FormatExpression.Parsed;
+	[TSKindId.MethodDeclaration]: MethodDeclaration.Parsed;
 	[TSKindId.ImportPrefix]: ImportPrefix.Parsed;
 	[TSKindId.TypeConversion]: TypeConversion.Parsed;
 	[TSKindId.Identifier]: Identifier.Parsed;
@@ -10920,7 +11325,8 @@ export type FixedTextKindId =
 	| TSKindId.LtGt
 	| TSKindId.NotIn
 	| TSKindId.IsKeyword
-	| TSKindId.IsNot;
+	| TSKindId.IsNot
+	| TSKindId.InitUKeyword;
 
 export interface TypeKeyOf {
 	[TSKindId.Module]: 'module';
@@ -11083,9 +11489,14 @@ export interface TypeKeyOf {
 	[TSKindId.SuiteEmpty]: 'suiteEmpty';
 	[TSKindId.ComparisonOperatorComparator]: 'comparisonOperatorComparator';
 	[TSKindId.YieldFromClause]: 'yieldFromClause';
+	[TSKindId.ConstructorDeclaration]: 'constructorDeclaration';
+	[TSKindId.BlockClassDeclaration]: 'blockClassDeclaration';
+	[TSKindId.SuiteBlockClassDeclaration]: 'suiteBlockClassDeclaration';
+	[TSKindId.DecoratedDefinitionClassDeclaration]: 'decoratedDefinitionClassDeclaration';
 	[TSKindId.Names]: 'names';
 	[TSKindId.AsPatternTarget]: 'asPatternTarget';
 	[TSKindId.FormatExpression]: 'formatExpression';
+	[TSKindId.MethodDeclaration]: 'methodDeclaration';
 	[TSKindId.WildcardImport]: 'wildcardImport';
 	[TSKindId.PassStatement]: 'passStatement';
 	[TSKindId.BreakStatement]: 'breakStatement';
@@ -11200,8 +11611,8 @@ export namespace ImportStatement {
 	}
 	export type Loose = LooseFor<TSKindId.ImportStatement>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ImportStatement>;
-	export type BuildArgs = [value: Admit<T.Names | T.Names.Types>] | [value: Admit<T.ImportList>];
-	export type LooseArgs = [value: T.ImportStatement.Loose];
+	export type BuildArgs = [value: Admit<T.Names>] | T.Names.BuildArgs;
+	export type LooseArgs = [value: T.ImportStatement.Loose] | T.Names.LooseArgs;
 	export type Kind = TSKindId.ImportStatement;
 }
 export namespace RelativeImport {
@@ -14187,33 +14598,17 @@ export namespace FormatSpecifier {
 	}
 	export type Loose = LooseFor<TSKindId.FormatSpecifier>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatSpecifier>;
-	export type BuildArgs = [
-		...children: Admit<((T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types)[]>
-	];
+	export type BuildArgs = [...children: Admit<(T.FormatSpecifierText | T.FormatExpression)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
 					| T.FormatSpecifier.Loose
-					| LooseValue<
-							(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
 					| LooseValue<T.FormatSpecifierText | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								(T.FormatSpecifierText | T.FormatExpression) | T.FormatExpression.Types,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<T.FormatSpecifierText | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					)[]
+					LooseValue<T.FormatSpecifierText | T.FormatExpression, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
 				>
 		  ];
 	export type Kind = TSKindId.FormatSpecifier;
@@ -16105,9 +16500,123 @@ export namespace YieldFromClause {
 	export type LooseArgs = [value: T.YieldFromClause.Loose];
 	export type Kind = TSKindId.YieldFromClause;
 }
+export namespace ConstructorDeclaration {
+	export type Config = ConfigFor<TSKindId.ConstructorDeclaration>;
+	export interface Bound extends BoundOf<T.ConstructorDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ConstructorDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.ConstructorDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ConstructorDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ConstructorDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ConstructorDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ConstructorDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.ConstructorDeclaration>];
+	export type LooseArgs = [config: T.ConstructorDeclaration.Loose];
+	export type Kind = TSKindId.ConstructorDeclaration;
+}
+export namespace BlockClassDeclaration {
+	export type Config = ConfigFor<TSKindId.BlockClassDeclaration>;
+	export interface Bound extends BoundOf<T.BlockClassDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.BlockClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.BlockClassDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.BlockClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.BlockClassDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.BlockClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.BlockClassDeclaration>;
+	export type BuildArgs = [...children: Admit<T.StatementClassDefinition[]>];
+	export type LooseArgs =
+		| [
+				...children: (
+					| T.BlockClassDeclaration.Loose
+					| LooseValue<T.StatementClassDefinition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [children: Readonly<LooseValue<T.StatementClassDefinition, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
+	export type Kind = TSKindId.BlockClassDeclaration;
+}
+export namespace SuiteBlockClassDeclaration {
+	export type Config = ConfigFor<TSKindId.SuiteBlockClassDeclaration>;
+	export interface Bound extends BoundOf<T.SuiteBlockClassDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.SuiteBlockClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.SuiteBlockClassDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.SuiteBlockClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.SuiteBlockClassDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.SuiteBlockClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SuiteBlockClassDeclaration>;
+	export type BuildArgs = [value: Admit<T.BlockClassDeclaration>] | T.BlockClassDeclaration.BuildArgs;
+	export type LooseArgs = [value?: T.SuiteBlockClassDeclaration.Loose] | T.BlockClassDeclaration.LooseArgs;
+	export type Kind = TSKindId.SuiteBlockClassDeclaration;
+}
+export namespace DecoratedDefinitionClassDeclaration {
+	export type Config = ConfigFor<TSKindId.DecoratedDefinitionClassDeclaration>;
+	export interface Bound
+		extends BoundOf<T.DecoratedDefinitionClassDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.DecoratedDefinitionClassDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.DecoratedDefinitionClassDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.DecoratedDefinitionClassDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.DecoratedDefinitionClassDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.DecoratedDefinitionClassDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.DecoratedDefinitionClassDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.DecoratedDefinitionClassDeclaration>];
+	export type LooseArgs = [config: T.DecoratedDefinitionClassDeclaration.Loose];
+	export type Kind = TSKindId.DecoratedDefinitionClassDeclaration;
+	type NonEmptySlots = Proven<
+		[
+			KeyRefusesEmpty<Config, 'decorators'>,
+			KeyRefusesEmpty<LooseConfig, 'decorators'>,
+			SetterRefusesEmpty<Bound, 'decorators'>
+		]
+	>;
+}
 export namespace Names {
 	export type Config = ConfigFor<TSKindId.Names>;
-	export type Types = SupertypeSurface<ImportList, BoundByKindId>;
 	export interface Bound extends BoundOf<T.Names, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.Names['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -16126,9 +16635,37 @@ export namespace Names {
 	}
 	export type Loose = LooseFor<TSKindId.Names>;
 	export type LooseConfig = LooseConfigFor<TSKindId.Names>;
-	export type BuildArgs = [value: Admit<T.ImportList>];
-	export type LooseArgs = [value: T.Names.Loose];
+	export type BuildArgs =
+		| [element: Admit<T.DottedName | T.AliasedImport>, ...elements: Admit<T.DottedName | T.AliasedImport>[]]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element: Admit<T.DottedName | T.AliasedImport>,
+				...elements: Admit<T.DottedName | T.AliasedImport>[]
+		  ];
+	export type LooseArgs =
+		| [
+				element:
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ]
+		| [
+				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+				element:
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (
+					| T.Names.Loose
+					| LooseValue<T.DottedName | T.AliasedImport, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+				)[]
+		  ];
 	export type Kind = TSKindId.Names;
+	type NonEmptySlots = Proven<
+		[KeyRefusesEmpty<Config, 'names'>, KeyRefusesEmpty<LooseConfig, 'names'>, SetterRefusesEmpty<Bound, 'names'>]
+	>;
 }
 export namespace AsPatternTarget {
 	export type Config = ConfigFor<TSKindId.AsPatternTarget>;
@@ -16157,7 +16694,6 @@ export namespace AsPatternTarget {
 }
 export namespace FormatExpression {
 	export type Config = ConfigFor<TSKindId.FormatExpression>;
-	export type Types = SupertypeSurface<Interpolation, BoundByKindId>;
 	export interface Bound extends BoundOf<T.FormatExpression, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.FormatExpression['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -16176,9 +16712,33 @@ export namespace FormatExpression {
 	}
 	export type Loose = LooseFor<TSKindId.FormatExpression>;
 	export type LooseConfig = LooseConfigFor<TSKindId.FormatExpression>;
-	export type BuildArgs = [value: Admit<T.Interpolation>];
-	export type LooseArgs = [value: T.FormatExpression.Loose];
+	export type BuildArgs = [config: ConfigOf<T.FormatExpression>];
+	export type LooseArgs = [config: T.FormatExpression.Loose];
 	export type Kind = TSKindId.FormatExpression;
+}
+export namespace MethodDeclaration {
+	export type Config = ConfigFor<TSKindId.MethodDeclaration>;
+	export interface Bound extends BoundOf<T.MethodDeclaration, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.MethodDeclaration['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.MethodDeclaration, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.MethodDeclaration['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.MethodDeclaration['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.MethodDeclaration>;
+	export type LooseConfig = LooseConfigFor<TSKindId.MethodDeclaration>;
+	export type BuildArgs = [config: ConfigOf<T.MethodDeclaration>];
+	export type LooseArgs = [config: T.MethodDeclaration.Loose];
+	export type Kind = TSKindId.MethodDeclaration;
 }
 export namespace WildcardImport {
 	export type Config = WildcardImportNs['Config'];

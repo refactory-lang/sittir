@@ -1641,3 +1641,7 @@ a gap sits on.
 ### `packages/codegen/src/types/spacing.ts::FlankSide`
 
 `start` or `end`: the end of a flanked array a flank gap sits at.
+
+### `packages/codegen/src/types/rule.ts::SymbolRule::copyOf`
+
+The copy a symbol rule refers to, when it is a copy.

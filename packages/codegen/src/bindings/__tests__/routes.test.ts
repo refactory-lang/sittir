@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
+import { type GrammarInput, type ModelNode, type ModelSlot, type Vocabulary, type VocabularyMember, canonicalFacts, derive, envelopeTargets, formsOf, readBindings, resolveFlags, resolveRoutes, unenteredForms } from '../index.ts';
 
 const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> = {}): ModelSlot => ({
 	name,
@@ -22,6 +22,8 @@ const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<Mod
 	text: null,
 	pattern: null,
 	variantOf: null,
+	splitFrom: null,
+	aliasStorage: null,
 	shownAs: [],
 	...extra
 });
@@ -177,6 +179,36 @@ describe('unenteredForms', () => {
 	});
 });
 
+describe("a base's claim on its clones", () => {
+	const cloned = async (bindings: readonly string[]): Promise<GrammarInput> => {
+		const input = await grammar(bindings.join('\n'));
+		const base = input.model.get('function_definition')!;
+		const model = new Map(input.model);
+		for (const kind of ['constructor_declaration', 'lambda_definition']) model.set(kind, { ...base, kind, splitFrom: 'function_definition' });
+		return { ...input, model };
+	};
+
+	it("stops at a clone whose own unconditional claim sits at an unrelated path, and still reaches it from an ancestor or a refinement, and reaches a clone without a claim of its own", async () => {
+		const input = await cloned([
+			'(function_definition) @declaration.function',
+			'(function_definition) @declaration',
+			'((function_definition name: (_) @n) @declaration.constructor.special (#eq? @n "x"))',
+			'(constructor_declaration) @declaration.constructor'
+		]);
+		const routes = resolveRoutes(input);
+		expect(routes.stopped).toEqual([{ kind: 'constructor_declaration', vocab: 'declaration.function', index: 0 }]);
+		expect(routes.readEntries.get('constructor_declaration')?.map((e) => e.vocab).sort()).toEqual(['declaration', 'declaration.constructor', 'declaration.constructor.special']);
+		expect(routes.readEntries.get('lambda_definition')?.map((e) => e.vocab)).toContain('declaration.function');
+		expect(unenteredForms(input, routes)).toEqual([]);
+	});
+
+	it('keeps reaching a clone whose own claim tests a field absent, since that claim does not always hold', async () => {
+		const routes = resolveRoutes(await cloned(['(function_definition) @declaration.function', '(constructor_declaration !modifiers) @declaration.constructor']));
+		expect(routes.stopped).toEqual([]);
+		expect(routes.readEntries.get('constructor_declaration')?.map((e) => e.vocab)).toContain('declaration.function');
+	});
+});
+
 describe('resolveRoutes', () => {
 	it('reads a receiver claimed once per arm exactly: a first parameter not named self is no method', async () => {
 		const routes = resolveRoutes(
@@ -227,6 +259,26 @@ describe('resolveRoutes', () => {
 		expect(routes.readEntries.get('identifier')?.map((e) => e.vocab)).toEqual(['declaration.parameter', 'expression.identifier']);
 		expect(routes.readEntries.get('mut_pattern')?.map((e) => [e.kind, e.vocab])).toEqual([['mut_pattern', 'declaration.parameter']]);
 		expect(routes.readEntries.get('parameter')?.map((e) => e.vocab)).toEqual(['declaration.parameter']);
+	});
+
+	it("decides a literal claim on the clone its split named, and still tests it on the kind the clone was split from", async () => {
+		const input = await grammar(['(meth) @declaration.method', '((meth name: (identifier) @name) @declaration.constructor (#eq? @name "constructor"))'].join('\n'));
+		const clone = node('constructor_declaration', [slot('deco', ['decorator'], { required: false })], { splitFrom: 'meth' });
+		const routes = resolveRoutes({ ...input, model: new Map([...input.model, [clone.kind, clone]]) });
+		expect(routes.readEntries.get('constructor_declaration')?.map((e) => [e.vocab, e.decided])).toEqual([
+			['declaration.constructor', true],
+			['declaration.method', undefined]
+		]);
+		expect(routes.readEntries.get('meth')?.find((e) => e.vocab === 'declaration.constructor')?.decided).toBeUndefined();
+	});
+
+	it("gives a hidden copy its source's forms, and the source its hidden copy, without revisiting either", () => {
+		const copy = node('_meth_copy', MODEL.find((n) => n.kind === 'meth')!.slots, { splitFrom: 'meth' });
+		const clone = node('constructor_declaration', [], { splitFrom: 'meth' });
+		const model = new Map([...MODEL, copy, clone].map((n) => [n.kind, n]));
+		expect(formsOf(model, '_meth_copy')).toEqual(['_meth_copy', 'meth', 'constructor_declaration']);
+		expect(formsOf(model, 'meth')).toEqual(['meth', '_meth_copy', 'constructor_declaration']);
+		expect(formsOf(model, 'constructor_declaration')).toEqual(['constructor_declaration']);
 	});
 
 	it('leaves a wildcard claim off a kind that already claims the same path itself', async () => {
@@ -443,11 +495,74 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
 		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
+		const input = { ...(await grammar('(field_name) @identifier.field')), model };
+		expect(resolveRoutes(input).members.get('field_name')).toEqual([]);
+	});
+
+	it('gives a container capture only to the kind its element pattern names, and to every kind its element slot holds under a wildcard', async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('fn_x', node('fn_x'));
+		model.set('cls_x', node('cls_x'));
+		model.set('holder_x', node('holder_x', [slot('mark', [], { terminals: ['@'] }), slot('definition', ['fn_x', 'cls_x'])]));
+		const vocabOf = new Map([
+			['fn_x', 'declaration.method'],
+			['cls_x', 'declaration.class']
+		]);
+		const [named, wildcard] = (await readBindings('(holder_x "@" @static definition: (fn_x) @element)\n(holder_x "@" @static definition: (_) @element)')).containers;
+		expect(envelopeTargets(model, named!, vocabOf)).toEqual(['declaration.method']);
+		expect(envelopeTargets(model, wildcard!, vocabOf)).toEqual(['declaration.method', 'declaration.class']);
+	});
+
+	it("gives an alias envelope of a structured kind the stored kind's members, each routed through its content", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('wrapped', node('wrapped', [slot('content', ['binary'])], { modelType: 'alias' }));
-		const input = { ...(await grammar('(field_name) @identifier.field\n(wrapped) @expression.wrapped')), model };
-		const routes = resolveRoutes(input);
-		expect(routes.members.get('field_name')).toEqual([]);
-		expect(routes.members.get('wrapped')?.map((m) => m.name)).toEqual(['content']);
+		const input = { ...(await grammar('(wrapped left: (_) @lhs) @expression.wrapped')), model };
+		const members = resolveRoutes(input).members.get('wrapped') ?? [];
+		expect(members.map((m) => [m.name, m.path])).toEqual([
+			[
+				'lhs',
+				[
+					{ owner: 'wrapped', slot: 'content' },
+					{ owner: 'binary', slot: 'left' }
+				]
+			],
+			[
+				'operator',
+				[
+					{ owner: 'wrapped', slot: 'content' },
+					{ owner: 'binary', slot: 'operator' }
+				]
+			],
+			[
+				'right',
+				[
+					{ owner: 'wrapped', slot: 'content' },
+					{ owner: 'binary', slot: 'right' }
+				]
+			]
+		]);
+	});
+
+	it("reads a claim pattern on an alias envelope of a structured kind in the stored kind's slots, through its content", async () => {
+		const model = new Map(MODEL.map((n) => [n.kind, n]));
+		model.set('call_env', node('call_env', [slot('content', ['call_x'])], { modelType: 'alias' }));
+		model.set('bin_env', node('bin_env', [slot('content', ['binary'])], { modelType: 'alias' }));
+		model.set('outer_env', node('outer_env', [slot('content', ['outer'])], { modelType: 'alias' }));
+		const bindings = [
+			'(call_env args: (expr)) @expression.call',
+			'(bin_env) @expression.binary',
+			'(bin_env "+") @expression.binary.add',
+			'(outer_env (middle (binary left: (_) @lhs))) @expression.outer'
+		].join('\n');
+		const routes = resolveRoutes({ ...(await grammar(bindings)), model });
+		expect(routes.readEntries.get('call_env')?.[0]?.children).toEqual([]);
+		expect(routes.readEntries.get('bin_env')?.[0]?.pins).toEqual([{ member: 'operator', slot: 'operator', text: '+' }]);
+		expect(routes.members.get('outer_env')?.find((m) => m.name === 'lhs')?.path).toEqual([
+			{ owner: 'outer_env', slot: 'content' },
+			{ owner: 'outer', slot: 'mid' },
+			{ owner: 'middle', slot: 'inner' },
+			{ owner: 'binary', slot: 'left' }
+		]);
 	});
 
 	it('builds a nested member back from the owner outward, though the facts name its route nearest first', async () => {

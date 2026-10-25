@@ -71,6 +71,7 @@ interface SerializedNodeBase {
 	seated?: true;
 	renamedFrom?: string;
 	splitFrom?: string;
+	aliasStorage?: string;
 	variantOf?: string;
 	oneSurface?: true;
 	factoryShape?: FactoryShape;
@@ -211,6 +212,7 @@ function serializeNode(node: AssembledNode, nodeMap: NodeMap, wires: PolymorphWi
 		...(node.seated ? { seated: true } : {}),
 		...(node.renamedFrom !== undefined ? { renamedFrom: node.renamedFrom } : {}),
 		...(node.splitFrom !== undefined ? { splitFrom: node.splitFrom } : {}),
+		...(node.aliasStorage !== undefined ? { aliasStorage: node.aliasStorage } : {}),
 		...(node.variantOf !== undefined ? { variantOf: node.variantOf } : {})
 	};
 	switch (node.modelType) {
