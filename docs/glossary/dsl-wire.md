@@ -2261,10 +2261,6 @@ The alias targets the layer registered.
 
 The copies minted during the layer pass.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copyDepth`
-
-How deep the walk is within copy references.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::WireContext::copyReferences`
 
 The copy references the walk has made.
@@ -2345,10 +2341,6 @@ The `WireContext` field `applyingEntries`: `'scoped'`: it holds only while one e
 
 The `WireContext` field `copies`: `'undone'`: an entry that is refused restores it.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copyDepth`
-
-The `WireContext` field `copyDepth`: `'scoped'`: it holds only while one entry is applied.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::copyReferences`
 
 The `WireContext` field `copyReferences`: `'unreached'`: no entry reaches it.
@@ -2388,3 +2380,23 @@ The `WireContext` field `pendingRules`: `'undone'`: an entry that is refused res
 ### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::layer`
 
 The role of each field of the layer record, as a nested object: `name`, `depth` and `narrows`, `leads`, `renames` and `diagnostics`.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WIRE_ENTRY_ROLES::editing`
+
+The role of the editing state: it is scoped to the entry being applied.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireAliasSite`
+
+Records an alias site in the wire context.
+
+### `packages/codegen/src/dsl/wire/wire.ts::WireContext::editing`
+
+Whether an entry is being edited right now.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireInPathEdit`
+
+Whether a wire is applied inside a path edit.
+
+### `packages/codegen/src/dsl/wire/wire.ts::wireIsShown`
+
+Whether a rule is shown under a display name.
