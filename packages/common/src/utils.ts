@@ -128,7 +128,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
 		const at = tableAt(node);
 		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
-		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
+		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toNodeData(snapshotOf(entry, 1) as AnyUntypedNode, PLAIN_KINDS))));
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
