@@ -1031,3 +1031,7 @@ Calls the `build` hook for one node and rethrows any failure with the JSON path 
 ### `packages/common/src/node-json.ts::kindIdOf`
 
 The kind id for a kind name, or `undefined` when the language has no kind of that name. The set of names is computed once per facts object and cached, so a name that is not a kind is answered here instead of reaching `facts.kindId`, which throws for names no kind has.
+
+### `packages/common/src/utils.ts::OwnerView`
+
+A view of a node's owner.
