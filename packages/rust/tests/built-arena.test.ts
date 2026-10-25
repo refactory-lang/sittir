@@ -36,6 +36,20 @@ describe('a built arena', () => {
 		expect(at).toBeGreaterThan(builtRecordOf(leaf, arena)!);
 	});
 
+	it('places only the draft it handed out last, once', () => {
+		const arena = arenaOf();
+		const outer = arena.record(9, 7);
+		const inner = arena.record(4, 2);
+		expect(builtRecordOf(arena.view(inner), arena)).toBeTypeOf('number');
+		expect(() => arena.view(outer)).toThrow(/drafted over/);
+		expect(() => arena.view(inner)).toThrow(/drafted over/);
+		const abandoned = arena.record(9, 7);
+		abandoned.data[abandoned.base + 2] = 1;
+		const next = arena.record(8, 3);
+		const at = builtRecordOf(arena.view(next), arena)!;
+		expect(Array.from(arena.words(at, 3).subarray(wordOf(at, format!), wordOf(at, format!) + 3))).toEqual([8, 0, 0]);
+	});
+
 	it('grows its shared chunks by doubling, and gives a run past a chunk its own', () => {
 		const arena = arenaOf();
 		const sizes = new Set<number>();

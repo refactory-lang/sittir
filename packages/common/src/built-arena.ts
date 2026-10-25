@@ -137,6 +137,7 @@ export class BuiltArena {
 	readonly #views: BuiltViews;
 	readonly #words: Chunks<Uint32Array>;
 	#draft = new Uint32Array(FIRST_DRAFT_WORDS);
+	#open: BuiltDraft | undefined;
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
 	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
@@ -183,7 +184,8 @@ export class BuiltArena {
 		if (this.#draft.length < words) this.#draft = new Uint32Array(Math.max(words, this.#draft.length * 2));
 		else this.#draft.fill(0, 0, words);
 		this.#draft[0] = kind;
-		return { data: this.#draft, base: 0, words };
+		this.#open = { data: this.#draft, base: 0, words };
+		return this.#open;
 	}
 
 	#header(kind: number, words: number): BuiltPlace {
@@ -262,6 +264,8 @@ export class BuiltArena {
 	}
 
 	view(record: BuiltDraft): object {
+		if (record !== this.#open) throw new Error('a record draft was placed already or drafted over: a builder drafts one record at a time and places it once');
+		this.#open = undefined;
 		const place = this.#place(record.words);
 		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
 		return this.#view(place.at);
