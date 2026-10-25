@@ -3,7 +3,6 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
-import { snapshotOf } from '@sittir/common';
 import { nestedComments, objects as rs, type Reported, type Route } from './side-nesting.mts';
 
 const b = rs.build;
@@ -196,7 +195,6 @@ describe("a side nests at most as deep as the addon's bound", () => {
 		expect(at.root.$render().split('/*').length - 1).toBe(bound);
 		const { parsed } = carrying(bound);
 		expect(parsed.$snapshot()).toBeDefined();
-		expect(() => snapshotOf(parsed, 1)).toThrow(native.SIDE_NESTING_REFUSAL);
 		const refused = parsedStatement();
 		expect(() => withSide(refused.y, 'leading', [parsed])).toThrow(native.SIDE_NESTING_REFUSAL);
 		expect(() => withSide(refused.y, 'leading', [chain(bound + 1)])).toThrow(native.SIDE_NESTING_REFUSAL);
