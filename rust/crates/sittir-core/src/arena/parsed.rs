@@ -108,11 +108,19 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Ok(arena.record(index))
     }
 
+    /// `f` of the words records fill in chunk `n` of the tree's arena,
+    /// borrowed for the call, or `None` for a chunk the arena does not hold.
+    /// Records only append to a chunk, so the words `f` sees stay as they are
+    /// and a later read adds words after them.
+    pub fn with_record_chunk<R>(&self, n: u32, f: impl FnOnce(&[u32]) -> R) -> Option<R> {
+        self.tree_arena().arena().chunk(n).map(f)
+    }
+
     /// The words of chunk `n` of the tree's arena that records fill, copied:
     /// a later read that appends to the chunk leaves the copy as it was.
     #[must_use]
     pub fn record_chunk(&self, n: u32) -> Option<Vec<u32>> {
-        self.tree_arena().arena().chunk(n).map(<[u32]>::to_vec)
+        self.with_record_chunk(n, <[u32]>::to_vec)
     }
 }
 

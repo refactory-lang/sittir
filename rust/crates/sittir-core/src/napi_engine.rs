@@ -914,17 +914,22 @@ macro_rules! napi_engine {
                 }
 
                 /// The words records fill in chunk `n` of the live tree
-                /// `treeId`'s arena, copied into a buffer JavaScript owns: a
-                /// later read that appends to the chunk leaves the copy as it
-                /// was. Refuses a tree that is not live and a chunk its arena
-                /// does not hold.
+                /// `treeId`'s arena from word `from` on, copied into a buffer
+                /// JavaScript owns. Records only append to a chunk, so a
+                /// reader that holds the words before `from` asks only for the
+                /// rest. Refuses a tree that is not live, a chunk its arena
+                /// does not hold, and a `from` past the chunk's words.
                 #[::napi_derive::napi]
-                pub fn chunk(&self, tree_id: $crate::types::TreeId, n: f64) -> ::napi::Result<::napi::bindgen_prelude::Uint32Array> {
+                pub fn chunk(&self, tree_id: $crate::types::TreeId, n: f64, from: f64) -> ::napi::Result<::napi::bindgen_prelude::Uint32Array> {
                     let n: u32 = $crate::napi_engine::checked_whole(n, "chunk")?;
+                    let from: usize = $crate::napi_engine::checked_whole(from, "from")?;
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                        let words = parsed.record_chunk(n).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s arena holds no chunk {n}")))?;
+                        let tail = parsed
+                            .with_record_chunk(n, |words| words.get(from..).map(<[u32]>::to_vec).ok_or(words.len()))
+                            .ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s arena holds no chunk {n}")))?;
+                        let words = tail.map_err(|len| ::napi::Error::from_reason(format!("tree {tree_id}'s chunk {n} holds {len} words, short of word {from}")))?;
                         Ok(::napi::bindgen_prelude::Uint32Array::new(words))
                     })
                 }

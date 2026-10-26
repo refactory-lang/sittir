@@ -323,12 +323,13 @@ renderCandidate(treeId: number, index: number, options?: object | undefined | nu
 coordinate(treeId: TreeId, index: NodeIndex): Array<number>
 /**
  * r" The words records fill in chunk `n` of the live tree
- * r" `treeId`'s arena, copied into a buffer JavaScript owns: a
- * r" later read that appends to the chunk leaves the copy as it
- * r" was. Refuses a tree that is not live and a chunk its arena
- * r" does not hold.
+ * r" `treeId`'s arena from word `from` on, copied into a buffer
+ * r" JavaScript owns. Records only append to a chunk, so a
+ * r" reader that holds the words before `from` asks only for the
+ * r" rest. Refuses a tree that is not live, a chunk its arena
+ * r" does not hold, and a `from` past the chunk's words.
  */
-chunk(treeId: TreeId, n: number): Uint32Array
+chunk(treeId: TreeId, n: number, from: number): Uint32Array
 }
 
 /**

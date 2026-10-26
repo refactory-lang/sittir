@@ -589,7 +589,7 @@ Shared by Tasks 7 to 10. These are proposals that Task 7 fixes as codegen facts.
 
 - **The arena.** One per tree, for parsed records, plus one per engine, for built records (ruling 3).
   - An arena is a list of fixed-size chunks of `u32` words. No record straddles a chunk, and a chunk never moves, so a view held across a later read still reads its record.
-  - A parsed tree's chunk crosses to JavaScript as a copy JavaScript owns (`chunk(tree, n)`): the words its records fill when it is asked for. A later read that appends to the chunk leaves the copy as it was, so a reader asks again for an address past it. No JavaScript write reaches the native arena.
+  - A parsed tree's chunk crosses to JavaScript as copies JavaScript owns (`chunk(tree, n, from)`): the words its records fill from word `from` on, when they are asked for. Records only append to a chunk, so the words a reader holds stay right, and a reader seeking an address past them asks only for the words after them. A `from` past the chunk's words is refused. No JavaScript write reaches the native arena.
   - The built nodes' arena is buffers JavaScript owns: builders write their records into them, and native code reads them per call, borrowed (napi-rs's `BufferSlice`), never holding them across calls, and refuses malformed words (Review Focus 1).
   - A record's address is (chunk, word): one `f64`-safe number, `chunk * 2^20 + word`.
 - **The source text** (ruling 1.1). A tree's UTF-8 source stays native and never crosses. `TreeHandle.text(span)` is a native call that returns the text of one byte span, and refuses a span that is not one of the source's (past its end, reversed, or splitting a character).

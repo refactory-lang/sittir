@@ -189,8 +189,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** JSON pairs of coordinates and native record addresses for the hydrated typed subtree, including nested content but no node fields or words. */
 	recordCandidates?(treeId: number, index: number): string;
-	/** The words records fill in chunk `n` of the tree's arena, copied. Present when the addon carries the record codec. */
-	chunk?(treeId: number, n: number): Uint32Array;
+	/** The words records fill in chunk `n` of the tree's arena from word `from` on, copied; refuses a `from` past them. Present when the addon carries the record codec. */
+	chunk?(treeId: number, n: number, from: number): Uint32Array;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
@@ -374,16 +374,28 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
-/**
- * A tree's record reader over `engine`'s record entry points. Each chunk's copy is kept, and fetched again when a record
- * sought lies past it: a read that appends to a chunk leaves the copy JavaScript holds as it was.
- */
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
 	const { readRecord, chunk, renderRecord, coordinate } = engine;
 	if (readRecord === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
-	const copies = new Map<number, Uint32Array>();
+	const copies = new Map<number, { readonly buffer: Uint32Array; readonly view: Uint32Array }>();
+	const grown = (n: number): Uint32Array => {
+		const copy = copies.get(n);
+		const held = copy?.view.length ?? 0;
+		const tail = chunk.call(engine, treeId, n, held);
+		const length = held + tail.length;
+		let buffer = copy?.buffer;
+		if (buffer === undefined || buffer.length < length) {
+			const larger = new Uint32Array(Math.max(length, (buffer?.length ?? 0) * 2));
+			if (copy !== undefined) larger.set(copy.view);
+			buffer = larger;
+		}
+		buffer.set(tail, held);
+		const view = buffer.subarray(0, length);
+		copies.set(n, { buffer, view });
+		return view;
+	};
 	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
 	return {
 		format,
@@ -408,11 +420,8 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 		words(address, length) {
 			const n = chunkOf(address, format);
 			const end = wordOf(address, format) + length;
-			let copy = copies.get(n);
-			if (copy === undefined || copy.length < end) {
-				copy = chunk.call(engine, treeId, n);
-				copies.set(n, copy);
-			}
+			let copy = copies.get(n)?.view;
+			if (copy === undefined || copy.length < end) copy = grown(n);
 			if (copy.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${copy.length} words, short of a record that ends at word ${end}`);
 			return copy;
 		},
