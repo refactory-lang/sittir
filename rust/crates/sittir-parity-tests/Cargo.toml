@@ -17,9 +17,15 @@ sittir-core = { path = "../sittir-core" }
 sittir-rust = { path = "../sittir-rust", default-features = false }
 sittir-typescript = { path = "../sittir-typescript", default-features = false }
 sittir-python = { path = "../sittir-python", default-features = false }
+sittir-regex = { path = "../sittir-regex", default-features = false }
+sittir-scm = { path = "../sittir-scm", default-features = false }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
+
+[features]
+# The record writer's corpus tests (`tests/record_write.rs`).
+arena = ["sittir-core/arena"]
 
 [lints]
 workspace = true

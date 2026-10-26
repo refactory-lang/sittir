@@ -190,22 +190,6 @@ impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
             Self::Node(_) => None,
         }
     }
-
-    /// The node this slot holds, or `None` after slicing its coordinate
-    /// into `w`. For render paths that call a concrete `render_<kind>`
-    /// function directly instead of going through `Render`.
-    pub fn node_or_write(
-        &self,
-        w: &mut dyn crate::render::RenderSink,
-    ) -> Result<Option<&T>, crate::render::RenderError> {
-        match self {
-            Self::Coord(coord) => {
-                write_coordinate(coord, ADJACENT, w)?;
-                Ok(None)
-            }
-            Self::Node(t) => Ok(Some(t)),
-        }
-    }
 }
 
 /// Two slot values are equal when they hold equal nodes, or
@@ -237,7 +221,7 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
 /// the coordinate's node, unless that node's frame is already open
 /// (`RenderSink::in_frame_of`); its kind's edges are the coordinate's own
 /// (`write_between_edges`).
-fn write_coordinate(
+pub(crate) fn write_coordinate(
     coord: &NodeCoordinate,
     adjacent: bool,
     w: &mut dyn crate::render::RenderSink,
@@ -543,11 +527,7 @@ mod tests {
                 crate::types::NodeIndex(0), crate::types::NodeIndex(1),
                 Span { start: 1, end: 3 },
             ));
-            slot.prepare(&RenderContext {
-                options,
-                sources: &sources,
-                recording: None,
-            })
+            slot.prepare(&RenderContext { options, sources: &sources })
             .unwrap();
             let mut out = String::new();
             let mut w = SpacingWriter::new(&mut out, WordMatcher::default_ident())
@@ -689,31 +669,5 @@ mod tests {
         let slot: SlotValue<Word> = SlotValue::Node(Word("fn"));
         assert_eq!(rendered(&slot), "fn");
         assert!(slot.node().is_some());
-    }
-
-    #[test]
-    fn node_or_write_writes_only_the_coordinate_case() {
-        let sources = Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("raw"))]));
-        let mut buf = String::new();
-        let mut w = SpacingWriter::new(&mut buf, WordMatcher::default_ident())
-            .with_table(&TABLE)
-            .with_sources(&sources);
-        let node: SlotValue<Word> = SlotValue::Node(Word("fn"));
-        assert!(node.node_or_write(&mut w).unwrap().is_some());
-        w.finish().unwrap();
-        assert_eq!(buf, "");
-
-        let mut buf2 = String::new();
-        let mut w2 = SpacingWriter::new(&mut buf2, WordMatcher::default_ident())
-            .with_table(&TABLE)
-            .with_sources(&sources);
-        let coord: SlotValue<Word> = SlotValue::Coord(NodeCoordinate::new(
-            crate::types::TreeId(1),
-            crate::types::NodeIndex(0), crate::types::NodeIndex(1),
-            Span { start: 0, end: 3 },
-        ));
-        assert!(coord.node_or_write(&mut w2).unwrap().is_none());
-        w2.finish().unwrap();
-        assert_eq!(buf2, "raw");
     }
 }

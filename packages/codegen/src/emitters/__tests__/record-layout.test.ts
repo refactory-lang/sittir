@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CELL_WORDS, RECORD_HEADER_WORDS, recordArgs, recordLayoutOf } from '../record-layout.ts';
+import { CELL_WORDS, RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm } from '../record-layout.ts';
 
 describe('recordLayoutOf', () => {
 	it('places the presence bits in words after the header, then each cell in field order', () => {
@@ -28,6 +28,13 @@ describe('recordLayoutOf', () => {
 
 	it('gives a record with no fields its header alone', () => {
 		expect(recordLayoutOf([])).toEqual({ words: RECORD_HEADER_WORDS, places: [] });
+	});
+
+	it('reserves the bounded child image and preserves its capacity in the native stamp', () => {
+		const layout = recordLayoutOf([{ field: 'child', form: slotRecordForm({ tag: 'any' }, false, 7) }]);
+		expect(layout).toEqual({ words: 11, places: [{ field: 'child', word: 2, width: 9, inline: 7 }] });
+		expect(recordArgs(layout.places[0]!)).toBe('word = 2, width = 9, inline = 7');
+		expect(slotRecordForm({ tag: 'any' }, true, 7)).toEqual({ tag: 'cell', width: 2, run: 5 });
 	});
 });
 

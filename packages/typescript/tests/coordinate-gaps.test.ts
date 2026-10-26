@@ -49,7 +49,7 @@ describe('gaps between coordinates', () => {
 		if (!ts.is.arguments(args)) throw new Error('expected arguments');
 		const [a, b, c] = args.elements();
 		if (b === undefined || typeof b === 'number' || !ts.is.memberExpression(b)) throw new Error('expected a member expression');
-		const edited = b.$with.object(ts.build.identifier('y')) as typeof b;
+		const edited = b.$with.object(ts.build.identifier('y'));
 		expect(args.$with.elements(a!, edited, c!).$render()).toBe('(a.x,y.x,c.x)');
 	});
 });

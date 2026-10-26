@@ -14,6 +14,16 @@ export interface BaselineRun {
   spaces?: number
   tabs?: number
 }
+
+/**
+ * The text a built leaf's cells hold, as its builder interned it: the
+ * chunk and byte packed as a cell stores them (`StringRef::offset`), and
+ * its length in bytes.
+ */
+export interface BuiltText {
+  at: number
+  len: number
+}
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   get renderModuleHash(): string
@@ -90,9 +100,13 @@ export declare class SittirEngine {
   triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
   /**
    * Replace `side` of the node at `index` of the live tree `treeId`
-   * with `entries`. Refuses as `triviaSide` does.
+   * with `entries`. A built record among them (`{ $type, $record,
+   * $owner }`) renders from the built arena of its owner, an engine
+   * of this language, wherever the side renders. Refuses as
+   * `triviaSide` does, and an owner that is no engine of this
+   * language.
    */
-  writeTriviaSide(treeId: TreeId, index: NodeIndex, side: string, entries: object[]): void
+  writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
   /**
    * Whether a write replaced a side of a node under the node at
    * `index` of the live tree `treeId`, its own `inner` included, and
@@ -108,6 +122,14 @@ export declare class SittirEngine {
    * Refuses a tree that is not live and an index naming no node of it.
    */
   siblings(treeId: TreeId, index: NodeIndex): string
+  /**
+   * The text `span` covers in the source of the live tree `treeId`:
+   * one string of that span's characters, so the source itself
+   * never crosses. Refuses a tree that is not live and a span that
+   * is not one of its source's: past its end, reversed, or
+   * splitting a character.
+   */
+  text(treeId: number, span: { start: number; end: number }): string
   /**
    * Whether the node at `index` of the live tree `treeId` is empty:
    * no child of it has width. Refuses a tree that is not live and an
@@ -182,12 +204,164 @@ planHolds(addresses: string, plan: string): Array<boolean>
 render(node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
 renderToFile(node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
 /**
- * Release the engine. It holds no state of its own past its
- * options: the trees it parsed stay in the addon's table, since
- * they belong to whoever still names them.
+ * Release the engine: it lets go of its built arena's chunks
+ * (`holdBuiltArena`), so a record they hold no longer renders as
+ * a trivia entry. The trees it parsed stay in the addon's table,
+ * since they belong to whoever still names them.
  */
 dispose(): void
+/**
+ * r" The address of the record of the node at `index` of the live
+ * r" tree `treeId`: the one a read wrote, else the one its read
+ * r" `depth` levels down (one when absent, `Infinity` for all)
+ * r" writes now. Null for a node with no record: a parsed leaf, or
+ * r" an `ERROR` node. Refuses as `read` does.
+ */
+readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+/**
+ * r" Materializes the node at `index` in the live tree `treeId`
+ * r" to `depth` (one when absent, `Infinity` for all), including
+ * r" children of records already present. Returns only the root
+ * r" address, or null for a leaf or `ERROR`; record words remain
+ * r" native until a separate `chunk` call requests a copy.
+ */
+hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+/**
+ * r" The hydrated typed nodes below `index` in stored field
+ * r" order, as a JSON list of their rows' coordinates. Units and
+ * r" captured strings are omitted. Exports no node fields or
+ * r" words.
+ */
+recordCandidates(treeId: TreeId, index: NodeIndex): string
+/**
+ * r" The nodes at `indexes` of the live tree `treeId`, in order:
+ * r" each read as `read` reads it when `wire` is `object`, and,
+ * r" when it is `record`, each record's address as `readRecord`
+ * r" answers it, 0 for a node with no record, in one
+ * r" `Uint32Array`. Refuses as `read` does at the first index it
+ * r" refuses, and any other wire.
+ */
+readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+/**
+ * r" The record at `address` of the live tree `treeId` rendered, as
+ * r" `render` renders a node read from the tree: a render root
+ * r" whose `leading` and `trailing` edges have no neighbour, as
+ * r" the node crossing as its coordinate marks them, under
+ * r" `options` over the tree's layer over the engine's, each
+ * r" trivia entry's built record from its store's arena. Refuses
+ * r" a tree that is not live, an address naming no record of its
+ * r" arena, and a record whose render refuses.
+ */
+renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" The built node at `address` of the built arena `owner`
+ * r" holds (`holdBuiltArena`) rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, under
+ * r" `options` over this engine's, with the sides `owner` holds:
+ * r" the engine that built the arena, which its records' side
+ * r" writes went to. A leaf passes the `text` its cells hold; a
+ * r" compound record passes none. The arena's chunks are
+ * r" borrowed for this call; the records the root reaches are
+ * r" admitted, and the parsed trees they link held for the
+ * r" render (`Engine::render_built`). Refuses an arena `owner`
+ * r" no longer holds, an address naming no record its words
+ * r" admit, a linked tree that is not live, and a record whose
+ * r" render refuses.
+ */
+renderBuilt(owner: SittirEngine, address: number, text: BuiltText | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" Holds the chunks of the built arena whose records this
+ * r" engine's builders write, in place of the ones it held:
+ * r" `words` and `bytes`, and `written`, the words written of
+ * r" each words chunk and the bytes of each bytes chunk, which
+ * r" the arena keeps current. Each is held weakly; the arena
+ * r" owns them. A trivia entry this engine's store answers
+ * r" renders from them.
+ */
+holdBuiltArena(words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void
+/**
+ * r" The entries a write gave `side` (`leading`, `trailing` or
+ * r" `inner`) of the built record at `address`, or `null` when
+ * r" no write did. Refuses address 0 and any other side.
+ */
+builtTriviaSide(address: number, side: string): object[] | null
+/**
+ * r" The sides writes gave each unit the record at `address` in
+ * r" the arena this engine built holds: `{ slot, item, leading?,
+ * r" trailing?, inner? }`. Refuses an arena this engine no
+ * r" longer holds and an address naming no record in it.
+ */
+builtUnitSides(address: number): object[]
+/**
+ * r" The units the record at `address` in the arena this engine
+ * r" built holds have the sides `units` gives (`{ slot, item,
+ * r" leading?, trailing?, inner? }`), in place of every unit
+ * r" side it had; `renderBuilt` then writes them, and a built
+ * r" record among them renders as `writeTriviaSide` says.
+ * r" Refuses as `builtUnitSides` does, and a slot the record's
+ * r" kind has no cell for.
+ */
+writeBuiltUnitSides(address: number, units: object[]): void
+/**
+ * r" Replace `side` of the built record at `address` with
+ * r" `entries`, which `renderBuilt` then writes; a built record
+ * r" among them renders as `writeTriviaSide` says. Refuses as
+ * r" `builtTriviaSide` does.
+ */
+writeBuiltTriviaSide(address: number, side: string, entries: object[]): void
+/**
+ * r" Renders the parsed candidate at row `index` without exporting
+ * r" its data or its outer trivia: the row's record, or, for a
+ * r" recordless node, its native coordinate.
+ */
+renderCandidate(treeId: number, index: number, options?: object | undefined | null): string
+/**
+ * r" The coordinate a read of the live tree `treeId` names the node
+ * r" at `index` by, as `[kind, end]`: the kind the read stamps on
+ * r" it and the row after its subtree (`ParsedTree::row_coordinate`),
+ * r" the one derivation a record view's coordinate takes. Refuses a
+ * r" tree that is not live and an index past its last node.
+ */
+coordinate(treeId: TreeId, index: NodeIndex): Array<number>
+/**
+ * r" The words records fill in chunk `n` of the live tree
+ * r" `treeId`'s arena, copied into a buffer JavaScript owns: a
+ * r" later read that appends to the chunk leaves the copy as it
+ * r" was. Refuses a tree that is not live and a chunk its arena
+ * r" does not hold.
+ */
+chunk(treeId: TreeId, n: number): Uint32Array
 }
+
+/**
+ * r" The bits of a packed record address or string offset below its
+ * r" chunk (`arena::CHUNK_SHIFT`).
+ */
+export const ARENA_CHUNK_SHIFT: number
+
+/** r" Words before an embedded child's own record header. */
+export const CELL_INLINE_HEADER_WORDS: number
+
+/** r" The tag word of an absent cell (`arena::cell::tag`). */
+export const CELL_TAG_ABSENT: number
+
+/** r" The tag word of a built leaf's cell, and of a built captured string's. */
+export const CELL_TAG_BUILT_LEAF: number
+
+/** r" The tag word of a cell naming a child's record. */
+export const CELL_TAG_CHILD: number
+
+/** r" The tag word of a coordinate cell. */
+export const CELL_TAG_COORDINATE: number
+
+/** r" The tag word of an embedded bounded child's record. */
+export const CELL_TAG_INLINE: number
+
+/** r" The tag word of a parsed leaf's cell, and of a parsed captured string's. */
+export const CELL_TAG_PARSED_LEAF: number
+
+/** r" The tag word of a unit's cell. */
+export const CELL_TAG_UNIT: number
 
 /** A child's position under its parent as JavaScript holds it: a whole number. */
 export type ChildPosition =
@@ -221,6 +395,34 @@ export declare function liveTreeCount(): number
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex =
   number
+
+/**
+ * r" A side record's fields before a list's delimiters setting, each
+ * r" one's mask bit and its words (`arena::side::field`).
+ */
+export const SIDE_FIELD_AT: number
+
+export const SIDE_FIELD_DELIMITER: number
+
+export const SIDE_FIELD_EDGES: number
+
+export const SIDE_FIELD_SEPARATOR: number
+
+export const SIDE_FIELD_SEPARATOR_KIND: number
+
+export const SIDE_FIELD_SIDES: number
+
+export const SIDE_FIELD_SPAN: number
+
+export const SIDE_WORDS_AT: number
+
+export const SIDE_WORDS_EDGES: number
+
+export const SIDE_WORDS_SEPARATOR: number
+
+export const SIDE_WORDS_SIDES: number
+
+export const SIDE_WORDS_SPAN: number
 
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId =

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { materialize, slotAccessorOf, type LoadedNodeModel } from '../validate/common.ts';
+import { materialize, slotAccessorOf } from '../validate/common.ts';
 import { collectChildren } from '../exercise/walk.ts';
 
 const LIST_ITEMS = Symbol('items');
-const accessorOf = slotAccessorOf({ slotAccessors: { owner: { _body: 'body' }, leaf: {} } } as unknown as LoadedNodeModel, (id) => (id === 7 ? 'owner' : id === 3 ? 'leaf' : undefined));
+const accessorOf = slotAccessorOf({ 7: [['body', 0, undefined, '_body']] }, { listSeparators: {} }, (id) => (id === 7 ? 'owner' : id === 3 ? 'leaf' : undefined));
 
 const leaf = (text: string) => ({
 	$type: 3,
@@ -34,8 +34,8 @@ const owner = (child: ReturnType<typeof leaf>) => ({
 	$engine: undefined
 });
 
-describe('the tools walkers select a node by key', () => {
-	it('materialize copies storage and $ metadata only', () => {
+describe('the tools walkers read a node through its model slots\' accessors', () => {
+	it('materialize copies $ metadata and each model slot as its accessor reads it', () => {
 		expect(materialize(owner(leaf('a')), accessorOf)).toEqual({
 			$type: 7,
 			
@@ -44,7 +44,7 @@ describe('the tools walkers select a node by key', () => {
 		});
 	});
 
-	it('collectChildren calls the readers of the node and no other member', () => {
+	it('collectChildren calls the model slots\' accessors and no other member', () => {
 		const child = leaf('a');
 		expect(collectChildren(owner(child) as never, accessorOf)).toEqual([child]);
 	});
@@ -56,6 +56,6 @@ describe('the tools walkers select a node by key', () => {
 
 	it('refuses a slot whose model-named accessor the node does not have as a reader', () => {
 		const { body: _body, ...withoutReader } = owner(leaf('a'));
-		expect(() => materialize(withoutReader, accessorOf)).toThrow('owner stores _body, but has no reader body()');
+		expect(() => materialize(withoutReader, accessorOf)).toThrow('stores _body, but has no reader body()');
 	});
 });

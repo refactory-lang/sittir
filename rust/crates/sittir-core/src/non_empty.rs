@@ -27,6 +27,12 @@ impl<T> NonEmptyVec<T> {
     }
 }
 
+impl<T> From<NonEmptyVec<T>> for Vec<T> {
+    fn from(items: NonEmptyVec<T>) -> Self {
+        items.0
+    }
+}
+
 impl<T> Deref for NonEmptyVec<T> {
     type Target = [T];
     fn deref(&self) -> &[T] {

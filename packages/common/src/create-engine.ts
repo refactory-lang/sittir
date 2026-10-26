@@ -22,14 +22,16 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, engineOf, inEngine, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { metricsEnabled, recordFfi } from './metrics.ts';
-import { checkInput, verifyStructure } from './verify-structure.ts';
+import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
+import { BuiltArena, type BuiltViews } from './built-arena.ts';
+import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { reviveNode } from './node-json.ts';
-import { createRenderHandle } from './engine.ts';
+import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
 
@@ -76,7 +78,10 @@ function refuseUnimplemented(options: EngineOptions<LanguageAPI, ApiSurface> | u
 function nativeEngineOptions<API extends LanguageAPI>(
 	options: EngineOptions<API, ApiSurface> | undefined
 ): NativeEngineOptions<API['options']> {
-	return options?.render === undefined ? {} : { options: options.render };
+	return {
+		...(options?.render === undefined ? {} : { options: options.render }),
+		...(options?.nodeStorage === undefined ? {} : { nodeStorage: options.nodeStorage })
+	};
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
@@ -153,11 +158,33 @@ function interceptedRender<Call>(
 }
 
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
+const recordConstruction = new WeakMap<object, (records: object) => void>();
+
+/**
+ * Makes the builders of `engine`, an engine reading trees as records, dispatch to `records`, the language's record
+ * builder module (`factories/records.ts`), from now on, so every node it builds is a view of its record. Internal:
+ * the construction switch tests and measurements use until an arena engine loads the record builders itself.
+ *
+ * @throws When `engine` was not made by `createEngine` with `nodeStorage: 'arena'`.
+ */
+export function useRecordConstruction(engine: object, records: object): void {
+	const use = recordConstruction.get(engine);
+	if (use === undefined) throw new Error("useRecordConstruction: the engine was not made by createEngine with nodeStorage 'arena'");
+	use(records);
+}
 
 export function scopeBuilders<T extends object>(engine: object, table: T): T {
 	const scope = builderScopes.get(engine);
 	if (scope === undefined) throw new Error('scopeBuilders: the engine was not made by createEngine');
 	return scope(table);
+}
+
+function storedVerifierOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: StructureTable, membership: KindMembership): EngineHandle['verifyStored'] {
+	if (mode !== 'runtime') return undefined;
+	return (kind, stored) => {
+		const row = table[kind];
+		if (row !== undefined) checkRow(stored, row, membership);
+	};
 }
 
 function settlerOf(
@@ -194,10 +221,14 @@ function assembleEngine<API extends LanguageAPI>(
 		trivia: hooks.trivia,
 		portable: hooks.portable
 	});
+	stampEngineStorage(identity, options?.nodeStorage ?? 'object');
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
+		querySlots: hooks.querySlots,
+		structure: hooks.structure,
 		settle: settlerOf(options?.verifyStructure, hooks.structure, hooks.membership),
+		verifyStored: storedVerifierOf(options?.verifyStructure, hooks.structure, hooks.membership),
 		admit: admitterOf(options?.verifyStructure, hooks.structure)
 	};
 	const interceptors = options?.intercept ?? [];
@@ -247,7 +278,7 @@ function assembleEngine<API extends LanguageAPI>(
 		reviver: (key, value) =>
 			key !== ''
 				? value
-				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, build: hooks.buildByKind, settle: handle.settle })),
+				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, structure: hooks.structure, build: hooks.buildByKind, settle: handle.settle })),
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (
@@ -268,9 +299,9 @@ function assembleEngine<API extends LanguageAPI>(
 		query: ((node: object) => {
 			if (handle.current !== engine)
 				throw new Error('query: engine disposed; parse the source again with a live engine');
-			const stamp = engineOf(node);
-			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
-				throw new Error(`cannot query a ${stamp.language.name} node through a ${language.name} engine`);
+			const foreign = foreignEngine(node, identity);
+			if (foreign !== undefined) {
+				throw new Error(`cannot query a ${foreign.language.name} node through a ${language.name} engine`);
 			}
 			return queryFacet(node, queryHooks);
 		}) as Engine<API>['query'],
@@ -279,9 +310,9 @@ function assembleEngine<API extends LanguageAPI>(
 		},
 		render(node: RenderArgument<API>, renderOptions?: API['options']) {
 			const target = typeof node === 'function' ? node(build) : node;
-			const stamp = engineOf(target);
-			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
-				throw new Error(`cannot render a ${stamp.language.name} node through a ${language.name} engine`);
+			const foreign = foreignEngine(target, identity);
+			if (foreign !== undefined) {
+				throw new Error(`cannot render a ${foreign.language.name} node through a ${language.name} engine`);
 			}
 			const rendered = native.render(target, renderOptions);
 			if (renderChain === undefined) {
@@ -310,7 +341,17 @@ function assembleEngine<API extends LanguageAPI>(
 	};
 	handle.current = engine;
 	const frozen = Object.freeze(engine);
+	stampEngineStorage(frozen, options?.nodeStorage ?? 'object');
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
+	const built = nativeBuiltRecords(native);
+	if (built !== undefined) {
+		recordConstruction.set(frozen, (records) => {
+			const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
+			if (views === undefined) throw new Error('useRecordConstruction: the records module exports no builtViews');
+			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views);
+			handle.records = records;
+		});
+	}
 	return frozen;
 }
 

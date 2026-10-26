@@ -1,0 +1,19 @@
+[package]
+name = "eager-builder-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "=3.14.2", default-features = false, features = ["napi4"] }
+napi-derive = "3"
+sittir-core = { path = "../../../../../../rust/crates/sittir-core", features = ["arena", "napi-bindings"] }
+sittir-rust = { path = "../../../../../../rust/crates/sittir-rust", features = ["arena"], default-features = false }
+
+[build-dependencies]
+napi-build = "2"

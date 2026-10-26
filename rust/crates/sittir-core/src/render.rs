@@ -17,6 +17,9 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// A record's cell or word that no record writer writes, met by a view.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
 }
 
 impl fmt::Display for RenderError {
@@ -25,6 +28,8 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -39,6 +44,10 @@ impl From<fmt::Error> for RenderError {
 
 impl From<CoordinateError> for RenderError {
     fn from(e: CoordinateError) -> Self {
+        #[cfg(feature = "arena")]
+        if let CoordinateError::Record(e) = e {
+            return Self::Record(e);
+        }
         Self::Coordinate(e)
     }
 }
@@ -142,6 +151,16 @@ pub trait SourceTable {
         }
     }
 
+    /// The levels the node a coordinate names opens net of those it closes:
+    /// its tree's depth members (`SurfaceKinds::indent`, `dedent`) counted
+    /// over its subtree. A slice moves the writer's depth by it, as the
+    /// node's template would. A coordinate whose handle names a node other
+    /// than its own span, and a table of bare sources, answer none.
+    fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {
+        let _ = coord;
+        0
+    }
+
     /// The sides of the node a coordinate names, as its tree's trivia table
     /// and writes give them (`ParsedTree::trivia_side`), or `None` when it has
     /// none. A table of bare sources knows no sides.
@@ -214,7 +233,26 @@ pub trait SourceTable {
         let _ = tree;
         None
     }
+
+    /// Renders the built record `record`, which the store `held` answered,
+    /// into `w` as a trivia entry in the side that holds it, from the arena
+    /// that wrote it, under `options`. A table that reaches no arena
+    /// refuses.
+    ///
+    /// # Errors
+    ///
+    /// What the record's render refuses, and `RenderError::Record` when no
+    /// arena is reachable from here.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (record, held, options, w);
+        Err(RenderError::Record(NO_ARENA))
+    }
 }
+
+/// The refusal of a record entry rendered where no arena is reachable.
+#[cfg(feature = "arena")]
+pub(crate) const NO_ARENA: crate::arena::ArenaError = crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable");
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
 /// a coordinate is only meaningful beside the tree that minted it, and the
@@ -237,6 +275,17 @@ pub enum CoordinateError {
         handle: crate::types::TreeHandle,
         detail: String,
     },
+    /// A record's cell or word that no record writer writes, met by a
+    /// record's prepare.
+    #[cfg(feature = "arena")]
+    Record(crate::arena::ArenaError),
+}
+
+#[cfg(feature = "arena")]
+impl From<crate::arena::ArenaError> for CoordinateError {
+    fn from(e: crate::arena::ArenaError) -> Self {
+        Self::Record(e)
+    }
 }
 
 impl fmt::Display for CoordinateError {
@@ -248,6 +297,8 @@ impl fmt::Display for CoordinateError {
             ),
             Self::BadSpan { handle, detail } => write!(f, "handle {handle}: {detail}"),
             Self::Unread { handle, detail } => write!(f, "handle {handle}: the node holds a write, and its read failed: {detail}"),
+            #[cfg(feature = "arena")]
+            Self::Record(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -353,7 +404,8 @@ pub trait RenderSink {
         self.seam(gap);
     }
     /// Write the bytes a coordinate names, from the tree table this writer
-    /// holds. The default refuses: a sink with no source table cannot answer
+    /// holds, and move the depth as the node's template would
+    /// (`SourceTable::depth_move`). The default refuses: a sink with no source table cannot answer
     /// a coordinate, and answering it as empty would silently delete source.
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> RenderResult {
         Err(CoordinateError::UnknownTree {
@@ -374,6 +426,20 @@ pub trait RenderSink {
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, CoordinateError> {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
+    }
+    /// Writes the built record `record`, which the store `held` answered, as
+    /// a trivia entry here, through this sink's tree table
+    /// (`SourceTable::render_record_entry`). Refuses a sink that holds no
+    /// table or no options.
+    ///
+    /// # Errors
+    ///
+    /// `RenderError::Record` for a sink that cannot reach the record's
+    /// arena, and what the table refuses.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> RenderResult {
+        let _ = (record, held);
+        Err(RenderError::Record(NO_ARENA))
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.

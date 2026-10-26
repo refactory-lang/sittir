@@ -105,6 +105,7 @@ import {
 	splicedEnvelopeType,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
+	listOptionStorageMembers,
 	type BuiltTypeSurface
 } from './factories.ts';
 import { resolveBitflagConstName } from './consts.ts';
@@ -1016,6 +1017,7 @@ function emitInterface(
 				lines.push(`  readonly ${f.storageKey}${opt}: ${storageType};`);
 			}
 		}
+		if (node instanceof AssembledList) lines.push(...listOptionStorageMembers(separatedListSurface(node, nodeMap, kindEntries)));
 		lines.push('  readonly __slotNames__?: {');
 		for (const f of slots) lines.push(`    readonly ${f.storageKey}: ${JSON.stringify(f.propertyName)};`);
 		lines.push('  };');

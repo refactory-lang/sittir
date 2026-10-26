@@ -1,4 +1,5 @@
 import { beforeAll, describe, it, expect } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { link } from '../link.ts';
 import { linkPredicted } from '../../__tests__/helpers/linked.ts';
 import { normalizeGrammar } from '../normalize.ts';
@@ -17,7 +18,7 @@ for (const grammar of ['python', 'rust', 'typescript']) {
 	beforeAll(async () => {
 		upstream[grammar] = await evaluatePackage(grammarPackage(grammar), { base: true });
 		authored[grammar] = await evaluatePackage(grammarPackage(grammar));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 }
 
 describe('Evaluate — real tree-sitter grammars', () => {

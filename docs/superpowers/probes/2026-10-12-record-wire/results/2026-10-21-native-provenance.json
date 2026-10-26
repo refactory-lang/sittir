@@ -1,0 +1,150 @@
+{
+  "baseCommit": "a57d72e652c84633f0b959fb16076766843657ad",
+  "snapshot": "/private/tmp/sittir-native-only-a67p85cc",
+  "snapshotOverlaySha256": "3700902fff0dce2f9c8e75d17b78bbc915c144602f5cce3676e9620b68bb1bfd",
+  "overlayScope": [
+    "packages/cli/src/commands/tool/bench-storage.ts",
+    "packages/common/src/engine.ts",
+    "packages/python/native/index.d.ts",
+    "packages/regex/native/index.d.ts",
+    "packages/rust/native/index.d.ts",
+    "packages/scm/native/index.d.ts",
+    "packages/tools/src/profile/native-hydration-worker.ts",
+    "packages/tools/src/profile/native-hydration.ts",
+    "packages/tools/src/profile/storage-common.ts",
+    "packages/tools/src/profile/storage-worker.ts",
+    "packages/tools/src/profile/storage.ts",
+    "packages/tools/src/validate/layout-runs.ts",
+    "packages/tools/tests/native-hydration.test.ts",
+    "packages/tools/tests/storage-bench.test.ts",
+    "packages/typescript/native/index.d.ts",
+    "rust/crates/sittir-core/src/arena/parsed.rs",
+    "rust/crates/sittir-core/src/arena/write.rs",
+    "rust/crates/sittir-core/src/napi_engine.rs",
+    "rust/crates/sittir-node-macros/src/write.rs",
+    "rust/crates/sittir-parity-tests/tests/record_render.rs",
+    "rust/crates/sittir-parity-tests/tests/record_write.rs"
+  ],
+  "implementationFilesSha256": {
+    "packages/cli/src/commands/tool/bench-storage.ts": "751a16c15000a7379b358fbb7b7eef789eb4b6889bda15a0fb7268ddd7dfb103",
+    "packages/common/src/engine.ts": "fb48f50196e4b4217043364ef0b1efce74d95bbd7858ba449e589be87fb44da9",
+    "packages/tools/src/profile/storage.ts": "61abdbb208bf6183662683d86de7f6dd8b952ec62ba35c38dbad0400f5750b19",
+    "packages/tools/src/validate/layout-runs.ts": "7f77200b71e64a02d7dfc8535717e23fdd3507f35c105638330d9d562e753d3a",
+    "packages/tools/tests/storage-bench.test.ts": "26383ec93ed0747042493c5575d3c3edfa80eff15f61458ae04d4fc77f1b6a71",
+    "rust/crates/sittir-core/src/arena/parsed.rs": "c2415061ad694fd2058a81319f4f07ed68378a2d126c3debf527c416dd8bfc4e",
+    "rust/crates/sittir-core/src/arena/write.rs": "6c70657ea01e2e9a5f95e747d51be2a98be87b22cfa0e1c37dfdaaec340ac96b",
+    "rust/crates/sittir-core/src/napi_engine.rs": "8f836a653a7dd36c3d336701d910f3cd5eafea43e336c4931301a26b7458a376",
+    "rust/crates/sittir-node-macros/src/write.rs": "daf74eb86afc4e63fae69b51691bd308eacb563c68e49516ed2a4dec291a2ae8",
+    "rust/crates/sittir-parity-tests/tests/record_render.rs": "6fdf530f523bc391596a620613feed0cc64694861069e99427e49b7772232930",
+    "rust/crates/sittir-parity-tests/tests/record_write.rs": "ba7e8c59a35224beb3a898ccdeb27de919761bda9498d0cd8f9aad743312ed39",
+    "packages/tools/src/profile/native-hydration-worker.ts": "3c58b395240a1c34e87b8d312b18a9d3edd8b84ddd7a4532b53d78f380757391",
+    "packages/tools/src/profile/native-hydration.ts": "05b02fae658493c8e4ef98530cd71999375cc5fd46b2a1ea42e4ff5c923f1fc7",
+    "packages/tools/src/profile/storage-common.ts": "5465881fb2702522644f7fd8f2ce4da921e015bd511d413d3dd4b597180f0eb9",
+    "packages/tools/tests/native-hydration.test.ts": "f66467e1d58f85f3a7e144c7c4b7a492d0146a2faaa371c8b09394d373310dc0",
+    "packages/python/native/index.d.ts": "3d8ce0a7f8fce66bf8824c4d56cddfd5ebb30c34fd3a8852c95a653ca9604b46",
+    "packages/regex/native/index.d.ts": "3d8ce0a7f8fce66bf8824c4d56cddfd5ebb30c34fd3a8852c95a653ca9604b46",
+    "packages/rust/native/index.d.ts": "3d8ce0a7f8fce66bf8824c4d56cddfd5ebb30c34fd3a8852c95a653ca9604b46",
+    "packages/scm/native/index.d.ts": "3d8ce0a7f8fce66bf8824c4d56cddfd5ebb30c34fd3a8852c95a653ca9604b46",
+    "packages/typescript/native/index.d.ts": "3d8ce0a7f8fce66bf8824c4d56cddfd5ebb30c34fd3a8852c95a653ca9604b46"
+  },
+  "removedImplementationFiles": [
+    "packages/tools/src/profile/storage-worker.ts"
+  ],
+  "nativeAddonsSha256": {
+    "packages/python/native/sittir-python.darwin-arm64.node": "52d65013d60b6e317784ff65b67448d0cfadf23926875851065c58b3c069f814",
+    "packages/typescript/native/sittir-typescript.darwin-arm64.node": "420c828ef3cf2ed12ecf7cf6c7e8c14a83467995131eb82277633cdf86ac823a",
+    "packages/rust/native/sittir-rust.darwin-arm64.node": "6c84044885d921d678ec6718f69655919d26482d999c1473847c54fde1c10af9",
+    "packages/regex/native/sittir-regex.darwin-arm64.node": "d79b4b3b6c7570a11c6b7c180a43a65ac8c3e40f28d5ca5391875a2925053ba1",
+    "packages/scm/native/sittir-scm.darwin-arm64.node": "ffc65d03fb4836dec128588f4d830de3b92f3900a2430191e7742df778743d81"
+  },
+  "compiledHarnessSha256": "58e757dbdbbf911cf821efc43961acab0d1b31fcc91091d540fd9e63e67c844c",
+  "rawReportsSha256": {
+    "2026-10-21-native-depth-all-darwin-arm64.json": "22d6843ddafb83352b914d42ffc0425077e7234ba9a6869f6288349da96fac8d",
+    "2026-10-21-native-depth-2-darwin-arm64.json": "bf7373a756160a3005fac8d90c921ad9611b14996400529a1bef79815b282f65"
+  },
+  "commands": {
+    "all": [
+      "node",
+      "packages/cli/dist/cli.js",
+      "tool",
+      "bench-storage",
+      "--rounds",
+      "5",
+      "--warmup",
+      "2",
+      "--iterations",
+      "3",
+      "--idle-gate",
+      "docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh",
+      "--output",
+      "/private/tmp/sittir-native-only-a67p85cc/native-depth-all.json"
+    ],
+    "2": [
+      "node",
+      "packages/cli/dist/cli.js",
+      "tool",
+      "bench-storage",
+      "--native-depth",
+      "2",
+      "--rounds",
+      "5",
+      "--warmup",
+      "2",
+      "--iterations",
+      "3",
+      "--idle-gate",
+      "docs/superpowers/probes/2026-10-01-shared-arena/timing/idle.sh",
+      "--output",
+      "/private/tmp/sittir-native-only-a67p85cc/native-depth-2.json"
+    ]
+  },
+  "environment": {
+    "node": "v26.12.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "os": "27.2.0",
+    "cpu": "Apple M4 Pro",
+    "cpuCount": 14,
+    "cwd": "/private/tmp/sittir-native-only-a67p85cc",
+    "nodeEnv": "production",
+    "idleGated": true,
+    "harnessSha256": "58e757dbdbbf911cf821efc43961acab0d1b31fcc91091d540fd9e63e67c844c"
+  },
+  "verification": {
+    "allStatisticsRecomputed": true,
+    "sameCorpusAcrossDepths": true,
+    "sameOutputAcrossDepths": true,
+    "sourceAndNativeHashesMatch": true,
+    "compiledHarnessHashVerified": true,
+    "runs": {
+      "all": {
+        "startedAt": "2026-10-21T19:56:32.516Z",
+        "finishedAt": "2026-10-21T19:57:41.682Z",
+        "sampleCount": 25,
+        "uniqueWorkerProcesses": 25,
+        "idlePercentRange": [
+          76,
+          90
+        ],
+        "pipelineEntries": 440,
+        "hydrationRefusals": 0,
+        "renderRefusals": 0
+      },
+      "2": {
+        "startedAt": "2026-10-21T19:57:42.058Z",
+        "finishedAt": "2026-10-21T19:59:32.269Z",
+        "sampleCount": 25,
+        "uniqueWorkerProcesses": 25,
+        "idlePercentRange": [
+          78,
+          89
+        ],
+        "pipelineEntries": 440,
+        "hydrationRefusals": 0,
+        "renderRefusals": 0
+      }
+    },
+    "uniqueWorkerProcesses": 50
+  },
+  "method": "Sequential native parse, hydrateRecord and renderRecord on the same fresh trees; no JS node inspection or chunk copies. Full depth is the default command. Normal source folding enabled. Retained memory sampled after hydration and before render preflight; process-level deltas include harness metadata and native allocator effects."
+}

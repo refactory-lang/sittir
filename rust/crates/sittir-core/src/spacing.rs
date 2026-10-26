@@ -138,6 +138,21 @@ pub enum SeamStrength {
     Trivia = 4,
 }
 
+impl SeamStrength {
+    /// The strength whose discriminant is `code`.
+    #[must_use]
+    pub const fn from_code(code: u8) -> Option<Self> {
+        match code {
+            0 => Some(Self::Fallback),
+            1 => Some(Self::Cascade),
+            2 => Some(Self::Declared),
+            3 => Some(Self::Slot),
+            4 => Some(Self::Trivia),
+            _ => None,
+        }
+    }
+}
+
 /// The rank of a seam's text: empty 2, no break 1, otherwise 2 plus the number
 /// of logical breaks (`\r\n` counts once).
 #[must_use]
@@ -327,7 +342,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
     /// Records the line breaks the render writes at each gap into
     /// `baseline`, when one is given (`baseline::Recorder`).
     #[must_use]
-    pub fn with_recording(mut self, baseline: Option<&'a std::cell::RefCell<crate::baseline::Baseline>>) -> Self {
+    pub fn with_recording(mut self, baseline: Option<&'a mut crate::baseline::Baseline>) -> Self {
         self.recorder = baseline.map(crate::baseline::Recorder::new);
         self
     }
@@ -1079,10 +1094,17 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let mut frames = sources.frames(coord);
         if let Some(options) = self.options {
             for frame in frames.iter_mut() {
-                frame.prepare(&crate::prepare::RenderContext { options, sources, recording: None })?;
+                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
             }
         }
         Ok(frames)
+    }
+
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> crate::render::RenderResult {
+        let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
+        let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
+        sources.render_record_entry(record, held, options, self)
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
@@ -1161,6 +1183,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
             recorder.wrote_slice(coord.index);
         }
         self.end_leaf();
+        let moved = sources.depth_move(coord);
+        for _ in 0..moved.unsigned_abs() {
+            if moved > 0 {
+                crate::render::RenderSink::indent(self);
+            } else {
+                crate::render::RenderSink::dedent(self, LayoutKinds::NONE);
+            }
+        }
         Ok(())
     }
 

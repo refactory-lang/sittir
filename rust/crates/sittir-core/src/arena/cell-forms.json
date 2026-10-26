@@ -1,0 +1,113 @@
+{
+	"cells": [
+		{ "form": "absent", "words": [0] },
+		{ "form": "coordinate", "kind": 12, "index": 40, "start": 3, "end": 7, "words": [1, 12, 40, 3, 7] },
+		{ "form": "parsedLeaf", "kind": 13, "start": 3, "end": 7, "row": 41, "words": [2, 13, 3, 7, 41] },
+		{ "form": "parsedText", "start": 3, "end": 7, "words": [2, 0, 3, 7] },
+		{
+			"form": "child",
+			"kind": 14,
+			"at": 3145737,
+			"link": null,
+			"leading": false,
+			"trailing": false,
+			"words": [3, 14, 3145737, 0, 0]
+		},
+		{
+			"form": "child",
+			"kind": 14,
+			"at": 3145737,
+			"link": null,
+			"leading": false,
+			"trailing": true,
+			"words": [3, 14, 3145737, 0, 2]
+		},
+		{
+			"form": "child",
+			"kind": 14,
+			"at": 3145737,
+			"link": 0,
+			"leading": false,
+			"trailing": false,
+			"words": [3, 14, 3145737, 1, 0]
+		},
+		{
+			"form": "child",
+			"kind": 14,
+			"at": 3145737,
+			"link": 9,
+			"leading": true,
+			"trailing": false,
+			"words": [3, 14, 3145737, 10, 1]
+		},
+		{
+			"form": "child",
+			"kind": 14,
+			"at": 3145737,
+			"link": 9,
+			"leading": true,
+			"trailing": true,
+			"words": [3, 14, 3145737, 10, 3]
+		},
+		{ "form": "unit", "kind": 15, "row": null, "words": [4, 15, 0] },
+		{ "form": "unit", "kind": 15, "row": 0, "words": [4, 15, 1] },
+		{ "form": "unit", "kind": 15, "row": 42, "words": [4, 15, 43] },
+		{ "form": "unit", "kind": 0, "row": null, "words": [4, 0, 0] },
+		{
+			"form": "builtLeaf",
+			"kind": 16,
+			"offset": 1048581,
+			"len": 4,
+			"record": 3145737,
+			"words": [5, 16, 1048581, 4, 3145737]
+		},
+		{
+			"form": "builtLeaf",
+			"kind": 65535,
+			"offset": 1048581,
+			"len": 4,
+			"record": 3145737,
+			"words": [5, 65535, 1048581, 4, 3145737]
+		},
+		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] }
+	],
+	"inlineHeaderWords": 2,
+	"inlines": [
+		{
+			"address": 3145735,
+			"capacity": 2,
+			"kind": 14,
+			"at": 3145737,
+			"leading": false,
+			"trailing": false,
+			"words": [6, 0, 14, 0, 0]
+		},
+		{
+			"address": 1048577,
+			"capacity": 5,
+			"kind": 16,
+			"at": 1048579,
+			"leading": true,
+			"trailing": true,
+			"words": [6, 3, 16, 0, 0, 0, 0]
+		}
+	],
+	"lists": [
+		{ "run": 3145737, "len": 3, "words": [3145737, 3] },
+		{ "run": 0, "len": 0, "words": [0, 0] }
+	],
+	"sides": [
+		{
+			"row": { "index": 4, "end": 9, "start": 3, "endByte": 8 },
+			"delimiter": 2,
+			"words": [335, 4, 9, 3, 8, 0, 2147483679, 1, 2, 3, 0, 2, 5, 6, 10, 14, 7, 2]
+		},
+		{ "row": null, "delimiter": 0, "words": [256, 0] },
+		{ "row": { "index": 4, "end": 9, "start": 3, "endByte": 8 }, "delimiter": null, "words": [1, 4, 9, 3, 8] }
+	],
+	"addresses": [
+		{ "chunk": 0, "word": 2, "address": 2 },
+		{ "chunk": 3, "word": 9, "address": 3145737 },
+		{ "chunk": 4095, "word": 1048575, "address": 4294967295 }
+	]
+}

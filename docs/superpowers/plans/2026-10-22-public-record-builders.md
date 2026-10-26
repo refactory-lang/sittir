@@ -1,0 +1,193 @@
+# Public eager record builders
+
+The packed AST and arena-tables documents govern this work: the shared-arena
+design (§ Packed AST is definitive, § The wire, § Render, § Trivia) and the
+arena-tables plan's cutover outline ("Eager immutable built records are
+required"). The private construction probe in
+`docs/superpowers/probes/2026-10-12-record-wire/eager/` is the prototype, not
+public cutover evidence.
+
+## Accepted boundary
+
+- **Three builder modules from one generator.** `factories/objects.ts` holds
+  the object builders and `factories/records.ts` the record builders, with the
+  same names and signatures. Each builder's prelude (normalization, coercion,
+  admission and checks) comes from one emitter in both; then the object backend
+  writes the node literal and the record backend writes the record
+  (`record-construction.ts`). Both are fed one structured construction
+  contract. Neither backend reads the other's source text.
+- **`raw.ts` dispatches by engine.** Every module that calls builders imports
+  them from `factories/raw.ts`: coercion, bundles, overlays, IR, `from` and a
+  parsed node's `$with` rebuild. `raw.ts` re-exports `objects.ts` and replaces
+  each builder with one that runs the builder of the backend of the engine in
+  scope. The record builder module reaches an engine by `import()`, so a
+  process that never builds records never loads it. Inside one backend,
+  builders call their own backend directly.
+- **Storages do not mix.** A builder refuses a child from an engine of the
+  same language that stores its nodes differently, so an object node never
+  holds a record and a record never holds an object node.
+- **Literal record stores.** Codegen emits literal word offsets, widths,
+  presence bits, run strides and inline capacities from the one layout pass.
+  There are no runtime layout descriptors and no generic record writer.
+  Allocation, ownership and text interning are shared runtime helpers in
+  `@sittir/common`.
+- **Built views reuse the parsed record views.** The built arena supplies a
+  records reader over its JS-owned chunks, so accessors have one derivation.
+  Only the members that differ are built-specific: `$with`, a rebuild that
+  shares unchanged children; `$trivia`; and `$render`.
+- **Native reads JS-owned chunks per call.** Every grammar's addon borrows the
+  chunks for one synchronous render, admits the records it reaches, and holds
+  no span after the call (`BorrowedArena`, `admit`, `RecordGrammar::render_record`).
+- **Preserve everything the object path has:**
+  - parsed coordinate links;
+  - bounded inline children, lists and list settings;
+  - string interning, with the original builder string kept;
+  - trivia, provenance and retained views.
+
+## Where slices land
+
+Each slice is a PR stacked on the slice before it, and the stack lands in
+`feat/records`, the arena-storage branch, not in master. Master is merged into
+`feat/records` by a merge commit, never a rebase, followed by regeneration and
+the gate, at the start of each slice and whenever master moves.
+
+`feat/records` goes to master only when records are stable:
+
+- the switch slice is merged into it with its gates: both storages' complete
+  validation history unchanged, the corpus comparison in CI, and the record
+  builders at or above the eager probe in the `Arena benchmarks` workflow;
+- native parsed hydration writes records directly, without building typed
+  Rust nodes first;
+- unreferenced built records and chunks are reclaimed;
+- a deeply nested built tree renders, or refuses by name, on every storage, on
+  the main thread and in a Worker, and never ends the process.
+
+## Slices, each a PR stacked on the arena-storage PR
+
+Each slice is green on its own. Arena engines keep building objects until
+the last slice.
+
+- [x] **Record builders and parsed links.** `factories/records.ts`, generated
+  from the same construction contract as `objects.ts`, and the dispatching
+  `raw.ts`. `objects.ts` keeps today's builders. The shared runtime covers
+  chunks, allocation and interning. Record stores cover every constructible
+  kind: compounds, lists, text leaves, refinement forms and units. Built views
+  read them back. An internal switch (`useRecordConstruction`) gives an arena
+  engine the record backend for tests and `validate counts --construction
+  records`.
+  - Built records hold the untouched parsed children of their inputs by link,
+    as the native writer does: a compound by its record in the parsed tree, a
+    parsed leaf as a built leaf whose side record names its tree, row and
+    span. The arena holds each linked tree. The factory and IR storage rows
+    build every candidate over its parsed children, so they compare nothing
+    without links.
+  - Every non-render row must match object construction in all five grammars.
+    The built-render-parse row fails until the render bridge.
+- [x] **Native render bridge.** Every addon renders JS-owned chunks borrowed per call,
+  with admission, including the parsed trees a built record links. Render bytes
+  match the object path over the corpus.
+  - A built record in a side is held by reference, its kind and address, and
+    renders where the side renders, from its arena, with its own sides as its
+    neighbours.
+  - Every render reads through one table that answers every live tree.
+  - Sides nest at most 64 deep, the addon's stack-safety bound, with one
+    refusal on every storage.
+- [ ] **Trivia and edits.**
+  - Links to children read by another engine of the same language: a built
+    record holds such a child by link, renders it and rebuilds over it, and
+    renders after that engine is disposed.
+  - A built record written into a side of a node another engine of the
+    language holds names its owner, the engine whose arena wrote it. The side
+    renders it from that engine's arena, with the sides that engine wrote on
+    it, and reads it back as its builder's node. The holder's table keeps that
+    arena and its engine alive while the side holds the record; the store keeps
+    the other engine's store weakly.
+  - Written sides go to the native store. So do a built record's unit sides,
+    from a JSON revival or a rebuild, which carries them realigned to where
+    their units moved; the store is the only copy, and the holder's table
+    keeps the arena of any record they hold.
+  - A parsed entry of a live tree crosses into any native table as its
+    coordinate, and the table holds that tree, so the entry's own sides are
+    read at render and it reads back as its parsed view. A parsed entry of
+    another language is refused by name at the write.
+  - A view the arena makes of a record from the record alone, once its
+    builder's object is collected, is the node its builder made. The arena
+    stamps every built node it adopts. A compound view's `$with` and `$trivia`
+    come from its kind's row, made lazily from the record: the row reads the
+    builder's input back from the record's slots and list settings, so a
+    builder binds no closure. A leaf is made anew from its cell's kind and
+    text by its kind's maker, the one its builder calls. The records module
+    hands the arena both, by kind.
+  - A builder's input shape (its config keys, options and positional list) is
+    the structure row its emitter writes beside the builder. One reader
+    (`builderInputs`) serves the JSON reviver and the rows.
+  - `$with` shares unchanged children and copies bounded ones.
+  - Disposal, growth and invalid buffers are covered.
+- [x] **Record views for every compound kind.** A kind that seats a group
+  has a record view. Each key the group lends its parent is a member, present
+  only while the group's cell is set, that reads the group's field through the
+  view, as the object path reads it through the stored group. Its `$with`
+  seats the key in the group, as the object path's does. The kinds this
+  covered are rust `last_match_arm`, `match_arm_block_ending`,
+  `match_arm_with_comma`, `match_block`, `parameters_elements_receiver` and
+  `use_wildcard`, typescript `catch_clause`, and python `slice`. Only a kind
+  with a slot the layout gives no cell would still have no view, and no
+  compound kind of the five grammars has one.
+- [ ] **Deep built trees.** Native prepare and render grow the stack on
+  demand at each node they descend into, so a deeply nested built tree renders
+  on the main thread and in a Worker. Render stays recursive descent and tracks
+  no depth. No napi or V8 call runs on a grown stack: a render borrows every
+  chunk it can reach before it can grow, as a fact of its types. The
+  side-nesting bound stays.
+- [ ] **Switch.** Arena engines load the record backend. Prove that construction calls no
+  object builder or serializer. Benchmark metadata names the construction
+  backend. Both storages' complete validation history must be unchanged, and
+  the corpus comparison runs in CI.
+  - A parsed `$with` on records that mixes a kept parsed child with a
+    records-built item throws `Missing field _content on BlockNode._statements`,
+    where both object storages render it: a parsed record view rebuilds as an
+    object node (`rowWith`), which then holds a record. Recheck once master's
+    alias-envelope change is carried up, since `_content` is the envelope
+    shape it removes.
+
+## Measurement
+
+Every slice is measured with the `Arena benchmarks` workflow, not local runs:
+the dispatcher is on master, and each run is dispatched at the slice's branch
+(`gh workflow run benchmarks.yml --ref <branch>`).
+
+- **Corpus job.** `sittir tool bench-storage --validation` pairs object and
+  arena engines over the complete validation buckets. Its factory and IR
+  buckets time construction (`build`) and render on each storage. From the
+  render bridge until the switch, `--construction records` gives the arena
+  arm's engines the record backend, so the same buckets compare the record
+  builders with the object builders. The report names the construction
+  backend.
+- **Eager job.** It measures the probe's private builders. It is the
+  baseline the public builders must match or beat: build, render, immutable
+  edit, and heap plus external memory over 10,000 builds.
+- A slice that moves a measured phase reports the workflow's paired summary
+  in its PR, with the run link.
+
+## Additional unfinished migration requirements
+
+These must not be mistaken for completed builder integration:
+
+- Native parsed hydration still creates typed Rust nodes before arena encoding;
+  direct Tree-sitter-to-record writing is unfinished.
+- Reclamation of unreferenced built records and chunks, and complete native
+  retained-memory attribution, are unfinished; append-only allocation is not
+  reclamation.
+- The final cutover retires the transitional object codec, the object
+  projection and the compatibility options, once correctness and performance
+  are accepted.
+- A built leaf written as a side entry (typescript's `html_comment`, the one
+  stamped trivia kind assembled as a pattern) crosses as its text, not as kind
+  and address: its record is a header, and its text is a span of the arena's
+  bytes that only its builder's reference names, so the address alone cannot
+  stamp it. Reading the side back gives a fresh node where object construction
+  gives the builder's. Every compound comment kind crosses as kind and address
+  and reads back as the builder's node.
+- The broader cutover outline also calls for native-only built trivia, parsed
+  unit identity and native file parsing. Audit their live implementations
+  before claiming the whole migration complete.

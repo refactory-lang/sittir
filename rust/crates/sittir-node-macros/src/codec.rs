@@ -48,7 +48,19 @@ fn is_option(ty: &Type) -> bool {
     crate::expand::last_segment(ty).as_deref() == Some("Option")
 }
 
-fn is_kind_key(key: &LitStr) -> bool {
+/// A list whose items may each be absent: `Vec<Option<_>>` or
+/// `NonEmptyVec<Option<_>>`, encoded through `boundary::holes`.
+fn holds_absent_items(ty: &Type) -> bool {
+    let Type::Path(path) = ty else { return false };
+    let Some(list) = path.path.segments.last() else { return false };
+    if list.ident != "Vec" && list.ident != "NonEmptyVec" {
+        return false;
+    }
+    let syn::PathArguments::AngleBracketed(args) = &list.arguments else { return false };
+    matches!(args.args.first(), Some(syn::GenericArgument::Type(item)) if is_option(item))
+}
+
+pub(crate) fn is_kind_key(key: &LitStr) -> bool {
     key.value() == "$type"
 }
 
@@ -115,6 +127,8 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
         let (name, key) = (field.ident, c_key(field.key)?);
         entries.push(if is_option(field.ty) {
             quote!(::sittir_core::boundary::present(env, #key, #name)?,)
+        } else if holds_absent_items(field.ty) {
+            quote!(::core::option::Option::Some((#key, ::sittir_core::boundary::holes(env, ::std::vec::Vec::from(#name))?)),)
         } else {
             quote!(::core::option::Option::Some((#key, #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, #name)?)),)
         });
@@ -250,6 +264,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         quote!(#ident::#name(unsafe { <#ty as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? }))
     };
     let (mut by_index, mut by_decodes, mut encodes) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut indices, mut claimed) = (Vec::new(), Vec::new());
     let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
     for variant in variants {
         let name = variant.name;
@@ -260,10 +275,12 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         };
         if let Some(i) = variant.index {
             by_index.push(quote!(::core::option::Option::Some(#i) => return ::core::result::Result::Ok(#value),));
+            indices.push(i);
         }
         if !variant.decodes.is_empty() {
             let ids = &variant.decodes;
             by_decodes.push(quote!(if [#(#ids),*].contains(&id) { return ::core::result::Result::Ok(#value); }));
+            claimed.extend(ids.iter());
         }
         if variant.blank {
             blank = quote!(if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(#ident::#name); });
@@ -302,7 +319,24 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     };
     let missing = format!("$type property missing in {owner}");
     let boxed = boxed(ident);
+    let mut decodes = Vec::new();
+    if !indices.is_empty() {
+        decodes.push(quote!(::core::matches!(__variant(id, id), ::core::option::Option::Some(#(#indices)|*))));
+    }
+    if !claimed.is_empty() {
+        decodes.push(quote!([#(#claimed),*].contains(&id)));
+    }
+    if variants.iter().any(|variant| variant.blank) {
+        decodes.push(quote!(id == ::sittir_core::types::KindId::BLANK));
+    }
+    let decodes = if decodes.is_empty() { quote!(false) } else { quote!(#(#decodes)||*) };
     Ok(gated(&quote! {
+        impl ::sittir_core::boundary::DecodesKind for #ident {
+            const OWNER: &'static str = #owner;
+            fn decodes(id: __Kind) -> bool {
+                #decodes
+            }
+        }
         unsafe fn __decode_id(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value, id: __Kind) -> #napi::Result<#ident> {
             match __variant(id, id) {
                 #(#by_index)*
@@ -310,7 +344,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
             }
             #(#by_decodes)*
             #blank
-            ::core::result::Result::Err(#napi::Error::from_reason(::std::format!("unknown kind id {id} in {}", #owner)))
+            ::core::result::Result::Err(#napi::Error::from_reason(::sittir_core::boundary::unknown_kind(id, #owner)))
         }
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
@@ -381,6 +415,7 @@ mod tests {
             #[node(kind = kind::LET_DECLARATION)]
             pub struct LetDeclarationNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_pattern")]
                 #[slot(field = field::PATTERN)]
@@ -407,8 +442,10 @@ mod tests {
             #[node(kind = kind::SELF, text = "self")]
             pub struct SelfNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
+                #[text]
                 pub text: String,
             }
         });
@@ -423,8 +460,10 @@ mod tests {
             #[node(kind = kind::IDENTIFIER, text)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
+                #[text]
                 pub text: String,
             }
         });
@@ -442,8 +481,10 @@ mod tests {
             #[node(kind = IDENTIFIER, text)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
+                #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "$text")]
+                #[text]
                 pub text: String,
             }
         };
@@ -468,7 +509,8 @@ mod tests {
         assert!(has(&out, "match __variant(id, id) { ::core::option::Option::Some(0u16) => return"));
         assert!(has(&out, "if [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id)"));
         assert!(has(&out, "if id == ::sittir_core::types::KindId::BLANK { return ::core::result::Result::Ok(PropertyNodeSlot::Blank); }"));
-        assert!(has(&out, r#"::std::format!("unknown kind id {id} in {}", "PropertyNodeSlot")"#));
+        assert!(has(&out, r#"::sittir_core::boundary::unknown_kind(id, "PropertyNodeSlot")"#));
+        assert!(has(&out, "::core::matches!(__variant(id, id), ::core::option::Option::Some(0u16 | 1u16)) || [kind::GET_KEYWORD, kind::SET_KEYWORD].contains(&id) || id == ::sittir_core::types::KindId::BLANK"));
         assert!(!has(&out, "if let ::core::result::Result::Ok("));
     }
 

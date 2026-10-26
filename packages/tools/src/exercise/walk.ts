@@ -1,24 +1,9 @@
-import type { AnyUntypedNode } from '@sittir/types';
-import { isCoordinate, type TreeHandle } from '@sittir/common/utils';
+import { isCoordinate } from '@sittir/common/utils';
 
 import { assertGrammar, type GrammarName } from '@sittir/codegen/grammars';
-import type { SlotAccessorOf } from '../validate/common.ts';
+import { slotValuesOf, type AccessorThrowRecord, type SlotAccessorOf } from '../validate/common.ts';
 
-interface CommonModule {
-	buildReadHandle(grammar: string, source: string): Promise<TreeHandle>;
-	loadNativeRender(grammar: string): Promise<(node: AnyUntypedNode) => string>;
-	readNodeOf(grammar: string): Promise<(tree: TreeHandle) => unknown>;
-	loadKindNameFromId(grammar: string): Promise<(id: number) => string>;
-	loadSlotAccessorOf(grammar: string): Promise<SlotAccessorOf>;
-	materialize(root: unknown, accessorOf: SlotAccessorOf, onAccessorThrow?: (rec: AccessorThrowRecord) => void): AnyUntypedNode;
-}
-
-interface AccessorThrowRecord {
-	readonly key: string;
-	readonly accessor: string;
-	readonly type: unknown;
-	readonly message: string;
-}
+type CommonModule = typeof import('../validate/common.ts');
 
 interface WalkNode {
 	readonly $type: number;
@@ -57,20 +42,7 @@ function resolveKindName(node: WalkNode, kindNameFromId: (id: number) => string)
 }
 
 export function collectChildren(node: WalkNode, accessorOf: SlotAccessorOf): unknown[] {
-	const children: unknown[] = [];
-	const members = node as unknown as Record<string, unknown>;
-	const { accessors } = accessorOf(node.$type);
-	const readers = new Set(Object.keys(members).flatMap((key) => (accessors[key] === undefined ? [] : [accessors[key]])));
-	for (const name of readers) {
-		const reader = members[name];
-		if (typeof reader !== 'function' || reader.length !== 0) continue;
-		try {
-			children.push(reader.call(node));
-		} catch {
-			// Ignore hydration failures; traversal is best-effort diagnostic output.
-		}
-	}
-	return children;
+	return slotValuesOf(node, accessorOf).map(([, value]) => value);
 }
 
 function walkTree(root: unknown, accessorOf: SlotAccessorOf, visit: (node: WalkNode) => void): void {

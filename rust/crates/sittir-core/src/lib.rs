@@ -28,11 +28,14 @@ pub mod query;
 pub mod non_empty;
 pub use non_empty::NonEmptyVec;
 pub mod read;
+#[cfg(feature = "arena")]
+pub mod arena;
 pub mod record;
 pub mod render;
 pub mod slot;
 pub mod spacing;
 pub mod trivia;
+pub mod trivia_store;
 pub mod types;
 pub mod verbatim;
 pub mod view;
@@ -76,6 +79,25 @@ macro_rules! napi_codec {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! napi_codec {
+    ($($item:item)*) => {};
+}
+
+/// The items of a derived node's record writer (`arena::WriteCell`), kept
+/// only when this crate is built with the arena, so a crate that derives
+/// `Node` needs no feature of its own.
+#[cfg(feature = "arena")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! records_codec {
+    ($($item:item)*) => { $($item)* };
+}
+
+/// The items of a derived node's record writer, dropped: this crate is
+/// built without the arena.
+#[cfg(not(feature = "arena"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! records_codec {
     ($($item:item)*) => {};
 }
 

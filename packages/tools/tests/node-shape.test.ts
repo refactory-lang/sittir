@@ -45,7 +45,7 @@ const classes: Record<string, () => object> = {
 	'python group seat': () => py.build.slice({})
 };
 
-const TRANSPORT_METADATA = new Set([
+const NODE_METADATA = new Set([
 	'$type',
 	'$named',
 	'$text',
@@ -64,7 +64,7 @@ const offenders = (value: unknown, path = '$'): string[] => {
 	const isNode = ['number', 'string'].includes(typeof (value as { $type?: unknown }).$type);
 	return Object.entries(value).flatMap(([key, entry]) => {
 		const stray =
-			!isNode || isStorageKey(key) || TRANSPORT_METADATA.has(key)
+			!isNode || isStorageKey(key) || NODE_METADATA.has(key)
 				? []
 				: [`${path}.${key} is neither storage nor $ metadata`];
 		return [...stray, ...offenders(entry, `${path}.${key}`)];

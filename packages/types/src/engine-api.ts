@@ -161,10 +161,6 @@ export interface NodeJSONFacts {
 	readonly units: ReadonlySet<number>;
 	/** The kind id an optional slot holds when it chose none. */
 	readonly blank: number;
-	/** The kinds whose builder takes their one repeated slot's items as its rest arguments, after its options: lists, and compounds with a sole repeated slot. */
-	readonly spread: ReadonlySet<number>;
-	/** Each kind's registered slots, by kind id: the slot names its builder takes in its options argument. */
-	readonly options: Readonly<Record<number, readonly string[]>>;
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {
@@ -234,8 +230,12 @@ export interface Language<API extends LanguageAPI> {
 	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
 }
 
+/** How a parsed tree's nodes cross from the native engine: as objects, or as records read in place (`EngineOptions.nodeStorage`). */
+export type NodeStorage = 'object' | 'arena';
+
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
 	readonly options?: O;
+	readonly nodeStorage?: NodeStorage;
 }
 
 /** The structure facts the generated types prove for one kind's built nodes, by slot storage key. An engine constructed with `verifyStructure: 'runtime'` checks them when a node is built or rebuilt. */
@@ -257,6 +257,8 @@ export interface StructureRow {
 	readonly config?: readonly string[];
 	/** `[propertyName, holes, arrival]`: a list the builder takes as input. `holes` lists admit absent items; `arrival` is `'key'` for a config key, or the index the items start at in the builder's arguments (1 after a leading options argument). */
 	readonly lists?: readonly (readonly [propertyName: string, holes: boolean, arrival: 'key' | number])[];
+	/** The slots the builder takes in its options argument, not its config or its items. */
+	readonly options?: readonly string[];
 }
 
 /** Each kind's {@link StructureRow} by kind id; a kind with nothing to check has no row. */
@@ -305,6 +307,7 @@ export interface ParsedRoot {
 
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
+	/** Parses and retains a tree; accessing `root` performs its first read. Keeping only `tree` exports no root data. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
 
@@ -506,6 +509,14 @@ export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = '
 	 * checks and read checks run in both modes.
 	 */
 	readonly verifyStructure?: 'compileTimeOnly' | 'runtime';
+	/**
+	 * How a parsed tree's nodes cross from the native engine. `'object'` (the default) reads each node as an object.
+	 * `'arena'` reads each node as a view over its record in the tree's native arena: its accessors read the record's
+	 * cells, and a node's text is one native call when read. Both give the same nodes, kinds and text.
+	 *
+	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
+	 */
+	readonly nodeStorage?: NodeStorage;
 }
 
 export interface Interceptor<API extends LanguageAPI> {

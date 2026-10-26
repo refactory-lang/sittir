@@ -1,6 +1,7 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
+import { TRIVIA_NODE } from './render-module.ts';
 
-export const NATIVE_RENDER_NODE_ABI = 25;
+export const NATIVE_RENDER_NODE_ABI = 26;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -29,10 +30,11 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["napi-bindings"]
 napi-bindings = ["dep:napi", "dep:napi-derive", "sittir-core/napi-bindings"]
+arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
-napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
+napi = { version = "3", default-features = false, features = ["napi8", "serde-json"], optional = true }
 napi-derive = { version = "3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -178,11 +180,12 @@ pub fn language() -> tree_sitter::Language {
     LANGUAGE.into()
 }
 
-#[cfg(feature = "napi-bindings")]
 use sittir_core::engine::EngineGrammar;
 
+use render::{render_node_parts, AnyNode, RENDER_MODULE_HASH};
+
 #[cfg(feature = "napi-bindings")]
-use render::{render_node_parts, AnyNode, RenderRoot, RENDER_MODULE_HASH};
+use render::RenderRoot;
 
 #[cfg(feature = "napi-bindings")]
 const NATIVE_RENDER_NODE_ABI: u32 = ${NATIVE_RENDER_NODE_ABI};
@@ -190,7 +193,6 @@ const NATIVE_RENDER_NODE_ABI: u32 = ${NATIVE_RENDER_NODE_ABI};
 #[derive(Clone, Copy, Default)]
 pub struct ${v.Name}Grammar;
 
-#[cfg(feature = "napi-bindings")]
 impl EngineGrammar for ${v.Name}Grammar {
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
         let language = crate::language();
@@ -215,7 +217,7 @@ impl EngineGrammar for ${v.Name}Grammar {
         render::kind_ids::relaxes
     }
 
-    type Trivia = render::node::TriviaNode;
+    type Trivia = render::node::${TRIVIA_NODE};
 
     fn whitespace(self) -> (&'static sittir_core::render::WhitespaceTable, &'static [sittir_core::types::KindId]) {
         (&render::options::WHITESPACE, render::options::LAYOUT_KINDS)
@@ -229,17 +231,17 @@ impl EngineGrammar for ${v.Name}Grammar {
         &<render::options::Sites as sittir_core::options::OptionSites>::TABLES
     }
 
-    fn read_units(self, tree: &tree_sitter::Tree, ctx: &sittir_core::read::ReadCtx<'_>, index: sittir_core::types::NodeIndex) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
+    fn read_units(self, tree: &tree_sitter::Tree, ctx: &mut sittir_core::read::ReadCtx<'_>, index: sittir_core::types::NodeIndex) -> Vec<sittir_core::layout::UnitSides<Self::Trivia>> {
         sittir_core::read::read_at::<AnyNode>(&mut tree.walk(), ctx, index, sittir_core::read::Depth::ONE)
             .ok()
             .and_then(|mut any| sittir_core::read::HasLayout::<Option<Box<sittir_core::layout::NodeLayout<Self::Trivia>>>>::take_layout(&mut any))
             .map_or_else(Vec::new, |layout| layout.units)
     }
 
-    fn render_read(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex, depth: sittir_core::read::Depth, ctx: &sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>) -> std::result::Result<String, String> {
+    fn render_read(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex, depth: sittir_core::read::Depth, ctx: &mut sittir_core::read::ReadCtx<'_>, render: &sittir_core::prepare::RenderContext<'_>, baseline: &mut sittir_core::baseline::Baseline) -> std::result::Result<String, String> {
         let node = sittir_core::read::read_at::<AnyNode>(&mut tree.walk(), ctx, index, depth)
             .map_err(|refusal| refusal.describe(&|kind| self.kind_name(kind)))?;
-        render_node_parts(sittir_core::SlotValue::Node(node), render).map(|(_, text)| text).map_err(|error| error.to_string())
+        render_node_parts(sittir_core::SlotValue::Node(node), render, Some(baseline)).map(|(_, text)| text).map_err(|error| error.to_string())
     }
 
     fn slot_routes(self, tree: &tree_sitter::Tree, index: sittir_core::types::NodeIndex) -> Option<sittir_core::read::Routed> {
@@ -252,6 +254,45 @@ impl EngineGrammar for ${v.Name}Grammar {
 
     fn unit_id(self, cursor: &mut tree_sitter::TreeCursor<'_>) -> Option<sittir_core::types::KindId> {
         <AnyNode as sittir_core::read::ReadNode>::unit_id(cursor)
+    }
+}
+
+sittir_core::records_codec! {
+    impl sittir_core::arena::RecordGrammar for ${v.Name}Grammar {
+        fn render_record(
+            self,
+            root: sittir_core::arena::CellAt,
+            trees: &mut dyn sittir_core::arena::RecordTrees,
+            built: &dyn sittir_core::arena::ArenaRead,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+        ) -> std::result::Result<String, sittir_core::render::RenderError> {
+            render::node::render_record(root, trees, built, store, ctx)
+        }
+
+        fn render_entry(
+            self,
+            root: sittir_core::arena::CellAt,
+            trees: &mut dyn sittir_core::arena::RecordTrees,
+            built: &dyn sittir_core::arena::ArenaRead,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+            w: &mut dyn sittir_core::render::RenderSink,
+        ) -> sittir_core::render::RenderResult {
+            render::node::render_entry_record(root, trees, built, store, ctx, w)
+        }
+
+        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
+            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
+        }
+
+        fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_key(kind, word)
+        }
+
+        fn slot_word(kind: sittir_core::types::KindId, key: &str) -> Option<u32> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_word(kind, key)
+        }
     }
 }
 

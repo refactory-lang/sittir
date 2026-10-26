@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import type { AnyUntypedNode } from '@sittir/types';
-import { carryTree, isCoordinate, sidesOf } from '@sittir/common/utils';
+import { carryReadTree, isCoordinate, sidesOf } from '@sittir/common/utils';
 import { loadNativeEngine, loadSlotAccessorOf, readNodeOf, materializeDetached, readNativeTree, nativeLanguageEngineOf } from '../common.ts';
 import { detachedRenderer } from './helpers/detached-renderer.ts';
 import { createEngine } from '@sittir/common';
@@ -53,7 +53,7 @@ describe('read trivia layout, rendered detached', () => {
 		const at = source.indexOf('+');
 		const comment = sidesOf(binary._right)?.leading?.find(isCoordinate);
 		if (comment === undefined) throw new Error('expected the comment as a coordinate');
-		binary._operator = carryTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
+		binary._operator = carryReadTree(comment, { $type: binary._operator, $treeHandle: comment.$treeHandle, $end: comment.$end, $span: { start: at, end: at + 1 } });
 		expect(engine.render(data as never as AnyUntypedNode).toString()).toBe(source);
 	});
 

@@ -8,16 +8,17 @@ const RECORD = {
 			kind: 'binary',
 			modelType: 'branch',
 			slots: [
-				{ name: 'left', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'expr' }] },
+				{ name: 'left', accessor: 'left', required: true, values: [{ kind: 'node-ref', multiplicity: 'single', parseKind: 'expr' }] },
 				{
 					name: 'operator',
+					accessor: 'operator',
 					required: true,
 					values: [
 						{ kind: 'terminal', multiplicity: 'single', value: '+' },
 						{ kind: 'node-ref', multiplicity: 'single', name: 'minus', parseKind: 'dash' }
 					]
 				},
-				{ name: 'argument', multiple: true, values: [{ kind: 'node-ref', multiplicity: 'array', parseKind: 'expr' }] }
+				{ name: 'argument', accessor: 'arguments', multiple: true, values: [{ kind: 'node-ref', multiplicity: 'array', parseKind: 'expr' }] }
 			]
 		},
 		{ kind: 'call_expression', renamedFrom: 'call', subtypes: [] },
@@ -26,7 +27,7 @@ const RECORD = {
 };
 
 describe('slotModelOf', () => {
-	it('reads each node\'s slots with their terminals, deriving what the record leaves out', () => {
+	it('reads each node\'s slots with their accessors and terminals, deriving the kinds the record leaves out', () => {
 		const model = slotModelOf(RECORD);
 		expect(model.get('binary')?.slots).toEqual([
 			{ name: 'left', propertyName: 'left', required: true, multiple: false, storage: 'verbatim', kinds: ['expr'], terminals: [] },

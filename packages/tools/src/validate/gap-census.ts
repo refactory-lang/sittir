@@ -4,7 +4,18 @@ import { sourceSpans, spanSlicer } from '@sittir/common';
 import { spanOf } from '@sittir/common/utils';
 import { computeRunCensus, renderRunCensus } from './gap-runs.ts';
 import { gapClassOf, type GapClass } from '../exercise/default-diff.ts';
-import { loadCorpusEntries, type CorpusEntry, loadKindNameFromId, loadLanguageForGrammar, loadNativeEngine, loadSlotAccessorOf, type SlotAccessorOf, type TSNode } from './common.ts';
+import {
+	loadCorpusEntries,
+	type CorpusEntry,
+	loadKindNameFromId,
+	loadLanguageForGrammar,
+	loadNativeEngine,
+	loadSlotAccessorOf,
+	slotValuesOf as storedValuesOf,
+	type SlotAccessorOf,
+	type TSNode,
+	type TypedNode as ReadNode
+} from './common.ts';
 
 function adjacentPairs<T extends object>(items: readonly T[]): [T, T][] {
 	const pairs: [T, T][] = [];
@@ -167,8 +178,7 @@ function emptyByShape(): Record<LossyShape, number> {
 	return Object.fromEntries(LOSSY_SHAPES.map((shape) => [shape, 0])) as Record<LossyShape, number>;
 }
 
-interface TypedNode {
-	readonly $type: number;
+interface TypedNode extends ReadNode {
 	readonly $with?: Record<string, ((...items: unknown[]) => { $render(): string }) | undefined>;
 }
 
@@ -199,21 +209,10 @@ const holdsMany = (owner: unknown, value: unknown): value is ArrayLike<unknown> 
 	isArrayLike(value) && (spanOf(value) === undefined || isArrayLike(owner));
 
 function* slotValuesOf(node: TypedNode, accessorOf: SlotAccessorOf): Generator<{ camel: string; values: unknown[]; many: boolean }> {
-	const record = node as unknown as Record<string, unknown>;
 	const { accessors } = accessorOf(node.$type);
-	const names = new Set([
-		...Object.getOwnPropertyNames(node).flatMap((key) => (accessors[key] === undefined ? [] : [accessors[key]])),
-		...Object.keys(node.$with ?? {})
-	]);
-	for (const camel of names) {
-		const read = record[camel];
-		if (typeof read !== 'function') continue;
-		let value: unknown;
-		try {
-			value = read.call(node);
-		} catch {
-			continue;
-		}
+	for (const [storageKey, value] of storedValuesOf(node, accessorOf, () => {})) {
+		const camel = accessors[storageKey];
+		if (camel === undefined) continue;
 		yield holdsMany(node, value) ? { camel, values: Array.from(value), many: true } : { camel, values: [value], many: false };
 	}
 }

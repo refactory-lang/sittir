@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { nodeText, placeOf, slotSeparatorOf, spanOf } from '@sittir/common/utils';
+import { listSeparatorOf, nodeText, placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -34,8 +34,10 @@ import {
 	loadLanguageForGrammar,
 	buildReadHandle,
 	walkWrappedTree,
-	materialize,
+	materializeBuildInput,
+	builtStorageOf,
 	loadSlotAccessorOf,
+	type SlotAccessorOf,
 	readNodeOf,
 	emitValidatorMetrics,
 	loadNodeModel,
@@ -65,6 +67,7 @@ import {
 } from './built-render.ts';
 import { KindCases, type CasesByKind } from './kind-cases.ts';
 import { sourceSpans } from '@sittir/common';
+import { measureRoundtrip, type RoundtripProfile } from './roundtrip-profile.ts';
 
 /**
  * Which factory surface a run builds through: `raw` calls each kind's raw
@@ -76,6 +79,7 @@ export type FactorySurface = 'raw' | 'ir';
 
 export interface ValidateFactoryStorageOptions {
 	readonly surface?: FactorySurface;
+	readonly profile?: RoundtripProfile;
 }
 
 /** Return the named tree-sitter child kinds for a parsed CST node, in source order. */
@@ -204,18 +208,6 @@ function compareStorageValue(expected: unknown, actual: unknown, path: string, c
 	return null;
 }
 
-/**
- * Deep-compare a factory-built node against the materialized reference
- * node a real parse+read produced. Returns a human-readable diff
- * description for the first divergence found, or `null` when the two are
- * storage-identical (ignoring identity-only metadata — see
- * `IGNORED_NODE_KEYS`).
- *
- * @param expected - Materialized reference node (from the wrapped read tree).
- * @param actual - Factory-built node under test.
- * @param path - Field-path accumulator for error messages (empty at the root).
- * @param ctx - Factory-shape lookup used to decide whether `$text` applies.
- */
 function compareNodeStorage(
 	expected: Record<string, unknown>,
 	actual: Record<string, unknown>,
@@ -245,7 +237,7 @@ function compareNodeStorage(
 		if (key === '$type' || seen.has(key)) continue;
 		const av = storageValueOf(actual, key);
 		if (isEmptyStorageValue(av)) continue;
-		if (key === '_separator' && slotSeparatorOf(expected) === av) continue;
+		if (key === '_separator' && listSeparatorOf(expected) === av) continue;
 		return `${path || 'root'}.${key}: unexpected extra field on factory output`;
 	}
 	return null;
@@ -294,13 +286,6 @@ export interface FactoryStorageResult {
 
 const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span']);
 
-/**
- * `node` with every node under it built through `build` from its leaves up,
- * so none keeps the identity of the read it came from. A node `build` has no
- * factory for is kept as its data, without the keys that name its source.
- * Each copy carries the sides `sides` gives the read it came from, taken
- * while that read still names its tree.
- */
 function rebuildChildren(
 	node: Record<string, unknown>,
 	build: (node: Record<string, unknown>) => unknown,
@@ -322,7 +307,7 @@ function rebuildChildren(
 			SOURCE_KEYS.has(key) || key === '$_layout' ? [] : [[key, rebuild(value)]]
 		)
 	);
-	const separator = isComparableNode(node) ? slotSeparatorOf(node) : undefined;
+	const separator = isComparableNode(node) ? listSeparatorOf(node) : undefined;
 	if (separator !== undefined && !('_separator' in copy)) copy['_separator'] = separator;
 	const trivia = isComparableNode(node) ? sides(node as unknown as ReadNodeLike, rebuild) : undefined;
 	return trivia === undefined ? copy : { ...copy, $_layout: { trivia } };
@@ -416,6 +401,7 @@ function buildFactoryUntypedNode(
 		input?: string;
 		rendered?: string;
 	}[],
+	accessorOf: SlotAccessorOf,
 	kindNameFromId?: (id: number) => string | undefined,
 	tree?: TreeHandle
 ): AnyUntypedNode | null {
@@ -426,7 +412,7 @@ function buildFactoryUntypedNode(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, tree, placeText: tree !== undefined }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, accessorOf, tree, placeText: tree !== undefined }
 		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
@@ -455,10 +441,15 @@ export async function validateFactoryStorage(
 	if ('importFailure' in loaded) return failedRun(grammar, [{ kind: '(factory-module-load)', message: loaded.importFailure }]);
 	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, readNode } = loaded;
 
-	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
-	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
-	const { listSeparators } = await loadNodeModel(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
+	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
+	const renderReparseContext = await loadRenderReparseContext(
+		grammar,
+		parser,
+		await loadNativeEngine(grammar),
+		options.profile
+	);
+	const { listSeparators } = await loadNodeModel(grammar);
 	const render = emptyBuiltRenderRun();
 
 	const entries = loadCorpusEntries(grammar);
@@ -540,6 +531,7 @@ export async function validateFactoryStorage(
 				if (testedPairs.has(pairKey)) continue;
 				testedPairs.add(pairKey);
 				cases.add(kind);
+				options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
 
 				const indices = spans.toIndices(cand);
 				const node1 = findSpanNode(tree1.rootNode, indices.start, indices.end, kind, kindNameFromId);
@@ -549,7 +541,7 @@ export async function validateFactoryStorage(
 				// this node, fully materialized (no lazy stubs).
 				// $text is handled per-node by the comparator itself (see
 				// isTextShapeNode) rather than stripped here.
-				const referenceData = materialize(cand.node, accessorOf);
+				const referenceData = measureRoundtrip(options.profile, 'read', () => materializeBuildInput(cand.node, accessorOf));
 
 				const cstNamedChildKinds = node1 ? namedChildKinds(node1) : [];
 
@@ -572,6 +564,7 @@ export async function validateFactoryStorage(
 					entry.name,
 					inputSource,
 					errors,
+					accessorOf,
 					kindNameFromId,
 					handle
 				);
@@ -591,37 +584,45 @@ export async function validateFactoryStorage(
 						node,
 						innerKind,
 						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
-						{ kindNameFromId, tree: handle, placeText: true }
+						{ kindNameFromId, accessorOf, tree: handle, placeText: true }
 					);
 				};
 				const buildErrors: typeof errors = [];
 				let builtTree: AnyUntypedNode | null = null;
 				try {
-					const takesText = (node: Record<string, unknown>): boolean => {
-						const name = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
-						return name !== undefined && factoryShapes[name] === 'placed';
-					};
-					const root = referenceData as unknown as Record<string, unknown>;
-					builtTree = buildFactoryUntypedNode(
-						(takesText(root)
-							? root
-							: rebuildChildren(root, buildInner, (read, rebuild) => tableSides(read, handle, rebuild), takesText)) as unknown as AnyUntypedNode,
-						kind,
-						node1?.type,
-						cstNamedChildKinds[0],
-						cstNamedChildKinds,
-						factoryMap,
-						factoryShapes,
-						fieldAliasMap,
-						factoryFields,
-						factorySlots,
-						surface,
-						entry.name,
-						inputSource,
-						buildErrors,
-						kindNameFromId,
-						handle
-					);
+					builtTree = measureRoundtrip(options.profile, 'build', () => {
+						const takesText = (node: Record<string, unknown>): boolean => {
+							const name = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
+							return name !== undefined && factoryShapes[name] === 'placed';
+						};
+						const root = referenceData as unknown as Record<string, unknown>;
+						return buildFactoryUntypedNode(
+							(takesText(root)
+								? root
+								: rebuildChildren(
+										root,
+										buildInner,
+										(read, rebuild) => tableSides(read, accessorOf, rebuild),
+										takesText
+									)) as unknown as AnyUntypedNode,
+							kind,
+							node1?.type,
+							cstNamedChildKinds[0],
+							cstNamedChildKinds,
+							factoryMap,
+							factoryShapes,
+							fieldAliasMap,
+							factoryFields,
+							factorySlots,
+							surface,
+							entry.name,
+							inputSource,
+							buildErrors,
+							accessorOf,
+							kindNameFromId,
+							handle
+						);
+					});
 				} catch (e) {
 					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });
 				}
@@ -665,7 +666,7 @@ export async function validateFactoryStorage(
 				if (factoryData === null) continue;
 				const diff = compareNodeStorage(
 					referenceData as unknown as Record<string, unknown>,
-					factoryData as unknown as Record<string, unknown>,
+					builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
 					'',
 					{ factoryShapes, kindNameFromId }
 				);

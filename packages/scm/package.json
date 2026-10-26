@@ -28,6 +28,10 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
+		"./arena": {
+			"types": "./dist/arena.d.ts",
+			"import": "./dist/arena.js"
+		},
 		"./api": {
 			"types": "./dist/api.d.ts",
 			"import": "./dist/api.js"

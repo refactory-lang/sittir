@@ -67,6 +67,7 @@ Per-grammar raw pass/total counts for all four validators
 **Options**
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
+- `--node-storage <storage>` — How the engine reads a parsed tree: as object nodes (object), or as record views (arena) (default: `object`)
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**
@@ -191,6 +192,31 @@ Benchmark codemod on a corpus directory
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool bench-codemod <corpus-dir> [options]
+```
+
+### `tool bench-storage`
+
+Measure native workflows or object/arena validation buckets
+
+**Arguments**
+
+- `grammars…` (optional) — Defaults to all stable grammars
+
+**Options**
+
+- `--rounds <n>` — Fresh-process rounds per grammar (default: `5`)
+- `--warmup <n>` — Warmup batches per timed phase (default: `2`)
+- `--iterations <n>` — Measured corpus batches per phase and round (default: `3`)
+- `--limit <n>` — Use only the first n corpus entries (smoke runs)
+- `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
+- `--validation` — Profile deep read, factory and IR render/parse validators with object and arena storage
+- `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
+- `--output <path>` — Write the complete JSON report to this file
+
+**Example**
+
+```sh
+pnpm exec tsx packages/cli/src/cli.ts tool bench-storage [grammars] [options]
 ```
 
 ### `tool bootstrap-grammar`

@@ -90,8 +90,9 @@ describe('engine', () => {
 
 		const native = (await (await descriptor()).load()).createNative();
 		const parsed = native.parseAndRead('pub fn main');
-		expect(reads).toEqual([[3, 0, 1]]);
+		expect(reads).toEqual([]);
 		expect(parsed.root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
+		expect(reads).toEqual([[3, 0, 1]]);
 
 		const tree = parsed.tree as TreeHandle;
 		expect(tree.read?.(1)).toMatchObject({ $type: TSKindId.Identifier, $text: 'main' });

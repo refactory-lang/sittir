@@ -5,9 +5,10 @@ import { isRebuilt } from './node-data.ts';
 import { isNodeValue } from './utils.ts';
 import { isCoordinate } from './read.ts';
 import { sourceOf } from './source-stamp.ts';
+import { isBuiltNode } from './built-arena.ts';
 
 export function verifyStructure(value: unknown, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
-	if (typeof value === 'object' && value !== null && !seen.has(value)) verifyNode(value as Record<string, unknown>, table, membership, seen);
+	if (typeof value === 'object' && value !== null && !seen.has(value) && !isBuiltNode(value)) verifyNode(value as Record<string, unknown>, table, membership, seen);
 }
 
 function verifyNode(node: Record<string, unknown>, table: StructureTable, membership: KindMembership, seen: WeakSet<object>): void {
@@ -58,7 +59,7 @@ function listInput(args: readonly unknown[], slot: string, arrival: 'key' | numb
 	return isConfigInput(only) && slot in only ? (Array.isArray(only[slot]) ? (only[slot] as readonly unknown[]) : [only[slot]]) : rest;
 }
 
-function checkRow(node: Record<string, unknown>, row: StructureRow, membership: KindMembership): void {
+export function checkRow(node: Readonly<Record<string, unknown>>, row: StructureRow, membership: KindMembership): void {
 	for (const [storage, slot] of row.required ?? []) {
 		if (node[storage] === undefined || node[storage] === null) throw new Error(`Missing required slot '${slot}' on ${row.kind}`);
 	}

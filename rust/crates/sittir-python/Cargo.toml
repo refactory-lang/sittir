@@ -13,10 +13,11 @@ crate-type = ["cdylib", "rlib"]
 [features]
 default = ["napi-bindings"]
 napi-bindings = ["dep:napi", "dep:napi-derive", "sittir-core/napi-bindings"]
+arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
-napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
+napi = { version = "3", default-features = false, features = ["napi8", "serde-json"], optional = true }
 napi-derive = { version = "3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

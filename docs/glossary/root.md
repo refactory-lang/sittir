@@ -460,6 +460,10 @@ another (`runFullRegen` calling `runCodegen`) restores the outer call's
 value rather than clearing the flag out from under it.
 ```
 
+### `packages/codegen/src/run-codegen.ts::refuseUnlessAllowed`
+
+Prints a batch of blocking diagnostics raised after compilation (dropped tokens, slots read through a hidden helper) and throws a `GrammarDiagnosticError` for those whose code `allowDiagnostics` does not list. An empty batch prints nothing.
+
 ### `packages/codegen/src/run-codegen.ts::runNativeBuild`
 
 Builds a grammar's N-API binding from its generated sources: clears the grammar's napi typedef directories (`clearNapiTypedefs`), runs the crate's `build:gate` script (`build:debug` under `nativeDebug`), then, unless `workspaceCheck` is false, the workspace check (`runWorkspaceCheck`). Throws on either failure. `runCodegenInternal` calls it after writing the render module, and `runNativeOnly` without generating.

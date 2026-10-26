@@ -3,7 +3,8 @@ import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
 import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf } from './node-data.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
-import { readCoordinate } from './side-entries.ts';
+import { builtEntryNode, isBuiltEntry, readCoordinate } from './built-arena.ts';
+import { storedSlotValues } from './record-view.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -22,7 +23,8 @@ function snapshotTreeOf(value: object, fallback: SnapshotTree | undefined): Snap
  * from its data and its geometry.
  *
  * - A tree-backed node is one native read of its subtree, the sides its tree's trivia table gives
- *   each node (writes included) turned into text with spans.
+ *   each node (writes included) turned into text with spans; a built record written into one of
+ *   those sides is the snapshot of its node.
  * - A built node keeps its data with no span, and its sides (`sidesOf`): the ones it holds, else
  *   those of the node it was rebuilt from. A tree-backed node under it is measured from its own
  *   start, since a built node has no points.
@@ -49,6 +51,7 @@ interface Detaching {
 function detached(read: unknown, from: Detaching): unknown {
 	const work: unknown[] = [read];
 	const visit = (entry: unknown): unknown => {
+		if (isBuiltEntry(entry)) return snapshotIn(builtEntryNode(entry), undefined, undefined);
 		if (isCoordinate(entry)) return snapshotIn(readCoordinate(from.tree, entry, from.own), undefined, undefined);
 		work.push(entry);
 		return entry;
@@ -80,9 +83,10 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 			out.$text = nodeText(value);
 			continue;
 		}
-		if (!isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? snapshotIn(raw, undefined, undefined) : raw;
+		if (isStorageKey(key) || !isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
+		out[key] = raw;
 	}
+	for (const [key, stored] of storedSlotValues(value)) out[key] = snapshotIn(stored, undefined, undefined);
 	const each = (entry: unknown) => snapshotIn(entry, undefined, undefined);
 	const sides = sidesOf(value);
 	const unitSides = unitSidesOf(value);

@@ -1,14 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { createEngine } from '@sittir/common';
 import { rebuilt } from '@sittir/common/utils';
-import rust from '../src/index.ts';
-
-const rs = await createEngine(rust);
+import { constructions } from './constructions.mts';
 
 type Sided = { readonly $trivia: { trailing(...items: unknown[]): readonly unknown[] } };
 type Item = { body(): { statements(): readonly Sided[] } };
 
-describe('a parsed comment in a side is read by reference', () => {
+describe.each(constructions)('a parsed comment in a side is read by reference (%s)', (_, rs) => {
 	const b = rs.build;
 	const rendered = (node: unknown) => rs.render(node as never).toString();
 	const parsedComment = () => (rs.parse('fn f() {\n    x(); /* c */\n}\n').statements()[0] as unknown as Item).body().statements()[0]!.$trivia.trailing()[0] as object;

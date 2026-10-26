@@ -12,21 +12,69 @@ use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
 use crate::slot::SlotValue;
 
-/// One trivia entry: the node, or the coordinate of one.
+/// One trivia entry: the node, the coordinate of one, or a record of an
+/// engine's built arena, which renders from that arena where the side that
+/// holds it renders, as a coordinate renders from its tree.
 #[derive(Debug, Clone, PartialEq)]
-pub struct TriviaEntry<T> {
-    pub value: SlotValue<T>,
+pub enum TriviaEntry<T> {
+    Value(SlotValue<T>),
+    #[cfg(feature = "arena")]
+    Record(RecordEntry<T>),
 }
 
 impl<T> TriviaEntry<T> {
     pub fn new(value: SlotValue<T>) -> Self {
-        Self { value }
+        Self::Value(value)
+    }
+
+    /// The node or coordinate the entry holds; `None` for a record.
+    #[must_use]
+    pub fn value(&self) -> Option<&SlotValue<T>> {
+        match self {
+            Self::Value(value) => Some(value),
+            #[cfg(feature = "arena")]
+            Self::Record(_) => None,
+        }
+    }
+
+    #[cfg_attr(not(feature = "arena"), allow(clippy::unnecessary_wraps, reason = "an entry is a built record only in the arena build"))]
+    fn value_mut(&mut self) -> Option<&mut SlotValue<T>> {
+        match self {
+            Self::Value(value) => Some(value),
+            #[cfg(feature = "arena")]
+            Self::Record(_) => None,
+        }
     }
 }
 
-impl<T: Render> Render for TriviaEntry<T> {
+/// A record of an engine's built arena, by its kind and its address, that a
+/// side write was given as an entry.
+#[cfg(feature = "arena")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BuiltEntry {
+    pub kind: KindId,
+    pub at: crate::arena::Address,
+}
+
+/// A built record a side holds. Read from a store, it holds that store,
+/// which holds the record's own sides and reaches the arena that wrote it.
+#[cfg(feature = "arena")]
+#[derive(Debug, Clone, PartialEq)]
+pub struct RecordEntry<T> {
+    pub record: BuiltEntry,
+    pub store: Option<crate::trivia_store::TriviaStore<T>>,
+}
+
+impl<T: Render + 'static> Render for TriviaEntry<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-        self.value.render(w)
+        match self {
+            Self::Value(value) => value.render(w),
+            #[cfg(feature = "arena")]
+            Self::Record(entry) => {
+                let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ARENA_RELEASED))?;
+                w.render_record_entry(entry.record, store)
+            }
+        }
     }
 }
 
@@ -38,7 +86,7 @@ impl<T: Render> Render for TriviaEntry<T> {
 /// excess indentation (`RenderSink::layout_depth`) instead, and
 /// `depth_member` is the member that makes the change `delta`'s sign names.
 /// A trivia value holds no sides of its own: an extra gets no extras.
-pub trait TriviaSeam {
+pub trait TriviaSeam: 'static {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         None
     }
@@ -58,18 +106,18 @@ pub trait TriviaSeam {
 
 impl<T: TriviaSeam> TriviaEntry<T> {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
-        match &self.value {
-            SlotValue::Node(value) => value.seam_gap(),
-            SlotValue::Coord(_) => None,
+        match self.value() {
+            Some(SlotValue::Node(value)) => value.seam_gap(),
+            Some(SlotValue::Coord(_)) | None => None,
         }
     }
 
     /// The change a depth member makes to the excess indentation; 0 for any
     /// other entry.
     pub fn depth(&self) -> i32 {
-        match &self.value {
-            SlotValue::Node(value) => value.depth(),
-            SlotValue::Coord(_) => 0,
+        match self.value() {
+            Some(SlotValue::Node(value)) => value.depth(),
+            Some(SlotValue::Coord(_)) | None => 0,
         }
     }
 
@@ -132,8 +180,8 @@ impl<T: crate::prepare::Prepare> crate::prepare::Prepare for NodeTrivia<T> {
     /// kind's edges, as a coordinate in a slot does.
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         let sides = self.leading.iter_mut().chain(self.trailing.iter_mut());
-        for entry in sides.chain(self.inner.iter_mut()).flatten() {
-            entry.value.prepare(ctx)?;
+        for value in sides.chain(self.inner.iter_mut()).flatten().filter_map(TriviaEntry::value_mut) {
+            value.prepare(ctx)?;
         }
         Ok(())
     }
@@ -512,6 +560,23 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
     }
 }
 
+impl<T: TriviaSeam> NodeTrivia<T> {
+    /// The node's sides once its neighbour changed on `changed`'s edges:
+    /// each such side without its edge runs (`on_changed_edge`), and none
+    /// where nothing is left.
+    pub fn trim_changed(&mut self, changed: crate::slot::ChangedEdges) {
+        use crate::trivia_table::TriviaSide;
+        for (side, entries) in [(TriviaSide::Leading, &mut self.leading), (TriviaSide::Trailing, &mut self.trailing)] {
+            if let Some(list) = entries.as_mut().filter(|_| changed.on(side)) {
+                on_changed_edge(list, side, TriviaEntry::is_layout, TriviaEntry::depth, |delta| T::depth_member(delta).map(|member| TriviaEntry::new(SlotValue::Node(member))));
+                if list.is_empty() {
+                    *entries = None;
+                }
+            }
+        }
+    }
+}
+
 /// Whether a node's trivia holds inner entries.
 #[must_use]
 pub fn has_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> bool {
@@ -530,15 +595,68 @@ pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>, w: &
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
     for TriviaEntry<T>
 {
-    /// A trivia entry is a slot value: a node, a coordinate, bare text, a
+    /// A built record is `{ $type, $record }`, its kind and its address.
+    /// Any other entry is a slot value: a node, a coordinate, bare text, a
     /// whitespace member's kind id, or text with its stamped kind (`{ $type,
     /// $text }`, which the entry type decodes).
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
+        #[cfg(feature = "arena")]
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
+        if unsafe { crate::slot::node_value_type(env, napi_val)? } == ::napi::ValueType::Object {
+            // SAFETY: `napi_val` is a live object in `env`.
+            if let Some(at) = unsafe { crate::boundary::property_whole::<u32>(env, napi_val, c"$record", "TriviaEntry")? } {
+                // SAFETY: `napi_val` is a live object in `env`.
+                let kind = unsafe { crate::boundary::required(env, napi_val, c"$type", "TriviaEntry")? };
+                return Ok(Self::Record(RecordEntry { record: BuiltEntry { kind, at: crate::arena::Address(at) }, store: None }));
+            }
+        }
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         Ok(Self::new(unsafe { SlotValue::from_napi_value(env, napi_val)? }))
+    }
+}
+
+/// A trivia entry as a write passes it. A built record is `{ $type, $record,
+/// $owner }`: `$owner` is the engine whose arena wrote it, which only that
+/// engine's class resolves to its store.
+#[cfg(feature = "napi-bindings")]
+pub struct WireEntry<'e, T> {
+    entry: TriviaEntry<T>,
+    owner: Option<::napi::Unknown<'e>>,
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<'e, T> WireEntry<'e, T> {
+    /// The entry, a built record holding the store `store_of` resolves its
+    /// owner to.
+    ///
+    /// # Errors
+    ///
+    /// What `store_of` refuses.
+    #[cfg_attr(not(feature = "arena"), allow(unused_variables, reason = "an entry names a built record only in the arena build"))]
+    pub fn resolve(self, store_of: &impl Fn(::napi::Unknown<'e>) -> ::napi::Result<crate::trivia_store::TriviaStore<T>>) -> ::napi::Result<TriviaEntry<T>> {
+        match (self.entry, self.owner) {
+            #[cfg(feature = "arena")]
+            (TriviaEntry::Record(record), Some(owner)) => Ok(TriviaEntry::Record(RecordEntry { store: Some(store_of(owner)?), ..record })),
+            (entry, _) => Ok(entry),
+        }
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for WireEntry<'_, T> {
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
+        let entry = unsafe { TriviaEntry::from_napi_value(env, napi_val)? };
+        let owner = match entry {
+            #[cfg(feature = "arena")]
+            // SAFETY: a record entry decoded from `napi_val`, a live object in `env`.
+            TriviaEntry::Record(_) => Some(unsafe { crate::boundary::required(env, napi_val, c"$owner", "TriviaEntry")? }),
+            TriviaEntry::Value(_) => None,
+        };
+        Ok(Self { entry, owner })
     }
 }
 
@@ -580,10 +698,23 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
-    /// The value's own form.
+    /// The value's own form; a built record, its `{ $type, $record, $owner }`.
+    /// Refuses a record whose store, or whose store's engine, is gone.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-        unsafe { SlotValue::to_napi_value(env, val.value) }
+        match val {
+            // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+            Self::Value(value) => unsafe { SlotValue::to_napi_value(env, value) },
+            #[cfg(feature = "arena")]
+            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, store }) => {
+                use crate::boundary::{object_with_present, present, present_with};
+                use ::napi::JsValue;
+                let scope = ::napi::Env::from_raw(env);
+                let released = || ::napi::Error::from_reason(crate::arena::ARENA_RELEASED.to_string());
+                let owner = store.ok_or_else(released)?.built().owner(&scope).map_err(|_| released())?.raw();
+                // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
+                unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?, present_with(c"$owner", Some(owner), Ok)?]) }
+            }
+        }
     }
 }
 

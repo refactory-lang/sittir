@@ -14,7 +14,7 @@ const accessorOf = await loadSlotAccessorOf('rust');
 const readNode = await readNodeOf('rust');
 
 function detachedInput(source: string): { readonly input: AnyUntypedNode; readonly options: Readonly<Record<string, unknown>> } {
-	const { tree } = readNativeTree(engine, source);
+	const { tree } = readNativeTree(engine, source, { depth: Infinity });
 	const input = selfContainedRenderInput(materializeDetached(readNode(tree), accessorOf), source, isLeafKind, kindViewOf(engine)) as AnyUntypedNode;
 	return { input, options: tree.options ?? {} };
 }

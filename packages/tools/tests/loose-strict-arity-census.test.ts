@@ -5,7 +5,7 @@ import { grammarModulePath } from '../src/grammar-internals.ts';
 
 const grammars = ['rust', 'typescript', 'python'] as const;
 
-const parse = (grammar: string, file: 'raw' | 'coerce' | 'bundle'): ts.SourceFile => {
+const parse = (grammar: string, file: 'objects' | 'coerce' | 'bundle'): ts.SourceFile => {
 	const path = grammarModulePath(grammar, `factories/${file}.ts`);
 	if (path === undefined) throw new Error(`Missing ${file} factories for ${grammar}`);
 	return ts.createSourceFile(path, readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true);
@@ -62,7 +62,7 @@ const stampOf = (stamp: ts.Expression | undefined, source: ts.SourceFile): numbe
 describe.each(grammars)('%s: a loose builder takes exactly the arguments its strict builder takes', (grammar) => {
 	it('every bundled kind agrees, and its arity stamp is the loose builder’s widest overload', () => {
 		const bundle = parse(grammar, 'bundle');
-		const strictOf = visibleOverloads(parse(grammar, 'raw'));
+		const strictOf = visibleOverloads(parse(grammar, 'objects'));
 		const looseOf = visibleOverloads(parse(grammar, 'coerce'));
 		const disagreements: string[] = [];
 		let pairs = 0;

@@ -1,6 +1,7 @@
 import { predictedIdTablesOf } from '../../dsl/symbol-table.ts';
 import { createRequire } from 'node:module';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { EMPTY_CONFLICT_RESOLUTIONS, type ConflictResolutionsFile } from '../../dsl/conflict-resolutions.ts';
 import type { ConflictReport } from '../../transpile/conflict-summary.ts';
 import { grammarPackage } from '../../grammars.ts';
@@ -28,7 +29,7 @@ describe('python conflict records', () => {
 	let python: RawGrammar;
 	beforeAll(async () => {
 		python = await evaluatePackage(grammarPackage('python'));
-	});
+	}, FULL_PIPELINE_TIMEOUT);
 
 	it('records one informational conflict-resolution per derived resolution, with its step and conflict', () => {
 		const resolutions = conflictRecords(python).filter((record) => record.code === 'conflict-resolution');

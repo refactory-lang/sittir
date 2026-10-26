@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { treeOf } from '@sittir/common/utils';
+import { useRecordConstruction } from '@sittir/common/engine';
+import { sidesOf, treeOf } from '@sittir/common/utils';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import python from '../../python/src/index.ts';
 import { loadNativeEngine, loadSlotAccessorOf, materializeDetached, tableSides } from '../src/validate/common.ts';
@@ -23,7 +24,7 @@ function caseBlock(source: string): AnyUntypedNode {
 	const tree = treeOf(block);
 	if (tree === undefined) throw new Error('expected a parsed block');
 	const data = materializeDetached(block, accessorOf) as AnyUntypedNode & { $_layout?: object };
-	return { ...data, $_layout: { ...data.$_layout, trivia: tableSides(block, tree, (read) => read) } } as AnyUntypedNode;
+	return { ...data, $_layout: { ...data.$_layout, trivia: tableSides(block, accessorOf, (read) => read) } } as AnyUntypedNode;
 }
 
 describe('a candidate rendered alone is its own span', () => {
@@ -31,5 +32,27 @@ describe('a candidate rendered alone is its own span', () => {
 		const data = caseBlock('match x:\n    case C():\n        # no args\n        foo1()\n');
 		expect(render(data)).toContain('# no args');
 		expect(render(candidateData(data, triviaOf))).not.toContain('# no args');
+	});
+
+	it('is a record view itself, never a copy of it: its record renders none of its outer sides', async () => {
+		const arena = await createEngine(python, { nodeStorage: 'arena' });
+		const statement = arena.parse('# lead\nfoo()\n').$query().$descendants.ofType(arena.kinds.ExpressionStatement).at(0);
+		if (statement === undefined) throw new Error('expected an expression statement');
+		const sides = (): NodeTrivia => ({ leading: [statement as never] });
+		expect(candidateData(statement as AnyUntypedNode, sides)).toBe(statement);
+		arena.dispose();
+	});
+
+	it('is a built record itself, the outer sides a write gave it emptied, so it renders as its own span', async () => {
+		const arena = await createEngine(python, { nodeStorage: 'arena' });
+		useRecordConstruction(arena, await import('../../python/src/factories/records.ts'));
+		const b = arena.build;
+		const statement = b.expressionStatement(b.call({ function: b.identifier('foo'), arguments: b.argumentList() }));
+		statement.$trivia.leading(b.comment(' lead'));
+		expect(arena.render(statement).toString()).toBe('# lead\nfoo()');
+		const candidate = candidateData(statement as unknown as AnyUntypedNode, sidesOf);
+		expect(candidate).toBe(statement);
+		expect(arena.render(statement).toString()).toBe('foo()');
+		arena.dispose();
 	});
 });

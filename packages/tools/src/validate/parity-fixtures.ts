@@ -162,7 +162,12 @@ export async function extractParityFixtures(grammar: string): Promise<ExtractRes
  * `serde_json::from_str` against a matching enum.
  */
 export function serializeFixtures(fixtures: readonly ParityFixture[]): string {
-	return JSON.stringify(fixtures, null, 2) + '\n';
+	return JSON.stringify(fixtures, keysInOrder, 2) + '\n';
+}
+
+function keysInOrder(_key: string, value: unknown): unknown {
+	if (value === null || typeof value !== 'object' || Array.isArray(value)) return value;
+	return Object.fromEntries(Object.entries(value).sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)));
 }
 
 /** Per-grammar output path. Kept alongside the render-module module so a
@@ -180,7 +185,7 @@ export function leftOutOutputPath(grammar: string): string {
 }
 
 export function serializeLeftOut(leftOutByKind: Readonly<Record<string, number>>): string {
-	return JSON.stringify(leftOutByKind, null, 2) + '\n';
+	return JSON.stringify(leftOutByKind, keysInOrder, 2) + '\n';
 }
 
 // Re-export the fixture types so cli.ts / tests can reference them

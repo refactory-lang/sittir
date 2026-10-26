@@ -3,8 +3,9 @@
 //! so the value is exactly what an options address could have named.
 
 use crate::render::WhitespaceTable;
+use crate::layout_kinds::LayoutKinds;
 use crate::types::KindId;
-use crate::spacing::seam_rank;
+use crate::spacing::{seam_rank, SeamRank};
 
 /// The admitted arm spelled as `ws`, else the one whose text has its seam
 /// rank (a space and a tab share one); a wider run takes the widest admitted
@@ -16,14 +17,31 @@ pub fn classify_whitespace(ws: &str, allowed: &[KindId], table: &WhitespaceTable
     if !ws.chars().all(char::is_whitespace) {
         return None;
     }
-    let want = seam_rank(ws);
+    classify(seam_rank(ws), |arm| (table.text_of)(arm) == ws, allowed, table)
+}
+
+/// The admitted arm that is the gap kind `kind` (`WhitespaceTable::gap_of`),
+/// else the one of its seam rank, else the widest admitted arm below it, as
+/// `classify_whitespace` classifies the kind's text: a stamped kind needs no
+/// text to resolve. `NONE` and sets of kinds classify to nothing.
+#[must_use]
+pub fn classify_kind(kind: LayoutKinds, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
+    if !kind.is_single() {
+        return None;
+    }
+    classify(kind.rank(), |arm| table.gap_of(arm) == Some(kind), allowed, table)
+}
+
+/// The admitted arm `spells` holds, else the one of seam rank `want`, else
+/// the widest admitted arm below it; depth arms never classify.
+fn classify(want: SeamRank, spells: impl Fn(KindId) -> bool, allowed: &[KindId], table: &WhitespaceTable) -> Option<KindId> {
     let ranked: Vec<(KindId, usize)> = allowed
         .iter()
         .copied()
         .filter(|&arm| arm != table.indent && arm != table.dedent)
         .map(|arm| (arm, seam_rank((table.text_of)(arm))))
         .collect();
-    if let Some(&(arm, _)) = ranked.iter().find(|&&(arm, _)| (table.text_of)(arm) == ws) {
+    if let Some(&(arm, _)) = ranked.iter().find(|&&(arm, _)| spells(arm)) {
         return Some(arm);
     }
     if let Some(&(arm, _)) = ranked.iter().find(|(_, rank)| *rank == want) {
@@ -42,14 +60,36 @@ pub fn classify_whitespace(ws: &str, allowed: &[KindId], table: &WhitespaceTable
 /// geometry cannot give (tabs, trailing spaces, line endings) is left to the
 /// options. Columns count bytes, as a point's do.
 #[must_use]
-pub fn geometry_gap_text(a: &crate::points::PointSpan, b: &crate::points::PointSpan) -> String {
+pub fn geometry_gap(a: &crate::points::PointSpan, b: &crate::points::PointSpan) -> GeometryGap {
     let last = a.last_row();
     if b.start.row == last {
         let from = if a.end.row == last { a.end.column } else { 0 };
-        " ".repeat(b.start.column.saturating_sub(from) as usize)
+        GeometryGap { breaks: 0, spaces: b.start.column.saturating_sub(from) }
     } else {
-        let mut gap = "\n".repeat(b.start.row.saturating_sub(last) as usize);
-        gap.push_str(&" ".repeat(b.start.column as usize));
-        gap
+        GeometryGap { breaks: b.start.row.saturating_sub(last), spaces: b.start.column }
     }
+}
+
+/// A gap as geometry implies it: `breaks` line breaks, then `spaces` spaces.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct GeometryGap {
+    pub breaks: u32,
+    pub spaces: u32,
+}
+
+impl GeometryGap {
+    /// The one gap kind the gap is: no whitespace, a run of spaces, or a run
+    /// by how many lines it breaks, its indentation the writer's. A kind
+    /// classifies to the arm the gap itself does (`classify_kind`).
+    #[must_use]
+    pub fn kind(self) -> LayoutKinds {
+        match (self.breaks, self.spaces) {
+            (0, 0) => LayoutKinds::TIGHT,
+            (0, _) => LayoutKinds::SPACE,
+            (1, _) => LayoutKinds::NEWLINE,
+            (2, _) => LayoutKinds::BLANKLINE,
+            _ => LayoutKinds::DOUBLE_BLANKLINE,
+        }
+    }
+
 }

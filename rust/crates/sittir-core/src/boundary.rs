@@ -2,6 +2,22 @@
 //! Serde `rename` / `skip_if_none` attrs live alongside the structs in
 //! `types`; reading a wire object's properties lives here.
 
+/// A choice a wire value decodes into, by the kind its `$type` names: the
+/// variants its derived codec reads.
+pub trait DecodesKind {
+    /// The choice's name, as its codec's refusals name it.
+    const OWNER: &'static str;
+    /// Whether the codec decodes a node object of kind `id` into a variant.
+    fn decodes(id: crate::types::KindId) -> bool;
+}
+
+/// The refusal of a value of kind `id` that the choice `owner` decodes into
+/// no variant.
+#[must_use]
+pub fn unknown_kind(id: crate::types::KindId, owner: &str) -> String {
+    format!("unknown kind id {id} in {owner}")
+}
+
 /// Reads the property `key` of the wire object `obj`: `None` when it is
 /// undefined, otherwise its value decoded as `V`. The key is a static C
 /// string, which napi resolves to V8's interned string the way a derived
@@ -129,6 +145,43 @@ pub unsafe fn object(env: ::napi::sys::napi_env, value: ::napi::sys::napi_value)
     // SAFETY: this fn requires `value` to be live in `env`.
     let obj = unsafe { <::napi::bindgen_prelude::Object as ::napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, value)? };
     Ok(::napi::JsValue::raw(&obj))
+}
+
+/// A list whose items may each be absent, as a JavaScript array: an absent
+/// item is `undefined`, the one value of a list's empty element, as its type
+/// (`X | undefined`) says. napi's own encoding of `Option` writes `null`.
+///
+/// # Safety
+/// `env` must be live.
+#[cfg(feature = "napi-bindings")]
+pub unsafe fn holes<T: ::napi::bindgen_prelude::ToNapiValue>(env: ::napi::sys::napi_env, items: Vec<Option<T>>) -> ::napi::Result<::napi::sys::napi_value> {
+    let mut array = ::std::ptr::null_mut();
+    ::napi::check_status!(
+        // SAFETY: this fn requires `env` to be live.
+        unsafe { ::napi::sys::napi_create_array_with_length(env, items.len(), &raw mut array) },
+        "failed to create a list"
+    )?;
+    for (index, item) in items.into_iter().enumerate() {
+        let value = if let Some(item) = item {
+            // SAFETY: this fn requires `env` to be live, and the value is created in it.
+            unsafe { T::to_napi_value(env, item)? }
+        } else {
+            let mut undefined = ::std::ptr::null_mut();
+            ::napi::check_status!(
+                // SAFETY: this fn requires `env` to be live.
+                unsafe { ::napi::sys::napi_get_undefined(env, &raw mut undefined) },
+                "failed to get undefined"
+            )?;
+            undefined
+        };
+        let index = u32::try_from(index).map_err(|_| ::napi::Error::from_reason("a list longer than an array holds"))?;
+        ::napi::check_status!(
+            // SAFETY: `array` and `value` are live in `env`.
+            unsafe { ::napi::sys::napi_set_element(env, array, index, value) },
+            "failed to set a list item"
+        )?;
+    }
+    Ok(array)
 }
 
 /// A new object holding `fields`, defined in one call.

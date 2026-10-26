@@ -91,6 +91,11 @@ jobs:
         # test:coverage`), each running all ~208 test files.
         run: pnpm run test -- --coverage
 
+      - name: Benchmark reporting tests
+        # The benchmark workflows run these with `node --test` before any
+        # build, so they stay outside vitest.
+        run: node --test scripts/ci/arena-benchmark-*.test.mjs
+
       - name: Security Audit
         run: pnpm audit --audit-level moderate
         continue-on-error: true
@@ -188,6 +193,45 @@ jobs:
             --base /tmp/016-base/native.json \
             --head /tmp/016-head/native.json \
             --declared packages/tools/baselines/native.json
+
+  # While the engine offers both node storages, a parsed tree read as record
+  # views (`nodeStorage: 'arena'`) must validate exactly as one read as
+  # objects: the same rows in every grammar. `validate history --diff` exits
+  # non-zero when any row moves between the two reports.
+  node-storage-parity:
+    name: validation rows under both node storages
+    runs-on: ubuntu-22.04
+    needs: napi-build
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+      - name: Use Node.js 24.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Download napi `.node` artifacts (linux x86_64-gnu)
+        uses: actions/download-artifact@v4
+        with:
+          name: bindings-x86_64-unknown-linux-gnu
+          path: /tmp/node-storage-bindings
+      - name: Stage `.node` artifacts into the grammar packages
+        run: |
+          cp -R /tmp/node-storage-bindings/. ./
+          find packages -path "*/native/*.node" -print
+      - name: Validation rows, object storage
+        run: |
+          npx tsx packages/cli/src/cli.ts validate counts
+          cp packages/tools/validation-report.json /tmp/rows-object.json
+      - name: Validation rows, arena storage
+        run: |
+          npx tsx packages/cli/src/cli.ts validate counts --node-storage arena
+          cp packages/tools/validation-report.json /tmp/rows-arena.json
+      - name: Arena rows equal object rows
+        run: npx tsx packages/cli/src/cli.ts validate history --diff /tmp/rows-object.json /tmp/rows-arena.json
 
   # Spec 054 — perf regression-checker (native only). Compares the FFI
   # roundtrip + call-count from a fresh native-backend metrics run against
@@ -300,6 +344,12 @@ jobs:
         run: cargo clippy --workspace --all-targets --no-default-features -- -D warnings
       - name: Clippy with napi bindings (warnings denied)
         run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Clippy with the record arena (warnings denied)
+        run: cargo clippy --workspace --all-targets --no-default-features --features sittir-parity-tests/arena -- -D warnings
+      - name: Clippy with the record arena and napi bindings (warnings denied)
+        run: cargo clippy --workspace --all-targets --features sittir-parity-tests/arena -- -D warnings
+      - name: Record arena tests
+        run: cargo test --workspace --no-default-features --features sittir-parity-tests/arena
       - name: Typed reader debug diagnostics
         run: cargo test -p sittir-parity-tests --no-default-features --test typed_read --features sittir-core/read-debug-checks
 

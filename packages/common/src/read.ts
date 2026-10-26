@@ -1,13 +1,15 @@
-import type { NodeCoordinate } from '@sittir/types';
+import type { BuiltArena } from './built-arena.ts';
+import type { CellFormat } from './record-cell.ts';
+import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
 export type TriviaSideName = 'leading' | 'trailing' | 'inner';
 
-/** A parsed tree: the source it was read from, and the read of any node in it. */
+/** A parsed tree: the read of any node in it, and the text of any span of the source it was read from, which stays native. */
 export interface TreeHandle {
-	/** Original source text. */
-	source?: string;
+	/** The text `span` covers in the source: one string of that span's characters, never the source. */
+	text?(span: ByteSpan): string;
 	/** The native tree `read` reads: the tree id every coordinate read from it packs. */
 	id?: number;
 	/** The node at descendant `index` read into its native node, `depth` levels down (one when absent, `Infinity` for all); index 0 is the root. A unit variant's native node is its kind id. */
@@ -18,11 +20,13 @@ export interface TreeHandle {
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;
 	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
-	triviaSide?(index: number, side: TriviaSideName): unknown[];
+	triviaSide?(index: number, side: TriviaSideName): unknown[] | undefined;
 	/** Replaces `side` of the node at descendant `index` with `entries`. */
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	/** The sides of the unit children of the node at descendant `index`, by slot and item (`NodeLayout.units`). */
 	unitSides?(index: number): unknown[];
+	/** Replaces every side of the unit children of the node at descendant `index` with `units`, by slot and item (`NodeLayout.units`). */
+	writeUnitSides?(index: number, units: readonly unknown[]): void;
 	/** The stored layout of each list slot of the node at descendant `index` that stores any (`NodeLayout.slots`). */
 	slotLayouts?(index: number): unknown[];
 	/** The separator the list at descendant `index` writes between its items: its slot's stored one, else the read-time options'. */
@@ -35,6 +39,35 @@ export interface TreeHandle {
 	isEmpty?(index: number): boolean;
 	/** The siblings that hold sides beside the node at descendant `index` (`Siblings`). */
 	siblings?(index: number): Siblings;
+	/** The tree's records, when its engine reads nodes as records (`nodeStorage: 'arena'`). */
+	records?: RecordReader;
+	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
+	built?: BuiltArena;
+}
+
+/** What any record view reads its records' words through. */
+export interface RecordWords {
+	readonly format: CellFormat;
+	/** The words of the chunk `address` lies in, holding at least `length` words from it. */
+	words(address: number, length: number): Uint32Array;
+}
+
+/** What a record view reads its tree's records through. */
+export interface RecordReader extends RecordWords {
+	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
+	record(index: number, depth?: number): number | undefined;
+	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
+	hydrate(index: number, depth?: number): number | undefined;
+	candidates(index: number): readonly NodeCoordinate[];
+	/** Renders a native record address without exporting its words. The edge flags follow the native render-root convention. */
+	render(address: number, leading: boolean, trailing: boolean): string;
+	renderCandidate(index: number): string;
+	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
+	object(index: number, depth?: number): unknown;
+	/** The words of the chunk `address` lies in, holding at least `length` words from it: a copy JavaScript owns, fetched again when the words sought lie past the copy held. */
+	words(address: number, length: number): Uint32Array;
+	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */
+	coordinate(index: number): { readonly kind: number; readonly end: number };
 }
 
 /**
@@ -53,6 +86,11 @@ const INDEX_RANGE = 2 ** 32;
 /** The descendant index a handle packs: the inverse of the native `encode_handle`, which puts the tree id above 32 bits of index, inside a double's exact range. */
 export function decodeIndex(handle: number): number {
 	return handle % INDEX_RANGE;
+}
+
+/** The handle of descendant `index` of tree `tree`, as the native `encode_handle` packs it. */
+export function encodeHandle(tree: number, index: number): number {
+	return tree * INDEX_RANGE + index;
 }
 
 /** The tree id a handle packs, as `decodeIndex` reads its index. */

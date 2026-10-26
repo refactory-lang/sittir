@@ -14,13 +14,28 @@ export const counts: CommandModule = {
 				).default(false)
 			)
 			.addOption(
+				new Option('--node-storage <storage>', 'How the engine reads a parsed tree: as object nodes (object), or as record views (arena)').default(
+					'object'
+				)
+			)
+			.addOption(
+				new Option('--construction <construction>', 'How builders construct nodes: as objects (objects), or as records (records, with --node-storage arena)').default(
+					'objects'
+				)
+			)
+			.addOption(
 				new Option('--_isolate-worker', 'Internal: run as an isolation worker for a single grammar')
 					.hideHelp()
 					.default(false)
 			)
-			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean }) => {
-				const { runCountsCli } = await import('@sittir/tools');
-				await runCountsCli(grammars, 'native', { isolate: opts.isolate, isolateWorker: opts._isolateWorker });
+			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean; nodeStorage: string; construction: string }) => {
+				const { runCountsCli, parseConstruction, parseNodeStorage } = await import('@sittir/tools');
+				await runCountsCli(grammars, 'native', {
+					isolate: opts.isolate,
+					isolateWorker: opts._isolateWorker,
+					nodeStorage: parseNodeStorage(opts.nodeStorage),
+					construction: parseConstruction(opts.construction)
+				});
 			});
 	}
 };

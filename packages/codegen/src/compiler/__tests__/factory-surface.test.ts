@@ -3,6 +3,7 @@ import type { NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtu
 import type { GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import { collectKindEntries } from '../../emitters/kind-discriminant.ts';
 import { beforeAll, describe, expect, it } from 'vitest';
+import { FULL_PIPELINE_TIMEOUT } from '../../__tests__/helpers/timeouts.ts';
 import { REPARSE_HOSTS } from '../../../../rust/src/reparse-hosts.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
 import type { NodeMap } from '../types.ts';
@@ -37,7 +38,7 @@ beforeAll(async () => {
 	({ nodeMap, generatedIdTables: rustIdTables } = await assembleGrammar('rust'));
 	({ nodeMap: typescriptNodeMap } = await assembleGrammar('typescript'));
 	({ nodeMap: pythonNodeMap } = await assembleGrammar('python'));
-});
+}, FULL_PIPELINE_TIMEOUT);
 
 function expectDirect(node: AssembledNode, nodeMap: NodeMap): void {
 	expect(fromForwardsToChildFactory(node, nodeMap)).toBe(true);

@@ -1,17 +1,19 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
-import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
+import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setUnitSides, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
+import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
-import { register, registered, type Role } from './identity.ts';
+import { registered, wrapRegistered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-entries.ts';
+import { chosenSeparatorOf, recordOf } from './record-view.ts';
+import { builtRefOf } from './built-ref.ts';
+import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -55,14 +57,6 @@ export function queryOf(handle: EngineHandle, node: object): object {
 	return handle.current.query(node);
 }
 
-/**
- * Runs a rebuild inside the node's own engine and hands the source node's trivia on to the
- * node it returns: a built source's stored sides, and the source identity a parsed source's
- * sides are read through. Inner comments can only travel to a node that is still empty: once the
- * rebuild gives the node a child, a comment would sit beside it, so the rebuild refuses. Inner
- * layout (whitespace, depth members, which cross as bare kinds) spelled the inside of an empty
- * node, so a node that gains a child drops it.
- */
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
 	const result = handle === undefined ? build() : inEngine(handle, build);
@@ -81,9 +75,9 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
 	}
-	const trivia = triviaOf(node);
-	if (inner.length > 0) setTriviaData(result, { ...trivia, inner: [] });
-	else if (trivia !== undefined) setTriviaData(result, trivia);
+	const trivia = writtenSides(node);
+	if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
+	else if (trivia !== undefined) writeTrivia(result, trivia);
 	return handle === undefined ? result : handle.settle(result);
 }
 
@@ -107,6 +101,54 @@ export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] 
 
 const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
 
+export function writeTrivia(node: object, trivia: NodeTrivia): void {
+	const at = tableAt(node);
+	if (at === undefined) {
+		refuseBuiltEntries(trivia);
+		const own = triviaOf(node);
+		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
+		return;
+	}
+	const wire = entryWire(node);
+	for (const side of TRIVIA_SIDES) {
+		const entries = trivia[side];
+		if (entries === undefined) continue;
+		at.tree.writeTriviaSide(at.index, side, entries.map(wire));
+		holdSideEntries(at.tree, `${at.index}:${side}`, entries);
+	}
+}
+
+export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
+	const given = new Set<string>();
+	for (const { slot, item } of units) {
+		const unit = `${slot}[${item}]`;
+		if (given.has(unit)) throw new Error(`trivia: the sides of the unit at ${unit} are given twice`);
+		given.add(unit);
+	}
+	const built = builtRefOf(node);
+	if (built === undefined) {
+		for (const unit of units) refuseBuiltEntries(unit);
+		setUnitSides(node, units);
+		return;
+	}
+	const wire = entryWire(node);
+	built.arena.tree.writeUnitSides(built.at, units.map((unit) => ({ ...unit, ...mapTriviaEntries(unit as TriviaSides<TriviaEntry>, (entries) => entries.map(wire)) })));
+	holdSideEntries(built.arena.tree, `${built.at}:units`, units.flatMap((unit) => TRIVIA_SIDES.flatMap((side) => unit[side] ?? [])));
+}
+
+function carryUnitSides(from: object, to: object): void {
+	const units = (builtRefOf(to) === undefined ? heldUnitSides(from) : unitSidesOf(from)) as readonly UnitSidesData[] | undefined;
+	if (units !== undefined && units.length > 0) writeUnitSides(to, realignedUnits(units, from, to));
+}
+
+function entryWire(node: object): (entry: TriviaEntry) => unknown {
+	const tree = treeOf(node);
+	const built = builtRefOf(node)?.arena;
+	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));
+	const holder = built?.engine ?? engineOf(node);
+	return (entry) => (typeof entry === 'number' ? entry : (sideEntryOf(entry, arena, holder) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
+}
+
 function triviaWriter(target: object, handle: EngineHandle | undefined) {
 	const node = target as AnyUntypedNode;
 	if (handle === undefined) throw new Error(NO_ENGINE);
@@ -118,13 +160,7 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		return hydratedEntries(entries, tree);
 	};
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
-		const entries = scoped(() => items.map((item) => triviaEntryOf(item, handle.current)));
-		const at = tableAt(node);
-		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
-		else {
-			at.tree.writeTriviaSide(at.index, side, entries.map(sideEntryWire));
-			holdSideEntries(at.tree, `${at.index}:${side}`, entries);
-		}
+		writeTrivia(node, { [side]: scoped(() => items.map((item) => triviaEntryOf(item, handle.current))) });
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -206,10 +242,7 @@ export function triviaInner(
 	return triviaWriter(node, handle).inner(items);
 }
 
-function sideEntryWire(entry: TriviaEntry): unknown {
-	return typeof entry === 'number' ? entry : (readCoordinateOf(entry) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
-}
-
+/** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
 function triviaEntryOf(item: unknown, holder: EngineIdentity): TriviaEntry {
 	const facts: TriviaFacts = holder.trivia;
 	if (typeof item === 'string') return textEntryOf(item, facts);
@@ -302,11 +335,13 @@ void readonlyArrayCovered;
 
 export const LIST_VIEW_MEMBERS: readonly string[] = [...READONLY_ARRAY_METHODS, 'length'];
 
+const holdsDecoration = (value: unknown): boolean => value !== undefined && !(Array.isArray(value) && value.length === 0);
+
 const collapseWrapper = (item: unknown, wrapper: ListViewWrapper | undefined): unknown => {
 	if (wrapper === undefined || item === null || typeof item !== 'object') return item;
 	const node = item as Members & Record<string, unknown>;
 	if ((node as { $type?: unknown }).$type !== wrapper.kind) return item;
-	if (wrapper.decorations.some((key) => node[key] !== undefined)) return item;
+	if (wrapper.decorations.some((accessor) => holdsDecoration(node[accessor]!.call(node)))) return item;
 	return node[wrapper.content]!.call(node);
 };
 
@@ -344,18 +379,18 @@ export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
 export interface OwnerView {
 	readonly list: Record<string, unknown> | undefined;
 	readonly stored: readonly unknown[] | undefined;
+	readonly length: number | undefined;
 }
 
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
-	if (list == null) return { list: undefined, stored: [] };
-	const source = count in list || !isCoordinate(list) ? list : hydrate?.(list);
-	if (source === undefined) return { list: undefined, stored: undefined };
+	if (list == null) return { list: undefined, stored: [], length: 0 };
+	const source = count in list || isBuiltNode(list) || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
+	if (source === undefined) return { list: undefined, stored: undefined, length: undefined };
+	if (recordOf(source) !== undefined) return { list: source as Record<string, unknown>, stored: undefined, length: (source as { readonly length: number }).length };
 	const elements = (source as Record<string, unknown>)[count];
-	return {
-		list: source as Record<string, unknown>,
-		stored: Array.isArray(elements) ? elements : elements == null ? [] : [elements]
-	};
+	const items = Array.isArray(elements) ? elements : elements == null ? [] : [elements];
+	return { list: source as Record<string, unknown>, stored: items, length: items.length };
 }
 
 /** The elements a list stores: its array, or the one element it holds, or none. */
@@ -372,24 +407,24 @@ export function ownerElements(list: unknown, reader: string): readonly unknown[]
 
 /** A list option the owner reads from its list, or the option's default. */
 export function listOption(list: unknown, key: string, fallback: unknown): unknown {
-	return (list as Record<string, unknown> | null | undefined)?.[`_${key}`] ?? fallback;
+	const held = list as Record<string, unknown> | null | undefined;
+	return (recordOf(held) === undefined ? held?.[`_${key}`] : held?.[key]) ?? fallback;
 }
 
 const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
 
 const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
 
-/**
- * Defines the `separator` of a wrapped list or list owner: a shared getter that answers the list's
- * own `_separator` when its data stores one, else the one its tree answers (`slotSeparatorOf`).
- * An owner names the accessor that returns its list and answers that list's `separator`.
- */
+export function listSeparatorOf(node: object): unknown {
+	return chosenSeparatorOf(node) ?? slotSeparatorOf(node);
+}
+
 export function defineListSeparator(node: object, accessor?: string): void {
 	let getter = SEPARATOR_GETTERS.get(accessor);
 	if (getter === undefined) {
 		getter = function (this: Record<string, unknown>) {
 			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
-			return this._separator ?? slotSeparatorOf(this);
+			return listSeparatorOf(this);
 		};
 		SEPARATOR_GETTERS.set(accessor, getter);
 	}
@@ -540,6 +575,18 @@ export function isNodeOfKind(v: unknown, kind: number): boolean {
 	return isNodeValue(v) && v.$type === kind;
 }
 
+/** `node` with each defined option set through its `$with` setter; throws when the node has no setter for one. */
+export function withOptions<N>(node: N, options: object): N {
+	let out: unknown = node;
+	for (const [key, value] of Object.entries(options)) {
+		if (value === undefined) continue;
+		const set = (out as { readonly $with?: Readonly<Record<string, ((v: unknown) => unknown) | undefined>> }).$with?.[key];
+		if (set === undefined) throw new Error(`cannot set the option '${key}': the node has no $with setter for it`);
+		out = set(value);
+	}
+	return out as N;
+}
+
 export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
 }
@@ -590,21 +637,6 @@ export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, de
 	return wrapRegistered(value, tree, wrap, role);
 }
 
-/**
- * The node `value` reads as on `tree`: the wrapper already registered at its index and role, or
- * `wrap(value, tree)`, registered there. A value that names no index of `tree` is wrapped and not
- * registered.
- */
-export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value: object, tree: TreeHandle) => T, role: Role = 'node'): T {
-	const handle = treeHandleOf(value);
-	if (handle === undefined || decodeTree(handle) !== tree.id) return wrap(value, tree);
-	const index = decodeIndex(handle);
-	const known = registered(tree, index, role);
-	if (known !== undefined) return known as T;
-	const wrapper = wrap(value, tree);
-	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
-	return wrapper;
-}
 
 /** The role an envelope's content is reached in: `aliasContent` when it shares the envelope's parser node (both stamp one index), else `node`. */
 export function contentRole(envelope: object, content: unknown): Role {
@@ -660,14 +692,22 @@ export function hydrateStoredSlots(node: object, key: string): readonly unknown[
 }
 
 export { numberText, type NumberBase } from './number.ts';
-export { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
+export {
+	decodeIndex,
+	decodeTree,
+	encodeHandle,
+	isCoordinate,
+	readNode,
+	type TreeHandle,
+	type TriviaSideName
+} from './read.ts';
 export type { Role } from './identity.ts';
-export { currentHandle, inEngine, hydrateStored, type EngineHandle } from './engine-scope.ts';
+export { admitChildren, admitSlot, builtArenaOf, currentHandle, dispatched, inEngine, hydrateStored, recordBuilders, type EngineHandle } from './engine-scope.ts';
 export { checkDelimited, type DelimitedSpec } from './delimited-check.ts';
 export { inTreeEngine } from './engine-scope.ts';
 export { metricsEnabled, recordFfi } from './metrics.ts';
-export { toNodeData, toDetachedNodeData, PLAIN_KINDS, spanOf, nodeText, hasNodeText, asTextNode, sideOf, sidesOf, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, placeOf, slotSeparatorOf } from './node-data.ts';
-export { carryTree, treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
+export { toNodeData, toDetachedNodeData, PLAIN_KINDS, coordinateOf, spanOf, sourceTextOf, nodeText, hasNodeText, textOf, asTextNode, sideOf, sidesOf, writtenSides, carryPlace, type NodeDataLayout, type KindView, markEdited, treeHandleOf, isStorageKey, isDataKey, holdsSlots, holdTree, carryRead, carryReadTree, placeOf } from './node-data.ts';
+export { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 export { stampBuilt, sourceOf, carrySourceStamp } from './source-stamp.ts';
 export { snapshotOf } from './snapshot.ts';
 export {
@@ -682,5 +722,28 @@ export {
 	type InteriorSlot,
 	type ProjectedInterior
 } from './interior.ts';
-export { mapTriviaEntries };
+export { mapTriviaEntries, wrapRegistered };
 export * from './runtime.ts';
+export {
+	RECORD,
+	recordDelimiter,
+	recordSeparator,
+	recordFlag,
+	recordItems,
+	recordLength,
+	recordOf,
+	recordSlot,
+	recordSlots,
+	rowData,
+	rowOf,
+	rowTrivia,
+	rowWith,
+	builtInputs,
+	chosenSeparatorOf,
+	slotValuesOf,
+	storedSlotValues,
+	type RecordStub,
+	type RefusedSlot
+} from './record-view.ts';
+
+export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltRow, type BuiltText, type BuiltViews } from './built-arena.ts';

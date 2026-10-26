@@ -93,3 +93,39 @@ impl LayoutKinds {
         }
     }
 }
+
+/// A snapshot root's two flanks as its read stamped them: the gap kind
+/// before its first item and after its last, each one kind or `NONE` where
+/// the read stamped none (`ReadCtx::layout`). The render resolves each to
+/// the arm its edge site admits (`classify::classify_kind`).
+#[derive(Clone, Copy, PartialEq, Eq, Debug, Default)]
+pub struct Flanks {
+    pub before: LayoutKinds,
+    pub after: LayoutKinds,
+}
+
+impl Flanks {
+    /// Whether neither flank is stamped.
+    #[must_use]
+    pub const fn is_none(self) -> bool {
+        self.before.is_empty() && self.after.is_empty()
+    }
+
+    /// The flanks as one word, as a side record and the wire hold them: the
+    /// before kind in the low byte, the after kind in the next.
+    #[must_use]
+    pub fn word(self) -> u32 {
+        u32::from(self.before.0) | u32::from(self.after.0) << 8
+    }
+
+    /// The flanks a word holds (`word`); `None` for a word past two bytes or
+    /// a byte that is neither one kind nor `NONE`.
+    #[must_use]
+    pub fn of_word(word: u32) -> Option<Self> {
+        let kind = |byte: u32| u8::try_from(byte).ok().map(LayoutKinds).filter(|kind| kind.is_empty() || (kind.is_single() && LayoutKinds::ALL.has(*kind)));
+        if word >> 16 != 0 {
+            return None;
+        }
+        Some(Self { before: kind(word & 0xff)?, after: kind(word >> 8)? })
+    }
+}
