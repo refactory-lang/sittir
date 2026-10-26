@@ -8252,7 +8252,7 @@ pub enum TypeContentNodeSlot {
     UnionType(UnionTypeNode),
     #[kind(kind::CONSTRAINED_TYPE)]
     ConstrainedType(ConstrainedTypeNode),
-    #[kind(kind::MEMBER_TYPE)]
+    #[kind(kind::MEMBER_TYPE, kind::DOTTED_NAME)]
     MemberType(MemberTypeNode),
     #[kind(kind::TRUE)]
     #[node(edged)]
@@ -14696,17 +14696,16 @@ impl ::sittir_core::prepare::Prepare for ExpressionListNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DOTTED_NAME, words = 4)]
+#[node(kind = kind::DOTTED_NAME, words = 12)]
 pub struct DottedNameNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_names")]
-    #[slot(field = field::NAMES, separator = kind::DOT, word = 2, width = 2, run = 5)]
-    pub names: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<IdentifierNode>>,
-    #[wire(key = "_names_separator_space_before")]
-    pub names_separator_space_before: Option<KindId>,
-    #[wire(key = "_names_separator_space_after")]
-    pub names_separator_space_after: Option<KindId>,
+    #[wire(key = "_qualifier")]
+    #[slot(field = field::QUALIFIER, separator = kind::DOT, word = 2, width = 5)]
+    pub qualifier: Option<::sittir_core::SlotValue<Box<DottedNameNode>>>,
+    #[wire(key = "_name")]
+    #[slot(field = field::NAME, word = 7, width = 5)]
+    pub name: ::sittir_core::SlotValue<IdentifierNode>,
 }
 
 impl ::sittir_core::view::KindOf for DottedNameNode {
@@ -14730,10 +14729,9 @@ impl ::sittir_core::render::Render for DottedNameNode {
 impl ::sittir_core::prepare::Prepare for DottedNameNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.names.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_names"));
-        self.names_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_BEFORE).arm);
-        self.names_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_DOTTED_NAME_NAMES_SEPARATOR_SPACE_AFTER).arm);
-        self.names.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.qualifier.prepare(ctx)?;
+        self.name.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -22637,19 +22635,19 @@ pub struct AsPatternTargetNode {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(343)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(342)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(343) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(342) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(342)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
@@ -25519,6 +25517,15 @@ impl ::sittir_core::prepare::SeatTarget for DecoratorNode {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for DottedNameNode {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(182)) {
+            return Some((self.layout.edges_mut(), site));
+        }
+        None
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for CasePatternNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match Some(&mut self.content) {
@@ -26278,11 +26285,20 @@ impl ::sittir_core::prepare::SeatTarget for StatementClassDefinitionNode {
     }
 }
 
+impl ::sittir_core::prepare::SeatTarget for ImportFromStatementModuleNameNodeSlot {
+    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
+        match self {
+            Self::DottedName(t) => t.seat_target(table, ctx),
+            Self::RelativeImport { .. } => None,
+        }
+    }
+}
+
 impl ::sittir_core::prepare::SeatTarget for ImportListNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
+            Self::DottedName(t) => t.seat_target(table, ctx),
             Self::AliasedImport(t) => t.seat_target(table, ctx),
-            Self::DottedName { .. } => None,
         }
     }
 }
@@ -26441,10 +26457,11 @@ impl ::sittir_core::prepare::SeatTarget for SimplePatternContentNodeSlot {
             Self::SplatPatternDictionary(t) => t.seat_target(table, ctx),
             Self::String(t) => t.seat_target(table, ctx),
             Self::ConcatenatedString(t) => t.seat_target(table, ctx),
+            Self::DottedName(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(69)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
-            Self::ClassPattern { .. } | Self::UnionPattern { .. } | Self::CaseListPattern { .. } | Self::CaseTuplePattern { .. } | Self::DictPattern { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::SimplePatternNegative { .. } | Self::ComplexPattern { .. } | Self::DottedName { .. } | Self::WildcardPattern { .. } | Self::Verbatim { .. } => None,
+            Self::ClassPattern { .. } | Self::UnionPattern { .. } | Self::CaseListPattern { .. } | Self::CaseTuplePattern { .. } | Self::DictPattern { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::SimplePatternNegative { .. } | Self::ComplexPattern { .. } | Self::WildcardPattern { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -26918,6 +26935,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::ParenthesizedListSplat(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinition(t) => t.seat_target(table, ctx),
             Self::Decorator(t) => t.seat_target(table, ctx),
+            Self::DottedName(t) => t.seat_target(table, ctx),
             Self::CasePattern(t) => t.seat_target(table, ctx),
             Self::CaseAsPattern(t) => t.seat_target(table, ctx),
             Self::KeyValuePattern(t) => t.seat_target(table, ctx),
@@ -26982,7 +27000,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
             Self::ConstructorDeclaration(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinitionClassDeclaration(t) => t.seat_target(table, ctx),
-            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::DottedName { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Underscore { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
+            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Underscore { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -27721,20 +27739,17 @@ fn render_expression_list(node: &ExpressionListNode, w: &mut dyn ::sittir_core::
 }
 
 fn render_dotted_name(node: &DottedNameNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let names = ListView {
-        items: &node.names,
-        template: "{}",
-        token: ".",
-        separators: None,
-        before: node.names_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.names_separator_space_after.unwrap_or(KindId::BLANK),
-        leading: false,
-        trailing: false,
-        head: None,
-        tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_names"),
-    };
-    names.render(w)?;
+    let name = &node.name;
+    let qualifier = View::new(&node.qualifier, "{}");
+    w.edge(::sittir_core::types::KindId(182), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    if qualifier.is_present() {
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_qualifier", ::sittir_core::types::ItemIndex(0), w, |w| qualifier.render(w))?;
+        w.site_at(options::SITE_DOTTED_NAME_DOT_BEFORE);
+        w.text(".")?;
+        w.site_at(options::SITE_DOTTED_NAME_DOT_AFTER);
+    }
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_name", ::sittir_core::types::ItemIndex(0), w, |w| name.render(w))?;
+    w.edge(::sittir_core::types::KindId(182), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 

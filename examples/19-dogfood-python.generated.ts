@@ -9,8 +9,12 @@ export function rebuildPython4spaceGenerated() {
 		contents: [py.build.stringContent.strict(py.build.stringFragment("Simple user management module."))],
 		stringEnd: py.build.stringEnd("\"\"\""),
 	}))), py.build.simpleStatements.strict(py.build.importFromStatement.strict({
-		moduleName: py.build.dottedName.strict(py.build.identifier("typing")),
-		content: py.build.importList.strict(py.build.dottedName.strict(py.build.identifier("Optional"))),
+		moduleName: py.build.dottedName.strict({
+			name: py.build.identifier("typing"),
+		}),
+		content: py.build.importList.strict(py.build.dottedName.strict({
+			name: py.build.identifier("Optional"),
+		})),
 	})), py.build.classDefinition.strict({
 		name: py.build.identifier("User"),
 		body: py.build.suiteBlockClassDeclaration.strict(py.build.constructorDeclaration.strict({

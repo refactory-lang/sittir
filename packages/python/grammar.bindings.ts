@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "286256244922011b7629d877cfd42a8280cc7b04c36015d50a127815bb743a0b";
+export const hash = "972045507e06b46cd2ace0cd309ad22d88f8fd7966edbe0223fb009f95c16b0b";
 
 export const renames = {
 	module: "file",
@@ -71,7 +71,6 @@ export const renames = {
 	dict_pattern: "map_pattern",
 	class_pattern: "struct_pattern",
 	keyword_pattern: "field_struct_pattern",
-	member_type: "qualified_identifier",
 	splat_type: "rest_type",
 	string: "string_literal",
 	escape_sequence: "escape_string_literal",
@@ -89,7 +88,6 @@ export const renames = {
 	true: "true_boolean_literal",
 	false: "false_boolean_literal",
 	none: "null_literal",
-	dotted_name: "dotted_identifier",
 	decorator: "decorator_attribute",
 	comment: "line_comment"
 };
@@ -100,18 +98,23 @@ export default grammar(
 		generated: true,
 		edits: {
 			_expression_within_for_in_clause: { "-1": alias("lambda_expression") },
+			_import_list: { "0/0/0": alias("qualified_identifier"), "1/0/1/0/0": alias("qualified_identifier") },
+			_simple_pattern: { "-2": alias("qualified_identifier") },
+			aliased_import: { "0/0": alias("qualified_identifier") },
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
 			case_clause: { "1": field("case_patterns") },
 			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
-			class_pattern: { "0": field("type"), "2": field("fields") },
+			class_pattern: [{ "0": field("type"), "2": field("fields") }, { "0/0": alias("qualified_identifier") }],
 			conditional_expression: { "0": field("consequence") },
 			default_parameter: { "2": field("default") },
 			dictionary_splat_pattern: { "1": field("pattern") },
+			dotted_name: { "0/0/0/0": alias("qualified_identifier") },
 			expression: { "-5": alias("lambda_expression") },
 			finally_clause: { "2": field("body") },
+			import_from_statement: { "1/0/1": alias("qualified_identifier") },
 			keyword_pattern: { "2": field("pattern") },
 			list: { "1/0": field("elements") },
 			list_pattern: { "1/0": field("elements") },
@@ -121,6 +124,7 @@ export default grammar(
 			parameter: { "-5": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
 			pattern: { "-3": alias("rest_pattern") },
 			primary_expression: { "-1": alias("rest_pattern") },
+			relative_import: { "1/0/0": alias("qualified_identifier") },
 			set: { "1": field("elements") },
 			splat_pattern: { "-2": alias("rest_pattern"), "-1": alias("map_rest_pattern") },
 			splat_pattern_dictionary: { "1": field("pattern") },
@@ -128,6 +132,7 @@ export default grammar(
 			splat_type: { "1": field("type") },
 			subscript: { "0": field("object") },
 			try_statement: { "3": field("handlers"), "4/0": field("alternative"), "5/0": field("finalizer") },
+			type: { "-1": alias("qualified_identifier") },
 			type_parameter: { "1": field("types") },
 			typed_default_parameter: { "4": field("default") },
 			typed_parameter: { "0/0/1": alias("rest_pattern"), "0/0/2": alias("map_rest_pattern") },

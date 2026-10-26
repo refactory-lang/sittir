@@ -482,7 +482,7 @@
         "required": true,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -1346,7 +1346,7 @@
         "required": true,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -1954,22 +1954,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "dotted_name",
-    "named": true,
-    "fields": {
-      "names": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -2694,7 +2678,7 @@
         "required": true,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -2736,7 +2720,7 @@
             "named": true
           },
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -2859,10 +2843,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -2876,6 +2856,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -2985,10 +2969,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -3002,6 +2982,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3268,32 +3252,6 @@
     }
   },
   {
-    "type": "member_type",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "qualifier": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "method_declaration",
     "named": true,
     "fields": {
@@ -3423,7 +3381,7 @@
             "named": true
           },
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -3720,6 +3678,40 @@
     }
   },
   {
+    "type": "qualified_identifier",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "qualifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ".",
+            "named": false
+          },
+          {
+            "type": "qualified_identifier",
+            "named": true
+          },
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "raise_statement",
     "named": true,
     "fields": {
@@ -3758,7 +3750,7 @@
         "required": false,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -3897,10 +3889,6 @@
           "named": true
         },
         {
-          "type": "dotted_name",
-          "named": true
-        },
-        {
           "type": "false",
           "named": true
         },
@@ -3914,6 +3902,10 @@
         },
         {
           "type": "none",
+          "named": true
+        },
+        {
+          "type": "qualified_identifier",
           "named": true
         },
         {
@@ -4506,7 +4498,7 @@
           "named": true
         },
         {
-          "type": "member_type",
+          "type": "qualified_identifier",
           "named": true
         },
         {
@@ -4715,10 +4707,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -4732,6 +4720,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -4789,10 +4781,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -4806,6 +4794,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {

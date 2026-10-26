@@ -219,8 +219,7 @@ export interface PortableIds {
 	'expression.yield.delegate': TSKindId.YieldFromClause;
 	file: TSKindId.Module;
 	identifier: TSKindId.DottedName | TSKindId.Identifier | TSKindId.MemberType;
-	'identifier.dotted': TSKindId.DottedName;
-	'identifier.qualified': TSKindId.MemberType;
+	'identifier.qualified': TSKindId.DottedName | TSKindId.MemberType;
 	literal:
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
@@ -733,12 +732,7 @@ export interface PortableKindsAt {
 	};
 	'expression.yield.delegate': { readonly $path: 'expression.yield.delegate' };
 	file: { readonly $path: 'file' };
-	identifier: {
-		readonly $path: 'identifier';
-		readonly dotted: PortableKindsAt['identifier.dotted'];
-		readonly qualified: PortableKindsAt['identifier.qualified'];
-	};
-	'identifier.dotted': { readonly $path: 'identifier.dotted' };
+	identifier: { readonly $path: 'identifier'; readonly qualified: PortableKindsAt['identifier.qualified'] };
 	'identifier.qualified': { readonly $path: 'identifier.qualified' };
 	literal: {
 		readonly $path: 'literal';
@@ -1453,10 +1447,8 @@ export interface PortableIsAt {
 	'expression.yield.delegate': PortableGuard<PortableIds['expression.yield.delegate'], PythonNode, TSKindId> & {};
 	file: PortableGuard<PortableIds['file'], PythonNode, TSKindId> & {};
 	identifier: PortableGuard<PortableIds['identifier'], PythonNode, TSKindId> & {
-		readonly dotted: PortableIsAt['identifier.dotted'];
 		readonly qualified: PortableIsAt['identifier.qualified'];
 	};
-	'identifier.dotted': PortableGuard<PortableIds['identifier.dotted'], PythonNode, TSKindId> & {};
 	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], PythonNode, TSKindId> & {};
 	literal: PortableGuard<PortableIds['literal'], PythonNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
@@ -1958,8 +1950,7 @@ const table: PortableTable = {
 		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
 		file: { ids: [TSKindId.Module], exact: true },
 		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier, TSKindId.MemberType], exact: true },
-		'identifier.dotted': { ids: [TSKindId.DottedName], exact: true },
-		'identifier.qualified': { ids: [TSKindId.MemberType], exact: true },
+		'identifier.qualified': { ids: [TSKindId.DottedName, TSKindId.MemberType], exact: true },
 		literal: {
 			ids: [
 				TSKindId.ConcatenatedString,
@@ -2579,7 +2570,7 @@ const table: PortableTable = {
 		[TSKindId.DictionaryComprehension]: [{ path: 'expression.comprehension.map', within: [], test: [] }],
 		[TSKindId.DictionarySplat]: [{ path: 'element.spread.map', within: [], test: [] }],
 		[TSKindId.DictionarySplatPattern]: [{ path: 'pattern.rest.map', within: [], test: [] }],
-		[TSKindId.DottedName]: [{ path: 'identifier.dotted', within: [], test: [] }],
+		[TSKindId.DottedName]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ElifClause]: [{ path: 'clause.else_if', within: [], test: [] }],
 		[TSKindId.Ellipsis]: [{ path: 'literal.ellipsis', within: [], test: [] }],
 		[TSKindId.ElseClause]: [{ path: 'clause.else', within: [], test: [] }],
@@ -2637,12 +2628,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '345': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '344': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '345': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '344': 1 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -2919,7 +2910,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '345': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '344': 0 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '162': 0 } } }
 } satisfies QueryFlags);
 
@@ -2930,8 +2921,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	282: { contents: { async: { types: [], kinds: [244] } } },
-	304: { statements: { async: { types: [], kinds: [157, 162, 302, 345] } } },
-	306: { definition: { async: { types: [], kinds: [302, 345] } } }
+	304: { statements: { async: { types: [], kinds: [157, 162, 302, 344] } } },
+	306: { definition: { async: { types: [], kinds: [302, 344] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

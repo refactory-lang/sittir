@@ -1241,10 +1241,10 @@ const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	345, 151, 157, 158, 159, 162, 302, 174, 306, 154
+	344, 151, 157, 158, 159, 162, 302, 174, 306, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 345, 151, 157, 158, 159, 162, 302, 174, 306, 154
+	130, 344, 151, 157, 158, 159, 162, 302, 174, 306, 154
 ]);
 const _supertype_suiteClassDefinition_ids = new Set<number>([297, 305, 299]);
 

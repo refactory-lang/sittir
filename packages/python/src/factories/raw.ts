@@ -2037,22 +2037,27 @@ function _buildExpressionList(
 	return stampBuilt(node) as unknown as T.ExpressionList.Bound;
 }
 
-export function buildDottedName<A extends NonEmptyArray<Admit<T.Identifier>>>(
-	...children: A & RefuseUndeclared<A>
-): T.DottedName.Bound;
-export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>): T.DottedName.Bound {
-	currentHandle()?.admit(TSKindId.DottedName, children);
-	const _names = children;
+export function buildDottedName<
+	QualifierSlot extends T.DottedName.Config['qualifier'],
+	NameSlot extends T.DottedName.Config['name']
+>(config: RefusingConfig<T.DottedName.Config, { qualifier: QualifierSlot; name: NameSlot }>): T.DottedName.Bound;
+export function buildDottedName(config: T.DottedName.Config): T.DottedName.Bound {
+	currentHandle()?.admit(TSKindId.DottedName, [config]);
+	const _qualifier = config.qualifier;
+	const _name = config.name;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DottedName as const,
 		$named: true as const,
-		_names,
+		_qualifier,
+		_name,
 		$with: {
-			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
-				rebuilt(node, handle, () => buildDottedName(...restItems('names', vs)))
+			qualifier: (value?: Admit<T.DottedName>) =>
+				rebuilt(node, handle, () => buildDottedName({ ...config, qualifier: value })),
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildDottedName({ ...config, name: value }))
 		},
-		names: () => hydrateStoredSlots(node, '_names'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

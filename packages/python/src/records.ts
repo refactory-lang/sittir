@@ -105,7 +105,7 @@ export const records = {
 	DecoratorNode: { words: 7, expression: { word: 2, width: 5 } },
 	BlockNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
 	ExpressionListNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	DottedNameNode: { words: 4, names: { word: 2, width: 2, run: 5 } },
+	DottedNameNode: { words: 12, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	CasePatternNode: { words: 7, content: { word: 2, width: 5 } },
 	SimplePatternNode: { words: 7, content: { word: 2, width: 5 } },
 	CaseAsPatternNode: { words: 12, case_pattern: { word: 2, width: 5 }, identifier: { word: 7, width: 5 } },

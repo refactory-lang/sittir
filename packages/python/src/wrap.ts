@@ -1616,12 +1616,17 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 	const node = {
 		...data,
 		$type: TSKindId.DottedName as const,
-		names() {
-			return hydrateSlots<T.Identifier>(this, '_names', tree);
+		qualifier() {
+			return hydrateSlot<T.DottedName | undefined>(this, '_qualifier', tree);
+		},
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
-			names: (...v: NonEmptyArray<NonNullable<T.DottedName['_names']>[number]>) =>
-				rebuilt(node, handle, () => wrapDottedName({ ...$edited(data), _names: restItems('names', v) }, tree))
+			qualifier: (v: NonNullable<T.DottedName['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapDottedName({ ...$edited(data), _qualifier: v }, tree)),
+			name: (v: NonNullable<T.DottedName['_name']>) =>
+				rebuilt(node, handle, () => wrapDottedName({ ...$edited(data), _name: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

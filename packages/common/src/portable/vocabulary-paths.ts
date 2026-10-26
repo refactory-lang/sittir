@@ -405,7 +405,6 @@ export const vocabularyPaths = Object.freeze([
 	'expression.yield.delegate',
 	'file',
 	'identifier',
-	'identifier.dotted',
 	'identifier.label',
 	'identifier.lifetime',
 	'identifier.metavariable',

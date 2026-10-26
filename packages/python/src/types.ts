@@ -300,7 +300,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[348, '_simple_statements'],
+	[347, '_simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -355,7 +355,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'dotted_name'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[347, '_simple_pattern'],
+	[346, '_simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -487,37 +487,36 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[313, 'global_statement_repeat1'],
 	[314, 'decorated_definition_repeat1'],
 	[315, 'expression_list_repeat1'],
-	[316, 'dotted_name_repeat1'],
-	[317, '_parameters_repeat1'],
-	[318, '_patterns_repeat1'],
-	[319, 'comparison_operator_repeat1'],
-	[320, '_collection_elements_repeat1'],
-	[321, 'for_in_clause_repeat1'],
-	[322, 'concatenated_string_repeat1'],
-	[323, 'string_repeat1'],
-	[324, 'string_content_repeat1'],
-	[325, 'format_specifier_repeat1'],
-	[326, 'simple_statements_elements_repeat1'],
-	[327, 'subjects_repeat1'],
-	[328, 'case_patterns_repeat1'],
-	[329, 'with_clause_with_items_repeat1'],
-	[330, '_exec_statement_optional1_repeat1'],
-	[331, 'types_repeat1'],
-	[332, 'argument_list_elements_repeat1'],
-	[333, 'dict_pattern_elements_repeat1'],
-	[334, 'subscripts_repeat1'],
-	[335, 'dictionary_elements_repeat1'],
-	[336, '_tuple_pattern_elements_repeat1'],
-	[337, '_tuple_elements_repeat1'],
-	[338, 'comprehension_clauses_repeat1'],
-	[339, 'except_clause_exception_list_repeat1'],
-	[340, 'with_clause_bare_repeat1'],
-	[341, 'match_block_block_repeat1'],
-	[342, '_block_class_definition_repeat1'],
-	[343, 'as_pattern_target'],
-	[344, 'format_expression'],
-	[345, 'method_declaration'],
-	[346, 'names'],
+	[316, '_parameters_repeat1'],
+	[317, '_patterns_repeat1'],
+	[318, 'comparison_operator_repeat1'],
+	[319, '_collection_elements_repeat1'],
+	[320, 'for_in_clause_repeat1'],
+	[321, 'concatenated_string_repeat1'],
+	[322, 'string_repeat1'],
+	[323, 'string_content_repeat1'],
+	[324, 'format_specifier_repeat1'],
+	[325, 'simple_statements_elements_repeat1'],
+	[326, 'subjects_repeat1'],
+	[327, 'case_patterns_repeat1'],
+	[328, 'with_clause_with_items_repeat1'],
+	[329, '_exec_statement_optional1_repeat1'],
+	[330, 'types_repeat1'],
+	[331, 'argument_list_elements_repeat1'],
+	[332, 'dict_pattern_elements_repeat1'],
+	[333, 'subscripts_repeat1'],
+	[334, 'dictionary_elements_repeat1'],
+	[335, '_tuple_pattern_elements_repeat1'],
+	[336, '_tuple_elements_repeat1'],
+	[337, 'comprehension_clauses_repeat1'],
+	[338, 'except_clause_exception_list_repeat1'],
+	[339, 'with_clause_bare_repeat1'],
+	[340, 'match_block_block_repeat1'],
+	[341, '_block_class_definition_repeat1'],
+	[342, 'as_pattern_target'],
+	[343, 'format_expression'],
+	[344, 'method_declaration'],
+	[345, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -653,7 +652,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[348, 'simple_statements'],
+	[347, 'simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -705,10 +704,10 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[179, 'decorator'],
 	[180, 'block'],
 	[181, 'expression_list'],
-	[182, 'dotted_name'],
+	[182, 'qualified_identifier'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[347, 'simple_pattern'],
+	[346, 'simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -755,7 +754,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[228, 'generic_type'],
 	[229, 'union_type'],
 	[230, 'constrained_type'],
-	[231, 'member_type'],
+	[231, 'qualified_identifier'],
 	[232, 'keyword_argument'],
 	[233, 'list'],
 	[234, 'set'],
@@ -840,37 +839,36 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[313, 'global_statement_repeat1'],
 	[314, 'decorated_definition_repeat1'],
 	[315, 'expression_list_repeat1'],
-	[316, 'dotted_name_repeat1'],
-	[317, '_parameters_repeat1'],
-	[318, '_patterns_repeat1'],
-	[319, 'comparison_operator_repeat1'],
-	[320, '_collection_elements_repeat1'],
-	[321, 'for_in_clause_repeat1'],
-	[322, 'concatenated_string_repeat1'],
-	[323, 'string_repeat1'],
-	[324, 'string_content_repeat1'],
-	[325, 'format_specifier_repeat1'],
-	[326, 'simple_statements_elements_repeat1'],
-	[327, 'subjects_repeat1'],
-	[328, 'case_patterns_repeat1'],
-	[329, 'with_clause_with_items_repeat1'],
-	[330, '_exec_statement_optional1_repeat1'],
-	[331, 'types_repeat1'],
-	[332, 'argument_list_elements_repeat1'],
-	[333, 'dict_pattern_elements_repeat1'],
-	[334, 'subscripts_repeat1'],
-	[335, 'dictionary_elements_repeat1'],
-	[336, '_tuple_pattern_elements_repeat1'],
-	[337, '_tuple_elements_repeat1'],
-	[338, 'comprehension_clauses_repeat1'],
-	[339, 'except_clause_exception_list_repeat1'],
-	[340, 'with_clause_bare_repeat1'],
-	[341, 'match_block_block_repeat1'],
-	[342, '_block_class_definition_repeat1'],
-	[343, 'as_pattern_target'],
-	[344, 'format_expression'],
-	[345, 'method_declaration'],
-	[346, 'names'],
+	[316, '_parameters_repeat1'],
+	[317, '_patterns_repeat1'],
+	[318, 'comparison_operator_repeat1'],
+	[319, '_collection_elements_repeat1'],
+	[320, 'for_in_clause_repeat1'],
+	[321, 'concatenated_string_repeat1'],
+	[322, 'string_repeat1'],
+	[323, 'string_content_repeat1'],
+	[324, 'format_specifier_repeat1'],
+	[325, 'simple_statements_elements_repeat1'],
+	[326, 'subjects_repeat1'],
+	[327, 'case_patterns_repeat1'],
+	[328, 'with_clause_with_items_repeat1'],
+	[329, '_exec_statement_optional1_repeat1'],
+	[330, 'types_repeat1'],
+	[331, 'argument_list_elements_repeat1'],
+	[332, 'dict_pattern_elements_repeat1'],
+	[333, 'subscripts_repeat1'],
+	[334, 'dictionary_elements_repeat1'],
+	[335, '_tuple_pattern_elements_repeat1'],
+	[336, '_tuple_elements_repeat1'],
+	[337, 'comprehension_clauses_repeat1'],
+	[338, 'except_clause_exception_list_repeat1'],
+	[339, 'with_clause_bare_repeat1'],
+	[340, 'match_block_block_repeat1'],
+	[341, '_block_class_definition_repeat1'],
+	[342, 'as_pattern_target'],
+	[343, 'format_expression'],
+	[344, 'method_declaration'],
+	[345, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1509,8 +1507,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.DecoratedDefinitionRepeat1;
 		case 'expression_list_repeat1':
 			return TSKindId.ExpressionListRepeat1;
-		case 'dotted_name_repeat1':
-			return TSKindId.DottedNameRepeat1;
 		case '_parameters_repeat1':
 			return TSKindId._ParametersRepeat1;
 		case '_patterns_repeat1':
@@ -1747,6 +1743,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Dedent;
 		case 'simple_statements':
 			return TSKindId.SimpleStatements;
+		case 'qualified_identifier':
+			return TSKindId.DottedName;
 		case 'simple_pattern':
 			return TSKindId.SimplePattern;
 		case 'rest_pattern':
@@ -2082,9 +2080,6 @@ export interface RelativeImport {
 		readonly _prefix: 'prefix';
 		readonly _name: 'name';
 	};
-	readonly __looseHints__?: {
-		readonly name?: readonly Identifier[];
-	};
 	readonly __slotHints__?: {
 		readonly prefix: SlotHint<T.ImportPrefix>;
 		readonly name: SlotHint<T.DottedName, true>;
@@ -2148,9 +2143,6 @@ export interface AliasedImport {
 	readonly __slotNames__?: {
 		readonly _name: 'name';
 		readonly _alias: 'alias';
-	};
-	readonly __looseHints__?: {
-		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.DottedName>;
@@ -2943,14 +2935,18 @@ export interface ExpressionList {
 
 export interface DottedName {
 	readonly $type: TSKindId.DottedName;
-	readonly _names: NonEmptyArray<Identifier>;
+	readonly _qualifier?: DottedName;
+	readonly _name: Identifier;
 	readonly __slotNames__?: {
-		readonly _names: 'names';
+		readonly _qualifier: 'qualifier';
+		readonly _name: 'name';
 	};
 	readonly __slotHints__?: {
-		readonly names: SlotHint<NonEmptyArray<T.Identifier>, false, true>;
+		readonly qualifier: SlotHint<T.DottedName, true>;
+		readonly name: SlotHint<T.Identifier>;
 	};
-	readonly names: () => NonEmptyArray<Identifier>;
+	readonly qualifier: () => DottedName | undefined;
+	readonly name: () => Identifier;
 }
 
 export interface CasePattern {
@@ -3369,7 +3365,6 @@ export interface ClassPattern {
 		readonly _fields: 'fields';
 	};
 	readonly __looseHints__?: {
-		readonly type: readonly Identifier[];
 		readonly fields?: readonly CasePattern[];
 	};
 	readonly __slotHints__?: {
@@ -6062,7 +6057,7 @@ export interface OptionsHintMap {
 	decorator: Decorator.Hints;
 	block: Block.Hints;
 	expressionList: ExpressionList.Hints;
-	dottedName: DottedName.Hints;
+	qualifiedIdentifier: DottedName.Hints | MemberType.Hints;
 	caseAsPattern: CaseAsPattern.Hints;
 	unionPattern: UnionPattern.Hints;
 	dictPattern: DictPattern.Hints;
@@ -6097,7 +6092,6 @@ export interface OptionsHintMap {
 	genericType: GenericType.Hints;
 	unionType: UnionType.Hints;
 	constrainedType: ConstrainedType.Hints;
-	memberType: MemberType.Hints;
 	keywordArgument: KeywordArgument.Hints;
 	list: List.Hints;
 	set: Set.Hints;
@@ -6233,6 +6227,7 @@ export namespace ImportList {
 			readonly name?: {
 				readonly aliasedImport?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly qualifiedIdentifier?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6744,11 +6739,19 @@ export namespace ExpressionList {
 export namespace DottedName {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly names?: {
-				readonly separator?: {
-					readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-				};
-			};
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace MemberType {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7159,16 +7162,6 @@ export namespace ConstrainedType {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly colon?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-		};
-	}
-}
-
-export namespace MemberType {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceKindId;
-			readonly before?: WhitespaceKindId;
-			readonly dot?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7614,11 +7607,11 @@ export namespace Types {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly memberType?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly qualifiedIdentifier?: { readonly after?: WhitespaceKindId };
 				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -12880,27 +12873,9 @@ export namespace DottedName {
 	}
 	export type Loose = LooseFor<TSKindId.DottedName>;
 	export type LooseConfig = LooseConfigFor<TSKindId.DottedName>;
-	export type BuildArgs = [...children: NonEmptyArray<Admit<T.Identifier>>];
-	export type LooseArgs =
-		| [
-				...children: NonEmptyArray<
-					| T.DottedName.Loose
-					| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				>
-		  ]
-		| [
-				children: Readonly<
-					NonEmptyArray<
-						| LooseValue<T.Identifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-						| LooseValue<T.Identifier | string, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					>
-				>
-		  ];
+	export type BuildArgs = [config: ConfigOf<T.DottedName>];
+	export type LooseArgs = [config: T.DottedName.Loose];
 	export type Kind = TSKindId.DottedName;
-	type NonEmptySlots = Proven<
-		[KeyRefusesEmpty<Config, 'names'>, KeyRefusesEmpty<LooseConfig, 'names'>, SetterRefusesEmpty<Bound, 'names'>]
-	>;
 }
 export namespace CasePattern {
 	export type Config = ConfigFor<TSKindId.CasePattern>;

@@ -249,7 +249,7 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(dotted_name) @identifier.dotted
+(dotted_name) @identifier.qualified
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)

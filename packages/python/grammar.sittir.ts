@@ -134,8 +134,6 @@ export default grammar(enrich(base), wire({
 			'","/before': preference('tight'),
 			'_/separator/","/before': preference('tight'),
 			'_/separator/";"/before': preference('tight'),
-			'_/separator/"."/before': preference('tight'),
-			'_/separator/"."/after': preference('tight'),
 			'":"/before': preference('tight'),
 			'":"/after': preference('space'),
 			'"->"/before': preference('space'),
@@ -373,7 +371,10 @@ export default grammar(enrich(base), wire({
 		relative_import: { 0: field('prefix'), '1/0': field('name') },
 		global_statement: { 1: field('names') },
 		nonlocal_statement: { 1: field('names') },
-		dotted_name: { 0: field('names'), 1: field('names') },
+		dotted_name: {
+			0: ($) => field('qualifier', optional(seq($.dotted_name, '.'))),
+			1: ($) => field('name', $.identifier)
+		},
 		union_pattern: { 0: field('left'), 1: ($) => seq('|', field('right', $._simple_pattern)) },
 		if_clause: { 1: field('condition') },
 		await: { 1: field('expression') },

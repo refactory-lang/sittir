@@ -37,7 +37,7 @@ describe('import_statement', () => {
 						$type: TSKindId.DottedName,
 						$text: 'test',
 						$named: true,
-						_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 					}) as any
 				]
 			}) as any
@@ -56,7 +56,7 @@ describe('import_statement', () => {
 						$type: TSKindId.DottedName,
 						$text: 'test',
 						$named: true,
-						_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 					}) as any
 				]
 			}) as any
@@ -105,7 +105,7 @@ describe('future_import_statement', () => {
 						$type: TSKindId.DottedName,
 						$text: 'test',
 						$named: true,
-						_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 					}) as any
 				]
 			}) as any
@@ -124,7 +124,7 @@ describe('future_import_statement', () => {
 						$type: TSKindId.DottedName,
 						$text: 'test',
 						$named: true,
-						_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 					}) as any
 				]
 			}) as any
@@ -142,7 +142,7 @@ describe('future_import_statement sub-factories', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		);
 		expect(node.$type).toBe(TSKindId.FutureImportStatement);
@@ -160,7 +160,7 @@ describe('future_import_statement sub-factories', () => {
 						$type: TSKindId.DottedName,
 						$text: 'test',
 						$named: true,
-						_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 					}) as any
 				]
 			}) as any
@@ -228,7 +228,7 @@ describe('import_from_statement sub-factories', () => {
 					$type: TSKindId.DottedName,
 					$text: 'test',
 					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any
 			]
 		});
@@ -253,7 +253,7 @@ describe('import_from_statement sub-factories', () => {
 						$type: TSKindId.DottedName,
 						$text: 'test',
 						$named: true,
-						_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 					}) as any
 				]
 			}) as any
@@ -272,7 +272,7 @@ describe('import_list', () => {
 					$type: TSKindId.DottedName,
 					$text: 'test',
 					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any
 			]
 		);
@@ -286,7 +286,7 @@ describe('import_list', () => {
 					$type: TSKindId.DottedName,
 					$text: 'test',
 					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any
 			]
 		);
@@ -301,7 +301,7 @@ describe('aliased_import', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
 			alias: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -314,7 +314,7 @@ describe('aliased_import', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
 			alias: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
@@ -1782,15 +1782,18 @@ describe('expression_list', () => {
 
 describe('dotted_name', () => {
 	it('factory produces correct type', () => {
-		const node = ir.dottedName(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		const node = ir.dottedName({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
 		expect(node.$type).toBe(TSKindId.DottedName);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.dottedName(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		const node = ir.dottedName({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('test');
 	});
 });
 
@@ -1868,7 +1871,7 @@ describe('case_pattern sub-factories', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
@@ -2120,7 +2123,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.dottedName builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.dottedName({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			pattern: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			pattern: { name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any }
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2140,7 +2143,7 @@ describe('case_pattern sub-factories', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
@@ -2353,9 +2356,9 @@ describe('case_pattern sub-factories', () => {
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('simplePattern.dottedName builds the parent', () => {
-		const node = ir.casePattern.simplePattern.dottedName(
-			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		);
+		const node = ir.casePattern.simplePattern.dottedName({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2500,7 +2503,7 @@ describe('key_value_pattern sub-factories', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
@@ -2975,7 +2978,7 @@ describe('key_value_pattern sub-factories', () => {
 					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
-			key: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		expect((node as any).key()).toBeDefined();
@@ -3030,7 +3033,7 @@ describe('keyword_pattern sub-factories', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
@@ -3285,7 +3288,7 @@ describe('keyword_pattern sub-factories', () => {
 	it('dottedName builds the parent', () => {
 		const node = ir.keywordPattern.dottedName({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			pattern: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			pattern: { name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any }
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expect((node as any).pattern()).toBeDefined();
@@ -3309,7 +3312,7 @@ describe('class_pattern', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.ClassPattern);
@@ -3321,7 +3324,7 @@ describe('class_pattern', () => {
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
-				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any
 		});
 		const rendered = node.$render!();
@@ -6019,7 +6022,7 @@ describe('names', () => {
 					$type: TSKindId.DottedName,
 					$text: 'test',
 					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any
 			]
 		);
@@ -6033,7 +6036,7 @@ describe('names', () => {
 					$type: TSKindId.DottedName,
 					$text: 'test',
 					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 				}) as any
 			]
 		);

@@ -3085,10 +3085,10 @@
       ]
     },
     "dotted_name": {
-      "vocab": "identifier.dotted",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "identifier.dotted",
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3097,24 +3097,28 @@
       ],
       "members": [
         {
-          "name": "names",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "names",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "dotted_name",
-              "slot": "names"
+              "slot": "qualifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "dotted_name",
+              "slot": "name"
             }
           ]
         }
-      ],
-      "container": {
-        "kinds": [
-          "identifier"
-        ],
-        "terminals": [],
-        "list": true
-      }
+      ]
     },
     "elif_clause": {
       "vocab": "clause.else_if",
@@ -4502,7 +4506,7 @@
     "import_list": {
       "container": {
         "kinds": [
-          "dotted_name",
+          "qualified_identifier",
           "aliased_import"
         ],
         "terminals": [],
@@ -5217,6 +5221,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -5260,7 +5271,7 @@
                 "op": "eq",
                 "text": "__init__",
                 "slots": {
-                  "345": 1
+                  "344": 1
                 }
               }
             }
@@ -5279,7 +5290,7 @@
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
                 "slots": {
-                  "345": 1
+                  "344": 1
                 }
               }
             }
@@ -5515,7 +5526,7 @@
     "names": {
       "container": {
         "kinds": [
-          "dotted_name",
+          "qualified_identifier",
           "aliased_import"
         ],
         "terminals": [],
@@ -5872,6 +5883,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "qualified_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "raise_statement": {
       "vocab": "statement.throw",
@@ -7624,9 +7648,9 @@
       },
       {
         "depth": 2,
-        "paths": 77,
-        "kinds": 80,
-        "refinements": 6
+        "paths": 76,
+        "kinds": 81,
+        "refinements": 5
       },
       {
         "depth": 3,

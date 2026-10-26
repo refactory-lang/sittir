@@ -576,9 +576,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276, 278, 279,
-		281, 289, 290, 291, 292, 301, 346
+		281, 289, 290, 291, 292, 301, 345
 	]),
-	import_statement: new Set([137, 182, 346]),
+	import_statement: new Set([137, 182, 345]),
 	future_import_statement: new Set([136, 137, 182, 281]),
 	import_list: new Set([137, 182]),
 	print_statement: new Set([
@@ -607,13 +607,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276,
-		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 346
+		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 345
 	]),
 	finally_clause: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276,
-		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 346
+		278, 279, 281, 289, 290, 291, 292, 297, 298, 299, 301, 345
 	]),
 	with_item: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -716,7 +716,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 269, 272, 276, 278, 279, 281,
-		289, 290, 291, 292, 301, 346
+		289, 290, 291, 292, 301, 345
 	]),
 	subjects: new Set([
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -809,7 +809,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276, 278, 279,
-		281, 289, 290, 291, 292, 301, 346
+		281, 289, 290, 291, 292, 301, 345
 	]),
 	suite_block: new Set([180]),
 	suite_empty: new Set([116]),
@@ -1009,7 +1009,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	decorator: TSKindId.Decorator,
 	block: TSKindId.Block,
 	expression_list: TSKindId.ExpressionList,
-	dotted_name: TSKindId.DottedName,
 	case_pattern: TSKindId.CasePattern,
 	_simple_pattern: TSKindId.SimplePattern,
 	dict_pattern: TSKindId.DictPattern,
@@ -1094,7 +1093,6 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	decorator: 'expression',
 	block: '_statement',
 	expression_list: 'expression',
-	dotted_name: 'identifier',
 	dict_pattern: 'dict_pattern_elements',
 	parameters_elements: 'parameter',
 	patterns: 'pattern',
@@ -1264,8 +1262,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return (coerceToBlock as (...args: unknown[]) => unknown)(...children);
 		case 'expression_list':
 			return (coerceToExpressionList as (...args: unknown[]) => unknown)(...children);
-		case 'dotted_name':
-			return (coerceToDottedName as (...args: unknown[]) => unknown)(...children);
 		case 'case_pattern':
 			return F.buildCasePattern(children[0] as Parameters<typeof F.buildCasePattern>[0]);
 		case '_simple_pattern':
@@ -3487,30 +3483,26 @@ export function coerceToExpressionList(...input: T.ExpressionList.LooseArgs): Re
 	);
 }
 
-export function coerceToDottedName<const A extends T.DottedName.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.DottedName.LooseArgs>
+export function resolveDottedName_qualifier(
+	value: T.DottedName.LooseConfig['qualifier']
+): Admit<T.DottedName['_qualifier']> {
+	return _resolveOneBranch<T.DottedName>(value, 'dotted_name', undefined, true);
+}
+
+export function resolveDottedName_name(value: T.DottedName.LooseConfig['name']): Admit<T.DottedName['_name']> {
+	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
+}
+
+export function coerceToDottedName<const I extends T.DottedName.Loose>(
+	input: I & RefuseUndeclared<I, T.DottedName.Loose>
 ): ReturnType<typeof F.buildDottedName>;
-export function coerceToDottedName(...input: T.DottedName.LooseArgs): ReturnType<typeof F.buildDottedName> {
-	currentHandle()?.admit(TSKindId.DottedName, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DottedName)) {
-		const data = input[0];
-		const stored = (data as unknown as { _names?: unknown })._names;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
-		return F.buildDottedName(
-			...(_resolveManyLeaf<T.Identifier>(children, 'identifier') as unknown as Parameters<typeof F.buildDottedName>)
-		);
-	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('names' in head)) return input;
-		const v = (head as Record<string, unknown>)['names'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildDottedName(
-		...(_resolveManyLeaf<T.Identifier>(_elems, 'identifier') as unknown as Parameters<typeof F.buildDottedName>)
-	);
+export function coerceToDottedName(input: T.DottedName.Loose): ReturnType<typeof F.buildDottedName> {
+	if (!_isLooseConfig<T.DottedName.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildDottedName>;
+	currentHandle()?.admit(TSKindId.DottedName, [input]);
+	return F.buildDottedName({
+		qualifier: resolveDottedName_qualifier(input.qualifier),
+		name: resolveDottedName_name(input.name)
+	});
 }
 
 export function resolveCasePattern_content(

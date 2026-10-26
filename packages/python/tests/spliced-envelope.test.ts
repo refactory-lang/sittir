@@ -58,7 +58,10 @@ describe('a slot that splices a hidden rule admits that rule\'s envelope and sto
 	});
 
 	it('admits the envelope at a mapping key and a keyword argument value, strict and loose', () => {
-		const y = () => py.build.casePattern.strict(py.build.simplePattern.strict(py.build.dottedName.strict(py.build.identifier('y'))));
+		const y = () =>
+			py.build.casePattern.strict(
+				py.build.simplePattern.strict(py.build.dottedName.strict({ name: py.build.identifier('y') }))
+			);
 		for (const pair of [py.build.keyValuePattern.strict({ key: negativeOne(), value: y() }), py.build.keyValuePattern({ key: negativeOne(), value: y() })]) {
 			expect(pair.$render()).toBe('-1: y');
 			expect(py.is.simplePatternNegative(pair.key())).toBe(true);

@@ -1264,9 +1264,12 @@ const keywordPattern$complexPattern$coerce = keywordPattern$complexPattern(
 );
 const keywordPattern$dottedName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
+	(
+		config: OmitEach<ArgsOf<PF>[0], 'pattern'> & { pattern: ArgsOf<CF>[0] },
+		options?: OptionsArg<PF>
+	): ReturnType<PF> => {
 		const { pattern: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(...seated) } as never, options as never);
+		return _s<ReturnType<PF>>(parent)({ ...rest, pattern: _c(child)(seated) } as never, options as never);
 	};
 const keywordPattern$dottedName$strict = keywordPattern$dottedName(F.buildKeywordPattern, F.buildDottedName);
 const keywordPattern$dottedName$coerce = keywordPattern$dottedName(C.coerceToKeywordPattern, C.coerceToDottedName);
@@ -2023,26 +2026,28 @@ export const keywordPattern = Object.freeze({
 	dottedName: {
 		strict: <
 			const V extends OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'pattern'> & {
-				pattern: ArgsOf<typeof F.buildDottedName>;
+				pattern: ArgsOf<typeof F.buildDottedName>[0];
 			}
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
-					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'pattern'> & { pattern: ArgsOf<typeof F.buildDottedName> }
+					OmitEach<ArgsOf<typeof F.buildKeywordPattern>[0], 'pattern'> & {
+						pattern: ArgsOf<typeof F.buildDottedName>[0];
+					}
 				>,
 			options?: OptionsArg<typeof F.buildKeywordPattern>
 		) => ReturnType<typeof F.buildKeywordPattern>;
 		coerce: <
 			const V extends OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'pattern'> & {
-				pattern: ArgsOf<typeof C.coerceToDottedName>;
+				pattern: ArgsOf<typeof C.coerceToDottedName>[0];
 			}
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
 					OmitEach<ArgsOf<typeof C.coerceToKeywordPattern>[0], 'pattern'> & {
-						pattern: ArgsOf<typeof C.coerceToDottedName>;
+						pattern: ArgsOf<typeof C.coerceToDottedName>[0];
 					}
 				>,
 			options?: OptionsArg<typeof C.coerceToKeywordPattern>
@@ -2319,7 +2324,10 @@ export const simplePattern = Object.freeze({
 		key: 'simplePattern.complexPattern',
 		max: 1
 	}),
-	dottedName: bundle(simplePattern$dottedName$strict, simplePattern$dottedName$coerce),
+	dottedName: bundle(simplePattern$dottedName$strict, simplePattern$dottedName$coerce, {
+		key: 'simplePattern.dottedName',
+		max: 1
+	}),
 	wildcardPattern: bundle(simplePattern$wildcardPattern$strict, simplePattern$wildcardPattern$coerce, {
 		key: 'simplePattern.wildcardPattern',
 		max: 1
@@ -3390,7 +3398,10 @@ export const casePattern = Object.freeze({
 			casePattern$simplePattern$complexPattern$coerce,
 			{ key: 'casePattern.simplePattern.complexPattern', max: 1 }
 		),
-		dottedName: bundle(casePattern$simplePattern$dottedName$strict, casePattern$simplePattern$dottedName$coerce),
+		dottedName: bundle(casePattern$simplePattern$dottedName$strict, casePattern$simplePattern$dottedName$coerce, {
+			key: 'casePattern.simplePattern.dottedName',
+			max: 1
+		}),
 		wildcardPattern: bundle(
 			casePattern$simplePattern$wildcardPattern$strict,
 			casePattern$simplePattern$wildcardPattern$coerce,
@@ -4107,9 +4118,14 @@ const keyValuePattern$complexPattern$coerce = keyValuePattern$complexPattern(
 );
 const keyValuePattern$dottedName =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'key'> & { key: ArgsOf<CF> }, options?: OptionsArg<PF>): ReturnType<PF> => {
-		const { key: seated, ...rest } = config;
-		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(...seated) } as never, options as never);
+	(config: OmitEach<ArgsOf<PF>[0], 'key'> & ArgsOf<CF>[0], options?: OptionsArg<PF>): ReturnType<PF> => {
+		const rest: Record<string, unknown> = {};
+		const inner: Record<string, unknown> = {};
+		for (const [key, value] of Object.entries(_o(config))) {
+			if (key === 'qualifier' || key === 'name') inner[key] = value;
+			else rest[key] = value;
+		}
+		return _s<ReturnType<PF>>(parent)({ ...rest, key: _c(child)(inner) } as never, options as never);
 	};
 const keyValuePattern$dottedName$strict = keyValuePattern$dottedName(F.buildKeyValuePattern, F.buildDottedName);
 const keyValuePattern$dottedName$coerce = keyValuePattern$dottedName(C.coerceToKeyValuePattern, C.coerceToDottedName);
@@ -4848,26 +4864,23 @@ export const keyValuePattern = Object.freeze({
 	};
 	dottedName: {
 		strict: <
-			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof F.buildDottedName>;
-			}
+			const V extends OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildDottedName>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
-					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof F.buildDottedName> }
+					OmitEach<ArgsOf<typeof F.buildKeyValuePattern>[0], 'key'> & ArgsOf<typeof F.buildDottedName>[0]
 				>,
 			options?: OptionsArg<typeof F.buildKeyValuePattern>
 		) => ReturnType<typeof F.buildKeyValuePattern>;
 		coerce: <
-			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & {
-				key: ArgsOf<typeof C.coerceToDottedName>;
-			}
+			const V extends OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> &
+				ArgsOf<typeof C.coerceToDottedName>[0]
 		>(
 			config: V &
 				RefuseUndeclared<
 					V,
-					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & { key: ArgsOf<typeof C.coerceToDottedName> }
+					OmitEach<ArgsOf<typeof C.coerceToKeyValuePattern>[0], 'key'> & ArgsOf<typeof C.coerceToDottedName>[0]
 				>,
 			options?: OptionsArg<typeof C.coerceToKeyValuePattern>
 		) => ReturnType<typeof C.coerceToKeyValuePattern>;

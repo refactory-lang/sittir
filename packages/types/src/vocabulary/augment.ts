@@ -2277,7 +2277,6 @@ declare module './identifier.ts' {
 		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
-			| V.Identifier.Dotted<G>
 			| V.Identifier.Label<G>
 			| V.Identifier.Lifetime<G>
 			| V.Identifier.Metavariable<G>

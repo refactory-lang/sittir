@@ -26,10 +26,10 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270,
-		281, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 305, 343
+		281, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 305, 342
 	]),
 	listKinds: new Set<number>([
-		136, 181, 193, 194, 218, 243, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 271, 272, 276, 277, 292, 293, 346
+		136, 181, 193, 194, 218, 243, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 271, 272, 276, 277, 292, 293, 345
 	]),
 	layout: new Set<number>([106, 107, 116, 117, 118, 123, 124, 125, 126, 127]),
 	innerRegions: new Map<number, readonly string[]>([
@@ -216,7 +216,10 @@ export const querySlots: QuerySlots = Object.freeze({
 	179: [['expression', 0, undefined, '_expression']],
 	180: [['statements', 0, undefined, '_statements']],
 	181: [['items', 0, undefined, '_item']],
-	182: [['names', 0, undefined, '_names']],
+	182: [
+		['qualifier', 0, undefined, '_qualifier'],
+		['name', 1, undefined, '_name']
+	],
 	183: [['content', 0, undefined, '_content']],
 	184: [['content', 0, undefined, '_content']],
 	185: [
@@ -470,14 +473,14 @@ export const querySlots: QuerySlots = Object.freeze({
 		['decorators', 0, undefined, '_decorator'],
 		['definition', 1, undefined, '_definition']
 	],
-	343: [['content', 0, undefined, '_content']],
-	344: [
+	342: [['content', 0, undefined, '_content']],
+	343: [
 		['expression', 0, undefined, '_expression'],
 		['debug', 1, '=', '_debug'],
 		['typeConversion', 2, undefined, '_type_conversion'],
 		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
-	345: [
+	344: [
 		['async', 0, 'async', '_async'],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -485,7 +488,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', 4, undefined, '_return_type'],
 		['body', 5, undefined, '_body']
 	],
-	346: [['names', 0, undefined, '_name']]
+	345: [['names', 0, undefined, '_name']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({
@@ -494,8 +497,8 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	slots: querySlots,
 	layout: triviaFacts.layout,
 	spread: new Set<number>([
-		128, 136, 141, 170, 171, 180, 181, 182, 193, 194, 218, 243, 247, 249, 254, 260, 261, 262, 263, 264, 265, 266, 267,
-		268, 269, 271, 272, 276, 277, 282, 285, 292, 293, 295, 304, 346
+		128, 136, 141, 170, 171, 180, 181, 193, 194, 218, 243, 247, 249, 254, 260, 261, 262, 263, 264, 265, 266, 267, 268,
+		269, 271, 272, 276, 277, 282, 285, 292, 293, 295, 304, 345
 	]),
 	leaves: new Set<number>([1, 65, 88, 93, 94, 95, 106, 119, 120, 121, 122, 132]),
 	textEnvelopes: new Map<number, number>([]),
@@ -584,7 +587,7 @@ export const structure: StructureTable = Object.freeze({
 	131: {
 		kind: 'import_statement',
 		required: [['_names', 'names']],
-		nodeOnly: [['_names', 'ImportStatement.names', 'a built Names', [346]]]
+		nodeOnly: [['_names', 'ImportStatement.names', 'a built Names', [345]]]
 	},
 	133: {
 		kind: 'relative_import',
@@ -951,9 +954,12 @@ export const structure: StructureTable = Object.freeze({
 	},
 	182: {
 		kind: 'dotted_name',
-		nonEmpty: [['_names', 'dotted_name.children']],
-		nodeOnly: [['_names', 'DottedName.names', 'buildIdentifier(…)', [1]]],
-		lists: [['names', false, 0]]
+		required: [['_name', 'name']],
+		nodeOnly: [
+			['_qualifier', 'DottedName.qualifier', 'a built DottedName', [182]],
+			['_name', 'DottedName.name', 'buildIdentifier(…)', [1]]
+		],
+		config: ['qualifier', 'name']
 	},
 	183: {
 		kind: 'case_pattern',
@@ -1126,7 +1132,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_expression', 'AsPattern.expression', 'a built Expression', [205]],
-			['_alias', 'AsPattern.alias', 'a built AsPatternTarget', [343]]
+			['_alias', 'AsPattern.alias', 'a built AsPatternTarget', [342]]
 		],
 		config: ['expression', 'alias']
 	},
@@ -1532,7 +1538,7 @@ export const structure: StructureTable = Object.freeze({
 	},
 	254: {
 		kind: 'format_specifier',
-		nodeOnly: [['_elements', 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)', [88, 344]]],
+		nodeOnly: [['_elements', 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)', [88, 343]]],
 		lists: [['elements', false, 0]]
 	},
 	257: {
@@ -1865,18 +1871,18 @@ export const structure: StructureTable = Object.freeze({
 				'_definition',
 				'DecoratedDefinitionClassDeclaration.definition',
 				'a built ClassDefinition / MethodDeclaration / ConstructorDeclaration',
-				[174, 302, 345]
+				[174, 302, 344]
 			]
 		],
 		config: ['decorators', 'definition'],
 		lists: [['decorators', false, 'key']]
 	},
-	343: {
+	342: {
 		kind: 'as_pattern_target',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'AsPatternTarget.content', 'a built Expression', [205]]]
 	},
-	344: {
+	343: {
 		kind: 'format_expression',
 		required: [['_expression', 'expression']],
 		nodeOnly: [
@@ -1892,7 +1898,7 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [['_debug', 'FormatExpression.debug']],
 		config: ['expression', 'debug', 'typeConversion', 'formatSpecifier']
 	},
-	345: {
+	344: {
 		kind: 'method_declaration',
 		required: [
 			['_name', 'name'],
@@ -1909,7 +1915,7 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [['_async', 'MethodDeclaration.async']],
 		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
-	346: {
+	345: {
 		kind: 'names',
 		nonEmpty: [['_name', 'names.elements']],
 		nodeOnly: [['_name', 'Names.names', 'a built DottedName / AliasedImport', [137, 182]]],
