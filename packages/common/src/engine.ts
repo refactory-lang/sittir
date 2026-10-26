@@ -15,7 +15,7 @@ import type {
 import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { adoptSideNesting, holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
-import { readEntries, readUnits } from './side-entries.ts';
+import { heldProjection, heldSide, holdSide, readEntries, readUnits, releaseSide, type HeldSideData } from './side-entries.ts';
 import type { DescendantBatch } from './query.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -112,9 +112,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * the native node that holds it, each placed extra with its text, and the node itself measured from the
 	 * byte `holderByte`, or from its own start when absent.
 	 *
-	 * @throws as {@link read} does.
+	 * @throws as {@link read} does, and as {@link render} does on `held`.
 	 */
-	snapshot(treeId: number, index: number, holderByte?: number | null): TNode;
+	snapshot(treeId: number, index: number, holderByte?: number | null, held?: readonly HeldSideData[]): TNode;
 	/**
 	 * The entries of `side` of the node at descendant `index` of tree `treeId`: the ones a write gave it,
 	 * else the ones the tree's trivia table assigns it. An extra is its coordinate, an `ERROR` its kind
@@ -129,6 +129,13 @@ export interface NativeEngineLike<TNode = unknown> {
 	 * @throws as {@link triviaSide} does.
 	 */
 	writeTriviaSide(treeId: number, index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/**
+	 * Marks `side` of the node at descendant `index` of tree `treeId` as one the client holds: a write whose
+	 * entries each {@link render}, {@link renderToFile} and {@link snapshot} that reads it carries in `held`.
+	 *
+	 * @throws as {@link triviaSide} does.
+	 */
+	holdTriviaSide(treeId: number, index: number, side: TriviaSideName): void;
 	/**
 	 * The sides of the unit children of the node at descendant `index` of tree `treeId`, which their
 	 * slots store as bare kinds: each `{ slot, item, leading?, trailing?, inner? }`, by its slot's
@@ -212,8 +219,17 @@ export interface NativeEngineLike<TNode = unknown> {
 		depth?: number | null
 	): string;
 	planHolds(addresses: string, plan: string): boolean[];
-	render(node: TNode, treeId?: number, options?: object): string;
-	renderToFile?(node: TNode, path: string, treeId?: number, options?: object): void;
+	/**
+	 * Render `node`, by the layer of options tree `treeId` read when it names one, over the engine's. `held`
+	 * carries the entries of every side the client holds ({@link holdTriviaSide}) in any live tree, for this
+	 * call only.
+	 *
+	 * @throws when `held` carries entries for a side no tree holds, leaves out a held side, or names a tree
+	 *   that is not live, and when the render refuses.
+	 */
+	render(node: TNode, treeId?: number, options?: object, held?: readonly HeldSideData[]): string;
+	/** {@link render} into the file at `path`. */
+	renderToFile?(node: TNode, path: string, treeId?: number, options?: object, held?: readonly HeldSideData[]): void;
 	/** The binary's compile profile (`debug` | `release`); absent on a binary that predates the getter. */
 	readonly buildProfile?: string;
 	dispose(): void;
@@ -365,38 +381,29 @@ export function createNativeEngine<
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
 	}
 
+	const native = status.native;
 	try {
-		adoptSideNesting(status.native);
-		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
+		adoptSideNesting(native);
+		const engine = new native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
 		};
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
-			// The projection is the one place a node's storage wins over the
-			// coordinate it read in with: it crosses here, on every render
-			// path, so a caller handing over raw read data cannot slice a
-			// pre-edit span past a rebuilt slot.
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
-			// The tree the node was read from, or rebuilt from, is the layer of
-			// options its source inferred; a built node has none.
 			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
 			const treeId = handle === undefined ? undefined : decodeTree(handle);
-			// The handle renders lazily, and the data's coordinates are
-			// numbers: the tokens stayed on `node`. Both closures name `node`,
-			// so the handle holds the trees it will slice for as long as it
-			// can still render.
 			const holdsTrees = (): unknown => node;
 			return createRenderHandle(
 				() => {
 					holdsTrees();
-					return engine.render(data, treeId, perCall);
+					return engine.render(data, treeId, perCall, heldProjection(native));
 				},
 				(path) => {
 					holdsTrees();
 					if (engine.renderToFile) {
-						engine.renderToFile(data, path, treeId, perCall);
+						engine.renderToFile(data, path, treeId, perCall, heldProjection(native));
 						return true;
 					}
 					return false;
@@ -418,13 +425,9 @@ export function createNativeEngine<
 					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
-						// Held by `read` below and by every parsed object a read
-						// returns, so it stays reachable exactly as long as
-						// something can still read from this tree or names it.
-						// Its collection is what releases the tree.
 						const liveToken = mintTreeToken(parsed.treeId);
 						treeDisposalRegistry.register(liveToken, {
-							release: status.native.disposeTree,
+							release: native.disposeTree,
 							treeId: parsed.treeId
 						});
 						const readAt = (index: number, depth: number): TNode => {
@@ -432,10 +435,7 @@ export function createNativeEngine<
 							holdReadTree(node, liveToken);
 							return node;
 						};
-						// The parse's error regions ride beside the root and are stamped here.
 						const root = Object.assign(readObject(readAt(0, depthOf(parseOptions)), 'the root'), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
-						// One root per depth: the parse's own read seeds it, and a
-						// root asked for at another depth is read once.
 						const roots = new Map<number, unknown>([[depthOf(parseOptions), root]]);
 						const tree: TreeHandle = {
 							source,
@@ -450,9 +450,16 @@ export function createNativeEngine<
 								return cached;
 							},
 							options: parsed.options,
-							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
-							triviaSide: (index, side) => readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
-							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
+							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte, heldProjection(native)),
+							triviaSide: (index, side) => heldSide(liveToken, index, side) ?? readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
+							writeTriviaSide: (index, side, entries) => {
+								engine.writeTriviaSide(parsed.treeId, index, side, entries);
+								releaseSide(liveToken, index, side);
+							},
+							holdTriviaSide: (index, side, entries) => {
+								engine.holdTriviaSide(parsed.treeId, index, side);
+								holdSide(native, liveToken, index, side, entries);
+							},
 							unitSides: (index) => readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,

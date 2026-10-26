@@ -1,4 +1,4 @@
-import type { NodeCoordinate } from '@sittir/types';
+import type { NodeCoordinate, TriviaEntry } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
@@ -18,9 +18,11 @@ export interface TreeHandle {
 	/** A snapshot of the node at descendant `index`, measured from the byte `holderByte`, or from its own start (`snapshotOf`). */
 	snapshot?(index: number, holderByte?: number): unknown;
 	/** The entries of `side` of the node at descendant `index`: the ones a write gave it, else the ones the tree's trivia table assigns it. */
-	triviaSide?(index: number, side: TriviaSideName): unknown[];
+	triviaSide?(index: number, side: TriviaSideName): readonly unknown[];
 	/** Replaces `side` of the node at descendant `index` with `entries`. */
 	writeTriviaSide?(index: number, side: TriviaSideName, entries: readonly unknown[]): void;
+	/** Replaces `side` of the node at descendant `index` with `entries` the client holds, which read back as themselves and render as they are when rendered. */
+	holdTriviaSide?(index: number, side: TriviaSideName, entries: readonly TriviaEntry[]): void;
 	/** The sides of the unit children of the node at descendant `index`, by slot and item (`NodeLayout.units`). */
 	unitSides?(index: number): unknown[];
 	/** The stored layout of each list slot of the node at descendant `index` that stores any (`NodeLayout.slots`). */

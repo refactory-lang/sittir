@@ -190,7 +190,7 @@ describe('the tree token a parsed object holds', () => {
 function tableTree(id: number, siblings: (index: number) => Siblings = () => ({ previous: null, next: null })) {
 	const token = mintTreeToken(id);
 	const written: string[] = [];
-	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings });
+	registerTree(token, { id, triviaSide: (index, side) => [`${index}:${side}`], writeTriviaSide: (index, side) => written.push(`${index}:${side}`), holdTriviaSide: (index, side) => written.push(`${index}:${side}`), siblings });
 	return { token, written };
 }
 

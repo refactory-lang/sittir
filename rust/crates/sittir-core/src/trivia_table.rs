@@ -42,6 +42,18 @@ pub enum TriviaSide {
     Inner,
 }
 
+impl TriviaSide {
+    /// The side's wire name: `leading`, `trailing` or `inner`.
+    #[must_use]
+    pub fn wire_name(self) -> &'static str {
+        match self {
+            TriviaSide::Leading => "leading",
+            TriviaSide::Trailing => "trailing",
+            TriviaSide::Inner => "inner",
+        }
+    }
+}
+
 /// One token of the walk, by its bytes and the node it is (a leaf) or belongs
 /// to (hidden text or a node edge, `own`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

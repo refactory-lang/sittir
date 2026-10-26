@@ -33,10 +33,6 @@ export function snapshotOf(value: object): Snapshot {
 	return snapshotIn(value, undefined, undefined, new Set(), 0) as Snapshot;
 }
 
-export function entrySnapshotOf(entry: object): Snapshot {
-	return snapshotIn(entry, undefined, undefined, new Set(), 1) as Snapshot;
-}
-
 function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: SnapshotTree | undefined, within: Set<object>, nesting: number): unknown {
 	if (Array.isArray(value)) return value.map((entry) => snapshotIn(entry, holderByte, holderTree, within, nesting));
 	if (!isRecord(value)) return value;

@@ -5,6 +5,7 @@ import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
 import { nestedComments, objects as rs, type Reported, type Route } from './side-nesting.mts';
 
+const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
 const b = rs.build;
 const L = b.layout;
 
@@ -98,21 +99,19 @@ describe('a node that a side reaches from its own sides', () => {
 		expect((statement('y') as unknown as Rendered).$render()).toBe('y;');
 	});
 
-	it("refuses the comment's snapshot once a parsed comment's side holds it, and renders on after it", () => {
+	it("refuses the comment's render and snapshot by the bound once a parsed comment's side holds it, and renders on after it", () => {
 		const content = b.blockCommentRegular(' k ') as unknown as Sided;
 		const holder = b.blockComment(content as never);
 		withSide(content, 'leading', [holder]);
-		const { parsed } = parsedComment();
-		expect(() => {
-			withSide(parsed, 'leading', [holder]);
-			parsed.$snapshot();
-		}).toThrow(refusal);
+		const { root, parsed } = parsedComment();
+		withSide(parsed, 'leading', [holder]);
+		expect(() => root.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => parsed.$snapshot()).toThrow(native.SIDE_NESTING_REFUSAL);
 		expect((statement('y') as unknown as Rendered).$render()).toBe('y;');
 	});
 });
 
 describe("a side nests at most as deep as the addon's bound", () => {
-	const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
 	const bound = native.SIDE_NESTING_BOUND;
 	const helper = fileURLToPath(new URL('./side-nesting.mts', import.meta.url));
 	const routes: readonly [Route, string][] = [
@@ -186,10 +185,10 @@ describe("a side nests at most as deep as the addon's bound", () => {
 		expect(carrying(bound - 1).root.$render().split('/*').length - 1).toBe(bound);
 		const past = carrying(bound).root;
 		expect(() => past.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
-		expect(() => carrying(bound + 1)).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => carrying(bound + 1).root.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
 	});
 
-	it('refuses a parsed comment whose own sides nest past the bound where it is held, at the render, and a built one at the write', () => {
+	it('refuses a parsed comment whose own sides nest past the bound where it is held, and a built one, at the render and the snapshot', () => {
 		const at = parsedStatement();
 		withSide(at.y, 'leading', [carrying(bound - 1).parsed]);
 		expect(at.root.$render().split('/*').length - 1).toBe(bound);
@@ -200,7 +199,9 @@ describe("a side nests at most as deep as the addon's bound", () => {
 		expect(() => held.root.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
 		expect(() => held.root.$snapshot()).toThrow(native.SIDE_NESTING_REFUSAL);
 		const refused = parsedStatement();
-		expect(() => withSide(refused.y, 'leading', [chain(bound + 1)])).toThrow(native.SIDE_NESTING_REFUSAL);
-		expect(refused.root.$render()).toBe('fn g() {\n    y;\n}\n');
+		withSide(refused.y, 'leading', [chain(bound + 1)]);
+		expect(() => refused.root.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => refused.root.$snapshot()).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(parsedStatement().root.$render()).toBe('fn g() {\n    y;\n}\n');
 	});
 });

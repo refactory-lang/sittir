@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, readCoordinateOf, tableAt, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, type EngineHandle } from './engine-scope.ts';
@@ -10,8 +10,7 @@ import { register, registered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
-import { entrySnapshotOf } from './snapshot.ts';
-import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-entries.ts';
+import { holdSideEntries, refuseForeignEntry } from './side-entries.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -122,7 +121,9 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		const at = tableAt(node);
 		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
 		else {
-			at.tree.writeTriviaSide(at.index, side, entries.map(sideEntryWire));
+			const wire = nativeEntries(entries);
+			if (wire === undefined) at.tree.holdTriviaSide(at.index, side, entries);
+			else at.tree.writeTriviaSide(at.index, side, wire);
 			holdSideEntries(at.tree, `${at.index}:${side}`, entries);
 		}
 		return node;
@@ -206,8 +207,14 @@ export function triviaInner(
 	return triviaWriter(node, handle).inner(items);
 }
 
-function sideEntryWire(entry: TriviaEntry): unknown {
-	return typeof entry === 'number' ? entry : (readCoordinateOf(entry) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
+function nativeEntries(entries: readonly TriviaEntry[]): (number | NodeCoordinate)[] | undefined {
+	const wire: (number | NodeCoordinate)[] = [];
+	for (const entry of entries) {
+		const crossing = typeof entry === 'number' ? entry : readCoordinateOf(entry);
+		if (crossing === undefined) return undefined;
+		wire.push(crossing);
+	}
+	return wire;
 }
 
 function triviaEntryOf(item: unknown, holder: EngineIdentity): TriviaEntry {

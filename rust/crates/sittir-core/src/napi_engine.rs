@@ -53,6 +53,18 @@ macro_rules! napi_engine {
             pub options: Option<$options>,
         }
 
+        /// The entries a call carries for one side the client holds
+        /// (`holdTriviaSide`): its tree, node and side, and the side's
+        /// entries as node data.
+        #[::napi_derive::napi(object, object_to_js = false)]
+        pub struct HeldSide {
+            pub tree_id: $crate::types::TreeId,
+            pub index: $crate::types::NodeIndex,
+            pub side: String,
+            #[napi(ts_type = "object[]")]
+            pub entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+        }
+
         ::std::thread_local! {
             /// Every tree of this language still reachable from this
             /// JavaScript thread, keyed by the id its handles carry. Entries
@@ -60,6 +72,44 @@ macro_rules! napi_engine {
             static LIVE_TREES: ::std::cell::RefCell<
                 ::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>,
             > = ::std::cell::RefCell::new(::std::collections::HashMap::new());
+
+            /// The live trees whose client holds a side
+            /// (`ParsedTree::holds_sides`), so a call with none to carry
+            /// checks nothing else.
+            static HELD_TREES: ::std::cell::RefCell<::std::collections::BTreeSet<$crate::types::TreeId>> =
+                ::std::cell::RefCell::new(::std::collections::BTreeSet::new());
+        }
+
+        /// Runs `f` with `held` given to the held sides of the live trees
+        /// for the call (`ParsedTree::holding`), taken back by any path out
+        /// of it. Refuses entries for a side no tree holds, a held side
+        /// `held` leaves out, and a tree that is not live.
+        fn with_held<R>(
+            trees: &::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>,
+            held: Option<Vec<HeldSide>>,
+            f: impl FnOnce() -> ::napi::Result<R>,
+        ) -> ::napi::Result<R> {
+            if held.is_none() && HELD_TREES.with(|holders| holders.borrow().is_empty()) {
+                return f();
+            }
+            let mut by_tree = ::std::collections::BTreeMap::<$crate::types::TreeId, $crate::engine::HeldEntries<<$grammar as $crate::engine::EngineGrammar>::Trivia>>::new();
+            for side in held.unwrap_or_default() {
+                let at = (side.index, $crate::napi_engine::trivia_side_from_wire(&side.side)?);
+                by_tree.entry(side.tree_id).or_default().insert(at, side.entries);
+            }
+            HELD_TREES.with(|holders| {
+                for &tree_id in holders.borrow().iter() {
+                    by_tree.entry(tree_id).or_default();
+                }
+            });
+            let mut holding = Vec::with_capacity(by_tree.len());
+            for (tree_id, entries) in by_tree {
+                let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                holding.push(parsed.holding(entries).map_err(::napi::Error::from_reason)?);
+            }
+            let result = f();
+            drop(holding);
+            result
         }
 
         /// Drop one tree. Called from the boundary's `FinalizationRegistry`
@@ -83,6 +133,9 @@ macro_rules! napi_engine {
             };
             LIVE_TREES.with(|trees| {
                 trees.borrow_mut().remove(&tree_id);
+            });
+            HELD_TREES.with(|holders| {
+                holders.borrow_mut().remove(&tree_id);
             });
         }
 
@@ -279,9 +332,20 @@ macro_rules! napi_engine {
             /// node with its span (`$_layout.span`) from the native node that
             /// holds it and each placed extra with its text, the node itself
             /// measured from the byte `holderByte`, or from its own start when
-            /// absent. Refuses as `read` does.
-            #[::napi_derive::napi(ts_return_type = "object")]
-            pub fn snapshot(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex, holder_byte: Option<f64>) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
+            /// absent, each side the client holds read from `held`
+            /// (`holdTriviaSide`). Refuses as `read` does, and as `render`
+            /// does on `held`.
+            #[::napi_derive::napi(
+                ts_args_type = "treeId: number, index: number, holderByte?: number | undefined | null, held?: Array<HeldSide> | undefined | null",
+                ts_return_type = "object"
+            )]
+            pub fn snapshot(
+                &self,
+                tree_id: $crate::types::TreeId,
+                index: $crate::types::NodeIndex,
+                holder_byte: Option<f64>,
+                held: Option<Vec<HeldSide>>,
+            ) -> ::napi::Result<::napi::Either<$any, $crate::ErrorRead>> {
                 let holder_byte = holder_byte.map(|byte| $crate::napi_engine::checked_whole::<u32>(byte, "holderByte")).transpose()?;
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
@@ -293,10 +357,12 @@ macro_rules! napi_engine {
                         return Ok(::napi::Either::B(error));
                     }
                     let grammar = <$grammar as ::std::default::Default>::default();
-                    ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.snapshot::<$any>(index, holder_byte)))
-                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "snapshot panicked")))?
-                        .map(::napi::Either::A)
-                        .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                    with_held(&trees, held, || {
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.snapshot::<$any>(index, holder_byte)))
+                            .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "snapshot panicked")))?
+                            .map(::napi::Either::A)
+                            .map_err(|refusal| ::napi::Error::from_reason(refusal.describe(&|kind| $crate::engine::EngineGrammar::kind_name(grammar, kind))))
+                    })
                 })
             }
 
@@ -327,10 +393,34 @@ macro_rules! napi_engine {
                 #[napi(ts_arg_type = "object[]")] entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
             ) -> ::napi::Result<()> {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                with_live_node(tree_id, index, |parsed, index| {
+                let holds = with_live_node(tree_id, index, |parsed, index| {
                     parsed.write_trivia_side(index, side, entries);
+                    Ok(parsed.holds_sides())
+                })?;
+                if !holds {
+                    HELD_TREES.with(|holders| holders.borrow_mut().remove(&tree_id));
+                }
+                Ok(())
+            }
+
+            /// Mark `side` of the node at `index` of the live tree `treeId`
+            /// as one the client holds: a write in the node's range, whose
+            /// entries each `render`, `renderToFile` and `snapshot` that
+            /// reads it carries as `held`. Refuses as `triviaSide` does.
+            #[::napi_derive::napi]
+            pub fn hold_trivia_side(
+                &self,
+                tree_id: $crate::types::TreeId,
+                index: $crate::types::NodeIndex,
+                side: String,
+            ) -> ::napi::Result<()> {
+                let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                with_live_node(tree_id, index, |parsed, index| {
+                    parsed.hold_trivia_side(index, side);
                     Ok(())
-                })
+                })?;
+                HELD_TREES.with(|holders| holders.borrow_mut().insert(tree_id));
+                Ok(())
             }
 
             /// Whether a write replaced a side of a node under the node at
@@ -471,14 +561,19 @@ macro_rules! napi_engine {
             /// of the tree `treeId` names (`ParsedTree::inferred`), over the
             /// engine's. `treeId` is the tree the node was read from; a built
             /// node belongs to no tree and renders by the engine's options.
+            /// `held` carries the entries of every side the client holds in
+            /// any live tree (`holdTriviaSide`), for this call only; the
+            /// render refuses entries for a side no tree holds and a held
+            /// side `held` leaves out.
             #[::napi_derive::napi(
-                ts_args_type = "node: object, treeId?: number | undefined | null, options?: object | undefined | null"
+                ts_args_type = "node: object, treeId?: number | undefined | null, options?: object | undefined | null, held?: Array<HeldSide> | undefined | null"
             )]
             pub fn render(
                 &self,
                 node: $render_root,
                 tree_id: Option<$crate::types::TreeId>,
                 options: Option<$options>,
+                held: Option<Vec<HeldSide>>,
             ) -> ::napi::Result<String> {
                 // No JavaScript runs while the table is borrowed, so the
                 // borrow cannot be re-entered.
@@ -493,20 +588,22 @@ macro_rules! napi_engine {
                         None => base,
                     };
                     let table = &resolved;
-                    let ctx = $crate::prepare::RenderContext {
-                        options: table,
-                        sources: &*trees,
-                        recording: None,
-                    };
-                    let (_, canonical) = $render_parts(node, &ctx).map_err(|e| {
-                        ::napi::Error::from_reason(format!("render_node failed: {e}"))
-                    })?;
-                    Ok($crate::line_endings::spell(canonical, &table.newline))
+                    with_held(&trees, held, || {
+                        let ctx = $crate::prepare::RenderContext {
+                            options: table,
+                            sources: &*trees,
+                            recording: None,
+                        };
+                        let (_, canonical) = $render_parts(node, &ctx).map_err(|e| {
+                            ::napi::Error::from_reason(format!("render_node failed: {e}"))
+                        })?;
+                        Ok($crate::line_endings::spell(canonical, &table.newline))
+                    })
                 })
             }
 
             #[::napi_derive::napi(
-                ts_args_type = "node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null"
+                ts_args_type = "node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null, held?: Array<HeldSide> | undefined | null"
             )]
             pub fn render_to_file(
                 &self,
@@ -514,8 +611,9 @@ macro_rules! napi_engine {
                 path: String,
                 tree_id: Option<$crate::types::TreeId>,
                 options: Option<$options>,
+                held: Option<Vec<HeldSide>>,
             ) -> ::napi::Result<()> {
-                let rendered = self.render(node, tree_id, options)?;
+                let rendered = self.render(node, tree_id, options, held)?;
                 ::std::fs::write(&path, rendered).map_err(|e| {
                     ::napi::Error::from_reason(format!("render_to_file failed for {path}: {e}"))
                 })
@@ -635,22 +733,11 @@ impl BaselineRun {
             start: run.start,
             end: run.end,
             index: run.node,
-            side: trivia_side_to_wire(run.side).to_owned(),
+            side: run.side.wire_name().to_owned(),
             breaks: written.map(|tally| tally.breaks),
             spaces: written.map(|tally| tally.spaces),
             tabs: written.map(|tally| tally.tabs),
         }
-    }
-}
-
-/// A trivia side's wire name (`trivia_side_from_wire`).
-#[must_use]
-pub fn trivia_side_to_wire(side: crate::trivia_table::TriviaSide) -> &'static str {
-    use crate::trivia_table::TriviaSide;
-    match side {
-        TriviaSide::Leading => "leading",
-        TriviaSide::Trailing => "trailing",
-        TriviaSide::Inner => "inner",
     }
 }
 

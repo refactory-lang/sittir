@@ -416,7 +416,31 @@ pub struct ParsedTree<G: EngineGrammar> {
     /// The work its layout reads have done (`layout_work`).
     work: crate::layout::LayoutWorkCounter,
     /// The sides a write replaced, by node and side.
-    written: std::collections::BTreeMap<(NodeIndex, TriviaSide), Vec<crate::trivia::TriviaEntry<G::Trivia>>>,
+    written: std::collections::BTreeMap<(NodeIndex, TriviaSide), SideWrite<G::Trivia>>,
+    /// The entries of each side the client holds, for the call reading them
+    /// now (`holding`); empty between calls.
+    held: std::sync::Mutex<HeldEntries<G::Trivia>>,
+}
+
+/// A side a write replaced: with the entries it wrote, or held by the
+/// client, which gives its entries to each call that reads it (`holding`).
+#[derive(Debug)]
+enum SideWrite<T> {
+    Entries(Vec<TriviaEntry<T>>),
+    Held,
+}
+
+/// The entries of each held side a call carries, by node and side.
+pub type HeldEntries<T> = std::collections::BTreeMap<(NodeIndex, TriviaSide), Vec<TriviaEntry<T>>>;
+
+/// A call's entries for a tree's held sides, given to its reads until it
+/// drops, by any path out of the call (`ParsedTree::holding`).
+pub struct Holding<'t, G: EngineGrammar>(&'t ParsedTree<G>);
+
+impl<G: EngineGrammar> Drop for Holding<'_, G> {
+    fn drop(&mut self) {
+        self.0.held.lock().unwrap_or_else(std::sync::PoisonError::into_inner).clear();
+    }
 }
 
 /// A record of a tree (`ParsedTree::recorded`), shared by every run it
@@ -1160,7 +1184,11 @@ impl<G: EngineGrammar> ParsedTree<G> {
     /// as a changed edge keeps it (`trivia::on_changed_edge`).
     pub fn side_entries(&self, index: crate::types::NodeIndex, side: TriviaSide, edge_changed: bool) -> Vec<SideEntry<G::Trivia>> {
         let mut entries: Vec<SideEntry<G::Trivia>> = match self.written.get(&(index, side)) {
-            Some(written) => written.iter().cloned().map(SideEntry::Written).collect(),
+            Some(SideWrite::Entries(written)) => written.iter().cloned().map(SideEntry::Written).collect(),
+            Some(SideWrite::Held) => {
+                let held = self.held.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+                held.get(&(index, side)).map_or_else(Vec::new, |entries| entries.iter().cloned().map(SideEntry::Written).collect())
+            }
             None => self.assigned_side(index, side, true),
         };
         if edge_changed {
@@ -1252,7 +1280,39 @@ impl<G: EngineGrammar> ParsedTree<G> {
 
     /// Replace `side` of the node at `index` with `entries`.
     pub fn write_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
-        self.written.insert((index, side), entries);
+        self.written.insert((index, side), SideWrite::Entries(entries));
+    }
+
+    /// Replace `side` of the node at `index` with entries the client holds:
+    /// a write in the node's range, whose entries each call that reads the
+    /// side carries (`holding`).
+    pub fn hold_trivia_side(&mut self, index: crate::types::NodeIndex, side: TriviaSide) {
+        self.written.insert((index, side), SideWrite::Held);
+    }
+
+    /// Whether the client holds any side of the tree (`hold_trivia_side`).
+    #[must_use]
+    pub fn holds_sides(&self) -> bool {
+        self.written.values().any(|written| matches!(written, SideWrite::Held))
+    }
+
+    /// Give `entries` to the reads of the tree's held sides until the guard
+    /// drops. Refuses entries for a side the client does not hold, and a
+    /// held side `entries` leaves out, so a held side never reads empty.
+    ///
+    /// # Errors
+    ///
+    /// The side, node and tree of the first such mismatch.
+    pub fn holding(&self, entries: HeldEntries<G::Trivia>) -> Result<Holding<'_, G>, String> {
+        let side_of = |(index, side): (NodeIndex, TriviaSide)| format!("{} side of node {index} of tree {}", side.wire_name(), self.tree_id());
+        if let Some(&at) = entries.keys().find(|at| !matches!(self.written.get(at), Some(SideWrite::Held))) {
+            return Err(format!("the call carries entries for the {}, which the client does not hold", side_of(at)));
+        }
+        if let Some((&at, _)) = self.written.iter().find(|(at, written)| matches!(written, SideWrite::Held) && !entries.contains_key(at)) {
+            return Err(format!("the client holds the {}, and the call carries no entries for it", side_of(at)));
+        }
+        *self.held.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = entries;
+        Ok(Holding(self))
     }
 
     /// Whether a write replaced a side of a node under the node at `index`:
@@ -1453,6 +1513,7 @@ impl<G: EngineGrammar> Engine<G> {
             items: std::sync::Mutex::new(HashMap::new()),
             work: crate::layout::LayoutWorkCounter::default(),
             written: std::collections::BTreeMap::new(),
+            held: std::sync::Mutex::new(std::collections::BTreeMap::new()),
         })
     }
 
@@ -2261,6 +2322,39 @@ mod tests {
         assert!(!tree.edited_within(g, false));
         assert!(!tree.edited_within(a, false), "a node's own leading is not within it");
         assert!(tree.edited_within(a, true));
+    }
+
+    #[test]
+    fn a_held_side_reads_the_entries_its_call_gives_until_the_guard_drops() {
+        let (mut tree, _) = parsed("fn f() { a(); }\n");
+        let a = index_of_kind(&tree, "expression_statement", 0);
+        let entries = vec![TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// h".to_owned(), span: None, before: None, after: None })))];
+        let given = || HeldEntries::from([((a, TriviaSide::Leading), entries.clone())]);
+        tree.hold_trivia_side(a, TriviaSide::Leading);
+        assert!(tree.holds_sides());
+        assert!(tree.edited_within(NodeIndex::ROOT, false));
+        let tree_id = tree.tree_id();
+        assert_eq!(
+            tree.holding(HeldEntries::new()).err(),
+            Some(format!("the client holds the leading side of node {a} of tree {tree_id}, and the call carries no entries for it"))
+        );
+        assert_eq!(
+            tree.holding(HeldEntries::from([((a, TriviaSide::Trailing), entries.clone())])).err(),
+            Some(format!("the call carries entries for the trailing side of node {a} of tree {tree_id}, which the client does not hold"))
+        );
+        let guard = tree.holding(given()).expect("the call covers the held side");
+        assert_eq!(tree.trivia_side(a, TriviaSide::Leading), entries);
+        drop(guard);
+        assert_eq!(tree.trivia_side(a, TriviaSide::Leading), []);
+        let refused = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            let _guard = tree.holding(given()).expect("the call covers the held side");
+            panic!("the render refused");
+        }));
+        assert!(refused.is_err());
+        assert_eq!(tree.trivia_side(a, TriviaSide::Leading), []);
+        tree.write_trivia_side(a, TriviaSide::Leading, Vec::new());
+        assert!(!tree.holds_sides());
+        assert!(tree.holding(HeldEntries::new()).is_ok());
     }
 
     #[test]

@@ -77,9 +77,11 @@ export declare class SittirEngine {
    * node with its span (`$_layout.span`) from the native node that
    * holds it and each placed extra with its text, the node itself
    * measured from the byte `holderByte`, or from its own start when
-   * absent. Refuses as `read` does.
+   * absent, each side the client holds read from `held`
+   * (`holdTriviaSide`). Refuses as `read` does, and as `render`
+   * does on `held`.
    */
-  snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
+  snapshot(treeId: number, index: number, holderByte?: number | undefined | null, held?: Array<HeldSide> | undefined | null): object
   /**
    * The entries of `side` (`leading`, `trailing` or `inner`) of the
    * node at `index` of the live tree `treeId`: the ones a write gave
@@ -93,6 +95,13 @@ export declare class SittirEngine {
    * with `entries`. Refuses as `triviaSide` does.
    */
   writeTriviaSide(treeId: TreeId, index: NodeIndex, side: string, entries: object[]): void
+  /**
+   * Mark `side` of the node at `index` of the live tree `treeId`
+   * as one the client holds: a write in the node's range, whose
+   * entries each `render`, `renderToFile` and `snapshot` that
+   * reads it carries as `held`. Refuses as `triviaSide` does.
+   */
+  holdTriviaSide(treeId: TreeId, index: NodeIndex, side: string): void
   /**
    * Whether a write replaced a side of a node under the node at
    * `index` of the live tree `treeId`, its own `inner` included, and
@@ -172,9 +181,13 @@ planHolds(addresses: string, plan: string): Array<boolean>
  * of the tree `treeId` names (`ParsedTree::inferred`), over the
  * engine's. `treeId` is the tree the node was read from; a built
  * node belongs to no tree and renders by the engine's options.
+ * `held` carries the entries of every side the client holds in
+ * any live tree (`holdTriviaSide`), for this call only; the
+ * render refuses entries for a side no tree holds and a held
+ * side `held` leaves out.
  */
-render(node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
-renderToFile(node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
+render(node: object, treeId?: number | undefined | null, options?: object | undefined | null, held?: Array<HeldSide> | undefined | null): string
+renderToFile(node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null, held?: Array<HeldSide> | undefined | null): void
 /**
  * Release the engine. It holds no state of its own past its
  * options: the trees it parsed stay in the addon's table, since
@@ -203,6 +216,18 @@ export interface EngineOptions {
    * engine's table — the engine's own table never changes.
    */
   options?: object
+}
+
+/**
+ * The entries a call carries for one side the client holds
+ * (`holdTriviaSide`): its tree, node and side, and the side's
+ * entries as node data.
+ */
+export interface HeldSide {
+  treeId: TreeId
+  index: NodeIndex
+  side: string
+  entries: object[]
 }
 
 /**
