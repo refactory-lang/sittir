@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
 
 const edited = (source: string, text: string) => {
-	const { root, tree } = rs.diagnostics.parseAndRead(source);
+	const { root, tree: parsed } = rs.diagnostics.parseAndRead(source);
+	const tree = parsed as TreeHandle;
 	const end = (tree.read!(0, 1) as { $_layout: { at: { $end: number } } }).$_layout.at.$end;
 	const index = Array.from({ length: end }, (_, at) => at).find((at) => {
 		const read = tree.read!(at, 1) as { $_layout?: { at?: { $span: { start: number; end: number } } } };

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import type { TreeHandle } from '@sittir/common/utils';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
 
 const edited = (source: string, text: string) => {
-	const { tree } = ts.diagnostics.parseAndRead(source);
+	const tree = ts.diagnostics.parseAndRead(source).tree as TreeHandle;
 	const end = (tree.read!(0, 1) as { $_layout: { at: { $end: number } } }).$_layout.at.$end;
 	const index = Array.from({ length: end }, (_, at) => at).find((at) => {
 		const read = tree.read!(at, 1) as { $_layout?: { at?: { $span: { start: number; end: number } } } };
