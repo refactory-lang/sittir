@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { constructions } from './side-nesting.mts';
 
-const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
+const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string; readonly SIDE_CYCLE_REFUSAL: string };
 
 type Sided = { readonly $trivia: { leading(...items: unknown[]): readonly unknown[]; trailing(...items: unknown[]): readonly unknown[] } };
 type Item = { body(): { statements(): readonly Sided[] } };
@@ -75,9 +75,45 @@ describe.each(constructions)("a built comment in a parsed node's side is held by
 		const ring = comment('b');
 		p.$trivia.leading(ring);
 		ring.$trivia.leading(p);
-		expect(() => rendered(root)).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => rendered(root)).toThrow(native.SIDE_CYCLE_REFUSAL);
 		expect(() => p.$snapshot()).toThrow(native.SIDE_NESTING_REFUSAL);
 		expect(rendered(parsedG().root)).toBe('fn f() {\n    g();\n}\n');
+	});
+
+	const ring = (length: number): Sided => {
+		const comments = Array.from({ length }, (_, at) => comment(String(at)));
+		for (let at = 0; at < length; at += 1) comments[at]!.$trivia.leading(comments[(at + 1) % length]);
+		return comments[0]!;
+	};
+
+	it('refuses a built ring held in a parsed side as a cycle, and one longer than the bound by the bound', () => {
+		const short = parsedP();
+		short.p.$trivia.leading(ring(2));
+		expect(() => rendered(short.root)).toThrow(native.SIDE_CYCLE_REFUSAL);
+		const long = parsedP();
+		long.p.$trivia.leading(ring(native.SIDE_NESTING_BOUND + 1));
+		expect(() => rendered(long.root)).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => long.p.$snapshot()).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(rendered(parsedG().root)).toBe('fn f() {\n    g();\n}\n');
+	});
+
+	it('renders and snapshots a held side that holds one comment twice', () => {
+		const { root, p } = parsedP();
+		const twice = comment('t');
+		twice.$trivia.leading(comment('later'));
+		p.$trivia.leading(twice, twice);
+		const expected = 'fn f() {\n    /* later */ /* t */ /* later */ /* t */ /* p */\n    g();\n}\n';
+		expect(rendered(root)).toBe(expected);
+		expect(rendered(root.$snapshot())).toBe(expected);
+	});
+
+	it("gives the id a call's projection gives a held entry to no snapshot, JSON or side read", () => {
+		const { root, p } = parsedP();
+		const c = comment('c');
+		c.$trivia.leading(comment('later'));
+		p.$trivia.leading(c);
+		expect(rendered(root)).toBe('fn f() {\n    /* later */ /* c */ /* p */\n    g();\n}\n');
+		for (const held of [root.$snapshot(), JSON.parse(JSON.stringify(root)), p.$trivia.leading()]) expect(JSON.stringify(held)).not.toContain('"entry"');
 	});
 
 	it.each([

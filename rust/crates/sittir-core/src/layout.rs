@@ -56,6 +56,11 @@ pub struct NodeLayout<T> {
     /// (`$_layout.separator`, `ParsedTree::separator_before`). A read writes
     /// it; a node without a tree carries it as data.
     pub separator: Option<KindId>,
+    /// The id one call's projection of a held side gives this built entry
+    /// (`$_layout.entry`), which tells it apart from the entries it renders
+    /// inside (`trivia::SideKey`). Only that projection writes it, and it never
+    /// crosses back.
+    pub entry: Option<crate::types::EntryId>,
 }
 
 /// A list slot's layout: the class its separator gaps take before and after
@@ -225,6 +230,7 @@ impl<T> Default for NodeLayout<T> {
             units: Vec::new(),
             slots: Vec::new(),
             separator: None,
+            entry: None,
         }
     }
 }
@@ -480,6 +486,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                 units: property(env, napi_val, c"units")?.unwrap_or_default(),
                 slots: property(env, napi_val, c"slots")?.unwrap_or_default(),
                 separator: property(env, napi_val, c"separator")?,
+                entry: property(env, napi_val, c"entry")?,
             })
         }
     }

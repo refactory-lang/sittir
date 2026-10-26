@@ -2534,6 +2534,9 @@ function renderTriviaNodeSupport(
 			for (const variant of sided) lines.push(`            TriviaNode::${variant}(t) => t.layout.${layout}()?.trivia.${trivia}(),`);
 			lines.push('            _ => None,', '        }', '    }');
 		}
+		lines.push('', '    fn entry(&self) -> Option<::sittir_core::types::EntryId> {', '        match self {');
+		for (const variant of sided) lines.push(`            TriviaNode::${variant}(t) => t.layout.as_deref()?.entry,`);
+		lines.push('            _ => None,', '        }', '    }');
 	}
 	if (depthVariants.length > 0) {
 		lines.push('', '    fn depth(&self) -> i32 {', '        match self {');

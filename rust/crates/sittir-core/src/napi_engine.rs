@@ -188,6 +188,12 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub const SIDE_NESTING_REFUSAL: &str = $crate::trivia::SIDE_NESTING_REFUSAL;
 
+        /// The refusal of a side that reaches an entry it renders inside
+        /// (`trivia::SIDE_CYCLE_REFUSAL`), which the JavaScript projection of
+        /// a side's entries refuses with as the render does.
+        #[::napi_derive::napi]
+        pub const SIDE_CYCLE_REFUSAL: &str = $crate::trivia::SIDE_CYCLE_REFUSAL;
+
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,

@@ -48,6 +48,7 @@ export function heldProjection(addon: HeldAddon): HeldSideData[] | undefined {
 	const trees = holders.get(addon);
 	if (trees === undefined) return undefined;
 	const held: HeldSideData[] = [];
+	const ids = new Map<object, number>();
 	for (const [treeId, ref] of trees) {
 		const token = ref.deref();
 		if (token === undefined) {
@@ -58,7 +59,7 @@ export function heldProjection(addon: HeldAddon): HeldSideData[] | undefined {
 		const table = treeOfToken(token);
 		for (const { index, side, entries } of heldSides.get(token)?.values() ?? []) {
 			const reads = new Set<TreeToken>();
-			held.push({ treeId, index, side, entries: heldSideData(entries, reads) });
+			held.push({ treeId, index, side, entries: heldSideData(entries, reads, ids) });
 			if (table !== undefined) holdTrees(table, `${index}:${side}`, reads);
 		}
 	}

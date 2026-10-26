@@ -4,7 +4,7 @@ import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 
-const { SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL } = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
+const { SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL, SIDE_CYCLE_REFUSAL } = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string; readonly SIDE_CYCLE_REFUSAL: string };
 
 const descriptor = async () => (await import('../src/index.ts')).default;
 
@@ -35,6 +35,7 @@ describe('engine', () => {
 				native: {
 					SIDE_NESTING_BOUND,
 					SIDE_NESTING_REFUSAL,
+					SIDE_CYCLE_REFUSAL,
 					SittirEngine: class {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
@@ -71,6 +72,7 @@ describe('engine', () => {
 				native: {
 					SIDE_NESTING_BOUND,
 					SIDE_NESTING_REFUSAL,
+					SIDE_CYCLE_REFUSAL,
 					SittirEngine: class {
 						render(_node: Record<string, unknown>): string {
 							return 'ok';
@@ -120,6 +122,7 @@ describe('engine', () => {
 				native: {
 					SIDE_NESTING_BOUND,
 					SIDE_NESTING_REFUSAL,
+					SIDE_CYCLE_REFUSAL,
 					SittirEngine: class {
 						render(node: Record<string, unknown>): string {
 							return render(node);

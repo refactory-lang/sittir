@@ -5,7 +5,7 @@ import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
 import { nestedComments, objects as rs, type Reported, type Route } from './side-nesting.mts';
 
-const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
+const native = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string; readonly SIDE_CYCLE_REFUSAL: string };
 const b = rs.build;
 const L = b.layout;
 
@@ -79,7 +79,7 @@ const parsedComment = () => {
 };
 
 describe('a node that a side reaches from its own sides', () => {
-	const refusal = /a side that reaches its own node/;
+	const refusal = native.SIDE_CYCLE_REFUSAL;
 
 	it('refuses at the render, by name, and the engine renders on after it', () => {
 		const held = (entry: unknown) => rendered(withSide(statement('x'), 'trailing', [entry]));
@@ -105,7 +105,7 @@ describe('a node that a side reaches from its own sides', () => {
 		withSide(content, 'leading', [holder]);
 		const { root, parsed } = parsedComment();
 		withSide(parsed, 'leading', [holder]);
-		expect(() => root.$render()).toThrow(native.SIDE_NESTING_REFUSAL);
+		expect(() => root.$render()).toThrow(refusal);
 		expect(() => parsed.$snapshot()).toThrow(native.SIDE_NESTING_REFUSAL);
 		expect((statement('y') as unknown as Rendered).$render()).toBe('y;');
 	});
@@ -139,7 +139,7 @@ describe("a side nests at most as deep as the addon's bound", () => {
 		});
 
 		it('refuses a ring shorter than the bound as a cycle, and a ring at the bound and one past it by the bound', () => {
-			expect(() => nestedComments(rs, route, 2, true)).toThrow(/a side that reaches its own node/);
+			expect(() => nestedComments(rs, route, 2, true)).toThrow(native.SIDE_CYCLE_REFUSAL);
 			for (const length of [bound, bound + 1]) expect(() => nestedComments(rs, route, length, true)).toThrow(native.SIDE_NESTING_REFUSAL);
 		});
 

@@ -33,14 +33,29 @@ export function asTextNode<T>(value: T): T {
 	return typeof text === 'string' ? Object.assign(value, { $text: () => text }) : value;
 }
 
-let sideNesting: { readonly bound: number; readonly refusal: string } | undefined;
+interface SideNesting {
+	readonly bound: number;
+	readonly refusal: string;
+	readonly cycle: string;
+}
+
+let sideNesting: SideNesting | undefined;
+
+function adoptedSideNesting(): SideNesting {
+	if (sideNesting === undefined) throw new Error('no addon has given the side nesting bound');
+	return sideNesting;
+}
 
 export function adoptSideNesting(native: object): void {
-	const { SIDE_NESTING_BOUND: bound, SIDE_NESTING_REFUSAL: refusal } = native as { readonly SIDE_NESTING_BOUND?: unknown; readonly SIDE_NESTING_REFUSAL?: unknown };
-	if (typeof bound !== 'number' || typeof refusal !== 'string') throw new Error('the addon exports no side nesting bound');
-	if (sideNesting !== undefined && (sideNesting.bound !== bound || sideNesting.refusal !== refusal))
+	const {
+		SIDE_NESTING_BOUND: bound,
+		SIDE_NESTING_REFUSAL: refusal,
+		SIDE_CYCLE_REFUSAL: cycle
+	} = native as { readonly SIDE_NESTING_BOUND?: unknown; readonly SIDE_NESTING_REFUSAL?: unknown; readonly SIDE_CYCLE_REFUSAL?: unknown };
+	if (typeof bound !== 'number' || typeof refusal !== 'string' || typeof cycle !== 'string') throw new Error('the addon exports no side nesting bound');
+	if (sideNesting !== undefined && (sideNesting.bound !== bound || sideNesting.refusal !== refusal || sideNesting.cycle !== cycle))
 		throw new Error(`the addon's side nesting bound, ${bound}, is not the ${sideNesting.bound} another addon gave`);
-	sideNesting = { bound, refusal };
+	sideNesting = { bound, refusal, cycle };
 }
 
 function nestedSide(holder: number, cut: boolean): number | undefined {
@@ -63,7 +78,7 @@ export function mapUnitSides(units: readonly unknown[], holder: number, each: (e
 }
 
 export function withinSides<T>(value: object, within: Set<object>, read: () => T): T {
-	if (within.has(value)) throw new Error('a side that reaches its own node');
+	if (within.has(value)) throw new Error(adoptedSideNesting().cycle);
 	within.add(value);
 	try {
 		return read();
@@ -72,7 +87,7 @@ export function withinSides<T>(value: object, within: Set<object>, read: () => T
 	}
 }
 
-type Projecting = { readonly within: Set<object> } | { readonly reads: Set<TreeToken> };
+type Projecting = { readonly within: Set<object> } | { readonly reads: Set<TreeToken>; readonly entries: Map<object, number> };
 
 function entryData(value: unknown, projecting: Projecting, nesting: number): unknown {
 	if (Array.isArray(value)) return value.map((entry) => entryData(entry, projecting, nesting));
@@ -107,15 +122,24 @@ function layoutData(layout: unknown, projecting: Projecting, holder: number): un
 }
 
 function entriesData<S extends TriviaSides<unknown>>(sides: S, projecting: Projecting, holder: number): S {
-	return mapSideEntries(sides, holder, (entry, nesting) => entryData(entry, projecting, nesting), 'reads' in projecting);
+	return mapSideEntries(sides, holder, (entry, nesting) => sideEntryData(entry, projecting, nesting), 'reads' in projecting);
 }
 
 function unitsData(units: readonly unknown[], projecting: Projecting, holder: number): unknown[] {
-	return mapUnitSides(units, holder, (entry, nesting) => entryData(entry, projecting, nesting), 'reads' in projecting);
+	return mapUnitSides(units, holder, (entry, nesting) => sideEntryData(entry, projecting, nesting), 'reads' in projecting);
 }
 
-export function heldSideData(entries: readonly unknown[], reads: Set<TreeToken>): readonly unknown[] {
-	return entriesData({ leading: entries }, { reads }, 0).leading ?? [];
+function sideEntryData(entry: unknown, projecting: Projecting, nesting: number): unknown {
+	const data = entryData(entry, projecting, nesting);
+	if (!('entries' in projecting) || !isRecord(entry) || !isRecord(data) || isCoordinate(data)) return data;
+	const known = projecting.entries.get(entry);
+	const id = known ?? projecting.entries.size + 1;
+	if (known === undefined) projecting.entries.set(entry, id);
+	return { ...data, $_layout: { ...(isRecord(data.$_layout) ? data.$_layout : {}), entry: id } };
+}
+
+export function heldSideData(entries: readonly unknown[], reads: Set<TreeToken>, ids: Map<object, number>): readonly unknown[] {
+	return entriesData({ leading: entries }, { reads, entries: ids }, 0).leading ?? [];
 }
 
 export function readCoordinateOf(entry: object): NodeCoordinate | undefined {

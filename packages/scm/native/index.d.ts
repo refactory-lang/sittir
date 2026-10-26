@@ -242,6 +242,13 @@ export type NodeIndex =
   number
 
 /**
+ * The refusal of a side that reaches an entry it renders inside
+ * (`trivia::SIDE_CYCLE_REFUSAL`), which the JavaScript projection of
+ * a side's entries refuses with as the render does.
+ */
+export const SIDE_CYCLE_REFUSAL: string
+
+/**
  * The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
  * the JavaScript projection of a side's entries enforces as the
  * render does.

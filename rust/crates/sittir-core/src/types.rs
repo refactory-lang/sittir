@@ -212,6 +212,13 @@ id_newtype! {
     NodeIndex(u32)
 }
 
+id_newtype! {
+    /// A built entry of a held side as one call's projection names it
+    /// (`$_layout.entry`): each occurrence of one entry in that call's held
+    /// sides carries the same id, and the id lives for the call only.
+    EntryId(u32)
+}
+
 impl NodeIndex {
     /// The tree's root.
     pub const ROOT: NodeIndex = NodeIndex(0);

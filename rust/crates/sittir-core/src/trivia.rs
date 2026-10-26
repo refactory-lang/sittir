@@ -24,10 +24,66 @@ impl<T> TriviaEntry<T> {
     }
 }
 
-impl<T: Render> Render for TriviaEntry<T> {
+impl<T: Render + TriviaSeam> Render for TriviaEntry<T> {
+    /// The entry inside the entries it renders inside (`Ancestors`), refused
+    /// when it is among them.
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-        self.value.render(w)
+        let Some(key) = self.key() else {
+            return self.value.render(w);
+        };
+        let inside = entered(&w.side_ancestors(), key)?;
+        within(Some(inside), w, |w| self.value.render(w))
     }
+}
+
+/// The refusal of a side that reaches, at any depth, an entry it renders
+/// inside.
+pub const SIDE_CYCLE_REFUSAL: &str = "a side that reaches its own node";
+
+/// What tells a side's entry apart from the entries it renders inside: a
+/// parsed node, by its tree and index, or a built entry, by the id its call's
+/// projection gave it (`types::EntryId`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SideKey {
+    Node(crate::types::TreeId, crate::types::NodeIndex),
+    Entry(crate::types::EntryId),
+}
+
+/// An entry a render is inside, and the ones it is inside in turn: an
+/// immutable list, innermost first, so each step of a splice and each item of
+/// a run keeps the list it was made in, and entering an entry adds one node.
+#[derive(Debug)]
+pub struct Ancestors {
+    key: SideKey,
+    outer: Option<std::rc::Rc<Ancestors>>,
+}
+
+/// The entries a render is inside (`RenderSink::side_ancestors`): none
+/// outside every side's entry.
+pub type Within = Option<std::rc::Rc<Ancestors>>;
+
+/// `within` with `key` entered.
+///
+/// # Errors
+///
+/// `RenderError::SideCycle` when `key` is among them.
+fn entered(within: &Within, key: SideKey) -> Result<std::rc::Rc<Ancestors>, RenderError> {
+    let mut at = within.as_deref();
+    while let Some(ancestor) = at {
+        if ancestor.key == key {
+            return Err(RenderError::SideCycle);
+        }
+        at = ancestor.outer.as_deref();
+    }
+    Ok(std::rc::Rc::new(Ancestors { key, outer: within.clone() }))
+}
+
+/// `render` written inside `ancestors`, the sink's restored after it.
+fn within(ancestors: Within, w: &mut dyn RenderSink, render: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
+    let outer = w.set_side_ancestors(ancestors);
+    let rendered = render(w);
+    w.set_side_ancestors(outer);
+    rendered
 }
 
 /// A trivia value that is whitespace answers its gap kind: it is merged into
@@ -63,9 +119,26 @@ pub trait TriviaSeam: Clone + 'static {
     fn sides_mut(&mut self) -> Option<&mut NodeTrivia<Self>> {
         None
     }
+
+    /// The id one call's projection of a held side gives this value
+    /// (`layout::NodeLayout::entry`), none for a value no such projection
+    /// wrote.
+    fn entry(&self) -> Option<crate::types::EntryId> {
+        None
+    }
 }
 
 impl<T: TriviaSeam> TriviaEntry<T> {
+    /// What tells the entry apart from the entries it renders inside
+    /// (`SideKey`): a coordinate's node, or a built entry's call id. None for
+    /// a built entry no held projection wrote, which the client walks itself.
+    fn key(&self) -> Option<SideKey> {
+        match &self.value {
+            SlotValue::Coord(coord) => Some(SideKey::Node(coord.tree, coord.index)),
+            SlotValue::Node(value) => value.entry().map(SideKey::Entry),
+        }
+    }
+
     /// Whether the entry holds a leading or trailing side of its own.
     fn has_sides(&self) -> bool {
         let held = |side: &Option<Vec<TriviaEntry<T>>>| side.as_ref().is_some_and(|entries| !entries.is_empty());
@@ -473,35 +546,39 @@ impl<T: TriviaSeam> RunItem for TriviaEntry<T> {
 /// An item of a side's run once each entry's own sides are spliced in
 /// (`spliced`): an entry, or the coordinate of a parsed node whose own sides
 /// the run holds as its neighbours, each with the nesting of the side it was
-/// spliced from, which it renders at. A coordinate is a trivia entry's, which
-/// no position holds adjacent, and it writes its bytes between its items'
-/// frames (`Frames::items`), as a coordinate with no sides of its own does.
+/// spliced from, which it renders at, and the entries it renders inside
+/// (`Within`). A coordinate is a trivia entry's, which no position holds
+/// adjacent, and it writes its bytes between its items' frames
+/// (`Frames::items`), as a coordinate with no sides of its own does.
 enum Spliced<T> {
-    Entry(TriviaEntry<T>, usize),
-    Bare(crate::slot::NodeCoordinate, Vec<Box<dyn FramedTrivia>>, usize),
+    Entry(TriviaEntry<T>, usize, Within),
+    Bare(crate::slot::NodeCoordinate, Vec<Box<dyn FramedTrivia>>, usize, Within),
 }
 
 impl<T: TriviaSeam> RunItem for Spliced<T> {
     fn depth(&self) -> i32 {
         match self {
-            Spliced::Entry(entry, _) => entry.depth(),
+            Spliced::Entry(entry, ..) => entry.depth(),
             Spliced::Bare(..) => 0,
         }
     }
 
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         match self {
-            Spliced::Entry(entry, _) => entry.seam_gap(),
+            Spliced::Entry(entry, ..) => entry.seam_gap(),
             Spliced::Bare(..) => None,
         }
     }
 }
 
-impl<T: Render> Render for Spliced<T> {
+impl<T: Render + TriviaSeam> Render for Spliced<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match self {
-            Spliced::Entry(entry, nesting) => at_nesting(*nesting, w, |w| entry.render(w)),
-            Spliced::Bare(coord, frames, nesting) => at_nesting(*nesting, w, |w| crate::slot::write_framed(frames, Some(coord), coord, false, w)),
+            Spliced::Entry(entry, nesting, ancestors) => within(ancestors.clone(), w, |w| at_nesting(*nesting, w, |w| entry.render(w))),
+            Spliced::Bare(coord, frames, nesting, ancestors) => {
+                let inside = entered(ancestors, SideKey::Node(coord.tree, coord.index))?;
+                within(Some(inside), w, |w| at_nesting(*nesting, w, |w| crate::slot::write_framed(frames, Some(coord), coord, false, w)))
+            }
         }
     }
 }
@@ -541,24 +618,35 @@ fn defer_run<I: RunItem + Render>(run: &[I], w: &mut dyn RenderSink) -> RenderRe
 /// side renders an entry's sides as entries of its own run, so they take part
 /// in its joins and its line layout. A node answers its sides itself; a
 /// coordinate's are its node's, as its tree holds them (`RenderSink::sides`).
-/// `entries` are a side at `nesting`; an entry's own sides are one deeper.
-/// `None` when no entry is a coordinate or holds sides: the side renders as
-/// it is.
+/// `entries` are a side at `nesting`; an entry's own sides are one deeper,
+/// and inside the entry (`Within`): one that reaches an entry it is inside
+/// refuses (`RenderError::SideCycle`). `None` when no entry is a coordinate
+/// or holds sides: the side renders as it is.
 fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], nesting: usize, w: &dyn RenderSink) -> Result<Option<Vec<Spliced<T>>>, RenderError> {
     if !entries.iter().any(|entry| entry.has_sides() || matches!(entry.value, SlotValue::Coord(_))) {
         return Ok(None);
     }
     let mut run = Vec::with_capacity(entries.len());
-    let mut tasks: Vec<Splice<T>> = entries.iter().rev().map(|entry| Splice::Entry(entry.clone(), nesting)).collect();
+    let start = w.side_ancestors();
+    let mut tasks: Vec<Splice<T>> = entries.iter().rev().map(|entry| Splice::Entry(entry.clone(), nesting, start.clone())).collect();
     while let Some(task) = tasks.pop() {
         match task {
-            Splice::Entry(entry, nesting) => {
-                let ((leading, trailing), item) = splice_one(entry, nesting, w)?;
+            Splice::Entry(entry, nesting, ancestors) => {
+                let key = entry.key();
+                let ((leading, trailing), item) = splice_one(entry, nesting, ancestors.clone(), w)?;
                 let sides = |side: &Option<Vec<TriviaEntry<T>>>| side.as_ref().is_some_and(|entries| !entries.is_empty());
-                let inside = if sides(&leading) || sides(&trailing) { nested_side(nesting)? } else { nesting };
-                tasks.extend(trailing.into_iter().flatten().rev().map(|entry| Splice::Entry(entry, inside)));
+                let (inside, inner) = if sides(&leading) || sides(&trailing) {
+                    let inside = nested_side(nesting)?;
+                    (inside, match key {
+                        Some(key) => Some(entered(&ancestors, key)?),
+                        None => ancestors,
+                    })
+                } else {
+                    (nesting, ancestors)
+                };
+                tasks.extend(trailing.into_iter().flatten().rev().map(|entry| Splice::Entry(entry, inside, inner.clone())));
                 tasks.push(Splice::Push(item));
-                tasks.extend(leading.into_iter().flatten().rev().map(|entry| Splice::Entry(entry, inside)));
+                tasks.extend(leading.into_iter().flatten().rev().map(|entry| Splice::Entry(entry, inside, inner.clone())));
             }
             Splice::Push(item) => run.push(item),
         }
@@ -566,10 +654,11 @@ fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], nesting: usize, w: &dyn Re
     Ok(Some(run))
 }
 
-/// One step of a splice: an entry, at the nesting of its side, to expand
-/// into its sides and itself, or an expanded item to add to the run.
+/// One step of a splice: an entry, at the nesting of its side and inside the
+/// entries that side is inside, to expand into its sides and itself, or an
+/// expanded item to add to the run.
 enum Splice<T> {
-    Entry(TriviaEntry<T>, usize),
+    Entry(TriviaEntry<T>, usize, Within),
     Push(Spliced<T>),
 }
 
@@ -614,20 +703,20 @@ fn at_nesting(nesting: usize, w: &mut dyn RenderSink, render: impl FnOnce(&mut d
 /// A side's leading and trailing entries, as `NodeTrivia` holds them.
 type Outer<T> = (Option<Vec<TriviaEntry<T>>>, Option<Vec<TriviaEntry<T>>>);
 
-/// `entry`, of a side at `nesting`, as the run holds it, between its own
-/// leading and trailing entries.
-fn splice_one<T: TriviaSeam>(mut entry: TriviaEntry<T>, nesting: usize, w: &dyn RenderSink) -> Result<(Outer<T>, Spliced<T>), RenderError> {
+/// `entry`, of a side at `nesting` inside `ancestors`, as the run holds it,
+/// between its own leading and trailing entries.
+fn splice_one<T: TriviaSeam>(mut entry: TriviaEntry<T>, nesting: usize, ancestors: Within, w: &dyn RenderSink) -> Result<(Outer<T>, Spliced<T>), RenderError> {
     Ok(match &mut entry.value {
         SlotValue::Node(value) => {
             let outer = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
-            (outer, Spliced::Entry(entry, nesting))
+            (outer, Spliced::Entry(entry, nesting, ancestors))
         }
         SlotValue::Coord(coord) => {
             let frames = w.frames(coord)?;
             match frames.own.as_deref().map(|own| own.as_any().downcast_ref::<NodeTrivia<T>>()) {
-                None => ((None, None), Spliced::Bare(coord.clone(), frames.items, nesting)),
-                Some(Some(sides)) => ((sides.leading.clone(), sides.trailing.clone()), Spliced::Bare(coord.clone(), frames.items, nesting)),
-                Some(None) => ((None, None), Spliced::Entry(entry, nesting)),
+                None => ((None, None), Spliced::Bare(coord.clone(), frames.items, nesting, ancestors)),
+                Some(Some(sides)) => ((sides.leading.clone(), sides.trailing.clone()), Spliced::Bare(coord.clone(), frames.items, nesting, ancestors)),
+                Some(None) => ((None, None), Spliced::Entry(entry, nesting, ancestors)),
             }
         }
     })
@@ -864,7 +953,8 @@ mod tests {
         assert_eq!(changed(TriviaSide::Leading, "\na\n-b\n++c\n-"), "a\n-b\n++c\n-");
     }
 
-    /// An entry by its name, with sides of its own.
+    /// An entry by its name, with sides of its own. Entries of one name are
+    /// one entry.
     #[derive(Debug, Clone, PartialEq)]
     struct Sided(char, super::NodeTrivia<Sided>);
 
@@ -875,6 +965,10 @@ mod tests {
 
         fn sides_mut(&mut self) -> Option<&mut super::NodeTrivia<Self>> {
             Some(&mut self.1)
+        }
+
+        fn entry(&self) -> Option<crate::types::EntryId> {
+            Some(crate::types::EntryId(u32::from(self.0)))
         }
     }
 
@@ -892,10 +986,26 @@ mod tests {
     fn names(run: &[super::Spliced<Sided>]) -> Vec<(char, bool)> {
         run.iter()
             .map(|item| match item {
-                super::Spliced::Entry(entry @ super::TriviaEntry { value: crate::slot::SlotValue::Node(Sided(name, _)), .. }, _) => (*name, entry.has_sides()),
+                super::Spliced::Entry(entry @ super::TriviaEntry { value: crate::slot::SlotValue::Node(Sided(name, _)), .. }, ..) => (*name, entry.has_sides()),
                 _ => ('?', false),
             })
             .collect()
+    }
+
+    #[test]
+    fn a_side_that_reaches_an_entry_it_renders_inside_refuses_and_one_holding_an_entry_twice_renders() {
+        let render = |leading: Vec<super::TriviaEntry<Sided>>| {
+            let mut out = String::new();
+            let mut w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
+            super::NodeTrivia { leading: Some(leading), trailing: None, inner: None }.render_leading(&mut w)
+        };
+        let leaf = |name| sided(name, vec![], vec![]);
+        let ring = sided('a', vec![sided('b', vec![sided('a', vec![leaf('c')], vec![])], vec![])], vec![]);
+        assert!(matches!(render(vec![ring]), Err(crate::render::RenderError::SideCycle)), "a ring through its own sides");
+        let reached = sided('a', vec![sided('b', vec![leaf('a')], vec![])], vec![]);
+        assert!(matches!(render(vec![reached]), Err(crate::render::RenderError::SideCycle)), "an entry with no sides of its own, reached inside itself");
+        let twice = sided('d', vec![leaf('c'), leaf('c')], vec![]);
+        assert!(render(vec![twice.clone(), twice]).is_ok(), "one entry held twice, beside itself and not inside it");
     }
 
     #[test]
@@ -912,9 +1022,11 @@ mod tests {
         assert_eq!(names(&run), spliced, "each entry in order, none holding sides of its own");
     }
 
-    /// A side of `length` entries, each in the trailing side of the one before.
+    /// A side of `length` entries, each in the trailing side of the one before
+    /// and each its own entry.
     fn chain(length: usize) -> Vec<super::TriviaEntry<Sided>> {
-        let last = (1..length).fold(sided('z', vec![], vec![]), |inner, _| sided('n', vec![], vec![inner]));
+        let name = |at: usize| u32::try_from(at).ok().and_then(|at| char::from_u32(0x100 + at)).expect("a name for each entry");
+        let last = (1..length).fold(sided('z', vec![], vec![]), |inner, at| sided(name(at), vec![], vec![inner]));
         vec![last]
     }
 
@@ -925,7 +1037,7 @@ mod tests {
         let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
         let run = super::spliced(&chain(bound), 1, &w).expect("a run").expect("spliced");
         assert_eq!(run.len(), bound, "an entry at the bound splices");
-        assert!(run.iter().enumerate().all(|(at, item)| matches!(item, super::Spliced::Entry(_, nesting) if *nesting == at + 1)), "each entry at the nesting of its side");
+        assert!(run.iter().enumerate().all(|(at, item)| matches!(item, super::Spliced::Entry(_, nesting, _) if *nesting == at + 1)), "each entry at the nesting of its side");
         assert!(matches!(super::spliced(&chain(bound + 1), 1, &w), Err(crate::render::RenderError::SideNesting)), "a side past the bound refuses");
         assert_eq!(crate::render::RenderError::SideNesting.to_string(), format!("sides nest more than {bound} deep, the stack-safety bound on side nesting"));
     }

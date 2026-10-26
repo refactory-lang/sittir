@@ -19,6 +19,8 @@ pub enum RenderError {
     ItemIndex(usize),
     /// A side holding entries nested past `trivia::SIDE_NESTING_BOUND`.
     SideNesting,
+    /// A side that reaches an entry it renders inside (`trivia::Ancestors`).
+    SideCycle,
 }
 
 impl fmt::Display for RenderError {
@@ -28,6 +30,7 @@ impl fmt::Display for RenderError {
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
             Self::SideNesting => f.write_str(crate::trivia::SIDE_NESTING_REFUSAL),
+            Self::SideCycle => f.write_str(crate::trivia::SIDE_CYCLE_REFUSAL),
         }
     }
 }
@@ -341,6 +344,12 @@ pub trait RenderSink {
     /// What renders next renders inside a side at `nesting`; answers the
     /// nesting it replaces.
     fn set_side_nesting(&mut self, nesting: usize) -> usize;
+    /// The side entries what renders here renders inside
+    /// (`trivia::Ancestors`): none outside every side's entry.
+    fn side_ancestors(&self) -> crate::trivia::Within;
+    /// What renders next renders inside `ancestors`; answers the entries it
+    /// replaces.
+    fn set_side_ancestors(&mut self, ancestors: crate::trivia::Within) -> crate::trivia::Within;
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;
         self.seam(gap);

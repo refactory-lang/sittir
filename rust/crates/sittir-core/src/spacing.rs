@@ -230,6 +230,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The nesting of the side whose entry is being written
     /// (`RenderSink::side_nesting`).
     side_nesting: usize,
+    /// The side entries what is being written renders inside
+    /// (`RenderSink::side_ancestors`).
+    side_ancestors: crate::trivia::Within,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -321,6 +324,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             open_before: 0,
             recorder: None,
             side_nesting: 0,
+            side_ancestors: None,
         }
     }
 
@@ -1133,6 +1137,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn set_side_nesting(&mut self, nesting: usize) -> usize {
         std::mem::replace(&mut self.side_nesting, nesting)
+    }
+
+    fn side_ancestors(&self) -> crate::trivia::Within {
+        self.side_ancestors.clone()
+    }
+
+    fn set_side_ancestors(&mut self, ancestors: crate::trivia::Within) -> crate::trivia::Within {
+        std::mem::replace(&mut self.side_ancestors, ancestors)
     }
 
     fn layout_depth(&mut self, delta: i32) {

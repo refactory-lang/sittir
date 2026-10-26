@@ -3106,6 +3106,14 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
         }
     }
 
+    fn entry(&self) -> Option<::sittir_core::types::EntryId> {
+        match self {
+            TriviaNode::LineComment(t) => t.layout.as_deref()?.entry,
+            TriviaNode::BlockComment(t) => t.layout.as_deref()?.entry,
+            _ => None,
+        }
+    }
+
     fn depth(&self) -> i32 {
         match self {
             TriviaNode::Indent => 1,

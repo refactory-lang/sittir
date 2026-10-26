@@ -4,7 +4,7 @@ import { RENDER_MODULE_HASH } from '../src/hash.ts';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const { SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL } = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
+const { SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL, SIDE_CYCLE_REFUSAL } = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string; readonly SIDE_CYCLE_REFUSAL: string };
 
 const ts = await createEngine(typescript);
 
@@ -35,7 +35,7 @@ describe('engine render boundary', () => {
 			getActiveBackend: () => ({
 				name: 'native',
 				hashMatch: true,
-				native: { SittirEngine, SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL }
+				native: { SittirEngine, SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL, SIDE_CYCLE_REFUSAL }
 			})
 		}));
 	}
