@@ -16,6 +16,7 @@ pub mod tag {
     pub const UNIT: u32 = 4;
     pub const BUILT_LEAF: u32 = 5;
     pub const INLINE: u32 = 6;
+    pub const COPIED_LEAF: u32 = 7;
 }
 
 /// Words before an embedded child's own record header: tag and changed edges.
@@ -48,6 +49,11 @@ pub enum Cell {
     /// A built leaf: its text in the string table, and its own header-only
     /// record, the key its sides take in the built trivia table.
     BuiltLeaf { kind: KindId, text: StringRef, record: Address },
+    /// A parsed leaf a built record holds: its text in the string table, and
+    /// a header record of its own in the built arena whose side record names
+    /// the parsed leaf (its tree, row and byte span) and the edges its one
+    /// holder changed. Its sides are its row's.
+    CopiedLeaf { kind: KindId, text: StringRef, record: Address },
     /// A captured interior string of a built node: its text in the string table.
     BuiltText { text: StringRef },
 }
@@ -139,7 +145,7 @@ impl Cell {
     /// is not below `holder`.
     pub fn below(self, holder: Address) -> Result<Cell, ArenaError> {
         match self {
-            Cell::Child { at, link: None, .. } | Cell::BuiltLeaf { record: at, .. } if at >= holder => Err(malformed("child record address", at.0)),
+            Cell::Child { at, link: None, .. } | Cell::BuiltLeaf { record: at, .. } | Cell::CopiedLeaf { record: at, .. } if at >= holder => Err(malformed("child record address", at.0)),
             cell => Ok(cell),
         }
     }
@@ -150,7 +156,7 @@ impl Cell {
         match self {
             Cell::Absent => None,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => Some(KindId::BLANK),
-            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } => Some(kind),
+            Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } | Cell::CopiedLeaf { kind, .. } => Some(kind),
         }
     }
 
@@ -161,7 +167,7 @@ impl Cell {
             Cell::Absent => 1,
             Cell::Unit { .. } => 3,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => 4,
-            Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::Child { .. } | Cell::BuiltLeaf { .. } => 5,
+            Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::Child { .. } | Cell::BuiltLeaf { .. } | Cell::CopiedLeaf { .. } => 5,
         }
     }
 
@@ -197,6 +203,10 @@ impl Cell {
                 let [offset, len] = text_words(text)?;
                 [tag::BUILT_LEAF, 0, offset, len, 0]
             }
+            Cell::CopiedLeaf { kind, text, record: at } => {
+                let [offset, len] = text_words(text)?;
+                [tag::COPIED_LEAF, named(kind)?, offset, len, record(at.0)?.0]
+            }
         };
         let (used, rest) = out.split_at_mut(width as usize);
         used.copy_from_slice(&words[..width as usize]);
@@ -227,6 +237,7 @@ impl Cell {
                     kind => Ok(Cell::BuiltLeaf { kind, text, record: record(field(4)?)? }),
                 }
             }
+            tag::COPIED_LEAF => Ok(Cell::CopiedLeaf { kind: named_kind(field(1)?)?, text: StringRef::from_offset(field(2)?, field(3)?), record: record(field(4)?)? }),
             _ => Err(malformed("cell tag", tag)),
         }
     }
@@ -325,6 +336,7 @@ mod tests {
             Cell::BuiltLeaf { kind: KindId(16), text, record },
             Cell::BuiltLeaf { kind: KindId::ERROR, text, record },
             Cell::BuiltText { text },
+            Cell::CopiedLeaf { kind: KindId(16), text, record },
         ]
     }
 
@@ -350,6 +362,7 @@ mod tests {
             "unit" => Cell::Unit { kind: kind(), row: row() },
             "builtLeaf" => Cell::BuiltLeaf { kind: kind(), text: text(), record: Address(n("record")) },
             "builtText" => Cell::BuiltText { text: text() },
+            "copiedLeaf" => Cell::CopiedLeaf { kind: kind(), text: text(), record: Address(n("record")) },
             other => panic!("no cell form {other}"),
         }
     }

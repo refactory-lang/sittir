@@ -298,9 +298,9 @@ impl<T: Clone> WriteCell<T> for VerbatimNode {
 /// The cell of an untouched node a coordinate names. A parsed record names it
 /// by its row (tag 1). A built record links its record in its tree's arena
 /// (tag 3) with the edges whose neighbour the holder changed, or copies a
-/// parsed leaf, which has no record, as a built leaf whose side record names
-/// the parsed one (`sides`) and holds those edges, since its cell has no word
-/// for them and its record has this one holder.
+/// parsed leaf, which has no record, as a copied leaf (tag 7) whose side
+/// record names the parsed one (`sides`) and holds those edges, since its
+/// cell has no word for them and its record has this one holder.
 ///
 /// # Errors
 ///
@@ -319,7 +319,7 @@ pub fn coordinate_cell<T: Clone>(sink: &mut RecordSink<'_, T>, coord: &NodeCoord
         Linked::Leaf(text) => {
             let sides = Some(Sides { tree: coord.tree, index: coord.index, end: coord.end, span: coord.span });
             let record = sink.header(kind, &SideRecord { sides, changed, ..SideRecord::default() })?;
-            Ok(Cell::BuiltLeaf { kind, text: sink.arena().intern(&text)?, record })
+            Ok(Cell::CopiedLeaf { kind, text: sink.arena().intern(&text)?, record })
         }
     }
 }
@@ -1017,7 +1017,7 @@ mod tests {
         let cell = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).expect("written");
         let (_, _, _, left, items) = pair_record(&arena, cell);
         assert_eq!(left, Cell::Child { kind: NAME, at: linked, link: Some(TREE), changed });
-        let [Cell::BuiltLeaf { kind: NAME, text, record }] = items[..] else { panic!("a copied leaf, not {items:?}") };
+        let [Cell::CopiedLeaf { kind: NAME, text, record }] = items[..] else { panic!("a copied leaf, not {items:?}") };
         assert_eq!(arena.text(text), Ok("y"));
         let header = arena.words(record, 2).expect("its header");
         let side = SideRecord::read(&arena, Address(header[1])).expect("its side record");

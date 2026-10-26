@@ -319,15 +319,15 @@ export class BuiltArena {
 	}
 
 	leaf({ kind, offset, len, record }: { readonly kind: number; readonly offset: number; readonly len: number; readonly record: number }): object {
-		return this.#parsedLeaf(kind, record) ?? this.#adopt(this.#views.leaves[kind]!(this.textOf(offset, len), this.#handle), record, { at: offset, len });
+		return this.#adopt(this.#views.leaves[kind]!(this.textOf(offset, len), this.#handle), record, { at: offset, len });
 	}
 
-	#parsedLeaf(kind: number, record: number): object | undefined {
+	/** The parsed leaf a copied leaf's record names, as its tree's own view of it. */
+	copiedLeaf({ kind, record }: { readonly kind: number; readonly record: number }): object {
 		const side = this.words(record, 2)[wordOf(record, this.format) + 1]!;
-		if (side === 0) return undefined;
-		const words = this.words(side, 1 + this.format.sideSides.words);
-		const at = wordOf(side, this.format);
-		if (words[at] !== this.format.sideSides.bit) return undefined;
+		const words = side === 0 ? undefined : this.words(side, 1 + this.format.sideSides.words);
+		const at = side === 0 ? 0 : wordOf(side, this.format);
+		if (words === undefined || words[at] !== this.format.sideSides.bit) throw new Error(`a copied leaf's record ${record} names no parsed leaf`);
 		const held = this.#trees.get(words[at + 1]!);
 		if (held === undefined) throw new Error(`a built record holds a leaf of parsed tree ${words[at + 1]}, which its arena does not hold`);
 		const row = words[at + 2]!;
@@ -467,6 +467,14 @@ function writeBuiltLeaf(words: Uint32Array | number[], at: number, format: CellF
 	words[at + 4] = record;
 }
 
+function writeCopiedLeaf(words: Uint32Array | number[], at: number, format: CellFormat, kind: number, text: BuiltText, record: number): void {
+	words[at] = format.copiedLeaf;
+	words[at + 1] = kind;
+	words[at + 2] = text.at;
+	words[at + 3] = text.len;
+	words[at + 4] = record;
+}
+
 function writeBuiltText(words: Uint32Array | number[], at: number, format: CellFormat, text: BuiltText): void {
 	words[at] = format.builtLeaf;
 	words[at + 1] = 0;
@@ -497,6 +505,9 @@ export function encodeCell(words: Uint32Array | number[], at: number, format: Ce
 		case 'builtText':
 			writeBuiltText(words, at, format, { at: cell.offset, len: cell.len });
 			return;
+		case 'copiedLeaf':
+			writeCopiedLeaf(words, at, format, cell.kind, { at: cell.offset, len: cell.len }, cell.record);
+			return;
 		default:
 			throw new Error(`a built record never writes a ${cell.form} cell`);
 	}
@@ -521,7 +532,7 @@ export function storeFlag(data: Uint32Array, at: number, mask: number): void {
 
 /**
  * Writes the cell of a slot holding the untouched parsed node `value`: a child linking the record its tree's reader
- * writes for it, or, for a parsed leaf, which has no record, a built leaf whose header names the parsed one. The
+ * writes for it, or, for a parsed leaf, which has no record, a copied leaf whose header names the parsed one. The
  * arena holds the tree from then on.
  *
  * @throws For a node no read produced, or one read through an engine that does not read trees as records.
@@ -542,7 +553,7 @@ function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: ob
 	if (record !== undefined) return writeChild(data, at, arena.format, kind, record, tree.id + 1, 0);
 	const text = tree.text?.(coordinate.$span);
 	if (text === undefined) throw new Error(`the parsed leaf of kind ${kind} has a tree that answers no text`);
-	writeBuiltLeaf(data, at, arena.format, kind, arena.text(text), arena.parsedLeaf(kind, tree.id, index, coordinate.$end, coordinate.$span));
+	writeCopiedLeaf(data, at, arena.format, kind, arena.text(text), arena.parsedLeaf(kind, tree.id, index, coordinate.$end, coordinate.$span));
 }
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {

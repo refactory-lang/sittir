@@ -583,6 +583,7 @@ module.exports.CELL_TAG_ABSENT = nativeBinding.CELL_TAG_ABSENT
 module.exports.CELL_TAG_BUILT_LEAF = nativeBinding.CELL_TAG_BUILT_LEAF
 module.exports.CELL_TAG_CHILD = nativeBinding.CELL_TAG_CHILD
 module.exports.CELL_TAG_COORDINATE = nativeBinding.CELL_TAG_COORDINATE
+module.exports.CELL_TAG_COPIED_LEAF = nativeBinding.CELL_TAG_COPIED_LEAF
 module.exports.CELL_TAG_INLINE = nativeBinding.CELL_TAG_INLINE
 module.exports.CELL_TAG_PARSED_LEAF = nativeBinding.CELL_TAG_PARSED_LEAF
 module.exports.CELL_TAG_UNIT = nativeBinding.CELL_TAG_UNIT

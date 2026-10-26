@@ -205,6 +205,9 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
 			return tree.built.textOf(cell.offset, cell.len);
+		case 'copiedLeaf':
+			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
+			return tree.built.copiedLeaf(cell);
 	}
 }
 

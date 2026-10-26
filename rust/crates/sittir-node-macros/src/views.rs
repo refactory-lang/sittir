@@ -233,7 +233,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, record } if #claims => {
+                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, record } | ::sittir_core::arena::Cell::CopiedLeaf { kind, text, record } if #claims => {
                         let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;
                         let place = ::sittir_core::arena::place_of(ctx, record, &side)?;
                         ::core::result::Result::Ok(Self {

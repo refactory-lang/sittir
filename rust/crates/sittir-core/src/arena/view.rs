@@ -168,7 +168,7 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn cell_text(self, cell: Cell) -> Result<&'a str, ArenaError> {
         match cell {
             Cell::ParsedLeaf { span, .. } | Cell::ParsedText { span } => self.source_text(span),
-            Cell::BuiltLeaf { text, .. } | Cell::BuiltText { text } => self.string(text),
+            Cell::BuiltLeaf { text, .. } | Cell::CopiedLeaf { text, .. } | Cell::BuiltText { text } => self.string(text),
             _ => Err(malformed("text cell", 0)),
         }
     }

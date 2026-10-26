@@ -610,6 +610,9 @@ macro_rules! napi_engine {
             /// The tag word of a built leaf's cell, and of a built captured string's.
             #[::napi_derive::napi]
             pub const CELL_TAG_BUILT_LEAF: u32 = $crate::arena::cell::tag::BUILT_LEAF;
+            /// The tag word of a parsed leaf's cell in a built record.
+            #[::napi_derive::napi]
+            pub const CELL_TAG_COPIED_LEAF: u32 = $crate::arena::cell::tag::COPIED_LEAF;
             /// The tag word of an embedded bounded child's record.
             #[::napi_derive::napi]
             pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::tag::INLINE;

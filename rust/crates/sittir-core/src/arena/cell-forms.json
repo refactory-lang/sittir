@@ -69,7 +69,15 @@
 			"record": 3145737,
 			"words": [5, 65535, 1048581, 4, 3145737]
 		},
-		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] }
+		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] },
+		{
+			"form": "copiedLeaf",
+			"kind": 16,
+			"offset": 1048581,
+			"len": 4,
+			"record": 3145737,
+			"words": [7, 16, 1048581, 4, 3145737]
+		}
 	],
 	"inlineHeaderWords": 2,
 	"inlines": [

@@ -353,6 +353,9 @@ export const CELL_TAG_CHILD: number
 /** r" The tag word of a coordinate cell. */
 export const CELL_TAG_COORDINATE: number
 
+/** r" The tag word of a parsed leaf's cell in a built record. */
+export const CELL_TAG_COPIED_LEAF: number
+
 /** r" The tag word of an embedded bounded child's record. */
 export const CELL_TAG_INLINE: number
 

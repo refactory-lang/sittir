@@ -143,6 +143,11 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
                     kind,
                     record: child,
                     ..
+                  }
+                | Cell::CopiedLeaf {
+                    kind,
+                    record: child,
+                    ..
                   } => pending.push((child, kind, inline, if inline == 0 { child } else { floor })),
                 Cell::Child { link: Some(tree), .. } => linked.push(tree),
                 _ => {}
