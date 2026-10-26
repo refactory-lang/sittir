@@ -22,7 +22,7 @@ Trivia fills the seams between tokens. A gap is the seam between two adjacent to
 
 `node.$trivia` is a view over the node's sides. It exists only on a node that is not an extra.
 
-- **An extra has no sides.** A node of a kind the grammar's extras list names, and every node it is made of, has no `$trivia`: no reads and no writes. The grammar's extras list is the deciding fact. A parsed `ERROR` is not an extra: it keeps its sides, as a side's entry and as a child alike.
+- **An extra has no sides.** A node of a kind the grammar's extras list names, and every node it is made of, has no `$trivia`: no reads and no writes. The deciding fact is the model's stamped trivia interior (`triviaInterior`): it starts from the kinds the grammar's extras list names and holds every kind referenced only from inside them. A parsed `ERROR` is not an extra. As a child it is a node like any other, with its sides. As a side's entry it is held as its text and has none. No side's entry holds sides.
 - `leading`, `trailing`: the node's entries before its first token and after its last, those the assignment gave it or a write put there. A parent and its first child have a leading side each. The assignment fills the outer one, the gap owner's child, and a write to either leaves the other.
 - `inner`: a node with no children (`()`, `{}`) has `inner`, the entries between its own tokens. It is the only side a parent addresses, because there it is unambiguous. No side is addressed from a parent by index.
 - **A gap no side takes** (§ 1) has no view and no guarantee. Its entries render while the owner copies its source bytes (§ 4). When the owner renders from its template, the template's tokens and the seam defaults decide that seam, and its entries may go.
