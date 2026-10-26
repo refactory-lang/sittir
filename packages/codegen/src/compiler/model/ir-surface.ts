@@ -1,4 +1,5 @@
 import type { NodeMap } from '../types.ts';
+import { stampSplicedEnvelopes } from './spliced-envelopes.ts';
 import { findOwnKindEntry, type GeneratedIdTables } from '../../dsl/symbol-table.ts';
 import {
 	AbstractAssembledCompound,
@@ -559,6 +560,7 @@ export function stampIrSurface(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 	const exported = exportedNodesOf(plan);
 	for (const node of nodeMap.nodes.values()) if (!exported.has(node)) node.irKey = undefined;
 	resolveBuilderPaths(nodeMap.name, nodeMap.nodes.values(), ownerRoutesOf(nodeMap, flattened, armRoutes, plan));
+	stampSplicedEnvelopes(nodeMap);
 }
 
 function exportedNodesOf(plan: IrPlan): ReadonlySet<AssembledNode> {

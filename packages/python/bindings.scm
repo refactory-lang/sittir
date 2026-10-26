@@ -188,7 +188,7 @@
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (dictionary_splat_pattern target: (_) @pattern)
 (case_pattern) @pattern.case
-(union_pattern) @pattern.case.or
+(union_pattern) @pattern.or
 (dict_pattern) @pattern.case.dictionary
 (keyword_pattern) @pattern.case.keyword
 (splat_pattern) @pattern.case.splat
@@ -238,6 +238,7 @@
 (float_point) @literal.number.float
 (float_leading_point) @literal.number.float.leading_point
 (float_scientific) @literal.number.float.scientific
+(simple_pattern_negative) @literal.number.negative
 (true) @literal.boolean.true
 (false) @literal.boolean.false
 (none) @literal.none

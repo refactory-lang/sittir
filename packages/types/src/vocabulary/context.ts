@@ -1337,14 +1337,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| string
 				| V.Pattern.Case.Any<G>;
 		};
-		readonly 'pattern.case.or': {
-			readonly patterns:
-				| unknown
-				| V.Identifier.Dotted<G>
-				| G['literal']
-				| string
-				| V.Pattern.Case.Any<G>;
-		};
 		readonly 'pattern.case.splat': {
 			readonly operator: string;
 		};

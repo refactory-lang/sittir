@@ -39671,8 +39671,10 @@ fn render_parameters_elements_receiver_group(node: &ParametersElementsReceiverGr
     let elements = View::new(&node.elements, "{}");
     w.edge(::sittir_core::types::KindId(440), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(",")?;
-    w.site_at(options::SITE_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    if elements.is_present() {
+        w.site_at(options::SITE_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
+        ::sittir_core::layout::render_unit(node.layout.as_deref(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    }
     w.edge(::sittir_core::types::KindId(440), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }

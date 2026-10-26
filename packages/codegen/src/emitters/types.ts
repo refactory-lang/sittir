@@ -7,7 +7,7 @@ import { isWordOrBuilderTextLeaf, isBuilderlessPunctuationLeaf } from '../compil
 import { isFixedTextLeaf, isKindIdStored, separatorCandidateTexts } from '../compiler/model/node-map.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { assertNever } from '../polymorph-variant.ts';
-import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape, widenNumericSlots } from './interior.ts';
+import { bareInteriorText, numberInputType, numericLeafInputTypes, numericLeafShape, numericSlotShape } from './interior.ts';
 import {
 	collectKindEntries,
 	collectCatalogKinds,
@@ -100,6 +100,8 @@ import {
 	groupSeatHints,
 	omitRegistered,
 	spellingTypeOf,
+	widenSlotInputs,
+	splicedEnvelopeType,
 	refineFormBuiltTypeSurfaceOf,
 	separatedListSurface,
 	type BuiltTypeSurface
@@ -462,7 +464,7 @@ function internalModule(internalLines: readonly string[], publicTypeNames: reado
 const VOCABULARY_IMPORTS = [
 	'ConfigOf',
 	'LooseConfigOf',
-	'WidenNumeric',
+	'WidenSlots',
 	'LooseValue',
 	'NodeNs',
 	'KeywordNs',
@@ -1341,7 +1343,7 @@ function emitNamespaceSugarBlock(
 		lines.push(`  /** Default form: '${defaultForm.name}' (first-declared). */`);
 		lines.push(`  export type Config = ${defaultShortName}.Config;`);
 	} else {
-		lines.push(`  export type Config = ${widenNumericSlots(omitRegistered(`ConfigFor<${nsKey}>`, node), node)};`);
+		lines.push(`  export type Config = ${widenSlotInputs(omitRegistered(`ConfigFor<${nsKey}>`, node), node, nodeMap)};`);
 	}
 	const spelling = spellingTypeOf(node, nodeMap, kindEntries);
 	if (spelling !== undefined) lines.push(`  export type Options = ${spelling};`);
@@ -1356,13 +1358,17 @@ function emitNamespaceSugarBlock(
 		lines.push(`  export type Parsed = BoundFor<${nsKey}>;`);
 	}
 	const looseConfig = omitRegistered(`LooseConfigFor<${nsKey}>`, node);
-	const widenedLooseConfig = widenNumericSlots(looseConfig, node);
+	const widenedLooseConfig = widenSlotInputs(looseConfig, node, nodeMap);
 	const looseWidened = widenedLooseConfig === looseConfig ? '' : ` | ${widenedLooseConfig}`;
 	const bareInterior = bareInteriorText(kind, node);
 	const bareText = bareInterior === undefined ? '' : ' | string';
 	const bareContent = lexedContentSlot(node);
 	const bareShape = (bareContent === undefined ? undefined : numericSlotShape(bareContent)) ?? numericLeafShape(kind, node) ?? bareInterior?.number;
-	lines.push(`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`};`);
+	const bareSlot = fromBareInput(node, nodeMap) === 'value' ? bareValueSlot(node, nodeMap) : undefined;
+	const bareEnvelope = bareSlot === undefined ? undefined : splicedEnvelopeType(bareSlot, nodeMap);
+	lines.push(
+		`  export type Loose = ${omitRegistered(`LooseFor<${nsKey}>`, node)}${looseWidened}${bareText}${bareShape === undefined ? '' : ` | ${numberInputType(bareShape)}`}${bareEnvelope === undefined ? '' : ` | ${bareEnvelope}`};`
+	);
 	lines.push(`  export type LooseConfig = ${widenedLooseConfig};`);
 	if (surface !== undefined) {
 		const rows = seatedRowsOf(node, wires, surface) ?? surface;

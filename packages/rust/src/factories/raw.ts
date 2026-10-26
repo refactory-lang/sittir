@@ -12,7 +12,7 @@ import type {
 	NumericLiteral,
 	RefuseUndeclared,
 	RefusingConfig,
-	WidenNumeric
+	WidenSlots
 } from '@sittir/types';
 import type { DelimitedSpec } from '@sittir/common/utils';
 import {
@@ -8052,20 +8052,20 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 }
 
 export function buildIntegerLiteralDecimal<
-	const C extends WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralDecimal.Config['content'],
 	SuffixSlot extends T.IntegerLiteralDecimal.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralDecimal.Bound;
 export function buildIntegerLiteralDecimal(
-	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralDecimal, [config]);
 	const _content = numberText(10, '', config.content);
@@ -8121,20 +8121,20 @@ export function buildIntegerLiteralDecimal(
 }
 
 export function buildIntegerLiteralHex<
-	const C extends WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralHex.Config['content'],
 	SuffixSlot extends T.IntegerLiteralHex.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralHex.Bound;
 export function buildIntegerLiteralHex(
-	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralHex, [config]);
 	const _content = numberText(16, '0x', config.content);
@@ -8190,20 +8190,20 @@ export function buildIntegerLiteralHex(
 }
 
 export function buildIntegerLiteralBinary<
-	const C extends WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralBinary.Config['content'],
 	SuffixSlot extends T.IntegerLiteralBinary.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralBinary.Bound;
 export function buildIntegerLiteralBinary(
-	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralBinary, [config]);
 	const _content = numberText(2, '0b', config.content);
@@ -8259,20 +8259,20 @@ export function buildIntegerLiteralBinary(
 }
 
 export function buildIntegerLiteralOctal<
-	const C extends WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralOctal.Config['content'],
 	SuffixSlot extends T.IntegerLiteralOctal.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralOctal.Bound;
 export function buildIntegerLiteralOctal(
-	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralOctal, [config]);
 	const _content = numberText(8, '0o', config.content);

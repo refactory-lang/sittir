@@ -1225,10 +1225,10 @@ const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	344, 151, 157, 158, 159, 162, 300, 174, 304, 154
+	343, 151, 157, 158, 159, 162, 300, 174, 304, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 344, 151, 157, 158, 159, 162, 300, 174, 304, 154
+	130, 343, 151, 157, 158, 159, 162, 300, 174, 304, 154
 ]);
 const _supertype_suiteClassDefinition_ids = new Set<number>([295, 303, 297]);
 

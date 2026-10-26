@@ -33,12 +33,12 @@ describe('a path that matches nothing is edit-site-missing, and the layer resolv
 	}, 60_000);
 
 	it('Z6b: a flat key that matches no choice arm records one diagnostic in a layer', async () => {
-		const raw = await run("edits: { wrap2: { 1: ($, m) => m } }");
+		const raw = await run("edits: { wrap2: { 1: ';' } }");
 		expect(raw.layerDiagnostics).toEqual([expect.objectContaining({ code: 'edit-site-missing', details: expect.objectContaining({ path: '1' }), message: expect.stringMatching(/matched no choice arm/) })]);
 	}, 60_000);
 
 	it('Z6c: a flat key on a rule that holds no SEQ records one diagnostic in a layer', async () => {
-		const raw = await run("edits: { wrap: { 0: ($, m) => m } }");
+		const raw = await run("edits: { wrap: { 0: ';' } }");
 		expect(raw.layerDiagnostics).toEqual([expect.objectContaining({ code: 'edit-site-missing', details: expect.objectContaining({ path: '0' }), message: expect.stringMatching(/holds no SEQ/) })]);
 	}, 60_000);
 

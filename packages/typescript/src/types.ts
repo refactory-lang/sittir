@@ -2,7 +2,7 @@
 
 import type {
 	ConfigOf,
-	WidenNumeric,
+	WidenSlots,
 	LooseValue,
 	NodeNs,
 	KeywordNs,
@@ -5008,13 +5008,16 @@ export interface RestPattern {
 	readonly __slotHints__?: {
 		readonly lhsExpression: SlotHint<
 			NonNullable<
-				| T.MemberExpression
-				| T.SubscriptExpression
-				| TSKindId.Undefined
-				| T.Identifier
-				| T.ObjectPattern
-				| T.ArrayPattern
-				| T.NonNullExpression
+				| (
+						| T.MemberExpression
+						| T.SubscriptExpression
+						| TSKindId.Undefined
+						| T.Identifier
+						| T.ObjectPattern
+						| T.ArrayPattern
+						| T.NonNullExpression
+				  )
+				| Admit<T.LhsExpression>
 			>
 		>;
 	};
@@ -20879,7 +20882,7 @@ export namespace ClassStaticBlock {
 	export type Kind = TSKindId.ClassStaticBlock;
 }
 export namespace RestPattern {
-	export type Config = ConfigFor<TSKindId.RestPattern>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.RestPattern>, { lhsExpression: Admit<T.LhsExpression> }>;
 	export interface Bound extends BoundOf<T.RestPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.RestPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -20896,17 +20899,23 @@ export namespace RestPattern {
 		>;
 		readonly $snapshot: () => Snapshot<T.RestPattern['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.RestPattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId.RestPattern>;
+	export type Loose =
+		| LooseFor<TSKindId.RestPattern>
+		| WidenSlots<LooseConfigFor<TSKindId.RestPattern>, { lhsExpression: Admit<T.LhsExpression> }>
+		| Admit<T.LhsExpression>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.RestPattern>, { lhsExpression: Admit<T.LhsExpression> }>;
 	export type BuildArgs = [
 		value: Admit<
-			| T.MemberExpression
-			| T.SubscriptExpression
-			| TSKindId.Undefined
-			| T.Identifier
-			| T.ObjectPattern
-			| T.ArrayPattern
-			| T.NonNullExpression
+			| (
+					| T.MemberExpression
+					| T.SubscriptExpression
+					| TSKindId.Undefined
+					| T.Identifier
+					| T.ObjectPattern
+					| T.ArrayPattern
+					| T.NonNullExpression
+			  )
+			| Admit<T.LhsExpression>
 		>
 	];
 	export type LooseArgs = [value: T.RestPattern.Loose];
@@ -23776,7 +23785,7 @@ export namespace LiteralTypeNegativeNumber {
 	export type Kind = TSKindId.LiteralTypeNegativeNumber;
 }
 export namespace NumberHex {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>;
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0x' | '0X' };
 	export interface Bound extends BoundOf<T.NumberHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberHex['$type'];
@@ -23796,10 +23805,10 @@ export namespace NumberHex {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberHex>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.NumberHex>, 'prefix'>,
 		{ content: number | bigint }
 	>;
@@ -23808,7 +23817,7 @@ export namespace NumberHex {
 	export type Kind = TSKindId.NumberHex;
 }
 export namespace NumberFloatPoint {
-	export type Config = WidenNumeric<
+	export type Config = WidenSlots<
 		OmitEach<ConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
@@ -23831,18 +23840,18 @@ export namespace NumberFloatPoint {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatPoint>, 'marker'>
-		| WidenNumeric<
+		| WidenSlots<
 				OmitEach<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<
+		config: WidenSlots<
 			OmitEach<ConfigOf<T.NumberFloatPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
@@ -23852,7 +23861,7 @@ export namespace NumberFloatPoint {
 	export type Kind = TSKindId.NumberFloatPoint;
 }
 export namespace NumberFloatLeadingPoint {
-	export type Config = WidenNumeric<
+	export type Config = WidenSlots<
 		OmitEach<ConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
@@ -23876,18 +23885,18 @@ export namespace NumberFloatLeadingPoint {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>
-		| WidenNumeric<
+		| WidenSlots<
 				OmitEach<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 				{ fraction: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatLeadingPoint>, 'marker'>,
 		{ fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<
+		config: WidenSlots<
 			OmitEach<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
 			{ fraction: number | bigint; exponent: number | bigint }
 		>,
@@ -23897,7 +23906,7 @@ export namespace NumberFloatLeadingPoint {
 	export type Kind = TSKindId.NumberFloatLeadingPoint;
 }
 export namespace NumberFloatScientific {
-	export type Config = WidenNumeric<
+	export type Config = WidenSlots<
 		OmitEach<ConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
@@ -23921,18 +23930,18 @@ export namespace NumberFloatScientific {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberFloatScientific>, 'marker'>
-		| WidenNumeric<
+		| WidenSlots<
 				OmitEach<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
 				{ integer: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.NumberFloatScientific>, 'marker'>,
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<
+		config: WidenSlots<
 			OmitEach<ConfigOf<T.NumberFloatScientific>, 'marker'>,
 			{ integer: number | bigint; exponent: number | bigint }
 		>,
@@ -23942,7 +23951,7 @@ export namespace NumberFloatScientific {
 	export type Kind = TSKindId.NumberFloatScientific;
 }
 export namespace NumberBinary {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>;
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0b' | '0B' };
 	export interface Bound extends BoundOf<T.NumberBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberBinary['$type'];
@@ -23962,10 +23971,10 @@ export namespace NumberBinary {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberBinary>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.NumberBinary>, 'prefix'>,
 		{ content: number | bigint }
 	>;
@@ -23974,7 +23983,7 @@ export namespace NumberBinary {
 	export type Kind = TSKindId.NumberBinary;
 }
 export namespace NumberOctal {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>;
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0o' | '0O' };
 	export interface Bound extends BoundOf<T.NumberOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberOctal['$type'];
@@ -23994,10 +24003,10 @@ export namespace NumberOctal {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.NumberOctal>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.NumberOctal>, 'prefix'>,
 		{ content: number | bigint }
 	>;
@@ -24006,7 +24015,7 @@ export namespace NumberOctal {
 	export type Kind = TSKindId.NumberOctal;
 }
 export namespace NumberBigintHex {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.NumberBigintHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberBigintHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24025,16 +24034,16 @@ export namespace NumberBigintHex {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintHex>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.NumberBigintHex>, { content: number | bigint }>;
 	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintHex;
 }
 export namespace NumberBigintBinary {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.NumberBigintBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberBigintBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24054,16 +24063,16 @@ export namespace NumberBigintBinary {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintBinary>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.NumberBigintBinary>, { content: number | bigint }>;
 	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintBinary;
 }
 export namespace NumberBigintOctal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.NumberBigintOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberBigintOctal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24082,16 +24091,16 @@ export namespace NumberBigintOctal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintOctal>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.NumberBigintOctal>, { content: number | bigint }>;
 	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintOctal;
 }
 export namespace NumberBigintDecimal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.NumberBigintDecimal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.NumberBigintDecimal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24111,10 +24120,10 @@ export namespace NumberBigintDecimal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.NumberBigintDecimal>
-		| WidenNumeric<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.NumberBigintDecimal>, { content: number | bigint }>;
 	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `${string}n`, affix: false];
 	export type Kind = TSKindId.NumberBigintDecimal;

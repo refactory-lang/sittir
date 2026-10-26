@@ -2,6 +2,7 @@
 
 import {
 	restItems,
+	admitSplicedEnvelope,
 	markEdited as $edited,
 	asTextNode,
 	carryRead,
@@ -36,7 +37,7 @@ import {
 } from '@sittir/common/utils';
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptyProgram } from './types.js';
 import type * as T from './types-internal.js';
@@ -2723,8 +2724,20 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle): T.RestPa
 			>(this, '_lhs_expression', tree);
 		},
 		$with: {
-			lhsExpression: (v: NonNullable<T.RestPattern['_lhs_expression']>) =>
-				rebuilt(node, handle, () => wrapRestPattern({ ...$edited(data), _lhs_expression: v }, tree))
+			lhsExpression: (v: NonNullable<T.RestPattern['_lhs_expression']> | Admit<T.LhsExpression>) =>
+				rebuilt(node, handle, () =>
+					wrapRestPattern(
+						{
+							...$edited(data),
+							_lhs_expression: admitSplicedEnvelope(
+								v,
+								[TSKindId.LhsExpression, 'content', 'lhs_expression'],
+								'RestPattern.lhsExpression'
+							)
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

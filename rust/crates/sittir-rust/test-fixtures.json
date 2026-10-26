@@ -120136,14 +120136,7 @@
                         "$type": 330,
                         "_value": {
                           "$type": 141,
-                          "_content": "1",
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                168
-                              ]
-                            }
-                          }
+                          "_content": "1"
                         }
                       }
                     },
@@ -120161,14 +120154,7 @@
                         "$type": 330,
                         "_value": {
                           "$type": 162,
-                          "$text": "3.14",
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                168
-                              ]
-                            }
-                          }
+                          "$text": "3.14"
                         }
                       }
                     },
@@ -120662,14 +120648,7 @@
                     "$type": 330,
                     "_value": {
                       "$type": 141,
-                      "_content": "1",
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            168
-                          ]
-                        }
-                      }
+                      "_content": "1"
                     }
                   }
                 },
@@ -120687,14 +120666,7 @@
                     "$type": 330,
                     "_value": {
                       "$type": 162,
-                      "$text": "3.14",
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            168
-                          ]
-                        }
-                      }
+                      "$text": "3.14"
                     }
                   }
                 },
@@ -120922,14 +120894,7 @@
                   "$type": 330,
                   "_value": {
                     "$type": 141,
-                    "_content": "1",
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          168
-                        ]
-                      }
-                    }
+                    "_content": "1"
                   }
                 }
               },
@@ -120947,14 +120912,7 @@
                   "$type": 330,
                   "_value": {
                     "$type": 162,
-                    "$text": "3.14",
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          168
-                        ]
-                      }
-                    }
+                    "$text": "3.14"
                   }
                 }
               },
@@ -121443,14 +121401,7 @@
                 "$type": 330,
                 "_value": {
                   "$type": 141,
-                  "_content": "1",
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        168
-                      ]
-                    }
-                  }
+                  "_content": "1"
                 }
               }
             },
@@ -121468,14 +121419,7 @@
                 "$type": 330,
                 "_value": {
                   "$type": 162,
-                  "$text": "3.14",
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        168
-                      ]
-                    }
-                  }
+                  "$text": "3.14"
                 }
               }
             },
@@ -121954,14 +121898,7 @@
               "$type": 330,
               "_value": {
                 "$type": 141,
-                "_content": "1",
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      168
-                    ]
-                  }
-                }
+                "_content": "1"
               }
             }
           },
@@ -121979,14 +121916,7 @@
               "$type": 330,
               "_value": {
                 "$type": 162,
-                "$text": "3.14",
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      168
-                    ]
-                  }
-                }
+                "$text": "3.14"
               }
             }
           },
@@ -122587,14 +122517,7 @@
         "$type": 330,
         "_value": {
           "$type": 141,
-          "_content": "1",
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                168
-              ]
-            }
-          }
+          "_content": "1"
         }
       }
     },
@@ -122626,14 +122549,7 @@
         "$type": 330,
         "_value": {
           "$type": 162,
-          "$text": "3.14",
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                168
-              ]
-            }
-          }
+          "$text": "3.14"
         }
       }
     },
@@ -123800,14 +123716,7 @@
           "$type": 330,
           "_value": {
             "$type": 141,
-            "_content": "1",
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  168
-                ]
-              }
-            }
+            "_content": "1"
           }
         }
       },
@@ -123847,14 +123756,7 @@
           "$type": 330,
           "_value": {
             "$type": 162,
-            "$text": "3.14",
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  168
-                ]
-              }
-            }
+            "$text": "3.14"
           }
         }
       },
@@ -124235,14 +124137,7 @@
       "$type": 330,
       "_value": {
         "$type": 141,
-        "_content": "1",
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              168
-            ]
-          }
-        }
+        "_content": "1"
       }
     },
     "expectedOutput": "-1",
@@ -124271,14 +124166,7 @@
       "$type": 330,
       "_value": {
         "$type": 162,
-        "$text": "3.14",
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              168
-            ]
-          }
-        }
+        "$text": "3.14"
       }
     },
     "expectedOutput": "-3.14",
@@ -174834,13 +174722,6 @@
                       }
                     ],
                     "_delimiter": 0
-                  },
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        169
-                      ]
-                    }
                   }
                 }
               }
@@ -178630,13 +178511,6 @@
                   }
                 ],
                 "_delimiter": 0
-              },
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    169
-                  ]
-                }
               }
             }
           }
@@ -178921,13 +178795,6 @@
                 }
               ],
               "_delimiter": 0
-            },
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  169
-                ]
-              }
             }
           }
         }
@@ -179473,13 +179340,6 @@
               }
             ],
             "_delimiter": 0
-          },
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                169
-              ]
-            }
           }
         }
       }
@@ -179537,13 +179397,6 @@
             }
           ],
           "_delimiter": 0
-        },
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              169
-            ]
-          }
         }
       }
     },

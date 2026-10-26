@@ -3913,22 +3913,12 @@
 			"field": "simple_pattern_negative_before"
 		},
 		{
-			"kind": "if",
-			"arms": [
-				{
-					"test": "sign",
-					"body": [
-						{
-							"kind": "slot",
-							"name": "sign"
-						},
-						{
-							"kind": "seam",
-							"field": "sign_after"
-						}
-					]
-				}
-			]
+			"kind": "text",
+			"text": "-"
+		},
+		{
+			"kind": "seam",
+			"field": "dash_after"
 		},
 		{
 			"kind": "slot",
@@ -4565,8 +4555,32 @@
 	],
 	"union_pattern": [
 		{
+			"kind": "seam",
+			"field": "union_pattern_before"
+		},
+		{
 			"kind": "slot",
-			"name": "patterns"
+			"name": "left"
+		},
+		{
+			"kind": "seam",
+			"field": "pipe_before"
+		},
+		{
+			"kind": "text",
+			"text": "|"
+		},
+		{
+			"kind": "seam",
+			"field": "pipe_after"
+		},
+		{
+			"kind": "slot",
+			"name": "right"
+		},
+		{
+			"kind": "seam",
+			"field": "union_pattern_after"
 		}
 	],
 	"union_type": [

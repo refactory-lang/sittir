@@ -3498,22 +3498,23 @@
 			"text": ","
 		},
 		{
-			"kind": "seam",
-			"field": "comma_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
 					"test": "elements",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "comma_after"
+						},
+						{
 							"kind": "slot",
 							"name": "elements"
 						}
 					]
 				}
-			]
+			],
+			"padded": true
 		},
 		{
 			"kind": "seam",

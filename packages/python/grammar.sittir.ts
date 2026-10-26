@@ -162,6 +162,11 @@ export default grammar(enrich(base), wire({
 		comprehension_clauses: { 'content:/separator': preference('space') },
 		comparison_operator: { 'comparators:/separator': preference('space') },
 		concatenated_string: { 'string:/separator': preference('space') },
+		union_pattern: { '"|"/after': preference('space') },
+		union_type: { '"|"/after': preference('space') },
+		simple_pattern_negative: { '"-"/after': preference('tight') },
+		complex_pattern: { 'sign:/after': preference('tight') },
+		chevron: { '">>"/after': preference('space'), after: preference('tight') },
 
 		_labels: {
 			'block/statements:/separator': 'gap/separator',
@@ -263,7 +268,10 @@ export default grammar(enrich(base), wire({
 		},
 
 		// See docs/python-grammar-sittir-glossary.md::_simple_pattern
-		_simple_pattern: [{ '11/0': field('sign'), '11/1': field('value') }, { '11': variant('negative') }],
+		_simple_pattern: [
+			{ '11': ($) => choice($.integer, $.float, seq('-', field('value', choice($.integer, $.float)))) },
+			{ '11/2': variant('negative') }
+		],
 
 		constrained_type: {
 			0: field('base_type'),
@@ -358,7 +366,7 @@ export default grammar(enrich(base), wire({
 		global_statement: { 1: field('names') },
 		nonlocal_statement: { 1: field('names') },
 		dotted_name: { 0: field('names'), 1: field('names') },
-		union_pattern: { 0: field('patterns'), 1: field('patterns') },
+		union_pattern: { 0: field('left'), 1: ($) => seq('|', field('right', $._simple_pattern)) },
 		if_clause: { 1: field('condition') },
 		await: { 1: field('expression') },
 

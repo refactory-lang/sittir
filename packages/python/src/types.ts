@@ -2,7 +2,7 @@
 
 import type {
 	ConfigOf,
-	WidenNumeric,
+	WidenSlots,
 	LooseValue,
 	NodeNs,
 	KeywordNs,
@@ -121,6 +121,7 @@ export type LeafStringMap = {
 	[TSKindId.Lbrack]: '[';
 	[TSKindId.Rbrack]: ']';
 	[TSKindId.At]: '@';
+	[TSKindId.Pipe]: '|';
 	[TSKindId.Lbrace]: '{';
 	[TSKindId.Rbrace]: '}';
 	[TSKindId.Underscore]: '_';
@@ -132,7 +133,6 @@ export type LeafStringMap = {
 	[TSKindId.Slash]: '/';
 	[TSKindId.Percent]: '%';
 	[TSKindId.SlashSlash]: '//';
-	[TSKindId.Pipe]: '|';
 	[TSKindId.Amp]: '&';
 	[TSKindId.Caret]: '^';
 	[TSKindId.LtLt]: '<<';
@@ -300,7 +300,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[347, '_simple_statements'],
+	[346, '_simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -355,7 +355,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'dotted_name'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[346, '_simple_pattern'],
+	[345, '_simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -486,37 +486,36 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[312, 'decorated_definition_repeat1'],
 	[313, 'expression_list_repeat1'],
 	[314, 'dotted_name_repeat1'],
-	[315, 'union_pattern_repeat1'],
-	[316, '_parameters_repeat1'],
-	[317, '_patterns_repeat1'],
-	[318, 'comparison_operator_repeat1'],
-	[319, '_collection_elements_repeat1'],
-	[320, 'for_in_clause_repeat1'],
-	[321, 'concatenated_string_repeat1'],
-	[322, 'string_repeat1'],
-	[323, 'string_content_repeat1'],
-	[324, 'format_specifier_repeat1'],
-	[325, 'simple_statements_elements_repeat1'],
-	[326, 'subjects_repeat1'],
-	[327, 'case_patterns_repeat1'],
-	[328, 'with_clause_with_items_repeat1'],
-	[329, '_exec_statement_optional1_repeat1'],
-	[330, 'types_repeat1'],
-	[331, 'argument_list_elements_repeat1'],
-	[332, 'dict_pattern_elements_repeat1'],
-	[333, 'subscripts_repeat1'],
-	[334, 'dictionary_elements_repeat1'],
-	[335, '_tuple_pattern_elements_repeat1'],
-	[336, '_tuple_elements_repeat1'],
-	[337, 'comprehension_clauses_repeat1'],
-	[338, 'except_clause_exception_list_repeat1'],
-	[339, 'with_clause_bare_repeat1'],
-	[340, 'match_block_block_repeat1'],
-	[341, '_block_class_definition_repeat1'],
-	[342, 'as_pattern_target'],
-	[343, 'format_expression'],
-	[344, 'method_declaration'],
-	[345, 'names'],
+	[315, '_parameters_repeat1'],
+	[316, '_patterns_repeat1'],
+	[317, 'comparison_operator_repeat1'],
+	[318, '_collection_elements_repeat1'],
+	[319, 'for_in_clause_repeat1'],
+	[320, 'concatenated_string_repeat1'],
+	[321, 'string_repeat1'],
+	[322, 'string_content_repeat1'],
+	[323, 'format_specifier_repeat1'],
+	[324, 'simple_statements_elements_repeat1'],
+	[325, 'subjects_repeat1'],
+	[326, 'case_patterns_repeat1'],
+	[327, 'with_clause_with_items_repeat1'],
+	[328, '_exec_statement_optional1_repeat1'],
+	[329, 'types_repeat1'],
+	[330, 'argument_list_elements_repeat1'],
+	[331, 'dict_pattern_elements_repeat1'],
+	[332, 'subscripts_repeat1'],
+	[333, 'dictionary_elements_repeat1'],
+	[334, '_tuple_pattern_elements_repeat1'],
+	[335, '_tuple_elements_repeat1'],
+	[336, 'comprehension_clauses_repeat1'],
+	[337, 'except_clause_exception_list_repeat1'],
+	[338, 'with_clause_bare_repeat1'],
+	[339, 'match_block_block_repeat1'],
+	[340, '_block_class_definition_repeat1'],
+	[341, 'as_pattern_target'],
+	[342, 'format_expression'],
+	[343, 'method_declaration'],
+	[344, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -652,7 +651,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[347, 'simple_statements'],
+	[346, 'simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -707,7 +706,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'dotted_name'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[346, 'simple_pattern'],
+	[345, 'simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -838,37 +837,36 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[312, 'decorated_definition_repeat1'],
 	[313, 'expression_list_repeat1'],
 	[314, 'dotted_name_repeat1'],
-	[315, 'union_pattern_repeat1'],
-	[316, '_parameters_repeat1'],
-	[317, '_patterns_repeat1'],
-	[318, 'comparison_operator_repeat1'],
-	[319, '_collection_elements_repeat1'],
-	[320, 'for_in_clause_repeat1'],
-	[321, 'concatenated_string_repeat1'],
-	[322, 'string_repeat1'],
-	[323, 'string_content_repeat1'],
-	[324, 'format_specifier_repeat1'],
-	[325, 'simple_statements_elements_repeat1'],
-	[326, 'subjects_repeat1'],
-	[327, 'case_patterns_repeat1'],
-	[328, 'with_clause_with_items_repeat1'],
-	[329, '_exec_statement_optional1_repeat1'],
-	[330, 'types_repeat1'],
-	[331, 'argument_list_elements_repeat1'],
-	[332, 'dict_pattern_elements_repeat1'],
-	[333, 'subscripts_repeat1'],
-	[334, 'dictionary_elements_repeat1'],
-	[335, '_tuple_pattern_elements_repeat1'],
-	[336, '_tuple_elements_repeat1'],
-	[337, 'comprehension_clauses_repeat1'],
-	[338, 'except_clause_exception_list_repeat1'],
-	[339, 'with_clause_bare_repeat1'],
-	[340, 'match_block_block_repeat1'],
-	[341, '_block_class_definition_repeat1'],
-	[342, 'as_pattern_target'],
-	[343, 'format_expression'],
-	[344, 'method_declaration'],
-	[345, 'names'],
+	[315, '_parameters_repeat1'],
+	[316, '_patterns_repeat1'],
+	[317, 'comparison_operator_repeat1'],
+	[318, '_collection_elements_repeat1'],
+	[319, 'for_in_clause_repeat1'],
+	[320, 'concatenated_string_repeat1'],
+	[321, 'string_repeat1'],
+	[322, 'string_content_repeat1'],
+	[323, 'format_specifier_repeat1'],
+	[324, 'simple_statements_elements_repeat1'],
+	[325, 'subjects_repeat1'],
+	[326, 'case_patterns_repeat1'],
+	[327, 'with_clause_with_items_repeat1'],
+	[328, '_exec_statement_optional1_repeat1'],
+	[329, 'types_repeat1'],
+	[330, 'argument_list_elements_repeat1'],
+	[331, 'dict_pattern_elements_repeat1'],
+	[332, 'subscripts_repeat1'],
+	[333, 'dictionary_elements_repeat1'],
+	[334, '_tuple_pattern_elements_repeat1'],
+	[335, '_tuple_elements_repeat1'],
+	[336, 'comprehension_clauses_repeat1'],
+	[337, 'except_clause_exception_list_repeat1'],
+	[338, 'with_clause_bare_repeat1'],
+	[339, 'match_block_block_repeat1'],
+	[340, '_block_class_definition_repeat1'],
+	[341, 'as_pattern_target'],
+	[342, 'format_expression'],
+	[343, 'method_declaration'],
+	[344, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -1505,8 +1503,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExpressionListRepeat1;
 		case 'dotted_name_repeat1':
 			return TSKindId.DottedNameRepeat1;
-		case 'union_pattern_repeat1':
-			return TSKindId.UnionPatternRepeat1;
 		case '_parameters_repeat1':
 			return TSKindId._ParametersRepeat1;
 		case '_patterns_repeat1':
@@ -2966,6 +2962,8 @@ export interface SimplePattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
@@ -2987,6 +2985,8 @@ export interface SimplePattern {
 			| DictPattern
 			| String
 			| ConcatenatedString
+			| Integer
+			| Float
 			| SimplePatternNegative
 			| ComplexPattern
 			| DottedName;
@@ -3005,6 +3005,8 @@ export interface SimplePattern {
 				| TSKindId.True
 				| TSKindId.False
 				| TSKindId.None
+				| T.Integer
+				| T.Float
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
@@ -3024,6 +3026,8 @@ export interface SimplePattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
@@ -3051,7 +3055,7 @@ export interface CaseAsPattern {
 
 export interface UnionPattern {
 	readonly $type: TSKindId.UnionPattern;
-	readonly _patterns: NonEmptyArray<
+	readonly _left:
 		| ClassPattern
 		| SplatPattern
 		| UnionPattern
@@ -3063,16 +3067,36 @@ export interface UnionPattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| TSKindId.WildcardPattern
-	>;
+		| TSKindId.WildcardPattern;
+	readonly _right:
+		| ClassPattern
+		| SplatPattern
+		| UnionPattern
+		| CaseListPattern
+		| CaseTuplePattern
+		| DictPattern
+		| String
+		| ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| Integer
+		| Float
+		| SimplePatternNegative
+		| ComplexPattern
+		| DottedName
+		| TSKindId.WildcardPattern;
 	readonly __slotNames__?: {
-		readonly _patterns: 'patterns';
+		readonly _left: 'left';
+		readonly _right: 'right';
 	};
 	readonly __inputHints__?: {
-		readonly patterns: NonEmptyArray<
+		readonly left:
 			| KindEnum<
 					'True' | 'False' | 'None' | '_',
 					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Underscore
@@ -3085,36 +3109,35 @@ export interface UnionPattern {
 			| DictPattern
 			| String
 			| ConcatenatedString
+			| Integer
+			| Float
 			| SimplePatternNegative
 			| ComplexPattern
-			| DottedName
-		>;
+			| DottedName;
+		readonly right:
+			| KindEnum<
+					'True' | 'False' | 'None' | '_',
+					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Underscore
+			  >
+			| ClassPattern
+			| SplatPattern
+			| UnionPattern
+			| CaseListPattern
+			| CaseTuplePattern
+			| DictPattern
+			| String
+			| ConcatenatedString
+			| Integer
+			| Float
+			| SimplePatternNegative
+			| ComplexPattern
+			| DottedName;
 	};
 	readonly __slotHints__?: {
-		readonly patterns: SlotHint<
-			NonEmptyArray<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| TSKindId.True
-				| TSKindId.False
-				| TSKindId.None
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| TSKindId.WildcardPattern
-			>,
-			false,
-			true,
-			T.SimplePatternNegative.Config
-		>;
+		readonly left: SlotHint<NonNullable<T.UnionPattern.Config>['left']>;
+		readonly right: SlotHint<NonNullable<T.UnionPattern.Config>['right']>;
 	};
-	readonly patterns: () => NonEmptyArray<
+	readonly left: () =>
 		| ClassPattern
 		| SplatPattern
 		| UnionPattern
@@ -3126,11 +3149,30 @@ export interface UnionPattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
-		| TSKindId.WildcardPattern
-	>;
+		| TSKindId.WildcardPattern;
+	readonly right: () =>
+		| ClassPattern
+		| SplatPattern
+		| UnionPattern
+		| CaseListPattern
+		| CaseTuplePattern
+		| DictPattern
+		| String
+		| ConcatenatedString
+		| TSKindId.True
+		| TSKindId.False
+		| TSKindId.None
+		| Integer
+		| Float
+		| SimplePatternNegative
+		| ComplexPattern
+		| DottedName
+		| TSKindId.WildcardPattern;
 }
 
 export interface DictPattern {
@@ -3172,6 +3214,8 @@ export interface KeyValuePattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
@@ -3195,6 +3239,8 @@ export interface KeyValuePattern {
 			| DictPattern
 			| String
 			| ConcatenatedString
+			| Integer
+			| Float
 			| SimplePatternNegative
 			| ComplexPattern
 			| DottedName;
@@ -3218,6 +3264,8 @@ export interface KeyValuePattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
@@ -3240,6 +3288,8 @@ export interface KeywordPattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
@@ -3262,6 +3312,8 @@ export interface KeywordPattern {
 			| DictPattern
 			| String
 			| ConcatenatedString
+			| Integer
+			| Float
 			| SimplePatternNegative
 			| ComplexPattern
 			| DottedName;
@@ -3283,6 +3335,8 @@ export interface KeywordPattern {
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| Integer
+		| Float
 		| SimplePatternNegative
 		| ComplexPattern
 		| DottedName
@@ -5133,20 +5187,13 @@ export interface EscapeSequenceNamed {
 
 export interface SimplePatternNegative {
 	readonly $type: TSKindId.SimplePatternNegative;
-	readonly _sign: boolean;
 	readonly _value: Integer | Float;
 	readonly __slotNames__?: {
-		readonly _sign: 'sign';
 		readonly _value: 'value';
 	};
-	readonly __inputHints__?: {
-		readonly sign?: BaseBooleanKeyword<'-'>;
-	};
 	readonly __slotHints__?: {
-		readonly sign: SlotHint<NonNullable<T.SimplePatternNegative.Config>['sign'], true>;
 		readonly value: SlotHint<T.Integer | T.Float>;
 	};
-	readonly sign: () => boolean;
 	readonly value: () => Integer | Float;
 }
 
@@ -5342,7 +5389,7 @@ export interface SuiteInline {
 		readonly elements: readonly SimpleStatement[];
 	};
 	readonly __slotHints__?: {
-		readonly elements: SlotHint<T.SimpleStatementsElements>;
+		readonly elements: SlotHint<T.SimpleStatementsElements | Admit<T.SimpleStatements>>;
 		readonly $listView: ListViewHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		readonly $listSlots: {
 			readonly elements: ListSlotHint<T.SimpleStatement, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
@@ -6685,24 +6732,9 @@ export namespace CaseAsPattern {
 export namespace UnionPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
-			readonly patterns?: {
-				readonly caseListPattern?: { readonly after?: WhitespaceKindId };
-				readonly caseTuplePattern?: { readonly after?: WhitespaceKindId };
-				readonly classPattern?: { readonly after?: WhitespaceKindId };
-				readonly complexPattern?: { readonly after?: WhitespaceKindId };
-				readonly concatenatedString?: { readonly after?: WhitespaceKindId };
-				readonly dictPattern?: { readonly after?: WhitespaceKindId };
-				readonly false?: { readonly after?: WhitespaceKindId };
-				readonly none?: { readonly after?: WhitespaceKindId };
-				readonly separator?: {
-					readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-				};
-				readonly simplePatternNegative?: { readonly after?: WhitespaceKindId };
-				readonly splatPattern?: { readonly after?: WhitespaceKindId };
-				readonly string?: { readonly after?: WhitespaceKindId };
-				readonly true?: { readonly after?: WhitespaceKindId };
-				readonly wildcardPattern?: { readonly after?: WhitespaceKindId };
-			};
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly pipe?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7932,7 +7964,7 @@ export namespace SimplePatternNegative {
 		readonly __optionsHint__?: {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
-			readonly sign?: { readonly after?: WhitespaceKindId };
+			readonly dash?: { readonly after?: WhitespaceKindId };
 		};
 	}
 }
@@ -10208,7 +10240,7 @@ export interface SimplePatternNegativeNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	SimplePatternNegative.Bound,
-	never,
+	'value',
 	TSKindId.SimplePatternNegative,
 	SimplePatternNegative.Parsed,
 	never
@@ -11258,6 +11290,7 @@ export type FixedTextKindId =
 	| TSKindId.Lbrack
 	| TSKindId.Rbrack
 	| TSKindId.At
+	| TSKindId.Pipe
 	| TSKindId.Lbrace
 	| TSKindId.Rbrace
 	| TSKindId.Underscore
@@ -11269,7 +11302,6 @@ export type FixedTextKindId =
 	| TSKindId.Slash
 	| TSKindId.Percent
 	| TSKindId.SlashSlash
-	| TSKindId.Pipe
 	| TSKindId.Amp
 	| TSKindId.Caret
 	| TSKindId.LtLt
@@ -12863,6 +12895,8 @@ export namespace SimplePattern {
 			| TSKindId.True
 			| TSKindId.False
 			| TSKindId.None
+			| T.Integer
+			| T.Float
 			| T.SimplePatternNegative
 			| T.ComplexPattern
 			| T.DottedName
@@ -12897,7 +12931,10 @@ export namespace CaseAsPattern {
 	export type Kind = TSKindId.CaseAsPattern;
 }
 export namespace UnionPattern {
-	export type Config = ConfigFor<TSKindId.UnionPattern>;
+	export type Config = WidenSlots<
+		ConfigFor<TSKindId.UnionPattern>,
+		{ left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }
+	>;
 	export interface Bound extends BoundOf<T.UnionPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.UnionPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -12914,89 +12951,21 @@ export namespace UnionPattern {
 		>;
 		readonly $snapshot: () => Snapshot<T.UnionPattern['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.UnionPattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId.UnionPattern>;
-	export type BuildArgs = [
-		...children: NonEmptyArray<
-			Admit<
-				| T.ClassPattern
-				| T.SplatPattern
-				| T.UnionPattern
-				| T.CaseListPattern
-				| T.CaseTuplePattern
-				| T.DictPattern
-				| T.String
-				| T.ConcatenatedString
-				| TSKindId.True
-				| TSKindId.False
-				| TSKindId.None
-				| T.SimplePatternNegative
-				| T.ComplexPattern
-				| T.DottedName
-				| TSKindId.WildcardPattern
-			>
-		>
-	];
-	export type LooseArgs =
-		| [
-				...children: NonEmptyArray<
-					| T.UnionPattern.Loose
-					| LooseValue<
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| TSKindId.True
-							| TSKindId.False
-							| TSKindId.None
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| TSKindId.WildcardPattern,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-				>
-		  ]
-		| [
-				children: Readonly<
-					NonEmptyArray<
-						LooseValue<
-							| T.ClassPattern
-							| T.SplatPattern
-							| T.UnionPattern
-							| T.CaseListPattern
-							| T.CaseTuplePattern
-							| T.DictPattern
-							| T.String
-							| T.ConcatenatedString
-							| TSKindId.True
-							| TSKindId.False
-							| TSKindId.None
-							| T.SimplePatternNegative
-							| T.ComplexPattern
-							| T.DottedName
-							| TSKindId.WildcardPattern,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-						>
-					>
-				>
-		  ];
-	export type Kind = TSKindId.UnionPattern;
-	type NonEmptySlots = Proven<
-		[
-			KeyRefusesEmpty<Config, 'patterns'>,
-			KeyRefusesEmpty<LooseConfig, 'patterns'>,
-			SetterRefusesEmpty<Bound, 'patterns'>
-		]
+	export type Loose =
+		| LooseFor<TSKindId.UnionPattern>
+		| WidenSlots<
+				LooseConfigFor<TSKindId.UnionPattern>,
+				{ left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }
+		  >;
+	export type LooseConfig = WidenSlots<
+		LooseConfigFor<TSKindId.UnionPattern>,
+		{ left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }
 	>;
+	export type BuildArgs = [
+		config: WidenSlots<ConfigOf<T.UnionPattern>, { left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }>
+	];
+	export type LooseArgs = [config: T.UnionPattern.Loose];
+	export type Kind = TSKindId.UnionPattern;
 }
 export namespace DictPattern {
 	export type Config = ConfigFor<TSKindId.DictPattern>;
@@ -13023,7 +12992,7 @@ export namespace DictPattern {
 	export type Kind = TSKindId.DictPattern;
 }
 export namespace KeyValuePattern {
-	export type Config = ConfigFor<TSKindId.KeyValuePattern>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.KeyValuePattern>, { key: Admit<T.SimplePattern> }>;
 	export interface Bound extends BoundOf<T.KeyValuePattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.KeyValuePattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -13040,14 +13009,16 @@ export namespace KeyValuePattern {
 		>;
 		readonly $snapshot: () => Snapshot<T.KeyValuePattern['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.KeyValuePattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId.KeyValuePattern>;
-	export type BuildArgs = [config: ConfigOf<T.KeyValuePattern>];
+	export type Loose =
+		| LooseFor<TSKindId.KeyValuePattern>
+		| WidenSlots<LooseConfigFor<TSKindId.KeyValuePattern>, { key: Admit<T.SimplePattern> }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.KeyValuePattern>, { key: Admit<T.SimplePattern> }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.KeyValuePattern>, { key: Admit<T.SimplePattern> }>];
 	export type LooseArgs = [config: T.KeyValuePattern.Loose];
 	export type Kind = TSKindId.KeyValuePattern;
 }
 export namespace KeywordPattern {
-	export type Config = ConfigFor<TSKindId.KeywordPattern>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.KeywordPattern>, { value: Admit<T.SimplePattern> }>;
 	export interface Bound extends BoundOf<T.KeywordPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.KeywordPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -13064,9 +13035,11 @@ export namespace KeywordPattern {
 		>;
 		readonly $snapshot: () => Snapshot<T.KeywordPattern['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.KeywordPattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId.KeywordPattern>;
-	export type BuildArgs = [config: ConfigOf<T.KeywordPattern>];
+	export type Loose =
+		| LooseFor<TSKindId.KeywordPattern>
+		| WidenSlots<LooseConfigFor<TSKindId.KeywordPattern>, { value: Admit<T.SimplePattern> }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.KeywordPattern>, { value: Admit<T.SimplePattern> }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.KeywordPattern>, { value: Admit<T.SimplePattern> }>];
 	export type LooseArgs = [config: T.KeywordPattern.Loose];
 	export type Kind = TSKindId.KeywordPattern;
 }
@@ -15652,7 +15625,7 @@ export namespace ComprehensionClauses {
 	>;
 }
 export namespace IntegerHex {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>;
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0x' | '0X' };
 	export interface Bound extends BoundOf<T.IntegerHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerHex['$type'];
@@ -15672,10 +15645,10 @@ export namespace IntegerHex {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerHex>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.IntegerHex>, 'prefix'>,
 		{ content: number | bigint }
 	>;
@@ -15684,7 +15657,7 @@ export namespace IntegerHex {
 	export type Kind = TSKindId.IntegerHex;
 }
 export namespace IntegerOctal {
-	export type Config = WidenNumeric<OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>;
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0o' | '0O' };
 	export interface Bound extends BoundOf<T.IntegerOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerOctal['$type'];
@@ -15704,10 +15677,10 @@ export namespace IntegerOctal {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerOctal>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.IntegerOctal>, 'prefix'>,
 		{ content: number | bigint }
 	>;
@@ -15716,10 +15689,7 @@ export namespace IntegerOctal {
 	export type Kind = TSKindId.IntegerOctal;
 }
 export namespace IntegerBinary {
-	export type Config = WidenNumeric<
-		OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'prefix'>,
-		{ content: number | bigint }
-	>;
+	export type Config = WidenSlots<OmitEach<ConfigFor<TSKindId.IntegerBinary>, 'prefix'>, { content: number | bigint }>;
 	export type Options = { readonly prefix?: '0b' | '0B' };
 	export interface Bound extends BoundOf<T.IntegerBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerBinary['$type'];
@@ -15739,10 +15709,10 @@ export namespace IntegerBinary {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.IntegerBinary>, 'prefix'>
-		| WidenNumeric<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>, { content: number | bigint }>
+		| WidenSlots<OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.IntegerBinary>, 'prefix'>,
 		{ content: number | bigint }
 	>;
@@ -15751,7 +15721,7 @@ export namespace IntegerBinary {
 	export type Kind = TSKindId.IntegerBinary;
 }
 export namespace FloatPoint {
-	export type Config = WidenNumeric<
+	export type Config = WidenSlots<
 		OmitEach<ConfigFor<TSKindId.FloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
@@ -15774,18 +15744,18 @@ export namespace FloatPoint {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.FloatPoint>, 'marker'>
-		| WidenNumeric<
+		| WidenSlots<
 				OmitEach<LooseConfigFor<TSKindId.FloatPoint>, 'marker'>,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.FloatPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<
+		config: WidenSlots<
 			OmitEach<ConfigOf<T.FloatPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
@@ -15795,7 +15765,7 @@ export namespace FloatPoint {
 	export type Kind = TSKindId.FloatPoint;
 }
 export namespace FloatLeadingPoint {
-	export type Config = WidenNumeric<
+	export type Config = WidenSlots<
 		OmitEach<ConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
@@ -15818,18 +15788,18 @@ export namespace FloatLeadingPoint {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.FloatLeadingPoint>, 'marker'>
-		| WidenNumeric<
+		| WidenSlots<
 				OmitEach<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.FloatLeadingPoint>, 'marker'>,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<
+		config: WidenSlots<
 			OmitEach<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
@@ -15839,7 +15809,7 @@ export namespace FloatLeadingPoint {
 	export type Kind = TSKindId.FloatLeadingPoint;
 }
 export namespace FloatScientific {
-	export type Config = WidenNumeric<
+	export type Config = WidenSlots<
 		OmitEach<ConfigFor<TSKindId.FloatScientific>, 'marker'>,
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
@@ -15862,18 +15832,18 @@ export namespace FloatScientific {
 	}
 	export type Loose =
 		| OmitEach<LooseFor<TSKindId.FloatScientific>, 'marker'>
-		| WidenNumeric<
+		| WidenSlots<
 				OmitEach<LooseConfigFor<TSKindId.FloatScientific>, 'marker'>,
 				{ integer: number | bigint; exponent: number | bigint }
 		  >
 		| string
 		| number;
-	export type LooseConfig = WidenNumeric<
+	export type LooseConfig = WidenSlots<
 		OmitEach<LooseConfigFor<TSKindId.FloatScientific>, 'marker'>,
 		{ integer: number | bigint; exponent: number | bigint }
 	>;
 	export type BuildArgs = [
-		config: WidenNumeric<
+		config: WidenSlots<
 			OmitEach<ConfigOf<T.FloatScientific>, 'marker'>,
 			{ integer: number | bigint; exponent: number | bigint }
 		>,
@@ -15957,7 +15927,7 @@ export namespace EscapeSequenceHex {
 	export type Kind = TSKindId.EscapeSequenceHex;
 }
 export namespace EscapeSequenceOctal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.EscapeSequenceOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.EscapeSequenceOctal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -15977,10 +15947,10 @@ export namespace EscapeSequenceOctal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.EscapeSequenceOctal>
-		| WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.EscapeSequenceOctal>, { content: number | bigint }>;
 	export type BuildArgs = [content: string | number | bigint, affix?: true] | [text: `\\${string}`, affix: false];
 	export type LooseArgs = [content: string | number | bigint, affix?: true] | [text: `\\${string}`, affix: false];
 	export type Kind = TSKindId.EscapeSequenceOctal;
@@ -16081,8 +16051,8 @@ export namespace SimplePatternNegative {
 	}
 	export type Loose = LooseFor<TSKindId.SimplePatternNegative>;
 	export type LooseConfig = LooseConfigFor<TSKindId.SimplePatternNegative>;
-	export type BuildArgs = [config: ConfigOf<T.SimplePatternNegative>];
-	export type LooseArgs = [config: T.SimplePatternNegative.Loose];
+	export type BuildArgs = [value: Admit<T.Integer | T.Float>];
+	export type LooseArgs = [value: T.SimplePatternNegative.Loose];
 	export type Kind = TSKindId.SimplePatternNegative;
 }
 export namespace ExceptClauseExceptionList {
@@ -16401,7 +16371,7 @@ export namespace MatchBlockEmpty {
 	export type Kind = TSKindId.MatchBlockEmpty;
 }
 export namespace SuiteInline {
-	export type Config = ConfigFor<TSKindId.SuiteInline>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.SuiteInline>, { elements: Admit<T.SimpleStatements> }>;
 	export interface Bound extends BoundOf<T.SuiteInline, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.SuiteInline['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -16418,9 +16388,14 @@ export namespace SuiteInline {
 		>;
 		readonly $snapshot: () => Snapshot<T.SuiteInline['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.SuiteInline>;
-	export type LooseConfig = LooseConfigFor<TSKindId.SuiteInline>;
-	export type BuildArgs = [value: Admit<T.SimpleStatementsElements>] | T.SimpleStatementsElements.BuildArgs;
+	export type Loose =
+		| LooseFor<TSKindId.SuiteInline>
+		| WidenSlots<LooseConfigFor<TSKindId.SuiteInline>, { elements: Admit<T.SimpleStatements> }>
+		| Admit<T.SimpleStatements>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.SuiteInline>, { elements: Admit<T.SimpleStatements> }>;
+	export type BuildArgs =
+		| [value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>]
+		| T.SimpleStatementsElements.BuildArgs;
 	export type LooseArgs = [value: T.SuiteInline.Loose] | T.SimpleStatementsElements.LooseArgs;
 	export type Kind = TSKindId.SuiteInline;
 }

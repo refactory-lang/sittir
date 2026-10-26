@@ -837,15 +837,21 @@ export type PatchMap = Record<string, unknown>;
 
 type RulesOf<B> = B extends { readonly rules: infer R } ? R : never;
 
-type PatchKeyCheck<Rule, M, Minted extends string> = {
+type PatchKeyCheck<Rule, M, Minted extends string, Replaced extends string = never> = {
 	readonly [Path in keyof M]: Path extends string | number
 		? string extends Path
 			? M[Path]
-			: IsPath<Rule, `${Path}`, Minted> extends true
+			: `${Path}` extends `${Replaced}/${string}`
 				? M[Path]
-				: { readonly 'edits: no such path in this rule': `${Path}` }
+				: IsPath<Rule, `${Path}`, Minted> extends true
+					? M[Path]
+					: { readonly 'edits: no such path in this rule': `${Path}` }
 		: M[Path];
 };
+
+type ReplacedKeys<M> = {
+	readonly [K in keyof M]: M[K] extends (...args: never[]) => unknown ? `${K & (string | number)}` : never;
+}[keyof M];
 
 type MintedLabels<M> = {
 	readonly [K in keyof M]: M[K] extends { readonly name: infer N extends string }
@@ -855,11 +861,11 @@ type MintedLabels<M> = {
 		: never;
 }[keyof M];
 
-type CheckMaps<Rule, E extends readonly unknown[], Minted extends string> = E extends readonly [
+type CheckMaps<Rule, E extends readonly unknown[], Minted extends string, Replaced extends string = never> = E extends readonly [
 	infer Head,
 	...infer Tail
 ]
-	? readonly [PatchKeyCheck<Rule, Head, Minted>, ...CheckMaps<Rule, Tail, Minted | MintedLabels<Head>>]
+	? readonly [PatchKeyCheck<Rule, Head, Minted, Replaced>, ...CheckMaps<Rule, Tail, Minted | MintedLabels<Head>, Replaced | ReplacedKeys<Head>>]
 	: readonly [];
 
 type PatchEntryCheck<Rule, E> = E extends readonly unknown[]
@@ -962,12 +968,12 @@ export interface WiredOpts {
 	readonly __wireContext__?: WireContext;
 }
 
-type SittirRuleFn = ($: any, previous?: any) => unknown;
+export type SittirRuleFn = ($: any, previous?: any) => unknown;
 type RuleFn = SittirRuleFn;
 type DollarFn<T> = (this: unknown, $: unknown, previous?: T) => T;
 
 export function wire<B extends GrammarJson = any, const P = EditsConfig<B>, const O = OptionsConfig>(
-	config: WireConfig<B> & { readonly edits?: P & EditsCheck<B, P>; readonly options?: O & OptionsCheck<B, O> },
+	config: WireConfig<B> & { readonly edits?: P & NoInfer<EditsCheck<B, P>>; readonly options?: O & OptionsCheck<B, O> },
 	base: B,
 	source: unknown = base
 ): WiredOpts {

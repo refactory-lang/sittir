@@ -469,7 +469,6 @@ export const vocabularyPaths = Object.freeze([
 	'pattern.case.dictionary',
 	'pattern.case.keyword',
 	'pattern.case.list',
-	'pattern.case.or',
 	'pattern.case.splat',
 	'pattern.case.tuple',
 	'pattern.generic',

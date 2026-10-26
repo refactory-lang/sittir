@@ -9,7 +9,7 @@ import { languageByName } from '../../src/languages.ts';
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCRATCH = join(HERE, '__scratch__');
 
-async function rebuildAndRender(grammar: 'rust' | 'typescript' | 'regex', input: string): Promise<{ source: string; rendered: string }> {
+async function rebuildAndRender(grammar: 'rust' | 'typescript' | 'python' | 'regex', input: string): Promise<{ source: string; rendered: string }> {
 	const source = await emitFactorySourceText(grammar, input, 'rebuild');
 	mkdirSync(SCRATCH, { recursive: true });
 	const file = join(SCRATCH, `${grammar}-${Math.random().toString(36).slice(2)}.ts`);
@@ -63,6 +63,16 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 		expect(source).toContain('extraSlashes.strict("// - Only a comment")');
 		expect(source).not.toContain('identifier("// - Only a comment")');
 		expect(rendered).toContain('//// - Only a comment');
+	});
+
+	it('python: a negative literal on either side of a union pattern, or as a mapping key, rebuilds', async () => {
+		for (const pattern of ['-1 | 2', '2 | -1', '{-1: y}']) {
+			const input = `match x:\n    case ${pattern}:\n        pass\n`;
+			const { rendered } = await rebuildAndRender('python', input);
+			expect(rendered).toBe(input);
+		}
+		const { source } = await rebuildAndRender('python', 'match x:\n    case -1 | 2:\n        pass\n');
+		expect(source).toContain('py.build.simplePattern.negative.strict(');
 	});
 
 	it('regex: a count quantifier with a range and a unicode property value both build', async () => {

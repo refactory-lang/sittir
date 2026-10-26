@@ -435,7 +435,15 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
 	_named_expression_lhs: ['identifier'],
-	_simple_pattern: ['true', 'false', 'none', 'wildcard_pattern']
+	_simple_pattern: [
+		'true',
+		'false',
+		'none',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
+		'wildcard_pattern'
+	]
 };
 
 function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode | number | undefined {
@@ -565,9 +573,9 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276, 278, 279,
-		281, 287, 288, 289, 290, 299, 345
+		281, 287, 288, 289, 290, 299, 344
 	]),
-	import_statement: new Set([137, 182, 345]),
+	import_statement: new Set([137, 182, 344]),
 	future_import_statement: new Set([136, 137, 182, 281]),
 	import_list: new Set([137, 182]),
 	print_statement: new Set([
@@ -596,13 +604,13 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276,
-		278, 279, 281, 287, 288, 289, 290, 295, 296, 297, 299, 345
+		278, 279, 281, 287, 288, 289, 290, 295, 296, 297, 299, 344
 	]),
 	finally_clause: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 116, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146,
 		147, 148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 180, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217,
 		220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276,
-		278, 279, 281, 287, 288, 289, 290, 295, 296, 297, 299, 345
+		278, 279, 281, 287, 288, 289, 290, 295, 296, 297, 299, 344
 	]),
 	with_item: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -641,10 +649,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		214, 220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 269, 272, 299
 	]),
 	case_pattern: new Set([
-		70, 71, 72, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248, 266, 267, 274, 275, 280, 284
+		70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248,
+		266, 267, 274, 275, 280, 284
 	]),
 	_simple_pattern: new Set([
-		70, 71, 72, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248, 266, 267, 274, 275, 280, 284
+		70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248,
+		266, 267, 274, 275, 280, 284
 	]),
 	dict_pattern: new Set([188, 190, 267]),
 	parameters_elements: new Set([1, 194, 197, 198, 199, 200, 201, 202, 221, 222, 225, 258, 259, 271]),
@@ -703,14 +713,15 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 269, 272, 276, 278, 279, 281,
-		287, 288, 289, 290, 299, 345
+		287, 288, 289, 290, 299, 344
 	]),
 	subjects: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
 		214, 220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 269, 272, 299
 	]),
 	case_patterns: new Set([
-		70, 71, 72, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248, 266, 267, 274, 275, 280, 284
+		70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248,
+		266, 267, 274, 275, 280, 284
 	]),
 	with_clause_with_items: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 164, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210,
@@ -728,7 +739,8 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		299
 	]),
 	list_pattern_case_patterns: new Set([
-		70, 71, 72, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248, 266, 267, 274, 275, 280, 284
+		70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248,
+		266, 267, 274, 275, 280, 284
 	]),
 	dict_pattern_elements: new Set([188, 190]),
 	subscripts: new Set([
@@ -750,10 +762,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		214, 220, 221, 222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 269, 272, 299
 	]),
 	case_tuple_pattern: new Set([
-		70, 71, 72, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248, 266, 267, 274, 275, 280, 284
+		70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248,
+		266, 267, 274, 275, 280, 284
 	]),
 	case_list_pattern: new Set([
-		70, 71, 72, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248, 266, 267, 274, 275, 280, 284
+		70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 247, 248,
+		266, 267, 274, 275, 280, 284
 	]),
 	print_arguments: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -769,6 +783,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		299
 	]),
 	parenthesized_import_list: new Set([136, 137, 182]),
+	simple_pattern_negative: new Set([90, 91, 92, 93, 94, 95, 96, 97, 98]),
 	except_clause_exception: new Set([273, 285]),
 	expression_statement_tuple: new Set([
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 168, 169, 176, 181, 201, 203, 207, 208, 209, 210, 213,
@@ -789,7 +804,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		1, 64, 70, 71, 72, 90, 91, 92, 93, 94, 95, 96, 97, 98, 131, 134, 135, 136, 137, 139, 141, 142, 143, 145, 146, 147,
 		148, 149, 150, 168, 169, 170, 171, 172, 173, 176, 181, 182, 201, 203, 207, 208, 209, 210, 213, 214, 217, 220, 221,
 		222, 224, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 246, 247, 248, 257, 260, 269, 272, 276, 278, 279,
-		281, 287, 288, 289, 290, 299, 345
+		281, 287, 288, 289, 290, 299, 344
 	]),
 	suite_block: new Set([180]),
 	suite_empty: new Set([116]),
@@ -992,7 +1007,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	dotted_name: TSKindId.DottedName,
 	case_pattern: TSKindId.CasePattern,
 	_simple_pattern: TSKindId.SimplePattern,
-	union_pattern: TSKindId.UnionPattern,
 	dict_pattern: TSKindId.DictPattern,
 	parameters_elements: TSKindId.ParametersElements,
 	patterns: TSKindId.Patterns,
@@ -1035,6 +1049,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	print_statement_plain: TSKindId.PrintStatementPlain,
 	parenthesized_import_list: TSKindId.ParenthesizedImportList,
 	comprehension_clauses: TSKindId.ComprehensionClauses,
+	simple_pattern_negative: TSKindId.SimplePatternNegative,
 	except_clause_exception_list: TSKindId.ExceptClauseExceptionList,
 	except_clause_exception: TSKindId.ExceptClauseException,
 	expression_statement_tuple: TSKindId.ExpressionStatementTuple,
@@ -1156,6 +1171,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'case_list_pattern',
 	'print_statement_plain',
 	'parenthesized_import_list',
+	'simple_pattern_negative',
 	'except_clause_exception',
 	'with_clause_paren',
 	'match_block_empty',
@@ -1243,8 +1259,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildCasePattern(children[0] as Parameters<typeof F.buildCasePattern>[0]);
 		case '_simple_pattern':
 			return F.buildSimplePattern(children[0] as Parameters<typeof F.buildSimplePattern>[0]);
-		case 'union_pattern':
-			return (coerceToUnionPattern as (...args: unknown[]) => unknown)(...children);
 		case 'dict_pattern':
 			return F.buildDictPattern(children[0] as Parameters<typeof F.buildDictPattern>[0]);
 		case 'parameters_elements':
@@ -1329,6 +1343,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildParenthesizedImportList(children[0] as Parameters<typeof F.buildParenthesizedImportList>[0]);
 		case 'comprehension_clauses':
 			return (coerceToComprehensionClauses as (...args: unknown[]) => unknown)(...children);
+		case 'simple_pattern_negative':
+			return F.buildSimplePatternNegative(children[0] as Parameters<typeof F.buildSimplePatternNegative>[0]);
 		case 'except_clause_exception_list':
 			return (coerceToExceptClauseExceptionList as (...args: unknown[]) => unknown)(...children);
 		case 'except_clause_exception':
@@ -1624,7 +1640,15 @@ const _K14: readonly string[] = ['string'];
 const _K15: readonly string[] = ['parenthesized_list_splat', 'list_splat'];
 const _K16: readonly string[] = ['class_definition', 'function_definition'];
 const _K17: readonly string[] = ['case_as_pattern', 'keyword_pattern', '_simple_pattern'];
-const _K18: readonly string[] = ['true', 'false', 'none', 'wildcard_pattern'];
+const _K18: readonly string[] = [
+	'true',
+	'false',
+	'none',
+	'integer_decimal_long',
+	'integer_decimal_imaginary',
+	'integer_decimal_plain',
+	'wildcard_pattern'
+];
 const _K19: readonly string[] = [
 	'class_pattern',
 	'splat_pattern',
@@ -1634,6 +1658,12 @@ const _K19: readonly string[] = [
 	'dict_pattern',
 	'string',
 	'concatenated_string',
+	'integer_hex',
+	'integer_octal',
+	'integer_binary',
+	'float_point',
+	'float_leading_point',
+	'float_scientific',
 	'simple_pattern_negative',
 	'complex_pattern',
 	'dotted_name'
@@ -3513,6 +3543,8 @@ export function resolveSimplePattern_content(
 						| TSKindId.True
 						| TSKindId.False
 						| TSKindId.None
+						| T.Integer
+						| T.Float
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
@@ -3561,6 +3593,8 @@ export function coerceToSimplePattern(input: T.SimplePattern.Loose): ReturnType<
 								| TSKindId.True
 								| TSKindId.False
 								| TSKindId.None
+								| T.Integer
+								| T.Float
 								| T.SimplePatternNegative
 								| T.ComplexPattern
 								| T.DottedName
@@ -3607,59 +3641,101 @@ export function coerceToCaseAsPattern(input: T.CaseAsPattern.Loose): ReturnType<
 	});
 }
 
-export function coerceToUnionPattern<const A extends T.UnionPattern.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.UnionPattern.LooseArgs>
-): ReturnType<typeof F.buildUnionPattern>;
-export function coerceToUnionPattern(...input: T.UnionPattern.LooseArgs): ReturnType<typeof F.buildUnionPattern> {
-	currentHandle()?.admit(TSKindId.UnionPattern, input);
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('patterns' in head)) return input;
-		const v = (head as Record<string, unknown>)['patterns'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildUnionPattern(
-		...((_elems == null ? [] : Array.isArray(_elems) ? _elems : [_elems])
-			.map(
-				(_e: _LooseFieldInput) =>
-					_keywordOf(_e, [
-						['True', TSKindId.True] as const,
-						['False', TSKindId.False] as const,
-						['None', TSKindId.None] as const,
-						['_', TSKindId.WildcardPattern] as const
-					]) ??
-					coerceMixedEnumStorage(
-						_resolveKindEnum(_e, [TSKindId.True, TSKindId.False, TSKindId.None, TSKindId.WildcardPattern], () =>
-							_resolveOne<
-								| T.ClassPattern
-								| T.SplatPattern
-								| T.UnionPattern
-								| T.CaseListPattern
-								| T.CaseTuplePattern
-								| T.DictPattern
-								| T.String
-								| T.ConcatenatedString
-								| TSKindId.True
-								| TSKindId.False
-								| TSKindId.None
-								| T.SimplePatternNegative
-								| T.ComplexPattern
-								| T.DottedName
-								| TSKindId.WildcardPattern
-							>(_e, _K18, _K19)
-						),
-						[
-							['True', TSKindId.True] as const,
-							['False', TSKindId.False] as const,
-							['None', TSKindId.None] as const,
-							['_', TSKindId.WildcardPattern] as const
-						]
-					)
+export function resolveUnionPattern_left(value: T.UnionPattern.LooseConfig['left']): Admit<T.UnionPattern['_left']> {
+	return _keywordOr(
+		value,
+		[
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, [TSKindId.True, TSKindId.False, TSKindId.None, TSKindId.WildcardPattern], () =>
+					_resolveOne<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.None
+						| T.Integer
+						| T.Float
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| TSKindId.WildcardPattern
+					>(value, _K18, _K19)
+				),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				]
 			)
-			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildUnionPattern>)
 	);
+}
+
+export function resolveUnionPattern_right(value: T.UnionPattern.LooseConfig['right']): Admit<T.UnionPattern['_right']> {
+	return _keywordOr(
+		value,
+		[
+			['True', TSKindId.True] as const,
+			['False', TSKindId.False] as const,
+			['None', TSKindId.None] as const,
+			['_', TSKindId.WildcardPattern] as const
+		],
+		() =>
+			coerceMixedEnumStorage(
+				_resolveKindEnum(value, [TSKindId.True, TSKindId.False, TSKindId.None, TSKindId.WildcardPattern], () =>
+					_resolveOne<
+						| T.ClassPattern
+						| T.SplatPattern
+						| T.UnionPattern
+						| T.CaseListPattern
+						| T.CaseTuplePattern
+						| T.DictPattern
+						| T.String
+						| T.ConcatenatedString
+						| TSKindId.True
+						| TSKindId.False
+						| TSKindId.None
+						| T.Integer
+						| T.Float
+						| T.SimplePatternNegative
+						| T.ComplexPattern
+						| T.DottedName
+						| TSKindId.WildcardPattern
+					>(value, _K18, _K19)
+				),
+				[
+					['True', TSKindId.True] as const,
+					['False', TSKindId.False] as const,
+					['None', TSKindId.None] as const,
+					['_', TSKindId.WildcardPattern] as const
+				]
+			)
+	);
+}
+
+export function coerceToUnionPattern<const I extends T.UnionPattern.Loose>(
+	input: I & RefuseUndeclared<I, T.UnionPattern.Loose>
+): ReturnType<typeof F.buildUnionPattern>;
+export function coerceToUnionPattern(input: T.UnionPattern.Loose): ReturnType<typeof F.buildUnionPattern> {
+	if (!_isLooseConfig<T.UnionPattern.LooseConfig>(input))
+		return input as unknown as ReturnType<typeof F.buildUnionPattern>;
+	currentHandle()?.admit(TSKindId.UnionPattern, [input]);
+	return F.buildUnionPattern({
+		left: resolveUnionPattern_left(input.left),
+		right: resolveUnionPattern_right(input.right)
+	});
 }
 
 export function resolveDictPattern_elements(
@@ -3717,6 +3793,8 @@ export function resolveKeyValuePattern_key(
 						| TSKindId.True
 						| TSKindId.False
 						| TSKindId.None
+						| T.Integer
+						| T.Float
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
@@ -3784,6 +3862,8 @@ export function resolveKeywordPattern_value(
 						| TSKindId.True
 						| TSKindId.False
 						| TSKindId.None
+						| T.Integer
+						| T.Float
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
@@ -7113,12 +7193,6 @@ export function coerceToLineContinuationNul(_input?: T.LineContinuationNul.Loose
 	return F.buildLineContinuationNul;
 }
 
-export function resolveSimplePatternNegative_sign(
-	value: T.SimplePatternNegative.LooseConfig['sign']
-): Admit<T.SimplePatternNegative['_sign']> {
-	return _resolveBooleanKeyword(value);
-}
-
 export function resolveSimplePatternNegative_value(
 	value: T.SimplePatternNegative.LooseConfig['value']
 ): Admit<T.SimplePatternNegative['_value']> {
@@ -7131,13 +7205,15 @@ export function coerceToSimplePatternNegative<const I extends T.SimplePatternNeg
 export function coerceToSimplePatternNegative(
 	input: T.SimplePatternNegative.Loose
 ): ReturnType<typeof F.buildSimplePatternNegative> {
-	if (!_isLooseConfig<T.SimplePatternNegative.LooseConfig>(input))
+	if (isNodeOfKind(input, TSKindId.SimplePatternNegative))
 		return input as unknown as ReturnType<typeof F.buildSimplePatternNegative>;
-	currentHandle()?.admit(TSKindId.SimplePatternNegative, [input]);
-	return F.buildSimplePatternNegative({
-		sign: resolveSimplePatternNegative_sign(input.sign),
-		value: resolveSimplePatternNegative_value(input.value)
-	});
+	return F.buildSimplePatternNegative(
+		_resolveOne<T.Integer | T.Float>(
+			configFieldOr(input, 'value', () => input),
+			_super_integer_decimal,
+			_K20
+		)
+	);
 }
 
 export function coerceToExceptClauseExceptionList<const A extends T.ExceptClauseExceptionList.LooseArgs>(
@@ -7487,7 +7563,9 @@ export function coerceToMatchBlockEmpty(input?: T.MatchBlockEmpty.Loose): Return
 export function resolveSuiteInline_elements(
 	value: T.SuiteInline.LooseConfig['elements']
 ): Admit<T.SuiteInline['_elements']> {
-	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements');
+	return _resolveOneBranch<T.SimpleStatementsElements>(value, 'simple_statements_elements', [
+		TSKindId.SimpleStatements
+	]);
 }
 
 export function coerceToSuiteInline<const A extends T.SimpleStatementsElements.LooseArgs>(
@@ -7506,7 +7584,8 @@ export function coerceToSuiteInline(...args: unknown[]): ReturnType<typeof F.bui
 	return F.buildSuiteInline(
 		_resolveOneBranch<T.SimpleStatementsElements>(
 			configFieldOr(input, 'elements', () => input),
-			'simple_statements_elements'
+			'simple_statements_elements',
+			[TSKindId.SimpleStatements]
 		)
 	);
 }

@@ -20,7 +20,7 @@ import {
 	numericSlotKeys,
 	numericSlotShape,
 	optionalGroupPeers,
-	widenNumericSlots
+	numericSlotInputs
 } from './interior.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import {
@@ -122,6 +122,7 @@ import {
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
 import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
+import { splicedEnvelopeOf } from '../compiler/model/spliced-envelopes.ts';
 import type { CodegenEmitter } from './emitter.ts';
 
 export interface EmitFactoriesConfig {
@@ -146,6 +147,7 @@ function collectStorageCoercionImports(nodeMap: NodeMap, kindEntries: readonly K
 			if (seatedKeywordTexts(slot, nodeMap, kindEntries).length > 0) imports.add('rejectKeywordText');
 			if (slot.checksReserved === true) imports.add('rejectReservedText');
 			if (slotAliases(slot, nodeMap).length > 0) imports.add('admitAliasContent');
+			if (splicedEnvelopeOf(slot, nodeMap) !== undefined) imports.add('admitSplicedEnvelope');
 		}
 		if (node instanceof AssembledList && slotAliases(buildSeparatedListContentSlot(node), nodeMap).length > 0)
 			imports.add('admitAliasContent');
@@ -747,16 +749,63 @@ function admittedSlotInput(
 	kindEntries: readonly KindEnumEntry[],
 	typeName: string
 ): string {
-	const admitted = keywordTextRejection(f, expr, nodeMap, kindEntries, typeName);
+	const unspliced = splicedEnvelopeAdmission(f, expr, nodeMap, kindEntries, typeName);
+	const admitted = keywordTextRejection(f, unspliced, nodeMap, kindEntries, typeName);
 	return aliasContentAdmission(f, admitted, nodeMap, kindEntries, `NonNullable<T.${typeName}[${JSON.stringify(f.storageKey)}]>`);
 }
 
-function aliasContentTypes(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): string[] {
-	return [...new Set(slots.flatMap((slot) => slotAliases(slot, nodeMap).map((alias) => `T.${alias.typeName}.Types`)))];
+export function splicedEnvelopeAdmission(
+	f: AssembledNonterminal,
+	expr: string,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[],
+	typeName: string
+): string {
+	const envelope = splicedEnvelopeOf(f, nodeMap);
+	if (envelope === undefined) return expr;
+	const entry = findKindEntry(kindEntries, envelope.kind);
+	const spec = `[${kindDiscriminantExpr(envelope.kind, nodeMap, kindEntries)}, ${JSON.stringify(envelope.slots[0]!.propertyName)}, ${JSON.stringify(entry?.parseName ?? envelope.kind)}]`;
+	return `admitSplicedEnvelope(${expr}, ${spec}, '${typeName}.${f.propertyName}')`;
 }
 
-function withAliasContentTypes(type: string, f: AssembledNonterminal, nodeMap: NodeMap): string {
-	return [type, ...aliasContentTypes([f], nodeMap)].join(' | ');
+export function splicedEnvelopeKindExprs(
+	f: AssembledNonterminal,
+	nodeMap: NodeMap,
+	kindEntries: readonly KindEnumEntry[]
+): readonly string[] {
+	const envelope = splicedEnvelopeOf(f, nodeMap);
+	return envelope === undefined ? [] : [kindDiscriminantExpr(envelope.kind, nodeMap, kindEntries)];
+}
+
+export function splicedEnvelopeType(f: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+	const envelope = splicedEnvelopeOf(f, nodeMap);
+	return envelope === undefined ? undefined : `Admit<T.${envelope.typeName}>`;
+}
+
+export function widenSlotInputs(type: string, node: AssembledNode, nodeMap: NodeMap): string {
+	const inputs = new Map<string, string[]>();
+	const envelopes = node.slots.flatMap((slot) => {
+		const input = splicedEnvelopeType(slot, nodeMap);
+		return input === undefined ? [] : [[slot.propertyName, input] as const];
+	});
+	for (const [slot, input] of [...numericSlotInputs(node), ...envelopes]) inputs.set(slot, [...(inputs.get(slot) ?? []), input]);
+	if (inputs.size === 0) return type;
+	return `WidenSlots<${type}, { ${[...inputs].map(([slot, types]) => `${JSON.stringify(slot)}: ${types.join(' | ')}`).join('; ')} }>`;
+}
+
+function admittedTypes(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): string[] {
+	return [
+		...new Set(
+			slots.flatMap((slot) => {
+				const envelope = splicedEnvelopeType(slot, nodeMap);
+				return [...slotAliases(slot, nodeMap).map((alias) => `T.${alias.typeName}.Types`), ...(envelope === undefined ? [] : [envelope])];
+			})
+		)
+	];
+}
+
+function withAdmittedTypes(type: string, f: AssembledNonterminal, nodeMap: NodeMap): string {
+	return [type, ...admittedTypes([f], nodeMap)].join(' | ');
 }
 
 function kindIdsOf(kind: string, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): number[] {
@@ -1109,9 +1158,8 @@ export function constructionChildElementType(
 	kindEntries: readonly KindEnumEntry[]
 ): string {
 	const base = childElementType(node, nodeMap, kindEntries);
-	const aliasTypes = aliasContentTypes(node.children, nodeMap);
-	const type = aliasTypes.length === 0 ? base : `(${[base, ...aliasTypes].join(' | ')})`;
-	return type;
+	const admitted = admittedTypes(node.children, nodeMap);
+	return admitted.length === 0 ? base : `(${[base, ...admitted].join(' | ')})`;
 }
 
 export function constructionFieldElementType(
@@ -1119,7 +1167,7 @@ export function constructionFieldElementType(
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[]
 ): string {
-	const type = withAliasContentTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
+	const type = withAdmittedTypes(fieldElementType(f, nodeMap, kindEntries), f, nodeMap);
 	const shape = numericSlotShape(f);
 	return shape === undefined ? type : `${type} | ${numberInputType(shape)}`;
 }
@@ -1437,7 +1485,7 @@ function resolveConfigFactorySurface(
 	const configType = resolveConfigType(node, nodeMap.refineForms?.has(node.kind) ?? false);
 	const hasConfigReads = slots.length > 0;
 	const allOptional = opt === '?' && hasConfigReads;
-	const widen = (type: string): string => widenNumericSlots(type, node);
+	const widen = (type: string): string => widenSlotInputs(type, node, nodeMap);
 	const strictType = allOptional ? `Partial<${widen(configType)}>` : widen(configType);
 	const numericSlots = numericConfigSlots(node);
 	const configParam: FactoryParam = {
@@ -1882,6 +1930,11 @@ function emitFieldCarryingFactory(
 		const targetEmpty = targetIsConstant ? targetFn : `${targetFn}()`;
 		const targetTakesNoArgs =
 			targetSurfaceParams !== undefined && targetNode !== undefined && targetNode.argumentOptional(nodeMap);
+		const splicedEnvelope = surface.singleField === undefined ? undefined : splicedEnvelopeOf(surface.singleField, nodeMap);
+		const prebuiltTest = [forwardTarget, ...(splicedEnvelope === undefined ? [] : [splicedEnvelope.kind])]
+			.map((kind) => `(args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(kind, nodeMap, kindEntries)})`)
+			.join(' || ');
+		const prebuiltCheck = splicedEnvelope === undefined ? prebuiltTest : `(${prebuiltTest})`;
 		const wrapper = withEmptyOverload(nodeMap, node.kind, `${exportKw}function ${fn}`, [
 			...forwarded.overloads.map((declared) => declaredOverload(`${exportKw}function ${fn}`, declared, `ReturnType<typeof _${fn}>`)),
 			`${exportKw}function ${fn}(...args: unknown[]) {`
@@ -1900,7 +1953,7 @@ function emitFieldCarryingFactory(
 				`  }`,
 				`  const prebuilt =`,
 				`    typeof args[0] === 'object' && args[0] !== null &&`,
-				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
+				`    ${prebuiltCheck};`,
 				`  return prebuilt`,
 				`    ? _${fn}(args[0] as Parameters<typeof _${fn}>[0], args[1] as never)`,
 				`    : _${fn}(${targetBuilt('args[0]')} as Parameters<typeof _${fn}>[0], args[1] as never);`,
@@ -1916,7 +1969,7 @@ function emitFieldCarryingFactory(
 				`  }`,
 				`  const prebuilt =`,
 				`    args.length === 1 && typeof args[0] === 'object' && args[0] !== null &&`,
-				`    (args[0] as { $type?: unknown }).$type === (${factoryTypeDiscriminant(forwardTarget, nodeMap, kindEntries)});`,
+				`    ${prebuiltCheck};`,
 				`  return prebuilt`,
 				`    ? _${fn}(args[0] as Parameters<typeof _${fn}>[0])`,
 				`    : _${fn}(${targetBuilt('...args')} as Parameters<typeof _${fn}>[0]);`,
@@ -2517,7 +2570,7 @@ export function separatedListSurface(
 } {
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const baseElemType = fieldElementType(contentSlot, nodeMap, kindEntries);
-	let elemType = withAliasContentTypes(baseElemType, contentSlot, nodeMap);
+	let elemType = withAdmittedTypes(baseElemType, contentSlot, nodeMap);
 	let wrapper: ReturnType<typeof separatedListSurface>['wrapper'];
 	const contentKinds = slotKindNames(contentSlot);
 	if (contentKinds.length === 1 && kindEntries) {
@@ -2536,7 +2589,7 @@ export function separatedListSurface(
 				decorationKeys: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.storageKey),
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};
-			elemType = `${elemType} | ${withAliasContentTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;
+			elemType = `${elemType} | ${withAdmittedTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;
 		}
 	}
 	const strictElemType = admitNodes(elemType);
@@ -2910,4 +2963,4 @@ export class FactoryEmitter implements CodegenEmitter<string> {
 	}
 }
 
-const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenNumeric'];
+const SITTIR_TYPES_IMPORT_CANDIDATES = ['Admit', 'ListOptions', 'AnyUntypedNode', 'ConfigOf', 'LooseValue', 'NonEmptyArray', 'NumericConfig', 'NumericLiteral', 'RefuseUndeclared', 'RefusingConfig', 'WidenSlots'];

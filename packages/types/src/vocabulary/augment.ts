@@ -2529,7 +2529,6 @@ declare module './pattern.ts' {
 			interface Dictionary<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Dictionary<G> {}
 			interface Keyword<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Keyword<G> {}
 			interface List<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.List<G> {}
-			interface Or<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Or<G> {}
 			interface Splat<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Splat<G> {}
 			interface Tuple<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Tuple<G> {}
 			type Any<G extends GrammarContext<G>> =
@@ -2539,7 +2538,6 @@ declare module './pattern.ts' {
 				| V.Pattern.Case.Dictionary<G>
 				| V.Pattern.Case.Keyword<G>
 				| V.Pattern.Case.List<G>
-				| V.Pattern.Case.Or<G>
 				| V.Pattern.Case.Splat<G>
 				| V.Pattern.Case.Tuple<G>;
 		}
@@ -2603,7 +2601,6 @@ declare module './pattern.ts' {
 			| V.Pattern.Case.Dictionary<G>
 			| V.Pattern.Case.Keyword<G>
 			| V.Pattern.Case.List<G>
-			| V.Pattern.Case.Or<G>
 			| V.Pattern.Case.Splat<G>
 			| V.Pattern.Case.Tuple<G>
 			| V.Pattern.Generic<G>

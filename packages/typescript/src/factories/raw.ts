@@ -13,7 +13,7 @@ import type {
 	NumericLiteral,
 	RefuseUndeclared,
 	RefusingConfig,
-	WidenNumeric
+	WidenSlots
 } from '@sittir/types';
 import type { DelimitedSpec } from '@sittir/common/utils';
 import {
@@ -46,6 +46,7 @@ import {
 	restItems,
 	isNodeOfKind,
 	admitAliasContent,
+	admitSplicedEnvelope,
 	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
@@ -3816,29 +3817,39 @@ function _buildClassStaticBlock(
 
 export function buildRestPattern<
 	V extends Admit<
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| TSKindId.Undefined
-		| T.Identifier
-		| T.ObjectPattern
-		| T.ArrayPattern
-		| T.NonNullExpression
+		| (
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+		  )
+		| Admit<T.LhsExpression>
 	>
 >(value: V & RefuseUndeclared<V>): T.RestPattern.Bound;
 export function buildRestPattern(
 	value: Admit<
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| TSKindId.Undefined
-		| T.Identifier
-		| T.ObjectPattern
-		| T.ArrayPattern
-		| T.NonNullExpression
+		| (
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+		  )
+		| Admit<T.LhsExpression>
 	>
 ): T.RestPattern.Bound {
 	const _lhs_expression = rejectReservedText(
 		rejectKeywordText(
-			kindIdStorage<NonNullable<T.RestPattern['_lhs_expression']>>(value),
+			admitSplicedEnvelope(
+				kindIdStorage<NonNullable<T.RestPattern['_lhs_expression']>>(value),
+				[TSKindId.LhsExpression, 'content', 'lhs_expression'],
+				'RestPattern.lhsExpression'
+			),
 			'RestPattern.lhsExpression',
 			TSKindId.Identifier,
 			['undefined']
@@ -3856,13 +3867,16 @@ export function buildRestPattern(
 			lhsExpression: (
 				value: Admit<
 					NonNullable<
-						| T.MemberExpression
-						| T.SubscriptExpression
-						| TSKindId.Undefined
-						| T.Identifier
-						| T.ObjectPattern
-						| T.ArrayPattern
-						| T.NonNullExpression
+						| (
+								| T.MemberExpression
+								| T.SubscriptExpression
+								| TSKindId.Undefined
+								| T.Identifier
+								| T.ObjectPattern
+								| T.ArrayPattern
+								| T.NonNullExpression
+						  )
+						| Admit<T.LhsExpression>
 					>
 				>
 			) => rebuilt(node, handle, () => buildRestPattern(value))
@@ -8675,7 +8689,7 @@ export function buildNumberHex(
 }
 
 export function buildNumberFloatPoint<
-	const C extends WidenNumeric<
+	const C extends WidenSlots<
 		T.NumberFloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -8688,13 +8702,13 @@ export function buildNumberFloatPoint<
 		NumericConfig<C, { integer: true; fraction: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<
+			WidenSlots<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
 		> &
 		RefusingConfig<
-			WidenNumeric<
+			WidenSlots<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
@@ -8703,7 +8717,7 @@ export function buildNumberFloatPoint<
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound;
 export function buildNumberFloatPoint(
-	config: WidenNumeric<
+	config: WidenSlots<
 		T.NumberFloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -8774,7 +8788,7 @@ export function buildNumberFloatPoint(
 }
 
 export function buildNumberFloatLeadingPoint<
-	const C extends WidenNumeric<
+	const C extends WidenSlots<
 		T.NumberFloatLeadingPoint.Config,
 		{ fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -8786,16 +8800,16 @@ export function buildNumberFloatLeadingPoint<
 		NumericConfig<C, { fraction: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>
+			WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>
 		> &
 		RefusingConfig<
-			WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
+			WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
 			{ fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound;
 export function buildNumberFloatLeadingPoint(
-	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
+	config: WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound {
 	currentHandle()?.admit(TSKindId.NumberFloatLeadingPoint, [config]);
@@ -8854,7 +8868,7 @@ export function buildNumberFloatLeadingPoint(
 }
 
 export function buildNumberFloatScientific<
-	const C extends WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	const C extends WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.NumberFloatScientific.Config['integer'],
 	SignSlot extends T.NumberFloatScientific.Config['sign'],
 	ExponentSlot extends T.NumberFloatScientific.Config['exponent']
@@ -8863,16 +8877,16 @@ export function buildNumberFloatScientific<
 		NumericConfig<C, { integer: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+			WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 		> &
 		RefusingConfig<
-			WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+			WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound;
 export function buildNumberFloatScientific(
-	config: WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	config: WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound {
 	currentHandle()?.admit(TSKindId.NumberFloatScientific, [config]);
