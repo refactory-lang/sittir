@@ -255,6 +255,8 @@ pub trait Layout {
     /// coordinate into one tree, a snapshot's geometry when each carries one,
     /// `None` with no inner trivia, and `Rebuilt` otherwise.
     fn inner_item(&self) -> Option<crate::prepare::EdgeItem<'_>>;
+    /// The coordinate a read node came from (`NodeLayout::at`).
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate>;
 }
 
 impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
@@ -316,6 +318,10 @@ impl<T: Prepare + TriviaSeam> Layout for Option<Box<NodeLayout<T>>> {
             }));
         }
         extent.map(|span| EdgeItem::Snapshot(SnapshotEdge { span, leading: TriviaReach::Bare, trailing: TriviaReach::Bare }))
+    }
+
+    fn source_coordinate(&self) -> Option<&crate::slot::NodeCoordinate> {
+        self.as_ref()?.at.as_ref()
     }
 }
 

@@ -13,9 +13,9 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
+import { adoptSideNesting, holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
-import { forEachTriviaList, type TriviaSides } from './trivia.ts';
+import { readEntries, readUnits } from './side-entries.ts';
 import type { DescendantBatch } from './query.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -366,6 +366,7 @@ export function createNativeEngine<
 	}
 
 	try {
+		adoptSideNesting(status.native);
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
@@ -450,17 +451,9 @@ export function createNativeEngine<
 							},
 							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
-							triviaSide: (index, side) => {
-								const entries = engine.triviaSide(parsed.treeId, index, side);
-								holdReadTree(entries, liveToken);
-								return entries;
-							},
+							triviaSide: (index, side) => readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
-							unitSides: (index) => {
-								const units = engine.unitSides(parsed.treeId, index);
-								for (const unit of units) forEachTriviaList(unit as TriviaSides<unknown>, (entries) => holdReadTree(entries, liveToken));
-								return units;
-							},
+							unitSides: (index) => readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
 							separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,

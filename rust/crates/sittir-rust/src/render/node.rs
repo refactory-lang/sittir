@@ -2095,6 +2095,419 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AnyNode::SourceFile(t) => t.source_coordinate(),
+            AnyNode::ExpressionStatement(t) => t.source_coordinate(),
+            AnyNode::MacroRule(t) => t.source_coordinate(),
+            AnyNode::TokenBindingPattern(t) => t.source_coordinate(),
+            AnyNode::TokenRepetitionPattern(t) => t.source_coordinate(),
+            AnyNode::FragmentSpecifier(t) => t.source_coordinate(),
+            AnyNode::TokenRepetition(t) => t.source_coordinate(),
+            AnyNode::NonSpecialToken(t) => t.source_coordinate(),
+            AnyNode::AttributeItem(t) => t.source_coordinate(),
+            AnyNode::InnerAttributeItem(t) => t.source_coordinate(),
+            AnyNode::Attribute(t) => t.source_coordinate(),
+            AnyNode::DeclarationList(t) => t.source_coordinate(),
+            AnyNode::UnionItem(t) => t.source_coordinate(),
+            AnyNode::EnumItem(t) => t.source_coordinate(),
+            AnyNode::EnumVariantList(t) => t.source_coordinate(),
+            AnyNode::EnumVariant(t) => t.source_coordinate(),
+            AnyNode::FieldDeclarationList(t) => t.source_coordinate(),
+            AnyNode::FieldDeclaration(t) => t.source_coordinate(),
+            AnyNode::OrderedFieldDeclarationList(t) => t.source_coordinate(),
+            AnyNode::ExternCrateDeclaration(t) => t.source_coordinate(),
+            AnyNode::ConstItem(t) => t.source_coordinate(),
+            AnyNode::StaticItem(t) => t.source_coordinate(),
+            AnyNode::TypeItem(t) => t.source_coordinate(),
+            AnyNode::FunctionItem(t) => t.source_coordinate(),
+            AnyNode::FunctionSignatureItem(t) => t.source_coordinate(),
+            AnyNode::FunctionModifiers(t) => t.source_coordinate(),
+            AnyNode::WhereClause(t) => t.source_coordinate(),
+            AnyNode::WherePredicate(t) => t.source_coordinate(),
+            AnyNode::TraitItem(t) => t.source_coordinate(),
+            AnyNode::AssociatedType(t) => t.source_coordinate(),
+            AnyNode::TraitBounds(t) => t.source_coordinate(),
+            AnyNode::HigherRankedTraitBound(t) => t.source_coordinate(),
+            AnyNode::RemovedTraitBound(t) => t.source_coordinate(),
+            AnyNode::TypeParameters(t) => t.source_coordinate(),
+            AnyNode::ConstParameter(t) => t.source_coordinate(),
+            AnyNode::TypeParameter(t) => t.source_coordinate(),
+            AnyNode::LifetimeParameter(t) => t.source_coordinate(),
+            AnyNode::LetDeclaration(t) => t.source_coordinate(),
+            AnyNode::UseDeclaration(t) => t.source_coordinate(),
+            AnyNode::ScopedUseList(t) => t.source_coordinate(),
+            AnyNode::UseList(t) => t.source_coordinate(),
+            AnyNode::UseAsClause(t) => t.source_coordinate(),
+            AnyNode::UseWildcard(t) => t.source_coordinate(),
+            AnyNode::Parameters(t) => t.source_coordinate(),
+            AnyNode::SelfParameter(t) => t.source_coordinate(),
+            AnyNode::VariadicParameter(t) => t.source_coordinate(),
+            AnyNode::Parameter(t) => t.source_coordinate(),
+            AnyNode::ExternModifier(t) => t.source_coordinate(),
+            AnyNode::VisibilityModifier(t) => t.source_coordinate(),
+            AnyNode::BracketedType(t) => t.source_coordinate(),
+            AnyNode::QualifiedType(t) => t.source_coordinate(),
+            AnyNode::Lifetime(t) => t.source_coordinate(),
+            AnyNode::ArrayType(t) => t.source_coordinate(),
+            AnyNode::ForLifetimes(t) => t.source_coordinate(),
+            AnyNode::FunctionType(t) => t.source_coordinate(),
+            AnyNode::TupleType(t) => t.source_coordinate(),
+            AnyNode::GenericFunction(t) => t.source_coordinate(),
+            AnyNode::GenericType(t) => t.source_coordinate(),
+            AnyNode::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            AnyNode::BoundedType(t) => t.source_coordinate(),
+            AnyNode::UseBounds(t) => t.source_coordinate(),
+            AnyNode::TypeArguments(t) => t.source_coordinate(),
+            AnyNode::TypeBinding(t) => t.source_coordinate(),
+            AnyNode::ReferenceType(t) => t.source_coordinate(),
+            AnyNode::AbstractType(t) => t.source_coordinate(),
+            AnyNode::DynamicType(t) => t.source_coordinate(),
+            AnyNode::MacroInvocation(t) => t.source_coordinate(),
+            AnyNode::ScopedIdentifier(t) => t.source_coordinate(),
+            AnyNode::ScopedTypeIdentifierInExpressionPosition(t) => t.source_coordinate(),
+            AnyNode::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            AnyNode::UnaryExpression(t) => t.source_coordinate(),
+            AnyNode::TryExpression(t) => t.source_coordinate(),
+            AnyNode::BinaryExpression(t) => t.source_coordinate(),
+            AnyNode::AssignmentExpression(t) => t.source_coordinate(),
+            AnyNode::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            AnyNode::TypeCastExpression(t) => t.source_coordinate(),
+            AnyNode::ReturnExpression(t) => t.source_coordinate(),
+            AnyNode::YieldExpression(t) => t.source_coordinate(),
+            AnyNode::CallExpression(t) => t.source_coordinate(),
+            AnyNode::Arguments(t) => t.source_coordinate(),
+            AnyNode::ParenthesizedExpression(t) => t.source_coordinate(),
+            AnyNode::TupleExpression(t) => t.source_coordinate(),
+            AnyNode::StructExpression(t) => t.source_coordinate(),
+            AnyNode::FieldInitializerList(t) => t.source_coordinate(),
+            AnyNode::ShorthandFieldInitializer(t) => t.source_coordinate(),
+            AnyNode::FieldInitializer(t) => t.source_coordinate(),
+            AnyNode::BaseFieldInitializer(t) => t.source_coordinate(),
+            AnyNode::IfExpression(t) => t.source_coordinate(),
+            AnyNode::LetCondition(t) => t.source_coordinate(),
+            AnyNode::LetChain(t) => t.source_coordinate(),
+            AnyNode::ElseClause(t) => t.source_coordinate(),
+            AnyNode::MatchExpression(t) => t.source_coordinate(),
+            AnyNode::MatchBlock(t) => t.source_coordinate(),
+            AnyNode::LastMatchArm(t) => t.source_coordinate(),
+            AnyNode::MatchPattern(t) => t.source_coordinate(),
+            AnyNode::WhileExpression(t) => t.source_coordinate(),
+            AnyNode::LoopExpression(t) => t.source_coordinate(),
+            AnyNode::ForExpression(t) => t.source_coordinate(),
+            AnyNode::ConstBlock(t) => t.source_coordinate(),
+            AnyNode::ClosureParameters(t) => t.source_coordinate(),
+            AnyNode::Label(t) => t.source_coordinate(),
+            AnyNode::BreakExpression(t) => t.source_coordinate(),
+            AnyNode::ContinueExpression(t) => t.source_coordinate(),
+            AnyNode::IndexExpression(t) => t.source_coordinate(),
+            AnyNode::AwaitExpression(t) => t.source_coordinate(),
+            AnyNode::FieldExpression(t) => t.source_coordinate(),
+            AnyNode::UnsafeBlock(t) => t.source_coordinate(),
+            AnyNode::AsyncBlock(t) => t.source_coordinate(),
+            AnyNode::GenBlock(t) => t.source_coordinate(),
+            AnyNode::TryBlock(t) => t.source_coordinate(),
+            AnyNode::Block(t) => t.source_coordinate(),
+            AnyNode::GenericPattern(t) => t.source_coordinate(),
+            AnyNode::TuplePattern(t) => t.source_coordinate(),
+            AnyNode::SlicePattern(t) => t.source_coordinate(),
+            AnyNode::TupleStructPattern(t) => t.source_coordinate(),
+            AnyNode::StructPattern(t) => t.source_coordinate(),
+            AnyNode::MutPattern(t) => t.source_coordinate(),
+            AnyNode::RefPattern(t) => t.source_coordinate(),
+            AnyNode::CapturedPattern(t) => t.source_coordinate(),
+            AnyNode::ReferencePattern(t) => t.source_coordinate(),
+            AnyNode::NegativeLiteral(t) => t.source_coordinate(),
+            AnyNode::StringLiteral(t) => t.source_coordinate(),
+            AnyNode::RawStringLiteral(t) => t.source_coordinate(),
+            AnyNode::BooleanLiteral(t) => t.source_coordinate(),
+            AnyNode::LineComment(t) => t.source_coordinate(),
+            AnyNode::BlockComment(t) => t.source_coordinate(),
+            AnyNode::Identifier(t) => t.source_coordinate(),
+            AnyNode::Shebang(t) => t.source_coordinate(),
+            AnyNode::Metavariable(t) => t.source_coordinate(),
+            AnyNode::PrimitiveType(t) => t.source_coordinate(),
+            AnyNode::MacroRules(t) => t.source_coordinate(),
+            AnyNode::EnumVariantListElements(t) => t.source_coordinate(),
+            AnyNode::FieldDeclarationListElements(t) => t.source_coordinate(),
+            AnyNode::OrderedFieldDeclarationListElements(t) => t.source_coordinate(),
+            AnyNode::WherePredicates(t) => t.source_coordinate(),
+            AnyNode::TypeParametersElements(t) => t.source_coordinate(),
+            AnyNode::UseClauses(t) => t.source_coordinate(),
+            AnyNode::ParametersElements(t) => t.source_coordinate(),
+            AnyNode::Lifetimes(t) => t.source_coordinate(),
+            AnyNode::Types(t) => t.source_coordinate(),
+            AnyNode::UseBoundsElements(t) => t.source_coordinate(),
+            AnyNode::TypeArgumentsElements(t) => t.source_coordinate(),
+            AnyNode::ArgumentsElements(t) => t.source_coordinate(),
+            AnyNode::Expressions(t) => t.source_coordinate(),
+            AnyNode::FieldInitializerListElements(t) => t.source_coordinate(),
+            AnyNode::TuplePatternElements(t) => t.source_coordinate(),
+            AnyNode::Patterns(t) => t.source_coordinate(),
+            AnyNode::StructPatternElements(t) => t.source_coordinate(),
+            AnyNode::UseWildcardGroup(t) => t.source_coordinate(),
+            AnyNode::TokenRepetitionPatternText(t) => t.source_coordinate(),
+            AnyNode::StringOpen(t) => t.source_coordinate(),
+            AnyNode::TokenTreePunctuation(t) => t.source_coordinate(),
+            AnyNode::TokenKeywords(t) => t.source_coordinate(),
+            AnyNode::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            AnyNode::IntegerLiteralHex(t) => t.source_coordinate(),
+            AnyNode::IntegerLiteralBinary(t) => t.source_coordinate(),
+            AnyNode::IntegerLiteralOctal(t) => t.source_coordinate(),
+            AnyNode::CharLiteralPlain(t) => t.source_coordinate(),
+            AnyNode::CharLiteralEmpty(t) => t.source_coordinate(),
+            AnyNode::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            AnyNode::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            AnyNode::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            AnyNode::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            AnyNode::EscapeSequenceSimple(t) => t.source_coordinate(),
+            AnyNode::EscapeSequenceUnicodeFixed(t) => t.source_coordinate(),
+            AnyNode::EscapeSequenceUnicodeBraced(t) => t.source_coordinate(),
+            AnyNode::EscapeSequenceHex(t) => t.source_coordinate(),
+            AnyNode::ArrayExpressionSemi(t) => t.source_coordinate(),
+            AnyNode::ArrayExpressionList(t) => t.source_coordinate(),
+            AnyNode::AttributeInput(t) => t.source_coordinate(),
+            AnyNode::ClosureExpressionBlock(t) => t.source_coordinate(),
+            AnyNode::ClosureExpressionExpr(t) => t.source_coordinate(),
+            AnyNode::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            AnyNode::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            AnyNode::ReferenceExpressionMut(t) => t.source_coordinate(),
+            AnyNode::ReferenceExpressionBare(t) => t.source_coordinate(),
+            AnyNode::ImplItemPositiveClause(t) => t.source_coordinate(),
+            AnyNode::ImplItemNegativeClause(t) => t.source_coordinate(),
+            AnyNode::ImplItemBody(t) => t.source_coordinate(),
+            AnyNode::ImplItemSemi(t) => t.source_coordinate(),
+            AnyNode::VisibilityModifierPubScopeInPath(t) => t.source_coordinate(),
+            AnyNode::VisibilityModifierPubScope(t) => t.source_coordinate(),
+            AnyNode::VisibilityModifierPub(t) => t.source_coordinate(),
+            AnyNode::FunctionTypeTraitForm(t) => t.source_coordinate(),
+            AnyNode::FunctionTypeFnForm(t) => t.source_coordinate(),
+            AnyNode::ModItemExternal(t) => t.source_coordinate(),
+            AnyNode::ModItemInline(t) => t.source_coordinate(),
+            AnyNode::OrPatternBinary(t) => t.source_coordinate(),
+            AnyNode::OrPatternPrefix(t) => t.source_coordinate(),
+            AnyNode::PointerTypeConst(t) => t.source_coordinate(),
+            AnyNode::PointerTypeMut(t) => t.source_coordinate(),
+            AnyNode::RangeExpressionBinary(t) => t.source_coordinate(),
+            AnyNode::RangeExpressionPostfix(t) => t.source_coordinate(),
+            AnyNode::RangeExpressionPrefix(t) => t.source_coordinate(),
+            AnyNode::RangeExpressionBare(t) => t.source_coordinate(),
+            AnyNode::ExpressionStatementWithSemi(t) => t.source_coordinate(),
+            AnyNode::ForeignModItemSemi(t) => t.source_coordinate(),
+            AnyNode::ForeignModItemBody(t) => t.source_coordinate(),
+            AnyNode::MatchArmWithComma(t) => t.source_coordinate(),
+            AnyNode::MatchArmBlockEnding(t) => t.source_coordinate(),
+            AnyNode::LineCommentExtraSlashes(t) => t.source_coordinate(),
+            AnyNode::LineCommentDocOuter(t) => t.source_coordinate(),
+            AnyNode::LineCommentDocInner(t) => t.source_coordinate(),
+            AnyNode::LineCommentRegular(t) => t.source_coordinate(),
+            AnyNode::BlockCommentDocOuter(t) => t.source_coordinate(),
+            AnyNode::BlockCommentDocInner(t) => t.source_coordinate(),
+            AnyNode::BlockCommentRegular(t) => t.source_coordinate(),
+            AnyNode::TokenTreePatternParen(t) => t.source_coordinate(),
+            AnyNode::TokenTreePatternBracket(t) => t.source_coordinate(),
+            AnyNode::TokenTreePatternBrace(t) => t.source_coordinate(),
+            AnyNode::TokenTreeParen(t) => t.source_coordinate(),
+            AnyNode::TokenTreeBracket(t) => t.source_coordinate(),
+            AnyNode::TokenTreeBrace(t) => t.source_coordinate(),
+            AnyNode::DelimTokenTreeParen(t) => t.source_coordinate(),
+            AnyNode::DelimTokenTreeBracket(t) => t.source_coordinate(),
+            AnyNode::DelimTokenTreeBrace(t) => t.source_coordinate(),
+            AnyNode::FieldPatternShorthand(t) => t.source_coordinate(),
+            AnyNode::FieldPatternNamed(t) => t.source_coordinate(),
+            AnyNode::MacroDefinitionParen(t) => t.source_coordinate(),
+            AnyNode::MacroDefinitionBracket(t) => t.source_coordinate(),
+            AnyNode::MacroDefinitionBrace(t) => t.source_coordinate(),
+            AnyNode::RangePatternPrefix(t) => t.source_coordinate(),
+            AnyNode::RangePatternWithLeftWithRight(t) => t.source_coordinate(),
+            AnyNode::RangePatternWithLeft(t) => t.source_coordinate(),
+            AnyNode::StructItemBrace(t) => t.source_coordinate(),
+            AnyNode::StructItemTuple(t) => t.source_coordinate(),
+            AnyNode::StructItemUnit(t) => t.source_coordinate(),
+            AnyNode::AttributedFieldDeclaration(t) => t.source_coordinate(),
+            AnyNode::AttributedEnumVariant(t) => t.source_coordinate(),
+            AnyNode::AttributedParameter(t) => t.source_coordinate(),
+            AnyNode::AttributedTypeParameter(t) => t.source_coordinate(),
+            AnyNode::AttributedArgument(t) => t.source_coordinate(),
+            AnyNode::AttributedOrderedField(t) => t.source_coordinate(),
+            AnyNode::TypeArgument(t) => t.source_coordinate(),
+            AnyNode::MatchBlockArms(t) => t.source_coordinate(),
+            AnyNode::FloatLiteral(t) => t.source_coordinate(),
+            AnyNode::StringContent(t) => t.source_coordinate(),
+            AnyNode::RawStringLiteralContent(t) => t.source_coordinate(),
+            AnyNode::RawStringLiteralStart(t) => t.source_coordinate(),
+            AnyNode::RawStringLiteralEnd(t) => t.source_coordinate(),
+            AnyNode::DocComment(t) => t.source_coordinate(),
+            AnyNode::BlockCommentContent(t) => t.source_coordinate(),
+            AnyNode::TraitInterfaceDeclarationBody(t) => t.source_coordinate(),
+            AnyNode::ExtensionDeclarationBody(t) => t.source_coordinate(),
+            AnyNode::ReceiverParameterDeclaration(t) => t.source_coordinate(),
+            AnyNode::AttributedParameterReceiver(t) => t.source_coordinate(),
+            AnyNode::ParametersElementsReceiver(t) => t.source_coordinate(),
+            AnyNode::ParametersElementsReceiverGroup(t) => t.source_coordinate(),
+            AnyNode::StringClose(t) => t.source_coordinate(),
+            AnyNode::ErrorSentinel(t) => t.source_coordinate(),
+            AnyNode::TypeIdentifier(t) => t.source_coordinate(),
+            AnyNode::FieldIdentifier(t) => t.source_coordinate(),
+            AnyNode::ShorthandFieldIdentifier(t) => t.source_coordinate(),
+            AnyNode::MethodDeclaration(t) => t.source_coordinate(),
+            AnyNode::SignatureMethodDeclaration(t) => t.source_coordinate(),
+            AnyNode::EmptyStatement(_) => None,
+            AnyNode::UnitType(_) => None,
+            AnyNode::NeverType(_) => None,
+            AnyNode::MutableSpecifier => None,
+            AnyNode::UnitExpression(_) => None,
+            AnyNode::RemainingFieldPattern(_) => None,
+            AnyNode::InnerLineDocCommentMarker => None,
+            AnyNode::OuterLineDocCommentMarker => None,
+            AnyNode::Self_(_) => None,
+            AnyNode::Super(_) => None,
+            AnyNode::Crate(_) => None,
+            AnyNode::_RangeExpressionBare => None,
+            AnyNode::ImplItemUnsafeMarker => None,
+            AnyNode::RangePatternWithLeftBare => None,
+            AnyNode::WildcardPattern(_) => None,
+            AnyNode::OuterDocCommentMarker => None,
+            AnyNode::InnerDocCommentMarker => None,
+            AnyNode::Tight => None,
+            AnyNode::Space => None,
+            AnyNode::Tab => None,
+            AnyNode::Newline => None,
+            AnyNode::Blankline => None,
+            AnyNode::DoubleBlankline => None,
+            AnyNode::Indent => None,
+            AnyNode::Dedent => None,
+            AnyNode::CrateVisibilityModifier => None,
+            AnyNode::Semi => None,
+            AnyNode::EqGt => None,
+            AnyNode::Colon => None,
+            AnyNode::Dollar => None,
+            AnyNode::Lparen => None,
+            AnyNode::Rparen => None,
+            AnyNode::Plus => None,
+            AnyNode::Star => None,
+            AnyNode::Qmark => None,
+            AnyNode::BlockKeyword => None,
+            AnyNode::ExprKeyword => None,
+            AnyNode::Expr2021Keyword => None,
+            AnyNode::IdentKeyword => None,
+            AnyNode::ItemKeyword => None,
+            AnyNode::LifetimeKeyword => None,
+            AnyNode::LiteralKeyword => None,
+            AnyNode::MetaKeyword => None,
+            AnyNode::PatKeyword => None,
+            AnyNode::PatParamKeyword => None,
+            AnyNode::PathKeyword => None,
+            AnyNode::StmtKeyword => None,
+            AnyNode::TtKeyword => None,
+            AnyNode::TyKeyword => None,
+            AnyNode::VisKeyword => None,
+            AnyNode::Pound => None,
+            AnyNode::Lbrack => None,
+            AnyNode::Rbrack => None,
+            AnyNode::Bang => None,
+            AnyNode::Lbrace => None,
+            AnyNode::Rbrace => None,
+            AnyNode::UnionKeyword => None,
+            AnyNode::EnumKeyword => None,
+            AnyNode::Eq => None,
+            AnyNode::ExternKeyword => None,
+            AnyNode::AsKeyword => None,
+            AnyNode::ConstKeyword => None,
+            AnyNode::StaticKeyword => None,
+            AnyNode::RefKeyword => None,
+            AnyNode::TypeKeyword => None,
+            AnyNode::FnKeyword => None,
+            AnyNode::DashGt => None,
+            AnyNode::AsyncKeyword => None,
+            AnyNode::DefaultKeyword => None,
+            AnyNode::UnsafeKeyword => None,
+            AnyNode::WhereKeyword => None,
+            AnyNode::TraitKeyword => None,
+            AnyNode::ForKeyword => None,
+            AnyNode::Lt => None,
+            AnyNode::Gt => None,
+            AnyNode::LetKeyword => None,
+            AnyNode::ElseKeyword => None,
+            AnyNode::UseKeyword => None,
+            AnyNode::ColonColon => None,
+            AnyNode::Amp => None,
+            AnyNode::DotDotDot => None,
+            AnyNode::Squote => None,
+            AnyNode::ImplKeyword => None,
+            AnyNode::DynKeyword => None,
+            AnyNode::Dash => None,
+            AnyNode::AmpAmp => None,
+            AnyNode::PipePipe => None,
+            AnyNode::Pipe => None,
+            AnyNode::Caret => None,
+            AnyNode::EqEq => None,
+            AnyNode::BangEq => None,
+            AnyNode::LtEq => None,
+            AnyNode::GtEq => None,
+            AnyNode::LtLt => None,
+            AnyNode::GtGt => None,
+            AnyNode::Slash => None,
+            AnyNode::Percent => None,
+            AnyNode::PlusEq => None,
+            AnyNode::DashEq => None,
+            AnyNode::StarEq => None,
+            AnyNode::SlashEq => None,
+            AnyNode::PercentEq => None,
+            AnyNode::AmpEq => None,
+            AnyNode::PipeEq => None,
+            AnyNode::CaretEq => None,
+            AnyNode::LtLtEq => None,
+            AnyNode::GtGtEq => None,
+            AnyNode::ReturnKeyword => None,
+            AnyNode::YieldKeyword => None,
+            AnyNode::DotDot => None,
+            AnyNode::IfKeyword => None,
+            AnyNode::MatchKeyword => None,
+            AnyNode::Comma => None,
+            AnyNode::WhileKeyword => None,
+            AnyNode::LoopKeyword => None,
+            AnyNode::InKeyword => None,
+            AnyNode::BreakKeyword => None,
+            AnyNode::ContinueKeyword => None,
+            AnyNode::Dot => None,
+            AnyNode::AwaitKeyword => None,
+            AnyNode::MoveKeyword => None,
+            AnyNode::GenKeyword => None,
+            AnyNode::TryKeyword => None,
+            AnyNode::At => None,
+            AnyNode::TrueKeyword => None,
+            AnyNode::FalseKeyword => None,
+            AnyNode::SlashSlash => None,
+            AnyNode::SlashStar => None,
+            AnyNode::StarSlash => None,
+            AnyNode::U8Keyword => None,
+            AnyNode::I8Keyword => None,
+            AnyNode::U16Keyword => None,
+            AnyNode::I16Keyword => None,
+            AnyNode::U32Keyword => None,
+            AnyNode::I32Keyword => None,
+            AnyNode::U64Keyword => None,
+            AnyNode::I64Keyword => None,
+            AnyNode::U128Keyword => None,
+            AnyNode::I128Keyword => None,
+            AnyNode::IsizeKeyword => None,
+            AnyNode::UsizeKeyword => None,
+            AnyNode::F32Keyword => None,
+            AnyNode::F64Keyword => None,
+            AnyNode::BoolKeyword => None,
+            AnyNode::StrKeyword => None,
+            AnyNode::CharKeyword => None,
+            AnyNode::Underscore => None,
+            AnyNode::DotDotEq => None,
+            AnyNode::ModKeyword => None,
+            AnyNode::PubKeyword => None,
+            AnyNode::StructKeyword => None,
+            AnyNode::RawKeyword => None,
+            AnyNode::MacroRulesBang => None,
+            AnyNode::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AnyNode::SourceFile(t) => t.source_separator(ctx),
@@ -2593,6 +3006,22 @@ impl ::sittir_core::prepare::Prepare for TriviaNode {
             TriviaNode::Text(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TriviaNode::LineComment(t) => t.source_coordinate(),
+            TriviaNode::BlockComment(t) => t.source_coordinate(),
+            TriviaNode::Tight => None,
+            TriviaNode::Space => None,
+            TriviaNode::Tab => None,
+            TriviaNode::Newline => None,
+            TriviaNode::Blankline => None,
+            TriviaNode::DoubleBlankline => None,
+            TriviaNode::Indent => None,
+            TriviaNode::Dedent => None,
+            TriviaNode::Verbatim(t) => t.source_coordinate(),
+            TriviaNode::Text(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TriviaNode::LineComment(t) => t.source_separator(ctx),
@@ -2811,6 +3240,33 @@ impl ::sittir_core::prepare::Prepare for StatementNode {
             StatementNode::StaticItem(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            StatementNode::ExpressionStatement(t) => t.source_coordinate(),
+            StatementNode::DeclarationStatement(t) => t.source_coordinate(),
+            StatementNode::ConstItem(t) => t.source_coordinate(),
+            StatementNode::MacroInvocation(t) => t.source_coordinate(),
+            StatementNode::MacroDefinition(t) => t.source_coordinate(),
+            StatementNode::EmptyStatement(_) => None,
+            StatementNode::AttributeItem(t) => t.source_coordinate(),
+            StatementNode::InnerAttributeItem(t) => t.source_coordinate(),
+            StatementNode::ModItem(t) => t.source_coordinate(),
+            StatementNode::ForeignModItem(t) => t.source_coordinate(),
+            StatementNode::StructItem(t) => t.source_coordinate(),
+            StatementNode::UnionItem(t) => t.source_coordinate(),
+            StatementNode::EnumItem(t) => t.source_coordinate(),
+            StatementNode::TypeItem(t) => t.source_coordinate(),
+            StatementNode::FunctionItem(t) => t.source_coordinate(),
+            StatementNode::FunctionSignatureItem(t) => t.source_coordinate(),
+            StatementNode::ImplItem(t) => t.source_coordinate(),
+            StatementNode::TraitItem(t) => t.source_coordinate(),
+            StatementNode::AssociatedType(t) => t.source_coordinate(),
+            StatementNode::LetDeclaration(t) => t.source_coordinate(),
+            StatementNode::UseDeclaration(t) => t.source_coordinate(),
+            StatementNode::ExternCrateDeclaration(t) => t.source_coordinate(),
+            StatementNode::StaticItem(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StatementNode::ExpressionStatement(t) => t.source_separator(ctx),
@@ -3003,6 +3459,31 @@ impl ::sittir_core::prepare::Prepare for DeclarationStatementNode {
             DeclarationStatementNode::StaticItem(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            DeclarationStatementNode::ConstItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::MacroInvocation(t) => t.source_coordinate(),
+            DeclarationStatementNode::MacroDefinition(t) => t.source_coordinate(),
+            DeclarationStatementNode::EmptyStatement(_) => None,
+            DeclarationStatementNode::AttributeItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::InnerAttributeItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::ModItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::ForeignModItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::StructItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::UnionItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::EnumItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::TypeItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::FunctionItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::FunctionSignatureItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::ImplItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::TraitItem(t) => t.source_coordinate(),
+            DeclarationStatementNode::AssociatedType(t) => t.source_coordinate(),
+            DeclarationStatementNode::LetDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementNode::UseDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementNode::ExternCrateDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementNode::StaticItem(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DeclarationStatementNode::ConstItem(t) => t.source_separator(ctx),
@@ -3126,6 +3607,13 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionNode {
             MacroDefinitionNode::MacroDefinitionBrace(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            MacroDefinitionNode::MacroDefinitionParen(t) => t.source_coordinate(),
+            MacroDefinitionNode::MacroDefinitionBracket(t) => t.source_coordinate(),
+            MacroDefinitionNode::MacroDefinitionBrace(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MacroDefinitionNode::MacroDefinitionParen(t) => t.source_separator(ctx),
@@ -3195,6 +3683,13 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternNode {
             TokenTreePatternNode::TokenTreePatternBrace(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TokenTreePatternNode::TokenTreePatternParen(t) => t.source_coordinate(),
+            TokenTreePatternNode::TokenTreePatternBracket(t) => t.source_coordinate(),
+            TokenTreePatternNode::TokenTreePatternBrace(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TokenTreePatternNode::TokenTreePatternParen(t) => t.source_separator(ctx),
@@ -3256,6 +3751,13 @@ impl ::sittir_core::prepare::Prepare for TokenTreeNode {
             TokenTreeNode::TokenTreeBrace(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TokenTreeNode::TokenTreeParen(t) => t.source_coordinate(),
+            TokenTreeNode::TokenTreeBracket(t) => t.source_coordinate(),
+            TokenTreeNode::TokenTreeBrace(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TokenTreeNode::TokenTreeParen(t) => t.source_separator(ctx),
@@ -3310,6 +3812,12 @@ impl ::sittir_core::prepare::Prepare for ModItemNode {
         match self {
             ModItemNode::ModItemExternal(t) => t.snapshot_edge(),
             ModItemNode::ModItemInline(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ModItemNode::ModItemExternal(t) => t.source_coordinate(),
+            ModItemNode::ModItemInline(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -3371,6 +3879,12 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemNode {
         match self {
             ForeignModItemNode::ForeignModItemSemi(t) => t.snapshot_edge(),
             ForeignModItemNode::ForeignModItemBody(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ForeignModItemNode::ForeignModItemSemi(t) => t.source_coordinate(),
+            ForeignModItemNode::ForeignModItemBody(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -3439,6 +3953,13 @@ impl ::sittir_core::prepare::Prepare for StructItemNode {
             StructItemNode::StructItemUnit(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            StructItemNode::StructItemBrace(t) => t.source_coordinate(),
+            StructItemNode::StructItemTuple(t) => t.source_coordinate(),
+            StructItemNode::StructItemUnit(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StructItemNode::StructItemBrace(t) => t.source_separator(ctx),
@@ -3501,6 +4022,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemNode {
         match self {
             ImplItemNode::ImplItemBody(t) => t.snapshot_edge(),
             ImplItemNode::ImplItemSemi(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ImplItemNode::ImplItemBody(t) => t.source_coordinate(),
+            ImplItemNode::ImplItemSemi(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -3641,6 +4168,27 @@ impl ::sittir_core::prepare::Prepare for TypeNode {
             TypeNode::PrimitiveType(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TypeNode::AbstractType(t) => t.source_coordinate(),
+            TypeNode::ReferenceType(t) => t.source_coordinate(),
+            TypeNode::Metavariable(t) => t.source_coordinate(),
+            TypeNode::PointerType(t) => t.source_coordinate(),
+            TypeNode::GenericType(t) => t.source_coordinate(),
+            TypeNode::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            TypeNode::TupleType(t) => t.source_coordinate(),
+            TypeNode::UnitType(_) => None,
+            TypeNode::ArrayType(t) => t.source_coordinate(),
+            TypeNode::FunctionType(t) => t.source_coordinate(),
+            TypeNode::TypeIdentifier(t) => t.source_coordinate(),
+            TypeNode::MacroInvocation(t) => t.source_coordinate(),
+            TypeNode::NeverType(_) => None,
+            TypeNode::DynamicType(t) => t.source_coordinate(),
+            TypeNode::BoundedType(t) => t.source_coordinate(),
+            TypeNode::RemovedTraitBound(t) => t.source_coordinate(),
+            TypeNode::PrimitiveType(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeNode::AbstractType(t) => t.source_separator(ctx),
@@ -3723,6 +4271,12 @@ impl ::sittir_core::prepare::Prepare for PointerTypeNode {
         match self {
             PointerTypeNode::PointerTypeConst(t) => t.snapshot_edge(),
             PointerTypeNode::PointerTypeMut(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            PointerTypeNode::PointerTypeConst(t) => t.source_coordinate(),
+            PointerTypeNode::PointerTypeMut(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -4008,6 +4562,56 @@ impl ::sittir_core::prepare::Prepare for ExpressionNode {
             ExpressionNode::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ExpressionNode::UnaryExpression(t) => t.source_coordinate(),
+            ExpressionNode::ReferenceExpression(t) => t.source_coordinate(),
+            ExpressionNode::TryExpression(t) => t.source_coordinate(),
+            ExpressionNode::BinaryExpression(t) => t.source_coordinate(),
+            ExpressionNode::AssignmentExpression(t) => t.source_coordinate(),
+            ExpressionNode::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            ExpressionNode::TypeCastExpression(t) => t.source_coordinate(),
+            ExpressionNode::CallExpression(t) => t.source_coordinate(),
+            ExpressionNode::ReturnExpression(t) => t.source_coordinate(),
+            ExpressionNode::YieldExpression(t) => t.source_coordinate(),
+            ExpressionNode::StringLiteral(t) => t.source_coordinate(),
+            ExpressionNode::RawStringLiteral(t) => t.source_coordinate(),
+            ExpressionNode::CharLiteral(t) => t.source_coordinate(),
+            ExpressionNode::BooleanLiteral(t) => t.source_coordinate(),
+            ExpressionNode::IntegerLiteral(t) => t.source_coordinate(),
+            ExpressionNode::FloatLiteral(t) => t.source_coordinate(),
+            ExpressionNode::Identifier(t) => t.source_coordinate(),
+            ExpressionNode::Self_(_) => None,
+            ExpressionNode::ScopedIdentifier(t) => t.source_coordinate(),
+            ExpressionNode::GenericFunction(t) => t.source_coordinate(),
+            ExpressionNode::AwaitExpression(t) => t.source_coordinate(),
+            ExpressionNode::FieldExpression(t) => t.source_coordinate(),
+            ExpressionNode::ArrayExpression(t) => t.source_coordinate(),
+            ExpressionNode::TupleExpression(t) => t.source_coordinate(),
+            ExpressionNode::MacroInvocation(t) => t.source_coordinate(),
+            ExpressionNode::UnitExpression(_) => None,
+            ExpressionNode::BreakExpression(t) => t.source_coordinate(),
+            ExpressionNode::ContinueExpression(t) => t.source_coordinate(),
+            ExpressionNode::IndexExpression(t) => t.source_coordinate(),
+            ExpressionNode::Metavariable(t) => t.source_coordinate(),
+            ExpressionNode::ClosureExpression(t) => t.source_coordinate(),
+            ExpressionNode::ParenthesizedExpression(t) => t.source_coordinate(),
+            ExpressionNode::StructExpression(t) => t.source_coordinate(),
+            ExpressionNode::UnsafeBlock(t) => t.source_coordinate(),
+            ExpressionNode::AsyncBlock(t) => t.source_coordinate(),
+            ExpressionNode::GenBlock(t) => t.source_coordinate(),
+            ExpressionNode::TryBlock(t) => t.source_coordinate(),
+            ExpressionNode::Block(t) => t.source_coordinate(),
+            ExpressionNode::IfExpression(t) => t.source_coordinate(),
+            ExpressionNode::MatchExpression(t) => t.source_coordinate(),
+            ExpressionNode::WhileExpression(t) => t.source_coordinate(),
+            ExpressionNode::LoopExpression(t) => t.source_coordinate(),
+            ExpressionNode::ForExpression(t) => t.source_coordinate(),
+            ExpressionNode::ConstBlock(t) => t.source_coordinate(),
+            ExpressionNode::RangeExpression(t) => t.source_coordinate(),
+            ExpressionNode::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExpressionNode::UnaryExpression(t) => t.source_separator(ctx),
@@ -4155,6 +4759,13 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeNode {
             DelimTokenTreeNode::DelimTokenTreeBrace(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            DelimTokenTreeNode::DelimTokenTreeParen(t) => t.source_coordinate(),
+            DelimTokenTreeNode::DelimTokenTreeBracket(t) => t.source_coordinate(),
+            DelimTokenTreeNode::DelimTokenTreeBrace(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DelimTokenTreeNode::DelimTokenTreeParen(t) => t.source_separator(ctx),
@@ -4219,6 +4830,14 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionNode {
             RangeExpressionNode::RangeExpressionPostfix(t) => t.snapshot_edge(),
             RangeExpressionNode::RangeExpressionPrefix(t) => t.snapshot_edge(),
             RangeExpressionNode::RangeExpressionBare(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            RangeExpressionNode::RangeExpressionBinary(t) => t.source_coordinate(),
+            RangeExpressionNode::RangeExpressionPostfix(t) => t.source_coordinate(),
+            RangeExpressionNode::RangeExpressionPrefix(t) => t.source_coordinate(),
+            RangeExpressionNode::RangeExpressionBare(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -4298,6 +4917,14 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionNode {
             ReferenceExpressionNode::ReferenceExpressionBare(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ReferenceExpressionNode::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            ReferenceExpressionNode::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            ReferenceExpressionNode::ReferenceExpressionMut(t) => t.source_coordinate(),
+            ReferenceExpressionNode::ReferenceExpressionBare(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ReferenceExpressionNode::ReferenceExpressionRawConst(t) => t.source_separator(ctx),
@@ -4365,6 +4992,12 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionNode {
             ArrayExpressionNode::ArrayExpressionList(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ArrayExpressionNode::ArrayExpressionSemi(t) => t.source_coordinate(),
+            ArrayExpressionNode::ArrayExpressionList(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ArrayExpressionNode::ArrayExpressionSemi(t) => t.source_separator(ctx),
@@ -4426,6 +5059,12 @@ impl ::sittir_core::prepare::Prepare for MatchArmNode {
             MatchArmNode::MatchArmBlockEnding(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            MatchArmNode::MatchArmWithComma(t) => t.source_coordinate(),
+            MatchArmNode::MatchArmBlockEnding(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MatchArmNode::MatchArmWithComma(t) => t.source_separator(ctx),
@@ -4478,6 +5117,12 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionNode {
         match self {
             ClosureExpressionNode::ClosureExpressionBlock(t) => t.snapshot_edge(),
             ClosureExpressionNode::ClosureExpressionExpr(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ClosureExpressionNode::ClosureExpressionBlock(t) => t.source_coordinate(),
+            ClosureExpressionNode::ClosureExpressionExpr(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -4628,6 +5273,29 @@ impl ::sittir_core::prepare::Prepare for PatternNode {
             PatternNode::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            PatternNode::LiteralPattern(t) => t.source_coordinate(),
+            PatternNode::Identifier(t) => t.source_coordinate(),
+            PatternNode::ScopedIdentifier(t) => t.source_coordinate(),
+            PatternNode::GenericPattern(t) => t.source_coordinate(),
+            PatternNode::TuplePattern(t) => t.source_coordinate(),
+            PatternNode::TupleStructPattern(t) => t.source_coordinate(),
+            PatternNode::StructPattern(t) => t.source_coordinate(),
+            PatternNode::RefPattern(t) => t.source_coordinate(),
+            PatternNode::SlicePattern(t) => t.source_coordinate(),
+            PatternNode::CapturedPattern(t) => t.source_coordinate(),
+            PatternNode::ReferencePattern(t) => t.source_coordinate(),
+            PatternNode::RemainingFieldPattern(_) => None,
+            PatternNode::MutPattern(t) => t.source_coordinate(),
+            PatternNode::RangePattern(t) => t.source_coordinate(),
+            PatternNode::OrPattern(t) => t.source_coordinate(),
+            PatternNode::ConstBlock(t) => t.source_coordinate(),
+            PatternNode::MacroInvocation(t) => t.source_coordinate(),
+            PatternNode::WildcardPattern(_) => None,
+            PatternNode::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             PatternNode::LiteralPattern(t) => t.source_separator(ctx),
@@ -4716,6 +5384,12 @@ impl ::sittir_core::prepare::Prepare for RangePatternNode {
             RangePatternNode::RangePatternPrefix(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            RangePatternNode::RangePatternWithLeft(t) => t.source_coordinate(),
+            RangePatternNode::RangePatternPrefix(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             RangePatternNode::RangePatternWithLeft(t) => t.source_separator(ctx),
@@ -4775,6 +5449,12 @@ impl ::sittir_core::prepare::Prepare for OrPatternNode {
         match self {
             OrPatternNode::OrPatternBinary(t) => t.snapshot_edge(),
             OrPatternNode::OrPatternPrefix(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            OrPatternNode::OrPatternBinary(t) => t.source_coordinate(),
+            OrPatternNode::OrPatternPrefix(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -4868,6 +5548,18 @@ impl ::sittir_core::prepare::Prepare for LiteralPatternNode {
             LiteralPatternNode::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            LiteralPatternNode::StringLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::RawStringLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::CharLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::BooleanLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::IntegerLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::FloatLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::NegativeLiteral(t) => t.source_coordinate(),
+            LiteralPatternNode::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LiteralPatternNode::StringLiteral(t) => t.source_separator(ctx),
@@ -4957,6 +5649,14 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralNode {
             IntegerLiteralNode::IntegerLiteralOctal(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            IntegerLiteralNode::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            IntegerLiteralNode::IntegerLiteralHex(t) => t.source_coordinate(),
+            IntegerLiteralNode::IntegerLiteralBinary(t) => t.source_coordinate(),
+            IntegerLiteralNode::IntegerLiteralOctal(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             IntegerLiteralNode::IntegerLiteralDecimal(t) => t.source_separator(ctx),
@@ -5034,6 +5734,14 @@ impl ::sittir_core::prepare::Prepare for CharLiteralNode {
             CharLiteralNode::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            CharLiteralNode::CharLiteralEscaped(t) => t.source_coordinate(),
+            CharLiteralNode::CharLiteralPlain(t) => t.source_coordinate(),
+            CharLiteralNode::CharLiteralEmpty(t) => t.source_coordinate(),
+            CharLiteralNode::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CharLiteralNode::CharLiteralEscaped(t) => t.source_separator(ctx),
@@ -5109,6 +5817,14 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedNode {
             CharLiteralEscapedNode::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
             CharLiteralEscapedNode::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
             CharLiteralEscapedNode::CharLiteralEscapedHex(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            CharLiteralEscapedNode::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            CharLiteralEscapedNode::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            CharLiteralEscapedNode::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            CharLiteralEscapedNode::CharLiteralEscapedHex(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -5272,6 +5988,31 @@ impl ::sittir_core::prepare::Prepare for DeclarationStatementTraitItemNode {
             DeclarationStatementTraitItemNode::UseDeclaration(t) => t.snapshot_edge(),
             DeclarationStatementTraitItemNode::ExternCrateDeclaration(t) => t.snapshot_edge(),
             DeclarationStatementTraitItemNode::StaticItem(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            DeclarationStatementTraitItemNode::ConstItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::MacroInvocation(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::MacroDefinition(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::EmptyStatement(_) => None,
+            DeclarationStatementTraitItemNode::AttributeItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::InnerAttributeItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::ModItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::ForeignModItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::StructItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::UnionItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::EnumItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::TypeItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::MethodDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::SignatureMethodDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::ImplItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::TraitItem(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::AssociatedType(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::LetDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::UseDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::ExternCrateDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementTraitItemNode::StaticItem(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -5462,6 +6203,31 @@ impl ::sittir_core::prepare::Prepare for DeclarationStatementImplItemBodyNode {
             DeclarationStatementImplItemBodyNode::StaticItem(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            DeclarationStatementImplItemBodyNode::ConstItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::MacroInvocation(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::MacroDefinition(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::EmptyStatement(_) => None,
+            DeclarationStatementImplItemBodyNode::AttributeItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::InnerAttributeItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::ModItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::ForeignModItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::StructItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::UnionItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::EnumItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::TypeItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::MethodDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::FunctionSignatureItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::ImplItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::TraitItem(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::AssociatedType(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::LetDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::UseDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::ExternCrateDeclaration(t) => t.source_coordinate(),
+            DeclarationStatementImplItemBodyNode::StaticItem(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DeclarationStatementImplItemBodyNode::ConstItem(t) => t.source_separator(ctx),
@@ -5605,6 +6371,22 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementContentNodeSlot {
             ExpressionStatementContentNodeSlot::ConstBlock(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ExpressionStatementContentNodeSlot::ExpressionStatementWithSemi(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::GenBlock(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::TryBlock(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::Block(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::IfExpression(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::ForExpression(t) => t.source_coordinate(),
+            ExpressionStatementContentNodeSlot::ConstBlock(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ExpressionStatementContentNodeSlot::ExpressionStatementWithSemi(t) => t.source_separator(ctx),
@@ -5715,6 +6497,17 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTokenPatternsNode
             TokenRepetitionPatternTokenPatternsNodeSlot::TokenBindingPattern(t) => t.snapshot_edge(),
             TokenRepetitionPatternTokenPatternsNodeSlot::Metavariable(t) => t.snapshot_edge(),
             TokenRepetitionPatternTokenPatternsNodeSlot::NonSpecialToken(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TokenRepetitionPatternTokenPatternsNodeSlot::TokenTreePatternParen(t) => t.source_coordinate(),
+            TokenRepetitionPatternTokenPatternsNodeSlot::TokenTreePatternBracket(t) => t.source_coordinate(),
+            TokenRepetitionPatternTokenPatternsNodeSlot::TokenTreePatternBrace(t) => t.source_coordinate(),
+            TokenRepetitionPatternTokenPatternsNodeSlot::TokenRepetitionPattern(t) => t.source_coordinate(),
+            TokenRepetitionPatternTokenPatternsNodeSlot::TokenBindingPattern(t) => t.source_coordinate(),
+            TokenRepetitionPatternTokenPatternsNodeSlot::Metavariable(t) => t.source_coordinate(),
+            TokenRepetitionPatternTokenPatternsNodeSlot::NonSpecialToken(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -5866,6 +6659,16 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionTokensNodeSlot {
             TokenRepetitionTokensNodeSlot::TokenRepetition(t) => t.snapshot_edge(),
             TokenRepetitionTokensNodeSlot::Metavariable(t) => t.snapshot_edge(),
             TokenRepetitionTokensNodeSlot::NonSpecialToken(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TokenRepetitionTokensNodeSlot::TokenTreeParen(t) => t.source_coordinate(),
+            TokenRepetitionTokensNodeSlot::TokenTreeBracket(t) => t.source_coordinate(),
+            TokenRepetitionTokensNodeSlot::TokenTreeBrace(t) => t.source_coordinate(),
+            TokenRepetitionTokensNodeSlot::TokenRepetition(t) => t.source_coordinate(),
+            TokenRepetitionTokensNodeSlot::Metavariable(t) => t.source_coordinate(),
+            TokenRepetitionTokensNodeSlot::NonSpecialToken(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -6104,6 +6907,33 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenContentNodeSlot {
             NonSpecialTokenContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            NonSpecialTokenContentNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::Identifier(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::PrimitiveType(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::TokenTreePunctuation(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::TokenKeywords(t) => t.source_coordinate(),
+            NonSpecialTokenContentNodeSlot::MutableSpecifier => None,
+            NonSpecialTokenContentNodeSlot::Self_(_) => None,
+            NonSpecialTokenContentNodeSlot::Super(_) => None,
+            NonSpecialTokenContentNodeSlot::Crate(_) => None,
+            NonSpecialTokenContentNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             NonSpecialTokenContentNodeSlot::StringLiteral(t) => t.source_separator(ctx),
@@ -6252,6 +7082,17 @@ impl ::sittir_core::prepare::Prepare for AttributePathNodeSlot {
             AttributePathNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AttributePathNodeSlot::Metavariable(t) => t.source_coordinate(),
+            AttributePathNodeSlot::Identifier(t) => t.source_coordinate(),
+            AttributePathNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            AttributePathNodeSlot::Self_(_) => None,
+            AttributePathNodeSlot::Super(_) => None,
+            AttributePathNodeSlot::Crate(_) => None,
+            AttributePathNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AttributePathNodeSlot::Metavariable(t) => t.source_separator(ctx),
@@ -6324,6 +7165,12 @@ impl ::sittir_core::prepare::Prepare for EnumVariantBodyNodeSlot {
             EnumVariantBodyNodeSlot::OrderedFieldDeclarationList(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            EnumVariantBodyNodeSlot::FieldDeclarationList(t) => t.source_coordinate(),
+            EnumVariantBodyNodeSlot::OrderedFieldDeclarationList(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             EnumVariantBodyNodeSlot::FieldDeclarationList(t) => t.source_separator(ctx),
@@ -6384,6 +7231,13 @@ impl ::sittir_core::prepare::Prepare for FunctionItemNameNodeSlot {
             FunctionItemNameNodeSlot::Identifier(t) => t.snapshot_edge(),
             FunctionItemNameNodeSlot::Metavariable(t) => t.snapshot_edge(),
             FunctionItemNameNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            FunctionItemNameNodeSlot::Identifier(t) => t.source_coordinate(),
+            FunctionItemNameNodeSlot::Metavariable(t) => t.source_coordinate(),
+            FunctionItemNameNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -6455,6 +7309,15 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersModifierNodeSlot {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             FunctionModifiersModifierNodeSlot::ExternModifier(t) => t.snapshot_edge(),
+            FunctionModifiersModifierNodeSlot::AsyncKeyword => None,
+            FunctionModifiersModifierNodeSlot::DefaultKeyword => None,
+            FunctionModifiersModifierNodeSlot::ConstKeyword => None,
+            FunctionModifiersModifierNodeSlot::UnsafeKeyword => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            FunctionModifiersModifierNodeSlot::ExternModifier(t) => t.source_coordinate(),
             FunctionModifiersModifierNodeSlot::AsyncKeyword => None,
             FunctionModifiersModifierNodeSlot::DefaultKeyword => None,
             FunctionModifiersModifierNodeSlot::ConstKeyword => None,
@@ -6570,6 +7433,21 @@ impl ::sittir_core::prepare::Prepare for WherePredicateLeftNodeSlot {
             WherePredicateLeftNodeSlot::ArrayType(t) => t.snapshot_edge(),
             WherePredicateLeftNodeSlot::HigherRankedTraitBound(t) => t.snapshot_edge(),
             WherePredicateLeftNodeSlot::PrimitiveType(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            WherePredicateLeftNodeSlot::Lifetime(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::GenericType(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::ReferenceType(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::PointerTypeConst(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::PointerTypeMut(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::TupleType(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::ArrayType(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::HigherRankedTraitBound(t) => t.source_coordinate(),
+            WherePredicateLeftNodeSlot::PrimitiveType(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -6744,6 +7622,30 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsBoundsNodeSlot {
             TraitBoundsBoundsNodeSlot::PrimitiveType(t) => t.snapshot_edge(),
             TraitBoundsBoundsNodeSlot::Lifetime(t) => t.snapshot_edge(),
             TraitBoundsBoundsNodeSlot::HigherRankedTraitBound(t) => t.snapshot_edge(),
+            TraitBoundsBoundsNodeSlot::UnitType(_) => None,
+            TraitBoundsBoundsNodeSlot::NeverType(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TraitBoundsBoundsNodeSlot::AbstractType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::ReferenceType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::Metavariable(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::PointerTypeConst(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::PointerTypeMut(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::GenericType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::TupleType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::ArrayType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::FunctionType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::DynamicType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::BoundedType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::RemovedTraitBound(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::PrimitiveType(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::Lifetime(t) => t.source_coordinate(),
+            TraitBoundsBoundsNodeSlot::HigherRankedTraitBound(t) => t.source_coordinate(),
             TraitBoundsBoundsNodeSlot::UnitType(_) => None,
             TraitBoundsBoundsNodeSlot::NeverType(_) => None,
         }
@@ -6939,6 +7841,28 @@ impl ::sittir_core::prepare::Prepare for ConstParameterDefaultNodeSlot {
             ConstParameterDefaultNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ConstParameterDefaultNodeSlot::Block(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::Identifier(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
+            ConstParameterDefaultNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ConstParameterDefaultNodeSlot::Block(t) => t.source_separator(ctx),
@@ -7092,6 +8016,21 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationArgumentNodeSlot {
             UseDeclarationArgumentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            UseDeclarationArgumentNodeSlot::Metavariable(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::Identifier(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::UseAsClause(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::UseList(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::ScopedUseList(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::UseWildcard(t) => t.source_coordinate(),
+            UseDeclarationArgumentNodeSlot::Self_(_) => None,
+            UseDeclarationArgumentNodeSlot::Super(_) => None,
+            UseDeclarationArgumentNodeSlot::Crate(_) => None,
+            UseDeclarationArgumentNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             UseDeclarationArgumentNodeSlot::Metavariable(t) => t.source_separator(ctx),
@@ -7176,6 +8115,12 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsNodeSlot {
             ParametersElementsNodeSlot::ParametersElementsReceiver(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ParametersElementsNodeSlot::ParametersElements(t) => t.source_coordinate(),
+            ParametersElementsNodeSlot::ParametersElementsReceiver(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ParametersElementsNodeSlot::ParametersElements(t) => t.source_separator(ctx),
@@ -7230,6 +8175,12 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierContentNodeSlot {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.snapshot_edge(),
+            VisibilityModifierContentNodeSlot::CrateVisibilityModifier => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            VisibilityModifierContentNodeSlot::VisibilityModifierPub(t) => t.source_coordinate(),
             VisibilityModifierContentNodeSlot::CrateVisibilityModifier => None,
         }
     }
@@ -7377,6 +8328,29 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeTypeNodeSlot {
             BracketedTypeTypeNodeSlot::NeverType(_) => None,
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            BracketedTypeTypeNodeSlot::AbstractType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::ReferenceType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::Metavariable(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::PointerTypeConst(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::PointerTypeMut(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::GenericType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::TupleType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::ArrayType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::FunctionType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::DynamicType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::BoundedType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::RemovedTraitBound(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::PrimitiveType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::QualifiedType(t) => t.source_coordinate(),
+            BracketedTypeTypeNodeSlot::UnitType(_) => None,
+            BracketedTypeTypeNodeSlot::NeverType(_) => None,
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             BracketedTypeTypeNodeSlot::AbstractType(t) => t.source_separator(ctx),
@@ -7485,6 +8459,12 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeContentNodeSlot {
             FunctionTypeContentNodeSlot::FunctionTypeFnForm(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            FunctionTypeContentNodeSlot::FunctionTypeTraitForm(t) => t.source_coordinate(),
+            FunctionTypeContentNodeSlot::FunctionTypeFnForm(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             FunctionTypeContentNodeSlot::FunctionTypeTraitForm(t) => t.source_separator(ctx),
@@ -7550,6 +8530,14 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionFunctionNodeSlot {
             GenericFunctionFunctionNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
             GenericFunctionFunctionNodeSlot::FieldExpression(t) => t.snapshot_edge(),
             GenericFunctionFunctionNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            GenericFunctionFunctionNodeSlot::Identifier(t) => t.source_coordinate(),
+            GenericFunctionFunctionNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            GenericFunctionFunctionNodeSlot::FieldExpression(t) => t.source_coordinate(),
+            GenericFunctionFunctionNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -7625,6 +8613,14 @@ impl ::sittir_core::prepare::Prepare for GenericTypeTypeNodeSlot {
             GenericTypeTypeNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            GenericTypeTypeNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            GenericTypeTypeNodeSlot::Identifier(t) => t.source_coordinate(),
+            GenericTypeTypeNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            GenericTypeTypeNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             GenericTypeTypeNodeSlot::TypeIdentifier(t) => t.source_separator(ctx),
@@ -7686,6 +8682,12 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishTypeNodeSlot {
         match self {
             GenericTypeWithTurbofishTypeNodeSlot::TypeIdentifier(t) => t.snapshot_edge(),
             GenericTypeWithTurbofishTypeNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            GenericTypeWithTurbofishTypeNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            GenericTypeWithTurbofishTypeNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -7837,6 +8839,30 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeLeftNodeSlot {
             BoundedTypeLeftNodeSlot::NeverType(_) => None,
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            BoundedTypeLeftNodeSlot::Lifetime(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::AbstractType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::ReferenceType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::Metavariable(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::PointerTypeConst(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::PointerTypeMut(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::GenericType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::TupleType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::ArrayType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::FunctionType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::DynamicType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::BoundedType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::RemovedTraitBound(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::PrimitiveType(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::UseBounds(t) => t.source_coordinate(),
+            BoundedTypeLeftNodeSlot::UnitType(_) => None,
+            BoundedTypeLeftNodeSlot::NeverType(_) => None,
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             BoundedTypeLeftNodeSlot::Lifetime(t) => t.source_separator(ctx),
@@ -7973,6 +8999,17 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeTraitNodeSlot {
             AbstractTypeTraitNodeSlot::BoundedType(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AbstractTypeTraitNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            AbstractTypeTraitNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            AbstractTypeTraitNodeSlot::RemovedTraitBound(t) => t.source_coordinate(),
+            AbstractTypeTraitNodeSlot::GenericType(t) => t.source_coordinate(),
+            AbstractTypeTraitNodeSlot::FunctionType(t) => t.source_coordinate(),
+            AbstractTypeTraitNodeSlot::TupleType(t) => t.source_coordinate(),
+            AbstractTypeTraitNodeSlot::BoundedType(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AbstractTypeTraitNodeSlot::TypeIdentifier(t) => t.source_separator(ctx),
@@ -8065,6 +9102,16 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeTraitNodeSlot {
             DynamicTypeTraitNodeSlot::TupleType(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            DynamicTypeTraitNodeSlot::HigherRankedTraitBound(t) => t.source_coordinate(),
+            DynamicTypeTraitNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            DynamicTypeTraitNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            DynamicTypeTraitNodeSlot::GenericType(t) => t.source_coordinate(),
+            DynamicTypeTraitNodeSlot::FunctionType(t) => t.source_coordinate(),
+            DynamicTypeTraitNodeSlot::TupleType(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             DynamicTypeTraitNodeSlot::HigherRankedTraitBound(t) => t.source_separator(ctx),
@@ -8137,6 +9184,13 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationFunctionNodeSlot {
             MacroInvocationFunctionNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
             MacroInvocationFunctionNodeSlot::Identifier(t) => t.snapshot_edge(),
             MacroInvocationFunctionNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            MacroInvocationFunctionNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            MacroInvocationFunctionNodeSlot::Identifier(t) => t.source_coordinate(),
+            MacroInvocationFunctionNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -8237,6 +9291,19 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierQualifierNodeSlot {
             ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.source_separator(ctx),
@@ -8319,6 +9386,13 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierNameNodeSlot {
             ScopedIdentifierNameNodeSlot::Identifier(t) => t.snapshot_edge(),
             ScopedIdentifierNameNodeSlot::Super(_) => None,
             ScopedIdentifierNameNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ScopedIdentifierNameNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedIdentifierNameNodeSlot::Super(_) => None,
+            ScopedIdentifierNameNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -8412,6 +9486,18 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(_) => None,
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(_) => None,
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -8530,6 +9616,20 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierQualifierNodeSlot {
             ScopedTypeIdentifierQualifierNodeSlot::Super(_) => None,
             ScopedTypeIdentifierQualifierNodeSlot::Crate(_) => None,
             ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -9152,6 +10252,68 @@ impl ::sittir_core::prepare::Prepare for CallExpressionFunctionNodeSlot {
             CallExpressionFunctionNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            CallExpressionFunctionNodeSlot::UnaryExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ReferenceExpressionMut(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ReferenceExpressionBare(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::TryExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::BinaryExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::AssignmentExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::TypeCastExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CallExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ReturnExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::YieldExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::Identifier(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::GenericFunction(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::AwaitExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::FieldExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ArrayExpressionSemi(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ArrayExpressionList(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::TupleExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::BreakExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ContinueExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::IndexExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::Metavariable(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ClosureExpressionBlock(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ClosureExpressionExpr(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::StructExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::GenBlock(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::TryBlock(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::Block(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::IfExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ForExpression(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            CallExpressionFunctionNodeSlot::Self_(_) => None,
+            CallExpressionFunctionNodeSlot::UnitExpression(_) => None,
+            CallExpressionFunctionNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CallExpressionFunctionNodeSlot::UnaryExpression(t) => t.source_separator(ctx),
@@ -9382,6 +10544,13 @@ impl ::sittir_core::prepare::Prepare for StructExpressionNameNodeSlot {
             StructExpressionNameNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            StructExpressionNameNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            StructExpressionNameNodeSlot::ScopedTypeIdentifierInExpressionPosition(t) => t.source_coordinate(),
+            StructExpressionNameNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StructExpressionNameNodeSlot::TypeIdentifier(t) => t.source_separator(ctx),
@@ -9455,6 +10624,15 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerFieldNodeSlot {
             FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
             FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
             FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            FieldInitializerFieldNodeSlot::FieldIdentifier(t) => t.source_coordinate(),
+            FieldInitializerFieldNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            FieldInitializerFieldNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            FieldInitializerFieldNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            FieldInitializerFieldNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -9833,6 +11011,74 @@ impl ::sittir_core::prepare::Prepare for IfExpressionConditionNodeSlot {
             IfExpressionConditionNodeSlot::Self_(_) => None,
             IfExpressionConditionNodeSlot::UnitExpression(_) => None,
             IfExpressionConditionNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            IfExpressionConditionNodeSlot::UnaryExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ReferenceExpressionMut(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ReferenceExpressionBare(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::TryExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::BinaryExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::AssignmentExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::TypeCastExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CallExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ReturnExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::YieldExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::Identifier(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::GenericFunction(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::AwaitExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::FieldExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ArrayExpressionSemi(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ArrayExpressionList(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::TupleExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::BreakExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ContinueExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::IndexExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::Metavariable(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ClosureExpressionBlock(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ClosureExpressionExpr(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::StructExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::GenBlock(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::TryBlock(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::Block(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::IfExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ForExpression(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::RangeExpressionBinary(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::RangeExpressionPostfix(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::RangeExpressionPrefix(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::RangeExpressionBare(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::LetCondition(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::LetChain(t) => t.source_coordinate(),
+            IfExpressionConditionNodeSlot::Self_(_) => None,
+            IfExpressionConditionNodeSlot::UnitExpression(_) => None,
+            IfExpressionConditionNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -10390,6 +11636,74 @@ impl ::sittir_core::prepare::Prepare for LetChainLeftNodeSlot {
             LetChainLeftNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            LetChainLeftNodeSlot::LetChain(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::LetCondition(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::UnaryExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ReferenceExpressionMut(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ReferenceExpressionBare(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::TryExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::BinaryExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::AssignmentExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::TypeCastExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CallExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ReturnExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::YieldExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::Identifier(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::GenericFunction(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::AwaitExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::FieldExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ArrayExpressionSemi(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ArrayExpressionList(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::TupleExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::BreakExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ContinueExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::IndexExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::Metavariable(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ClosureExpressionBlock(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ClosureExpressionExpr(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::StructExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::GenBlock(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::TryBlock(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::Block(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::IfExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ForExpression(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::RangeExpressionBinary(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::RangeExpressionPostfix(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::RangeExpressionPrefix(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::RangeExpressionBare(t) => t.source_coordinate(),
+            LetChainLeftNodeSlot::Self_(_) => None,
+            LetChainLeftNodeSlot::UnitExpression(_) => None,
+            LetChainLeftNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LetChainLeftNodeSlot::LetChain(t) => t.source_separator(ctx),
@@ -10940,6 +12254,73 @@ impl ::sittir_core::prepare::Prepare for LetChainRightNodeSlot {
             LetChainRightNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            LetChainRightNodeSlot::LetCondition(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::UnaryExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ReferenceExpressionMut(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ReferenceExpressionBare(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::TryExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::BinaryExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::AssignmentExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::TypeCastExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CallExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ReturnExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::YieldExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::Identifier(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::GenericFunction(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::AwaitExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::FieldExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ArrayExpressionSemi(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ArrayExpressionList(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::TupleExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::BreakExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ContinueExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::IndexExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::Metavariable(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ClosureExpressionBlock(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ClosureExpressionExpr(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::StructExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::GenBlock(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::TryBlock(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::Block(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::IfExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ForExpression(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::RangeExpressionBinary(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::RangeExpressionPostfix(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::RangeExpressionPrefix(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::RangeExpressionBare(t) => t.source_coordinate(),
+            LetChainRightNodeSlot::Self_(_) => None,
+            LetChainRightNodeSlot::UnitExpression(_) => None,
+            LetChainRightNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LetChainRightNodeSlot::LetCondition(t) => t.source_separator(ctx),
@@ -11180,6 +12561,12 @@ impl ::sittir_core::prepare::Prepare for ElseClauseBodyNodeSlot {
             ElseClauseBodyNodeSlot::IfExpression(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ElseClauseBodyNodeSlot::Block(t) => t.source_coordinate(),
+            ElseClauseBodyNodeSlot::IfExpression(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ElseClauseBodyNodeSlot::Block(t) => t.source_separator(ctx),
@@ -11235,6 +12622,12 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmAttributesNodeSlot {
         match self {
             LastMatchArmAttributesNodeSlot::AttributeItem(t) => t.snapshot_edge(),
             LastMatchArmAttributesNodeSlot::InnerAttributeItem(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            LastMatchArmAttributesNodeSlot::AttributeItem(t) => t.source_coordinate(),
+            LastMatchArmAttributesNodeSlot::InnerAttributeItem(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -11510,6 +12903,46 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersNodeSlot {
             ClosureParametersParametersNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ClosureParametersParametersNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::Identifier(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::GenericPattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::TuplePattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::TupleStructPattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::StructPattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::RefPattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::SlicePattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::CapturedPattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::ReferencePattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::MutPattern(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::RangePatternWithLeft(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::RangePatternPrefix(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::OrPatternBinary(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::OrPatternPrefix(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::Parameter(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::RemainingFieldPattern(_) => None,
+            ClosureParametersParametersNodeSlot::WildcardPattern(_) => None,
+            ClosureParametersParametersNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ClosureParametersParametersNodeSlot::StringLiteral(t) => t.source_separator(ctx),
@@ -11674,6 +13107,13 @@ impl ::sittir_core::prepare::Prepare for GenericPatternNameNodeSlot {
             GenericPatternNameNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            GenericPatternNameNodeSlot::Identifier(t) => t.source_coordinate(),
+            GenericPatternNameNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            GenericPatternNameNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             GenericPatternNameNodeSlot::Identifier(t) => t.source_separator(ctx),
@@ -11744,6 +13184,14 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternTypeNodeSlot {
             TupleStructPatternTypeNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TupleStructPatternTypeNodeSlot::Identifier(t) => t.source_coordinate(),
+            TupleStructPatternTypeNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            TupleStructPatternTypeNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            TupleStructPatternTypeNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TupleStructPatternTypeNodeSlot::Identifier(t) => t.source_separator(ctx),
@@ -11805,6 +13253,12 @@ impl ::sittir_core::prepare::Prepare for StructPatternTypeNodeSlot {
         match self {
             StructPatternTypeNodeSlot::TypeIdentifier(t) => t.snapshot_edge(),
             StructPatternTypeNodeSlot::ScopedTypeIdentifier(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            StructPatternTypeNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            StructPatternTypeNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -11882,6 +13336,16 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralValueNodeSlot {
             NegativeLiteralValueNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
             NegativeLiteralValueNodeSlot::FloatLiteral(t) => t.snapshot_edge(),
             NegativeLiteralValueNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            NegativeLiteralValueNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            NegativeLiteralValueNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            NegativeLiteralValueNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            NegativeLiteralValueNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            NegativeLiteralValueNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            NegativeLiteralValueNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -11973,6 +13437,16 @@ impl ::sittir_core::prepare::Prepare for StringLiteralElementsNodeSlot {
             StringLiteralElementsNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            StringLiteralElementsNodeSlot::EscapeSequenceSimple(t) => t.source_coordinate(),
+            StringLiteralElementsNodeSlot::EscapeSequenceUnicodeFixed(t) => t.source_coordinate(),
+            StringLiteralElementsNodeSlot::EscapeSequenceUnicodeBraced(t) => t.source_coordinate(),
+            StringLiteralElementsNodeSlot::EscapeSequenceHex(t) => t.source_coordinate(),
+            StringLiteralElementsNodeSlot::StringContent(t) => t.source_coordinate(),
+            StringLiteralElementsNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             StringLiteralElementsNodeSlot::EscapeSequenceSimple(t) => t.source_separator(ctx),
@@ -12057,6 +13531,15 @@ impl ::sittir_core::prepare::Prepare for LineCommentContentNodeSlot {
             LineCommentContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            LineCommentContentNodeSlot::LineCommentExtraSlashes(t) => t.source_coordinate(),
+            LineCommentContentNodeSlot::LineCommentDocOuter(t) => t.source_coordinate(),
+            LineCommentContentNodeSlot::LineCommentDocInner(t) => t.source_coordinate(),
+            LineCommentContentNodeSlot::LineCommentRegular(t) => t.source_coordinate(),
+            LineCommentContentNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             LineCommentContentNodeSlot::LineCommentExtraSlashes(t) => t.source_separator(ctx),
@@ -12133,6 +13616,14 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentNodeSlot {
             BlockCommentContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            BlockCommentContentNodeSlot::BlockCommentDocOuter(t) => t.source_coordinate(),
+            BlockCommentContentNodeSlot::BlockCommentDocInner(t) => t.source_coordinate(),
+            BlockCommentContentNodeSlot::BlockCommentRegular(t) => t.source_coordinate(),
+            BlockCommentContentNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             BlockCommentContentNodeSlot::BlockCommentDocOuter(t) => t.source_separator(ctx),
@@ -12196,6 +13687,12 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsItemNodeSlot {
             UseBoundsElementsItemNodeSlot::TypeIdentifier(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            UseBoundsElementsItemNodeSlot::Lifetime(t) => t.source_coordinate(),
+            UseBoundsElementsItemNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             UseBoundsElementsItemNodeSlot::Lifetime(t) => t.source_separator(ctx),
@@ -12256,6 +13753,13 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsItemNodeSlo
             FieldInitializerListElementsItemNodeSlot::ShorthandFieldInitializer(t) => t.snapshot_edge(),
             FieldInitializerListElementsItemNodeSlot::FieldInitializer(t) => t.snapshot_edge(),
             FieldInitializerListElementsItemNodeSlot::BaseFieldInitializer(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            FieldInitializerListElementsItemNodeSlot::ShorthandFieldInitializer(t) => t.source_coordinate(),
+            FieldInitializerListElementsItemNodeSlot::FieldInitializer(t) => t.source_coordinate(),
+            FieldInitializerListElementsItemNodeSlot::BaseFieldInitializer(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -12495,6 +13999,47 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsItemNodeSlot {
             TuplePatternElementsItemNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TuplePatternElementsItemNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::Identifier(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::GenericPattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::TuplePattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::TupleStructPattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::StructPattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::RefPattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::SlicePattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::CapturedPattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::ReferencePattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::MutPattern(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::RangePatternWithLeft(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::RangePatternPrefix(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::OrPatternBinary(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::OrPatternPrefix(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::ClosureExpressionBlock(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::ClosureExpressionExpr(t) => t.source_coordinate(),
+            TuplePatternElementsItemNodeSlot::RemainingFieldPattern(_) => None,
+            TuplePatternElementsItemNodeSlot::WildcardPattern(_) => None,
+            TuplePatternElementsItemNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TuplePatternElementsItemNodeSlot::StringLiteral(t) => t.source_separator(ctx),
@@ -12660,6 +14205,13 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsItemNodeSlot {
         match self {
             StructPatternElementsItemNodeSlot::FieldPatternShorthand(t) => t.snapshot_edge(),
             StructPatternElementsItemNodeSlot::FieldPatternNamed(t) => t.snapshot_edge(),
+            StructPatternElementsItemNodeSlot::RemainingFieldPattern(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            StructPatternElementsItemNodeSlot::FieldPatternShorthand(t) => t.source_coordinate(),
+            StructPatternElementsItemNodeSlot::FieldPatternNamed(t) => t.source_coordinate(),
             StructPatternElementsItemNodeSlot::RemainingFieldPattern(_) => None,
         }
     }
@@ -13030,6 +14582,73 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprBodyNodeSlot {
             ClosureExpressionExprBodyNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ClosureExpressionExprBodyNodeSlot::UnaryExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ReferenceExpressionRawConst(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ReferenceExpressionRawMut(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ReferenceExpressionMut(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ReferenceExpressionBare(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::TryExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::BinaryExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::AssignmentExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CompoundAssignmentExpr(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::TypeCastExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CallExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ReturnExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::YieldExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::Identifier(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::GenericFunction(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::AwaitExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::FieldExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ArrayExpressionSemi(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ArrayExpressionList(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::TupleExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::BreakExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ContinueExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::IndexExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ClosureExpressionBlock(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ClosureExpressionExpr(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ParenthesizedExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::StructExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::GenBlock(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::TryBlock(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::Block(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::IfExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ForExpression(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::RangeExpressionBinary(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::RangeExpressionPostfix(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::RangeExpressionPrefix(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::RangeExpressionBare(t) => t.source_coordinate(),
+            ClosureExpressionExprBodyNodeSlot::Self_(_) => None,
+            ClosureExpressionExprBodyNodeSlot::UnitExpression(_) => None,
+            ClosureExpressionExprBodyNodeSlot::Underscore => None,
+            ClosureExpressionExprBodyNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ClosureExpressionExprBodyNodeSlot::UnaryExpression(t) => t.source_separator(ctx),
@@ -13280,6 +14899,13 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseTraitNodeSlot {
             ImplItemPositiveClauseTraitNodeSlot::GenericType(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ImplItemPositiveClauseTraitNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            ImplItemPositiveClauseTraitNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            ImplItemPositiveClauseTraitNodeSlot::GenericType(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             ImplItemPositiveClauseTraitNodeSlot::TypeIdentifier(t) => t.source_separator(ctx),
@@ -13338,6 +14964,12 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyTraitClauseNodeSlot {
         match self {
             ImplItemBodyTraitClauseNodeSlot::ImplItemPositiveClause(t) => t.snapshot_edge(),
             ImplItemBodyTraitClauseNodeSlot::ImplItemNegativeClause(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            ImplItemBodyTraitClauseNodeSlot::ImplItemPositiveClause(t) => t.source_coordinate(),
+            ImplItemBodyTraitClauseNodeSlot::ImplItemNegativeClause(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -13405,6 +15037,14 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeContentNodeSl
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             VisibilityModifierPubScopeContentNodeSlot::VisibilityModifierPubScopeInPath(t) => t.snapshot_edge(),
+            VisibilityModifierPubScopeContentNodeSlot::Self_(_) => None,
+            VisibilityModifierPubScopeContentNodeSlot::Super(_) => None,
+            VisibilityModifierPubScopeContentNodeSlot::Crate(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            VisibilityModifierPubScopeContentNodeSlot::VisibilityModifierPubScopeInPath(t) => t.source_coordinate(),
             VisibilityModifierPubScopeContentNodeSlot::Self_(_) => None,
             VisibilityModifierPubScopeContentNodeSlot::Super(_) => None,
             VisibilityModifierPubScopeContentNodeSlot::Crate(_) => None,
@@ -13562,6 +15202,21 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingValueNodeSlot {
             MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::GenBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::TryBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::Block(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::IfExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::ForExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.source_separator(ctx),
@@ -13658,6 +15313,15 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenDelimTokensNodeSlot 
             DelimTokenTreeParenDelimTokensNodeSlot::DelimTokenTreeParen(t) => t.snapshot_edge(),
             DelimTokenTreeParenDelimTokensNodeSlot::DelimTokenTreeBracket(t) => t.snapshot_edge(),
             DelimTokenTreeParenDelimTokensNodeSlot::DelimTokenTreeBrace(t) => t.snapshot_edge(),
+            DelimTokenTreeParenDelimTokensNodeSlot::Dollar => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            DelimTokenTreeParenDelimTokensNodeSlot::NonSpecialToken(t) => t.source_coordinate(),
+            DelimTokenTreeParenDelimTokensNodeSlot::DelimTokenTreeParen(t) => t.source_coordinate(),
+            DelimTokenTreeParenDelimTokensNodeSlot::DelimTokenTreeBracket(t) => t.source_coordinate(),
+            DelimTokenTreeParenDelimTokensNodeSlot::DelimTokenTreeBrace(t) => t.source_coordinate(),
             DelimTokenTreeParenDelimTokensNodeSlot::Dollar => None,
         }
     }
@@ -13828,6 +15492,32 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixRightNodeSlot {
             RangePatternPrefixRightNodeSlot::Super(_) => None,
             RangePatternPrefixRightNodeSlot::Crate(_) => None,
             RangePatternPrefixRightNodeSlot::Verbatim(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            RangePatternPrefixRightNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::Metavariable(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::Identifier(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            RangePatternPrefixRightNodeSlot::Self_(_) => None,
+            RangePatternPrefixRightNodeSlot::Super(_) => None,
+            RangePatternPrefixRightNodeSlot::Crate(_) => None,
+            RangePatternPrefixRightNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -14060,6 +15750,12 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftContentNodeSlot {
             RangePatternWithLeftContentNodeSlot::RangePatternWithLeftBare => None,
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            RangePatternWithLeftContentNodeSlot::RangePatternWithLeftWithRight(t) => t.source_coordinate(),
+            RangePatternWithLeftContentNodeSlot::RangePatternWithLeftBare => None,
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             RangePatternWithLeftContentNodeSlot::RangePatternWithLeftWithRight(t) => t.source_separator(ctx),
@@ -14219,6 +15915,31 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterContentNodeSlot {
             AttributedParameterContentNodeSlot::Underscore => None,
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AttributedParameterContentNodeSlot::Parameter(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::VariadicParameter(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::AbstractType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::ReferenceType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::Metavariable(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::PointerTypeConst(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::PointerTypeMut(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::GenericType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::TupleType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::ArrayType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::FunctionType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::DynamicType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::BoundedType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::RemovedTraitBound(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::PrimitiveType(t) => t.source_coordinate(),
+            AttributedParameterContentNodeSlot::UnitType(_) => None,
+            AttributedParameterContentNodeSlot::NeverType(_) => None,
+            AttributedParameterContentNodeSlot::Underscore => None,
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AttributedParameterContentNodeSlot::Parameter(t) => t.source_separator(ctx),
@@ -14346,6 +16067,14 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterContentNodeSlot 
             AttributedTypeParameterContentNodeSlot::TypeParameter(t) => t.snapshot_edge(),
             AttributedTypeParameterContentNodeSlot::LifetimeParameter(t) => t.snapshot_edge(),
             AttributedTypeParameterContentNodeSlot::ConstParameter(t) => t.snapshot_edge(),
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AttributedTypeParameterContentNodeSlot::Metavariable(t) => t.source_coordinate(),
+            AttributedTypeParameterContentNodeSlot::TypeParameter(t) => t.source_coordinate(),
+            AttributedTypeParameterContentNodeSlot::LifetimeParameter(t) => t.source_coordinate(),
+            AttributedTypeParameterContentNodeSlot::ConstParameter(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -14583,6 +16312,46 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentContentNodeSlot {
             TypeArgumentContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            TypeArgumentContentNodeSlot::AbstractType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::ReferenceType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::Metavariable(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::PointerTypeConst(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::PointerTypeMut(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::GenericType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::ScopedTypeIdentifier(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::TupleType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::ArrayType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::FunctionType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::TypeIdentifier(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::DynamicType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::BoundedType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::RemovedTraitBound(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::PrimitiveType(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::TypeBinding(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::Lifetime(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::StringLiteral(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::FloatLiteral(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::Block(t) => t.source_coordinate(),
+            TypeArgumentContentNodeSlot::UnitType(_) => None,
+            TypeArgumentContentNodeSlot::NeverType(_) => None,
+            TypeArgumentContentNodeSlot::Verbatim(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             TypeArgumentContentNodeSlot::AbstractType(t) => t.source_separator(ctx),
@@ -14742,6 +16511,12 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterReceiverContentNodeS
             AttributedParameterReceiverContentNodeSlot::SelfParameter(t) => t.snapshot_edge(),
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            AttributedParameterReceiverContentNodeSlot::ReceiverParameterDeclaration(t) => t.source_coordinate(),
+            AttributedParameterReceiverContentNodeSlot::SelfParameter(t) => t.source_coordinate(),
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             AttributedParameterReceiverContentNodeSlot::ReceiverParameterDeclaration(t) => t.source_separator(ctx),
@@ -14831,6 +16606,9 @@ impl ::sittir_core::prepare::Prepare for SourceFileNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -14862,6 +16640,11 @@ impl ::sittir_core::prepare::Prepare for EmptyStatementNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            EmptyStatementNode::EmptyStatement(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             EmptyStatementNode::EmptyStatement(_) => None,
         }
@@ -14927,6 +16710,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -14980,6 +16766,9 @@ impl ::sittir_core::prepare::Prepare for MacroRuleNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15032,6 +16821,9 @@ impl ::sittir_core::prepare::Prepare for TokenBindingPatternNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15098,6 +16890,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15253,6 +17048,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15300,6 +17098,9 @@ impl ::sittir_core::prepare::Prepare for NonSpecialTokenNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15350,6 +17151,9 @@ impl ::sittir_core::prepare::Prepare for AttributeItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15398,6 +17202,9 @@ impl ::sittir_core::prepare::Prepare for InnerAttributeItemNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15452,6 +17259,9 @@ impl ::sittir_core::prepare::Prepare for AttributeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15505,6 +17315,9 @@ impl ::sittir_core::prepare::Prepare for DeclarationListNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15571,6 +17384,9 @@ impl ::sittir_core::prepare::Prepare for UnionItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15636,6 +17452,9 @@ impl ::sittir_core::prepare::Prepare for EnumItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15684,6 +17503,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15746,6 +17568,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15794,6 +17619,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15852,6 +17680,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -15900,6 +17731,9 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -15957,6 +17791,9 @@ impl ::sittir_core::prepare::Prepare for ExternCrateDeclarationNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -16018,6 +17855,9 @@ impl ::sittir_core::prepare::Prepare for ConstItemNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -16088,6 +17928,9 @@ impl ::sittir_core::prepare::Prepare for StaticItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16156,6 +17999,9 @@ impl ::sittir_core::prepare::Prepare for TypeItemNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -16236,6 +18082,9 @@ impl ::sittir_core::prepare::Prepare for FunctionItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16311,6 +18160,9 @@ impl ::sittir_core::prepare::Prepare for FunctionSignatureItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16365,6 +18217,9 @@ impl ::sittir_core::prepare::Prepare for FunctionModifiersNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16413,6 +18268,9 @@ impl ::sittir_core::prepare::Prepare for WhereClauseNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -16466,6 +18324,9 @@ impl ::sittir_core::prepare::Prepare for WherePredicateNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -16540,6 +18401,9 @@ impl ::sittir_core::prepare::Prepare for TraitItemNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16601,6 +18465,9 @@ impl ::sittir_core::prepare::Prepare for AssociatedTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16658,6 +18525,9 @@ impl ::sittir_core::prepare::Prepare for TraitBoundsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16711,6 +18581,9 @@ impl ::sittir_core::prepare::Prepare for HigherRankedTraitBoundNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16760,6 +18633,9 @@ impl ::sittir_core::prepare::Prepare for RemovedTraitBoundNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16808,6 +18684,9 @@ impl ::sittir_core::prepare::Prepare for TypeParametersNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -16866,6 +18745,9 @@ impl ::sittir_core::prepare::Prepare for ConstParameterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16923,6 +18805,9 @@ impl ::sittir_core::prepare::Prepare for TypeParameterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -16975,6 +18860,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeParameterNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17041,6 +18929,9 @@ impl ::sittir_core::prepare::Prepare for LetDeclarationNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17093,6 +18984,9 @@ impl ::sittir_core::prepare::Prepare for UseDeclarationNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17147,6 +19041,9 @@ impl ::sittir_core::prepare::Prepare for ScopedUseListNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17195,6 +19092,9 @@ impl ::sittir_core::prepare::Prepare for UseListNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17249,6 +19149,9 @@ impl ::sittir_core::prepare::Prepare for UseAsClauseNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17298,6 +19201,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17346,6 +19252,9 @@ impl ::sittir_core::prepare::Prepare for ParametersNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17404,6 +19313,9 @@ impl ::sittir_core::prepare::Prepare for SelfParameterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17456,6 +19368,9 @@ impl ::sittir_core::prepare::Prepare for VariadicParameterNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17514,6 +19429,9 @@ impl ::sittir_core::prepare::Prepare for ParameterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17563,6 +19481,9 @@ impl ::sittir_core::prepare::Prepare for ExternModifierNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17610,6 +19531,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17659,6 +19583,9 @@ impl ::sittir_core::prepare::Prepare for BracketedTypeNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17713,6 +19640,9 @@ impl ::sittir_core::prepare::Prepare for QualifiedTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17761,6 +19691,9 @@ impl ::sittir_core::prepare::Prepare for LifetimeNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17815,6 +19748,9 @@ impl ::sittir_core::prepare::Prepare for ArrayTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17863,6 +19799,9 @@ impl ::sittir_core::prepare::Prepare for ForLifetimesNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -17925,6 +19864,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -17974,6 +19916,9 @@ impl ::sittir_core::prepare::Prepare for TupleTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18005,6 +19950,11 @@ impl ::sittir_core::prepare::Prepare for UnitTypeNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            UnitTypeNode::UnitType(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             UnitTypeNode::UnitType(_) => None,
         }
@@ -18075,6 +20025,9 @@ impl ::sittir_core::prepare::Prepare for GenericFunctionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18127,6 +20080,9 @@ impl ::sittir_core::prepare::Prepare for GenericTypeNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -18181,6 +20137,9 @@ impl ::sittir_core::prepare::Prepare for GenericTypeWithTurbofishNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18234,6 +20193,9 @@ impl ::sittir_core::prepare::Prepare for BoundedTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18283,6 +20245,9 @@ impl ::sittir_core::prepare::Prepare for UseBoundsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18331,6 +20296,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -18389,6 +20357,9 @@ impl ::sittir_core::prepare::Prepare for TypeBindingNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18446,6 +20417,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18477,6 +20451,11 @@ impl ::sittir_core::prepare::Prepare for NeverTypeNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            NeverTypeNode::NeverType(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             NeverTypeNode::NeverType(_) => None,
         }
@@ -18547,6 +20526,9 @@ impl ::sittir_core::prepare::Prepare for AbstractTypeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18595,6 +20577,9 @@ impl ::sittir_core::prepare::Prepare for DynamicTypeNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -18677,6 +20662,9 @@ impl ::sittir_core::prepare::Prepare for MacroInvocationNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18729,6 +20717,9 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -18783,6 +20774,9 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18835,6 +20829,9 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -18893,6 +20890,9 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -18941,6 +20941,9 @@ impl ::sittir_core::prepare::Prepare for TryExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -18999,6 +21002,9 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19051,6 +21057,9 @@ impl ::sittir_core::prepare::Prepare for AssignmentExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19109,6 +21118,9 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19162,6 +21174,9 @@ impl ::sittir_core::prepare::Prepare for TypeCastExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19211,6 +21226,9 @@ impl ::sittir_core::prepare::Prepare for ReturnExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19259,6 +21277,9 @@ impl ::sittir_core::prepare::Prepare for YieldExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19313,6 +21334,9 @@ impl ::sittir_core::prepare::Prepare for CallExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19362,6 +21386,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19410,6 +21437,9 @@ impl ::sittir_core::prepare::Prepare for ParenthesizedExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19469,6 +21499,9 @@ impl ::sittir_core::prepare::Prepare for TupleExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19500,6 +21533,11 @@ impl ::sittir_core::prepare::Prepare for UnitExpressionNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            UnitExpressionNode::UnitExpression(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             UnitExpressionNode::UnitExpression(_) => None,
         }
@@ -19570,6 +21608,9 @@ impl ::sittir_core::prepare::Prepare for StructExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19618,6 +21659,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19676,6 +21720,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldInitializerNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19739,6 +21786,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19787,6 +21837,9 @@ impl ::sittir_core::prepare::Prepare for BaseFieldInitializerNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19845,6 +21898,9 @@ impl ::sittir_core::prepare::Prepare for IfExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -19897,6 +21953,9 @@ impl ::sittir_core::prepare::Prepare for LetConditionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19958,6 +22017,9 @@ impl ::sittir_core::prepare::Prepare for LetChainNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20006,6 +22068,9 @@ impl ::sittir_core::prepare::Prepare for ElseClauseNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20060,6 +22125,9 @@ impl ::sittir_core::prepare::Prepare for MatchExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20108,6 +22176,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20176,6 +22247,9 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20228,6 +22302,9 @@ impl ::sittir_core::prepare::Prepare for MatchPatternNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20286,6 +22363,9 @@ impl ::sittir_core::prepare::Prepare for WhileExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20338,6 +22418,9 @@ impl ::sittir_core::prepare::Prepare for LoopExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20400,6 +22483,9 @@ impl ::sittir_core::prepare::Prepare for ForExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20448,6 +22534,9 @@ impl ::sittir_core::prepare::Prepare for ConstBlockNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20506,6 +22595,9 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20554,6 +22646,9 @@ impl ::sittir_core::prepare::Prepare for LabelNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20608,6 +22703,9 @@ impl ::sittir_core::prepare::Prepare for BreakExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20656,6 +22754,9 @@ impl ::sittir_core::prepare::Prepare for ContinueExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20710,6 +22811,9 @@ impl ::sittir_core::prepare::Prepare for IndexExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20758,6 +22862,9 @@ impl ::sittir_core::prepare::Prepare for AwaitExpressionNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20812,6 +22919,9 @@ impl ::sittir_core::prepare::Prepare for FieldExpressionNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20860,6 +22970,9 @@ impl ::sittir_core::prepare::Prepare for UnsafeBlockNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -20914,6 +23027,9 @@ impl ::sittir_core::prepare::Prepare for AsyncBlockNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -20967,6 +23083,9 @@ impl ::sittir_core::prepare::Prepare for GenBlockNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21015,6 +23134,9 @@ impl ::sittir_core::prepare::Prepare for TryBlockNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21078,6 +23200,9 @@ impl ::sittir_core::prepare::Prepare for BlockNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21131,6 +23256,9 @@ impl ::sittir_core::prepare::Prepare for GenericPatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21180,6 +23308,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21228,6 +23359,9 @@ impl ::sittir_core::prepare::Prepare for SlicePatternNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21282,6 +23416,9 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21335,6 +23472,9 @@ impl ::sittir_core::prepare::Prepare for StructPatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21366,6 +23506,11 @@ impl ::sittir_core::prepare::Prepare for RemainingFieldPatternNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            RemainingFieldPatternNode::RemainingFieldPattern(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             RemainingFieldPatternNode::RemainingFieldPattern(_) => None,
         }
@@ -21432,6 +23577,9 @@ impl ::sittir_core::prepare::Prepare for MutPatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21480,6 +23628,9 @@ impl ::sittir_core::prepare::Prepare for RefPatternNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21534,6 +23685,9 @@ impl ::sittir_core::prepare::Prepare for CapturedPatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21587,6 +23741,9 @@ impl ::sittir_core::prepare::Prepare for ReferencePatternNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21635,6 +23792,9 @@ impl ::sittir_core::prepare::Prepare for NegativeLiteralNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21689,6 +23849,9 @@ impl ::sittir_core::prepare::Prepare for StringLiteralNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21746,6 +23909,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21831,6 +23997,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -21937,6 +24106,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -21982,6 +24154,9 @@ impl ::sittir_core::prepare::Prepare for IdentifierNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22031,6 +24206,9 @@ impl ::sittir_core::prepare::Prepare for ShebangNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -22062,6 +24240,11 @@ impl ::sittir_core::prepare::Prepare for Self_Node {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            Self_Node::Self_(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             Self_Node::Self_(_) => None,
         }
@@ -22114,6 +24297,11 @@ impl ::sittir_core::prepare::Prepare for SuperNode {
             SuperNode::Super(_) => None,
         }
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        match self {
+            SuperNode::Super(_) => None,
+        }
+    }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             SuperNode::Super(_) => None,
@@ -22158,6 +24346,11 @@ impl ::sittir_core::prepare::Prepare for CrateNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            CrateNode::Crate(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             CrateNode::Crate(_) => None,
         }
@@ -22222,6 +24415,9 @@ impl ::sittir_core::prepare::Prepare for MetavariableNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22380,6 +24576,9 @@ impl ::sittir_core::prepare::Prepare for MacroRulesNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -22440,6 +24639,9 @@ impl ::sittir_core::prepare::Prepare for EnumVariantListElementsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22502,6 +24704,9 @@ impl ::sittir_core::prepare::Prepare for FieldDeclarationListElementsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -22562,6 +24767,9 @@ impl ::sittir_core::prepare::Prepare for OrderedFieldDeclarationListElementsNode
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22624,6 +24832,9 @@ impl ::sittir_core::prepare::Prepare for WherePredicatesNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -22684,6 +24895,9 @@ impl ::sittir_core::prepare::Prepare for TypeParametersElementsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22746,6 +24960,9 @@ impl ::sittir_core::prepare::Prepare for UseClausesNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -22806,6 +25023,9 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22868,6 +25088,9 @@ impl ::sittir_core::prepare::Prepare for LifetimesNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -22928,6 +25151,9 @@ impl ::sittir_core::prepare::Prepare for TypesNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -22990,6 +25216,9 @@ impl ::sittir_core::prepare::Prepare for UseBoundsElementsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23050,6 +25279,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentsElementsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -23112,6 +25344,9 @@ impl ::sittir_core::prepare::Prepare for ArgumentsElementsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23172,6 +25407,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -23234,6 +25472,9 @@ impl ::sittir_core::prepare::Prepare for FieldInitializerListElementsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23294,6 +25535,9 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -23356,6 +25600,9 @@ impl ::sittir_core::prepare::Prepare for PatternsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23417,6 +25664,9 @@ impl ::sittir_core::prepare::Prepare for StructPatternElementsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23466,6 +25716,9 @@ impl ::sittir_core::prepare::Prepare for UseWildcardGroupNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23512,6 +25765,9 @@ impl ::sittir_core::prepare::Prepare for TokenRepetitionPatternTextNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -23557,6 +25813,9 @@ impl ::sittir_core::prepare::Prepare for StringOpenNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24014,6 +26273,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralDecimalNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24065,6 +26327,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralHexNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24118,6 +26383,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralBinaryNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24169,6 +26437,9 @@ impl ::sittir_core::prepare::Prepare for IntegerLiteralOctalNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24222,6 +26493,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralPlainNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24267,6 +26541,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEmptyNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24320,6 +26597,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedSimpleNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24371,6 +26651,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeFixedNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24424,6 +26707,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedUnicodeBracedNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24476,6 +26762,9 @@ impl ::sittir_core::prepare::Prepare for CharLiteralEscapedHexNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24523,6 +26812,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceSimpleNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24572,6 +26864,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeFixedNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24620,6 +26915,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceUnicodeBracedNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24667,6 +26965,9 @@ impl ::sittir_core::prepare::Prepare for EscapeSequenceHexNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24730,6 +27031,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionSemiNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24788,6 +27092,9 @@ impl ::sittir_core::prepare::Prepare for ArrayExpressionListNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24839,6 +27146,9 @@ impl ::sittir_core::prepare::Prepare for AttributeInputNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -24909,6 +27219,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionBlockNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -24974,6 +27287,9 @@ impl ::sittir_core::prepare::Prepare for ClosureExpressionExprNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25022,6 +27338,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawConstNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25072,6 +27391,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionRawMutNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25120,6 +27442,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionMutNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25170,6 +27495,9 @@ impl ::sittir_core::prepare::Prepare for ReferenceExpressionBareNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25219,6 +27547,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemPositiveClauseNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25267,6 +27598,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemNegativeClauseNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25337,6 +27671,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemBodyNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25402,6 +27739,9 @@ impl ::sittir_core::prepare::Prepare for ImplItemSemiNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25450,6 +27790,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeInPathNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25500,6 +27843,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubScopeNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25549,6 +27895,9 @@ impl ::sittir_core::prepare::Prepare for VisibilityModifierPubNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25596,6 +27945,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeTraitFormNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25645,6 +27997,9 @@ impl ::sittir_core::prepare::Prepare for FunctionTypeFnFormNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25698,6 +28053,9 @@ impl ::sittir_core::prepare::Prepare for ModItemExternalNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25756,6 +28114,9 @@ impl ::sittir_core::prepare::Prepare for ModItemInlineNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25809,6 +28170,9 @@ impl ::sittir_core::prepare::Prepare for OrPatternBinaryNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25857,6 +28221,9 @@ impl ::sittir_core::prepare::Prepare for OrPatternPrefixNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -25907,6 +28274,9 @@ impl ::sittir_core::prepare::Prepare for PointerTypeConstNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -25955,6 +28325,9 @@ impl ::sittir_core::prepare::Prepare for PointerTypeMutNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26013,6 +28386,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26061,6 +28437,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPostfixNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26111,6 +28490,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionPrefixNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26158,6 +28540,9 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBareNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26207,6 +28592,9 @@ impl ::sittir_core::prepare::Prepare for ExpressionStatementWithSemiNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26260,6 +28648,9 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemSemiNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26317,6 +28708,9 @@ impl ::sittir_core::prepare::Prepare for ForeignModItemBodyNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26380,6 +28774,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26442,6 +28839,9 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26487,6 +28887,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentExtraSlashesNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26536,6 +28939,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocOuterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26584,6 +28990,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentDocInnerNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26629,6 +29038,9 @@ impl ::sittir_core::prepare::Prepare for LineCommentRegularNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26678,6 +29090,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocOuterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26726,6 +29141,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentDocInnerNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26771,6 +29189,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentRegularNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26826,6 +29247,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternParenNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26879,6 +29303,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBracketNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -26934,6 +29361,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreePatternBraceNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -26987,6 +29417,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeParenNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27042,6 +29475,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBracketNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27095,6 +29531,9 @@ impl ::sittir_core::prepare::Prepare for TokenTreeBraceNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27150,6 +29589,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeParenNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27204,6 +29646,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBracketNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27257,6 +29702,9 @@ impl ::sittir_core::prepare::Prepare for DelimTokenTreeBraceNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27314,6 +29762,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternShorthandNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27376,6 +29827,9 @@ impl ::sittir_core::prepare::Prepare for FieldPatternNamedNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27428,6 +29882,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionParenNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27482,6 +29939,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBracketNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27534,6 +29994,9 @@ impl ::sittir_core::prepare::Prepare for MacroDefinitionBraceNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27592,6 +30055,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternPrefixNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27648,6 +30114,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27730,6 +30199,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27794,6 +30266,9 @@ impl ::sittir_core::prepare::Prepare for StructItemBraceNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -27860,6 +30335,9 @@ impl ::sittir_core::prepare::Prepare for StructItemTupleNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27917,6 +30395,9 @@ impl ::sittir_core::prepare::Prepare for StructItemUnitNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -27948,6 +30429,11 @@ impl ::sittir_core::prepare::Prepare for WildcardPatternNode {
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        match self {
+            WildcardPatternNode::WildcardPattern(_) => None,
+        }
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             WildcardPatternNode::WildcardPattern(_) => None,
         }
@@ -28023,6 +30509,9 @@ impl ::sittir_core::prepare::Prepare for AttributedFieldDeclarationNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28081,6 +30570,9 @@ impl ::sittir_core::prepare::Prepare for AttributedEnumVariantNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28133,6 +30625,9 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28192,6 +30687,9 @@ impl ::sittir_core::prepare::Prepare for AttributedTypeParameterNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28249,6 +30747,9 @@ impl ::sittir_core::prepare::Prepare for AttributedArgumentNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28312,6 +30813,9 @@ impl ::sittir_core::prepare::Prepare for AttributedOrderedFieldNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28364,6 +30868,9 @@ impl ::sittir_core::prepare::Prepare for TypeArgumentNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28423,6 +30930,9 @@ impl ::sittir_core::prepare::Prepare for MatchBlockArmsNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28468,6 +30978,9 @@ impl ::sittir_core::prepare::Prepare for FloatLiteralNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28515,6 +31028,9 @@ impl ::sittir_core::prepare::Prepare for StringContentNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28560,6 +31076,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralContentNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28663,6 +31182,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralStartNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28708,6 +31230,9 @@ impl ::sittir_core::prepare::Prepare for RawStringLiteralEndNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -28755,6 +31280,9 @@ impl ::sittir_core::prepare::Prepare for DocCommentNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -28800,6 +31328,9 @@ impl ::sittir_core::prepare::Prepare for BlockCommentContentNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -29079,6 +31610,9 @@ impl ::sittir_core::prepare::Prepare for TraitInterfaceDeclarationBodyNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29133,6 +31667,9 @@ impl ::sittir_core::prepare::Prepare for ExtensionDeclarationBodyNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29185,6 +31722,9 @@ impl ::sittir_core::prepare::Prepare for ReceiverParameterDeclarationNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -29239,6 +31779,9 @@ impl ::sittir_core::prepare::Prepare for AttributedParameterReceiverNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29292,6 +31835,9 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsReceiverNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29341,6 +31887,9 @@ impl ::sittir_core::prepare::Prepare for ParametersElementsReceiverGroupNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29387,6 +31936,9 @@ impl ::sittir_core::prepare::Prepare for StringCloseNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29432,6 +31984,9 @@ impl ::sittir_core::prepare::Prepare for ErrorSentinelNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -29481,6 +32036,9 @@ impl ::sittir_core::prepare::Prepare for TypeIdentifierNode {
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
     }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
     }
@@ -29528,6 +32086,9 @@ impl ::sittir_core::prepare::Prepare for FieldIdentifierNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -29604,6 +32165,9 @@ impl ::sittir_core::prepare::Prepare for ShorthandFieldIdentifierNode {
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))

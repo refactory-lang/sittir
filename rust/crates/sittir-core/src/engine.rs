@@ -1281,6 +1281,47 @@ impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
     }
 }
 
+impl<G: EngineGrammar> ParsedTree<G> {
+    /// The sides a coordinate of the node at `index` renders between, as
+    /// `entries` gives each node's, outermost first, each frame's leading,
+    /// trailing and inner sides: the node's own, then a frame for each item
+    /// a list at its start or its end passes the extras and `ERROR`s of that
+    /// edge to (`TriviaTable::edge_item`), holding that one side, as the item
+    /// frames itself where the list is read as a node. The coordinate's bytes
+    /// hold each item's.
+    fn frame_levels<E>(&self, index: crate::types::NodeIndex, entries: impl Fn(crate::types::NodeIndex, TriviaSide) -> Vec<E>) -> Vec<[Vec<E>; 3]> {
+        let table = self.trivia_table();
+        let mut levels = vec![[entries(index, TriviaSide::Leading), entries(index, TriviaSide::Trailing), entries(index, TriviaSide::Inner)]];
+        for side in [TriviaSide::Leading, TriviaSide::Trailing] {
+            let mut item = table.edge_item(index, side);
+            while let Some(at) = item {
+                let held = entries(at, side);
+                levels.push(if side == TriviaSide::Leading { [held, Vec::new(), Vec::new()] } else { [Vec::new(), held, Vec::new()] });
+                item = table.edge_item(at, side);
+            }
+        }
+        levels
+    }
+}
+
+/// The frames of `levels` that hold any side, outermost first.
+fn framed<T: crate::trivia::TriviaItem>(levels: impl IntoIterator<Item = [Vec<SideEntry<T>>; 3]>) -> Vec<Box<dyn crate::trivia::FramedTrivia>> {
+    levels
+        .into_iter()
+        .filter_map(|[leading, trailing, inner]| {
+            let side = |entries: Vec<SideEntry<T>>| (!entries.is_empty()).then(|| entries.into_iter().map(SideEntry::into_entry).collect());
+            let trivia = crate::trivia::NodeTrivia { leading: side(leading), trailing: side(trailing), inner: side(inner) };
+            (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
+        })
+        .collect()
+}
+
+/// The frames of `levels`, the first the node's own (`framed`).
+fn frames_of<T: crate::trivia::TriviaItem>(levels: Vec<[Vec<SideEntry<T>>; 3]>) -> crate::trivia::Frames {
+    let mut levels = levels.into_iter();
+    crate::trivia::Frames { own: framed(levels.next()).pop(), items: framed(levels) }
+}
+
 /// A tree's sides as its source has them, without their layout runs or any
 /// write: what its baseline renders.
 struct WithoutLayout<'t, G: EngineGrammar>(&'t ParsedTree<G>);
@@ -1318,12 +1359,14 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
 
     fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
         self.0.own(coord.tree)?;
-        let side = |side: TriviaSide| {
-            let entries: Vec<_> = self.entries(coord.index, side).into_iter().map(SideEntry::into_entry).collect();
-            (!entries.is_empty()).then_some(entries)
-        };
-        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
-        (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
+        framed(self.0.frame_levels(coord.index, |at, side| self.entries(at, side)).into_iter().take(1)).pop()
+    }
+
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
+        if self.0.own(coord.tree).is_none() {
+            return crate::trivia::Frames::default();
+        }
+        frames_of(self.0.frame_levels(coord.index, |at, side| self.entries(at, side)))
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {
@@ -1552,30 +1595,35 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
 
     fn sides(&self, coord: &NodeCoordinate) -> Option<Box<dyn crate::trivia::FramedTrivia>> {
         let tree = self.own(coord.tree)?;
-        let side = |side: TriviaSide| {
-            let entries: Vec<_> = tree.side_entries(coord.index, side, coord.changed().on(side)).into_iter().map(SideEntry::into_entry).collect();
-            (!entries.is_empty()).then_some(entries)
-        };
-        let trivia = crate::trivia::NodeTrivia { leading: side(TriviaSide::Leading), trailing: side(TriviaSide::Trailing), inner: side(TriviaSide::Inner) };
-        (trivia.leading.is_some() || trivia.trailing.is_some() || trivia.inner.is_some()).then(|| Box::new(trivia) as Box<dyn crate::trivia::FramedTrivia>)
+        framed(tree.frame_levels(coord.index, |at, side| tree.side_entries(at, side, coord.changed().on(side))).into_iter().take(1)).pop()
+    }
+
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
+        let Some(tree) = self.own(coord.tree) else { return crate::trivia::Frames::default() };
+        frames_of(tree.frame_levels(coord.index, |at, side| tree.side_entries(at, side, coord.changed().on(side))))
     }
 
     fn framed_span(&self, coord: &NodeCoordinate) -> Span {
         let Some(tree) = self.own(coord.tree) else { return coord.span };
-        let spans = |side: TriviaSide| {
-            tree.side_entries(coord.index, side, coord.changed().on(side)).into_iter().filter_map(|entry| match entry {
-                SideEntry::Source { span, .. } => Some(span),
+        let levels = tree.frame_levels(coord.index, |at, side| tree.side_entries(at, side, coord.changed().on(side)));
+        let spans = |side: usize| {
+            levels.iter().flat_map(move |level| &level[side]).filter_map(|entry| match entry {
+                SideEntry::Source { span, .. } => Some(*span),
                 SideEntry::Layout(_) | SideEntry::Written(_) => None,
             })
         };
         Span {
-            start: spans(TriviaSide::Leading).map(|span| span.start).min().map_or(coord.span.start, |start| start.min(coord.span.start)),
-            end: spans(TriviaSide::Trailing).map(|span| span.end).max().map_or(coord.span.end, |end| end.max(coord.span.end)),
+            start: spans(0).map(|span| span.start).min().map_or(coord.span.start, |start| start.min(coord.span.start)),
+            end: spans(1).map(|span| span.end).max().map_or(coord.span.end, |end| end.max(coord.span.end)),
         }
     }
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
         self.own(coord.tree).is_some_and(|tree| tree.edited_within(coord.index, false))
+    }
+
+    fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
+        self.own(coord.tree).is_some_and(|tree| !tree.edited_within(coord.index, false))
     }
 
     fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {
@@ -1650,6 +1698,10 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
         self.get(&coord.tree)?.sides(coord)
     }
 
+    fn frames(&self, coord: &NodeCoordinate) -> crate::trivia::Frames {
+        self.get(&coord.tree).map_or_else(crate::trivia::Frames::default, |tree| tree.frames(coord))
+    }
+
     fn slot_layouts(&self, coord: &NodeCoordinate) -> Vec<crate::layout::SlotLayout> {
         self.get(&coord.tree).map_or_else(Vec::new, |tree| SourceTable::slot_layouts(tree, coord))
     }
@@ -1664,6 +1716,10 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
 
     fn edited_within(&self, coord: &NodeCoordinate) -> bool {
         self.get(&coord.tree).is_some_and(|tree| SourceTable::edited_within(tree, coord))
+    }
+
+    fn renders_as_source(&self, coord: &NodeCoordinate) -> bool {
+        self.get(&coord.tree).is_some_and(|tree| SourceTable::renders_as_source(tree, coord))
     }
 
     fn seat_through(&self, coord: &NodeCoordinate, wrappers: &[Option<crate::options::SeatPath>], seat: &dyn Fn(KindId) -> Option<crate::types::SiteId>) -> Option<crate::types::SiteId> {

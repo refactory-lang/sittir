@@ -17,6 +17,8 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// A side holding entries nested past `trivia::SIDE_NESTING_BOUND`.
+    SideNesting,
 }
 
 impl fmt::Display for RenderError {
@@ -25,6 +27,7 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            Self::SideNesting => f.write_str(crate::trivia::SIDE_NESTING_REFUSAL),
         }
     }
 }
@@ -134,6 +137,14 @@ pub trait SourceTable {
         None
     }
 
+    /// The sides a coordinate's bytes render between: its node's own
+    /// (`sides`), then those of each node inside its bytes that holds trivia
+    /// at its edges for it (`ParsedTree::frame_levels`). A table of bare
+    /// sources knows no sides.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> crate::trivia::Frames {
+        crate::trivia::Frames { own: self.sides(coord), items: Vec::new() }
+    }
+
     /// The stored layout of each list slot of the node a coordinate names
     /// (`layout::SlotLayout`), as its tree measures it; none for a table of
     /// bare sources.
@@ -162,6 +173,15 @@ pub trait SourceTable {
     /// Whether a write replaced a side of a node in the range of the node a
     /// coordinate names, its own `inner` included (`ParsedTree::edited_within`).
     fn edited_within(&self, coord: &crate::slot::NodeCoordinate) -> bool {
+        let _ = coord;
+        false
+    }
+
+    /// Whether a read node from the node a coordinate names renders as that
+    /// coordinate, its source bytes: a parsed node with no write in its range
+    /// (`edited_within`). A table that holds no tree, or one a render reads
+    /// templates through on purpose, answers no.
+    fn renders_as_source(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         let _ = coord;
         false
     }
@@ -315,6 +335,12 @@ pub trait RenderSink {
     fn layout_depth(&mut self, delta: i32) {
         let _ = delta;
     }
+    /// The nesting of the side whose entry renders here
+    /// (`trivia::SIDE_NESTING_BOUND`): 0 outside every side.
+    fn side_nesting(&self) -> usize;
+    /// What renders next renders inside a side at `nesting`; answers the
+    /// nesting it replaces.
+    fn set_side_nesting(&mut self, nesting: usize) -> usize;
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;
         self.seam(gap);
@@ -335,12 +361,12 @@ pub trait RenderSink {
         let _ = coord;
         None
     }
-    /// The leading and trailing sides of the node a coordinate names, from
-    /// the tree table this writer holds (`SourceTable::sides`), prepared as a
-    /// slot's trivia is; a sink with no table answers none.
-    fn sides(&self, coord: &crate::slot::NodeCoordinate) -> Result<Option<Box<dyn crate::trivia::FramedTrivia>>, CoordinateError> {
+    /// The frames a coordinate's bytes render between, from the tree table
+    /// this writer holds (`SourceTable::frames`), each prepared as a slot's
+    /// trivia is; a sink with no table answers none.
+    fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, CoordinateError> {
         let _ = coord;
-        Ok(None)
+        Ok(crate::trivia::Frames::default())
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.
