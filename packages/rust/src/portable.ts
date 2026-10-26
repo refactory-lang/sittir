@@ -269,31 +269,14 @@ export interface PortableIds {
 	'declaration.parameter.receiver': TSKindId.Parameter | TSKindId.ReceiverParameterDeclaration | TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
-		| TSKindId.EnumVariant
 		| TSKindId.StructItem
 		| TSKindId.StructItemBrace
 		| TSKindId.StructItemTuple
 		| TSKindId.StructItemUnit;
-	'declaration.struct.private':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
-	'declaration.struct.public':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
-	'declaration.struct.public.internal':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
-	'declaration.struct.public.restricted':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
+	'declaration.struct.private': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public.internal': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public.restricted': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.tuple': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
@@ -542,7 +525,7 @@ export interface PortableIds {
 	'expression.collection.tuple': TSKindId.TupleExpression;
 	'expression.instantiation': TSKindId.GenericFunction;
 	'expression.lambda': TSKindId.ClosureExpression | TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr;
-	'expression.member': TSKindId.CallExpression | TSKindId.FieldExpression;
+	'expression.member': TSKindId.FieldExpression;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
 	'expression.propagate': TSKindId.TryExpression;
 	'expression.range':
@@ -712,8 +695,7 @@ export interface PortableIds {
 		| TSKindId.FieldPatternNamed
 		| TSKindId.FieldPatternShorthand
 		| TSKindId.RemainingFieldPattern
-		| TSKindId.StructPattern
-		| TSKindId.TupleStructPattern;
+		| TSKindId.StructPattern;
 	'pattern.struct.field': TSKindId.FieldPattern | TSKindId.FieldPatternNamed | TSKindId.FieldPatternShorthand;
 	'pattern.struct.rest': TSKindId.RemainingFieldPattern;
 	'pattern.tuple': TSKindId.TuplePattern | TSKindId.TupleStructPattern;
@@ -3127,29 +3109,23 @@ const table: PortableTable = {
 		},
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
-			ids: [
-				TSKindId.EnumVariant,
-				TSKindId.StructItem,
-				TSKindId.StructItemBrace,
-				TSKindId.StructItemTuple,
-				TSKindId.StructItemUnit
-			],
-			exact: false
+			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: true
 		},
 		'declaration.struct.private': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.public': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.public.internal': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.public.restricted': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
@@ -3442,7 +3418,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ClosureExpression, TSKindId.ClosureExpressionBlock, TSKindId.ClosureExpressionExpr],
 			exact: true
 		},
-		'expression.member': { ids: [TSKindId.CallExpression, TSKindId.FieldExpression], exact: false },
+		'expression.member': { ids: [TSKindId.FieldExpression], exact: true },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
 		'expression.propagate': { ids: [TSKindId.TryExpression], exact: true },
 		'expression.range': {
@@ -3673,8 +3649,7 @@ const table: PortableTable = {
 				TSKindId.FieldPatternNamed,
 				TSKindId.FieldPatternShorthand,
 				TSKindId.RemainingFieldPattern,
-				TSKindId.StructPattern,
-				TSKindId.TupleStructPattern
+				TSKindId.StructPattern
 			],
 			exact: false
 		},
