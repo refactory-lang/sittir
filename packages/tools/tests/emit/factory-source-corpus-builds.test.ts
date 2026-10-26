@@ -75,6 +75,20 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 		expect(source).toContain('py.build.simplePattern.negative.strict(');
 	});
 
+	it('python: every = site rebuilds in its idiom, spaced for an assignment, an annotated default and a type alias, tight for a keyword and a debug interpolation', async () => {
+		const inputs = [
+			'x = 1\n',
+			'x: int = 1\n',
+			'type X = int\n',
+			'def f(a=1, b: int = 2):\n    pass\n',
+			'f(a=1)\n',
+			'match x:\n    case C(k=1):\n        pass\n',
+			'f"{x=}"\n',
+			'f"{x=!r:>10}"\n'
+		];
+		for (const input of inputs) expect((await rebuildAndRender('python', input)).rendered).toBe(input);
+	});
+
 	it('regex: a count quantifier with a range and a unicode property value both build', async () => {
 		const range = await rebuildAndRender('regex', 'a{4}b{2,3}\n');
 		expect(range.rendered).toBe('a{4}b{2,3}');

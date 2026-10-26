@@ -150,6 +150,7 @@ export default grammar(enrich(base), wire({
 		},
 		keyword_argument: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
+		keyword_pattern: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
 		splat_pattern: { 'operator:/after': preference('tight') },
 		list_splat: { '"*"/after': preference('tight') },
@@ -158,7 +159,12 @@ export default grammar(enrich(base), wire({
 		dictionary_splat_pattern: { '"**"/after': preference('tight') },
 		splat_type: { 'operator:/after': preference('tight') },
 		unary_operator: { 'operator:/after': preference('tight') },
-		interpolation: { before: preference('tight'), after: preference('tight') },
+		interpolation: {
+			before: preference('tight'),
+			after: preference('tight'),
+			'debug:/before': preference('tight'),
+			'debug:/after': preference('tight')
+		},
 		comprehension_clauses: { 'content:/separator': preference('space') },
 		comparison_operator: { 'comparators:/separator': preference('space') },
 		concatenated_string: { 'string:/separator': preference('space') },
