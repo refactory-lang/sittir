@@ -142,14 +142,21 @@ The python docstring's `doc` member resolves through the `_simple_statements` si
 
 The runtime bindings are what the portable engine runs, generated per grammar from the routes. The vocabulary's mapped types (owner × value crossings, per-kind flag unions) are authored in the vocabulary, not generated here.
 
+**Order (ruled by the user, 2026-10-25).** Three PRs come before this stage, in this order:
+1. The vocabulary renames still pending from the synonyms rulings (census: `docs/superpowers/probes/2026-10-25-vocabulary-renames-census/`). Rust's match arm keeps its low-level field `match`, authored in rust's grammar layer. `expression.update`'s prefix form takes a `prefix` flag in the same PR, and unset means postfix.
+2. The closure-parameter residue: the rust closure-parameter claim restated as an envelope, the part of the portable-surface plan's placement-residue task still to land. It goes before this stage, so every guard this stage generates agrees with the routes' read tests.
+3. The loose and strict builder surfaces made separate: codegen emits the two builder tables apart, through one emitter seam both builder backends use, and the engine loads only the table its `api` asks for. `bundle()` and the flavour pair retire, so this stage's build tables are written against one table per surface.
+4. This stage. Its runtime lands first and stays unexported. The flag guards, the build tables, the pick and the corpus round-trip lane land and are proved without types. Nothing new reaches the public portable API, a loosely typed `build` included, until the vocabulary-typed module, generated outside the package, has zero errors (the generator plan's rule for rejected members).
+
 - Honor the authored numeric and boolean scalar value contracts in high-to-low runtime builds and built-node crossings, through the [scalar-contract follow-up](2026-10-06-binding-generator.md#follow-up-high-to-low-runtime-scalar-bindings-october-15) in the generator plan.
 - `build`, `is` and `kinds` per vocabulary path, keyed by `$type`;
+- the pick: per path, a table codegen derives from the routes (which members are present, the kinds of their values, and the flags stated), emitted into the rows. A pick the table cannot decide is a codegen diagnostic. A form told apart only by a spelling (delimiters, quotes) is picked by the render options, the grammar's default when none are given;
 - the builder-chain steps and their guards: an `is` guard per segment carries the segment's read test and its flag bits;
-- each language's `$exclusions`: per kind, the flag pairs the grammar never spells together, derived from the rule by the generator, not declared by the vocabulary. The vocabulary's mapped types read them for the typed chains, so after a step the incompatible steps are gone, and the runtime check refuses a structure whose `$flags` break them;
-- the flags runtime object imported from the vocabulary (`packages/types/src/vocabulary/flags.ts`, written by `bindings-inventory --write`), never emitted here; its member names are spelled through `tsname`, so the two agree by construction.
+- no exclusions: the steps ship unnarrowed. Exclusions are each grammar's authored `exclusions:` block, never derived from its rule ([builder exclusions](../specs/2026-10-19-builder-exclusions-design.md)). When that primitive lands, the step types read its `exclusionGroups` stamps, and the runtime check is the grammar builder's own `excludedBy`, which the portable build reaches by building through the grammar's builders;
+- the flags runtime object, `Flags`, which `bindings-inventory --write` writes into `packages/common/src/portable/flags.ts`, beside the vocabulary path list, so `@sittir/types` stays type-only. It is never emitted here; its member names are spelled through `tsname`, so the two agree by construction.
 
-- **Census:** per grammar, the build, `is` and `kinds` entries and the flags each guard tests, compared with the routes.
-- **Gate:** the portable type-check ratchet (per-grammar error count) only falls, and every generated guard agrees with the routes' read tests on the existing `is` tests.
+- **Census:** taken (`docs/superpowers/probes/2026-10-25-runtime-bindings-census/`): per grammar, the build, `is` and `kinds` entries and the flags each guard tests, compared with the routes.
+- **Gate:** the vocabulary-typed module's type-check ratchet (per-grammar error count) only falls, every generated guard agrees with the routes' read tests on the existing `is` tests, and the portable round-trip lane's row is recorded as its baseline.
 
 ## Stage 4: vocabulary synonyms
 

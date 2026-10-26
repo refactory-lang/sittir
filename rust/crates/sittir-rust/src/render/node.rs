@@ -3090,22 +3090,6 @@ impl ::sittir_core::trivia::TriviaSeam for TriviaNode {
         }
     }
 
-    fn sides(&self) -> Option<&::sittir_core::trivia::NodeTrivia<Self>> {
-        match self {
-            TriviaNode::LineComment(t) => t.layout.as_deref()?.trivia.as_ref(),
-            TriviaNode::BlockComment(t) => t.layout.as_deref()?.trivia.as_ref(),
-            _ => None,
-        }
-    }
-
-    fn sides_mut(&mut self) -> Option<&mut ::sittir_core::trivia::NodeTrivia<Self>> {
-        match self {
-            TriviaNode::LineComment(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
-            TriviaNode::BlockComment(t) => t.layout.as_deref_mut()?.trivia.as_mut(),
-            _ => None,
-        }
-    }
-
     fn depth(&self) -> i32 {
         match self {
             TriviaNode::Indent => 1,
@@ -4282,7 +4266,7 @@ pub enum TypeNode {
     PointerType(PointerTypeNode),
     #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
     #[kind(kind::TUPLE_TYPE)]
     TupleType(TupleTypeNode),
@@ -8288,7 +8272,7 @@ pub enum WherePredicateLeftNodeSlot {
     Lifetime(LifetimeNode),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
     #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeNode),
@@ -9823,7 +9807,7 @@ pub enum GenericTypeTypeNodeSlot {
     TypeIdentifier(TypeIdentifierNode),
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
     Identifier(IdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
     #[node(verbatim)]
     Verbatim(VerbatimNode),
@@ -10292,7 +10276,7 @@ impl ::sittir_core::render::Render for BoundedTypeLeftNodeSlotRecord<'_> {
 pub enum AbstractTypeTraitNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
     #[kind(kind::REMOVED_TRAIT_BOUND)]
     RemovedTraitBound(RemovedTraitBoundNode),
@@ -10432,7 +10416,7 @@ pub enum DynamicTypeTraitNodeSlot {
     HigherRankedTraitBound(HigherRankedTraitBoundNode),
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
     #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeNode),
@@ -10647,8 +10631,8 @@ impl ::sittir_core::render::Render for MacroInvocationFunctionNodeSlotRecord<'_>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = ScopedIdentifierPathNodeSlotRecord)]
-pub enum ScopedIdentifierPathNodeSlot {
+#[node(choice, stamp = stamp, view = ScopedIdentifierQualifierNodeSlotRecord)]
+pub enum ScopedIdentifierQualifierNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
@@ -10672,70 +10656,70 @@ pub enum ScopedIdentifierPathNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathNodeSlot {
+impl ::sittir_core::prepare::Prepare for ScopedIdentifierQualifierNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ScopedIdentifierPathNodeSlot::Metavariable(t) => t.prepare(ctx),
-            ScopedIdentifierPathNodeSlot::Identifier(t) => t.prepare(ctx),
-            ScopedIdentifierPathNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            ScopedIdentifierPathNodeSlot::BracketedType(t) => t.prepare(ctx),
-            ScopedIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
-            ScopedIdentifierPathNodeSlot::Self_(_) => Ok(()),
-            ScopedIdentifierPathNodeSlot::Super(_) => Ok(()),
-            ScopedIdentifierPathNodeSlot::Crate(_) => Ok(()),
-            ScopedIdentifierPathNodeSlot::Verbatim(t) => t.prepare(ctx),
+            ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.prepare(ctx),
+            ScopedIdentifierQualifierNodeSlot::Identifier(t) => t.prepare(ctx),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(t) => t.prepare(ctx),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
+            ScopedIdentifierQualifierNodeSlot::Self_(_) => Ok(()),
+            ScopedIdentifierQualifierNodeSlot::Super(_) => Ok(()),
+            ScopedIdentifierQualifierNodeSlot::Crate(_) => Ok(()),
+            ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ScopedIdentifierPathNodeSlot::Metavariable(t) => t.gap_edges(),
-            ScopedIdentifierPathNodeSlot::Identifier(t) => t.gap_edges(),
-            ScopedIdentifierPathNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
-            ScopedIdentifierPathNodeSlot::BracketedType(t) => t.gap_edges(),
-            ScopedIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
-            ScopedIdentifierPathNodeSlot::Self_(edges) => Some(edges),
-            ScopedIdentifierPathNodeSlot::Super(edges) => Some(edges),
-            ScopedIdentifierPathNodeSlot::Crate(edges) => Some(edges),
-            ScopedIdentifierPathNodeSlot::Verbatim(t) => t.gap_edges(),
+            ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.gap_edges(),
+            ScopedIdentifierQualifierNodeSlot::Identifier(t) => t.gap_edges(),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(t) => t.gap_edges(),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
+            ScopedIdentifierQualifierNodeSlot::Self_(edges) => Some(edges),
+            ScopedIdentifierQualifierNodeSlot::Super(edges) => Some(edges),
+            ScopedIdentifierQualifierNodeSlot::Crate(edges) => Some(edges),
+            ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ScopedIdentifierPathNodeSlot::Metavariable(t) => t.snapshot_edge(),
-            ScopedIdentifierPathNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ScopedIdentifierPathNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            ScopedIdentifierPathNodeSlot::BracketedType(t) => t.snapshot_edge(),
-            ScopedIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
-            ScopedIdentifierPathNodeSlot::Self_(_) => None,
-            ScopedIdentifierPathNodeSlot::Super(_) => None,
-            ScopedIdentifierPathNodeSlot::Crate(_) => None,
-            ScopedIdentifierPathNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.snapshot_edge(),
+            ScopedIdentifierQualifierNodeSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(t) => t.snapshot_edge(),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            ScopedIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            ScopedIdentifierPathNodeSlot::Metavariable(t) => t.source_coordinate(),
-            ScopedIdentifierPathNodeSlot::Identifier(t) => t.source_coordinate(),
-            ScopedIdentifierPathNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
-            ScopedIdentifierPathNodeSlot::BracketedType(t) => t.source_coordinate(),
-            ScopedIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
-            ScopedIdentifierPathNodeSlot::Self_(_) => None,
-            ScopedIdentifierPathNodeSlot::Super(_) => None,
-            ScopedIdentifierPathNodeSlot::Crate(_) => None,
-            ScopedIdentifierPathNodeSlot::Verbatim(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            ScopedIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ScopedIdentifierPathNodeSlot::Metavariable(t) => t.source_separator(ctx),
-            ScopedIdentifierPathNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ScopedIdentifierPathNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            ScopedIdentifierPathNodeSlot::BracketedType(t) => t.source_separator(ctx),
-            ScopedIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
-            ScopedIdentifierPathNodeSlot::Self_(_) => None,
-            ScopedIdentifierPathNodeSlot::Super(_) => None,
-            ScopedIdentifierPathNodeSlot::Crate(_) => None,
-            ScopedIdentifierPathNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            ScopedIdentifierQualifierNodeSlot::Metavariable(t) => t.source_separator(ctx),
+            ScopedIdentifierQualifierNodeSlot::Identifier(t) => t.source_separator(ctx),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(t) => t.source_separator(ctx),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
+            ScopedIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedIdentifierQualifierNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10743,7 +10727,7 @@ impl ::sittir_core::prepare::Prepare for ScopedIdentifierPathNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for ScopedIdentifierPathNodeSlot {
+impl ::sittir_core::view::KindOf for ScopedIdentifierQualifierNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -10759,24 +10743,24 @@ impl ::sittir_core::view::KindOf for ScopedIdentifierPathNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ScopedIdentifierPathNodeSlot {
+impl ::sittir_core::render::Render for ScopedIdentifierQualifierNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ScopedIdentifierPathNodeSlot::Metavariable(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlot::Identifier(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlot::ScopedIdentifier(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlot::BracketedType(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedIdentifierPathNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedIdentifierPathNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedIdentifierPathNodeSlot::Verbatim(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlot::Metavariable(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlot::Identifier(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlot::ScopedIdentifier(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlot::BracketedType(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedIdentifierQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedIdentifierQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedIdentifierQualifierNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for ScopedIdentifierPathNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for ScopedIdentifierQualifierNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -10792,18 +10776,18 @@ impl ::sittir_core::view::KindOf for ScopedIdentifierPathNodeSlotRecord<'_> {
     }
 }
 
-impl ::sittir_core::render::Render for ScopedIdentifierPathNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for ScopedIdentifierQualifierNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ScopedIdentifierPathNodeSlotRecord::Metavariable(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlotRecord::Identifier(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlotRecord::BracketedType(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
-            ScopedIdentifierPathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedIdentifierPathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedIdentifierPathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedIdentifierPathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlotRecord::BracketedType(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedIdentifierQualifierNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedIdentifierQualifierNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedIdentifierQualifierNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedIdentifierQualifierNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -10905,8 +10889,8 @@ impl ::sittir_core::render::Render for ScopedIdentifierNameNodeSlotRecord<'_> {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord)]
-pub enum ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
+#[node(choice, stamp = stamp, view = ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord)]
+pub enum ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
@@ -10928,65 +10912,65 @@ pub enum ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
+impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Metavariable(t) => t.prepare(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Identifier(t) => t.prepare(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Self_(_) => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Super(_) => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Crate(_) => Ok(()),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Verbatim(t) => t.prepare(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(t) => t.prepare(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(t) => t.prepare(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(_) => Ok(()),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(_) => Ok(()),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(_) => Ok(()),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Metavariable(t) => t.gap_edges(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Identifier(t) => t.gap_edges(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Self_(edges) => Some(edges),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Super(edges) => Some(edges),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Crate(edges) => Some(edges),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Verbatim(t) => t.gap_edges(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(t) => t.gap_edges(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(t) => t.gap_edges(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(edges) => Some(edges),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(edges) => Some(edges),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(edges) => Some(edges),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Metavariable(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Self_(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Super(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Crate(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Metavariable(t) => t.source_coordinate(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Identifier(t) => t.source_coordinate(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Self_(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Super(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Crate(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Verbatim(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Metavariable(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Self_(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Super(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Crate(_) => None,
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -10994,7 +10978,7 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierInExpressionPositio
     }
 }
 
-impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -11009,23 +10993,23 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionPat
     }
 }
 
-impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
+impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Metavariable(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Identifier(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::ScopedIdentifier(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlot::Verbatim(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Metavariable(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Identifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -11040,25 +11024,25 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionPat
     }
 }
 
-impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Metavariable(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Identifier(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedTypeIdentifierInExpressionPositionPathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp, view = ScopedTypeIdentifierPathNodeSlotRecord)]
-pub enum ScopedTypeIdentifierPathNodeSlot {
+#[node(choice, stamp = stamp, view = ScopedTypeIdentifierQualifierNodeSlotRecord)]
+pub enum ScopedTypeIdentifierQualifierNodeSlot {
     #[kind(kind::METAVARIABLE)]
     Metavariable(MetavariableNode),
     #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
@@ -11084,75 +11068,75 @@ pub enum ScopedTypeIdentifierPathNodeSlot {
     Verbatim(VerbatimNode),
 }
 
-impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathNodeSlot {
+impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierQualifierNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ScopedTypeIdentifierPathNodeSlot::Metavariable(t) => t.prepare(ctx),
-            ScopedTypeIdentifierPathNodeSlot::Identifier(t) => t.prepare(ctx),
-            ScopedTypeIdentifierPathNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            ScopedTypeIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
-            ScopedTypeIdentifierPathNodeSlot::BracketedType(t) => t.prepare(ctx),
-            ScopedTypeIdentifierPathNodeSlot::GenericType(t) => t.prepare(ctx),
-            ScopedTypeIdentifierPathNodeSlot::Self_(_) => Ok(()),
-            ScopedTypeIdentifierPathNodeSlot::Super(_) => Ok(()),
-            ScopedTypeIdentifierPathNodeSlot::Crate(_) => Ok(()),
-            ScopedTypeIdentifierPathNodeSlot::Verbatim(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(t) => t.prepare(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(_) => Ok(()),
+            ScopedTypeIdentifierQualifierNodeSlot::Super(_) => Ok(()),
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(_) => Ok(()),
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ScopedTypeIdentifierPathNodeSlot::Metavariable(t) => t.gap_edges(),
-            ScopedTypeIdentifierPathNodeSlot::Identifier(t) => t.gap_edges(),
-            ScopedTypeIdentifierPathNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
-            ScopedTypeIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
-            ScopedTypeIdentifierPathNodeSlot::BracketedType(t) => t.gap_edges(),
-            ScopedTypeIdentifierPathNodeSlot::GenericType(t) => t.gap_edges(),
-            ScopedTypeIdentifierPathNodeSlot::Self_(edges) => Some(edges),
-            ScopedTypeIdentifierPathNodeSlot::Super(edges) => Some(edges),
-            ScopedTypeIdentifierPathNodeSlot::Crate(edges) => Some(edges),
-            ScopedTypeIdentifierPathNodeSlot::Verbatim(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(t) => t.gap_edges(),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(edges) => Some(edges),
+            ScopedTypeIdentifierQualifierNodeSlot::Super(edges) => Some(edges),
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(edges) => Some(edges),
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ScopedTypeIdentifierPathNodeSlot::Metavariable(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierPathNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierPathNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierPathNodeSlot::BracketedType(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierPathNodeSlot::GenericType(t) => t.snapshot_edge(),
-            ScopedTypeIdentifierPathNodeSlot::Self_(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Super(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Crate(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Verbatim(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(t) => t.snapshot_edge(),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            ScopedTypeIdentifierPathNodeSlot::Metavariable(t) => t.source_coordinate(),
-            ScopedTypeIdentifierPathNodeSlot::Identifier(t) => t.source_coordinate(),
-            ScopedTypeIdentifierPathNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
-            ScopedTypeIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
-            ScopedTypeIdentifierPathNodeSlot::BracketedType(t) => t.source_coordinate(),
-            ScopedTypeIdentifierPathNodeSlot::GenericType(t) => t.source_coordinate(),
-            ScopedTypeIdentifierPathNodeSlot::Self_(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Super(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Crate(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Verbatim(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(t) => t.source_coordinate(),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ScopedTypeIdentifierPathNodeSlot::Metavariable(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierPathNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierPathNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierPathNodeSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierPathNodeSlot::BracketedType(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierPathNodeSlot::GenericType(t) => t.source_separator(ctx),
-            ScopedTypeIdentifierPathNodeSlot::Self_(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Super(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Crate(_) => None,
-            ScopedTypeIdentifierPathNodeSlot::Verbatim(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(t) => t.source_separator(ctx),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Super(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(_) => None,
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &mut ::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -11160,7 +11144,7 @@ impl ::sittir_core::prepare::Prepare for ScopedTypeIdentifierPathNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for ScopedTypeIdentifierPathNodeSlot {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierQualifierNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -11177,25 +11161,25 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierPathNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for ScopedTypeIdentifierPathNodeSlot {
+impl ::sittir_core::render::Render for ScopedTypeIdentifierQualifierNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ScopedTypeIdentifierPathNodeSlot::Metavariable(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlot::Identifier(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlot::ScopedIdentifier(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlot::BracketedType(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlot::GenericType(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedTypeIdentifierPathNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedTypeIdentifierPathNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedTypeIdentifierPathNodeSlot::Verbatim(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::Metavariable(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::Identifier(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::BracketedType(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::GenericType(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedTypeIdentifierQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierQualifierNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
 
 ::sittir_core::records_codec! {
-impl ::sittir_core::view::KindOf for ScopedTypeIdentifierPathNodeSlotRecord<'_> {
+impl ::sittir_core::view::KindOf for ScopedTypeIdentifierQualifierNodeSlotRecord<'_> {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Metavariable(inner) => inner.kind_in(kinds),
@@ -11212,19 +11196,19 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierPathNodeSlotRecord<'_> 
     }
 }
 
-impl ::sittir_core::render::Render for ScopedTypeIdentifierPathNodeSlotRecord<'_> {
+impl ::sittir_core::render::Render for ScopedTypeIdentifierQualifierNodeSlotRecord<'_> {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ScopedTypeIdentifierPathNodeSlotRecord::Metavariable(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlotRecord::Identifier(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlotRecord::BracketedType(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlotRecord::GenericType(inner) => inner.render(w),
-            ScopedTypeIdentifierPathNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            ScopedTypeIdentifierPathNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedTypeIdentifierPathNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
-            ScopedTypeIdentifierPathNodeSlotRecord::Verbatim(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::Metavariable(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::Identifier(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::ScopedIdentifier(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::GenericTypeWithTurbofish(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::BracketedType(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::GenericType(inner) => inner.render(w),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierQualifierNodeSlotRecord::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -12193,7 +12177,7 @@ impl ::sittir_core::render::Render for CallExpressionFunctionNodeSlotRecord<'_> 
 pub enum StructExpressionNameNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifierInExpressionPosition(ScopedTypeIdentifierInExpressionPositionNode),
     #[kind(kind::GENERIC_TYPE_WITH_TURBOFISH)]
     GenericTypeWithTurbofish(GenericTypeWithTurbofishNode),
@@ -15561,7 +15545,7 @@ impl ::sittir_core::render::Render for TupleStructPatternTypeNodeSlotRecord<'_> 
 pub enum StructPatternTypeNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
 }
 
@@ -17627,7 +17611,7 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlotRecord<'
 pub enum ImplItemPositiveClauseTraitNodeSlot {
     #[kind(kind::_TYPE_IDENTIFIER, display)]
     TypeIdentifier(TypeIdentifierNode),
-    #[kind(kind::SCOPED_TYPE_IDENTIFIER)]
+    #[kind(kind::SCOPED_TYPE_IDENTIFIER, kind::SCOPED_IDENTIFIER)]
     ScopedTypeIdentifier(ScopedTypeIdentifierNode),
     #[kind(kind::GENERIC_TYPE)]
     GenericType(GenericTypeNode),
@@ -25218,9 +25202,9 @@ pub struct ScopedIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_path")]
-    #[slot(field = field::PATH, word = 2, width = 5)]
-    pub path: Option<::sittir_core::SlotValue<Box<ScopedIdentifierPathNodeSlot>>>,
+    #[wire(key = "_qualifier")]
+    #[slot(field = field::QUALIFIER, word = 2, width = 5)]
+    pub qualifier: Option<::sittir_core::SlotValue<Box<ScopedIdentifierQualifierNodeSlot>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<ScopedIdentifierNameNodeSlot>,
@@ -25284,7 +25268,7 @@ fn prepare_scoped_identifier<N: ScopedIdentifierPrepare + ?Sized>(node: &mut N, 
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(263), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.path, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.qualifier, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
@@ -25295,9 +25279,9 @@ pub struct ScopedTypeIdentifierInExpressionPositionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_path")]
-    #[slot(field = field::PATH, word = 2, width = 5)]
-    pub path: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierInExpressionPositionPathNodeSlot>>>,
+    #[wire(key = "_qualifier")]
+    #[slot(field = field::QUALIFIER, word = 2, width = 5)]
+    pub qualifier: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 9, inline = 7)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
@@ -25361,7 +25345,7 @@ fn prepare_scoped_type_identifier_in_expression_position<N: ScopedTypeIdentifier
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(264), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.path, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.qualifier, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
@@ -25372,9 +25356,9 @@ pub struct ScopedTypeIdentifierNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_path")]
-    #[slot(field = field::PATH, word = 2, width = 5)]
-    pub path: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierPathNodeSlot>>>,
+    #[wire(key = "_qualifier")]
+    #[slot(field = field::QUALIFIER, word = 2, width = 5)]
+    pub qualifier: Option<::sittir_core::SlotValue<Box<ScopedTypeIdentifierQualifierNodeSlot>>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 9, inline = 7)]
     pub name: ::sittir_core::SlotValue<TypeIdentifierNode>,
@@ -25438,7 +25422,7 @@ fn prepare_scoped_type_identifier<N: ScopedTypeIdentifierPrepare + ?Sized>(node:
     let mut parts = node.prepare_parts();
     ::sittir_core::prepare::LayoutTarget::prepare(&mut parts.layout, overlay, ctx)?;
     ::sittir_core::prepare::prepare_edges(::sittir_core::prepare::LayoutTarget::edges_mut(&mut parts.layout, overlay), ::sittir_core::types::KindId(265), (None, None), ctx);
-    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.path, overlay, ctx)?;
+    ::sittir_core::prepare::SlotTarget::prepare(&mut parts.qualifier, overlay, ctx)?;
     ::sittir_core::prepare::SlotTarget::prepare(&mut parts.name, overlay, ctx)?;
     Ok(())
 }
@@ -46125,7 +46109,7 @@ impl ::sittir_core::prepare::SeatTarget for MacroInvocationFunctionNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierPathNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierQualifierNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
@@ -46146,7 +46130,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierNameNodeSlot {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierInExpressionPositionPathNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
@@ -46158,7 +46142,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierInExpressionPosi
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierPathNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierQualifierNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
@@ -47972,9 +47956,9 @@ fn render_macro_invocation<N: MacroInvocationFields + ?Sized>(node: &N, w: &mut 
 
 fn render_scoped_identifier<N: ScopedIdentifierFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = node.name();
-    let path = View::new(node.path(), "{}");
+    let qualifier = View::new(node.qualifier(), "{}");
     w.edge(::sittir_core::types::KindId(263), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_path", ::sittir_core::types::ItemIndex(0), w, |w| path.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_qualifier", ::sittir_core::types::ItemIndex(0), w, |w| qualifier.render(w))?;
     w.site_at(options::SITE_SCOPED_IDENTIFIER_COLON_COLON_BEFORE);
     w.text("::")?;
     w.site_at(options::SITE_SCOPED_IDENTIFIER_COLON_COLON_AFTER);
@@ -47985,9 +47969,9 @@ fn render_scoped_identifier<N: ScopedIdentifierFields + ?Sized>(node: &N, w: &mu
 
 fn render_scoped_type_identifier_in_expression_position<N: ScopedTypeIdentifierInExpressionPositionFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = node.name();
-    let path = View::new(node.path(), "{}");
+    let qualifier = View::new(node.qualifier(), "{}");
     w.edge(::sittir_core::types::KindId(264), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_path", ::sittir_core::types::ItemIndex(0), w, |w| path.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_qualifier", ::sittir_core::types::ItemIndex(0), w, |w| qualifier.render(w))?;
     w.site_at(options::SITE_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_COLON_COLON_BEFORE);
     w.text("::")?;
     w.site_at(options::SITE_SCOPED_TYPE_IDENTIFIER_IN_EXPRESSION_POSITION_COLON_COLON_AFTER);
@@ -47998,9 +47982,9 @@ fn render_scoped_type_identifier_in_expression_position<N: ScopedTypeIdentifierI
 
 fn render_scoped_type_identifier<N: ScopedTypeIdentifierFields + ?Sized>(node: &N, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let name = node.name();
-    let path = View::new(node.path(), "{}");
+    let qualifier = View::new(node.qualifier(), "{}");
     w.edge(::sittir_core::types::KindId(265), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_path", ::sittir_core::types::ItemIndex(0), w, |w| path.render(w))?;
+    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_qualifier", ::sittir_core::types::ItemIndex(0), w, |w| qualifier.render(w))?;
     w.site_at(options::SITE_SCOPED_TYPE_IDENTIFIER_COLON_COLON_BEFORE);
     w.text("::")?;
     w.site_at(options::SITE_SCOPED_TYPE_IDENTIFIER_COLON_COLON_AFTER);
@@ -50645,8 +50629,10 @@ fn render_parameters_elements_receiver_group<N: ParametersElementsReceiverGroupF
     let elements = View::new(node.elements(), "{}");
     w.edge(::sittir_core::types::KindId(440), ::sittir_core::options::Side::Before, ::sittir_core::layout::BodyLayout::edges(node.layout()).before);
     w.text(",")?;
-    w.site_at(options::SITE_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
-    ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    if elements.is_present() {
+        w.site_at(options::SITE_PARAMETERS_ELEMENTS_RECEIVER_GROUP_COMMA_AFTER);
+        ::sittir_core::layout::BodyLayout::render_unit(node.layout(), "_elements", ::sittir_core::types::ItemIndex(0), w, |w| elements.render(w))?;
+    }
     w.edge(::sittir_core::types::KindId(440), ::sittir_core::options::Side::After, ::sittir_core::layout::BodyLayout::edges(node.layout()).after);
     Ok(())
 }
@@ -52146,13 +52132,12 @@ pub fn render_record(
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {
         return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx, None).map(|(_, text)| text);
     }
-    with_record_node(root, trees, built, store, ctx, false, |node| render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+    with_record_node(root, trees, built, store, ctx, |node| render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
-/// the side that holds it (`sittir_core::arena::RecordGrammar::render_entry`):
-/// as `render_record` renders it, without its own leading and trailing
-/// sides, which are its neighbours in that side, where `w` stands.
+/// the side that holds it (`sittir_core::arena::RecordGrammar::render_entry`),
+/// as `render_record` renders it, where `w` stands.
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
     trees: &mut dyn ::sittir_core::arena::RecordTrees,
@@ -52164,22 +52149,20 @@ pub fn render_entry_record(
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {
         return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
     }
-    with_record_node(root, trees, built, store, ctx, true, |node| node.render(w))
+    with_record_node(root, trees, built, store, ctx, |node| node.render(w))
 }
 
-/// The record `root` names, prepared into a fresh overlay, its own
-/// leading and trailing sides left out for an `entry`, as `body` reads
-/// it through its view.
+/// The record `root` names, prepared into a fresh overlay, as `body`
+/// reads it through its view.
 fn with_record_node<R>(
     root: ::sittir_core::arena::CellAt,
     trees: &mut dyn ::sittir_core::arena::RecordTrees,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    entry: bool,
     body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
-    let prepared = if entry { ::sittir_core::arena::prepare_entry_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx) } else { ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx) }?;
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx)?;
     let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
     body(&node)
@@ -54142,4 +54125,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierPathNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionPathNodeSlot, ScopedTypeIdentifierPathNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);

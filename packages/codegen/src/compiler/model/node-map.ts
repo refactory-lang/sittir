@@ -1212,6 +1212,7 @@ export class AssembledNonterminal {
 	registeredOption?: 'spelling' | 'choice';
 	effectiveWordsets?: readonly string[];
 	checksReserved?: boolean;
+	splicedEnvelope?: string;
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;

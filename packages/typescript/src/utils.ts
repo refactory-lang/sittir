@@ -229,8 +229,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	241: [['elements', 0, undefined, '_elements']],
 	242: [['elements', 0, undefined, '_elements']],
 	243: [
-		['object', 0, undefined, '_object'],
-		['property', 1, undefined, '_property']
+		['qualifier', 0, undefined, '_qualifier'],
+		['name', 1, undefined, '_name']
 	],
 	244: [
 		['decorators', 0, undefined, '_decorator'],
@@ -422,7 +422,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['terminator', 2, undefined, '_terminator']
 	],
 	318: [
-		['module', 0, undefined, '_module'],
+		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
 	319: [
@@ -1386,14 +1386,14 @@ export const structure: StructureTable = Object.freeze({
 	243: {
 		kind: 'nested_identifier',
 		required: [
-			['_object', 'object'],
-			['_property', 'property']
+			['_qualifier', 'qualifier'],
+			['_name', 'name']
 		],
 		nodeOnly: [
-			['_object', 'NestedIdentifier.object', 'buildIdentifier(…)', [1, 243]],
-			['_property', 'NestedIdentifier.property', 'a built PropertyIdentifier', [499]]
+			['_qualifier', 'NestedIdentifier.qualifier', 'buildIdentifier(…)', [1, 243]],
+			['_name', 'NestedIdentifier.name', 'a built PropertyIdentifier', [499]]
 		],
-		config: ['object', 'property']
+		config: ['qualifier', 'name']
 	},
 	244: {
 		kind: 'class',
@@ -1966,14 +1966,14 @@ export const structure: StructureTable = Object.freeze({
 	318: {
 		kind: 'nested_type_identifier',
 		required: [
-			['_module', 'module'],
+			['_qualifier', 'qualifier'],
 			['_name', 'name']
 		],
 		nodeOnly: [
-			['_module', 'NestedTypeIdentifier.module', 'buildIdentifier(…)', [1, 243]],
+			['_qualifier', 'NestedTypeIdentifier.qualifier', 'buildIdentifier(…)', [1, 243]],
 			['_name', 'NestedTypeIdentifier.name', 'a built TypeIdentifier', [504]]
 		],
-		config: ['module', 'name']
+		config: ['qualifier', 'name']
 	},
 	319: {
 		kind: 'interface_declaration',

@@ -1,10 +1,11 @@
 //! Resolved render options: one whitespace kind id per spacing site, one
 //! bitflag per flank site, and the indentation unit.
 
-use crate::types::{EdgeRow, FlankId, KindId, SiteId};
+use crate::types::{EdgeRow, FieldId, FlankId, KindId, SiteId};
 
 /// The seams a kind wraps around itself: the spacing site on each side, or
-/// none when the kind owns no seam there.
+/// none when the kind owns no seam there; and what its template places at
+/// each of its boundaries.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EdgeSite {
     pub before: Option<SiteId>,
@@ -14,6 +15,43 @@ pub struct EdgeSite {
     pub before_arms: &'static [ArmSite],
     /// As `before_arms`, for the side after.
     pub after_arms: &'static [ArmSite],
+    /// Per kind of the node's first child, what the kind's template places
+    /// between its before edge and that child, in `next` order.
+    pub before_bounds: &'static [BoundaryArm],
+    /// As `before_bounds`, between the node's last child and its after edge.
+    pub after_bounds: &'static [BoundaryArm],
+}
+
+impl EdgeSite {
+    /// Whether the kind owns an edge seam, a site or an arm on either side.
+    #[must_use]
+    pub const fn owns_edges(&self) -> bool {
+        self.before.is_some() || self.after.is_some() || !self.before_arms.is_empty() || !self.after_arms.is_empty()
+    }
+}
+
+/// What a kind's template places at one boundary when the child there is
+/// shown as kind `next` (`read::display_id`) and, for an arm whose `next`
+/// reaches that boundary through more than one slot, is tagged with `field`:
+/// a coordinate of the kind places the same marks at that edge of its bytes
+/// (`RenderSink::boundary`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BoundaryArm {
+    pub next: KindId,
+    pub field: Option<FieldId>,
+    pub marks: &'static [BoundaryMark],
+}
+
+/// One write a template makes at a boundary, through the sink's own entry
+/// point for it.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum BoundaryMark {
+    /// A spacing site (`RenderSink::site_at`).
+    Site(SiteId),
+    /// A list's flank site (`RenderSink::flank_at`).
+    Flank(SiteId),
+    /// A fixed seam (`RenderSink::seam`).
+    Seam(crate::layout_kinds::LayoutKinds),
 }
 
 /// One arm of a token-set edge: the arm token's kind id and the spacing site
@@ -170,10 +208,11 @@ impl ResolvedOptions {
         sites.iter().map(|spec| spec.seam(spec.default_arm)).collect()
     }
 
-    /// The edge seams the resolved options give a node of `kind`, or none when the kind owns no edge site.
+    /// The edge seams the resolved options give a node of `kind`, or none when
+    /// the kind owns no edge site or arm (a row of boundary arms alone).
     #[must_use]
     pub fn edge_arms(&self, kind: KindId) -> Option<crate::slot::CoordinateEdges> {
-        let row = self.edge_row(kind)?;
+        let row = self.edge_row(kind).filter(|row| row.owns_edges())?;
         Some(crate::slot::CoordinateEdges {
             before: row.before.map(|site| self.edge_seam(site, None)),
             after: row.after.map(|site| self.edge_seam(site, None)),
@@ -251,6 +290,30 @@ impl ResolvedOptions {
     #[must_use]
     pub fn kind_has(&self, kind: KindId, flag: crate::options::KindFlags) -> bool {
         self.kind_flags.get(kind.index()).is_some_and(|flags| flags.has(flag))
+    }
+
+    /// The boundary arms of `kind`'s row on `side` (`BoundaryArm`), in `next`
+    /// order; none when the kind has no row or its row places nothing there.
+    #[must_use]
+    pub fn boundary_arms(&self, kind: KindId, side: Side) -> Option<&'static [BoundaryArm]> {
+        let row = self.edge_row(kind)?;
+        let arms = match side {
+            Side::Before => row.before_bounds,
+            Side::After => row.after_bounds,
+        };
+        (!arms.is_empty()).then_some(arms)
+    }
+
+    /// The marks of the arm in `arms` (`boundary_arms`) for a child shown as
+    /// `next` and tagged with `field`; none when no arm names it.
+    #[must_use]
+    pub fn boundary_marks(arms: &'static [BoundaryArm], next: KindId, field: Option<FieldId>) -> &'static [BoundaryMark] {
+        let start = arms.partition_point(|arm| arm.next < next);
+        arms[start..]
+            .iter()
+            .take_while(|arm| arm.next == next)
+            .find(|arm| arm.field.is_none() || arm.field == field)
+            .map_or(&[], |arm| arm.marks)
     }
 
     /// The spacing sites of `kind`'s edge row, before and after it: `None` on a

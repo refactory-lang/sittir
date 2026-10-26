@@ -42,7 +42,7 @@ for (const form of forms) {
 			expect(member?.multiple).toBe(true);
 			expect(member?.scalar).toBe(false);
 			expect(member?.optional).toBe(true);
-			expect(member?.kinds.has('identifier.type')).toBe(true);
+			expect(member?.kinds.has('identifier')).toBe(true);
 			expect(member?.kinds.has(form.clause)).toBe(false);
 		}, FULL_PIPELINE_TIMEOUT);
 

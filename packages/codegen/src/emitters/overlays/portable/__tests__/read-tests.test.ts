@@ -17,6 +17,7 @@ const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> 
 const node = (kind: string, slots: readonly ModelSlot[] = []): ModelNode => ({
 	kind,
 	modelType: 'branch',
+	unit: false,
 	slots,
 	subtypes: [],
 	elementKinds: [],
@@ -106,8 +107,8 @@ describe('readTestOf', () => {
 	});
 
 	it('compares an alias\'s own text through the content it wraps', async () => {
-		expect(await testsOf('((type_identifier) @type.named.prelude (#match? @type.named.prelude "^Option$"))', 'type_identifier')).toEqual([
-			['type.named.prelude', [{ up: 0, via: [SLOTS['type_identifier.content']], plan: { op: 'match', pattern: '^Option$', self: true } }]]
+		expect(await testsOf('((type_identifier) @type.primitive (#match? @type.primitive "^u8$"))', 'type_identifier')).toEqual([
+			['type.primitive', [{ up: 0, via: [SLOTS['type_identifier.content']], plan: { op: 'match', pattern: '^u8$', self: true } }]]
 		]);
 	});
 

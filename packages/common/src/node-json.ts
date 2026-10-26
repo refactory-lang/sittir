@@ -88,7 +88,7 @@ function kindName(kindId: number, facts: NodeJSONFacts): string {
 	return name;
 }
 
-type Revived = { readonly $trivia: Readonly<Record<string, (...items: unknown[]) => unknown>> };
+type Revived = { readonly $trivia?: Readonly<Record<string, (...items: unknown[]) => unknown>> };
 
 export interface ReviveHooks {
 	readonly facts: NodeJSONFacts;
@@ -106,7 +106,7 @@ const kindNames = new WeakMap<NodeJSONFacts, ReadonlySet<string>>();
  * @param value - The parsed JSON.
  * @param hooks - How to build and settle the language's nodes.
  * @returns `value` with every node's JSON built into a node.
- * @throws Naming the JSON path, for a kind the language lacks, an ERROR node, a slot the kind lacks or a leaf without its text.
+ * @throws Naming the JSON path, for a kind the language lacks, an ERROR node, a slot the kind lacks, a leaf without its text or comments on a trivia kind.
  */
 export function reviveNode(value: unknown, hooks: ReviveHooks): unknown {
 	return revive(value, '$', hooks);
@@ -155,8 +155,10 @@ function revive(value: unknown, path: string, hooks: ReviveHooks): unknown {
 	for (const [side, key] of COMMENT_SIDES) {
 		const comments = object[key];
 		if (!Array.isArray(comments) || comments.length === 0) continue;
+		const trivia = (node as Revived).$trivia;
+		if (trivia === undefined) throw new Error(`${path}: ${name} is trivia and holds no ${key}`);
 		const entries = comments.map((entry, index) => revive(entry, `${path}.${key}[${index}]`, hooks));
-		node = (node as Revived).$trivia[side]!(...entries);
+		node = trivia[side]!(...entries);
 	}
 	return hooks.settle(node);
 }

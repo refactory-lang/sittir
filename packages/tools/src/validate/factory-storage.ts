@@ -534,7 +534,7 @@ export async function validateFactoryStorage(
 				options.profile?.candidate(entry.name, entry.source, kind, cand.start, cand.end);
 
 				const indices = spans.toIndices(cand);
-				const node1 = findSpanNode(tree1.rootNode, indices.start, indices.end, kind);
+				const node1 = findSpanNode(tree1.rootNode, indices.start, indices.end, kind, kindNameFromId);
 				const inputSource = node1 ? node1.text : spans.slice(cand);
 
 				// Canonical reference: what a real parse+read produces for

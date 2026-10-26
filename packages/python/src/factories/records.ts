@@ -12,7 +12,7 @@ import type {
 	NumericLiteral,
 	RefuseUndeclared,
 	RefusingConfig,
-	WidenNumeric
+	WidenSlots
 } from '@sittir/types';
 import {
 	currentHandle,
@@ -32,6 +32,7 @@ import {
 	describeValue,
 	restItems,
 	admitAliasContent,
+	admitSplicedEnvelope,
 	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
@@ -2101,6 +2102,8 @@ export function buildSimplePattern<
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| T.Integer
+		| T.Float
 		| T.SimplePatternNegative
 		| T.ComplexPattern
 		| T.DottedName
@@ -2120,6 +2123,8 @@ export function buildSimplePattern(
 		| TSKindId.True
 		| TSKindId.False
 		| TSKindId.None
+		| T.Integer
+		| T.Float
 		| T.SimplePatternNegative
 		| T.ComplexPattern
 		| T.DottedName
@@ -2131,7 +2136,7 @@ export function buildSimplePattern(
 	if (handle !== undefined) admitChildren(handle, '_simple_pattern', { content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.SimplePattern as const, { _content });
-	const record = arena.record(TSKindId.SimplePattern as const, 68);
+	const record = arena.record(TSKindId.SimplePattern as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
 	const node = arena.view(record);
 	return node as unknown as T.SimplePattern.Bound;
@@ -2154,6 +2159,8 @@ function rowSimplePattern(node: object, handle: EngineHandle | undefined): Built
 						| TSKindId.True
 						| TSKindId.False
 						| TSKindId.None
+						| T.Integer
+						| T.Float
 						| T.SimplePatternNegative
 						| T.ComplexPattern
 						| T.DottedName
@@ -2209,90 +2216,48 @@ function rowCaseAsPattern(node: object, handle: EngineHandle | undefined): Built
 }
 
 export function buildUnionPattern<
-	A extends NonEmptyArray<
-		Admit<
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern
-		>
+	LeftSlot extends T.UnionPattern.Config['left'],
+	RightSlot extends T.UnionPattern.Config['right']
+>(
+	config: RefusingConfig<
+		WidenSlots<T.UnionPattern.Config, { left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }>,
+		{ left: LeftSlot; right: RightSlot }
 	>
->(...children: A & RefuseUndeclared<A>): T.UnionPattern.Bound;
+): T.UnionPattern.Bound;
 export function buildUnionPattern(
-	...children: NonEmptyArray<
-		Admit<
-			| T.ClassPattern
-			| T.SplatPattern
-			| T.UnionPattern
-			| T.CaseListPattern
-			| T.CaseTuplePattern
-			| T.DictPattern
-			| T.String
-			| T.ConcatenatedString
-			| TSKindId.True
-			| TSKindId.False
-			| TSKindId.None
-			| T.SimplePatternNegative
-			| T.ComplexPattern
-			| T.DottedName
-			| TSKindId.WildcardPattern
-		>
-	>
+	config: WidenSlots<T.UnionPattern.Config, { left: Admit<T.SimplePattern>; right: Admit<T.SimplePattern> }>
 ): T.UnionPattern.Bound {
-	currentHandle()?.admit(TSKindId.UnionPattern, children);
-	const _patterns = children;
+	currentHandle()?.admit(TSKindId.UnionPattern, [config]);
+	const _left = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.UnionPattern['_left']>>(config.left),
+		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+		'UnionPattern.left'
+	);
+	const _right = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.UnionPattern['_right']>>(config.right),
+		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+		'UnionPattern.right'
+	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'union_pattern', { patterns: _patterns });
+	if (handle !== undefined) admitChildren(handle, 'union_pattern', { left: _left, right: _right });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.UnionPattern as const, { _patterns });
-	const record = arena.record(TSKindId.UnionPattern as const, 4);
-	storeList(arena, record.data, record.base + 2, _patterns, 5);
+	handle?.verifyStored?.(TSKindId.UnionPattern as const, { _left, _right });
+	const record = arena.record(TSKindId.UnionPattern as const, 12);
+	storeCell(arena, record.data, record.base + 2, _left);
+	storeCell(arena, record.data, record.base + 7, _right);
 	const node = arena.view(record);
 	return node as unknown as T.UnionPattern.Bound;
 }
 
 function rowUnionPattern(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.UnionPattern.Config;
 	return {
 		$with: {
-			patterns: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					elementsWith(
-						args,
-						{ slot: 'patterns', keys: ['sign', 'value'], make: buildSimplePatternNegative },
-						(
-							...vs: NonEmptyArray<
-								Admit<
-									| T.ClassPattern
-									| T.SplatPattern
-									| T.UnionPattern
-									| T.CaseListPattern
-									| T.CaseTuplePattern
-									| T.DictPattern
-									| T.String
-									| T.ConcatenatedString
-									| TSKindId.True
-									| TSKindId.False
-									| TSKindId.None
-									| T.SimplePatternNegative
-									| T.ComplexPattern
-									| T.DottedName
-									| TSKindId.WildcardPattern
-								>
-							>
-						) => buildUnionPattern(...restItems('patterns', vs))
-					)
-				)
+			left: (value: Admit<NonNullable<T.UnionPattern.Config>['left']>) =>
+				rebuilt(node, handle, () => buildUnionPattern({ ...config, left: value })),
+			right: (value: Admit<NonNullable<T.UnionPattern.Config>['right']>) =>
+				rebuilt(node, handle, () => buildUnionPattern({ ...config, right: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2364,18 +2329,29 @@ function rowDictPattern(node: object, handle: EngineHandle | undefined): BuiltRo
 export function buildKeyValuePattern<
 	KeySlot extends T.KeyValuePattern.Config['key'],
 	ValueSlot extends T.KeyValuePattern.Config['value']
->(config: RefusingConfig<T.KeyValuePattern.Config, { key: KeySlot; value: ValueSlot }>): T.KeyValuePattern.Bound;
-export function buildKeyValuePattern(config: T.KeyValuePattern.Config): T.KeyValuePattern.Bound {
+>(
+	config: RefusingConfig<
+		WidenSlots<T.KeyValuePattern.Config, { key: Admit<T.SimplePattern> }>,
+		{ key: KeySlot; value: ValueSlot }
+	>
+): T.KeyValuePattern.Bound;
+export function buildKeyValuePattern(
+	config: WidenSlots<T.KeyValuePattern.Config, { key: Admit<T.SimplePattern> }>
+): T.KeyValuePattern.Bound {
 	currentHandle()?.admit(TSKindId.KeyValuePattern, [config]);
-	const _key = kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key);
+	const _key = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.KeyValuePattern['_key']>>(config.key),
+		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+		'KeyValuePattern.key'
+	);
 	const _value = config.value;
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'key_value_pattern', { key: _key, value: _value });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.KeyValuePattern as const, { _key, _value });
-	const record = arena.record(TSKindId.KeyValuePattern as const, 73);
+	const record = arena.record(TSKindId.KeyValuePattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _key);
-	storeCell(arena, record.data, record.base + 68, _value);
+	storeCell(arena, record.data, record.base + 7, _value);
 	const node = arena.view(record);
 	return node as unknown as T.KeyValuePattern.Bound;
 }
@@ -2400,16 +2376,27 @@ function rowKeyValuePattern(node: object, handle: EngineHandle | undefined): Bui
 export function buildKeywordPattern<
 	NameSlot extends T.KeywordPattern.Config['name'],
 	ValueSlot extends T.KeywordPattern.Config['value']
->(config: RefusingConfig<T.KeywordPattern.Config, { name: NameSlot; value: ValueSlot }>): T.KeywordPattern.Bound;
-export function buildKeywordPattern(config: T.KeywordPattern.Config): T.KeywordPattern.Bound {
+>(
+	config: RefusingConfig<
+		WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>,
+		{ name: NameSlot; value: ValueSlot }
+	>
+): T.KeywordPattern.Bound;
+export function buildKeywordPattern(
+	config: WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>
+): T.KeywordPattern.Bound {
 	currentHandle()?.admit(TSKindId.KeywordPattern, [config]);
 	const _name = config.name;
-	const _value = kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value);
+	const _value = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value),
+		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+		'KeywordPattern.value'
+	);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'keyword_pattern', { name: _name, value: _value });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.KeywordPattern as const, { _name, _value });
-	const record = arena.record(TSKindId.KeywordPattern as const, 73);
+	const record = arena.record(TSKindId.KeywordPattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _value);
 	const node = arena.view(record);
@@ -3764,19 +3751,19 @@ function rowConstrainedType(node: object, handle: EngineHandle | undefined): Bui
 }
 
 export function buildMemberType<
-	BaseTypeSlot extends T.MemberType.Config['baseType'],
+	QualifierSlot extends T.MemberType.Config['qualifier'],
 	NameSlot extends T.MemberType.Config['name']
->(config: RefusingConfig<T.MemberType.Config, { baseType: BaseTypeSlot; name: NameSlot }>): T.MemberType.Bound;
+>(config: RefusingConfig<T.MemberType.Config, { qualifier: QualifierSlot; name: NameSlot }>): T.MemberType.Bound;
 export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound {
 	currentHandle()?.admit(TSKindId.MemberType, [config]);
-	const _base_type = config.baseType;
+	const _qualifier = config.qualifier;
 	const _name = config.name;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'member_type', { baseType: _base_type, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'member_type', { qualifier: _qualifier, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.MemberType as const, { _base_type, _name });
+	handle?.verifyStored?.(TSKindId.MemberType as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.MemberType as const, 12);
-	storeCell(arena, record.data, record.base + 2, _base_type);
+	storeCell(arena, record.data, record.base + 2, _qualifier);
 	storeCell(arena, record.data, record.base + 7, _name);
 	const node = arena.view(record);
 	return node as unknown as T.MemberType.Bound;
@@ -3787,7 +3774,8 @@ function rowMemberType(node: object, handle: EngineHandle | undefined): BuiltRow
 	const config = inputs.config as T.MemberType.Config;
 	return {
 		$with: {
-			baseType: (value: Admit<T.Type>) => rebuilt(node, handle, () => buildMemberType({ ...config, baseType: value })),
+			qualifier: (value: Admit<T.Type>) =>
+				rebuilt(node, handle, () => buildMemberType({ ...config, qualifier: value })),
 			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildMemberType({ ...config, name: value }))
 		},
 		$trivia: {
@@ -4815,10 +4803,6 @@ function rowComment(node: object, handle: EngineHandle | undefined): BuiltRow {
 	return {
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -6303,7 +6287,7 @@ function leafIntegerDecimalPlain(text: string, handle: EngineHandle | undefined)
 }
 
 export function buildFloatPoint<
-	const C extends WidenNumeric<
+	const C extends WidenSlots<
 		T.FloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -6317,13 +6301,13 @@ export function buildFloatPoint<
 		NumericConfig<C, { integer: true; fraction: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<
+			WidenSlots<
 				T.FloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
 		> &
 		RefusingConfig<
-			WidenNumeric<
+			WidenSlots<
 				T.FloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
@@ -6332,7 +6316,7 @@ export function buildFloatPoint<
 	options?: T.FloatPoint.Options
 ): T.FloatPoint.Bound;
 export function buildFloatPoint(
-	config: WidenNumeric<
+	config: WidenSlots<
 		T.FloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -6419,7 +6403,7 @@ function rowFloatPoint(node: object, handle: EngineHandle | undefined): BuiltRow
 }
 
 export function buildFloatLeadingPoint<
-	const C extends WidenNumeric<
+	const C extends WidenSlots<
 		T.FloatLeadingPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -6433,13 +6417,13 @@ export function buildFloatLeadingPoint<
 		NumericConfig<C, { integer: true; fraction: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<
+			WidenSlots<
 				T.FloatLeadingPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
 		> &
 		RefusingConfig<
-			WidenNumeric<
+			WidenSlots<
 				T.FloatLeadingPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
@@ -6448,7 +6432,7 @@ export function buildFloatLeadingPoint<
 	options?: T.FloatLeadingPoint.Options
 ): T.FloatLeadingPoint.Bound;
 export function buildFloatLeadingPoint(
-	config: WidenNumeric<
+	config: WidenSlots<
 		T.FloatLeadingPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -6542,7 +6526,7 @@ function rowFloatLeadingPoint(node: object, handle: EngineHandle | undefined): B
 }
 
 export function buildFloatScientific<
-	const C extends WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	const C extends WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.FloatScientific.Config['integer'],
 	SignSlot extends T.FloatScientific.Config['sign'],
 	ExponentSlot extends T.FloatScientific.Config['exponent'],
@@ -6550,18 +6534,15 @@ export function buildFloatScientific<
 >(
 	config: C &
 		NumericConfig<C, { integer: true; exponent: true }> &
-		RefuseUndeclared<
-			C,
-			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
-		> &
+		RefuseUndeclared<C, WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+			WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot; imaginary: ImaginarySlot }
 		>,
 	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound;
 export function buildFloatScientific(
-	config: WidenNumeric<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	config: WidenSlots<T.FloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	options?: T.FloatScientific.Options
 ): T.FloatScientific.Bound {
 	currentHandle()?.admit(TSKindId.FloatScientific, [config]);
@@ -6922,10 +6903,6 @@ function leafLineContinuationNewline(text: string, handle: EngineHandle | undefi
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return node;
@@ -6933,33 +6910,25 @@ function leafLineContinuationNewline(text: string, handle: EngineHandle | undefi
 
 export const buildLineContinuationNul: TSKindId.LineContinuationNul = TSKindId.LineContinuationNul;
 
-export function buildSimplePatternNegative<ValueSlot extends T.SimplePatternNegative.Config['value']>(
-	config: RefusingConfig<T.SimplePatternNegative.Config, { value: ValueSlot }>
+export function buildSimplePatternNegative<V extends Admit<T.Integer | T.Float>>(
+	value: V & RefuseUndeclared<V>
 ): T.SimplePatternNegative.Bound;
-export function buildSimplePatternNegative(config: T.SimplePatternNegative.Config): T.SimplePatternNegative.Bound {
-	currentHandle()?.admit(TSKindId.SimplePatternNegative, [config]);
-	const _sign = strictBooleanStorage(config.sign);
-	const _value = config.value;
+export function buildSimplePatternNegative(value: Admit<T.Integer | T.Float>): T.SimplePatternNegative.Bound {
+	const _value = value;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'simple_pattern_negative', { sign: _sign, value: _value });
+	if (handle !== undefined) admitChildren(handle, 'simple_pattern_negative', { value: _value });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SimplePatternNegative as const, { _sign, _value });
-	const record = arena.record(TSKindId.SimplePatternNegative as const, 31);
-	if (_sign) storeFlag(record.data, record.base + 2, 1);
-	storeCell(arena, record.data, record.base + 3, _value);
+	handle?.verifyStored?.(TSKindId.SimplePatternNegative as const, { _value });
+	const record = arena.record(TSKindId.SimplePatternNegative as const, 30);
+	storeCell(arena, record.data, record.base + 2, _value);
 	const node = arena.view(record);
 	return node as unknown as T.SimplePatternNegative.Bound;
 }
 
 function rowSimplePatternNegative(node: object, handle: EngineHandle | undefined): BuiltRow {
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.SimplePatternNegative.Config;
 	return {
 		$with: {
-			sign: (value?: Admit<NonNullable<T.SimplePatternNegative.Config>['sign']>) =>
-				rebuilt(node, handle, () => buildSimplePatternNegative({ ...config, sign: value })),
-			value: (value: Admit<T.Integer | T.Float>) =>
-				rebuilt(node, handle, () => buildSimplePatternNegative({ ...config, value: value }))
+			value: (value: Admit<T.Integer | T.Float>) => rebuilt(node, handle, () => buildSimplePatternNegative(value))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -7389,7 +7358,7 @@ function rowMatchBlockEmpty(node: object, handle: EngineHandle | undefined): Bui
 	};
 }
 
-export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements>>(
+export function buildSuiteInline<V extends Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>>(
 	value: V & RefuseUndeclared<V>
 ): ReturnType<typeof _buildSuiteInline>;
 export function buildSuiteInline<A extends NonEmptyArray<Admit<T.SimpleStatement>>>(
@@ -7407,7 +7376,8 @@ export function buildSuiteInline(...args: unknown[]) {
 		args.length === 1 &&
 		typeof args[0] === 'object' &&
 		args[0] !== null &&
-		(args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatementsElements as const);
+		((args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatementsElements as const) ||
+			(args[0] as { $type?: unknown }).$type === (TSKindId.SimpleStatements as const));
 	return prebuilt
 		? _buildSuiteInline(args[0] as Parameters<typeof _buildSuiteInline>[0])
 		: _buildSuiteInline(
@@ -7416,8 +7386,10 @@ export function buildSuiteInline(...args: unknown[]) {
 				>[0]
 			);
 }
-function _buildSuiteInline(value: Admit<T.SimpleStatementsElements>): T.SuiteInline.Bound {
-	const _elements = hydrateStored(value);
+function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>): T.SuiteInline.Bound {
+	const _elements = hydrateStored(
+		admitSplicedEnvelope(value, [TSKindId.SimpleStatements, 'elements', 'simple_statements'], 'SuiteInline.elements')
+	);
 	const listView = ownerView(_elements, '_item');
 	if (listView.length === undefined) refuseReadStub('_elements');
 	const handle = currentHandle();
@@ -7438,7 +7410,7 @@ function rowSuiteInline(node: object, handle: EngineHandle | undefined): BuiltRo
 					listSlotWith(
 						args,
 						{ kind: TSKindId.SimpleStatementsElements as const, optional: false, make: buildSimpleStatementsElements },
-						(value: Admit<T.SimpleStatementsElements>) => _buildSuiteInline(value)
+						(value: Admit<T.SimpleStatementsElements | Admit<T.SimpleStatements>>) => _buildSuiteInline(value)
 					)
 				)
 		},
@@ -8777,10 +8749,10 @@ export const builtViews: BuiltViews = Object.freeze({
 		302: rowBlockClassDeclaration,
 		303: rowSuiteBlockClassDeclaration,
 		304: rowDecoratedDefinitionClassDeclaration,
-		342: rowAsPatternTarget,
-		343: rowFormatExpression,
-		344: rowMethodDeclaration,
-		345: rowNames
+		341: rowAsPatternTarget,
+		342: rowFormatExpression,
+		343: rowMethodDeclaration,
+		344: rowNames
 	}),
 	leaves: Object.freeze({
 		1: leafIdentifier,

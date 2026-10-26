@@ -74,7 +74,7 @@ const seats: SeatTable = {
 };
 
 function surfaceWith(entries: IrSurface['entries']): IrSurface {
-	return { entries, seats, modelTypes: { tok: 'keyword' } };
+	return { entries, seats, modelTypes: { tok: 'keyword' }, unitKinds: new Set(['tok']) };
 }
 
 const opts = { factorySlots, factoryShapes, factoryFields, surface: surfaceWith({}), kindNameFromId, accessorOf };
@@ -169,7 +169,8 @@ describe('buildFactoryNodeFromReference on the ir surface', () => {
 			surface: {
 				entries: { header: { strict: vi.fn(), kind: { leftX: { strict: inner } } } },
 				seats: nestedSeats,
-				modelTypes: {}
+				modelTypes: {},
+				unitKinds: new Set()
 			}
 		}, { kindNameFromId, accessorOf });
 		expect(inner).toHaveBeenCalledWith({ kind: 3, x: 'v', name: 'n' });

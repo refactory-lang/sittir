@@ -354,8 +354,8 @@ impl<G: EngineGrammar> SourceTable for CandidateSources<'_, G> {
         self.sources.last_list_child_kind(tree, span, kind)
     }
 
-    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
-        self.sources.for_each_kind_ending_with(coord, f);
+    fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
+        self.sources.for_each_edge_level(coord, side, f);
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {

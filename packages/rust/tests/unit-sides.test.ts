@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { writeUnitSides } from '@sittir/common/utils';
-import { constructions, records } from './side-nesting.mts';
+import { constructions, records } from './constructions.mts';
 
 const source = 'fn f() {\n    /* c */ ;\n    x();\n}\n';
 const kept = '{\n    /* c */ ;\n    x();\n}';

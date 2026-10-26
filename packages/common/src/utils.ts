@@ -10,7 +10,7 @@ import { registered, wrapRegistered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
-import { entrySnapshotOf } from './snapshot.ts';
+import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
@@ -146,7 +146,7 @@ function entryWire(node: object): (entry: TriviaEntry) => unknown {
 	const built = builtRefOf(node)?.arena;
 	const arena = built ?? (tree === undefined ? undefined : treeBuiltArena(tree));
 	const holder = built?.engine ?? engineOf(node);
-	return (entry) => (typeof entry === 'number' ? entry : (sideEntryOf(entry, arena, holder) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
+	return (entry) => (typeof entry === 'number' ? entry : (sideEntryOf(entry, arena, holder) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS)));
 }
 
 function triviaWriter(target: object, handle: EngineHandle | undefined) {

@@ -125,7 +125,7 @@ export namespace Literal {
 			}
 		}
 		export interface Negative<G extends GrammarContext<G>> extends SubKindOf<V.Literal.Number<G>> {
-			// claimed by rt
+			// claimed by prt
 			readonly $kind: 'literal.number.negative';
 			readonly value: V.Literal.Number.Any<G>;
 		}

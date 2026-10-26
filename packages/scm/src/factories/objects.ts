@@ -340,10 +340,6 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.Comment.Bound;

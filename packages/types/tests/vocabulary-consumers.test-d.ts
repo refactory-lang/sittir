@@ -239,7 +239,7 @@ const self: Narrowed['identifier'] = { $kind: 'identifier' };
 export const narrowed: Declaration.Function<Narrowed> = { ...fn<Narrowed>(self), parameters: [self] };
 export const narrowedName: string = nameKind<Narrowed>(narrowed);
 // @ts-expect-error the narrowed identifier role refuses a kind the grammar leaves out
-export const crate = fn<Narrowed>({ $kind: 'identifier.crate' });
+export const base = fn<Narrowed>({ $kind: 'identifier.super' });
 // @ts-expect-error the narrowed parameters slot refuses an arm the grammar leaves out
 export const textParameter: Declaration.Function<Narrowed> = { ...narrowed, parameters: ['self'] };
 

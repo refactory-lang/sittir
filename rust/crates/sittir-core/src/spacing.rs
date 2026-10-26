@@ -242,13 +242,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// Set on a recording render (`with_recording`): the line breaks written
     /// at each gap, by the source bytes around them.
     recorder: Option<crate::baseline::Recorder<'a>>,
-    /// The built records whose entries are being written, outermost first,
-    /// each by the store that answered it and its address.
-    #[cfg(feature = "arena")]
-    entries: Vec<(usize, crate::arena::Address)>,
-    /// The nesting of the side whose entry is being written
-    /// (`RenderSink::side_nesting`).
-    side_nesting: usize,
+    /// The edge chain of the coordinate whose boundary is being placed
+    /// (`RenderSink::boundary`), kept to reuse its allocation.
+    edge_levels: Vec<crate::render::EdgeLevel>,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -339,9 +335,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             tail: None,
             open_before: 0,
             recorder: None,
-            #[cfg(feature = "arena")]
-            entries: Vec::new(),
-            side_nesting: 0,
+            edge_levels: Vec::new(),
         }
     }
 
@@ -764,6 +758,41 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.site_mark(arm, strength, flank);
     }
 
+    /// Places what `outer`'s template writes on `side` between its edge and
+    /// `inner`, its child at that edge: the arm for `inner` in the row of
+    /// `outer`'s stamped kind, or of its grammar kind when the stamp's row
+    /// places nothing on that side (`ResolvedOptions::boundary_marks`).
+    fn boundary_marks(
+        &mut self,
+        options: &crate::options::ResolvedOptions,
+        outer: crate::render::EdgeLevel,
+        inner: crate::render::EdgeLevel,
+        side: crate::options::Side,
+    ) {
+        let Some(arms) = [outer.stamp, outer.grammar].into_iter().find_map(|kind| options.boundary_arms(kind, side)) else {
+            return;
+        };
+        for mark in crate::options::ResolvedOptions::boundary_marks(arms, inner.display, inner.field) {
+            match *mark {
+                crate::options::BoundaryMark::Site(site) if !self.moves_depth(options.site_arm(site).arm) => {
+                    crate::render::RenderSink::site_at(self, site);
+                }
+                crate::options::BoundaryMark::Flank(site) if !self.moves_depth(options.site_arm(site).arm) => {
+                    crate::render::RenderSink::flank_at(self, site);
+                }
+                crate::options::BoundaryMark::Seam(kinds) => crate::render::RenderSink::seam(self, kinds),
+                crate::options::BoundaryMark::Site(_) | crate::options::BoundaryMark::Flank(_) => {}
+            }
+        }
+    }
+
+    /// Whether `arm` is a depth move. A boundary places none: the depth move
+    /// it pairs with lies inside the coordinate's bytes, which keep their own
+    /// indentation.
+    fn moves_depth(&self, arm: crate::types::KindId) -> bool {
+        self.table.is_some_and(|table| arm == table.indent || arm == table.dedent)
+    }
+
     /// Writes a whitespace kind's arm: a depth move plus its line break for
     /// the depth arms, otherwise the arm's text as a seam of `strength`.
     fn site_mark(&mut self, kind: crate::types::KindId, strength: SeamStrength, flank: bool) {
@@ -1063,40 +1092,29 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::CoordinateError> {
         let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
         let mut frames = sources.frames(coord);
-        if let Some(ctx) = self.render_context() {
+        if let Some(options) = self.options {
             for frame in frames.iter_mut() {
-                frame.prepare(&ctx)?;
+                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
             }
         }
         Ok(frames)
     }
 
-    fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
-        Some(crate::prepare::RenderContext { options: self.options?, sources: self.sources? })
-    }
-
     #[cfg(feature = "arena")]
-    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, store: usize, held: &dyn std::any::Any) -> crate::render::RenderResult {
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> crate::render::RenderResult {
         let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
         let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
-        let key = (store, record.at);
-        if self.entries.contains(&key) {
-            return Err(crate::render::RenderError::Record(crate::trivia::SIDE_CYCLE));
-        }
-        self.entries.push(key);
-        let rendered = sources.render_record_entry(record, held, options, self);
-        self.entries.pop();
-        rendered
+        sources.render_record_entry(record, held, options, self)
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
         let sources = self.sources;
         let mut first = true;
         if let Some(sources) = sources {
-            sources.for_each_kind_ending_with(coord, &mut |kind| {
+            sources.for_each_edge_level(coord, crate::options::Side::After, &mut |level| {
                 let kind = match (first, coord.kind) {
                     (true, Some(stamp)) => stamp,
-                    _ => kind,
+                    _ => level.grammar,
                 };
                 first = false;
                 crate::render::RenderSink::end_line_after(self, kind);
@@ -1107,6 +1125,28 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 crate::render::RenderSink::end_line_after(self, stamp);
             }
         }
+    }
+
+    fn boundary(&mut self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side) {
+        let (Some(sources), Some(options)) = (self.sources, self.options) else {
+            return;
+        };
+        let mut levels = std::mem::take(&mut self.edge_levels);
+        levels.clear();
+        sources.for_each_edge_level(coord, side, &mut |level| levels.push(level));
+        match side {
+            crate::options::Side::Before => {
+                for pair in levels.windows(2) {
+                    self.boundary_marks(options, pair[0], pair[1], side);
+                }
+            }
+            crate::options::Side::After => {
+                for pair in levels.windows(2).rev() {
+                    self.boundary_marks(options, pair[0], pair[1], side);
+                }
+            }
+        }
+        self.edge_levels = levels;
     }
 
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {
@@ -1172,14 +1212,6 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         self.frames.last().is_some_and(|frame| frame.origin == Some((coord.tree, coord.index)))
-    }
-
-    fn side_nesting(&self) -> usize {
-        self.side_nesting
-    }
-
-    fn set_side_nesting(&mut self, nesting: usize) -> usize {
-        std::mem::replace(&mut self.side_nesting, nesting)
     }
 
     fn layout_depth(&mut self, delta: i32) {

@@ -8,6 +8,7 @@ import type {
 	StrictFlavor
 } from '@sittir/types';
 import { isNode as isAnyNode, nodeText } from './utils.ts';
+import { sidesOf } from './node-data.ts';
 
 type NamespacePart<M extends GrammarTypeMap, K, P extends 'Node' | 'Loose'> = K extends keyof M['namespaces']
 	? M['namespaces'][K] extends { readonly [Q in P]: infer X }
@@ -74,6 +75,19 @@ export function admitAliasContent<T = unknown>(value: unknown, aliases: readonly
 	if (id === undefined) return value as T;
 	const hit = aliases.find(([storage]) => storage.includes(id));
 	return (hit === undefined ? value : hit[1](value)) as T;
+}
+
+export type SplicedEnvelope = readonly [kind: number, content: string, name: string];
+
+export function admitSplicedEnvelope<T = unknown>(value: unknown, envelope: SplicedEnvelope, where: string): T {
+	if (Array.isArray(value)) return value.map((item) => admitSplicedEnvelope(item, envelope, where)) as T;
+	const [kind, content, name] = envelope;
+	if (!isRecord(value) || value.$type !== kind) return value as T;
+	const sides = sidesOf(value);
+	if (sides !== undefined) {
+		throw new Error(`${where}: takes a ${name}'s content, and this ${name} holds ${Object.keys(sides).join(' and ')} trivia of its own; give that trivia to its content`);
+	}
+	return (value[content] as () => T)();
 }
 
 export function listStorage<T = unknown>(

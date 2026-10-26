@@ -105,7 +105,7 @@ export const dottedName = bundle(F.buildDottedName, C.coerceToDottedName);
 export const casePattern = bundle(F.buildCasePattern, C.coerceToCasePattern, { key: 'casePattern', max: 1 });
 export const simplePattern = bundle(F.buildSimplePattern, C.coerceToSimplePattern, { key: 'simplePattern', max: 1 });
 export const caseAsPattern = bundle(F.buildCaseAsPattern, C.coerceToCaseAsPattern, { key: 'caseAsPattern', max: 1 });
-export const unionPattern = bundle(F.buildUnionPattern, C.coerceToUnionPattern);
+export const unionPattern = bundle(F.buildUnionPattern, C.coerceToUnionPattern, { key: 'unionPattern', max: 1 });
 export const dictPattern = bundle(F.buildDictPattern, C.coerceToDictPattern);
 export const keyValuePattern = bundle(F.buildKeyValuePattern, C.coerceToKeyValuePattern, {
 	key: 'keyValuePattern',

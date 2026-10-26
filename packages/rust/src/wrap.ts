@@ -3486,7 +3486,7 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.ScopedIdentifier as const,
-		path() {
+		qualifier() {
 			return hydrateSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -3497,15 +3497,18 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 				| T.BracketedType
 				| T.GenericTypeWithTurbofish
 				| undefined
-			>(this, '_path', tree);
+			>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.Identifier | TSKindId.Super>(this, '_name', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedIdentifier['_path']>) =>
+			qualifier: (v: NonNullable<T.ScopedIdentifier['_qualifier']>) =>
 				rebuilt(node, handle, () =>
-					wrapScopedIdentifier({ ...$edited(data), _path: admitSlot(handle, 'scoped_identifier', 'path', v) }, tree)
+					wrapScopedIdentifier(
+						{ ...$edited(data), _qualifier: admitSlot(handle, 'scoped_identifier', 'qualifier', v) },
+						tree
+					)
 				),
 			name: (v: NonNullable<T.ScopedIdentifier['_name']>) =>
 				rebuilt(node, handle, () =>
@@ -3534,7 +3537,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
-		path() {
+		qualifier() {
 			return hydrateSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -3544,16 +3547,19 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 				| T.ScopedIdentifier
 				| T.GenericTypeWithTurbofish
 				| undefined
-			>(this, '_path', tree);
+			>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>) =>
+			qualifier: (v: NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']>) =>
 				rebuilt(node, handle, () =>
 					wrapScopedTypeIdentifierInExpressionPosition(
-						{ ...$edited(data), _path: admitSlot(handle, 'scoped_type_identifier_in_expression_position', 'path', v) },
+						{
+							...$edited(data),
+							_qualifier: admitSlot(handle, 'scoped_type_identifier_in_expression_position', 'qualifier', v)
+						},
 						tree
 					)
 				),
@@ -3587,7 +3593,7 @@ export function wrapScopedTypeIdentifier(
 	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifier as const,
-		path() {
+		qualifier() {
 			return hydrateSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -3599,16 +3605,16 @@ export function wrapScopedTypeIdentifier(
 				| T.BracketedType
 				| T.GenericType
 				| undefined
-			>(this, '_path', tree);
+			>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			path: (v: NonNullable<T.ScopedTypeIdentifier['_path']>) =>
+			qualifier: (v: NonNullable<T.ScopedTypeIdentifier['_qualifier']>) =>
 				rebuilt(node, handle, () =>
 					wrapScopedTypeIdentifier(
-						{ ...$edited(data), _path: admitSlot(handle, 'scoped_type_identifier', 'path', v) },
+						{ ...$edited(data), _qualifier: admitSlot(handle, 'scoped_type_identifier', 'qualifier', v) },
 						tree
 					)
 				),
@@ -5870,10 +5876,6 @@ export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineCo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -5902,10 +5904,6 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -9057,10 +9055,6 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -9088,10 +9082,6 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -9122,10 +9112,6 @@ export function wrapBlockCommentDocOuter(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -9156,10 +9142,6 @@ export function wrapBlockCommentDocInner(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -13563,7 +13545,7 @@ function viewScopedIdentifier(data: RecordStub, tree: TreeHandle): T.ScopedIdent
 	const node = {
 		...data,
 		$type: TSKindId.ScopedIdentifier as const,
-		path() {
+		qualifier() {
 			return viewSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -13580,7 +13562,7 @@ function viewScopedIdentifier(data: RecordStub, tree: TreeHandle): T.ScopedIdent
 			return viewSlot<T.Identifier | TSKindId.Super>(this, tree, 7, 5, 0);
 		},
 		$with: {
-			path: (...args: unknown[]) => rowWith(node, tree, _wrap, 'path', args),
+			qualifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'qualifier', args),
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
 		$render: () => renderText(handle, node),
@@ -13605,7 +13587,7 @@ function viewScopedTypeIdentifierInExpressionPosition(
 	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
-		path() {
+		qualifier() {
 			return viewSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -13621,7 +13603,7 @@ function viewScopedTypeIdentifierInExpressionPosition(
 			return viewSlot<T.TypeIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
-			path: (...args: unknown[]) => rowWith(node, tree, _wrap, 'path', args),
+			qualifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'qualifier', args),
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
 		$render: () => renderText(handle, node),
@@ -13643,7 +13625,7 @@ function viewScopedTypeIdentifier(data: RecordStub, tree: TreeHandle): T.ScopedT
 	const node = {
 		...data,
 		$type: TSKindId.ScopedTypeIdentifier as const,
-		path() {
+		qualifier() {
 			return viewSlot<
 				| TSKindId.Self
 				| T.Metavariable
@@ -13661,7 +13643,7 @@ function viewScopedTypeIdentifier(data: RecordStub, tree: TreeHandle): T.ScopedT
 			return viewSlot<T.TypeIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
-			path: (...args: unknown[]) => rowWith(node, tree, _wrap, 'path', args),
+			qualifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'qualifier', args),
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
 		$render: () => renderText(handle, node),
@@ -15315,10 +15297,6 @@ function viewLineComment(data: RecordStub, tree: TreeHandle): T.LineComment.Pars
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -15346,10 +15324,6 @@ function viewBlockComment(data: RecordStub, tree: TreeHandle): T.BlockComment.Pa
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -17594,10 +17568,6 @@ function viewLineCommentDocOuter(data: RecordStub, tree: TreeHandle): T.LineComm
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -17619,10 +17589,6 @@ function viewLineCommentDocInner(data: RecordStub, tree: TreeHandle): T.LineComm
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -17644,10 +17610,6 @@ function viewBlockCommentDocOuter(data: RecordStub, tree: TreeHandle): T.BlockCo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -17669,10 +17631,6 @@ function viewBlockCommentDocInner(data: RecordStub, tree: TreeHandle): T.BlockCo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -18929,6 +18887,21 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 	return node;
 }
 
+function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): object {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$text: () => textOf(data),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node;
+}
+
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => object> = {
 	[TSKindId.SourceFile]: (d, t) => wrapSourceFile(d as unknown as T.SourceFile, t),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
@@ -19200,16 +19173,16 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.TokenRepetitionPatternText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringOpen]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.CharLiteralEmpty]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.LineCommentExtraSlashes]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.LineCommentRegular]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.BlockCommentRegular]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.LineCommentExtraSlashes]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.LineCommentRegular]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.BlockCommentRegular]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.FloatLiteral]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralStart]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralEnd]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.DocComment]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.BlockCommentContent]: (d, t) => wrapLeaf(d, t)
+	[TSKindId.DocComment]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.BlockCommentContent]: (d, t) => wrapInteriorLeaf(d, t)
 };
 
 const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {

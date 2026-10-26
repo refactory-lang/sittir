@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Delimiter } from '@sittir/common/utils';
-import { constructions } from './side-nesting.mts';
+import { constructions } from './constructions.mts';
 
 type Lifetimes = { readonly $with: { items(...items: unknown[]): unknown } };
 

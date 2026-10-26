@@ -226,13 +226,13 @@ export const records = {
 	AbstractTypeNode: { words: 17, type_parameters: { word: 2, width: 10, inline: 8 }, trait_: { word: 12, width: 5 } },
 	DynamicTypeNode: { words: 7, trait_: { word: 2, width: 5 } },
 	MacroInvocationNode: { words: 13, function: { word: 2, width: 5 }, arguments: { word: 7, width: 6, inline: 4 } },
-	ScopedIdentifierNode: { words: 12, path: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
+	ScopedIdentifierNode: { words: 12, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	ScopedTypeIdentifierInExpressionPositionNode: {
 		words: 16,
-		path: { word: 2, width: 5 },
+		qualifier: { word: 2, width: 5 },
 		name: { word: 7, width: 9, inline: 7 }
 	},
-	ScopedTypeIdentifierNode: { words: 16, path: { word: 2, width: 5 }, name: { word: 7, width: 9, inline: 7 } },
+	ScopedTypeIdentifierNode: { words: 16, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 9, inline: 7 } },
 	UnaryExpressionNode: { words: 12, operator: { word: 2, width: 5 }, argument: { word: 7, width: 5 } },
 	TryExpressionNode: { words: 7, argument: { word: 2, width: 5 } },
 	BinaryExpressionNode: {

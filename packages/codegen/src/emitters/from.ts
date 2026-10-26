@@ -79,6 +79,7 @@ import {
 	listSpreadTarget,
 	leadingOptionsSplit,
 	slotStorageCoercion,
+	splicedEnvelopeKindExprs,
 	storageCallExpr
 } from './factories.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
@@ -170,7 +171,7 @@ const ARGS_HELPER = [
 ].join('\n');
 
 const TYPES_IMPORT_ALWAYS = 'AnyUntypedNode';
-const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'WidenNumeric', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
+const TYPES_IMPORT_OPTIONAL = ['Admit', 'LooseValue', 'NonEmptyArray', 'NumericInput', 'PlainBuilders', 'RefuseUndeclared', 'WidenSlots', 'SiblingLeadRefusal', 'SpelledAffix', 'WithSpelling'] as const;
 
 function emitFromFieldInputType(lines: string[]): void {
 	lines.push('/** Runtime-narrowed field input bag for generated from() helpers. */');
@@ -989,7 +990,8 @@ function storedFieldCall(
 				...altKindDiscriminants(tokenKinds, field.values, nodeMap, kindEntries),
 				...(storageInfo?.kind === 'kindEnum' || storageInfo?.kind === 'mixedEnum'
 					? kindEnumMemberDiscriminants(field as AssembledNonterminal, nodeMap, kindEntries)
-					: [])
+					: []),
+				...('name' in field ? splicedEnvelopeKindExprs(field as AssembledNonterminal, nodeMap, kindEntries) : [])
 			],
 			fieldMultiple,
 			elementType,

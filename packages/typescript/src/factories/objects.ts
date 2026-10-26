@@ -13,7 +13,7 @@ import type {
 	NumericLiteral,
 	RefuseUndeclared,
 	RefusingConfig,
-	WidenNumeric
+	WidenSlots
 } from '@sittir/types';
 import type { DelimitedSpec } from '@sittir/common/utils';
 import {
@@ -47,6 +47,7 @@ import {
 	restItems,
 	isNodeOfKind,
 	admitAliasContent,
+	admitSplicedEnvelope,
 	coerceKindEnumStorage,
 	kindIdStorage,
 	listStorage,
@@ -2079,43 +2080,38 @@ export function buildArrayPattern(...children: Admit<(T.Pattern | T.AssignmentPa
 }
 
 export function buildNestedIdentifier<
-	ObjectSlot extends T.NestedIdentifier.Config['object'],
-	PropertySlot extends T.NestedIdentifier.Config['property']
+	QualifierSlot extends T.NestedIdentifier.Config['qualifier'],
+	NameSlot extends T.NestedIdentifier.Config['name']
 >(
-	config: RefusingConfig<T.NestedIdentifier.Config, { object: ObjectSlot; property: PropertySlot }>
+	config: RefusingConfig<T.NestedIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
 ): T.NestedIdentifier.Bound;
 export function buildNestedIdentifier(config: T.NestedIdentifier.Config): T.NestedIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.NestedIdentifier, [config]);
-	const _object = rejectReservedText(
-		config.object,
-		'NestedIdentifier.object',
+	const _qualifier = rejectReservedText(
+		config.qualifier,
+		'NestedIdentifier.qualifier',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
-	const _property = admitAliasContent<NonNullable<T.NestedIdentifier['_property']>>(
-		rejectReservedText(
-			config.property,
-			'NestedIdentifier.property',
-			TSKindId.Identifier,
-			_reservedWords_buildIdentifier
-		),
+	const _name = admitAliasContent<NonNullable<T.NestedIdentifier['_name']>>(
+		rejectReservedText(config.name, 'NestedIdentifier.name', TSKindId.Identifier, _reservedWords_buildIdentifier),
 		[[[1], (v: unknown) => buildPropertyIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'nested_identifier', { object: _object, property: _property });
+	if (handle !== undefined) admitChildren(handle, 'nested_identifier', { qualifier: _qualifier, name: _name });
 	const node = {
 		$type: TSKindId.NestedIdentifier as const,
 		$named: true as const,
-		_object,
-		_property,
+		_qualifier,
+		_name,
 		$with: {
-			object: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, object: value })),
-			property: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
-				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, property: value }))
+			qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, qualifier: value })),
+			name: (value: Admit<T.PropertyIdentifier | T.PropertyIdentifier.Types>) =>
+				rebuilt(node, handle, () => buildNestedIdentifier({ ...config, name: value }))
 		},
-		object: () => hydrateStoredSlot(node, '_object'),
-		property: () => hydrateStoredSlot(node, '_property'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -4010,29 +4006,39 @@ function _buildClassStaticBlock(
 
 export function buildRestPattern<
 	V extends Admit<
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| TSKindId.Undefined
-		| T.Identifier
-		| T.ObjectPattern
-		| T.ArrayPattern
-		| T.NonNullExpression
+		| (
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+		  )
+		| Admit<T.LhsExpression>
 	>
 >(value: V & RefuseUndeclared<V>): T.RestPattern.Bound;
 export function buildRestPattern(
 	value: Admit<
-		| T.MemberExpression
-		| T.SubscriptExpression
-		| TSKindId.Undefined
-		| T.Identifier
-		| T.ObjectPattern
-		| T.ArrayPattern
-		| T.NonNullExpression
+		| (
+				| T.MemberExpression
+				| T.SubscriptExpression
+				| TSKindId.Undefined
+				| T.Identifier
+				| T.ObjectPattern
+				| T.ArrayPattern
+				| T.NonNullExpression
+		  )
+		| Admit<T.LhsExpression>
 	>
 ): T.RestPattern.Bound {
 	const _lhs_expression = rejectReservedText(
 		rejectKeywordText(
-			kindIdStorage<NonNullable<T.RestPattern['_lhs_expression']>>(value),
+			admitSplicedEnvelope(
+				kindIdStorage<NonNullable<T.RestPattern['_lhs_expression']>>(value),
+				[TSKindId.LhsExpression, 'content', 'lhs_expression'],
+				'RestPattern.lhsExpression'
+			),
 			'RestPattern.lhsExpression',
 			TSKindId.Identifier,
 			['undefined']
@@ -4051,13 +4057,16 @@ export function buildRestPattern(
 			lhsExpression: (
 				value: Admit<
 					NonNullable<
-						| T.MemberExpression
-						| T.SubscriptExpression
-						| TSKindId.Undefined
-						| T.Identifier
-						| T.ObjectPattern
-						| T.ArrayPattern
-						| T.NonNullExpression
+						| (
+								| T.MemberExpression
+								| T.SubscriptExpression
+								| TSKindId.Undefined
+								| T.Identifier
+								| T.ObjectPattern
+								| T.ArrayPattern
+								| T.NonNullExpression
+						  )
+						| Admit<T.LhsExpression>
 					>
 				>
 			) => rebuilt(node, handle, () => buildRestPattern(value))
@@ -4967,16 +4976,16 @@ export function buildImportAlias(config: T.ImportAlias.Config, options?: T.Impor
 }
 
 export function buildNestedTypeIdentifier<
-	ModuleSlot extends T.NestedTypeIdentifier.Config['module'],
+	QualifierSlot extends T.NestedTypeIdentifier.Config['qualifier'],
 	NameSlot extends T.NestedTypeIdentifier.Config['name']
 >(
-	config: RefusingConfig<T.NestedTypeIdentifier.Config, { module: ModuleSlot; name: NameSlot }>
+	config: RefusingConfig<T.NestedTypeIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
 ): T.NestedTypeIdentifier.Bound;
 export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config): T.NestedTypeIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.NestedTypeIdentifier, [config]);
-	const _module = rejectReservedText(
-		config.module,
-		'NestedTypeIdentifier.module',
+	const _qualifier = rejectReservedText(
+		config.qualifier,
+		'NestedTypeIdentifier.qualifier',
 		TSKindId.Identifier,
 		_reservedWords_buildIdentifier
 	);
@@ -4985,19 +4994,19 @@ export function buildNestedTypeIdentifier(config: T.NestedTypeIdentifier.Config)
 		[[[1], (v: unknown) => buildTypeIdentifier(v as never)]]
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'nested_type_identifier', { module: _module, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'nested_type_identifier', { qualifier: _qualifier, name: _name });
 	const node = {
 		$type: TSKindId.NestedTypeIdentifier as const,
 		$named: true as const,
-		_module,
+		_qualifier,
 		_name,
 		$with: {
-			module: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
-				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, module: value })),
+			qualifier: (value: Admit<T.Identifier | T.NestedIdentifier>) =>
+				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, qualifier: value })),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildNestedTypeIdentifier({ ...config, name: value }))
 		},
-		module: () => hydrateStoredSlot(node, '_module'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
 		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8957,10 +8966,6 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.CommentLine.Bound;
@@ -8993,10 +8998,6 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
@@ -9075,7 +9076,7 @@ export function buildNumberHex(
 }
 
 export function buildNumberFloatPoint<
-	const C extends WidenNumeric<
+	const C extends WidenSlots<
 		T.NumberFloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -9088,13 +9089,13 @@ export function buildNumberFloatPoint<
 		NumericConfig<C, { integer: true; fraction: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<
+			WidenSlots<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>
 		> &
 		RefusingConfig<
-			WidenNumeric<
+			WidenSlots<
 				T.NumberFloatPoint.Config,
 				{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 			>,
@@ -9103,7 +9104,7 @@ export function buildNumberFloatPoint<
 	options?: T.NumberFloatPoint.Options
 ): T.NumberFloatPoint.Bound;
 export function buildNumberFloatPoint(
-	config: WidenNumeric<
+	config: WidenSlots<
 		T.NumberFloatPoint.Config,
 		{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -9182,7 +9183,7 @@ export function buildNumberFloatPoint(
 }
 
 export function buildNumberFloatLeadingPoint<
-	const C extends WidenNumeric<
+	const C extends WidenSlots<
 		T.NumberFloatLeadingPoint.Config,
 		{ fraction: number | bigint; exponent: number | bigint }
 	>,
@@ -9194,16 +9195,16 @@ export function buildNumberFloatLeadingPoint<
 		NumericConfig<C, { fraction: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>
+			WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>
 		> &
 		RefusingConfig<
-			WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
+			WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
 			{ fraction: FractionSlot; sign: SignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound;
 export function buildNumberFloatLeadingPoint(
-	config: WidenNumeric<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
+	config: WidenSlots<T.NumberFloatLeadingPoint.Config, { fraction: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatLeadingPoint.Options
 ): T.NumberFloatLeadingPoint.Bound {
 	currentHandle()?.admit(TSKindId.NumberFloatLeadingPoint, [config]);
@@ -9269,7 +9270,7 @@ export function buildNumberFloatLeadingPoint(
 }
 
 export function buildNumberFloatScientific<
-	const C extends WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	const C extends WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	IntegerSlot extends T.NumberFloatScientific.Config['integer'],
 	SignSlot extends T.NumberFloatScientific.Config['sign'],
 	ExponentSlot extends T.NumberFloatScientific.Config['exponent']
@@ -9278,16 +9279,16 @@ export function buildNumberFloatScientific<
 		NumericConfig<C, { integer: true; exponent: true }> &
 		RefuseUndeclared<
 			C,
-			WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
+			WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>
 		> &
 		RefusingConfig<
-			WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+			WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 			{ integer: IntegerSlot; sign: SignSlot; exponent: ExponentSlot }
 		>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound;
 export function buildNumberFloatScientific(
-	config: WidenNumeric<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
+	config: WidenSlots<T.NumberFloatScientific.Config, { integer: number | bigint; exponent: number | bigint }>,
 	options?: T.NumberFloatScientific.Options
 ): T.NumberFloatScientific.Bound {
 	currentHandle()?.admit(TSKindId.NumberFloatScientific, [config]);
@@ -12590,10 +12591,6 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.HtmlComment.Bound;

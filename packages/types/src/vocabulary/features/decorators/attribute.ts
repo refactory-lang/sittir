@@ -14,7 +14,7 @@ export namespace Attribute {
 			// claimed by t
 			readonly $kind: 'attribute.content.member';
 			readonly object: G['slots']['attribute.content.member']['object'];
-			readonly property: V.Identifier.Property<G>;
+			readonly property: V.Identifier<G>;
 		}
 		export interface Parenthesized<G extends GrammarContext<G>> extends SubKindOf<V.Attribute.Content<G>> {
 			// claimed by t

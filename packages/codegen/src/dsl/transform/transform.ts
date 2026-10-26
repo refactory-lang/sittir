@@ -71,7 +71,8 @@ import {
 	wireAtomic,
 	wireEntry,
 	makeSimpleDollarProxy,
-	type PatchSite
+	type PatchSite,
+	type SittirRuleFn
 } from '../wire/wire.ts';
 import { polymorphVisibleName } from '../arm-names.ts';
 import {
@@ -128,7 +129,7 @@ export type PatchValue =
 	| RefinePlaceholder
 	| ReplacingFn;
 
-export type ReplacingFn = ($: unknown, member: RuntimeRule) => RuntimeRule;
+export type ReplacingFn = ($: Parameters<SittirRuleFn>[0], member: RuntimeRule) => RuntimeRule;
 
 type PatchSet = Record<number | string, PatchValue>;
 
@@ -173,7 +174,7 @@ function applyPatchSet(rule: RuntimeRule, patches: PatchSet): RuntimeRule {
 	recordPatchSites(patches);
 	const hasPathKeys = requiresPathMode(patches);
 	const hasPlaceholderAlias = Object.values(patches).some(
-		(v) => isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
+		(v) => typeof v === 'function' || isAliasPlaceholder(v) || isRulePlaceholder(v) || isVariantPlaceholder(v) || isArmDefault(v) || isGroupPlaceholder(v) || isFlattenPlaceholder(v) || isRegexPlaceholder(v) || isNarrowPlaceholder(v) || isLeadPlaceholder(v) || isRenamePlaceholder(v) || isRefinePlaceholder(v)
 	);
 	if (hasPathKeys || hasPlaceholderAlias) return applyPathPatches(rule, patches);
 	return appliedAtSite(Object.keys(patches).join(', '), () => applyFlatPatches(rule, patches as Record<number | string, RuntimeRule>)) ?? rule;

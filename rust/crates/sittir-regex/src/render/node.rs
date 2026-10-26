@@ -6831,13 +6831,12 @@ pub fn render_record(
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {
         return render_node_parts(::sittir_core::SlotValue::Coord(coord), ctx, None).map(|(_, text)| text);
     }
-    with_record_node(root, trees, built, store, ctx, false, |node| render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
+    with_record_node(root, trees, built, store, ctx, |node| render_root(ctx, None, |_| ::sittir_core::view::KindOf::kind_in(node, kind::ROOT_KINDS), |w| node.render(w)))
 }
 
 /// Write the built record `root` names into `w` as a trivia entry in
-/// the side that holds it (`sittir_core::arena::RecordGrammar::render_entry`):
-/// as `render_record` renders it, without its own leading and trailing
-/// sides, which are its neighbours in that side, where `w` stands.
+/// the side that holds it (`sittir_core::arena::RecordGrammar::render_entry`),
+/// as `render_record` renders it, where `w` stands.
 pub fn render_entry_record(
     root: ::sittir_core::arena::CellAt,
     trees: &mut dyn ::sittir_core::arena::RecordTrees,
@@ -6849,22 +6848,20 @@ pub fn render_entry_record(
     if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {
         return ::sittir_core::render::Render::render(&::sittir_core::SlotValue::<TriviaNode>::Coord(coord), w);
     }
-    with_record_node(root, trees, built, store, ctx, true, |node| node.render(w))
+    with_record_node(root, trees, built, store, ctx, |node| node.render(w))
 }
 
-/// The record `root` names, prepared into a fresh overlay, its own
-/// leading and trailing sides left out for an `entry`, as `body` reads
-/// it through its view.
+/// The record `root` names, prepared into a fresh overlay, as `body`
+/// reads it through its view.
 fn with_record_node<R>(
     root: ::sittir_core::arena::CellAt,
     trees: &mut dyn ::sittir_core::arena::RecordTrees,
     built: &dyn ::sittir_core::arena::ArenaRead,
     store: &::sittir_core::trivia_store::TriviaStore<TriviaNode>,
     ctx: &::sittir_core::prepare::RenderContext<'_>,
-    entry: bool,
     body: impl FnOnce(&AnyNodeRecord<'_>) -> Result<R, ::sittir_core::render::RenderError>,
 ) -> Result<R, ::sittir_core::render::RenderError> {
-    let prepared = if entry { ::sittir_core::arena::prepare_entry_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx) } else { ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx) }?;
+    let prepared = ::sittir_core::arena::prepare_root::<TriviaNode, AnyNode>(trees, built, store, root, ctx)?;
     let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;
     let node = <AnyNodeRecord<'_> as ::sittir_core::arena::RecordView<'_, TriviaNode>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;
     body(&node)

@@ -17,8 +17,6 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
-    /// A side holding entries nested past `trivia::SIDE_NESTING_BOUND`.
-    SideNesting,
     /// A record's cell or word that no record writer writes, met by a view.
     #[cfg(feature = "arena")]
     Record(crate::arena::ArenaError),
@@ -30,7 +28,6 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
-            Self::SideNesting => f.write_str(crate::trivia::SIDE_NESTING_REFUSAL),
             #[cfg(feature = "arena")]
             Self::Record(e) => fmt::Display::fmt(e, f),
         }
@@ -98,6 +95,18 @@ impl WhitespaceTable {
     }
 }
 
+/// One node of a coordinate's edge chain (`SourceTable::for_each_edge_level`):
+/// the kind a read stamps it with, its grammar kind, the kind the parser shows
+/// it as (`read::display_id`, which its holder's boundary arm names it by),
+/// and the field its holder tags it with (none at the coordinate's own level).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EdgeLevel {
+    pub stamp: KindId,
+    pub grammar: KindId,
+    pub display: KindId,
+    pub field: Option<crate::types::FieldId>,
+}
+
 /// The live trees a render may slice, keyed by the tag a handle carries.
 pub trait SourceTable {
     fn source_of(&self, tree_id: crate::types::TreeId) -> Option<&Arc<str>>;
@@ -127,14 +136,18 @@ pub trait SourceTable {
         None
     }
 
-    /// Visits the kind of the node a coordinate names, then the kind of each
-    /// last descendant that ends at the same byte. A line end the node's text
-    /// owes belongs to whichever of these kinds ends in it. A coordinate whose
-    /// handle names a node other than its own span (a deep read's leaf, trivia)
-    /// visits only its own kind.
-    fn for_each_kind_ending_with(&self, coord: &crate::slot::NodeCoordinate, f: &mut dyn FnMut(KindId)) {
-        if let Some(kind) = self.kind_of(coord) {
-            f(kind);
+    /// Visits the node a coordinate names, then each first (`Side::Before`)
+    /// or last (`Side::After`) child that starts or ends at the same byte,
+    /// outermost first: the nodes whose templates meet at that edge of the
+    /// coordinate's bytes. A line end the node's text owes belongs to
+    /// whichever of these kinds ends in it, and each level places at the edge
+    /// what its template writes there (`RenderSink::boundary`). A coordinate
+    /// whose handle names a node other than its own span (a deep read's leaf,
+    /// trivia) visits only its own level.
+    fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(EdgeLevel)) {
+        let _ = side;
+        if let Some(grammar) = self.kind_of(coord) {
+            f(EdgeLevel { stamp: coord.kind.unwrap_or(grammar), grammar, display: grammar, field: None });
         }
     }
 
@@ -222,9 +235,8 @@ pub trait SourceTable {
     }
 
     /// Renders the built record `record`, which the store `held` answered,
-    /// into `w` as a trivia entry in the side that holds it: from the arena
-    /// that wrote it, its own sides left to that side (they are its
-    /// neighbours there), under `options`. A table that reaches no arena
+    /// into `w` as a trivia entry in the side that holds it, from the arena
+    /// that wrote it, under `options`. A table that reaches no arena
     /// refuses.
     ///
     /// # Errors
@@ -387,12 +399,6 @@ pub trait RenderSink {
     fn layout_depth(&mut self, delta: i32) {
         let _ = delta;
     }
-    /// The nesting of the side whose entry renders here
-    /// (`trivia::SIDE_NESTING_BOUND`): 0 outside every side.
-    fn side_nesting(&self) -> usize;
-    /// What renders next renders inside a side at `nesting`; answers the
-    /// nesting it replaces.
-    fn set_side_nesting(&mut self, nesting: usize) -> usize;
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;
         self.seam(gap);
@@ -421,26 +427,19 @@ pub trait RenderSink {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
     }
-    /// The options and tree table this sink prepares what it looks up with,
-    /// a coordinate's frames (`frames`) and a built record's sides; none for
-    /// a sink that holds no table or no options.
-    fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
-        None
-    }
-    /// Writes the built record `record`, which the store `held` (whose
-    /// identity is `store`) answered, as a trivia entry here, through this
-    /// sink's tree table (`SourceTable::render_record_entry`). Refuses a
-    /// record the entries it is being written inside already hold, and a
-    /// sink that holds no table or no options.
+    /// Writes the built record `record`, which the store `held` answered, as
+    /// a trivia entry here, through this sink's tree table
+    /// (`SourceTable::render_record_entry`). Refuses a sink that holds no
+    /// table or no options.
     ///
     /// # Errors
     ///
-    /// `RenderError::Record` for a record inside its own entry, and what the
-    /// table refuses.
+    /// `RenderError::Record` for a sink that cannot reach the record's
+    /// arena, and what the table refuses.
     #[cfg(feature = "arena")]
-    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, store: usize, held: &dyn std::any::Any) -> RenderResult {
-        let _ = (record, store, held);
-        Err(RenderError::Record(crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable")))
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any) -> RenderResult {
+        let _ = (record, held);
+        Err(RenderError::Record(NO_ARENA))
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.
@@ -448,6 +447,19 @@ pub trait RenderSink {
         if let Some(kind) = self.kind_of(coord) {
             self.end_line_after(kind);
         }
+    }
+    /// Places, at one edge of a coordinate's bytes, what the templates of the
+    /// nodes along that edge write between each node and its child there
+    /// (`SourceTable::for_each_edge_level`, `options::BoundaryArm`): before
+    /// its text outermost first, after it innermost first. An inner node's own
+    /// edge seam is not placed: the source gap the node's own template would
+    /// have stamped there is not known, so its default arm would only move
+    /// the bytes off source. A mark whose arm moves the depth is not placed
+    /// either: the move it pairs with lies inside the coordinate's bytes,
+    /// which keep their own indentation. A sink with no tree table or options
+    /// places nothing.
+    fn boundary(&mut self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side) {
+        let _ = (coord, side);
     }
     /// Deepens the depth the next line is paid at. Depth is one fact per
     /// position: an indent arriving while the one before it has had no text

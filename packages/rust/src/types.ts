@@ -2,7 +2,7 @@
 
 import type {
 	ConfigOf,
-	WidenNumeric,
+	WidenSlots,
 	LooseValue,
 	NodeNs,
 	KeywordNs,
@@ -17,6 +17,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
 	TriviaSetter,
@@ -1066,9 +1067,9 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[260, 'delim_token_tree'],
 	[261, '_delim_tokens'],
 	[262, '_non_delim_token'],
-	[263, 'scoped_identifier'],
-	[264, 'scoped_type_identifier_in_expression_position'],
-	[265, 'scoped_type_identifier'],
+	[263, 'qualified_identifier'],
+	[264, 'qualified_identifier'],
+	[265, 'qualified_identifier'],
 	[266, 'range_expression'],
 	[267, 'unary_expression'],
 	[268, 'try_expression'],
@@ -2501,6 +2502,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.MacroRulesBang;
 		case '"':
 			return TSKindId.StringClose;
+		case 'qualified_identifier':
+			return TSKindId.ScopedIdentifier;
 		case 'let_chain':
 			return TSKindId.LetChain;
 		default:
@@ -6369,7 +6372,7 @@ export interface MacroInvocation {
 
 export interface ScopedIdentifier {
 	readonly $type: TSKindId.ScopedIdentifier;
-	readonly _path?:
+	readonly _qualifier?:
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6380,11 +6383,11 @@ export interface ScopedIdentifier {
 		| GenericTypeWithTurbofish;
 	readonly _name: Identifier | TSKindId.Super;
 	readonly __slotNames__?: {
-		readonly _path: 'path';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly path?:
+		readonly qualifier?:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
@@ -6394,10 +6397,10 @@ export interface ScopedIdentifier {
 		readonly name: KindEnum<'super', TSKindId.Super> | Identifier;
 	};
 	readonly __slotHints__?: {
-		readonly path: SlotHint<NonNullable<T.ScopedIdentifier.Config>['path'], true>;
+		readonly qualifier: SlotHint<NonNullable<T.ScopedIdentifier.Config>['qualifier'], true>;
 		readonly name: SlotHint<NonNullable<T.ScopedIdentifier.Config>['name']>;
 	};
-	readonly path: () =>
+	readonly qualifier: () =>
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6412,7 +6415,7 @@ export interface ScopedIdentifier {
 
 export interface ScopedTypeIdentifierInExpressionPosition {
 	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
-	readonly _path?:
+	readonly _qualifier?:
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6422,11 +6425,11 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 		| GenericTypeWithTurbofish;
 	readonly _name: TypeIdentifier;
 	readonly __slotNames__?: {
-		readonly _path: 'path';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly path?:
+		readonly qualifier?:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
@@ -6437,10 +6440,10 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly path: SlotHint<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path'], true>;
+		readonly qualifier: SlotHint<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['qualifier'], true>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
-	readonly path: () =>
+	readonly qualifier: () =>
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6454,7 +6457,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 
 export interface ScopedTypeIdentifier {
 	readonly $type: TSKindId.ScopedTypeIdentifier;
-	readonly _path?:
+	readonly _qualifier?:
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -6466,11 +6469,11 @@ export interface ScopedTypeIdentifier {
 		| GenericType;
 	readonly _name: TypeIdentifier;
 	readonly __slotNames__?: {
-		readonly _path: 'path';
+		readonly _qualifier: 'qualifier';
 		readonly _name: 'name';
 	};
 	readonly __inputHints__?: {
-		readonly path?:
+		readonly qualifier?:
 			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
 			| Metavariable
 			| Identifier
@@ -6483,10 +6486,10 @@ export interface ScopedTypeIdentifier {
 		readonly name: readonly Identifier[];
 	};
 	readonly __slotHints__?: {
-		readonly path: SlotHint<NonNullable<T.ScopedTypeIdentifier.Config>['path'], true>;
+		readonly qualifier: SlotHint<NonNullable<T.ScopedTypeIdentifier.Config>['qualifier'], true>;
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
-	readonly path: () =>
+	readonly qualifier: () =>
 		| TSKindId.Self
 		| Metavariable
 		| TSKindId.Super
@@ -11635,9 +11638,10 @@ export interface OptionsHintMap {
 	abstractType: AbstractType.Hints;
 	dynamicType: DynamicType.Hints;
 	macroInvocation: MacroInvocation.Hints;
-	scopedIdentifier: ScopedIdentifier.Hints;
-	scopedTypeIdentifierInExpressionPosition: ScopedTypeIdentifierInExpressionPosition.Hints;
-	scopedTypeIdentifier: ScopedTypeIdentifier.Hints;
+	qualifiedIdentifier:
+		| ScopedIdentifier.Hints
+		| ScopedTypeIdentifierInExpressionPosition.Hints
+		| ScopedTypeIdentifier.Hints;
 	unaryExpression: UnaryExpression.Hints;
 	tryExpression: TryExpression.Hints;
 	binaryExpression: BinaryExpression.Hints;
@@ -12216,9 +12220,9 @@ export namespace TraitBounds {
 				readonly neverType?: { readonly after?: LayoutKindId };
 				readonly pointerTypeConst?: { readonly after?: LayoutKindId };
 				readonly pointerTypeMut?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly referenceType?: { readonly after?: LayoutKindId };
 				readonly removedTraitBound?: { readonly after?: LayoutKindId };
-				readonly scopedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly plus?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -12867,6 +12871,7 @@ export namespace LetChain {
 				readonly macroInvocation?: { readonly after?: LayoutKindId };
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
@@ -12876,7 +12881,6 @@ export namespace LetChain {
 				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
 				readonly returnExpression?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly ampAmp?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -13017,13 +13021,13 @@ export namespace ClosureParameters {
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
 				readonly parameter?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
 				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
 				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13454,7 +13458,7 @@ export namespace UseClauses {
 				readonly crate?: { readonly after?: LayoutKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly end?: LayoutKindId;
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly scopedUseList?: { readonly after?: LayoutKindId };
 				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
@@ -13524,9 +13528,9 @@ export namespace Types {
 				readonly neverType?: { readonly after?: LayoutKindId };
 				readonly pointerTypeConst?: { readonly after?: LayoutKindId };
 				readonly pointerTypeMut?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly referenceType?: { readonly after?: LayoutKindId };
 				readonly removedTraitBound?: { readonly after?: LayoutKindId };
-				readonly scopedTypeIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13624,6 +13628,7 @@ export namespace Expressions {
 				readonly macroInvocation?: { readonly after?: LayoutKindId };
 				readonly matchExpression?: { readonly after?: LayoutKindId };
 				readonly parenthesizedExpression?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionBinary?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPostfix?: { readonly after?: LayoutKindId };
 				readonly rangeExpressionPrefix?: { readonly after?: LayoutKindId };
@@ -13633,7 +13638,6 @@ export namespace Expressions {
 				readonly referenceExpressionRawConst?: { readonly after?: LayoutKindId };
 				readonly referenceExpressionRawMut?: { readonly after?: LayoutKindId };
 				readonly returnExpression?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -13693,13 +13697,13 @@ export namespace TuplePatternElements {
 				readonly negativeLiteral?: { readonly after?: LayoutKindId };
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
 				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
 				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -13731,13 +13735,13 @@ export namespace Patterns {
 				readonly negativeLiteral?: { readonly after?: LayoutKindId };
 				readonly orPatternBinary?: { readonly after?: LayoutKindId };
 				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
+				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
 				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
 				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
 				readonly refPattern?: { readonly after?: LayoutKindId };
 				readonly referencePattern?: { readonly after?: LayoutKindId };
 				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
-				readonly scopedIdentifier?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -22683,11 +22687,11 @@ export namespace RawStringLiteral {
 }
 export namespace LineComment {
 	export type Config = ConfigFor<TSKindId.LineComment>;
-	export interface Bound extends BoundOf<T.LineComment, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LineComment, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineComment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LineComment, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LineComment, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.LineComment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -22709,11 +22713,11 @@ export namespace LineComment {
 }
 export namespace BlockComment {
 	export type Config = ConfigFor<TSKindId.BlockComment>;
-	export interface Bound extends BoundOf<T.BlockComment, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.BlockComment, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.BlockComment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BlockComment, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.BlockComment, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.BlockComment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -24133,7 +24137,7 @@ export namespace UseWildcardGroup {
 	export type Kind = TSKindId.UseWildcardGroup;
 }
 export namespace IntegerLiteralDecimal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.IntegerLiteralDecimal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerLiteralDecimal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24153,16 +24157,16 @@ export namespace IntegerLiteralDecimal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralDecimal>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralDecimal>, { content: number | bigint }>];
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralDecimal>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntegerLiteralDecimal>, { content: number | bigint }>];
 	export type LooseArgs = [config: T.IntegerLiteralDecimal.Loose];
 	export type Kind = TSKindId.IntegerLiteralDecimal;
 }
 export namespace IntegerLiteralHex {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.IntegerLiteralHex, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerLiteralHex['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24181,16 +24185,16 @@ export namespace IntegerLiteralHex {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralHex>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralHex>, { content: number | bigint }>];
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralHex>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntegerLiteralHex>, { content: number | bigint }>];
 	export type LooseArgs = [config: T.IntegerLiteralHex.Loose];
 	export type Kind = TSKindId.IntegerLiteralHex;
 }
 export namespace IntegerLiteralBinary {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.IntegerLiteralBinary, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerLiteralBinary['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24210,16 +24214,16 @@ export namespace IntegerLiteralBinary {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralBinary>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralBinary>, { content: number | bigint }>];
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralBinary>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntegerLiteralBinary>, { content: number | bigint }>];
 	export type LooseArgs = [config: T.IntegerLiteralBinary.Loose];
 	export type Kind = TSKindId.IntegerLiteralBinary;
 }
 export namespace IntegerLiteralOctal {
-	export type Config = WidenNumeric<ConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>;
 	export interface Bound extends BoundOf<T.IntegerLiteralOctal, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.IntegerLiteralOctal['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24239,11 +24243,11 @@ export namespace IntegerLiteralOctal {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.IntegerLiteralOctal>
-		| WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>
+		| WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>
 		| number
 		| bigint;
-	export type LooseConfig = WidenNumeric<LooseConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>;
-	export type BuildArgs = [config: WidenNumeric<ConfigOf<T.IntegerLiteralOctal>, { content: number | bigint }>];
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.IntegerLiteralOctal>, { content: number | bigint }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.IntegerLiteralOctal>, { content: number | bigint }>];
 	export type LooseArgs = [config: T.IntegerLiteralOctal.Loose];
 	export type Kind = TSKindId.IntegerLiteralOctal;
 }
@@ -25332,12 +25336,11 @@ export namespace MatchArmBlockEnding {
 }
 export namespace LineCommentDocOuter {
 	export type Config = ConfigFor<TSKindId.LineCommentDocOuter>;
-	export interface Bound extends BoundOf<T.LineCommentDocOuter, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LineCommentDocOuter, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed
-		extends ParsedOf<T.LineCommentDocOuter, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LineCommentDocOuter, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25357,12 +25360,11 @@ export namespace LineCommentDocOuter {
 }
 export namespace LineCommentDocInner {
 	export type Config = ConfigFor<TSKindId.LineCommentDocInner>;
-	export interface Bound extends BoundOf<T.LineCommentDocInner, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LineCommentDocInner, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed
-		extends ParsedOf<T.LineCommentDocInner, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LineCommentDocInner, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25382,12 +25384,12 @@ export namespace LineCommentDocInner {
 }
 export namespace BlockCommentDocOuter {
 	export type Config = ConfigFor<TSKindId.BlockCommentDocOuter>;
-	export interface Bound extends BoundOf<T.BlockCommentDocOuter, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.BlockCommentDocOuter, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.BlockCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.BlockCommentDocOuter, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		extends ParsedOf<T.BlockCommentDocOuter, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.BlockCommentDocOuter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25407,12 +25409,12 @@ export namespace BlockCommentDocOuter {
 }
 export namespace BlockCommentDocInner {
 	export type Config = ConfigFor<TSKindId.BlockCommentDocInner>;
-	export interface Bound extends BoundOf<T.BlockCommentDocInner, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.BlockCommentDocInner, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.BlockCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.BlockCommentDocInner, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		extends ParsedOf<T.BlockCommentDocInner, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.BlockCommentDocInner['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -27039,12 +27041,12 @@ export namespace CharLiteralEmpty {
 }
 export namespace LineCommentExtraSlashes {
 	export type Config = LineCommentExtraSlashesNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $named: true;
 		$text(): string;
@@ -27057,12 +27059,12 @@ export namespace LineCommentExtraSlashes {
 }
 export namespace LineCommentRegular {
 	export type Config = LineCommentRegularNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.LineCommentRegular;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.LineCommentRegular;
 		readonly $named: true;
 		$text(): string;
@@ -27075,12 +27077,12 @@ export namespace LineCommentRegular {
 }
 export namespace BlockCommentRegular {
 	export type Config = BlockCommentRegularNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.BlockCommentRegular;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.BlockCommentRegular;
 		readonly $named: true;
 		$text(): string;
@@ -27183,12 +27185,12 @@ export namespace RawStringLiteralEnd {
 }
 export namespace DocComment {
 	export type Config = DocCommentNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.DocComment;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.DocComment;
 		readonly $named: true;
 		$text(): string;
@@ -27201,12 +27203,12 @@ export namespace DocComment {
 }
 export namespace BlockCommentContent {
 	export type Config = BlockCommentContentNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.BlockCommentContent;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.BlockCommentContent;
 		readonly $named: true;
 		$text(): string;
@@ -27341,7 +27343,7 @@ export interface RustTypeMap extends GrammarTypeMap {
 	readonly trivia: Comment | Layout;
 }
 
-export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods & HoldsTrivia<RustTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RustTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;
 

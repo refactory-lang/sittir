@@ -14,7 +14,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { adoptSideNesting, holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
+import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
@@ -464,7 +464,6 @@ export function createNativeEngine<
 	}
 
 	try {
-		adoptSideNesting(status.native);
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
@@ -498,10 +497,6 @@ export function createNativeEngine<
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
 			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
 			const treeId = handle === undefined ? undefined : decodeTree(handle);
-			// The handle renders lazily, and the data's coordinates are
-			// numbers: the tokens stayed on `node`. Both closures name `node`,
-			// so the handle holds the trees it will slice for as long as it
-			// can still render.
 			return createRenderHandle(
 				() => {
 					holdsTrees();
@@ -533,10 +528,6 @@ export function createNativeEngine<
 					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
-						// Held by `read` below and by every parsed object a read
-						// returns, so it stays reachable exactly as long as
-						// something can still read from this tree or names it.
-						// Its collection is what releases the tree.
 						const liveToken = mintTreeToken(parsed.treeId);
 						treeDisposalRegistry.register(liveToken, {
 							release: status.native.disposeTree,
@@ -573,13 +564,9 @@ export function createNativeEngine<
 							},
 							options: parsed.options,
 							snapshot: (index, holderByte) => engine.snapshot(parsed.treeId, index, holderByte),
-							triviaSide: (index, side) => {
-								return readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken);
-							},
+							triviaSide: (index, side) => readEntries(tree, engine.triviaSide(parsed.treeId, index, side), liveToken),
 							writeTriviaSide: (index, side, entries) => engine.writeTriviaSide(parsed.treeId, index, side, entries),
-							unitSides: (index) => {
-								return readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken);
-							},
+							unitSides: (index) => readUnits(tree, engine.unitSides(parsed.treeId, index), liveToken),
 							slotLayouts: (index) => engine.slotLayouts(parsed.treeId, index),
 							slotSeparator: (index) => engine.slotSeparator(parsed.treeId, index) ?? undefined,
 							separatorBefore: (index) => engine.separatorBefore(parsed.treeId, index) ?? undefined,

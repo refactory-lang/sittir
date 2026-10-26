@@ -3799,15 +3799,15 @@ export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): Return
 	);
 }
 
-export function resolveNestedIdentifier_object(
-	value: T.NestedIdentifier.LooseConfig['object']
-): Admit<T.NestedIdentifier['_object']> {
+export function resolveNestedIdentifier_qualifier(
+	value: T.NestedIdentifier.LooseConfig['qualifier']
+): Admit<T.NestedIdentifier['_qualifier']> {
 	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K3, _K18);
 }
 
-export function resolveNestedIdentifier_property(
-	value: T.NestedIdentifier.LooseConfig['property']
-): Admit<T.NestedIdentifier['_property']> {
+export function resolveNestedIdentifier_name(
+	value: T.NestedIdentifier.LooseConfig['name']
+): Admit<T.NestedIdentifier['_name']> {
 	return _resolveOneBranch<T.PropertyIdentifier>(value, 'property_identifier');
 }
 
@@ -3819,8 +3819,8 @@ export function coerceToNestedIdentifier(input: T.NestedIdentifier.Loose): Retur
 		return input as unknown as ReturnType<typeof F.buildNestedIdentifier>;
 	currentHandle()?.admit(TSKindId.NestedIdentifier, [input]);
 	return F.buildNestedIdentifier({
-		object: resolveNestedIdentifier_object(input.object),
-		property: resolveNestedIdentifier_property(input.property)
+		qualifier: resolveNestedIdentifier_qualifier(input.qualifier),
+		name: resolveNestedIdentifier_name(input.name)
 	});
 }
 
@@ -5747,9 +5747,9 @@ export function coerceToImportAlias(
 	);
 }
 
-export function resolveNestedTypeIdentifier_module(
-	value: T.NestedTypeIdentifier.LooseConfig['module']
-): Admit<T.NestedTypeIdentifier['_module']> {
+export function resolveNestedTypeIdentifier_qualifier(
+	value: T.NestedTypeIdentifier.LooseConfig['qualifier']
+): Admit<T.NestedTypeIdentifier['_qualifier']> {
 	return _resolveOne<T.Identifier | T.NestedIdentifier>(value, _K3, _K18);
 }
 
@@ -5769,7 +5769,7 @@ export function coerceToNestedTypeIdentifier(
 		return input as unknown as ReturnType<typeof F.buildNestedTypeIdentifier>;
 	currentHandle()?.admit(TSKindId.NestedTypeIdentifier, [input]);
 	return F.buildNestedTypeIdentifier({
-		module: resolveNestedTypeIdentifier_module(input.module),
+		qualifier: resolveNestedTypeIdentifier_qualifier(input.qualifier),
 		name: resolveNestedTypeIdentifier_name(input.name)
 	});
 }

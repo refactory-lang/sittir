@@ -123,7 +123,7 @@ const NO_RECORDS = 'a side names a built record, and its engine builds no record
 
 export type BuiltRow = {
 	readonly $with?: Readonly<Record<string, (...args: never[]) => unknown>>;
-	readonly $trivia: Readonly<Record<string, (...items: unknown[]) => unknown>>;
+	readonly $trivia?: Readonly<Record<string, (...items: unknown[]) => unknown>>;
 };
 
 export interface BuiltViews {

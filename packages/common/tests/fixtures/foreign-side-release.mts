@@ -1,8 +1,7 @@
 // Run with `node --expose-gc --import tsx <parsed|built|unit>`: prints one
 // JSON line reporting how an engine renders its parsed or its built node
-// holding, in a side, a record another engine of its language built, with a
-// side of its own that engine wrote, once nothing but that side names the
-// record or its engine. `unit` holds it in a side of a unit of a built block,
+// holding, in a side, a record another engine of its language built, once
+// nothing but that side names the record or its engine. `unit` holds it in a side of a unit of a built block,
 // which the holder then rebuilds with an item before the unit, and clears on
 // the block it rebuilt from. `read` holds, in a built node's side, a comment
 // the other engine parsed, once nothing else names that comment or its tree.
@@ -46,11 +45,9 @@ const attempt = (read: () => unknown) => {
 	}
 };
 
-async function sidedComment(): Promise<object> {
+async function builtComment(): Promise<object> {
 	const builder = await recordEngine();
-	const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
-	comment.$trivia.leading(builder.build.blockComment(builder.build.blockCommentRegular(' d ')));
-	return comment;
+	return builder.build.blockComment(builder.build.blockCommentRegular(' c '));
 }
 
 function inSide(): { root: object; read: () => unknown; written: () => Promise<WeakRef<object>> } {
@@ -61,7 +58,7 @@ function inSide(): { root: object; read: () => unknown; written: () => Promise<W
 		root,
 		read: () => (target.$trivia.trailing() as readonly { $render(): string }[]).map((entry) => entry.$render()).join(' '),
 		written: async () => {
-			const comment = await sidedComment();
+			const comment = await builtComment();
 			target.$trivia.trailing(comment);
 			return new WeakRef(comment);
 		}
@@ -77,7 +74,7 @@ function inUnitSide(): { root: object; read: () => unknown; written: () => Promi
 		},
 		read: () => ((unitSidesOf(held.root!) as readonly { leading?: readonly { $render(): string }[] }[])[0]!.leading ?? []).map((entry) => entry.$render()).join(' '),
 		written: async () => {
-			const comment = await sidedComment();
+			const comment = await builtComment();
 			const block = holder.build.block({ statements: statements as never }) as unknown as Block;
 			writeUnitSides(block, [{ slot: '_statements', item: 0, leading: [comment] }]);
 			held.root = block.$with.statements(holder.build.expressionStatement(holder.build.identifier('y')), ...block.statements());

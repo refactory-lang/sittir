@@ -74,24 +74,6 @@ pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: 
     Ok(prepared)
 }
 
-/// `prepare_root` for the record of a trivia entry, which renders without its
-/// own leading and trailing sides: they are its neighbours in the side that
-/// holds it (`trivia::spliced`). Its inner side stays.
-///
-/// # Errors
-///
-/// What `prepare_root` refuses.
-pub fn prepare_entry_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>) -> Result<Prepared<T>, CoordinateError> {
-    let mut prepared = prepare_root::<T, N>(trees, built, store, root, ctx)?;
-    if let Cell::Child { at, link: None, .. } = root.cell {
-        if let Some(trivia) = prepared.node_mut(Place::Record(at).into()).trivia.as_mut() {
-            trivia.leading = None;
-            trivia.trailing = None;
-        }
-    }
-    Ok(prepared)
-}
-
 /// What a record's prepare reads and writes besides the record: the overlay
 /// it fills and the parsed trees' arenas it may write a first read into,
 /// beside the built arena, the render's trees and the store of written

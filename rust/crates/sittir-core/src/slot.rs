@@ -110,8 +110,9 @@ impl NodeCoordinate {
         self.kind.or_else(|| sources.kind_of(self))
     }
 
-    /// Write this coordinate's bytes between its kind's edge seams, the seams a
-    /// rendered node of the same kind writes around itself. `adjacent` drops the
+    /// Write this coordinate's bytes between its kind's edge seams and what
+    /// the templates along its edges place there (`RenderSink::boundary`), as
+    /// a rendered node of the same kind writes them. `adjacent` drops the
     /// leading seam for a position that forbids whitespace before it.
     pub fn write_between_edges(
         &self,
@@ -123,7 +124,9 @@ impl NodeCoordinate {
         } else if let Some(seam) = self.edges.and_then(|e| e.before) {
             w.seam_arm(seam);
         }
+        w.boundary(self, crate::options::Side::Before);
         w.slice(self)?;
+        w.boundary(self, crate::options::Side::After);
         if let Some(seam) = self.edges.and_then(|e| e.after) {
             w.seam_arm(seam);
         }
@@ -514,7 +517,7 @@ mod tests {
             indent: KindId(0),
             dedent: KindId(0), leaf_edges: &[], gaps: &[(1, KindId(1)), (2, KindId(2))]
         };
-        static EDGES: [EdgeSite; 1] = [EdgeSite { before: Some(SiteId(0)), after: None, before_arms: &[], after_arms: &[] }];
+        static EDGES: [EdgeSite; 1] = [EdgeSite { before: Some(SiteId(0)), after: None, before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] }];
         static EDGE_ROWS: [Option<EdgeRow>; 10] = [None, None, None, None, None, None, None, None, None, Some(EdgeRow(0))];
         static SITES: [SiteSpec; 1] = [SiteSpec { default_arm: TIGHT, strength: SeamStrength::Cascade }];
         let sources = Kinded(Sources(HashMap::from([(crate::types::TreeId(1), Arc::from("f()"))])));

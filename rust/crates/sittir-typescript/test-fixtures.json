@@ -554,16 +554,16 @@
             },
             "_name": {
               "$type": 243,
-              "_object": {
-                "$text": "Foo",
-                "$type": 1
-              },
-              "_property": {
+              "_name": {
                 "$type": 499,
                 "_content": {
                   "$text": "Bar",
                   "$type": 1
                 }
+              },
+              "_qualifier": {
+                "$text": "Foo",
+                "$type": 1
               }
             }
           }
@@ -829,7 +829,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
     "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -1468,16 +1468,16 @@
         },
         "_name": {
           "$type": 243,
-          "_object": {
-            "$text": "Foo",
-            "$type": 1
-          },
-          "_property": {
+          "_name": {
             "$type": 499,
             "_content": {
               "$text": "Bar",
               "$type": 1
             }
+          },
+          "_qualifier": {
+            "$text": "Foo",
+            "$type": 1
           }
         }
       }
@@ -1492,7 +1492,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6022,16 +6022,16 @@
       },
       "_name": {
         "$type": 243,
-        "_object": {
-          "$text": "Foo",
-          "$type": 1
-        },
-        "_property": {
+        "_name": {
           "$type": 499,
           "_content": {
             "$text": "Bar",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "Foo",
+          "$type": 1
         }
       }
     },
@@ -6045,7 +6045,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -6319,16 +6319,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 243,
-      "_object": {
-        "$text": "Foo",
-        "$type": 1
-      },
-      "_property": {
+      "_name": {
         "$type": 499,
         "_content": {
           "$text": "Bar",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "Foo",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -6341,7 +6341,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_identifier object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (property_identifier))",
     "expectedSourceOut": "Foo.Bar",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12315,16 +12315,16 @@
           "_terminator": 22,
           "_value": {
             "$type": 243,
-            "_object": {
-              "$text": "X",
-              "$type": 1
-            },
-            "_property": {
+            "_name": {
               "$type": 499,
               "_content": {
                 "$text": "N",
                 "$type": 1
               }
+            },
+            "_qualifier": {
+              "$text": "X",
+              "$type": 1
             }
           }
         }
@@ -12340,7 +12340,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (import_alias name: (identifier) value: (nested_identifier object: (identifier) property: (property_identifier))))",
+    "expectedReparseTree": "(program statements: (import_alias name: (identifier) value: (qualified_identifier qualifier: (identifier) name: (property_identifier))))",
     "expectedSourceOut": "\nimport r = X.N;\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12361,16 +12361,16 @@
       "_terminator": 22,
       "_value": {
         "$type": 243,
-        "_object": {
-          "$text": "X",
-          "$type": 1
-        },
-        "_property": {
+        "_name": {
           "$type": 499,
           "_content": {
             "$text": "N",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "X",
+          "$type": 1
         }
       }
     },
@@ -12384,7 +12384,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(import_alias name: (identifier) value: (nested_identifier object: (identifier) property: (property_identifier)))",
+    "expectedReparseTree": "(import_alias name: (identifier) value: (qualified_identifier qualifier: (identifier) name: (property_identifier)))",
     "expectedSourceOut": "import r = X.N;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12398,16 +12398,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 243,
-      "_object": {
-        "$text": "X",
-        "$type": 1
-      },
-      "_property": {
+      "_name": {
         "$type": 499,
         "_content": {
           "$text": "N",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "X",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -12420,7 +12420,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_identifier object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (property_identifier))",
     "expectedSourceOut": "X.N",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12479,16 +12479,16 @@
                 "_terminator": 22,
                 "_value": {
                   "$type": 243,
-                  "_object": {
-                    "$text": "X",
-                    "$type": 1
-                  },
-                  "_property": {
+                  "_name": {
                     "$type": 499,
                     "_content": {
                       "$text": "N",
                       "$type": 1
                     }
+                  },
+                  "_qualifier": {
+                    "$text": "X",
+                    "$type": 1
                   }
                 }
               }
@@ -12512,7 +12512,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (import_alias name: (identifier) value: (nested_identifier object: (identifier) property: (property_identifier))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(program statements: (module name: (identifier) body: (statement_block statements: (import_alias name: (identifier) value: (qualified_identifier qualifier: (identifier) name: (property_identifier))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "\nmodule C {\n  import r = X.N;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12538,16 +12538,16 @@
             "_terminator": 22,
             "_value": {
               "$type": 243,
-              "_object": {
-                "$text": "X",
-                "$type": 1
-              },
-              "_property": {
+              "_name": {
                 "$type": 499,
                 "_content": {
                   "$text": "N",
                   "$type": 1
                 }
+              },
+              "_qualifier": {
+                "$text": "X",
+                "$type": 1
               }
             }
           }
@@ -12569,7 +12569,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (import_alias name: (identifier) value: (nested_identifier object: (identifier) property: (property_identifier))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (identifier) body: (statement_block statements: (import_alias name: (identifier) value: (qualified_identifier qualifier: (identifier) name: (property_identifier))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module C {\n  import r = X.N;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12593,16 +12593,16 @@
           "_terminator": 22,
           "_value": {
             "$type": 243,
-            "_object": {
-              "$text": "X",
-              "$type": 1
-            },
-            "_property": {
+            "_name": {
               "$type": 499,
               "_content": {
                 "$text": "N",
                 "$type": 1
               }
+            },
+            "_qualifier": {
+              "$text": "X",
+              "$type": 1
             }
           }
         }
@@ -12619,7 +12619,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(statement_block statements: (import_alias name: (identifier) value: (nested_identifier object: (identifier) property: (property_identifier))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(statement_block statements: (import_alias name: (identifier) value: (qualified_identifier qualifier: (identifier) name: (property_identifier))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "{\n  import r = X.N;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12640,16 +12640,16 @@
       "_terminator": 22,
       "_value": {
         "$type": 243,
-        "_object": {
-          "$text": "X",
-          "$type": 1
-        },
-        "_property": {
+        "_name": {
           "$type": 499,
           "_content": {
             "$text": "N",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "X",
+          "$type": 1
         }
       }
     },
@@ -12663,7 +12663,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(import_alias name: (identifier) value: (nested_identifier object: (identifier) property: (property_identifier)))",
+    "expectedReparseTree": "(import_alias name: (identifier) value: (qualified_identifier qualifier: (identifier) name: (property_identifier)))",
     "expectedSourceOut": "import r = X.N;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -12677,16 +12677,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 243,
-      "_object": {
-        "$text": "X",
-        "$type": 1
-      },
-      "_property": {
+      "_name": {
         "$type": 499,
         "_content": {
           "$text": "N",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "X",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -12699,7 +12699,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_identifier object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (property_identifier))",
     "expectedSourceOut": "X.N",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -18398,16 +18398,16 @@
                                   "$type": 350,
                                   "_name": {
                                     "$type": 318,
-                                    "_module": {
-                                      "$text": "Iterable",
-                                      "$type": 1
-                                    },
                                     "_name": {
                                       "$type": 504,
                                       "_content": {
                                         "$text": "Keyed",
                                         "$type": 1
                                       }
+                                    },
+                                    "_qualifier": {
+                                      "$text": "Iterable",
+                                      "$type": 1
                                     }
                                   },
                                   "_type_arguments": {
@@ -18536,7 +18536,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon))))))",
+    "expectedReparseTree": "(program statements: (export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon))))))",
     "expectedSourceOut": "\nexport interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -18592,16 +18592,16 @@
                               "$type": 350,
                               "_name": {
                                 "$type": 318,
-                                "_module": {
-                                  "$text": "Iterable",
-                                  "$type": 1
-                                },
                                 "_name": {
                                   "$type": 504,
                                   "_content": {
                                     "$text": "Keyed",
                                     "$type": 1
                                   }
+                                },
+                                "_qualifier": {
+                                  "$text": "Iterable",
+                                  "$type": 1
                                 }
                               },
                               "_type_arguments": {
@@ -18728,7 +18728,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon)))))",
+    "expectedReparseTree": "(export_statement_default_declaration (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon)))))",
     "expectedSourceOut": "export interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -18773,16 +18773,16 @@
                     "$type": 350,
                     "_name": {
                       "$type": 318,
-                      "_module": {
-                        "$text": "Iterable",
-                        "$type": 1
-                      },
                       "_name": {
                         "$type": 504,
                         "_content": {
                           "$text": "Keyed",
                           "$type": 1
                         }
+                      },
+                      "_qualifier": {
+                        "$text": "Iterable",
+                        "$type": 1
                       }
                     },
                     "_type_arguments": {
@@ -18895,7 +18895,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
+    "expectedReparseTree": "(export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
     "expectedSourceOut": "export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -18949,16 +18949,16 @@
                             "$type": 350,
                             "_name": {
                               "$type": 318,
-                              "_module": {
-                                "$text": "Iterable",
-                                "$type": 1
-                              },
                               "_name": {
                                 "$type": 504,
                                 "_content": {
                                   "$text": "Keyed",
                                   "$type": 1
                                 }
+                              },
+                              "_qualifier": {
+                                "$text": "Iterable",
+                                "$type": 1
                               }
                             },
                             "_type_arguments": {
@@ -19083,7 +19083,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon))))",
+    "expectedReparseTree": "(interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon))))",
     "expectedSourceOut": "interface Foo {\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -19396,16 +19396,16 @@
                           "$type": 350,
                           "_name": {
                             "$type": 318,
-                            "_module": {
-                              "$text": "Iterable",
-                              "$type": 1
-                            },
                             "_name": {
                               "$type": 504,
                               "_content": {
                                 "$text": "Keyed",
                                 "$type": 1
                               }
+                            },
+                            "_qualifier": {
+                              "$text": "Iterable",
+                              "$type": 1
                             }
                           },
                           "_type_arguments": {
@@ -19522,7 +19522,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon)))",
+    "expectedReparseTree": "(interface_body members: (object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon)))",
     "expectedSourceOut": "{\n  export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;\n}",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -19571,16 +19571,16 @@
                         "$type": 350,
                         "_name": {
                           "$type": 318,
-                          "_module": {
-                            "$text": "Iterable",
-                            "$type": 1
-                          },
                           "_name": {
                             "$type": 504,
                             "_content": {
                               "$text": "Keyed",
                               "$type": 1
                             }
+                          },
+                          "_qualifier": {
+                            "$text": "Iterable",
+                            "$type": 1
                           }
                         },
                         "_type_arguments": {
@@ -19695,7 +19695,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon))",
+    "expectedReparseTree": "(object_type_content item: (export_statement_default_declaration (function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))) (automatic_semicolon))",
     "expectedSourceOut": "export function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -19738,16 +19738,16 @@
                   "$type": 350,
                   "_name": {
                     "$type": 318,
-                    "_module": {
-                      "$text": "Iterable",
-                      "$type": 1
-                    },
                     "_name": {
                       "$type": 504,
                       "_content": {
                         "$text": "Keyed",
                         "$type": 1
                       }
+                    },
+                    "_qualifier": {
+                      "$text": "Iterable",
+                      "$type": 1
                     }
                   },
                   "_type_arguments": {
@@ -19858,7 +19858,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
+    "expectedReparseTree": "(function_signature name: (identifier) type_parameters: (type_parameters elements: (type_parameters_elements item: (type_parameter name: (type_identifier)) item: (type_parameter name: (type_identifier)))) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))) return_type: (type_annotation type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
     "expectedSourceOut": "function OrderedMap<K, V>(iter: Iterable.Keyed<K, V>): OrderedMap<K, V>;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20063,16 +20063,16 @@
                 "$type": 350,
                 "_name": {
                   "$type": 318,
-                  "_module": {
-                    "$text": "Iterable",
-                    "$type": 1
-                  },
                   "_name": {
                     "$type": 504,
                     "_content": {
                       "$text": "Keyed",
                       "$type": 1
                     }
+                  },
+                  "_qualifier": {
+                    "$text": "Iterable",
+                    "$type": 1
                   }
                 },
                 "_type_arguments": {
@@ -20114,7 +20114,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))",
+    "expectedReparseTree": "(formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))))",
     "expectedSourceOut": "(iter: Iterable.Keyed<K, V>)",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20148,16 +20148,16 @@
               "$type": 350,
               "_name": {
                 "$type": 318,
-                "_module": {
-                  "$text": "Iterable",
-                  "$type": 1
-                },
                 "_name": {
                   "$type": 504,
                   "_content": {
                     "$text": "Keyed",
                     "$type": 1
                   }
+                },
+                "_qualifier": {
+                  "$text": "Iterable",
+                  "$type": 1
                 }
               },
               "_type_arguments": {
@@ -20198,7 +20198,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
+    "expectedReparseTree": "(formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))))",
     "expectedSourceOut": "iter: Iterable.Keyed<K, V>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20228,16 +20228,16 @@
           "$type": 350,
           "_name": {
             "$type": 318,
-            "_module": {
-              "$text": "Iterable",
-              "$type": 1
-            },
             "_name": {
               "$type": 504,
               "_content": {
                 "$text": "Keyed",
                 "$type": 1
               }
+            },
+            "_qualifier": {
+              "$text": "Iterable",
+              "$type": 1
             }
           },
           "_type_arguments": {
@@ -20276,7 +20276,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
+    "expectedReparseTree": "(required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))))",
     "expectedSourceOut": "iter: Iterable.Keyed<K, V>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20323,16 +20323,16 @@
         "$type": 350,
         "_name": {
           "$type": 318,
-          "_module": {
-            "$text": "Iterable",
-            "$type": 1
-          },
           "_name": {
             "$type": 504,
             "_content": {
               "$text": "Keyed",
               "$type": 1
             }
+          },
+          "_qualifier": {
+            "$text": "Iterable",
+            "$type": 1
           }
         },
         "_type_arguments": {
@@ -20370,7 +20370,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_annotation type: (generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
+    "expectedReparseTree": "(type_annotation type: (generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier)))))",
     "expectedSourceOut": ": Iterable.Keyed<K, V>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20444,16 +20444,16 @@
       "$type": 350,
       "_name": {
         "$type": 318,
-        "_module": {
-          "$text": "Iterable",
-          "$type": 1
-        },
         "_name": {
           "$type": 504,
           "_content": {
             "$text": "Keyed",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "Iterable",
+          "$type": 1
         }
       },
       "_type_arguments": {
@@ -20490,7 +20490,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(generic_type name: (nested_type_identifier module: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))",
+    "expectedReparseTree": "(generic_type name: (qualified_identifier qualifier: (identifier) name: (type_identifier)) type_arguments: (type_arguments (types item: (type_identifier) item: (type_identifier))))",
     "expectedSourceOut": "Iterable.Keyed<K, V>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -20559,16 +20559,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 318,
-      "_module": {
-        "$text": "Iterable",
-        "$type": 1
-      },
       "_name": {
         "$type": 504,
         "_content": {
           "$text": "Keyed",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "Iterable",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -20581,14 +20581,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_type_identifier module: (identifier) name: (type_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (type_identifier))",
     "expectedSourceOut": "Iterable.Keyed",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "nested_type_identifier",
     "sourceIn": "Iterable.Keyed",
     "wrappedOffset": 10,
-    "wrappedText": "type _X = Iterable.Keyed;"
+    "wrappedText": "type _X = Iterable.Keyed[];"
   },
   {
     "expectedOutput": "<K, V>",
@@ -61952,13 +61952,6 @@
                 "_override": false,
                 "_readonly": false,
                 "_type": {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        181
-                      ]
-                    }
-                  },
                   "$type": 333,
                   "_type": {
                     "$type": 377,
@@ -62556,13 +62549,6 @@
             "_override": false,
             "_readonly": false,
             "_type": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    181
-                  ]
-                }
-              },
               "$type": 333,
               "_type": {
                 "$type": 377,
@@ -63061,13 +63047,6 @@
           "_override": false,
           "_readonly": false,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 333,
             "_type": {
               "$type": 377,
@@ -66129,13 +66108,6 @@
         "_override": false,
         "_readonly": false,
         "_type": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                181
-              ]
-            }
-          },
           "$type": 333,
           "_type": {
             "$type": 377,
@@ -66178,13 +66150,6 @@
       "_override": false,
       "_readonly": false,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 333,
         "_type": {
           "$type": 377,
@@ -66715,16 +66680,16 @@
                     "$type": 377,
                     "_type": {
                       "$type": 318,
-                      "_module": {
-                        "$text": "C",
-                        "$type": 1
-                      },
                       "_name": {
                         "$type": 504,
                         "_content": {
                           "$text": "D",
                           "$type": 1
                         }
+                      },
+                      "_qualifier": {
+                        "$text": "C",
+                        "$type": 1
                       }
                     }
                   }
@@ -66746,7 +66711,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) type_arguments: (type_arguments (types item: (tuple_type tuple_type_members: (tuple_type_members item: (type_identifier))))) arguments: (arguments))) statements: (expression_statement expression: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (array_type type: (nested_type_identifier module: (identifier) name: (type_identifier))))) arguments: (arguments))))",
+    "expectedReparseTree": "(program statements: (expression_statement expression: (call_expression_call function: (member_expression object: (identifier) property: (property_identifier)) type_arguments: (type_arguments (types item: (tuple_type tuple_type_members: (tuple_type_members item: (type_identifier))))) arguments: (arguments))) statements: (expression_statement expression: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (array_type type: (qualified_identifier qualifier: (identifier) name: (type_identifier))))) arguments: (arguments))))",
     "expectedSourceOut": "\na.b<[C]>();\na<C.D[]>();\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -66853,16 +66818,16 @@
                 "$type": 377,
                 "_type": {
                   "$type": 318,
-                  "_module": {
-                    "$text": "C",
-                    "$type": 1
-                  },
                   "_name": {
                     "$type": 504,
                     "_content": {
                       "$text": "D",
                       "$type": 1
                     }
+                  },
+                  "_qualifier": {
+                    "$text": "C",
+                    "$type": 1
                   }
                 }
               }
@@ -66882,7 +66847,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(expression_statement expression: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (array_type type: (nested_type_identifier module: (identifier) name: (type_identifier))))) arguments: (arguments)))",
+    "expectedReparseTree": "(expression_statement expression: (call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (array_type type: (qualified_identifier qualifier: (identifier) name: (type_identifier))))) arguments: (arguments)))",
     "expectedSourceOut": "a<C.D[]>();",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -66983,16 +66948,16 @@
               "$type": 377,
               "_type": {
                 "$type": 318,
-                "_module": {
-                  "$text": "C",
-                  "$type": 1
-                },
                 "_name": {
                   "$type": 504,
                   "_content": {
                     "$text": "D",
                     "$type": 1
                   }
+                },
+                "_qualifier": {
+                  "$text": "C",
+                  "$type": 1
                 }
               }
             }
@@ -67010,7 +66975,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (array_type type: (nested_type_identifier module: (identifier) name: (type_identifier))))) arguments: (arguments))",
+    "expectedReparseTree": "(call_expression_call function: (identifier) type_arguments: (type_arguments (types item: (array_type type: (qualified_identifier qualifier: (identifier) name: (type_identifier))))) arguments: (arguments))",
     "expectedSourceOut": "a<C.D[]>()",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -67145,16 +67110,16 @@
             "$type": 377,
             "_type": {
               "$type": 318,
-              "_module": {
-                "$text": "C",
-                "$type": 1
-              },
               "_name": {
                 "$type": 504,
                 "_content": {
                   "$text": "D",
                   "$type": 1
                 }
+              },
+              "_qualifier": {
+                "$text": "C",
+                "$type": 1
               }
             }
           }
@@ -67171,7 +67136,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_arguments (types item: (array_type type: (nested_type_identifier module: (identifier) name: (type_identifier)))))",
+    "expectedReparseTree": "(type_arguments (types item: (array_type type: (qualified_identifier qualifier: (identifier) name: (type_identifier)))))",
     "expectedSourceOut": "<C.D[]>",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -67235,16 +67200,16 @@
           "$type": 377,
           "_type": {
             "$type": 318,
-            "_module": {
-              "$text": "C",
-              "$type": 1
-            },
             "_name": {
               "$type": 504,
               "_content": {
                 "$text": "D",
                 "$type": 1
               }
+            },
+            "_qualifier": {
+              "$text": "C",
+              "$type": 1
             }
           }
         }
@@ -67260,7 +67225,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(types item: (array_type type: (nested_type_identifier module: (identifier) name: (type_identifier))))",
+    "expectedReparseTree": "(types item: (array_type type: (qualified_identifier qualifier: (identifier) name: (type_identifier))))",
     "expectedSourceOut": "C.D[]",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -67459,16 +67424,16 @@
       "$type": 377,
       "_type": {
         "$type": 318,
-        "_module": {
-          "$text": "C",
-          "$type": 1
-        },
         "_name": {
           "$type": 504,
           "_content": {
             "$text": "D",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "C",
+          "$type": 1
         }
       }
     },
@@ -67482,7 +67447,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(array_type type: (nested_type_identifier module: (identifier) name: (type_identifier)))",
+    "expectedReparseTree": "(array_type type: (qualified_identifier qualifier: (identifier) name: (type_identifier)))",
     "expectedSourceOut": "C.D[]",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -67496,16 +67461,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 318,
-      "_module": {
-        "$text": "C",
-        "$type": 1
-      },
       "_name": {
         "$type": 504,
         "_content": {
           "$text": "D",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "C",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -67518,14 +67483,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_type_identifier module: (identifier) name: (type_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (type_identifier))",
     "expectedSourceOut": "C.D",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "nested_type_identifier",
     "sourceIn": "C.D",
     "wrappedOffset": 10,
-    "wrappedText": "type _X = C.D;"
+    "wrappedText": "type _X = C.D[];"
   },
   {
     "expectedOutput": "\nA?.<B>();\n",
@@ -77159,13 +77124,6 @@
                   },
                   "_readonly": false,
                   "_type": {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          181
-                        ]
-                      }
-                    },
                     "$type": 330,
                     "_type": 40
                   }
@@ -77226,13 +77184,6 @@
                   },
                   "_readonly": false,
                   "_type": {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          181
-                        ]
-                      }
-                    },
                     "$type": 332,
                     "_type": 40
                   }
@@ -78100,13 +78051,6 @@
             },
             "_readonly": false,
             "_type": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    181
-                  ]
-                }
-              },
               "$type": 330,
               "_type": 40
             }
@@ -78178,13 +78122,6 @@
             },
             "_readonly": false,
             "_type": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    181
-                  ]
-                }
-              },
               "$type": 332,
               "_type": 40
             }
@@ -78429,13 +78366,6 @@
           },
           "_readonly": false,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 330,
             "_type": 40
           }
@@ -78492,13 +78422,6 @@
           },
           "_readonly": false,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 332,
             "_type": 40
           }
@@ -78808,13 +78731,6 @@
               },
               "_readonly": false,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 330,
                 "_type": 40
               }
@@ -78897,13 +78813,6 @@
               },
               "_readonly": false,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 332,
                 "_type": 40
               }
@@ -79303,13 +79212,6 @@
       },
       "_readonly": false,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 330,
         "_type": 40
       }
@@ -79360,13 +79262,6 @@
       },
       "_readonly": false,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 332,
         "_type": 40
       }
@@ -83213,13 +83108,6 @@
                         "_override": false,
                         "_readonly": false,
                         "_type": {
-                          "$_layout": {
-                            "trivia": {
-                              "leading": [
-                                181
-                              ]
-                            }
-                          },
                           "$type": 333,
                           "_type": {
                             "$type": 504,
@@ -83384,13 +83272,6 @@
                     "_override": false,
                     "_readonly": false,
                     "_type": {
-                      "$_layout": {
-                        "trivia": {
-                          "leading": [
-                            181
-                          ]
-                        }
-                      },
                       "$type": 333,
                       "_type": {
                         "$type": 504,
@@ -83543,13 +83424,6 @@
                 "_override": false,
                 "_readonly": false,
                 "_type": {
-                  "$_layout": {
-                    "trivia": {
-                      "leading": [
-                        181
-                      ]
-                    }
-                  },
                   "$type": 333,
                   "_type": {
                     "$type": 504,
@@ -83712,13 +83586,6 @@
               "_override": false,
               "_readonly": false,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 333,
                 "_type": {
                   "$type": 504,
@@ -83908,13 +83775,6 @@
             "_override": false,
             "_readonly": false,
             "_type": {
-              "$_layout": {
-                "trivia": {
-                  "leading": [
-                    181
-                  ]
-                }
-              },
               "$type": 333,
               "_type": {
                 "$type": 504,
@@ -84037,13 +83897,6 @@
           "_override": false,
           "_readonly": false,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 333,
             "_type": {
               "$type": 504,
@@ -84305,13 +84158,6 @@
         "_override": false,
         "_readonly": false,
         "_type": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                181
-              ]
-            }
-          },
           "$type": 333,
           "_type": {
             "$type": 504,
@@ -84352,13 +84198,6 @@
       "_override": false,
       "_readonly": false,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 333,
         "_type": {
           "$type": 504,
@@ -87838,13 +87677,6 @@
                 "_type": {
                   "$type": 364,
                   "_type": {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          181
-                        ]
-                      }
-                    },
                     "$type": 504,
                     "_content": {
                       "$text": "CodeEditor",
@@ -87872,13 +87704,6 @@
                 "_type": {
                   "$type": 364,
                   "_type": {
-                    "$_layout": {
-                      "trivia": {
-                        "leading": [
-                          181
-                        ]
-                      }
-                    },
                     "$type": 377,
                     "_type": {
                       "$type": 504,
@@ -87933,13 +87758,6 @@
             "_type": {
               "$type": 364,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 504,
                 "_content": {
                   "$text": "CodeEditor",
@@ -87989,13 +87807,6 @@
             "_type": {
               "$type": 364,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 377,
                 "_type": {
                   "$type": 504,
@@ -88045,13 +87856,6 @@
         "_type": {
           "$type": 364,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 504,
             "_content": {
               "$text": "CodeEditor",
@@ -88094,13 +87898,6 @@
         "_type": {
           "$type": 364,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 377,
             "_type": {
               "$type": 504,
@@ -88140,13 +87937,6 @@
       "_type": {
         "$type": 364,
         "_type": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                181
-              ]
-            }
-          },
           "$type": 504,
           "_content": {
             "$text": "CodeEditor",
@@ -88182,13 +87972,6 @@
       "_type": {
         "$type": 364,
         "_type": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                181
-              ]
-            }
-          },
           "$type": 377,
           "_type": {
             "$type": 504,
@@ -88225,13 +88008,6 @@
     "input": {
       "$type": 364,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 504,
         "_content": {
           "$text": "CodeEditor",
@@ -88264,13 +88040,6 @@
     "input": {
       "$type": 364,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 377,
         "_type": {
           "$type": 504,
@@ -112029,16 +111798,16 @@
             "$type": 358,
             "_type": {
               "$type": 318,
-              "_module": {
-                "$text": "Person",
-                "$type": 1
-              },
               "_name": {
                 "$type": 504,
                 "_content": {
                   "$text": "P",
                   "$type": 1
                 }
+              },
+              "_qualifier": {
+                "$text": "Person",
+                "$type": 1
               }
             }
           }
@@ -112325,7 +112094,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (parenthesized_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query expression: (identifier))) statements: (type_alias_declaration name: (type_identifier) value: (type_query expression: (type_query_member_expression object: (identifier) property: (property_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query expression: (type_query_call_expression function: (import) arguments: (arguments elements: (string_single elements: (string_fragment)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_query expression: (identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (lookup_type type: (type_identifier) index_type: (predefined_type)))) statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (index_type_query type: (type_identifier)) right: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_query expression: (identifier)) index_type: (predefined_type))))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (qualified_identifier qualifier: (identifier) name: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (generic_type name: (type_identifier) type_arguments: (type_arguments (types item: (type_identifier)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (parenthesized_type type: (type_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query expression: (identifier))) statements: (type_alias_declaration name: (type_identifier) value: (type_query expression: (type_query_member_expression object: (identifier) property: (property_identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (type_query expression: (type_query_call_expression function: (import) arguments: (arguments elements: (string_single elements: (string_fragment)))))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (type_query expression: (identifier)))) statements: (type_alias_declaration name: (type_identifier) value: (index_type_query type: (lookup_type type: (type_identifier) index_type: (predefined_type)))) statements: (type_alias_declaration name: (type_identifier) value: (intersection_type left: (index_type_query type: (type_identifier)) right: (type_identifier))) statements: (type_alias_declaration name: (type_identifier) value: (lookup_type type: (type_query expression: (identifier)) index_type: (predefined_type))))",
     "expectedSourceOut": "\ntype T = keyof Person;\ntype T = keyof Person.P;\ntype T = keyof Person<P>;\ntype T = keyof (Person);\n\ntype T = typeof Person;\ntype T = typeof Person.P;\ntype T = typeof import('person');\n\ntype T = keyof typeof Person;\n\ntype T = keyof U[number];\ntype T = keyof U & V;\n\ntype T = typeof array[number];\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -112394,16 +112163,16 @@
         "$type": 358,
         "_type": {
           "$type": 318,
-          "_module": {
-            "$text": "Person",
-            "$type": 1
-          },
           "_name": {
             "$type": 504,
             "_content": {
               "$text": "P",
               "$type": 1
             }
+          },
+          "_qualifier": {
+            "$text": "Person",
+            "$type": 1
           }
         }
       }
@@ -112418,7 +112187,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier))))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (index_type_query type: (qualified_identifier qualifier: (identifier) name: (type_identifier))))",
     "expectedSourceOut": "type T = keyof Person.P;",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -113457,16 +113226,16 @@
       "$type": 358,
       "_type": {
         "$type": 318,
-        "_module": {
-          "$text": "Person",
-          "$type": 1
-        },
         "_name": {
           "$type": 504,
           "_content": {
             "$text": "P",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "Person",
+          "$type": 1
         }
       }
     },
@@ -113480,7 +113249,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(index_type_query type: (nested_type_identifier module: (identifier) name: (type_identifier)))",
+    "expectedReparseTree": "(index_type_query type: (qualified_identifier qualifier: (identifier) name: (type_identifier)))",
     "expectedSourceOut": "keyof Person.P",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -113680,16 +113449,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 318,
-      "_module": {
-        "$text": "Person",
-        "$type": 1
-      },
       "_name": {
         "$type": 504,
         "_content": {
           "$text": "P",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "Person",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -113702,14 +113471,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_type_identifier module: (identifier) name: (type_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (type_identifier))",
     "expectedSourceOut": "Person.P",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "nested_type_identifier",
     "sourceIn": "Person.P",
     "wrappedOffset": 10,
-    "wrappedText": "type _X = Person.P;"
+    "wrappedText": "type _X = Person.P[];"
   },
   {
     "expectedOutput": "Person<P>",
@@ -122207,16 +121976,16 @@
                   },
                   {
                     "$type": 318,
-                    "_module": {
-                      "$text": "B",
-                      "$type": 1
-                    },
                     "_name": {
                       "$type": 504,
                       "_content": {
                         "$text": "C",
                         "$type": 1
                       }
+                    },
+                    "_qualifier": {
+                      "$text": "B",
+                      "$type": 1
                     }
                   }
                 ]
@@ -122369,7 +122138,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (tuple_type) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (union_type left: (type_identifier) right: (type_identifier)) item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier))))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (optional_tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (tuple_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(program statements: (type_alias_declaration name: (type_identifier) value: (tuple_type) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (union_type left: (type_identifier) right: (type_identifier)) item: (type_identifier))) terminator: (automatic_semicolon)) statements: (type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (qualified_identifier qualifier: (identifier) name: (type_identifier))))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (optional_type type: (predefined_type)) item: (rest_type type: (type_identifier)))) terminator: (automatic_semicolon)) (comment_line) statements: (type_alias_declaration name: (type_identifier) value: (tuple_type tuple_type_members: (tuple_type_members item: (tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (optional_tuple_parameter name: (identifier) type: (type_annotation type: (type_identifier))) item: (tuple_parameter name: (rest_pattern (identifier)) type: (type_annotation type: (array_type type: (type_identifier)))))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "\ntype t = []\ntype t = [A,]\ntype t = [A|B, C]\ntype t = readonly [A[], B.C]\n\n// special optional and rest type syntax\ntype t = [string?, ...B]\n\n// labeled elements\ntype t = [a: A, b?: B, ...c: C[]]\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -122576,16 +122345,16 @@
               },
               {
                 "$type": 318,
-                "_module": {
-                  "$text": "B",
-                  "$type": 1
-                },
                 "_name": {
                   "$type": 504,
                   "_content": {
                     "$text": "C",
                     "$type": 1
                   }
+                },
+                "_qualifier": {
+                  "$text": "B",
+                  "$type": 1
                 }
               }
             ]
@@ -122603,7 +122372,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier))))) terminator: (automatic_semicolon))",
+    "expectedReparseTree": "(type_alias_declaration name: (type_identifier) value: (readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (qualified_identifier qualifier: (identifier) name: (type_identifier))))) terminator: (automatic_semicolon))",
     "expectedSourceOut": "type t = readonly [A[], B.C]\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -123384,16 +123153,16 @@
           },
           {
             "$type": 318,
-            "_module": {
-              "$text": "B",
-              "$type": 1
-            },
             "_name": {
               "$type": 504,
               "_content": {
                 "$text": "C",
                 "$type": 1
               }
+            },
+            "_qualifier": {
+              "$text": "B",
+              "$type": 1
             }
           }
         ]
@@ -123409,7 +123178,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier))))",
+    "expectedReparseTree": "(tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (qualified_identifier qualifier: (identifier) name: (type_identifier))))",
     "expectedSourceOut": "[A[], B.C]",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -123671,16 +123440,16 @@
         },
         {
           "$type": 318,
-          "_module": {
-            "$text": "B",
-            "$type": 1
-          },
           "_name": {
             "$type": 504,
             "_content": {
               "$text": "C",
               "$type": 1
             }
+          },
+          "_qualifier": {
+            "$text": "B",
+            "$type": 1
           }
         }
       ]
@@ -123695,7 +123464,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier)))",
+    "expectedReparseTree": "(tuple_type_members item: (array_type type: (type_identifier)) item: (qualified_identifier qualifier: (identifier) name: (type_identifier)))",
     "expectedSourceOut": "A[], B.C",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -123907,16 +123676,16 @@
             },
             {
               "$type": 318,
-              "_module": {
-                "$text": "B",
-                "$type": 1
-              },
               "_name": {
                 "$type": 504,
                 "_content": {
                   "$text": "C",
                   "$type": 1
                 }
+              },
+              "_qualifier": {
+                "$text": "B",
+                "$type": 1
               }
             }
           ]
@@ -123933,7 +123702,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (nested_type_identifier module: (identifier) name: (type_identifier)))))",
+    "expectedReparseTree": "(readonly_type type: (tuple_type tuple_type_members: (tuple_type_members item: (array_type type: (type_identifier)) item: (qualified_identifier qualifier: (identifier) name: (type_identifier)))))",
     "expectedSourceOut": "readonly [A[], B.C]",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -124011,16 +123780,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 318,
-      "_module": {
-        "$text": "B",
-        "$type": 1
-      },
       "_name": {
         "$type": 504,
         "_content": {
           "$text": "C",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "B",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -124033,14 +123802,14 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_type_identifier module: (identifier) name: (type_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (type_identifier))",
     "expectedSourceOut": "B.C",
     "grammar": "typescript",
     "kind": "roundtrip",
     "pattern": "nested_type_identifier",
     "sourceIn": "B.C",
     "wrappedOffset": 10,
-    "wrappedText": "type _X = B.C;"
+    "wrappedText": "type _X = B.C[];"
   },
   {
     "expectedOutput": "string?",
@@ -124422,13 +124191,6 @@
             "_consequence": {
               "$type": 364,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 504,
                 "_content": {
                   "$text": "X",
@@ -124446,13 +124208,6 @@
             "_right": {
               "$type": 364,
               "_type": {
-                "$_layout": {
-                  "trivia": {
-                    "leading": [
-                      181
-                    ]
-                  }
-                },
                 "$type": 504,
                 "_content": {
                   "$text": "Y",
@@ -125337,13 +125092,6 @@
         "_consequence": {
           "$type": 364,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 504,
             "_content": {
               "$text": "X",
@@ -125361,13 +125109,6 @@
         "_right": {
           "$type": 364,
           "_type": {
-            "$_layout": {
-              "trivia": {
-                "leading": [
-                  181
-                ]
-              }
-            },
             "$type": 504,
             "_content": {
               "$text": "Y",
@@ -128246,13 +127987,6 @@
       "_consequence": {
         "$type": 364,
         "_type": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                181
-              ]
-            }
-          },
           "$type": 504,
           "_content": {
             "$text": "X",
@@ -128270,13 +128004,6 @@
       "_right": {
         "$type": 364,
         "_type": {
-          "$_layout": {
-            "trivia": {
-              "leading": [
-                181
-              ]
-            }
-          },
           "$type": 504,
           "_content": {
             "$text": "Y",
@@ -129202,13 +128929,6 @@
     "input": {
       "$type": 364,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 504,
         "_content": {
           "$text": "Y",
@@ -129241,13 +128961,6 @@
     "input": {
       "$type": 364,
       "_type": {
-        "$_layout": {
-          "trivia": {
-            "leading": [
-              181
-            ]
-          }
-        },
         "$type": 504,
         "_content": {
           "$text": "X",
@@ -152274,16 +151987,16 @@
             },
             "_name": {
               "$type": 243,
-              "_object": {
-                "$text": "Foo",
-                "$type": 1
-              },
-              "_property": {
+              "_name": {
                 "$type": 499,
                 "_content": {
                   "$text": "Bar",
                   "$type": 1
                 }
+              },
+              "_qualifier": {
+                "$text": "Foo",
+                "$type": 1
               }
             }
           }
@@ -152602,7 +152315,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
+    "expectedReparseTree": "(program statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (type_identifier))) terminator: (automatic_semicolon))) terminator: (automatic_semicolon))) statements: (ambient_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type))))) statements: (ambient_declaration (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (string_double elements: (string_fragment))))) statements: (ambient_declaration (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type)))) statements: (ambient_declaration (internal_module name: (identifier) body: (statement_block statements: (function_signature name: (identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))) return_type: (type_annotation type: (predefined_type))) statements: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) type: (type_annotation type: (predefined_type)))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) statements: (interface_declaration name: (type_identifier) body: (interface_body members: (object_type_content item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type))) item: (property_signature name: (property_identifier) type: (type_annotation type: (predefined_type)))))) terminator: (automatic_semicolon)))) statements: (ambient_declaration (class_declaration name: (type_identifier) body: (class_body members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters elements: (formal_parameters_elements item: (required_parameter name: (lhs_expression (identifier)) type: (type_annotation type: (predefined_type))))))) members: (class_body_member_declaration member: (public_field_definition_plain name: (property_identifier) type: (type_annotation type: (predefined_type)))) members: (class_body_member_declaration member: (method_signature_plain name: (property_identifier) parameters: (formal_parameters) return_type: (type_annotation type: (predefined_type))))) terminator: (automatic_semicolon))) statements: (ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier))))))) statements: (empty_statement) statements: (ambient_declaration (module name: (identifier) body: (statement_block statements: (break_statement) statements: (continue_statement) statements: (debugger_statement) statements: (do_statement body: (statement_block) condition: (parenthesized_expression_typed expression: (true))) statements: (for_in_statement header: (for_header_lhs left: (lhs_expression (identifier)) right: (null)) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (empty_statement) condition: (empty_statement) body: (statement_block terminator: (automatic_semicolon))) statements: (for_statement initializer: (lexical_declaration declarators: (variable_declarator_plain name: (identifier) value: (number_decimal))) condition: (binary_expression left: (identifier) right: (number_decimal)) increment: (update_expression_postfix argument: (identifier)) body: (statement_block terminator: (automatic_semicolon))) statements: (if_statement condition: (parenthesized_expression_typed expression: (true)) consequence: (statement_block) alternative: (else_clause body: (statement_block terminator: (automatic_semicolon)))) statements: (expression_statement expression: (number_decimal)) statements: (return_statement) statements: (switch_statement value: (parenthesized_expression_typed expression: (identifier)) body: (switch_body cases: (switch_case value: (number_decimal) body: (break_statement)) cases: (switch_default body: (break_statement)))) statements: (throw_statement expression: (string_double elements: (string_fragment))) statements: (try_statement body: (statement_block terminator: (automatic_semicolon)) handlers: (catch_clause (catch_clause_group parameter: (identifier)) body: (statement_block terminator: (automatic_semicolon))) finalizer: (finally_clause body: (statement_block terminator: (automatic_semicolon)))) terminator: (automatic_semicolon)))))",
     "expectedSourceOut": "\ndeclare class Error {\n  constructor: Function\n}\n\ndeclare var foo: number;\n\ndeclare const bar = \"baz\";\n\ndeclare function greet(greeting: string): void;\n\ndeclare namespace myLib {\n  function makeGreeting(s: string): string;\n  let numberOfGreetings: number;\n\n  interface LogOptions {\n    verbose?: boolean;\n  }\n  interface AlertOptions {\n    modal: boolean;\n    title?: string;\n    color?: string;\n  }\n}\n\ndeclare class Greeter {\n  constructor(greeting: string);\n\n  greeting: string;\n  showGreeting(): void;\n}\n\ndeclare module Foo.Bar { export var foo; };\n\ndeclare module Foo {\n  break;\n  continue;\n  debugger;\n  do { } while (true);\n  for (x in null) { }\n  for (;;) { }\n  for (let i = 0; i < 3; i++) { }\n  if (true) { } else { }\n  1;\n  return;\n  switch (x) {\n    case 1:\n      break;\n    default:\n      break;\n  }\n  throw \"hello\";\n  try { }\n  catch (e) { }\n  finally { }\n}\n",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -153241,16 +152954,16 @@
         },
         "_name": {
           "$type": 243,
-          "_object": {
-            "$text": "Foo",
-            "$type": 1
-          },
-          "_property": {
+          "_name": {
             "$type": 499,
             "_content": {
               "$text": "Bar",
               "$type": 1
             }
+          },
+          "_qualifier": {
+            "$text": "Foo",
+            "$type": 1
           }
         }
       }
@@ -153265,7 +152978,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(ambient_declaration (module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
+    "expectedReparseTree": "(ambient_declaration (module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon))))",
     "expectedSourceOut": "declare module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -158012,16 +157725,16 @@
       },
       "_name": {
         "$type": 243,
-        "_object": {
-          "$text": "Foo",
-          "$type": 1
-        },
-        "_property": {
+        "_name": {
           "$type": 499,
           "_content": {
             "$text": "Bar",
             "$type": 1
           }
+        },
+        "_qualifier": {
+          "$text": "Foo",
+          "$type": 1
         }
       }
     },
@@ -158035,7 +157748,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(module name: (nested_identifier object: (identifier) property: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
+    "expectedReparseTree": "(module name: (qualified_identifier qualifier: (identifier) name: (property_identifier)) body: (statement_block statements: (export_statement_default_declaration (variable_declaration declarators: (variable_declarator_plain name: (identifier)))) terminator: (automatic_semicolon)))",
     "expectedSourceOut": "module Foo.Bar { export var foo; }",
     "grammar": "typescript",
     "kind": "roundtrip",
@@ -158362,16 +158075,16 @@
     "grammar": "typescript",
     "input": {
       "$type": 243,
-      "_object": {
-        "$text": "Foo",
-        "$type": 1
-      },
-      "_property": {
+      "_name": {
         "$type": 499,
         "_content": {
           "$text": "Bar",
           "$type": 1
         }
+      },
+      "_qualifier": {
+        "$text": "Foo",
+        "$type": 1
       }
     },
     "kind": "render",
@@ -158384,7 +158097,7 @@
   },
   {
     "edits": [],
-    "expectedReparseTree": "(nested_identifier object: (identifier) property: (property_identifier))",
+    "expectedReparseTree": "(qualified_identifier qualifier: (identifier) name: (property_identifier))",
     "expectedSourceOut": "Foo.Bar",
     "grammar": "typescript",
     "kind": "roundtrip",

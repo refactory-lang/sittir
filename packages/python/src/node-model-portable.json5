@@ -24,6 +24,8 @@
           "true",
           "false",
           "none",
+          "integer",
+          "float",
           "simple_pattern_negative",
           "complex_pattern",
           "dotted_name",
@@ -5060,10 +5062,10 @@
       ]
     },
     "member_type": {
-      "vocab": "type.path",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "type.path",
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5072,13 +5074,13 @@
       ],
       "members": [
         {
-          "name": "baseType",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "base_type",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "member_type",
-              "slot": "base_type"
+              "slot": "qualifier"
             }
           ]
         },
@@ -5111,7 +5113,7 @@
                 "op": "eq",
                 "text": "__init__",
                 "slots": {
-                  "344": 1
+                  "343": 1
                 }
               }
             }
@@ -5130,7 +5132,7 @@
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
                 "slots": {
-                  "344": 1
+                  "343": 1
                 }
               }
             }
@@ -5865,6 +5867,31 @@
             {
               "owner": "set_comprehension",
               "slot": "clauses"
+            }
+          ]
+        }
+      ]
+    },
+    "simple_pattern_negative": {
+      "vocab": "literal.number.negative",
+      "read": [
+        {
+          "vocab": "literal.number.negative",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "value",
+          "route": "slot",
+          "slot": "value",
+          "path": [
+            {
+              "owner": "simple_pattern_negative",
+              "slot": "value"
             }
           ]
         }
@@ -6951,10 +6978,10 @@
       ]
     },
     "union_pattern": {
-      "vocab": "pattern.case.or",
+      "vocab": "pattern.or",
       "read": [
         {
-          "vocab": "pattern.case.or",
+          "vocab": "pattern.or",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -6963,38 +6990,28 @@
       ],
       "members": [
         {
-          "name": "patterns",
+          "name": "left",
           "route": "slot",
-          "slot": "patterns",
+          "slot": "left",
           "path": [
             {
               "owner": "union_pattern",
-              "slot": "patterns"
+              "slot": "left"
+            }
+          ]
+        },
+        {
+          "name": "right",
+          "route": "slot",
+          "slot": "right",
+          "path": [
+            {
+              "owner": "union_pattern",
+              "slot": "right"
             }
           ]
         }
-      ],
-      "container": {
-        "kinds": [
-          "class_pattern",
-          "splat_pattern",
-          "union_pattern",
-          "case_list_pattern",
-          "case_tuple_pattern",
-          "dict_pattern",
-          "string",
-          "concatenated_string",
-          "true",
-          "false",
-          "none",
-          "simple_pattern_negative",
-          "complex_pattern",
-          "dotted_name",
-          "wildcard_pattern"
-        ],
-        "terminals": [],
-        "list": true
-      }
+      ]
     },
     "union_type": {
       "vocab": "type.union",
@@ -7385,15 +7402,15 @@
       },
       {
         "depth": 2,
-        "paths": 74,
-        "kinds": 72,
+        "paths": 75,
+        "kinds": 73,
         "refinements": 6
       },
       {
         "depth": 3,
         "paths": 69,
         "kinds": 63,
-        "refinements": 47
+        "refinements": 46
       },
       {
         "depth": 4,

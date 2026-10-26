@@ -8,7 +8,7 @@ export interface SetterEntry {
 	readonly body: string;
 }
 
-export interface InnerPositions {
+export interface TriviaPositions {
 	readonly inner: boolean;
 }
 
@@ -21,15 +21,15 @@ export interface StoredAccessor {
 export interface NodeMemberSpec {
 	readonly setters?: readonly SetterEntry[];
 	readonly accessors: readonly StoredAccessor[];
-	readonly inner: InnerPositions;
+	readonly trivia: TriviaPositions | undefined;
 	readonly extra?: readonly string[];
 	readonly parsed?: true;
 	readonly text?: string;
 	readonly row?: true;
 }
 
-export function innerPositionsOf(kind: string, nodeMap: NodeMap): InnerPositions {
-	return { inner: emptyForms(nodeMap).has(kind) };
+export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositions | undefined {
+	return nodeMap.nodes.get(kind)?.triviaInterior ? undefined : { inner: emptyForms(nodeMap).has(kind) };
 }
 
 export function triviaInnerImports(nodeMap: NodeMap): readonly string[] {
@@ -46,13 +46,13 @@ export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
 
-export function builtRowLines(name: string, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, inner: InnerPositions): string[] {
+export function builtRowLines(name: string, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, trivia: TriviaPositions | undefined): string[] {
 	return [
 		`function ${name}(node: object, handle: EngineHandle | undefined): BuiltRow {`,
 		...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
 		'  return {',
 		...withBlockLines(setters, withEntry),
-		...triviaBlockLines(false, inner),
+		...triviaBlockLines(false, trivia),
 		'  };',
 		'}'
 	];
@@ -62,8 +62,9 @@ function withBlockLines(setters: readonly SetterEntry[] | undefined, entry: (set
 	return setters === undefined ? [] : ['    $with: {', ...setters.map(entry), '    },'];
 }
 
-function triviaBlockLines(row: boolean, inner: InnerPositions): string[] {
-	return ['    $trivia: {', triviaMember(row, 'leading'), triviaMember(row, 'trailing'), ...(inner.inner ? [triviaMember(row, 'inner')] : []), '    },'];
+function triviaBlockLines(row: boolean, trivia: TriviaPositions | undefined): string[] {
+	if (trivia === undefined) return [];
+	return ['    $trivia: {', triviaMember(row, 'leading'), triviaMember(row, 'trailing'), ...(trivia.inner ? [triviaMember(row, 'inner')] : []), '    },'];
 }
 
 function rowWithEntry(entry: SetterEntry): string {
@@ -89,7 +90,7 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
 		'    toJSON: () => nodeJSON(node, jsonFacts),',
-		...triviaBlockLines(row, spec.inner),
+		...triviaBlockLines(row, spec.trivia),
 		...(spec.parsed
 			? [
 					`    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, ${target}) : undefined,`,

@@ -103,7 +103,7 @@ export const records = {
 	ObjectAssignmentPatternNode: { words: 16, left: { word: 2, width: 9, inline: 7 }, right: { word: 11, width: 5 } },
 	ArrayNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
 	ArrayPatternNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	NestedIdentifierNode: { words: 16, object: { word: 2, width: 5 }, property: { word: 7, width: 9, inline: 7 } },
+	NestedIdentifierNode: { words: 16, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 9, inline: 7 } },
 	ClassNode: {
 		words: 49,
 		decorator: { word: 2, width: 2, run: 5 },
@@ -292,7 +292,7 @@ export const records = {
 		value: { word: 7, width: 5 },
 		terminator: { word: 12, width: 5 }
 	},
-	NestedTypeIdentifierNode: { words: 16, module: { word: 2, width: 5 }, name: { word: 7, width: 9, inline: 7 } },
+	NestedTypeIdentifierNode: { words: 16, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 9, inline: 7 } },
 	InterfaceDeclarationNode: {
 		words: 47,
 		name: { word: 2, width: 9, inline: 7 },

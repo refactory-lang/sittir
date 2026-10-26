@@ -14,7 +14,7 @@ export namespace Declaration {
 	export interface ModuleProperty<G extends GrammarContext<G>> extends SubKindOf<V.Declaration<G>> {
 		// claimed by t
 		readonly $kind: 'declaration.module_property';
-		readonly name: V.Identifier.Property<G>;
+		readonly name: V.Identifier<G>;
 		readonly type: G['slots']['declaration.module_property']['type'];
 	}
 }

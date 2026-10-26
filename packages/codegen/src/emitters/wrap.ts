@@ -6,7 +6,7 @@ import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNont
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry } from './node-members.ts';
+import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
@@ -23,7 +23,7 @@ import {
 	pruneUnusedImports,
 	blankFromInput
 } from './shared.ts';
-import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface } from './factories.ts';
+import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType } from './factories.ts';
 import { collectKindEntries, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf } from './record-construction.ts';
@@ -268,7 +268,7 @@ function emitSeparatedListWrap(
 			setters: seatedSetters([...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)], plan),
 			accessors: [],
 			extra: view.members,
-			inner: innerPositionsOf(node.kind, nodeMap),
+			trivia: triviaPositionsOf(node.kind, nodeMap),
 			parsed: true,
 			...(storage.mode === 'record' ? { row: true as const } : {})
 		}),
@@ -338,7 +338,7 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 			setters: seatedSetters(inlineSetters(node, nodeMap, kindEntries), plan),
 			accessors: [],
 			extra: [...(view?.members ?? []), ...groups.members],
-			inner: innerPositionsOf(node.kind, nodeMap),
+			trivia: triviaPositionsOf(node.kind, nodeMap),
 			parsed: true,
 			...(storage.mode === 'record' ? { row: true as const } : {})
 		}),
@@ -362,21 +362,23 @@ function inlineSetters(node: AuthoredCompound | AssembledList, nodeMap: NodeMap,
 	);
 	return node.slots.map((f) => {
 		const method = f.propertyName;
+		const envelopeType = splicedEnvelopeType(f, nodeMap);
+		const admitted = envelopeType === undefined ? '' : ` | ${envelopeType}`;
 		if (isMultiple(f) && restSlots.has(method)) {
-			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]`;
+			const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>[number]${admitted}`;
 			const setterRestElement = setterValueType.includes(' | ') ? `(${setterValueType})` : setterValueType;
 			const restType = isNonEmpty(f) ? `NonEmptyArray<${setterValueType}>` : `${setterRestElement}[]`;
 			return {
 				name: method,
 				params: `...v: ${restType}`,
-				body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, `restItems(${JSON.stringify(method)}, v)`)} }, tree)`
+				body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, `restItems(${JSON.stringify(method)}, v)`, nodeMap, kindEntries, node.typeName))} }, tree)`
 			};
 		}
-		const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${hasBlankArm(f) ? ' | null' : ''}`;
+		const setterValueType = `NonNullable<T.${node.typeName}['${f.storageKey}']>${admitted}${hasBlankArm(f) ? ' | null' : ''}`;
 		return {
 			name: method,
 			params: `v: ${setterValueType}`,
-			body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, blankFromInput(hasBlankArm(f), 'v'))} }, tree)`
+			body: `${wrapFn}({ ...$edited(data), ${f.storageKey}: ${admittedSlot(node.kind, method, splicedEnvelopeAdmission(f, blankFromInput(hasBlankArm(f), 'v'), nodeMap, kindEntries, node.typeName))} }, tree)`
 		};
 	});
 }
@@ -390,6 +392,8 @@ function listOptionSetters(node: AssembledList, nodeMap: NodeMap, kindEntries: r
 	}));
 }
 
+const LEAF_WRAPS: Readonly<Record<'wrapLeaf' | 'wrapInteriorLeaf', TriviaPositions | undefined>> = { wrapLeaf: { inner: false }, wrapInteriorLeaf: undefined };
+
 export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
 	readonly #kindEntries: readonly KindEnumEntry[];
@@ -401,6 +405,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #views: string[] = [];
 	readonly #emittedStructuralKinds = new Set<string>();
 	readonly #viewKinds = new Set<string>();
+	readonly #leafWraps = new Set<keyof typeof LEAF_WRAPS>();
 	#rootTreeTypeName: string | undefined;
 	#rootMember: string | undefined;
 
@@ -499,7 +504,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (entry === undefined) continue;
 			const memberName = entry.member;
 			if (table.has(memberName)) continue;
-			table.set(memberName, `  [TSKindId.${memberName}]: (d, t) => wrapLeaf(d, t),`);
+			const leaf = triviaPositionsOf(kind, this.#nodeMap) === undefined ? 'wrapInteriorLeaf' : 'wrapLeaf';
+			this.#leafWraps.add(leaf);
+			table.set(memberName, `  [TSKindId.${memberName}]: (d, t) => ${leaf}(d, t),`);
 		}
 		return { wraps: table, views };
 	}
@@ -529,10 +536,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'',
-			"import { restItems, admitSlot, markEdited as $edited, asTextNode, carryReadTree, treeHandleOf, hydrateWith, hydrateSlotWith, hydrateSlotsWith, contentRole, inTreeEngine, currentHandle, listSlotWith, elementsWith, seatWith, groupField, LIST_ITEMS, LIST_READ, LIST_METHODS, listIterator, listItems, storedElements, ownerView, ownerElements, listOption, defineListIndices, defineListSeparator, rebuilt, renderText, nodeJSON, queryOf, snapshotOf, triviaSide, triviaInner, textOf, recordOf, recordSlot, recordSlots, recordFlag, recordItems, recordLength, recordDelimiter, rowData, rowOf, rowWith, rowTrivia } from '@sittir/common/utils';",
+			"import { restItems, admitSplicedEnvelope, admitSlot, markEdited as $edited, asTextNode, carryReadTree, treeHandleOf, hydrateWith, hydrateSlotWith, hydrateSlotsWith, contentRole, inTreeEngine, currentHandle, listSlotWith, elementsWith, seatWith, groupField, LIST_ITEMS, LIST_READ, LIST_METHODS, listIterator, listItems, storedElements, ownerView, ownerElements, listOption, defineListIndices, defineListSeparator, rebuilt, renderText, nodeJSON, queryOf, snapshotOf, triviaSide, triviaInner, textOf, recordOf, recordSlot, recordSlots, recordFlag, recordItems, recordLength, recordDelimiter, rowData, rowOf, rowWith, rowTrivia } from '@sittir/common/utils';",
 			"import type { RecordStub, Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
-			"import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
+			"import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
 			"import { TSKindId } from './kinds.js';",
 			...(this.#rootEmptyForm() !== undefined ? [`import type { ${this.#rootEmptyForm()} } from './types.js';`] : []),
 			DELIMITER_IMPORT,
@@ -566,17 +573,20 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		];
 		for (const source of this.#output) lines.push(source, '');
 		for (const source of this.#views) lines.push(source, '');
-		lines.push(
-			'function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {',
-			'  const handle = currentHandle();',
-			'  const node = {',
-			'    ...data,',
-			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false }, text: 'textOf(data)' }).map((line) => line.slice(2)),
-			'  };',
-			'  return node;',
-			'}',
-			''
-		);
+		for (const [leaf, trivia] of Object.entries(LEAF_WRAPS) as [keyof typeof LEAF_WRAPS, TriviaPositions | undefined][]) {
+			if (!this.#leafWraps.has(leaf)) continue;
+			lines.push(
+				`function ${leaf}(data: _UntypedNode, _tree: TreeHandle): object {`,
+				'  const handle = currentHandle();',
+				'  const node = {',
+				'    ...data,',
+				...nodeMemberLines({ accessors: [], parsed: true, trivia, text: 'textOf(data)' }).map((line) => line.slice(2)),
+				'  };',
+				'  return node;',
+				'}',
+				''
+			);
+		}
 		lines.push(
 			'const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => object> = {',
 			...rows.values(),
@@ -642,6 +652,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'rowOf',
 			'rowWith',
 			'rowTrivia',
+			'admitSplicedEnvelope',
+			'Admit',
 			'NonEmptyArray',
 			'RAW',
 			'ParsedRoot'

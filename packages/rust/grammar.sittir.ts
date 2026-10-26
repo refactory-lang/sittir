@@ -115,6 +115,13 @@ export default grammar(enrich(base), wire({
 		},
 
 		struct_pattern: { '"{"/before': preference('space') },
+		or_pattern_binary: { '"|"/after': preference('space') },
+		or_pattern_prefix: { '"|"/after': preference('space') },
+		_let_chain: { '"&&"/after': preference('space') },
+		array_expression_semi: { '";"/after': preference('space') },
+		captured_pattern: { '"@"/after': preference('space') },
+		negative_literal: { '"-"/after': preference('tight') },
+		parameters_elements_receiver_group: { '","/after': preference('space') },
 		struct_pattern_elements: { 'item:/start': preference('space'), 'item:/end': preference('space') },
 		macro_invocation: { '"!"/before': preference('tight'), '"!"/after': preference('tight') },
 		inner_attribute_item: { '"!"/before': preference('tight') },

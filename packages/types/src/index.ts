@@ -4,7 +4,7 @@
  */
 
 import type { KeysOfUnion } from 'type-fest';
-import type { NodeMethods } from './engine-api.ts';
+import type { HoldsTrivia, NodeMethods } from './engine-api.ts';
 export type {
 	Cond,
 	KindMembership,
@@ -645,8 +645,16 @@ type OptionalKeys<T> = {
  *   1 of spec 009 — cached indexed access instead of fresh `LooseConfigOf`
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
-/** A config type whose numeric text slots (the keys of `W`) also accept the JavaScript values `W` gives them (a number, and a bigint for an integer slot), converted to the slot's text by the base builder. */
-export type WidenNumeric<C, W> = { [P in keyof C]: P extends keyof W ? C[P] | W[P] : C[P] };
+/** A config type whose slots named in `W` also accept the inputs `W` gives them, and whose list slots named in `E` also accept the inputs `E` gives as elements: a numeric text slot's JavaScript number (and bigint for an integer slot), or a spliced slot's envelope. The base builder converts either to what the slot stores. */
+export type WidenSlots<C, W, E = {}> = {
+	[P in keyof C]: P extends keyof W ? C[P] | W[P] : P extends keyof E ? WidenElements<C[P], E[P]> : C[P];
+};
+
+type WidenElements<A, X> = A extends readonly [infer F, ...infer R]
+	? readonly [F | X, ...(R[number] | X)[]]
+	: A extends readonly (infer I)[]
+		? readonly (I | X)[]
+		: A;
 
 type NumericRefusal<M extends string, V> = { readonly [K in M]: V };
 
@@ -1118,7 +1126,7 @@ export interface NodeNs<
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Bound = T & NodeMethods & HoldsSource,
+	Bound = T & NodeMethods & HoldsTrivia & HoldsSource,
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
@@ -1271,6 +1279,7 @@ export type {
 	EngineOptions,
 	FileChange,
 	GrammarInnerTrivia,
+	HoldsTrivia,
 	NodeMethods,
 	NodeJSON,
 	NodeJSONFacts,

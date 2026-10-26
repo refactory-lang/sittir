@@ -89,6 +89,8 @@ Recommendation: (b), the path list's precedent.
 
 Question: do they ride the renames stage, or open this one?
 
+Ruled: the varying leaves need no path of their own, since each is decided by its holder's slot, so the pick table has no root entry for them. `expression.update` takes a `prefix` flag in the renames stage. The other four questions are ruled in the wiring plan's stage 3 and the generator plan's build stage.
+
 **5. The closure-parameter residue.** Rust's 35 placed entries are one claim, ruled to be restated as an envelope at the `closure_parameters` site. That edit is to the bindings and the grammar, not the runtime.
 
 Recommendation: its own small PR before this stage's code, so that every guard this stage generates agrees with the routes' read tests, the wiring plan's gate.

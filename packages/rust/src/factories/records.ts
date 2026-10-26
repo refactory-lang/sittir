@@ -12,7 +12,7 @@ import type {
 	NumericLiteral,
 	RefuseUndeclared,
 	RefusingConfig,
-	WidenNumeric
+	WidenSlots
 } from '@sittir/types';
 import {
 	currentHandle,
@@ -4122,14 +4122,16 @@ function rowMacroInvocation(node: object, handle: EngineHandle | undefined): Bui
 }
 
 export function buildScopedIdentifier<
-	PathSlot extends T.ScopedIdentifier.Config['path'],
+	QualifierSlot extends T.ScopedIdentifier.Config['qualifier'],
 	NameSlot extends T.ScopedIdentifier.Config['name']
->(config: RefusingConfig<T.ScopedIdentifier.Config, { path: PathSlot; name: NameSlot }>): T.ScopedIdentifier.Bound;
+>(
+	config: RefusingConfig<T.ScopedIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
+): T.ScopedIdentifier.Bound;
 export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.ScopedIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.ScopedIdentifier, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.ScopedIdentifier['_path']>>(config.path),
-		'ScopedIdentifier.path',
+	const _qualifier = rejectKeywordText(
+		kindIdStorage<NonNullable<T.ScopedIdentifier['_qualifier']>>(config.qualifier),
+		'ScopedIdentifier.qualifier',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -4140,11 +4142,11 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 		['super']
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'scoped_identifier', { path: _path, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'scoped_identifier', { qualifier: _qualifier, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ScopedIdentifier as const, { _path, _name });
+	handle?.verifyStored?.(TSKindId.ScopedIdentifier as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.ScopedIdentifier as const, 12);
-	storeCell(arena, record.data, record.base + 2, _path);
+	storeCell(arena, record.data, record.base + 2, _qualifier);
 	storeCell(arena, record.data, record.base + 7, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedIdentifier.Bound;
@@ -4155,8 +4157,8 @@ function rowScopedIdentifier(node: object, handle: EngineHandle | undefined): Bu
 	const config = inputs.config as T.ScopedIdentifier.Config;
 	return {
 		$with: {
-			path: (value?: Admit<NonNullable<T.ScopedIdentifier.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, path: value })),
+			qualifier: (value?: Admit<NonNullable<T.ScopedIdentifier.Config>['qualifier']>) =>
+				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, qualifier: value })),
 			name: (value: Admit<NonNullable<T.ScopedIdentifier.Config>['name']>) =>
 				rebuilt(node, handle, () => buildScopedIdentifier({ ...config, name: value }))
 		},
@@ -4168,18 +4170,21 @@ function rowScopedIdentifier(node: object, handle: EngineHandle | undefined): Bu
 }
 
 export function buildScopedTypeIdentifierInExpressionPosition<
-	PathSlot extends T.ScopedTypeIdentifierInExpressionPosition.Config['path'],
+	QualifierSlot extends T.ScopedTypeIdentifierInExpressionPosition.Config['qualifier'],
 	NameSlot extends T.ScopedTypeIdentifierInExpressionPosition.Config['name']
 >(
-	config: RefusingConfig<T.ScopedTypeIdentifierInExpressionPosition.Config, { path: PathSlot; name: NameSlot }>
+	config: RefusingConfig<
+		T.ScopedTypeIdentifierInExpressionPosition.Config,
+		{ qualifier: QualifierSlot; name: NameSlot }
+	>
 ): T.ScopedTypeIdentifierInExpressionPosition.Bound;
 export function buildScopedTypeIdentifierInExpressionPosition(
 	config: T.ScopedTypeIdentifierInExpressionPosition.Config
 ): T.ScopedTypeIdentifierInExpressionPosition.Bound {
 	currentHandle()?.admit(TSKindId.ScopedTypeIdentifierInExpressionPosition, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_path']>>(config.path),
-		'ScopedTypeIdentifierInExpressionPosition.path',
+	const _qualifier = rejectKeywordText(
+		kindIdStorage<NonNullable<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']>>(config.qualifier),
+		'ScopedTypeIdentifierInExpressionPosition.qualifier',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -4188,11 +4193,11 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 	]);
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'scoped_type_identifier_in_expression_position', { path: _path, name: _name });
+		admitChildren(handle, 'scoped_type_identifier_in_expression_position', { qualifier: _qualifier, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, { _path, _name });
+	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, 16);
-	storeCell(arena, record.data, record.base + 2, _path);
+	storeCell(arena, record.data, record.base + 2, _qualifier);
 	storeCell(arena, record.data, record.base + 7, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
@@ -4203,8 +4208,8 @@ function rowScopedTypeIdentifierInExpressionPosition(node: object, handle: Engin
 	const config = inputs.config as T.ScopedTypeIdentifierInExpressionPosition.Config;
 	return {
 		$with: {
-			path: (value?: Admit<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, path: value })),
+			qualifier: (value?: Admit<NonNullable<T.ScopedTypeIdentifierInExpressionPosition.Config>['qualifier']>) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, qualifier: value })),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildScopedTypeIdentifierInExpressionPosition({ ...config, name: value }))
 		},
@@ -4216,16 +4221,16 @@ function rowScopedTypeIdentifierInExpressionPosition(node: object, handle: Engin
 }
 
 export function buildScopedTypeIdentifier<
-	PathSlot extends T.ScopedTypeIdentifier.Config['path'],
+	QualifierSlot extends T.ScopedTypeIdentifier.Config['qualifier'],
 	NameSlot extends T.ScopedTypeIdentifier.Config['name']
 >(
-	config: RefusingConfig<T.ScopedTypeIdentifier.Config, { path: PathSlot; name: NameSlot }>
+	config: RefusingConfig<T.ScopedTypeIdentifier.Config, { qualifier: QualifierSlot; name: NameSlot }>
 ): T.ScopedTypeIdentifier.Bound;
 export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config): T.ScopedTypeIdentifier.Bound {
 	currentHandle()?.admit(TSKindId.ScopedTypeIdentifier, [config]);
-	const _path = rejectKeywordText(
-		kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_path']>>(config.path),
-		'ScopedTypeIdentifier.path',
+	const _qualifier = rejectKeywordText(
+		kindIdStorage<NonNullable<T.ScopedTypeIdentifier['_qualifier']>>(config.qualifier),
+		'ScopedTypeIdentifier.qualifier',
 		TSKindId.Identifier,
 		['self', 'super', 'crate']
 	);
@@ -4233,11 +4238,11 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 		[[1], (v: unknown) => buildTypeIdentifier(v as never)]
 	]);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'scoped_type_identifier', { path: _path, name: _name });
+	if (handle !== undefined) admitChildren(handle, 'scoped_type_identifier', { qualifier: _qualifier, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifier as const, { _path, _name });
+	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifier as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.ScopedTypeIdentifier as const, 16);
-	storeCell(arena, record.data, record.base + 2, _path);
+	storeCell(arena, record.data, record.base + 2, _qualifier);
 	storeCell(arena, record.data, record.base + 7, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedTypeIdentifier.Bound;
@@ -4248,8 +4253,8 @@ function rowScopedTypeIdentifier(node: object, handle: EngineHandle | undefined)
 	const config = inputs.config as T.ScopedTypeIdentifier.Config;
 	return {
 		$with: {
-			path: (value?: Admit<NonNullable<T.ScopedTypeIdentifier.Config>['path']>) =>
-				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, path: value })),
+			qualifier: (value?: Admit<NonNullable<T.ScopedTypeIdentifier.Config>['qualifier']>) =>
+				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, qualifier: value })),
 			name: (value: Admit<T.TypeIdentifier | T.TypeIdentifier.Types>) =>
 				rebuilt(node, handle, () => buildScopedTypeIdentifier({ ...config, name: value }))
 		},
@@ -6523,10 +6528,6 @@ function rowLineComment(node: object, handle: EngineHandle | undefined): BuiltRo
 			content: (
 				value: Admit<T.LineCommentExtraSlashes | T.LineCommentDocOuter | T.LineCommentDocInner | T.LineCommentRegular>
 			) => rebuilt(node, handle, () => buildLineComment(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -6558,10 +6559,6 @@ function rowBlockComment(node: object, handle: EngineHandle | undefined): BuiltR
 		$with: {
 			content: (value?: Admit<T.BlockCommentDocOuter | T.BlockCommentDocInner | T.BlockCommentRegular>) =>
 				rebuilt(node, handle, () => buildBlockComment(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -8107,20 +8104,20 @@ function leafStringOpen(text: string, handle: EngineHandle | undefined): object 
 }
 
 export function buildIntegerLiteralDecimal<
-	const C extends WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralDecimal.Config['content'],
 	SuffixSlot extends T.IntegerLiteralDecimal.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralDecimal.Bound;
 export function buildIntegerLiteralDecimal(
-	config: WidenNumeric<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralDecimal.Config, { content: number | bigint }>
 ): T.IntegerLiteralDecimal.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralDecimal, [config]);
 	const _content = numberText(10, '', config.content);
@@ -8178,20 +8175,20 @@ function rowIntegerLiteralDecimal(node: object, handle: EngineHandle | undefined
 }
 
 export function buildIntegerLiteralHex<
-	const C extends WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralHex.Config['content'],
 	SuffixSlot extends T.IntegerLiteralHex.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralHex.Bound;
 export function buildIntegerLiteralHex(
-	config: WidenNumeric<T.IntegerLiteralHex.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralHex.Config, { content: number | bigint }>
 ): T.IntegerLiteralHex.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralHex, [config]);
 	const _content = numberText(16, '0x', config.content);
@@ -8249,20 +8246,20 @@ function rowIntegerLiteralHex(node: object, handle: EngineHandle | undefined): B
 }
 
 export function buildIntegerLiteralBinary<
-	const C extends WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralBinary.Config['content'],
 	SuffixSlot extends T.IntegerLiteralBinary.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralBinary.Bound;
 export function buildIntegerLiteralBinary(
-	config: WidenNumeric<T.IntegerLiteralBinary.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralBinary.Config, { content: number | bigint }>
 ): T.IntegerLiteralBinary.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralBinary, [config]);
 	const _content = numberText(2, '0b', config.content);
@@ -8320,20 +8317,20 @@ function rowIntegerLiteralBinary(node: object, handle: EngineHandle | undefined)
 }
 
 export function buildIntegerLiteralOctal<
-	const C extends WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
+	const C extends WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
 	ContentSlot extends T.IntegerLiteralOctal.Config['content'],
 	SuffixSlot extends T.IntegerLiteralOctal.Config['suffix']
 >(
 	config: C &
 		NumericConfig<C, { content: true }> &
-		RefuseUndeclared<C, WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>> &
+		RefuseUndeclared<C, WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>> &
 		RefusingConfig<
-			WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
+			WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>,
 			{ content: ContentSlot; suffix: SuffixSlot }
 		>
 ): T.IntegerLiteralOctal.Bound;
 export function buildIntegerLiteralOctal(
-	config: WidenNumeric<T.IntegerLiteralOctal.Config, { content: number | bigint }>
+	config: WidenSlots<T.IntegerLiteralOctal.Config, { content: number | bigint }>
 ): T.IntegerLiteralOctal.Bound {
 	currentHandle()?.admit(TSKindId.IntegerLiteralOctal, [config]);
 	const _content = numberText(8, '0o', config.content);
@@ -10285,10 +10282,6 @@ function leafLineCommentExtraSlashes(text: string, handle: EngineHandle | undefi
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return node;
@@ -10313,10 +10306,6 @@ function rowLineCommentDocOuter(node: object, handle: EngineHandle | undefined):
 	return {
 		$with: {
 			doc: (value: Admit<T.DocComment>) => rebuilt(node, handle, () => buildLineCommentDocOuter(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -10340,10 +10329,6 @@ function rowLineCommentDocInner(node: object, handle: EngineHandle | undefined):
 	return {
 		$with: {
 			doc: (value: Admit<T.DocComment>) => rebuilt(node, handle, () => buildLineCommentDocInner(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -10369,10 +10354,6 @@ function leafLineCommentRegular(text: string, handle: EngineHandle | undefined):
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return node;
@@ -10397,10 +10378,6 @@ function rowBlockCommentDocOuter(node: object, handle: EngineHandle | undefined)
 	return {
 		$with: {
 			doc: (value?: Admit<T.BlockCommentContent>) => rebuilt(node, handle, () => buildBlockCommentDocOuter(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -10424,10 +10401,6 @@ function rowBlockCommentDocInner(node: object, handle: EngineHandle | undefined)
 	return {
 		$with: {
 			doc: (value?: Admit<T.BlockCommentContent>) => rebuilt(node, handle, () => buildBlockCommentDocInner(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
@@ -10453,10 +10426,6 @@ function leafBlockCommentRegular(text: string, handle: EngineHandle | undefined)
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return node;
@@ -11964,10 +11933,6 @@ function leafDocComment(text: string, handle: EngineHandle | undefined): object 
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return node;
@@ -11995,10 +11960,6 @@ function leafBlockCommentContent(text: string, handle: EngineHandle | undefined)
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return node;

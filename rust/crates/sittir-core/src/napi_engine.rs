@@ -413,6 +413,16 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.layout_work()))
             }
 
+            /// The bytes the node at `index` of the live tree `treeId` renders
+            /// between as its source (`ParsedTree::framed_span_at`): `{ start,
+            /// end }`. A diagnostic. Refuses as `read` does.
+            #[::napi_derive::napi(ts_return_type = "{ start: number; end: number }")]
+            pub fn framed_span(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<$crate::types::Span> {
+                with_live_node(tree_id, index, |parsed, index| {
+                    parsed.framed_span_at(index).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id} has no node {index}")))
+                })
+            }
+
             /// One batch of a pre-order walk of the named descendants under
             /// the node `from` names (JSON, see `query::Address`), filtered to
             /// `kinds` when given and to the `where` plan (JSON, see
@@ -605,17 +615,6 @@ macro_rules! napi_engine {
                 Ok(id)
             }
         }
-
-        /// The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
-        /// the JavaScript projection of a side's entries enforces as the
-        /// render does.
-        #[::napi_derive::napi]
-        pub const SIDE_NESTING_BOUND: u32 = $crate::trivia::SIDE_NESTING_BOUND as u32;
-
-        /// The refusal of a side nested past `SIDE_NESTING_BOUND`
-        /// (`trivia::SIDE_NESTING_REFUSAL`).
-        #[::napi_derive::napi]
-        pub const SIDE_NESTING_REFUSAL: &str = $crate::trivia::SIDE_NESTING_REFUSAL;
 
         $crate::records_codec! {
             /// The tag word of an absent cell (`arena::cell::tag`).
@@ -1284,8 +1283,8 @@ where
         self.trees.last_list_child_kind(tree, span, kind)
     }
 
-    fn for_each_kind_ending_with(&self, coord: &crate::slot::NodeCoordinate, f: &mut dyn FnMut(crate::types::KindId)) {
-        self.trees.for_each_kind_ending_with(coord, f);
+    fn for_each_edge_level(&self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
+        self.trees.for_each_edge_level(coord, side, f);
     }
 
     fn depth_move(&self, coord: &crate::slot::NodeCoordinate) -> i32 {

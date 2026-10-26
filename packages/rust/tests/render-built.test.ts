@@ -134,7 +134,6 @@ describe('a built arena rendered natively', () => {
 			const statement = (parsed.statements()[0] as unknown as { body(): { statements(): readonly typeof built[] } }).body().statements()[0]!;
 			const built = holder.build.expressionStatement(holder.build.identifier('x'));
 			const comment = builder.build.blockComment(builder.build.blockCommentRegular(' c '));
-			comment.$trivia.leading(builder.build.blockComment(builder.build.blockCommentRegular(' d ')));
 			statement.$trivia.trailing(comment);
 			built.$trivia.trailing(comment);
 			return { holder, parsed, statement, built, comment };
@@ -146,7 +145,7 @@ describe('a built arena rendered natively', () => {
 
 		it('renders where the side renders, on records as on objects', async () => {
 			const objects = await rendered(async () => arena.createEngine());
-			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* d */ /* c */\n}\n', built: 'x; /* d */ /* c */' });
+			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* c */\n}\n', built: 'x; /* c */' });
 			expect(await rendered(recordEngine)).toEqual(objects);
 		});
 
@@ -167,9 +166,9 @@ describe('a built arena rendered natively', () => {
 		});
 
 		it.each([
-			['parsed', 'fn f() {\n    g(); /* d */ /* c */\n}\n', '/* d */ /* c */'],
-			['built', 'x; /* d */ /* c */', '/* d */ /* c */'],
-			['unit', '{\n    y;\n    /* d */ /* c */ ;\n    x();\n}', '/* d */ /* c */'],
+			['parsed', 'fn f() {\n    g(); /* c */\n}\n', '/* c */'],
+			['built', 'x; /* c */', '/* c */'],
+			['unit', '{\n    y;\n    /* c */ ;\n    x();\n}', '/* c */'],
 			['read', 'x; /* c */', '/* c */']
 		])('renders in a %s holder, and reads back, once nothing else names its source or the entry', (holder, render, read) => {
 			const fixture = fileURLToPath(new URL('../../common/tests/fixtures/foreign-side-release.mts', import.meta.url));

@@ -359,7 +359,13 @@ export function findFirst(
 	return null;
 }
 
-export function findSpanNode(root: TS.Node, startIndex: number, endIndex: number, kind: string): TS.Node | null {
+export function findSpanNode(
+	root: TS.Node,
+	startIndex: number,
+	endIndex: number,
+	kind: string,
+	storageKindOf?: (id: number) => string | undefined
+): TS.Node | null {
 	const spanned: TS.Node[] = [];
 	const visit = (node: TS.Node): void => {
 		if (node.startIndex === startIndex && node.endIndex === endIndex) spanned.push(node);
@@ -369,7 +375,13 @@ export function findSpanNode(root: TS.Node, startIndex: number, endIndex: number
 		}
 	};
 	visit(root);
-	return spanned.find((node) => node.type === kind) ?? spanned.find((node) => node.grammarType === kind) ?? spanned[0] ?? null;
+	return (
+		spanned.find((node) => node.type === kind) ??
+		spanned.find((node) => storageKindOf?.(node.grammarId) === kind) ??
+		spanned.find((node) => node.grammarType === kind) ??
+		spanned[0] ??
+		null
+	);
 }
 
 export function collectKinds(node: TS.Node, kindOf: (node: TS.Node) => string = nodeType): Set<string> {
@@ -478,6 +490,7 @@ export interface LoadedNodeModel {
 	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
 	readonly oneSurfaceKinds: ReadonlySet<string>;
+	readonly unitKinds: ReadonlySet<string>;
 	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
 	readonly slotNames: Record<string, readonly string[]>;
@@ -542,6 +555,7 @@ interface ParsedNodeModel {
 		modelType?: string;
 		typeName?: string;
 		seated?: true;
+		unit?: true;
 		renamedFrom?: string;
 		splitFrom?: string;
 		slots?: ReadonlyArray<{
@@ -595,6 +609,7 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	leafPatterns: {},
 	hoistedKinds: new Set(),
 	oneSurfaceKinds: new Set(),
+	unitKinds: new Set(),
 	seats: {},
 	slotKinds: {},
 	slotNames: {},
@@ -658,6 +673,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
 	const oneSurfaceKinds = new Set<string>();
+	const unitKinds = new Set<string>();
 	const seats: SeatTable = {};
 	const seatAt = (kind: string, slot: string, seat: Seat): void => {
 		((seats[kind] ??= {})[slot] ??= {})[seat.kind] = seat;
@@ -692,6 +708,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.seated === true) hoistedKinds.add(node.kind);
 		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
+		if (node.unit === true) unitKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slot.accessor]));
 		if (node.slots !== undefined) {
@@ -742,6 +759,7 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		leafPatterns,
 		hoistedKinds,
 		oneSurfaceKinds,
+		unitKinds,
 		seats,
 		slotKinds,
 		slotNames,
@@ -995,6 +1013,7 @@ export interface IrSurface {
 	readonly entries: Record<string, IrEntry>;
 	readonly seats: SeatTable;
 	readonly modelTypes: Record<string, string>;
+	readonly unitKinds: ReadonlySet<string>;
 }
 
 export async function loadScopedFactoryMap<T extends Record<string, unknown>>(grammar: string, map: T): Promise<T> {
@@ -1011,7 +1030,7 @@ export async function loadIrSurface(grammar: string): Promise<IrSurface | undefi
 		const entry = mod.ir[irKey];
 		if (entry !== null && (typeof entry === 'object' || typeof entry === 'function')) entries[kind] = scopeBuilders(engine, entry as IrEntry);
 	}
-	return { entries, seats: model.seats, modelTypes: model.modelTypes };
+	return { entries, seats: model.seats, modelTypes: model.modelTypes, unitKinds: model.unitKinds };
 }
 
 export const FAILED_RUN = { total: 0, pass: 0, fail: 1, skip: 0 } as const;
@@ -1023,18 +1042,13 @@ export async function loadStorageKindNameFromId(grammar: string): Promise<(id: n
 
 export async function loadIsLeafKind(grammar: string): Promise<(kindId: number) => boolean> {
 	const kindNameFromId = await loadKindNameFromId(grammar);
-	const { modelTypes } = await loadNodeModel(grammar);
-	return (kindId) => {
-		return isLeafModelType(modelTypes[kindNameFromId(kindId)]);
-	};
+	const model = await loadNodeModel(grammar);
+	return (kindId) => isLeafKind(model, kindNameFromId(kindId));
 }
 
-export function isLeafModelType(modelType: string | undefined): boolean {
-	return modelType === 'pattern' || modelType === 'enum' || isUnitModelType(modelType);
-}
-
-export function isUnitModelType(modelType: string | undefined): boolean {
-	return modelType === 'keyword' || modelType === 'punctuation';
+export function isLeafKind(model: Pick<LoadedNodeModel, 'modelTypes' | 'unitKinds'>, kind: string): boolean {
+	const modelType = model.modelTypes[kind];
+	return modelType === 'pattern' || modelType === 'enum' || model.unitKinds.has(kind);
 }
 
 export async function loadKindNameFromId(grammar: string): Promise<(id: number) => string> {
@@ -1328,7 +1342,7 @@ function projectArmSlot(
 		});
 	};
 	const modelType = opts.surface?.modelTypes[seat.kind];
-	if (typeof value === 'number' || isUnitModelType(modelType))
+	if (typeof value === 'number' || opts.surface?.unitKinds.has(seat.kind) === true)
 		return setRoute(seat.mount, undefined);
 	const childShape = opts.factoryShapes?.[seat.kind] ?? 'config';
 	if (typeof value === 'string' || modelType === 'pattern' || childShape === 'text') {

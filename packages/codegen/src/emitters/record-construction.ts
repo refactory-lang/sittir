@@ -1,6 +1,6 @@
 import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { builtRowLines, type InnerPositions, type SetterEntry } from './node-members.ts';
+import { builtRowLines, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
 import { RECORD_HEADER_WORDS, type RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
@@ -32,7 +32,7 @@ export interface RecordConstruction {
 	readonly listOptions?: { readonly delimiter: boolean; readonly separator: boolean };
 	readonly setters: readonly SetterEntry[] | undefined;
 	readonly inputs: readonly string[] | 'kind';
-	readonly inner: InnerPositions;
+	readonly trivia: TriviaPositions | undefined;
 	readonly checks: readonly string[];
 	readonly result: string;
 }
@@ -75,7 +75,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		views.requireRow(spec.node);
 		return { tail, after: [] };
 	}
-	return { tail, after: views.row(spec.node, spec.inputs, spec.setters, spec.inner) };
+	return { tail, after: views.row(spec.node, spec.inputs, spec.setters, spec.trivia) };
 }
 
 export function recordRefusalLines(node: { readonly kind: string }): string[] {
@@ -97,12 +97,12 @@ export class BuiltViewTable {
 	readonly #leaves = new Map<number, { readonly name: string; readonly body: string }>();
 	readonly #required = new Map<number, string>();
 
-	row(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, inner: InnerPositions): string[] {
+	row(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, trivia: TriviaPositions | undefined): string[] {
 		const kindId = viewKindId(node);
 		if (this.#rows.has(kindId)) throw new Error(`record views: ${node.kind} has two record builders that each make its row`);
 		const name = `row${node.typeName}`;
 		this.#rows.set(kindId, name);
-		return builtRowLines(name, inputs, setters, inner);
+		return builtRowLines(name, inputs, setters, trivia);
 	}
 
 	requireRow(node: ViewKind): void {

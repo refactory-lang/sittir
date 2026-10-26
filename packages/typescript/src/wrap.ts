@@ -2,6 +2,7 @@
 
 import {
 	restItems,
+	admitSplicedEnvelope,
 	admitSlot,
 	markEdited as $edited,
 	asTextNode,
@@ -48,7 +49,7 @@ import {
 } from '@sittir/common/utils';
 import type { RecordStub, Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptyProgram } from './types.js';
 import { Delimiter } from '@sittir/common/utils';
@@ -1793,23 +1794,23 @@ export function wrapNestedIdentifier(data: T.NestedIdentifier, tree: TreeHandle)
 	const node = {
 		...data,
 		$type: TSKindId.NestedIdentifier as const,
-		object() {
-			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_object', tree);
+		qualifier() {
+			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_qualifier', tree);
 		},
-		property() {
-			return hydrateSlot<T.PropertyIdentifier>(this, '_property', tree);
+		name() {
+			return hydrateSlot<T.PropertyIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			object: (v: NonNullable<T.NestedIdentifier['_object']>) =>
-				rebuilt(node, handle, () =>
-					wrapNestedIdentifier({ ...$edited(data), _object: admitSlot(handle, 'nested_identifier', 'object', v) }, tree)
-				),
-			property: (v: NonNullable<T.NestedIdentifier['_property']>) =>
+			qualifier: (v: NonNullable<T.NestedIdentifier['_qualifier']>) =>
 				rebuilt(node, handle, () =>
 					wrapNestedIdentifier(
-						{ ...$edited(data), _property: admitSlot(handle, 'nested_identifier', 'property', v) },
+						{ ...$edited(data), _qualifier: admitSlot(handle, 'nested_identifier', 'qualifier', v) },
 						tree
 					)
+				),
+			name: (v: NonNullable<T.NestedIdentifier['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapNestedIdentifier({ ...$edited(data), _name: admitSlot(handle, 'nested_identifier', 'name', v) }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -3415,10 +3416,22 @@ export function wrapRestPattern(data: T.RestPattern, tree: TreeHandle): T.RestPa
 			>(this, '_lhs_expression', tree);
 		},
 		$with: {
-			lhsExpression: (v: NonNullable<T.RestPattern['_lhs_expression']>) =>
+			lhsExpression: (v: NonNullable<T.RestPattern['_lhs_expression']> | Admit<T.LhsExpression>) =>
 				rebuilt(node, handle, () =>
 					wrapRestPattern(
-						{ ...$edited(data), _lhs_expression: admitSlot(handle, 'rest_pattern', 'lhsExpression', v) },
+						{
+							...$edited(data),
+							_lhs_expression: admitSlot(
+								handle,
+								'rest_pattern',
+								'lhsExpression',
+								admitSplicedEnvelope(
+									v,
+									[TSKindId.LhsExpression, 'content', 'lhs_expression'],
+									'RestPattern.lhsExpression'
+								)
+							)
+						},
 						tree
 					)
 				)
@@ -4257,17 +4270,17 @@ export function wrapNestedTypeIdentifier(
 	const node = {
 		...data,
 		$type: TSKindId.NestedTypeIdentifier as const,
-		module() {
-			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_module', tree);
+		qualifier() {
+			return hydrateSlot<T.Identifier | T.NestedIdentifier>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.TypeIdentifier>(this, '_name', tree);
 		},
 		$with: {
-			module: (v: NonNullable<T.NestedTypeIdentifier['_module']>) =>
+			qualifier: (v: NonNullable<T.NestedTypeIdentifier['_qualifier']>) =>
 				rebuilt(node, handle, () =>
 					wrapNestedTypeIdentifier(
-						{ ...$edited(data), _module: admitSlot(handle, 'nested_type_identifier', 'module', v) },
+						{ ...$edited(data), _qualifier: admitSlot(handle, 'nested_type_identifier', 'qualifier', v) },
 						tree
 					)
 				),
@@ -7427,10 +7440,6 @@ export function wrapCommentLine(data: T.CommentLine, tree: TreeHandle): T.Commen
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -7455,10 +7464,6 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle): T.Comm
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -12698,15 +12703,15 @@ function viewNestedIdentifier(data: RecordStub, tree: TreeHandle): T.NestedIdent
 	const node = {
 		...data,
 		$type: TSKindId.NestedIdentifier as const,
-		object() {
+		qualifier() {
 			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 2, 5, 0);
 		},
-		property() {
+		name() {
 			return viewSlot<T.PropertyIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
-			object: (...args: unknown[]) => rowWith(node, tree, _wrap, 'object', args),
-			property: (...args: unknown[]) => rowWith(node, tree, _wrap, 'property', args)
+			qualifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'qualifier', args),
+			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -14387,14 +14392,14 @@ function viewNestedTypeIdentifier(data: RecordStub, tree: TreeHandle): T.NestedT
 	const node = {
 		...data,
 		$type: TSKindId.NestedTypeIdentifier as const,
-		module() {
+		qualifier() {
 			return viewSlot<T.Identifier | T.NestedIdentifier>(this, tree, 2, 5, 0);
 		},
 		name() {
 			return viewSlot<T.TypeIdentifier>(this, tree, 7, 9, 7);
 		},
 		$with: {
-			module: (...args: unknown[]) => rowWith(node, tree, _wrap, 'module', args),
+			qualifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'qualifier', args),
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
 		$render: () => renderText(handle, node),
@@ -16709,10 +16714,6 @@ function viewCommentLine(data: RecordStub, tree: TreeHandle): T.CommentLine.Pars
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -16734,10 +16735,6 @@ function viewCommentBlock(data: RecordStub, tree: TreeHandle): T.CommentBlock.Pa
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
 		$engine: handle && (() => handle.current)
@@ -19224,6 +19221,21 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): object {
 	return node;
 }
 
+function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): object {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$text: () => textOf(data),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node;
+}
+
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => object> = {
 	[TSKindId.Program]: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	[TSKindId.HashBangLine]: (d, t) => wrapHashBangLine(d as unknown as T.HashBangLine, t),
@@ -19527,7 +19539,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.RegexFlags]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.NumberDecimal]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.HtmlComment]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.HtmlComment]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.JsxText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.TemplateChars]: (d, t) => wrapLeaf(d, t)
 };

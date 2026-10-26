@@ -8,7 +8,7 @@
 
 use crate::layout_kinds::LayoutKinds;
 use crate::options::Side;
-use crate::render::{Render, RenderError, RenderResult, RenderSink};
+use crate::render::{Render, RenderResult, RenderSink};
 use crate::types::KindId;
 use crate::slot::SlotValue;
 
@@ -72,7 +72,7 @@ impl<T: Render + 'static> Render for TriviaEntry<T> {
             #[cfg(feature = "arena")]
             Self::Record(entry) => {
                 let store = entry.store.as_ref().ok_or(crate::render::RenderError::Record(crate::arena::ARENA_RELEASED))?;
-                w.render_record_entry(entry.record, store.identity(), store)
+                w.render_record_entry(entry.record, store)
             }
         }
     }
@@ -85,12 +85,8 @@ impl<T: Render + 'static> Render for TriviaEntry<T> {
 /// A depth member (`indent`, `dedent`) answers the change it makes to the
 /// excess indentation (`RenderSink::layout_depth`) instead, and
 /// `depth_member` is the member that makes the change `delta`'s sign names.
-/// A value that holds sides of its own answers them (`sides`), and the side
-/// holding it renders them as its neighbours there, splicing copies of the
-/// value and its sides into its own run (`spliced`): every value is `Clone`,
-/// and `'static`, so a coordinate's sides, which a sink answers type-erased,
-/// read back as the side's own type.
-pub trait TriviaSeam: Clone + crate::prepare::Prepare + 'static {
+/// A trivia value holds no sides of its own: an extra gets no extras.
+pub trait TriviaSeam: 'static {
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         None
     }
@@ -100,44 +96,15 @@ pub trait TriviaSeam: Clone + crate::prepare::Prepare + 'static {
     }
 
     #[must_use]
-    fn depth_member(_delta: i32) -> Option<Self> {
+    fn depth_member(_delta: i32) -> Option<Self>
+    where
+        Self: Sized,
+    {
         None
-    }
-
-    fn sides(&self) -> Option<&NodeTrivia<Self>> {
-        None
-    }
-
-    fn sides_mut(&mut self) -> Option<&mut NodeTrivia<Self>> {
-        None
-    }
-}
-
-impl<T> TriviaEntry<T> {
-    /// Whether the entry is a built record a store answered, whose own sides
-    /// that store holds.
-    #[cfg(feature = "arena")]
-    fn held_record(&self) -> bool {
-        matches!(self, Self::Record(RecordEntry { store: Some(_), .. }))
-    }
-
-    #[cfg(not(feature = "arena"))]
-    #[allow(clippy::unused_self, reason = "an entry names a built record only in the arena build")]
-    fn held_record(&self) -> bool {
-        false
     }
 }
 
 impl<T: TriviaSeam> TriviaEntry<T> {
-    /// Whether the entry holds a leading or trailing side of its own.
-    fn has_sides(&self) -> bool {
-        let held = |side: &Option<Vec<TriviaEntry<T>>>| side.as_ref().is_some_and(|entries| !entries.is_empty());
-        match self.value() {
-            Some(SlotValue::Node(value)) => value.sides().is_some_and(|sides| held(&sides.leading) || held(&sides.trailing)),
-            Some(SlotValue::Coord(_)) | None => false,
-        }
-    }
-
     fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
         match self.value() {
             Some(SlotValue::Node(value)) => value.seam_gap(),
@@ -157,7 +124,12 @@ impl<T: TriviaSeam> TriviaEntry<T> {
     /// Whether the entry is layout: a whitespace member, merged into its
     /// gap, or a depth member.
     pub fn is_layout(&self) -> bool {
-        RunItem::is_layout(self)
+        self.seam_gap().is_some() || self.depth() != 0
+    }
+
+    /// Whether the entry is layout that breaks the line.
+    fn breaks(&self) -> bool {
+        self.seam_gap().is_some_and(|(gap, _)| gap.breaks())
     }
 }
 
@@ -504,76 +476,10 @@ fn whitespace(gap: LayoutKinds, text: Option<&str>, after_entry: bool, w: &mut d
     }
 }
 
-/// An entry of a side's run, as the side's render lays the run out: a
-/// layout entry takes the place of a join, any other renders between joins.
-trait RunItem {
-    fn depth(&self) -> i32;
-
-    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)>;
-
-    /// Whether the item is layout: a whitespace member, merged into its gap,
-    /// or a depth member.
-    fn is_layout(&self) -> bool {
-        self.seam_gap().is_some() || self.depth() != 0
-    }
-
-    /// Whether the item is layout that breaks the line.
-    fn breaks(&self) -> bool {
-        self.seam_gap().is_some_and(|(gap, _)| gap.breaks())
-    }
-}
-
-impl<T: TriviaSeam> RunItem for TriviaEntry<T> {
-    fn depth(&self) -> i32 {
-        TriviaEntry::depth(self)
-    }
-
-    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
-        TriviaEntry::seam_gap(self)
-    }
-}
-
-/// An item of a side's run once each entry's own sides are spliced in
-/// (`spliced`): an entry, or the coordinate of a parsed node whose own
-/// sides the run holds as its neighbours, each with the nesting of the side
-/// it was spliced from, which it renders at. A coordinate is a trivia
-/// entry's, which no position holds adjacent, and it writes its bytes
-/// between its items' frames (`Frames::items`), as a coordinate with no
-/// sides of its own does.
-enum Spliced<T> {
-    Entry(TriviaEntry<T>, usize),
-    Bare(crate::slot::NodeCoordinate, Vec<Box<dyn FramedTrivia>>, usize),
-}
-
-impl<T: TriviaSeam> RunItem for Spliced<T> {
-    fn depth(&self) -> i32 {
-        match self {
-            Spliced::Entry(entry, _) => entry.depth(),
-            Spliced::Bare(..) => 0,
-        }
-    }
-
-    fn seam_gap(&self) -> Option<(LayoutKinds, Option<&str>)> {
-        match self {
-            Spliced::Entry(entry, _) => entry.seam_gap(),
-            Spliced::Bare(..) => None,
-        }
-    }
-}
-
-impl<T: Render + 'static> Render for Spliced<T> {
-    fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
-        match self {
-            Spliced::Entry(entry, nesting) => at_nesting(*nesting, w, |w| entry.render(w)),
-            Spliced::Bare(coord, frames, nesting) => at_nesting(*nesting, w, |w| crate::slot::write_framed(frames, Some(coord), coord, false, w)),
-        }
-    }
-}
-
 /// Render `entries` joined by `between`, a whitespace entry taking the
 /// place of the join at its gap. Each entry's own edges write what follows
 /// it; only the joins are written here.
-fn render_joined<I: RunItem + Render>(entries: &[I], between: LayoutKinds, w: &mut dyn RenderSink) -> RenderResult {
+fn render_joined<T: Render + TriviaSeam>(entries: &[TriviaEntry<T>], between: LayoutKinds, w: &mut dyn RenderSink) -> RenderResult {
     let mut after_entry = false;
     for entry in entries {
         if entry.depth() != 0 {
@@ -596,206 +502,21 @@ fn render_joined<I: RunItem + Render>(entries: &[I], between: LayoutKinds, w: &m
 
 /// Hold a run of same-line trailing entries in the sink, joined as
 /// `render_joined` joins them.
-fn defer_run<I: RunItem + Render>(run: &[I], w: &mut dyn RenderSink) -> RenderResult {
+fn defer_run<T: Render + TriviaSeam>(run: &[TriviaEntry<T>], w: &mut dyn RenderSink) -> RenderResult {
     w.defer_trailing(&mut |w| render_joined(run, LayoutKinds::SPACE, w))
-}
-
-/// `entries` with each entry's own sides as its neighbours: its leading
-/// entries before it and its trailing entries after it, theirs in turn. A
-/// side renders an entry's sides as entries of its own run, so they take part
-/// in its joins and its line layout. A node answers its sides itself; a
-/// coordinate's are its node's own frame's, as its tree holds them
-/// (`RenderSink::frames`); a built record's are the ones the store it was
-/// read from holds for it (`record_sides`).
-/// `entries` are a side at `nesting`; an entry's own sides are one deeper.
-/// `None` when no entry is a coordinate, a built record or holds sides: the
-/// side renders as it is.
-fn spliced<T: TriviaSeam>(entries: &[TriviaEntry<T>], nesting: usize, w: &dyn RenderSink) -> Result<Option<Vec<Spliced<T>>>, RenderError> {
-    if !entries.iter().any(|entry| entry.has_sides() || entry.held_record() || matches!(entry.value(), Some(SlotValue::Coord(_)))) {
-        return Ok(None);
-    }
-    let (mut run, mut within) = (Vec::with_capacity(entries.len()), Within::default());
-    let mut tasks: Vec<Splice<T>> = entries.iter().rev().map(|entry| Splice::Entry(entry.clone(), nesting)).collect();
-    while let Some(task) = tasks.pop() {
-        match task {
-            Splice::Entry(entry, nesting) => {
-                let ((leading, trailing), item, entered) = splice_one(entry, nesting, w, &within)?;
-                let sides = |side: &Option<Vec<TriviaEntry<T>>>| side.as_ref().is_some_and(|entries| !entries.is_empty());
-                let inside = if sides(&leading) || sides(&trailing) { nested_side(nesting)? } else { nesting };
-                if let Some(key) = entered {
-                    within.insert(key);
-                    tasks.push(Splice::Leave(key));
-                }
-                tasks.extend(trailing.into_iter().flatten().rev().map(|entry| Splice::Entry(entry, inside)));
-                tasks.push(Splice::Push(item));
-                tasks.extend(leading.into_iter().flatten().rev().map(|entry| Splice::Entry(entry, inside)));
-            }
-            Splice::Push(item) => run.push(item),
-            Splice::Leave(key) => {
-                within.remove(&key);
-            }
-        }
-    }
-    Ok(Some(run))
-}
-
-/// One step of a splice: an entry, at the nesting of its side, to expand
-/// into its sides and itself, an expanded item to add to the run, or a built
-/// record whose sides are done.
-enum Splice<T> {
-    Entry(TriviaEntry<T>, usize),
-    Push(Spliced<T>),
-    Leave(Entered),
-}
-
-/// A built record a splice is inside, by the store that answered it and its
-/// address.
-#[cfg(feature = "arena")]
-type Entered = (usize, crate::arena::Address);
-
-#[cfg(not(feature = "arena"))]
-type Entered = std::convert::Infallible;
-
-/// The built records a splice is inside: one already among them refuses.
-type Within = std::collections::HashSet<Entered>;
-
-/// The refusal of a built record that a side reaches from its own sides.
-#[cfg(feature = "arena")]
-pub(crate) const SIDE_CYCLE: crate::arena::ArenaError = crate::arena::ArenaError::Unwritable("a side that reaches its own record");
-
-macro_rules! side_nesting_bound {
-    () => {
-        64
-    };
-}
-
-/// The deepest a side may nest, a stack-safety bound: an entry renders
-/// inside the render of the entry whose side holds it, on the native stack.
-/// A main-tree node's sides nest at 1; a side of a node inside an entry of a
-/// side at `n`, the entry's own or one inside its content, nests at `n + 1`.
-/// A side holding entries past the bound refuses (`RenderError::SideNesting`).
-pub const SIDE_NESTING_BOUND: usize = side_nesting_bound!();
-
-/// The refusal of a side nested past `SIDE_NESTING_BOUND`.
-pub const SIDE_NESTING_REFUSAL: &str = concat!("sides nest more than ", side_nesting_bound!(), " deep, the stack-safety bound on side nesting");
-
-/// The nesting of a side inside an entry of a side at `nesting`.
-///
-/// # Errors
-///
-/// `RenderError::SideNesting` past `SIDE_NESTING_BOUND`.
-fn nested_side(nesting: usize) -> Result<usize, RenderError> {
-    let inside = nesting + 1;
-    if inside > SIDE_NESTING_BOUND {
-        return Err(RenderError::SideNesting);
-    }
-    Ok(inside)
-}
-
-/// `render` written at side nesting `nesting`, the sink's nesting restored
-/// after it.
-fn at_nesting(nesting: usize, w: &mut dyn RenderSink, render: impl FnOnce(&mut dyn RenderSink) -> RenderResult) -> RenderResult {
-    let outer = w.set_side_nesting(nesting);
-    let rendered = render(w);
-    w.set_side_nesting(outer);
-    rendered
-}
-
-/// A side's leading and trailing entries, as `NodeTrivia` holds them.
-type Outer<T> = (Option<Vec<TriviaEntry<T>>>, Option<Vec<TriviaEntry<T>>>);
-
-/// An entry's sides, the item the run holds for it, and the built record it
-/// enters.
-type SpliceStep<T> = (Outer<T>, Spliced<T>, Option<Entered>);
-
-/// The own sides of the built record `entry` holds, as the store that
-/// answered it holds them, prepared as the sink prepares a coordinate's
-/// frames.
-#[cfg(feature = "arena")]
-fn record_sides<T: TriviaSeam>(entry: &RecordEntry<T>, w: &dyn RenderSink) -> Result<Outer<T>, crate::render::CoordinateError> {
-    let Some(mut sides) = entry.store.as_ref().and_then(|store| store.sides(crate::trivia_store::Place::Record(entry.record.at))) else { return Ok((None, None)) };
-    if let Some(ctx) = w.render_context() {
-        crate::prepare::Prepare::prepare(&mut sides, &ctx)?;
-    }
-    Ok((sides.leading, sides.trailing))
-}
-
-/// `entry`, of a side at `nesting`, as the run holds it, between its own
-/// leading and trailing entries, and the built record it enters when it
-/// holds one a store answered.
-#[cfg_attr(not(feature = "arena"), allow(clippy::infallible_destructuring_match, unused_variables, reason = "an entry is a built record, the one entry that reads the records a splice is inside, only in the arena build"))]
-fn splice_one<T: TriviaSeam>(mut entry: TriviaEntry<T>, nesting: usize, w: &dyn RenderSink, within: &Within) -> Result<SpliceStep<T>, RenderError> {
-    let value = match &mut entry {
-        TriviaEntry::Value(value) => value,
-        #[cfg(feature = "arena")]
-        TriviaEntry::Record(record) => {
-            let key = record.store.as_ref().map(|store| (store.identity(), record.record.at));
-            if key.is_some_and(|key| within.contains(&key)) {
-                return Err(RenderError::Record(SIDE_CYCLE));
-            }
-            return Ok((record_sides(record, w)?, Spliced::Entry(entry, nesting), key));
-        }
-    };
-    let (outer, item) = match value {
-        SlotValue::Node(value) => {
-            let outer = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
-            (outer, Spliced::Entry(entry, nesting))
-        }
-        SlotValue::Coord(coord) => {
-            let frames = w.frames(coord)?;
-            match frames.own.as_deref().map(|own| own.as_any().downcast_ref::<NodeTrivia<T>>()) {
-                None => ((None, None), Spliced::Bare(coord.clone(), frames.items, nesting)),
-                Some(Some(sides)) => ((sides.leading.clone(), sides.trailing.clone()), Spliced::Bare(coord.clone(), frames.items, nesting)),
-                Some(None) => ((None, None), Spliced::Entry(entry, nesting)),
-            }
-        }
-    };
-    Ok((outer, item, None))
-}
-
-fn leading_run<I: RunItem + Render>(leading: &[I], w: &mut dyn RenderSink) -> RenderResult {
-    render_joined(leading, LayoutKinds::SPACE, w)?;
-    if leading.last().is_some_and(|entry| !entry.is_layout()) {
-        join(LayoutKinds::SPACE, w);
-    }
-    Ok(())
-}
-
-fn trailing_run<I: RunItem + Render>(trailing: &[I], w: &mut dyn RenderSink) -> RenderResult {
-    let own = trailing.iter().position(RunItem::breaks).unwrap_or(trailing.len());
-    let (same_line, own_line) = trailing.split_at(own);
-    if same_line.iter().all(RunItem::is_layout) {
-        render_joined(same_line, LayoutKinds::SPACE, w)?;
-    } else {
-        defer_run(same_line, w)?;
-        w.seat_trailing()?;
-    }
-    if !own_line.is_empty() {
-        w.seat_trailing()?;
-        let owner_seam = w.take_seam();
-        render_joined(own_line, LayoutKinds::SPACE, w)?;
-        if let Some(seam) = owner_seam {
-            w.restore_seam(seam);
-        }
-    }
-    Ok(())
 }
 
 impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// Leading entries, before the owner renders. Each layout entry takes the
     /// place of the join at its gap; where none stands, an entry joins the
-    /// next entry, or the owner, on its line. Each entry's own sides are its
-    /// neighbours in the run (`spliced`).
+    /// next entry, or the owner, on its line.
     pub fn render_leading(&self, w: &mut dyn RenderSink) -> RenderResult {
         let leading = self.leading.as_deref().unwrap_or(&[]);
-        if leading.is_empty() {
-            return Ok(());
+        render_joined(leading, LayoutKinds::SPACE, w)?;
+        if leading.last().is_some_and(|entry| !entry.is_layout()) {
+            join(LayoutKinds::SPACE, w);
         }
-        let nesting = nested_side(w.side_nesting())?;
-        at_nesting(nesting, w, |w| match spliced(leading, nesting, w)? {
-            Some(run) => leading_run(&run, w),
-            None => leading_run(leading, w),
-        })
+        Ok(())
     }
 
     /// Trailing entries, after the owner renders, in source order. The run
@@ -804,35 +525,38 @@ impl<T: Render + TriviaSeam> NodeTrivia<T> {
     /// text to seat, and merges into the gap after the owner. The rest render after it, each layout
     /// entry taking the place of the join at its gap and an entry with none
     /// joining the one before it on its line; the seam the owner left (its
-    /// after edge) is written after them. Each entry's own sides are its
-    /// neighbours in the run (`spliced`).
+    /// after edge) is written after them.
     pub fn render_trailing(&self, w: &mut dyn RenderSink) -> RenderResult {
         let trailing = self.trailing.as_deref().unwrap_or(&[]);
-        if trailing.is_empty() {
-            return Ok(());
+        let own = trailing.iter().position(TriviaEntry::breaks).unwrap_or(trailing.len());
+        let (same_line, own_line) = trailing.split_at(own);
+        if same_line.iter().all(TriviaEntry::is_layout) {
+            render_joined(same_line, LayoutKinds::SPACE, w)?;
+        } else {
+            defer_run(same_line, w)?;
+            w.seat_trailing()?;
         }
-        let nesting = nested_side(w.side_nesting())?;
-        at_nesting(nesting, w, |w| match spliced(trailing, nesting, w)? {
-            Some(run) => trailing_run(&run, w),
-            None => trailing_run(trailing, w),
-        })
+        if !own_line.is_empty() {
+            w.seat_trailing()?;
+            let owner_seam = w.take_seam();
+            render_joined(own_line, LayoutKinds::SPACE, w)?;
+            if let Some(seam) = owner_seam {
+                w.restore_seam(seam);
+            }
+        }
+        Ok(())
     }
 
     /// The inner entries, where the owner renders its inner site: one per
     /// line when the site starts a line (the start of a block body, which the
     /// body's own indent and dedent frame, or output standing at a line
     /// start, as at the grammar root), and joined by spaces anywhere else.
-    /// Each entry's own sides are its neighbours in the run (`spliced`).
     pub fn render_inner(&self, w: &mut dyn RenderSink) -> RenderResult {
-        let Some(entries) = self.inner.as_ref().filter(|entries| !entries.is_empty()) else {
+        let Some(entries) = self.inner.as_ref() else {
             return Ok(());
         };
         let between = if w.at_body_start() || w.ends_line() { LayoutKinds::NEWLINE } else { LayoutKinds::SPACE };
-        let nesting = nested_side(w.side_nesting())?;
-        at_nesting(nesting, w, |w| match spliced(entries, nesting, w)? {
-            Some(run) => render_joined(&run, between, w),
-            None => render_joined(entries, between, w),
-        })
+        render_joined(entries, between, w)
     }
 }
 
@@ -1065,122 +789,5 @@ mod tests {
     #[test]
     fn a_balanced_side_keeps_every_depth_member() {
         assert_eq!(changed(TriviaSide::Leading, "\na\n-b\n++c\n-"), "a\n-b\n++c\n-");
-    }
-
-    /// An entry by its name, with sides of its own.
-    #[derive(Debug, Clone, PartialEq)]
-    struct Sided(char, super::NodeTrivia<Sided>);
-
-    impl super::TriviaSeam for Sided {
-        fn sides(&self) -> Option<&super::NodeTrivia<Self>> {
-            Some(&self.1)
-        }
-
-        fn sides_mut(&mut self) -> Option<&mut super::NodeTrivia<Self>> {
-            Some(&mut self.1)
-        }
-    }
-
-    impl crate::prepare::Prepare for Sided {
-        fn prepare(&mut self, _: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
-            Ok(())
-        }
-    }
-
-    fn sided(name: char, leading: Vec<super::TriviaEntry<Sided>>, trailing: Vec<super::TriviaEntry<Sided>>) -> super::TriviaEntry<Sided> {
-        super::TriviaEntry::new(crate::slot::SlotValue::Node(Sided(name, super::NodeTrivia { leading: Some(leading), trailing: Some(trailing), inner: None })))
-    }
-
-    /// Each item's name, `'#'` for a built record, and whether it still
-    /// holds sides of its own.
-    fn names(run: &[super::Spliced<Sided>]) -> Vec<(char, bool)> {
-        run.iter()
-            .map(|item| match item {
-                super::Spliced::Entry(entry @ super::TriviaEntry::Value(crate::slot::SlotValue::Node(Sided(name, _))), _) => (*name, entry.has_sides()),
-                #[cfg(feature = "arena")]
-                super::Spliced::Entry(entry @ super::TriviaEntry::Record(_), _) => ('#', entry.has_sides()),
-                _ => ('?', false),
-            })
-            .collect()
-    }
-
-    #[test]
-    fn a_side_holds_each_entry_s_own_sides_as_its_neighbours_at_every_depth() {
-        let mut out = String::new();
-        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
-        let plain = vec![sided('a', vec![], vec![]), sided('b', vec![], vec![])];
-        assert!(matches!(super::spliced(&plain, 1, &w), Ok(None)), "a side whose entries hold no sides renders as it is");
-        let a = sided('a', vec![], vec![]);
-        let e = sided('e', vec![], vec![]);
-        let nested = vec![sided('c', vec![sided('b', vec![a], vec![])], vec![sided('d', vec![], vec![e])]), sided('f', vec![], vec![])];
-        let run = super::spliced(&nested, 1, &w).expect("a run").expect("spliced");
-        let spliced: Vec<_> = "abcdef".chars().map(|name| (name, false)).collect();
-        assert_eq!(names(&run), spliced, "each entry in order, none holding sides of its own");
-    }
-
-    #[cfg(feature = "arena")]
-    #[test]
-    fn a_built_record_s_own_sides_are_the_ones_the_store_it_was_read_from_holds() {
-        use crate::trivia_store::{Place, TriviaStore};
-        let mut out = String::new();
-        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
-        let at = crate::arena::Address(5);
-        let built = || super::TriviaEntry::Record(super::RecordEntry { record: super::BuiltEntry { kind: crate::types::KindId(1), at }, store: None });
-        let store = TriviaStore::<Sided>::new();
-        store.write_side(Place::Record(at), crate::trivia_table::TriviaSide::Leading, vec![sided('a', vec![], vec![])]);
-        store.write_side(Place::Record(at), crate::trivia_table::TriviaSide::Trailing, vec![sided('c', vec![], vec![])]);
-        let holder = Place::Row { tree: crate::types::TreeId(1), row: crate::types::NodeIndex::ROOT };
-        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![built()]);
-        let side = store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written");
-        let run = super::spliced(&side, 1, &w).expect("a run").expect("spliced");
-        assert_eq!(names(&run), [('a', false), ('#', false), ('c', false)], "the record between the sides its store holds for it");
-        assert!(matches!(super::spliced(&[built()], 1, &w), Ok(None)), "a record no store answered holds no sides of its own");
-    }
-
-    #[cfg(feature = "arena")]
-    #[test]
-    fn a_built_record_its_own_sides_reach_refuses_by_name() {
-        use crate::trivia_store::{Place, TriviaStore};
-        let mut out = String::new();
-        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
-        let record = |at| super::TriviaEntry::Record(super::RecordEntry { record: super::BuiltEntry { kind: crate::types::KindId(1), at: crate::arena::Address(at) }, store: None });
-        let refused = |entries: &[super::TriviaEntry<Sided>]| matches!(super::spliced(entries, 1, &w), Err(crate::render::RenderError::Record(refusal)) if refusal == super::SIDE_CYCLE);
-        let store = TriviaStore::<Sided>::new();
-        let holder = Place::Row { tree: crate::types::TreeId(1), row: crate::types::NodeIndex::ROOT };
-        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![record(5)]);
-        store.write_side(Place::Record(crate::arena::Address(5)), crate::trivia_table::TriviaSide::Leading, vec![record(5)]);
-        assert!(refused(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written")), "a record in its own side");
-        store.write_side(Place::Record(crate::arena::Address(5)), crate::trivia_table::TriviaSide::Leading, vec![record(6)]);
-        store.write_side(Place::Record(crate::arena::Address(6)), crate::trivia_table::TriviaSide::Trailing, vec![sided('a', vec![], vec![]), record(5)]);
-        assert!(refused(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written")), "two records in each other's sides");
-        store.write_side(Place::Record(crate::arena::Address(6)), crate::trivia_table::TriviaSide::Trailing, vec![record(7), record(7)]);
-        let run = super::spliced(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written"), 1, &w).expect("a run").expect("spliced");
-        assert_eq!(names(&run), [('#', false), ('#', false), ('#', false), ('#', false)], "a record twice in one side is no cycle");
-    }
-
-    #[cfg(feature = "arena")]
-    #[test]
-    fn a_chain_of_built_records_splices_to_the_nesting_bound_and_refuses_past_it() {
-        use crate::trivia_store::{Place, TriviaStore};
-        let bound = u32::try_from(super::SIDE_NESTING_BOUND).expect("a small bound");
-        let mut out = String::new();
-        let w = crate::spacing::SpacingWriter::new(&mut out, crate::spacing::WordMatcher::default_ident());
-        let record = |at| super::TriviaEntry::Record(super::RecordEntry { record: super::BuiltEntry { kind: crate::types::KindId(1), at: crate::arena::Address(at) }, store: None });
-        let nested = |entries: &[super::TriviaEntry<Sided>]| matches!(super::spliced(entries, 1, &w), Err(crate::render::RenderError::SideNesting));
-        let store = TriviaStore::<Sided>::new();
-        let holder = Place::Row { tree: crate::types::TreeId(1), row: crate::types::NodeIndex::ROOT };
-        store.write_side(holder, crate::trivia_table::TriviaSide::Leading, vec![record(1)]);
-        for at in 1..bound {
-            store.write_side(Place::Record(crate::arena::Address(at)), crate::trivia_table::TriviaSide::Trailing, vec![record(at + 1)]);
-        }
-        let side = store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written");
-        let run = super::spliced(&side, 1, &w).expect("a run").expect("spliced");
-        assert_eq!(run.len(), super::SIDE_NESTING_BOUND, "a record at the bound splices");
-        assert!(run.iter().enumerate().all(|(at, item)| matches!(item, super::Spliced::Entry(_, nesting) if *nesting == at + 1)), "each record at the nesting of its side");
-        store.write_side(Place::Record(crate::arena::Address(bound)), crate::trivia_table::TriviaSide::Trailing, vec![record(bound + 1)]);
-        assert!(nested(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written")), "a side past the bound refuses");
-        store.write_side(Place::Record(crate::arena::Address(bound)), crate::trivia_table::TriviaSide::Trailing, vec![record(1)]);
-        assert!(nested(&store.side(holder, crate::trivia_table::TriviaSide::Leading).expect("written")), "a ring longer than the bound refuses by the bound");
-        assert_eq!(crate::render::RenderError::SideNesting.to_string(), format!("sides nest more than {bound} deep, the stack-safety bound on side nesting"));
     }
 }

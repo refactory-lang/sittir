@@ -19,7 +19,7 @@ No stage touches `packages/common/src/node-data.ts` or the native reader; the ty
 - The bindings reader (`readBindings`, `inventory/bindings.ts`) and the derivation (`derive`, and the member classification `slotEntries` and `soleRole`, `inventory/derive.ts`) live in `packages/tools`, and read `bindings.scm` through the workspace `@sittir/scm`. `packages/codegen` cannot import `packages/tools`.
 - `bindings.scm` exists for rust, typescript and python.
 - The query facet's plan form is `QueryPlan` (`@sittir/types`), evaluated by `holds` in `packages/common/src/query.ts`.
-- The form and subtype routing for kinds with no bare factory lives in `packages/tools/src/validate/common.ts` (`buildFactoryNodeFromReference` over the `ir` surface).
+- The form and subtype routing for kinds with no bare factory lives in `packages/tools/src/validate/common.ts` (`buildFactoryNodeFromReference` over the `ir` surface). It dispatches on a parsed node's own kind, which names its form, so the portable build derives its own pick from the routes (stage 7).
 - Probe, rust: 191 read entries, 174 build entries, 133 of 374 members rejected by the vocabulary, with the probe filling rust's context (each role's keyword text and the slot table) from rust's own derivation.
 
 ## How codegen gets the bindings facts (decided)
@@ -33,9 +33,10 @@ No stage touches `packages/common/src/node-data.ts` or the native reader; the ty
 
 ## The rejected members: the rule
 
-**A grammar's portable members ship only at zero rejected members.** The generated module is type-checked with its package, so a rejected member is a compile error in the package. The namespaces `kinds` and `is` carry no member types, so stage 3 emits them for every bound grammar regardless of its count. Until a grammar reaches zero:
-- its typed views, read and build (stages 5 to 7) are not emitted into the package;
-- its rejection count, sorted by cause (the probe's `conformance.py`, promoted to `sittir tool portable-conformance`), is a ratchet that only falls.
+**A grammar's portable members ship only at zero rejected members.** The generated module is type-checked with its package, so a rejected member is a compile error in the package. The namespaces `kinds` and `is` carry no member types, so stage 3 emits them for every bound grammar regardless of its count. Until a grammar reaches zero (ruled by the user, 2026-10-25):
+- the runtime lands first and stays unexported: the flag guards, the build tables, the pick and the corpus round-trip lane land and are proved without types;
+- nothing new reaches the public portable API, a loosely typed `build` included: the vocabulary-typed module (the typed views, read and build of stages 5 to 7) is generated outside the package and moves in at zero;
+- its rejection count, the typed module's errors sorted by cause (the probe's `conformance.py`, promoted to `sittir tool portable-conformance`), is a ratchet that only falls.
 
 Stage 4 drives the count to zero for each cause on the side that owns it. Rust is first, then typescript and python.
 
@@ -116,15 +117,15 @@ The causes the probe reports, each on the side that owns it:
 
 ## Stage 7: build
 
-- Build entries per vocabulary kind under `build.<path>`, by full path as in stage 3. Where one path maps to several grammar kinds, the build picks the kind from the input's shape (which members are present, and the kinds of their values), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. Kinds whose shapes cannot be told apart are stage-4 conformance items, cleared by giving each its own vocabulary path (`expression.update.prefix` / `.postfix`, `comment.block` / `comment.line`), so the input's `$kind` picks the call.
-- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. A step's type leaves out the steps its flag excludes, and a refinement's builder those its value excludes, from exclusions derived once per kind from the grammar's rule (bindings spec §3.3); a structure's `$kind` and `$flags` are checked against the same exclusions. One refinement builder per refinement path:
+- Build entries per vocabulary kind under `build.<path>`, by full path as in stage 3. Where one path maps to several grammar kinds or forms, the build picks the kind from a pick table codegen derives per path from the routes (which members are present, the kinds of their values, and the flags stated), then builds through the low-level API and its mount routing. There is no default arm and no inference from text. A pick the table cannot decide is a codegen diagnostic. A form told apart only by a spelling (delimiters, quotes) is picked by the render options, the grammar's default when none are given. Kinds whose shapes cannot be told apart are cleared before this stage by a fact the input states: `expression.update`'s prefix form takes a `prefix` flag in the renames stage, and unset means postfix. A leaf whose grammar kind varies by where it sits (a comment's text, a string's content, a property name) needs no path of its own. Its holder decides it, through the slot that holds it, that slot's default leaf (bindings spec §8) or the holder's `privateName` flag, so the pick table has no root entry for it.
+- Refinement builders and flag steps, the only form a refinement or a flag takes in a build. A step per flag on each builder of its kind, in any order, sets its bit and builds its token or kind. Steps ship unnarrowed until the builder exclusions primitive lands ([builder exclusions](../specs/2026-10-19-builder-exclusions-design.md)). Then a step's type leaves out the steps a group excludes, and a refinement's builder those its value excludes, read from the kind's `exclusionGroups` stamps, and a structure is checked by the grammar builder's `excludedBy`, which the portable build reaches by building through it (bindings spec §3.3). One refinement builder per refinement path:
   - a literal or token refinement presets the literal (`build.expression.binary.add` fills `operator: '+'`);
   - a child-kind refinement narrows the slot's type to that child kind;
   - a text refinement (`#match?`, `#eq?`) narrows the type and runs the predicate as a guard when the node is built, always on like a leaf guard, refusing text it rejects.
   - a template predicate (a pattern with holes, such as a dunder name) builds from its holes; any other `#match?` checks the given text against the pattern and refuses a mismatch.
-- The portable `build` is typed per kind from the vocabulary; the low-level generic build is keyed by `$type`.
-- A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus.
-- Gate: the existing rows are equal; the new lane's row is recorded as its baseline. Type tests: a typescript field's `.optional` step offers no `.definite`, and a getter's builder no `.generator`; a structure stating an excluded pair is refused, naming both.
+- The portable `build` is typed per kind from the vocabulary, and is exported only when the typed module reaches zero (above); the low-level generic build is keyed by `$type`.
+- A portable round-trip lane joins `validate:native`: parse with the portable engine, build every node again from its members, render, and parse-equal over the corpus. It runs on the unexported runtime, so it proves the build before the types exist.
+- Gate: the existing rows are equal; the new lane's row is recorded as its baseline. Type tests, once the exclusions primitive lands: a typescript accessor field's `.static` step offers no `.abstract` (TS1243), and a getter's builder no `.generator`; a structure that breaks a group is refused with the group's label, and one that states a field's `optional` and `definite`, two arms of one slot, is refused, naming both.
 
 ### Follow-up: high-to-low runtime scalar bindings (October 15)
 

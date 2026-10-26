@@ -310,7 +310,8 @@
 (try_block) @expression.block.try
 (gen_block) @expression.block.gen
 (generic_function) @expression.instantiation
-(scoped_identifier) @identifier.scoped
+(scoped_identifier) @identifier.qualified
+(scoped_identifier path: (_) @qualifier)
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (match_pattern) @pattern.match
@@ -377,9 +378,10 @@
 (bounded_type) @type.bounded
 (qualified_type) @type.qualified
 (bracketed_type) @type.bracketed
-(scoped_type_identifier) @type.path
-(scoped_type_identifier_in_expression_position) @type.path.expression
-((type_identifier) @type.named.prelude (#match? @type.named.prelude "^(Option|Result|String|Vec|Box)$"))
+(scoped_type_identifier) @identifier.qualified
+(scoped_type_identifier path: (_) @qualifier)
+(scoped_type_identifier_in_expression_position) @identifier.qualified
+(scoped_type_identifier_in_expression_position path: (_) @qualifier)
 
 ; ── literal ────────────────────────────────────────────────────────────────────
 (string_literal) @literal.string
@@ -400,15 +402,15 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(type_identifier) @identifier.type
-(field_identifier) @identifier.field
-(shorthand_field_identifier) @identifier.property.shorthand
+(type_identifier) @identifier
+(field_identifier) @identifier
+(shorthand_field_identifier) @identifier
 (metavariable) @identifier.metavariable
 (lifetime) @identifier.lifetime
 (label) @identifier.label
 (self) @identifier.self
-(super) @identifier.super
-(crate) @identifier.crate
+(super) @identifier
+(crate) @identifier
 
 ; a keyword modifier is a member of what it modifies (`async`, `const`, `unsafe`, `mutable`), never a kind;
 ; a modifier with structure (`pub(in path)`, `extern "C"`) is a kind carrying that structure

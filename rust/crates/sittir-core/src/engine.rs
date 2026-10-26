@@ -651,6 +651,15 @@ impl<G: EngineGrammar> ParsedTree<G> {
         row_coordinate(&self.tree, &self.read_ctx(), index)
     }
 
+    /// The bytes the node at `index` renders between as its source: its span
+    /// widened by the extras and `ERROR`s its frames hold
+    /// (`SourceTable::framed_span`). A diagnostic; `None` past the last node.
+    #[must_use]
+    pub fn framed_span_at(&self, index: crate::types::NodeIndex) -> Option<Span> {
+        let node = node_at_index(&self.tree, index)?;
+        Some(SourceTable::framed_span(self, &self.read_ctx().coordinate(&node, index)))
+    }
+
     /// The context of a read that seats each node's sides from this tree's
     /// table and writes: a render read and a snapshot read.
     pub fn seating_ctx(&self) -> crate::read::ReadCtx<'_> {
@@ -1488,8 +1497,8 @@ impl<G: EngineGrammar> SourceTable for WithoutLayout<'_, G> {
         Some((&tree.tree, tree.read_ctx().with_sides(self)))
     }
 
-    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
-        self.0.for_each_kind_ending_with(coord, f);
+    fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
+        self.0.for_each_edge_level(coord, side, f);
     }
 
     fn depth_move(&self, coord: &NodeCoordinate) -> i32 {
@@ -1777,22 +1786,32 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
         Some((&tree.tree, tree.seating_ctx()))
     }
 
-    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+    fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
         let Some(tree) = self.own(coord.tree) else {
             return;
         };
-        let mut node = node_at_index(&tree.tree, coord.index);
-        let exact = node.is_some_and(|n| Span::of(&n) == coord.span);
-        while let Some(current) = node {
-            f(crate::read::grammar_id(&current));
-            if !exact {
-                return;
-            }
-            node = current
-                .child_count()
-                .checked_sub(1)
-                .and_then(|last| current.child(last))
-                .filter(|last| Span::of(last).end == Span::of(&current).end);
+        let Some(node) = node_at_index(&tree.tree, coord.index) else {
+            return;
+        };
+        let ctx = tree.read_ctx();
+        let grammar = crate::read::grammar_id(&node);
+        f(crate::render::EdgeLevel {
+            stamp: coord.kind.unwrap_or(grammar),
+            grammar,
+            display: crate::read::display_id(&node),
+            field: None,
+        });
+        if Span::of(&node) != coord.span {
+            return;
+        }
+        let mut cursor = node.walk();
+        while let Some(child) = edge_child(&mut cursor, side) {
+            f(crate::render::EdgeLevel {
+                stamp: ctx.node_kind(&child),
+                grammar: crate::read::grammar_id(&child),
+                display: crate::read::display_id(&child),
+                field: crate::read::field_id(&cursor),
+            });
         }
     }
 
@@ -1821,6 +1840,23 @@ impl<G: EngineGrammar> SourceTable for ParsedTree<G> {
             }
         }
     }
+}
+
+/// Moves `cursor` onto its node's child at the edge on `side`, when that
+/// child starts (before) or ends (after) where the node does: the next level
+/// of its edge chain (`SourceTable::for_each_edge_level`).
+fn edge_child<'t>(cursor: &mut tree_sitter::TreeCursor<'t>, side: crate::options::Side) -> Option<tree_sitter::Node<'t>> {
+    let holder = Span::of(&cursor.node());
+    let moved = match side {
+        crate::options::Side::Before => cursor.goto_first_child(),
+        crate::options::Side::After => cursor.goto_last_child(),
+    };
+    let child = cursor.node();
+    let at_edge = match side {
+        crate::options::Side::Before => Span::of(&child).start == holder.start,
+        crate::options::Side::After => Span::of(&child).end == holder.end,
+    };
+    (moved && at_edge).then_some(child)
 }
 
 impl<G: EngineGrammar> ParsedTree<G> {
@@ -1885,9 +1921,9 @@ impl<G: EngineGrammar, H: std::hash::BuildHasher> SourceTable for HashMap<crate:
         SourceTable::read_ctx(self.get(&tree)?, tree)
     }
 
-    fn for_each_kind_ending_with(&self, coord: &NodeCoordinate, f: &mut dyn FnMut(KindId)) {
+    fn for_each_edge_level(&self, coord: &NodeCoordinate, side: crate::options::Side, f: &mut dyn FnMut(crate::render::EdgeLevel)) {
         if let Some(tree) = self.get(&coord.tree) {
-            tree.for_each_kind_ending_with(coord, f);
+            tree.for_each_edge_level(coord, side, f);
         }
     }
 

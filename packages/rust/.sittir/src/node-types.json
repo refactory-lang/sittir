@@ -104,6 +104,10 @@
         "named": true
       },
       {
+        "type": "qualified_identifier",
+        "named": true
+      },
+      {
         "type": "range_expression",
         "named": true
       },
@@ -113,10 +117,6 @@
       },
       {
         "type": "return_expression",
-        "named": true
-      },
-      {
-        "type": "scoped_identifier",
         "named": true
       },
       {
@@ -266,6 +266,10 @@
         "named": true
       },
       {
+        "type": "qualified_identifier",
+        "named": true
+      },
+      {
         "type": "range_pattern",
         "named": true
       },
@@ -279,10 +283,6 @@
       },
       {
         "type": "remaining_field_pattern",
-        "named": true
-      },
-      {
-        "type": "scoped_identifier",
         "named": true
       },
       {
@@ -450,15 +450,15 @@
         "named": true
       },
       {
+        "type": "qualified_identifier",
+        "named": true
+      },
+      {
         "type": "reference_type",
         "named": true
       },
       {
         "type": "removed_trait_bound",
-        "named": true
-      },
-      {
-        "type": "scoped_type_identifier",
         "named": true
       },
       {
@@ -854,11 +854,11 @@
             "named": true
           },
           {
-            "type": "removed_trait_bound",
+            "type": "qualified_identifier",
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "removed_trait_bound",
             "named": true
           },
           {
@@ -1132,7 +1132,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -1822,15 +1822,15 @@
             "named": true
           },
           {
+            "type": "qualified_identifier",
+            "named": true
+          },
+          {
             "type": "reference_expression",
             "named": true
           },
           {
             "type": "return_expression",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
             "named": true
           },
           {
@@ -2440,7 +2440,7 @@
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3532,7 +3532,7 @@
         "required": true,
         "types": [
           {
-            "type": "scoped_type_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3586,7 +3586,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -3616,7 +3616,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -3646,7 +3646,7 @@
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3676,7 +3676,7 @@
         "required": true,
         "types": [
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3850,7 +3850,7 @@
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3874,7 +3874,7 @@
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -4462,7 +4462,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -5251,6 +5251,72 @@
     "fields": {}
   },
   {
+    "type": "qualified_identifier",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          },
+          {
+            "type": "type_identifier",
+            "named": true
+          }
+        ]
+      },
+      "qualifier": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "bracketed_type",
+            "named": true
+          },
+          {
+            "type": "crate",
+            "named": true
+          },
+          {
+            "type": "generic_type",
+            "named": true
+          },
+          {
+            "type": "generic_type_with_turbofish",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "metavariable",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
+            "named": true
+          },
+          {
+            "type": "self",
+            "named": true
+          },
+          {
+            "type": "super",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "qualified_type",
     "named": true,
     "fields": {
@@ -5402,7 +5468,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -5442,7 +5508,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -5501,7 +5567,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -5808,172 +5874,6 @@
     }
   },
   {
-    "type": "scoped_identifier",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "super",
-            "named": true
-          }
-        ]
-      },
-      "path": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "bracketed_type",
-            "named": true
-          },
-          {
-            "type": "crate",
-            "named": true
-          },
-          {
-            "type": "generic_type_with_turbofish",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
-            "named": true
-          },
-          {
-            "type": "self",
-            "named": true
-          },
-          {
-            "type": "super",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "scoped_type_identifier",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "type_identifier",
-            "named": true
-          }
-        ]
-      },
-      "path": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "bracketed_type",
-            "named": true
-          },
-          {
-            "type": "crate",
-            "named": true
-          },
-          {
-            "type": "generic_type",
-            "named": true
-          },
-          {
-            "type": "generic_type_with_turbofish",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
-            "named": true
-          },
-          {
-            "type": "self",
-            "named": true
-          },
-          {
-            "type": "super",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "scoped_type_identifier_in_expression_position",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "type_identifier",
-            "named": true
-          }
-        ]
-      },
-      "path": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "crate",
-            "named": true
-          },
-          {
-            "type": "generic_type_with_turbofish",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "metavariable",
-            "named": true
-          },
-          {
-            "type": "scoped_identifier",
-            "named": true
-          },
-          {
-            "type": "self",
-            "named": true
-          },
-          {
-            "type": "super",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "scoped_use_list",
     "named": true,
     "fields": {
@@ -6004,7 +5904,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -6333,7 +6233,7 @@
             "named": true
           },
           {
-            "type": "scoped_type_identifier_in_expression_position",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -6511,7 +6411,7 @@
         "required": true,
         "types": [
           {
-            "type": "scoped_type_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -7186,7 +7086,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -7635,7 +7535,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -7707,7 +7607,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -7759,7 +7659,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -7853,7 +7753,7 @@
             "named": true
           },
           {
-            "type": "scoped_identifier",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -7987,7 +7887,7 @@
           "named": true
         },
         {
-          "type": "scoped_identifier",
+          "type": "qualified_identifier",
           "named": true
         },
         {
@@ -8060,11 +7960,11 @@
             "named": true
           },
           {
-            "type": "reference_type",
+            "type": "qualified_identifier",
             "named": true
           },
           {
-            "type": "scoped_type_identifier",
+            "type": "reference_type",
             "named": true
           },
           {

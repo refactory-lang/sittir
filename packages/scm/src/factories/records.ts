@@ -364,10 +364,6 @@ function rowComment(node: object, handle: EngineHandle | undefined): BuiltRow {
 	return {
 		$with: {
 			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
 		}
 	};
 }
