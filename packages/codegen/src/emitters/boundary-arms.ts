@@ -119,7 +119,10 @@ interface ModeledArm {
 	readonly unsupported?: string;
 }
 
-type RawArm = ModeledArm | { readonly next: undefined; readonly unknown: string; readonly marks: readonly BoundaryMark[] };
+type RawArm =
+	| ModeledArm
+	| { readonly next: undefined; readonly unknown: string; readonly marks: readonly BoundaryMark[] }
+	| { readonly next: undefined; readonly cycle: string; readonly marks: readonly BoundaryMark[] };
 
 type Rest = (path: Path, marks: readonly BoundaryMark[]) => void;
 type Emit = (arm: RawArm) => void;
@@ -238,7 +241,7 @@ function marksKey(arm: ModeledArm): string {
 
 class BoundaryWalk {
 	private readonly memo = new Map<string, readonly RawArm[]>();
-	private readonly active = new Set<string>();
+	private readonly active: string[] = [];
 
 	constructor(private readonly inputs: BoundaryInputs) {}
 
@@ -246,10 +249,9 @@ class BoundaryWalk {
 		const key = `${side}\u0000${kind}`;
 		const known = this.memo.get(key);
 		if (known !== undefined) return known;
-		if (this.active.has(key)) return [];
-		this.active.add(key);
+		this.active.push(kind);
 		const arms = this.walkKind(kind, side);
-		this.active.delete(key);
+		this.active.pop();
 		this.memo.set(key, arms);
 		return arms;
 	}
@@ -390,6 +392,11 @@ class BoundaryWalk {
 			if (id === undefined) emit({ next: undefined, unknown: kind ?? element.text ?? '', marks });
 			return;
 		}
+		const at = this.active.indexOf(kind);
+		if (at >= 0) {
+			if (at < this.active.length - 1 || marks.length > 0 || path.unsupported !== undefined) emit({ next: undefined, cycle: [...this.active.slice(at), kind].join(' > '), marks });
+			return;
+		}
 		for (const inner of this.armsOf(kind, side)) {
 			if (inner.next === undefined) {
 				emit({ ...inner, marks: joined(side, marks, inner.marks) });
@@ -419,7 +426,12 @@ function fieldSplit(variants: readonly ModeledArm[]): ReadonlyMap<number, Modele
 }
 
 function merged(kind: string, side: BoundarySide, raw: readonly RawArm[], dropped: DroppedBoundaryArm[]): BoundaryArm[] {
-	const unknown = [...new Set(raw.flatMap((each) => (each.next === undefined ? [each.unknown] : [])))].sort();
+	const cycles = [...new Set(raw.flatMap((each) => (each.next === undefined && 'cycle' in each ? [each.cycle] : [])))].sort();
+	if (cycles.length > 0) {
+		dropped.push({ kind, side, drop: 'unmodeled', variants: cycles });
+		return [];
+	}
+	const unknown = [...new Set(raw.flatMap((each) => (each.next === undefined && 'unknown' in each ? [each.unknown] : [])))].sort();
 	if (unknown.length > 0) {
 		if (raw.some((each) => each.marks.length > 0)) dropped.push({ kind, side, drop: 'unknown', variants: unknown });
 		return [];
