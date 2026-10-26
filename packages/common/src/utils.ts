@@ -11,7 +11,7 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, SLOTS, type KeptSlots } from './record-view.ts';
+import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, SEEDS, SLOTS, type KeptSlots, type SeededSlots } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
 
@@ -683,20 +683,30 @@ function keptOf(view: object): KeptSlots {
 	return (holder[SLOTS] ??= {});
 }
 
+function seedsOf(view: object): SeededSlots | undefined {
+	return (view as { readonly [SEEDS]?: SeededSlots })[SEEDS];
+}
+
+function seededItems(seed: unknown): unknown[] {
+	return seed == null ? [] : Array.isArray(seed) ? seed.map((item) => hydrateStored(item)) : [hydrateStored(seed)];
+}
+
 export function keptSlot(view: object, tree: TreeHandle, word: number, width: number, inline = 0, wrap?: WrapNode, role: Role = 'node'): unknown {
 	const kept = keptOf(view);
-	if (word in kept) return kept[word] ?? undefined;
+	if (word in kept) return kept[word];
+	const seeds = seedsOf(view);
+	if (seeds !== undefined && word in seeds) return (kept[word] = hydrateStored(seeds[word]) ?? undefined);
 	const value = recordSlot(view, tree, word, width, inline);
 	return (kept[word] = wrap === undefined ? value : hydrateWith(value, tree, wrap, undefined, role));
 }
 
 export function keptItems(view: object, tree: TreeHandle, word: number, width: number, run?: number, inline = 0, wrap?: WrapNode): readonly unknown[] {
 	const kept = keptOf(view);
-	const known = kept[word];
-	if (Array.isArray(known) && Object.isFrozen(known)) return known;
+	if (word in kept) return kept[word] as readonly unknown[];
+	const seeds = seedsOf(view);
 	const items =
-		word in kept
-			? Array.isArray(known) ? known.slice() : known == null ? [] : [known]
+		seeds !== undefined && word in seeds
+			? seededItems(seeds[word])
 			: recordSlots(view, tree, word, width, run, inline).map((item) => (wrap === undefined ? item : hydrateWith(item, tree, wrap)));
 	return (kept[word] = Object.freeze(items)) as readonly unknown[];
 }

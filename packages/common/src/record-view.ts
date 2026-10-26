@@ -21,13 +21,18 @@ export const RECORD = Symbol.for('sittir.record');
 
 export const SLOTS = Symbol.for('sittir.slots');
 
+export const SEEDS = Symbol.for('sittir.seeds');
+
 export type KeptSlots = Record<number, unknown>;
+
+export type SeededSlots = Readonly<KeptSlots>;
 
 /** A record as the read returns it, before the wrap table makes it a view: its kind, its address and its coordinate. */
 export interface RecordStub {
 	readonly $type: number;
 	readonly [RECORD]: number;
 	readonly $_layout: { readonly at: NodeCoordinate };
+	readonly [SEEDS]?: SeededSlots;
 	[SLOTS]?: KeptSlots;
 }
 

@@ -8,7 +8,7 @@ import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { adoptBuilt, builtRefOf, type BuiltRef } from './built-ref.ts';
-import { leafData, RECORD, recordOf, recordStub, SLOTS, type KeptSlots, type RecordStub } from './record-view.ts';
+import { leafData, RECORD, recordOf, recordStub, SEEDS, SLOTS, type RecordStub, type SeededSlots } from './record-view.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
@@ -265,17 +265,17 @@ export class BuiltArena {
 		return stampBuilt(node);
 	}
 
-	#view(at: number, kept: KeptSlots | undefined): object {
+	#view(at: number, seeds: SeededSlots | undefined): object {
 		const head = this.words(at, 1);
-		const stub = { $type: head[wordOf(at, this.format)]!, [RECORD]: at, [SLOTS]: kept } as RecordStub;
+		const stub = { $type: head[wordOf(at, this.format)]!, [RECORD]: at, [SEEDS]: seeds, [SLOTS]: undefined } as RecordStub;
 		return this.#adopt(this.#wrap(stub, this.tree) as object, at, undefined);
 	}
 
-	/** The view of the drafted `record`, placed past every record its cells name; `kept` gives its slot values by word, the children its builder was given. */
-	view(record: BuiltDraft, kept?: KeptSlots): object {
+	/** The view of the drafted `record`, placed past every record its cells name; `seeds` gives its slot values by word, the children its builder was given. */
+	view(record: BuiltDraft, seeds?: SeededSlots): object {
 		const place = this.#place(record.words);
 		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
-		return this.#view(place.at, kept);
+		return this.#view(place.at, seeds);
 	}
 
 	adoptLeaf<T extends object>(node: T, kind: number, words: number, text: string): T {

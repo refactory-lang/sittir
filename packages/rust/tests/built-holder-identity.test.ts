@@ -1,7 +1,14 @@
 // A built node read through its holder is the object its builder was given,
 // and a built node a side holds by address reads back as its builder's node.
 import { describe, expect, it } from 'vitest';
+import { coordinateOf } from '@sittir/common/utils';
+import { carryTree } from '../../common/src/tree-token.ts';
 import { constructions } from './constructions.mts';
+
+const SOURCE = 'fn a() {}\nfn b(x: u8) { let x = 1; }\n';
+
+// A parsed node's coordinate as a lazy caller holds it: a copy that still holds its tree.
+const heldCoordinate = (node: object): object => carryTree(node, { ...coordinateOf(node)! });
 
 describe.each(constructions)('a built node read through its holder (%s)', (_, rs) => {
 	const b = rs.build;
@@ -15,6 +22,24 @@ describe.each(constructions)('a built node read through its holder (%s)', (_, rs
 		expect(fn.body()).toBe(body);
 		expect(fn.body().statements()[0]).toBe(statement);
 		expect(fn.body().statements()).toBe(fn.body().statements());
+	});
+
+	it("is the parsed holder's node for a coordinate its builder was given, in a slot and in a list", () => {
+		const parsed = rs.parse(SOURCE, { depth: 1 });
+		const fn = parsed.statements()[1];
+		if (fn === undefined || !rs.is.functionItem(fn)) throw new Error('expected a function');
+		const built = b.functionItem({
+			name: b.identifier('c'),
+			parameters: heldCoordinate(fn.parameters()) as never,
+			body: heldCoordinate(fn.body()) as never
+		});
+		expect(built.parameters()).toBe(fn.parameters());
+		expect(built.parameters().elements()).toHaveLength(1);
+		expect(built.body()).toBe(fn.body());
+		const file = b.sourceFile({ statements: parsed.statements().map((statement) => heldCoordinate(statement as object)) as never });
+		expect(file.statements()[1]).toBe(fn);
+		expect(file.statements()).toBe(file.statements());
+		expect(rs.render(file).toString()).toBe(SOURCE);
 	});
 
 	it('keeps a node a side holds, and reads it back as that node', () => {
