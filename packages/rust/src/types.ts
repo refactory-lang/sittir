@@ -79,6 +79,7 @@ export type LeafStringMap = {
 	[TSKindId.DoubleBlankline]: '\n\n\n';
 	[TSKindId.Indent]: '﷐\n';
 	[TSKindId.Dedent]: '﷑\n';
+	[TSKindId.SelfModule]: 'self';
 	[TSKindId.CrateVisibilityModifier]: 'crate';
 	[TSKindId.Semi]: ';';
 	[TSKindId.EqGt]: '=>';
@@ -796,9 +797,10 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[473, 'crate_visibility_modifier'],
 	[474, 'field_identifier'],
 	[476, 'method_declaration'],
-	[477, 'shorthand_field_identifier'],
-	[478, 'signature_method_declaration'],
-	[479, 'type_identifier'],
+	[477, 'self_module'],
+	[478, 'shorthand_field_identifier'],
+	[479, 'signature_method_declaration'],
+	[480, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1280,9 +1282,10 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[473, 'crate_visibility_modifier'],
 	[474, 'field_identifier'],
 	[476, 'method_declaration'],
-	[477, 'shorthand_field_identifier'],
-	[478, 'signature_method_declaration'],
-	[479, 'type_identifier'],
+	[477, 'self_module'],
+	[478, 'shorthand_field_identifier'],
+	[479, 'signature_method_declaration'],
+	[480, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2241,6 +2244,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.FieldIdentifier;
 		case 'method_declaration':
 			return TSKindId.MethodDeclaration;
+		case 'self_module':
+			return TSKindId.SelfModule;
 		case 'shorthand_field_identifier':
 			return TSKindId.ShorthandFieldIdentifier;
 		case 'signature_method_declaration':
@@ -2633,7 +2638,7 @@ export enum ImplItemKind {
 }
 
 export enum UseClauseKind {
-	Self = 'self',
+	SelfModule = 'self_module',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
@@ -2902,7 +2907,7 @@ export enum CommentKind {
 }
 
 export enum PathKind {
-	Self = 'self',
+	SelfModule = 'self_module',
 	Metavariable = 'metavariable',
 	Super = 'super',
 	Crate = 'crate',
@@ -3701,7 +3706,7 @@ export interface InnerAttributeItem {
 
 export interface Attribute {
 	readonly $type: TSKindId.Attribute;
-	readonly _path: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly _path: TSKindId.SelfModule | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly _input?: AttributeInput;
 	readonly __slotNames__?: {
 		readonly _path: 'path';
@@ -3709,7 +3714,7 @@ export interface Attribute {
 	};
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
@@ -3718,7 +3723,13 @@ export interface Attribute {
 		readonly path: SlotHint<NonNullable<T.Attribute.Config>['path']>;
 		readonly input: SlotHint<T.AttributeInput, true>;
 	};
-	readonly path: () => TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly path: () =>
+		| TSKindId.SelfModule
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier;
 	readonly input: () => AttributeInput | undefined;
 }
 
@@ -5182,7 +5193,7 @@ export interface UseDeclaration {
 	readonly $type: TSKindId.UseDeclaration;
 	readonly _visibility_modifier?: VisibilityModifier;
 	readonly _argument:
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -5198,7 +5209,7 @@ export interface UseDeclaration {
 	};
 	readonly __inputHints__?: {
 		readonly argument:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -5216,7 +5227,7 @@ export interface UseDeclaration {
 	};
 	readonly visibilityModifier: () => VisibilityModifier | undefined;
 	readonly argument: () =>
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -5230,7 +5241,7 @@ export interface UseDeclaration {
 
 export interface ScopedUseList {
 	readonly $type: TSKindId.ScopedUseList;
-	readonly _path?: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly _path?: TSKindId.SelfModule | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly _list: UseList;
 	readonly __slotNames__?: {
 		readonly _path: 'path';
@@ -5238,7 +5249,7 @@ export interface ScopedUseList {
 	};
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
@@ -5262,7 +5273,7 @@ export interface ScopedUseList {
 		readonly list: SlotHint<T.UseList>;
 		readonly $listSlots: {
 			readonly list: ListSlotHint<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -5277,7 +5288,7 @@ export interface ScopedUseList {
 		};
 	};
 	readonly path: () =>
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -5310,7 +5321,7 @@ export interface UseList {
 	readonly __slotHints__?: {
 		readonly useClauses: SlotHint<T.UseClauses, true>;
 		readonly $listView: ListViewHint<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -5324,7 +5335,7 @@ export interface UseList {
 		>;
 		readonly $listSlots: {
 			readonly useClauses: ListSlotHint<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -5343,7 +5354,7 @@ export interface UseList {
 
 export interface UseAsClause {
 	readonly $type: TSKindId.UseAsClause;
-	readonly _name: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly _name: TSKindId.SelfModule | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly _alias: Identifier;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
@@ -5351,7 +5362,7 @@ export interface UseAsClause {
 	};
 	readonly __inputHints__?: {
 		readonly name:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
@@ -5360,7 +5371,13 @@ export interface UseAsClause {
 		readonly name: SlotHint<NonNullable<T.UseAsClause.Config>['name']>;
 		readonly alias: SlotHint<T.Identifier>;
 	};
-	readonly name: () => TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly name: () =>
+		| TSKindId.SelfModule
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier;
 	readonly alias: () => Identifier;
 }
 
@@ -6372,7 +6389,7 @@ export interface MacroInvocation {
 export interface ScopedIdentifier {
 	readonly $type: TSKindId.ScopedIdentifier;
 	readonly _qualifier?:
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -6387,7 +6404,7 @@ export interface ScopedIdentifier {
 	};
 	readonly __inputHints__?: {
 		readonly qualifier?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -6400,7 +6417,7 @@ export interface ScopedIdentifier {
 		readonly name: SlotHint<NonNullable<T.ScopedIdentifier.Config>['name']>;
 	};
 	readonly qualifier: () =>
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -6415,7 +6432,7 @@ export interface ScopedIdentifier {
 export interface ScopedTypeIdentifierInExpressionPosition {
 	readonly $type: TSKindId.ScopedTypeIdentifierInExpressionPosition;
 	readonly _qualifier?:
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -6429,7 +6446,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 	};
 	readonly __inputHints__?: {
 		readonly qualifier?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -6443,7 +6460,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
 	readonly qualifier: () =>
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -6457,7 +6474,7 @@ export interface ScopedTypeIdentifierInExpressionPosition {
 export interface ScopedTypeIdentifier {
 	readonly $type: TSKindId.ScopedTypeIdentifier;
 	readonly _qualifier?:
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -6473,7 +6490,7 @@ export interface ScopedTypeIdentifier {
 	};
 	readonly __inputHints__?: {
 		readonly qualifier?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier
@@ -6489,7 +6506,7 @@ export interface ScopedTypeIdentifier {
 		readonly name: SlotHint<T.TypeIdentifier | T.TypeIdentifier.Types>;
 	};
 	readonly qualifier: () =>
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -8031,7 +8048,7 @@ export interface TypeParametersElements {
 export interface UseClauses {
 	readonly $type: TSKindId.UseClauses;
 	readonly _item: NonEmptyArray<
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -8048,7 +8065,7 @@ export interface UseClauses {
 	readonly __slotHints__?: {
 		readonly items: SlotHint<
 			NonEmptyArray<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -8064,7 +8081,7 @@ export interface UseClauses {
 		>;
 		readonly delimiter: SlotHint<Delimiter.None | Delimiter.Trailing, true>;
 		readonly $listView: ListViewHint<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -8078,7 +8095,7 @@ export interface UseClauses {
 		>;
 	};
 	readonly items: () => NonEmptyArray<
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -8312,25 +8329,27 @@ export interface StructPatternElements {
 
 export interface UseWildcardGroup {
 	readonly $type: TSKindId.UseWildcardGroup;
-	readonly _path?: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly _path?: TSKindId.SelfModule | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly __slotNames__?: {
 		readonly _path: 'path';
 	};
 	readonly __inputHints__?: {
 		readonly path?:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
 		readonly path: SlotHint<
-			NonNullable<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>,
+			NonNullable<
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+			>,
 			true
 		>;
 	};
 	readonly path: () =>
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -9138,42 +9157,50 @@ export interface ImplItemSemi {
 
 export interface VisibilityModifierPubScopeInPath {
 	readonly $type: TSKindId.VisibilityModifierPubScopeInPath;
-	readonly _path: TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly _path: TSKindId.SelfModule | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
 	readonly __slotNames__?: {
 		readonly _path: 'path';
 	};
 	readonly __inputHints__?: {
 		readonly path:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| Metavariable
 			| Identifier
 			| ScopedIdentifier;
 	};
 	readonly __slotHints__?: {
 		readonly path: SlotHint<
-			NonNullable<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+			NonNullable<
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+			>
 		>;
 	};
-	readonly path: () => TSKindId.Self | Metavariable | TSKindId.Super | TSKindId.Crate | Identifier | ScopedIdentifier;
+	readonly path: () =>
+		| TSKindId.SelfModule
+		| Metavariable
+		| TSKindId.Super
+		| TSKindId.Crate
+		| Identifier
+		| ScopedIdentifier;
 }
 
 export interface VisibilityModifierPubScope {
 	readonly $type: TSKindId.VisibilityModifierPubScope;
-	readonly _content: TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
+	readonly _content: TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
 	readonly __slotNames__?: {
 		readonly _content: 'content';
 	};
 	readonly __inputHints__?: {
 		readonly content:
-			| KindEnum<'self' | 'super' | 'crate', TSKindId.Self | TSKindId.Super | TSKindId.Crate>
+			| KindEnum<'self' | 'super' | 'crate', TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | TSKindId.Self>
 			| VisibilityModifierPubScopeInPath;
 	};
 	readonly __slotHints__?: {
 		readonly content: SlotHint<
-			NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+			NonNullable<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 		>;
 	};
-	readonly content: () => TSKindId.Self | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
+	readonly content: () => TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | VisibilityModifierPubScopeInPath;
 }
 
 export interface VisibilityModifierPub {
@@ -10011,7 +10038,7 @@ export interface RangePatternPrefix {
 	readonly _content: number;
 	readonly _right:
 		| LiteralPattern
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -10026,7 +10053,12 @@ export interface RangePatternPrefix {
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.SelfModule
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.Self
 			  >
 			| LiteralPattern
 			| Metavariable
@@ -10040,7 +10072,7 @@ export interface RangePatternPrefix {
 	readonly content: () => number;
 	readonly right: () =>
 		| LiteralPattern
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -10053,7 +10085,7 @@ export interface RangePatternWithLeftWithRight {
 	readonly _content: number;
 	readonly _right:
 		| LiteralPattern
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -10068,7 +10100,12 @@ export interface RangePatternWithLeftWithRight {
 		readonly right:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.SelfModule
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.Self
 			  >
 			| LiteralPattern
 			| Metavariable
@@ -10082,7 +10119,7 @@ export interface RangePatternWithLeftWithRight {
 	readonly content: () => number;
 	readonly right: () =>
 		| LiteralPattern
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -10094,7 +10131,7 @@ export interface RangePatternWithLeft {
 	readonly $type: TSKindId.RangePatternWithLeft;
 	readonly _left:
 		| LiteralPattern
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -10109,7 +10146,12 @@ export interface RangePatternWithLeft {
 		readonly left:
 			| KindEnum<
 					'true' | 'false' | 'self' | 'super' | 'crate',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self | TSKindId.Super | TSKindId.Crate
+					| TSKindId.TrueKeyword
+					| TSKindId.FalseKeyword
+					| TSKindId.SelfModule
+					| TSKindId.Super
+					| TSKindId.Crate
+					| TSKindId.Self
 			  >
 			| LiteralPattern
 			| Metavariable
@@ -10125,7 +10167,7 @@ export interface RangePatternWithLeft {
 	};
 	readonly left: () =>
 		| LiteralPattern
-		| TSKindId.Self
+		| TSKindId.SelfModule
 		| Metavariable
 		| TSKindId.Super
 		| TSKindId.Crate
@@ -11106,6 +11148,7 @@ export type Indent = TSKindId.Indent;
 export type Dedent = TSKindId.Dedent;
 export type StringClose = Terminal<TSKindId.StringClose, string>;
 export type ErrorSentinel = Terminal<TSKindId.ErrorSentinel, string>;
+export type SelfModule = TSKindId.SelfModule;
 export type CrateVisibilityModifier = TSKindId.CrateVisibilityModifier;
 
 // Supertype unions
@@ -13441,7 +13484,6 @@ export namespace UseClauses {
 				readonly end?: LayoutKindId;
 				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
 				readonly scopedUseList?: { readonly after?: LayoutKindId };
-				readonly self?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -18141,6 +18183,7 @@ export interface BlanklineNs extends KeywordNs<TSKindId.Blankline, '\n\n', TSKin
 export interface DoubleBlanklineNs extends KeywordNs<TSKindId.DoubleBlankline, '\n\n\n', TSKindId.DoubleBlankline> {}
 export interface IndentNs extends KeywordNs<TSKindId.Indent, '﷐\n', TSKindId.Indent> {}
 export interface DedentNs extends KeywordNs<TSKindId.Dedent, '﷑\n', TSKindId.Dedent> {}
+export interface SelfModuleNs extends KeywordNs<TSKindId.SelfModule, 'self', TSKindId.SelfModule> {}
 export interface CrateVisibilityModifierNs extends KeywordNs<
 	TSKindId.CrateVisibilityModifier,
 	'crate',
@@ -18472,6 +18515,7 @@ export interface NamespaceMap {
 	[TSKindId.DoubleBlankline]: DoubleBlanklineNs;
 	[TSKindId.Indent]: IndentNs;
 	[TSKindId.Dedent]: DedentNs;
+	[TSKindId.SelfModule]: SelfModuleNs;
 	[TSKindId.CrateVisibilityModifier]: CrateVisibilityModifierNs;
 	[TSKindId.Identifier]: IdentifierNs;
 	[TSKindId.TokenRepetitionPatternText]: TokenRepetitionPatternTextNs;
@@ -19022,6 +19066,7 @@ export type FixedTextKindId =
 	| TSKindId.Newline
 	| TSKindId.Blankline
 	| TSKindId.DoubleBlankline
+	| TSKindId.SelfModule
 	| TSKindId.CrateVisibilityModifier
 	| TSKindId.Semi
 	| TSKindId.EqGt
@@ -19410,6 +19455,7 @@ export interface TypeKeyOf {
 	[TSKindId.DoubleBlankline]: 'doubleBlankline';
 	[TSKindId.Indent]: 'indent';
 	[TSKindId.Dedent]: 'dedent';
+	[TSKindId.SelfModule]: 'selfModule';
 	[TSKindId.CrateVisibilityModifier]: 'crateVisibilityModifier';
 	[TSKindId.Identifier]: 'identifier';
 	[TSKindId.TokenRepetitionPatternText]: 'tokenRepetitionPatternText';
@@ -23222,7 +23268,7 @@ export namespace UseClauses {
 	export type BuildArgs =
 		| [
 				element: Admit<
-					| TSKindId.Self
+					| TSKindId.SelfModule
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -23234,7 +23280,7 @@ export namespace UseClauses {
 					| T.UseWildcard
 				>,
 				...elements: Admit<
-					| TSKindId.Self
+					| TSKindId.SelfModule
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -23249,7 +23295,7 @@ export namespace UseClauses {
 		| [
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element: Admit<
-					| TSKindId.Self
+					| TSKindId.SelfModule
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -23261,7 +23307,7 @@ export namespace UseClauses {
 					| T.UseWildcard
 				>,
 				...elements: Admit<
-					| TSKindId.Self
+					| TSKindId.SelfModule
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -23278,7 +23324,7 @@ export namespace UseClauses {
 				element:
 					| T.UseClauses.Loose
 					| LooseValue<
-							| TSKindId.Self
+							| TSKindId.SelfModule
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
@@ -23295,7 +23341,7 @@ export namespace UseClauses {
 				...elements: (
 					| T.UseClauses.Loose
 					| LooseValue<
-							| TSKindId.Self
+							| TSKindId.SelfModule
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
@@ -23316,7 +23362,7 @@ export namespace UseClauses {
 				element:
 					| T.UseClauses.Loose
 					| LooseValue<
-							| TSKindId.Self
+							| TSKindId.SelfModule
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
@@ -23333,7 +23379,7 @@ export namespace UseClauses {
 				...elements: (
 					| T.UseClauses.Loose
 					| LooseValue<
-							| TSKindId.Self
+							| TSKindId.SelfModule
 							| T.Metavariable
 							| TSKindId.Super
 							| TSKindId.Crate
@@ -24148,7 +24194,9 @@ export namespace UseWildcardGroup {
 	export type Loose = LooseFor<TSKindId.UseWildcardGroup>;
 	export type LooseConfig = LooseConfigFor<TSKindId.UseWildcardGroup>;
 	export type BuildArgs = [
-		value?: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+		value?: Admit<
+			TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+		>
 	];
 	export type LooseArgs = [value?: T.UseWildcardGroup.Loose];
 	export type Kind = TSKindId.UseWildcardGroup;
@@ -24850,7 +24898,9 @@ export namespace VisibilityModifierPubScopeInPath {
 	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScopeInPath>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScopeInPath>;
 	export type BuildArgs = [
-		value: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+		value: Admit<
+			TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+		>
 	];
 	export type LooseArgs = [value: T.VisibilityModifierPubScopeInPath.Loose];
 	export type Kind = TSKindId.VisibilityModifierPubScopeInPath;
@@ -24877,7 +24927,7 @@ export namespace VisibilityModifierPubScope {
 	export type Loose = LooseFor<TSKindId.VisibilityModifierPubScope>;
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPubScope>;
 	export type BuildArgs = [
-		value: Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+		value: Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 	];
 	export type LooseArgs = [value: T.VisibilityModifierPubScope.Loose];
 	export type Kind = TSKindId.VisibilityModifierPubScope;
@@ -24905,7 +24955,7 @@ export namespace VisibilityModifierPub {
 	export type LooseConfig = LooseConfigFor<TSKindId.VisibilityModifierPub>;
 	export type BuildArgs =
 		| [value?: Admit<T.VisibilityModifierPubScope>]
-		| [value: Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>];
+		| [value: Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>];
 	export type LooseArgs = [value?: T.VisibilityModifierPub.Loose];
 	export type Kind = TSKindId.VisibilityModifierPub;
 }
@@ -26975,6 +27025,16 @@ export namespace Dedent {
 	export type BuildArgs = DedentNs['BuildArgs'];
 	export type LooseArgs = DedentNs['LooseArgs'];
 	export type Kind = TSKindId.Dedent;
+}
+export namespace SelfModule {
+	export type Config = SelfModuleNs['Config'];
+	export type Bound = SelfModuleNs['Bound'];
+	export type Parsed = SelfModuleNs['Bound'];
+	export type Loose = SelfModuleNs['Loose'];
+	export type LooseConfig = SelfModuleNs['LooseConfig'];
+	export type BuildArgs = SelfModuleNs['BuildArgs'];
+	export type LooseArgs = SelfModuleNs['LooseArgs'];
+	export type Kind = TSKindId.SelfModule;
 }
 export namespace CrateVisibilityModifier {
 	export type Config = CrateVisibilityModifierNs['Config'];

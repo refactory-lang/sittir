@@ -419,11 +419,11 @@ const visibilityModifierPubScope$self =
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubScope$self$strict = visibilityModifierPubScope$self(
 	F.buildVisibilityModifierPubScope,
-	TSKindId.Self
+	TSKindId.SelfModule
 );
 const visibilityModifierPubScope$self$coerce = visibilityModifierPubScope$self(
 	C.coerceToVisibilityModifierPubScope,
-	TSKindId.Self
+	TSKindId.SelfModule
 );
 const visibilityModifierPubScope$super =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>

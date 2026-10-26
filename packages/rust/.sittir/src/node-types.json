@@ -1136,7 +1136,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5305,7 +5305,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5472,7 +5472,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5512,7 +5512,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5571,7 +5571,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5908,7 +5908,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7539,7 +7539,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7615,7 +7615,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7667,7 +7667,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7757,7 +7757,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7841,7 +7841,7 @@
           "named": true
         },
         {
-          "type": "self",
+          "type": "self_module",
           "named": true
         },
         {
@@ -7891,7 +7891,7 @@
           "named": true
         },
         {
-          "type": "self",
+          "type": "self_module",
           "named": true
         },
         {
@@ -8578,6 +8578,10 @@
   },
   {
     "type": "self",
+    "named": true
+  },
+  {
+    "type": "self_module",
     "named": true
   },
   {

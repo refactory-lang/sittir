@@ -2711,7 +2711,7 @@ export function buildUseList<V extends Admit<T.UseClauses>>(
 export function buildUseList<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -2730,7 +2730,7 @@ export function buildUseList<
 export function buildUseList<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -2840,7 +2840,9 @@ export function buildUseWildcard<V extends Admit<T.UseWildcardGroup>>(
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard<
-	V extends Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	V extends Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 >(...value: [value?: V] & RefuseUndeclared<V>): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -7006,7 +7008,7 @@ function _buildTypeParametersElements(
 export function buildUseClauses<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7022,7 +7024,7 @@ export function buildUseClauses<
 export function buildUseClauses<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7042,7 +7044,7 @@ export function buildUseClauses(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| Admit<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -7064,7 +7066,7 @@ export function buildUseClauses(
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7081,7 +7083,7 @@ export function buildUseClauses(
 function _buildUseClauses(
 	elements: NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7109,7 +7111,7 @@ function _buildUseClauses(
 			items: (
 				...vs: NonEmptyArray<
 					Admit<
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -7968,10 +7970,14 @@ function _buildStructPatternElements(
 }
 
 export function buildUseWildcardGroup<
-	V extends Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	V extends Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 >(...value: [value?: V] & RefuseUndeclared<V>): T.UseWildcardGroup.Bound;
 export function buildUseWildcardGroup(
-	value?: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	value?: Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 ): T.UseWildcardGroup.Bound {
 	const _path = rejectKeywordText(
 		kindIdStorage<NonNullable<T.UseWildcardGroup['_path']>>(value),
@@ -7988,7 +7994,7 @@ export function buildUseWildcardGroup(
 			path: (
 				value?: Admit<
 					NonNullable<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>
 				>
 			) => rebuilt(node, handle, () => buildUseWildcardGroup(value))
@@ -9284,10 +9290,14 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 }
 
 export function buildVisibilityModifierPubScopeInPath<
-	V extends Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	V extends Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 >(value: V & RefuseUndeclared<V>): T.VisibilityModifierPubScopeInPath.Bound;
 export function buildVisibilityModifierPubScopeInPath(
-	value: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	value: Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 ): T.VisibilityModifierPubScopeInPath.Bound {
 	const _path = rejectKeywordText(
 		kindIdStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value),
@@ -9304,7 +9314,7 @@ export function buildVisibilityModifierPubScopeInPath(
 			path: (
 				value: Admit<
 					NonNullable<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>
 				>
 			) => rebuilt(node, handle, () => buildVisibilityModifierPubScopeInPath(value))
@@ -9323,10 +9333,10 @@ export function buildVisibilityModifierPubScopeInPath(
 }
 
 export function buildVisibilityModifierPubScope<
-	V extends Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+	V extends Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 >(value: V & RefuseUndeclared<V>): T.VisibilityModifierPubScope.Bound;
 export function buildVisibilityModifierPubScope(
-	value: Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+	value: Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 ): T.VisibilityModifierPubScope.Bound {
 	const _content = kindIdStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value);
 	const handle = currentHandle();
@@ -9336,7 +9346,9 @@ export function buildVisibilityModifierPubScope(
 		_content,
 		$with: {
 			content: (
-				value: Admit<NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>>
+				value: Admit<
+					NonNullable<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+				>
 			) => rebuilt(node, handle, () => buildVisibilityModifierPubScope(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
@@ -9356,7 +9368,7 @@ export function buildVisibilityModifierPub<V extends Admit<T.VisibilityModifierP
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub<
-	V extends Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+	V extends Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 >(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -12031,6 +12043,8 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	return stampBuilt(node) as unknown as T.ErrorSentinel.Bound;
 }
 
+export const buildSelfModule: TSKindId.SelfModule = TSKindId.SelfModule;
+
 export function buildTypeIdentifier<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
 ): T.TypeIdentifier.Bound;
@@ -12582,6 +12596,7 @@ export type FluentKindMap = {
 	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
 	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
+	self_module: T.SelfModule;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
 	crate_visibility_modifier: T.CrateVisibilityModifier;
@@ -12859,6 +12874,7 @@ export const _factoryMap = {
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
 	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
+	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
 	crate_visibility_modifier: buildCrateVisibilityModifier,

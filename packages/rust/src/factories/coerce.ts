@@ -298,6 +298,7 @@ export const _fromMap = {
 	attributed_parameter_receiver: coerceToAttributedParameterReceiver,
 	parameters_elements_receiver: coerceToParametersElementsReceiver,
 	parameters_elements_receiver_group: coerceToParametersElementsReceiverGroup,
+	self_module: coerceToSelfModule,
 	type_identifier: coerceToTypeIdentifier,
 	field_identifier: coerceToFieldIdentifier,
 	crate_visibility_modifier: coerceToCrateVisibilityModifier,
@@ -407,6 +408,7 @@ const _leafRegistry: { readonly [kind: string]: _LeafEntry } = {
 	_double_blankline: { values: ['\n\n\n'], factory: () => F.buildDoubleBlankline },
 	_indent: { values: ['﷐\n'], factory: () => F.buildIndent },
 	_dedent: { values: ['﷑\n'], factory: () => F.buildDedent },
+	self_module: { values: ['self'], factory: () => F.buildSelfModule },
 	type_identifier: {
 		pattern: F._leafRe_buildIdentifier,
 		factory: (text: string) => F.buildTypeIdentifier(F.buildIdentifier(text) as never)
@@ -472,6 +474,7 @@ const _SLOTLESS_TEXT_KINDS: ReadonlySet<string> = new Set([
 	'_double_blankline',
 	'_indent',
 	'_dedent',
+	'self_module',
 	'crate_visibility_modifier'
 ]);
 
@@ -509,6 +512,7 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'mutable_specifier',
 	'remaining_field_pattern',
 	'self',
+	'self_module',
 	'super',
 	'crate',
 	'crate_visibility_modifier',
@@ -677,7 +681,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 	117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 156, 163, 164, 168, 169, 170, 171,
-	172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426, 473
+	172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426, 473, 477
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
@@ -698,41 +702,41 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list: new Set([202, 344, 427]),
 	ordered_field_declaration_list: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 345, 351, 388, 389, 432, 479
+		252, 254, 255, 256, 259, 265, 341, 345, 351, 388, 389, 432, 480
 	]),
 	where_clause: new Set([212, 346]),
 	removed_trait_bound: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
 	type_parameters: new Set([128, 220, 221, 222, 347, 430]),
-	use_list: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360]),
-	use_wildcard: new Set([1, 125, 126, 127, 128, 263, 360]),
+	use_list: new Set([1, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360, 477]),
+	use_wildcard: new Set([1, 126, 127, 128, 263, 360, 477]),
 	parameters: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 232, 233, 240, 242, 243, 244,
-		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 439, 479
+		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 439, 480
 	]),
 	extern_modifier: new Set([332]),
-	visibility_modifier: new Set([1, 125, 126, 127, 128, 263, 379, 380, 381, 473]),
+	visibility_modifier: new Set([1, 126, 127, 128, 263, 379, 380, 381, 473, 477]),
 	bracketed_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 238, 240, 242, 243, 244, 246,
-		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 239, 350]),
 	tuple_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
-	use_bounds: new Set([1, 239, 352, 479]),
+	use_bounds: new Set([1, 239, 352, 480]),
 	type_arguments: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
-		333, 336, 341, 351, 353, 388, 389, 433, 479
+		333, 336, 341, 351, 353, 388, 389, 433, 480
 	]),
 	dynamic_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
 	try_expression: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
@@ -805,25 +809,25 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list_elements: new Set([202, 427]),
 	ordered_field_declaration_list_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 432, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 432, 480
 	]),
 	where_predicates: new Set([212]),
 	type_parameters_elements: new Set([128, 220, 221, 222, 430]),
-	use_clauses: new Set([1, 125, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360]),
+	use_clauses: new Set([1, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360, 477]),
 	parameters_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 232, 233, 240, 242, 243, 244,
-		246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 479
+		246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 480
 	]),
 	lifetimes: new Set([1, 239]),
 	types: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
-	use_bounds_elements: new Set([1, 239, 479]),
+	use_bounds_elements: new Set([1, 239, 480]),
 	type_arguments_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
-		333, 336, 341, 351, 388, 389, 433, 479
+		333, 336, 341, 351, 388, 389, 433, 480
 	]),
 	arguments_elements: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
@@ -849,7 +853,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	struct_pattern_elements: new Set([321, 414, 415]),
-	use_wildcard_group: new Set([1, 125, 126, 127, 128, 263]),
+	use_wildcard_group: new Set([1, 126, 127, 128, 263, 477]),
 	reference_expression_raw_const: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
@@ -870,12 +874,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
 		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
-	impl_item_positive_clause: new Set([1, 246, 265, 479]),
-	impl_item_negative_clause: new Set([1, 246, 265, 479]),
-	visibility_modifier_pub_scope_in_path: new Set([1, 125, 126, 127, 128, 263]),
-	visibility_modifier_pub_scope: new Set([1, 125, 126, 127, 128, 263, 379]),
-	visibility_modifier_pub: new Set([1, 125, 126, 127, 128, 263, 379, 380]),
-	function_type_trait_form: new Set([1, 265, 479]),
+	impl_item_positive_clause: new Set([1, 246, 265, 480]),
+	impl_item_negative_clause: new Set([1, 246, 265, 480]),
+	visibility_modifier_pub_scope_in_path: new Set([1, 126, 127, 128, 263, 477]),
+	visibility_modifier_pub_scope: new Set([1, 126, 127, 128, 263, 379, 477]),
+	visibility_modifier_pub: new Set([1, 126, 127, 128, 263, 379, 380, 477]),
+	function_type_trait_form: new Set([1, 265, 480]),
 	function_type_fn_form: new Set([210]),
 	or_pattern_prefix: new Set([
 		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
@@ -883,11 +887,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	pointer_type_const: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
 	pointer_type_mut: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 479
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
 	]),
 	range_expression_postfix: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
@@ -911,7 +915,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	block_comment_doc_inner: new Set([165]),
 	parameters_elements_receiver_group: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 232, 233, 240, 242, 243, 244,
-		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 479
+		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 480
 	]),
 	type_identifier: new Set([1]),
 	field_identifier: new Set([1]),
@@ -1910,7 +1914,7 @@ const _K7: readonly string[] = [
 	'integer_literal_binary',
 	'integer_literal_octal'
 ];
-const _K8: readonly string[] = ['self', 'super', 'crate', 'identifier'];
+const _K8: readonly string[] = ['self_module', 'super', 'crate', 'identifier'];
 const _K9: readonly string[] = ['metavariable', 'scoped_identifier'];
 const _K10: readonly string[] = [
 	'const_item',
@@ -2551,7 +2555,7 @@ const _K63: readonly string[] = [
 const _K64: readonly string[] = ['remaining_field_pattern'];
 const _K65: readonly string[] = ['type_identifier', 'scoped_type_identifier', 'generic_type'];
 const _K66: readonly string[] = ['impl_item_positive_clause', 'impl_item_negative_clause'];
-const _K67: readonly string[] = ['self', 'super', 'crate'];
+const _K67: readonly string[] = ['self_module', 'super', 'crate'];
 const _K68: readonly string[] = ['visibility_modifier_pub_scope_in_path'];
 const _K69: readonly string[] = [
 	'non_special_token',
@@ -2563,7 +2567,7 @@ const _K70: readonly string[] = [
 	'char_literal_empty',
 	'boolean_literal',
 	'float_literal',
-	'self',
+	'self_module',
 	'super',
 	'crate',
 	'identifier'
@@ -3670,15 +3674,15 @@ export function coerceToInnerAttributeItem(
 export function resolveAttribute_path(value: T.Attribute.LooseConfig['path']): Admit<T.Attribute['_path']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>(value, _K8, _K9)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -4924,12 +4928,12 @@ export function resolveUseDeclaration_argument(
 ): Admit<T.UseDeclaration['_argument']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -4941,7 +4945,7 @@ export function resolveUseDeclaration_argument(
 						| T.UseWildcard
 					>(value, _K8, _K25)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -4962,15 +4966,15 @@ export function coerceToUseDeclaration(input: T.UseDeclaration.Loose): ReturnTyp
 export function resolveScopedUseList_path(value: T.ScopedUseList.LooseConfig['path']): Admit<T.ScopedUseList['_path']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>(value, _K8, _K9)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5023,15 +5027,15 @@ export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUs
 export function resolveUseAsClause_name(value: T.UseAsClause.LooseConfig['name']): Admit<T.UseAsClause['_name']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>(value, _K8, _K9)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5761,12 +5765,12 @@ export function resolveScopedIdentifier_qualifier(
 ): Admit<T.ScopedIdentifier['_qualifier']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -5776,7 +5780,7 @@ export function resolveScopedIdentifier_qualifier(
 						| T.GenericTypeWithTurbofish
 					>(value, _K8, _K38)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5810,12 +5814,12 @@ export function resolveScopedTypeIdentifierInExpressionPosition_qualifier(
 ): Admit<T.ScopedTypeIdentifierInExpressionPosition['_qualifier']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -5824,7 +5828,7 @@ export function resolveScopedTypeIdentifierInExpressionPosition_qualifier(
 						| T.GenericTypeWithTurbofish
 					>(value, _K8, _K40)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -5857,12 +5861,12 @@ export function resolveScopedTypeIdentifier_qualifier(
 ): Admit<T.ScopedTypeIdentifier['_qualifier']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -5873,7 +5877,7 @@ export function resolveScopedTypeIdentifier_qualifier(
 						| T.GenericType
 					>(value, _K8, _K41)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -7930,7 +7934,7 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 			},
 			...(children as unknown as NonEmptyArray<
 				Admit<
-					| TSKindId.Self
+					| TSKindId.SelfModule
 					| T.Metavariable
 					| TSKindId.Super
 					| TSKindId.Crate
@@ -7954,14 +7958,14 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 					.map(
 						(_e: _LooseFieldInput) =>
 							_keywordOf(_e, [
-								['self', TSKindId.Self] as const,
+								['self', TSKindId.SelfModule] as const,
 								['super', TSKindId.Super] as const,
 								['crate', TSKindId.Crate] as const
 							]) ??
 							coerceMixedEnumStorage(
-								_resolveKindEnum(_e, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+								_resolveKindEnum(_e, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 									_resolveOne<
-										| TSKindId.Self
+										| TSKindId.SelfModule
 										| T.Metavariable
 										| TSKindId.Super
 										| TSKindId.Crate
@@ -7974,7 +7978,7 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 									>(_e, _K8, _K25)
 								),
 								[
-									['self', TSKindId.Self] as const,
+									['self', TSKindId.SelfModule] as const,
 									['super', TSKindId.Super] as const,
 									['crate', TSKindId.Crate] as const
 								]
@@ -7982,7 +7986,7 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 					)
 					.filter((_e) => _e !== undefined),
 			[
-				'self',
+				'self_module',
 				'super',
 				'crate',
 				'identifier',
@@ -7995,7 +7999,7 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 			]
 		) as unknown as NonEmptyArray<
 			Admit<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -8798,15 +8802,15 @@ export function resolveUseWildcardGroup_path(
 ): Admit<T.UseWildcardGroup['_path']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>(value, _K8, _K9)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -8820,22 +8824,31 @@ export function coerceToUseWildcardGroup(input?: T.UseWildcardGroup.Loose): Retu
 	return F.buildUseWildcardGroup(
 		_keywordOr(
 			configFieldOr(input, 'path', () => input),
-			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+			[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
 						configFieldOr(input, 'path', () => input),
-						[TSKindId.Self, TSKindId.Super, TSKindId.Crate],
+						[TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate],
 						() =>
 							_resolveOne<
-								TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+								| TSKindId.SelfModule
+								| T.Metavariable
+								| TSKindId.Super
+								| TSKindId.Crate
+								| T.Identifier
+								| T.ScopedIdentifier
 							>(
 								configFieldOr(input, 'path', () => input),
 								_K8,
 								_K9
 							)
 					),
-					[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+					[
+						['self', TSKindId.SelfModule] as const,
+						['super', TSKindId.Super] as const,
+						['crate', TSKindId.Crate] as const
+					]
 				)
 		)
 	);
@@ -9742,15 +9755,15 @@ export function resolveVisibilityModifierPubScopeInPath_path(
 ): Admit<T.VisibilityModifierPubScopeInPath['_path']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>(value, _K8, _K9)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -9766,22 +9779,31 @@ export function coerceToVisibilityModifierPubScopeInPath(
 	return F.buildVisibilityModifierPubScopeInPath(
 		_keywordOr(
 			configFieldOr(input, 'path', () => input),
-			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+			[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
 						configFieldOr(input, 'path', () => input),
-						[TSKindId.Self, TSKindId.Super, TSKindId.Crate],
+						[TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate],
 						() =>
 							_resolveOne<
-								TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+								| TSKindId.SelfModule
+								| T.Metavariable
+								| TSKindId.Super
+								| TSKindId.Crate
+								| T.Identifier
+								| T.ScopedIdentifier
 							>(
 								configFieldOr(input, 'path', () => input),
 								_K8,
 								_K9
 							)
 					),
-					[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+					[
+						['self', TSKindId.SelfModule] as const,
+						['super', TSKindId.Super] as const,
+						['crate', TSKindId.Crate] as const
+					]
 				)
 		)
 	);
@@ -9792,17 +9814,17 @@ export function resolveVisibilityModifierPubScope_content(
 ): Admit<T.VisibilityModifierPubScope['_content']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
-					_resolveOne<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
+					_resolveOne<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 						value,
 						_K67,
 						_K68
 					)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -9818,20 +9840,24 @@ export function coerceToVisibilityModifierPubScope(
 	return F.buildVisibilityModifierPubScope(
 		_keywordOr(
 			configFieldOr(input, 'content', () => input),
-			[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+			[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 			() =>
 				coerceMixedEnumStorage(
 					_resolveKindEnum(
 						configFieldOr(input, 'content', () => input),
-						[TSKindId.Self, TSKindId.Super, TSKindId.Crate],
+						[TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate],
 						() =>
-							_resolveOne<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+							_resolveOne<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 								configFieldOr(input, 'content', () => input),
 								_K67,
 								_K68
 							)
 					),
-					[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+					[
+						['self', TSKindId.SelfModule] as const,
+						['super', TSKindId.Super] as const,
+						['crate', TSKindId.Crate] as const
+					]
 				)
 		)
 	);
@@ -10915,13 +10941,13 @@ export function resolveRangePatternPrefix_right(
 ): Admit<T.RangePatternPrefix['_right']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
 						| T.LiteralPattern
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -10929,7 +10955,7 @@ export function resolveRangePatternPrefix_right(
 						| T.ScopedIdentifier
 					>(value, _K70, _K71)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -10963,13 +10989,13 @@ export function resolveRangePatternWithLeftWithRight_right(
 ): Admit<T.RangePatternWithLeftWithRight['_right']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
 						| T.LiteralPattern
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -10977,7 +11003,7 @@ export function resolveRangePatternWithLeftWithRight_right(
 						| T.ScopedIdentifier
 					>(value, _K70, _K71)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -11008,13 +11034,13 @@ export function resolveRangePatternWithLeft_left(
 ): Admit<T.RangePatternWithLeft['_left']> {
 	return _keywordOr(
 		value,
-		[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
+		[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const],
 		() =>
 			coerceMixedEnumStorage(
-				_resolveKindEnum(value, [TSKindId.Self, TSKindId.Super, TSKindId.Crate], () =>
+				_resolveKindEnum(value, [TSKindId.SelfModule, TSKindId.Super, TSKindId.Crate], () =>
 					_resolveOne<
 						| T.LiteralPattern
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -11022,7 +11048,7 @@ export function resolveRangePatternWithLeft_left(
 						| T.ScopedIdentifier
 					>(value, _K70, _K71)
 				),
-				[['self', TSKindId.Self] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
+				[['self', TSKindId.SelfModule] as const, ['super', TSKindId.Super] as const, ['crate', TSKindId.Crate] as const]
 			)
 	);
 }
@@ -11718,6 +11744,10 @@ export function coerceToParametersElementsReceiverGroup(
 			true
 		)
 	);
+}
+
+export function coerceToSelfModule(_input?: T.SelfModule.Loose): typeof F.buildSelfModule {
+	return F.buildSelfModule;
 }
 
 export function resolveTypeIdentifier_content(

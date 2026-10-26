@@ -453,7 +453,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		$type: TSKindId.Attribute as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		input() {
@@ -1849,7 +1849,7 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 		},
 		argument() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -1888,7 +1888,13 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 		$type: TSKindId.ScopedUseList as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier | undefined
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| undefined
 			>(this, '_path', tree);
 		},
 		list() {
@@ -1970,7 +1976,7 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 		$type: TSKindId.UseAsClause as const,
 		name() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_name', tree);
 		},
 		alias() {
@@ -2938,7 +2944,7 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 		$type: TSKindId.ScopedIdentifier as const,
 		qualifier() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -2982,7 +2988,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 		qualifier() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -3027,7 +3033,7 @@ export function wrapScopedTypeIdentifier(
 		$type: TSKindId.ScopedTypeIdentifier as const,
 		qualifier() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -5295,7 +5301,7 @@ export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClaus
 		$type: TSKindId.UseClauses as const,
 		items() {
 			return hydrateSlots<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -5732,7 +5738,13 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 		$type: TSKindId.UseWildcardGroup as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier | undefined
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| undefined
 			>(this, '_path', tree);
 		},
 		$with: {
@@ -6764,7 +6776,7 @@ export function wrapVisibilityModifierPubScopeInPath(
 		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		$with: {
@@ -6794,7 +6806,7 @@ export function wrapVisibilityModifierPubScope(
 		...data,
 		$type: TSKindId.VisibilityModifierPubScope as const,
 		content() {
-			return hydrateSlot<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+			return hydrateSlot<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 				this,
 				'_content',
 				tree
@@ -8066,7 +8078,7 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 		right() {
 			return hydrateSlot<
 				| T.LiteralPattern
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -8108,7 +8120,7 @@ export function wrapRangePatternWithLeftWithRight(
 		right() {
 			return hydrateSlot<
 				| T.LiteralPattern
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -8147,7 +8159,7 @@ export function wrapRangePatternWithLeft(
 		left() {
 			return hydrateSlot<
 				| T.LiteralPattern
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate

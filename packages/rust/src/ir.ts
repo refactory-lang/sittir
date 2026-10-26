@@ -548,6 +548,7 @@ export const ir: {
 	readonly wildcardPattern: typeof F.buildWildcardPattern;
 	readonly outerDocCommentMarker: typeof F.buildOuterDocCommentMarker;
 	readonly innerDocCommentMarker: typeof F.buildInnerDocCommentMarker;
+	readonly selfModule: typeof F.buildSelfModule;
 	readonly crateVisibilityModifier: typeof F.buildCrateVisibilityModifier;
 	readonly shebang: typeof F.buildShebang;
 	readonly metavariable: typeof F.buildMetavariable;
@@ -817,6 +818,7 @@ export const ir: {
 	wildcardPattern: F.buildWildcardPattern,
 	outerDocCommentMarker: F.buildOuterDocCommentMarker,
 	innerDocCommentMarker: F.buildInnerDocCommentMarker,
+	selfModule: F.buildSelfModule,
 	crateVisibilityModifier: F.buildCrateVisibilityModifier,
 
 	// Leaves whose one slot is their own text
