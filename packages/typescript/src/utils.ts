@@ -919,10 +919,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	kindId: kindIdFromName,
 	slots: querySlots,
 	layout: triviaFacts.layout,
-	spread: new Set<number>([
-		206, 210, 228, 230, 237, 238, 241, 242, 271, 273, 283, 287, 309, 311, 320, 347, 383, 384, 386, 389, 390, 391, 392,
-		400, 423, 424
-	]),
 	leaves: new Set<number>([1, 119, 120, 126, 127, 159, 175, 177, 178]),
 	textEnvelopes: new Map<number, number>([
 		[499, 1],
@@ -940,41 +936,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		148, 149, 150, 151, 152, 166, 168, 170, 171, 172, 173, 174, 179, 181, 182, 183, 184, 185, 186, 187, 188, 196, 226,
 		254, 278, 279, 280, 281, 282, 326, 363, 394, 407, 415, 439, 440, 446, 503
 	]),
-	blank: 0,
-	options: Object.freeze<NodeJSONFacts['options']>({
-		155: ['prefix'],
-		156: ['marker'],
-		157: ['marker'],
-		158: ['marker'],
-		160: ['prefix'],
-		161: ['prefix'],
-		197: ['terminator'],
-		205: ['terminator'],
-		206: ['terminator'],
-		207: ['terminator'],
-		208: ['automaticSemicolon'],
-		210: ['terminator'],
-		218: ['terminator'],
-		221: ['terminator'],
-		222: ['terminator'],
-		224: ['terminator'],
-		225: ['terminator'],
-		245: ['terminator'],
-		248: ['terminator'],
-		250: ['terminator'],
-		289: ['terminator'],
-		302: ['terminator'],
-		317: ['terminator'],
-		324: ['terminator'],
-		399: ['terminator'],
-		402: ['terminator'],
-		403: ['terminator'],
-		408: ['terminator'],
-		410: ['terminator'],
-		430: ['terminator'],
-		436: ['automaticSemicolon'],
-		443: ['terminator']
-	})
+	blank: 0
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -986,7 +948,8 @@ export const structure: StructureTable = Object.freeze({
 	155: {
 		kind: 'number_hex',
 		required: [['_content', 'content']],
-		texts: [['_prefix', 'NumberHex.prefix', ['0x', '0X']]]
+		texts: [['_prefix', 'NumberHex.prefix', ['0x', '0X']]],
+		options: ['prefix']
 	},
 	156: {
 		kind: 'number_float_point',
@@ -995,7 +958,8 @@ export const structure: StructureTable = Object.freeze({
 			['_marker', 'NumberFloatPoint.marker', ['e', 'E']],
 			['_sign', 'NumberFloatPoint.sign', ['-', '+']]
 		],
-		config: ['integer', 'fraction', 'marker', 'sign', 'exponent']
+		config: ['integer', 'fraction', 'marker', 'sign', 'exponent'],
+		options: ['marker']
 	},
 	157: {
 		kind: 'number_float_leading_point',
@@ -1004,7 +968,8 @@ export const structure: StructureTable = Object.freeze({
 			['_marker', 'NumberFloatLeadingPoint.marker', ['e', 'E']],
 			['_sign', 'NumberFloatLeadingPoint.sign', ['-', '+']]
 		],
-		config: ['fraction', 'marker', 'sign', 'exponent']
+		config: ['fraction', 'marker', 'sign', 'exponent'],
+		options: ['marker']
 	},
 	158: {
 		kind: 'number_float_scientific',
@@ -1016,17 +981,20 @@ export const structure: StructureTable = Object.freeze({
 			['_marker', 'NumberFloatScientific.marker', ['e', 'E']],
 			['_sign', 'NumberFloatScientific.sign', ['-', '+']]
 		],
-		config: ['integer', 'marker', 'sign', 'exponent']
+		config: ['integer', 'marker', 'sign', 'exponent'],
+		options: ['marker']
 	},
 	160: {
 		kind: 'number_binary',
 		required: [['_content', 'content']],
-		texts: [['_prefix', 'NumberBinary.prefix', ['0b', '0B']]]
+		texts: [['_prefix', 'NumberBinary.prefix', ['0b', '0B']]],
+		options: ['prefix']
 	},
 	161: {
 		kind: 'number_octal',
 		required: [['_content', 'content']],
-		texts: [['_prefix', 'NumberOctal.prefix', ['0o', '0O']]]
+		texts: [['_prefix', 'NumberOctal.prefix', ['0o', '0O']]],
+		options: ['prefix']
 	},
 	162: { kind: 'number_bigint_hex', required: [['_content', 'content']] },
 	163: { kind: 'number_bigint_binary', required: [['_content', 'content']] },
@@ -1076,7 +1044,8 @@ export const structure: StructureTable = Object.freeze({
 			['_type_only', 'ImportStatement.typeOnly', [7, 8]],
 			['_terminator', 'ImportStatement.terminator', [22, 174]]
 		],
-		config: ['typeOnly', 'fromClause', 'importAttribute', 'terminator']
+		config: ['typeOnly', 'fromClause', 'importAttribute', 'terminator'],
+		options: ['terminator']
 	},
 	198: {
 		kind: 'import_clause',
@@ -1115,14 +1084,16 @@ export const structure: StructureTable = Object.freeze({
 		nodeOnly: [
 			['_expression', 'ExpressionStatement.expression', 'a built Expression / SequenceExpression', [234, 271]]
 		],
-		kindIds: [['_terminator', 'ExpressionStatement.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'ExpressionStatement.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	206: {
 		kind: 'variable_declaration',
 		nonEmpty: [['_declarators', 'variable_declaration.children']],
 		nodeOnly: [['_declarators', 'VariableDeclaration.declarators', 'a built VariableDeclarator', [209]]],
 		kindIds: [['_terminator', 'VariableDeclaration.terminator', [22, 174]]],
-		lists: [['declarators', false, 1]]
+		lists: [['declarators', false, 1]],
+		options: ['terminator']
 	},
 	207: {
 		kind: 'lexical_declaration',
@@ -1134,7 +1105,8 @@ export const structure: StructureTable = Object.freeze({
 			['_terminator', 'LexicalDeclaration.terminator', [22, 174]]
 		],
 		config: ['kind', 'declarators', 'terminator'],
-		lists: [['declarators', false, 'key']]
+		lists: [['declarators', false, 'key']],
+		options: ['terminator']
 	},
 	208: {
 		kind: 'using_declaration',
@@ -1146,13 +1118,15 @@ export const structure: StructureTable = Object.freeze({
 			['_automatic_semicolon', 'UsingDeclaration.automaticSemicolon', [22, 174]]
 		],
 		config: ['kind', 'variableDeclarators', 'automaticSemicolon'],
-		lists: [['variableDeclarators', false, 'key']]
+		lists: [['variableDeclarators', false, 'key']],
+		options: ['automaticSemicolon']
 	},
 	210: {
 		kind: 'statement_block',
 		nodeOnly: [['_statements', 'StatementBlock.statements', 'a built Statement', [204]]],
 		kindIds: [['_terminator', 'StatementBlock.terminator', [0, 174]]],
-		lists: [['statements', false, 1]]
+		lists: [['statements', false, 1]],
+		options: ['terminator']
 	},
 	211: {
 		kind: 'else_clause',
@@ -1239,7 +1213,8 @@ export const structure: StructureTable = Object.freeze({
 			['_condition', 'DoStatement.condition', 'a built ParenthesizedExpression', [233]]
 		],
 		kindIds: [['_terminator', 'DoStatement.terminator', [0, 22, 174]]],
-		config: ['body', 'condition', 'terminator']
+		config: ['body', 'condition', 'terminator'],
+		options: ['terminator']
 	},
 	219: {
 		kind: 'try_statement',
@@ -1266,12 +1241,14 @@ export const structure: StructureTable = Object.freeze({
 	221: {
 		kind: 'break_statement',
 		nodeOnly: [['_label', 'BreakStatement.label', 'a built StatementIdentifier', [502]]],
-		kindIds: [['_terminator', 'BreakStatement.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'BreakStatement.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	222: {
 		kind: 'continue_statement',
 		nodeOnly: [['_label', 'ContinueStatement.label', 'a built StatementIdentifier', [502]]],
-		kindIds: [['_terminator', 'ContinueStatement.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'ContinueStatement.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	223: {
 		kind: 'debugger_statement',
@@ -1281,13 +1258,15 @@ export const structure: StructureTable = Object.freeze({
 	224: {
 		kind: 'return_statement',
 		nodeOnly: [['_expression', 'ReturnStatement.expression', 'a built Expression / SequenceExpression', [234, 271]]],
-		kindIds: [['_terminator', 'ReturnStatement.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'ReturnStatement.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	225: {
 		kind: 'throw_statement',
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'ThrowStatement.expression', 'a built Expression / SequenceExpression', [234, 271]]],
-		kindIds: [['_terminator', 'ThrowStatement.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'ThrowStatement.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	227: {
 		kind: 'labeled_statement',
@@ -1444,7 +1423,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		kindIds: [['_terminator', 'ClassDeclaration.terminator', [0, 174]]],
 		config: ['decorators', 'name', 'typeParameters', 'heritage', 'body', 'terminator'],
-		lists: [['decorators', false, 'key']]
+		lists: [['decorators', false, 'key']],
+		options: ['terminator']
 	},
 	246: {
 		kind: 'class_heritage',
@@ -1495,7 +1475,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		booleans: [['_async', 'FunctionDeclaration.async']],
 		kindIds: [['_terminator', 'FunctionDeclaration.terminator', [0, 174]]],
-		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body', 'terminator']
+		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body', 'terminator'],
+		options: ['terminator']
 	},
 	249: {
 		kind: 'generator_function',
@@ -1539,7 +1520,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		booleans: [['_async', 'GeneratorFunctionDeclaration.async']],
 		kindIds: [['_terminator', 'GeneratorFunctionDeclaration.terminator', [0, 174]]],
-		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body', 'terminator']
+		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body', 'terminator'],
+		options: ['terminator']
 	},
 	251: {
 		kind: 'arrow_function',
@@ -1761,7 +1743,8 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'class_static_block',
 		required: [['_body', 'body']],
 		nodeOnly: [['_body', 'ClassStaticBlock.body', 'a built StatementBlock', [210]]],
-		kindIds: [['_terminator', 'ClassStaticBlock.terminator', [0, 174]]]
+		kindIds: [['_terminator', 'ClassStaticBlock.terminator', [0, 174]]],
+		options: ['terminator']
 	},
 	291: {
 		kind: 'rest_pattern',
@@ -1831,7 +1814,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		booleans: [['_async', 'FunctionSignature.async']],
 		kindIds: [['_terminator', 'FunctionSignature.terminator', [22, 174, 179]]],
-		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'terminator']
+		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'terminator'],
+		options: ['terminator']
 	},
 	303: {
 		kind: 'decorator_parenthesized_expression',
@@ -1976,7 +1960,8 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'ImportAlias.value', 'buildIdentifier(…)', [1, 243]]
 		],
 		kindIds: [['_terminator', 'ImportAlias.terminator', [22, 174]]],
-		config: ['name', 'value', 'terminator']
+		config: ['name', 'value', 'terminator'],
+		options: ['terminator']
 	},
 	318: {
 		kind: 'nested_type_identifier',
@@ -2060,7 +2045,8 @@ export const structure: StructureTable = Object.freeze({
 			['_value', 'TypeAliasDeclaration.value', 'a built Type', [338]]
 		],
 		kindIds: [['_terminator', 'TypeAliasDeclaration.terminator', [22, 174]]],
-		config: ['name', 'typeParameters', 'value', 'terminator']
+		config: ['name', 'typeParameters', 'value', 'terminator'],
+		options: ['terminator']
 	},
 	327: {
 		kind: 'required_parameter',
@@ -2627,7 +2613,8 @@ export const structure: StructureTable = Object.freeze({
 			['_type', 'AmbientDeclarationModule.type', 'a built Type', [338]]
 		],
 		kindIds: [['_terminator', 'AmbientDeclarationModule.terminator', [0, 22, 174]]],
-		config: ['name', 'type', 'terminator']
+		config: ['name', 'type', 'terminator'],
+		options: ['terminator']
 	},
 	400: {
 		kind: 'object_type_content',
@@ -2646,13 +2633,15 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'export_statement_namespace_export',
 		required: [['_name', 'name']],
 		nodeOnly: [['_name', 'ExportStatementNamespaceExport.name', 'buildIdentifier(…)', [1]]],
-		kindIds: [['_terminator', 'ExportStatementNamespaceExport.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'ExportStatementNamespaceExport.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	403: {
 		kind: 'export_statement_equals_export',
 		required: [['_value', 'value']],
 		nodeOnly: [['_value', 'ExportStatementEqualsExport.value', 'a built Expression', [234]]],
-		kindIds: [['_terminator', 'ExportStatementEqualsExport.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'ExportStatementEqualsExport.terminator', [22, 174]]],
+		options: ['terminator']
 	},
 	404: {
 		kind: 'literal_type_negative_number',
@@ -2685,7 +2674,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		kindIds: [['_terminator', 'ClassBodyMemberMethod.terminator', [0, 22, 174]]],
 		config: ['decorators', 'methodDefinition', 'terminator'],
-		lists: [['decorators', false, 'key']]
+		lists: [['decorators', false, 'key']],
+		options: ['terminator']
 	},
 	409: {
 		kind: 'class_body_member_method_sig',
@@ -2708,7 +2698,8 @@ export const structure: StructureTable = Object.freeze({
 				[297, 300, 301, 376]
 			]
 		],
-		kindIds: [['_terminator', 'ClassBodyMemberDeclaration.terminator', [15, 22, 174]]]
+		kindIds: [['_terminator', 'ClassBodyMemberDeclaration.terminator', [15, 22, 174]]],
+		options: ['terminator']
 	},
 	411: {
 		kind: 'index_signature_colon',
@@ -2912,7 +2903,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		booleans: [['_type_only', 'ExportStatementDefaultFrom.typeOnly']],
 		kindIds: [['_terminator', 'ExportStatementDefaultFrom.terminator', [22, 174]]],
-		config: ['typeOnly', 'content', 'terminator']
+		config: ['typeOnly', 'content', 'terminator'],
+		options: ['terminator']
 	},
 	431: {
 		kind: 'export_statement_default_declaration',
@@ -2971,7 +2963,10 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'export_statement_default_declaration_default_kw_value',
 		required: [['_value', 'value']],
 		nodeOnly: [['_value', 'ExportStatementDefaultDeclarationDefaultKwValue.value', 'a built Expression', [234]]],
-		kindIds: [['_automatic_semicolon', 'ExportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon', [22, 174]]]
+		kindIds: [
+			['_automatic_semicolon', 'ExportStatementDefaultDeclarationDefaultKwValue.automaticSemicolon', [22, 174]]
+		],
+		options: ['automaticSemicolon']
 	},
 	437: {
 		kind: 'variable_declarator_plain',
@@ -3041,7 +3036,8 @@ export const structure: StructureTable = Object.freeze({
 			['_terminator', 'ForHeaderLetConstKind.terminator', [0, 174]],
 			['_operator', 'ForHeaderLetConstKind.operator', [72, 151]]
 		],
-		config: ['kind', 'left', 'terminator', 'operator', 'right']
+		config: ['kind', 'left', 'terminator', 'operator', 'right'],
+		options: ['terminator']
 	},
 	444: {
 		kind: 'for_header_using_kind',

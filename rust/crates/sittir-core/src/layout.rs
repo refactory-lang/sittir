@@ -404,7 +404,7 @@ pub fn snapshot_edge<T: Prepare>(span: Option<crate::points::PointSpan>, trivia:
     use crate::prepare::TriviaReach;
     let reach = |entry: Option<&crate::trivia::TriviaEntry<T>>, end: fn(crate::points::PointSpan) -> crate::points::Point| match entry {
         None => TriviaReach::Bare,
-        Some(entry) => entry.value.snapshot_edge().map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
+        Some(entry) => entry.value().and_then(crate::slot::SlotValue::snapshot_edge).map_or(TriviaReach::Unplaced, |edge| TriviaReach::To(end(edge.span))),
     };
     Some(crate::prepare::SnapshotEdge {
         span: span?,
@@ -419,17 +419,17 @@ pub fn inner_item<T: Prepare + TriviaSeam>(trivia: Option<&NodeTrivia<T>>) -> Op
     use crate::prepare::{EdgeItem, SnapshotEdge, TriviaReach};
     let entries: Vec<_> = trivia?.inner.as_ref()?.iter().filter(|entry| !entry.is_layout()).collect();
     let first = entries.first()?;
-    if let Some(coord) = first.value.coord() {
+    if let Some(coord) = first.value().and_then(crate::slot::SlotValue::coord) {
         let mut span = coord.span;
         for entry in &entries {
-            let Some(next) = entry.value.coord().filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
+            let Some(next) = entry.value().and_then(crate::slot::SlotValue::coord).filter(|next| next.tree == coord.tree) else { return Some(EdgeItem::Rebuilt) };
             span = crate::types::Span { start: span.start.min(next.span.start), end: span.end.max(next.span.end) };
         }
         return Some(EdgeItem::Bytes { tree: coord.tree, span });
     }
     let mut extent: Option<crate::points::PointSpan> = None;
     for entry in entries {
-        let Some(edge) = entry.value.snapshot_edge() else { return Some(EdgeItem::Rebuilt) };
+        let Some(edge) = entry.value().and_then(crate::slot::SlotValue::snapshot_edge) else { return Some(EdgeItem::Rebuilt) };
         extent = Some(extent.map_or(edge.span, |span| crate::points::PointSpan {
             start: span.start.min(edge.span.start),
             end: span.end.max(edge.span.end),
@@ -658,6 +658,46 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
                 slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
                 item: property(env, napi_val, c"item")?.unwrap_or(crate::types::ItemIndex(0)),
                 trivia: NodeTrivia::from_napi_value(env, napi_val)?,
+            })
+        }
+    }
+}
+
+/// A unit's sides as a write passes them: `{ slot, item, leading?, trailing?,
+/// inner? }`, each entry a `WireEntry`, so a built record names its owner.
+#[cfg(feature = "napi-bindings")]
+pub struct WireUnit<'e, T> {
+    slot: String,
+    item: crate::types::ItemIndex,
+    sides: [Option<Vec<crate::trivia::WireEntry<'e, T>>>; 3],
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<'e, T> WireUnit<'e, T> {
+    /// The unit's sides, each built record holding the store `store_of`
+    /// resolves its owner to.
+    ///
+    /// # Errors
+    ///
+    /// What `store_of` refuses.
+    pub fn resolve(self, store_of: &impl Fn(::napi::Unknown<'e>) -> ::napi::Result<crate::trivia_store::TriviaStore<T>>) -> ::napi::Result<UnitSides<T>> {
+        let side = |entries: Option<Vec<crate::trivia::WireEntry<'e, T>>>| entries.map(|entries| entries.into_iter().map(|entry| entry.resolve(store_of)).collect::<::napi::Result<Vec<_>>>()).transpose();
+        let [leading, trailing, inner] = self.sides;
+        Ok(UnitSides { slot: self.slot, item: self.item, trivia: NodeTrivia { leading: side(leading)?, trailing: side(trailing)?, inner: side(inner)? } })
+    }
+}
+
+#[cfg(feature = "napi-bindings")]
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for WireUnit<'_, T> {
+    /// `{ slot, item, leading?, trailing?, inner? }`.
+    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
+        use crate::boundary::property;
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
+        unsafe {
+            Ok(Self {
+                slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
+                item: property(env, napi_val, c"item")?.unwrap_or(crate::types::ItemIndex(0)),
+                sides: [property(env, napi_val, c"leading")?, property(env, napi_val, c"trailing")?, property(env, napi_val, c"inner")?],
             })
         }
     }

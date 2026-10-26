@@ -25,6 +25,9 @@ import {
 	hydrateStored,
 	sidesOf,
 	spanOf,
+	recordOf,
+	isBuiltNode,
+	writeTrivia,
 	toDetachedNodeData,
 	type KindView,
 	type NodeDataLayout
@@ -361,45 +364,13 @@ export interface ReadRenderParseResult {
 	trivia: ValidatorSkip[];
 }
 
-/**
- * Width, in rendered bytes, of the leading trivia the render prints before a
- * candidate's first token: the candidate's own, and that of each node down its
- * first-descendant chain (a block's first statement prints its comments ahead
- * of the block's content). A child belongs to the chain when stripping its
- * leading entries changes the render from its first byte; one whose entries
- * sit further in is interior trivia and is left alone. The width is the offset
- * of the first token in the render, so a stripped render that differs from the
- * original further on does not change it. The text is what
- * `render_with_trivia!` (Rust) / its JS-engine counterpart writes BEFORE the
- * candidate's content. The candidate's real node starts this many bytes
- * after where its `rendered` string (trivia included) was spliced into the
- * reparse wrapper, so the offset-based lookup below must skip past it.
- * Returns 0 when there's no leading trivia (the common case).
- *
- * Derived by differencing two engine renders (with vs. without the leading
- * trivia) rather than rendering each trivia entry standalone: trivia entries
- * are embedded raw at read time (never wrapped into model shape), and only
- * the in-context `TriviaNode` decode carries the verbatim `$text`
- * fallback for that raw shape — a standalone root render of the same entry
- * hard-fails decoding (`Missing field _content`).
- *
- * `triviaOf` is the sides view the render itself uses (`sidesOf`), so the
- * width counts what the render printed: a leading comment and the whitespace
- * between it and the node, never the root's outer-edge whitespace. Each copy
- * is an edit of its node (`markEdited`) holding every side it renders, the
- * stripped one an empty `leading`, so both renders print the node from its
- * storage and differ only by the leading trivia; a coordinate, which holds
- * no storage, is hydrated and read one level down through the slot readers
- * first (`storageOf`, `materializeShallow`). A copy keeps
- * the node's source identity. Both are measured without trailing whitespace,
- * which only the outer edge contributes.
- */
 export function leadingTriviaRenderedWidth(
 	data: AnyUntypedNode,
 	render: (node: AnyUntypedNode) => string,
 	triviaOf: (node: object) => NodeTrivia | undefined,
 	accessorOf: SlotAccessorOf
 ): number {
+	if (recordOf(data) !== undefined) return 0;
 	const rendered = (node: AnyUntypedNode): string => render(node).trimEnd();
 	const withLeading = (node: AnyUntypedNode, leading: readonly unknown[], data: AnyUntypedNode = node): AnyUntypedNode => {
 		const copy = markEdited({ ...storageOf(data, accessorOf), $_layout: { ...node.$_layout, trivia: { ...triviaOf(node), leading } } } as AnyUntypedNode);
@@ -739,15 +710,15 @@ export function wrapRendered(
 	return placed === null ? null : { text: placed.text, offset: placed.offset + placement.prefix.length };
 }
 
-/**
- * The candidate as its own source span has it: its leading and trailing sides
- * lie outside the span, where its parent renders them, so a candidate
- * rendered alone leaves both out and keeps its inner side. The one place
- * every validator lane prepares a candidate.
- */
 export function candidateData(data: AnyUntypedNode, triviaOf: (node: object) => NodeTrivia | undefined): AnyUntypedNode {
+	const record = recordOf(data) !== undefined;
+	if (record && !isBuiltNode(data)) return data;
 	const trivia = triviaOf(data);
 	if (trivia?.leading === undefined && trivia?.trailing === undefined) return data;
+	if (record) {
+		writeTrivia(data, { leading: [], trailing: [] });
+		return data;
+	}
 	const candidate = markEdited({ ...data, $_layout: { ...data.$_layout, trivia: { ...trivia, leading: [], trailing: [] } } } as AnyUntypedNode);
 	carryPlace(data, candidate);
 	return candidate;
@@ -1016,11 +987,10 @@ export async function validateReadRenderParse(
 					node: TypedNode;
 					displayKind: string;
 					coordinate?: NodeCoordinate;
-					address?: number;
 				}[]
 			>();
 			const seen = new Set<string>();
-			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate, address?: number): void => {
+			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate): void => {
 				if (node.$named === false) return;
 				const displayKind = kindNameFromId(node.$type);
 				const kind = canonicalKindNameFromId(node.$type);
@@ -1037,18 +1007,17 @@ export async function validateReadRenderParse(
 					end,
 					node,
 					displayKind,
-					...(coordinate === undefined ? {} : { coordinate }),
-					...(address === undefined ? {} : { address })
+					...(coordinate === undefined ? {} : { coordinate })
 				});
 				candidatesByKind.set(kind, list);
 			};
 			if (recursive === true && handle.records !== undefined) {
 				if (handle.id === undefined) throw new Error('native arena validation needs a tree id');
 				const root = encodeHandle(handle.id, 0);
-				for (const [metadata, address] of handle.records.candidates(0)) {
+				for (const metadata of handle.records.candidates(0)) {
 					const coordinate =
 						metadata.$treeHandle === root ? { ...metadata, $span: { start: 0, end: spans.byteLength } } : metadata;
-					visitCandidate(coordinate as unknown as TypedNode, coordinate, address ?? undefined);
+					visitCandidate(coordinate as unknown as TypedNode, coordinate);
 				}
 			} else if (handle.read) {
 				const wrappedRoot = deepRoot ?? (readNode(handle) as TypedNode);
@@ -1119,8 +1088,8 @@ export async function validateReadRenderParse(
 					let data: AnyUntypedNode | (() => string);
 					try {
 						if (cand.coordinate !== undefined) {
-							const at = measureRoundtrip(options.profile, 'read', () => cand.address);
-							data = () => handle.records!.renderCandidate(decodeIndex(cand.coordinate!.$treeHandle), at);
+							const index = measureRoundtrip(options.profile, 'read', () => decodeIndex(cand.coordinate!.$treeHandle));
+							data = () => handle.records!.renderCandidate(index);
 						} else {
 							const at = (cand.node as AnyUntypedNode).$_layout?.at;
 							data = measureRoundtrip(options.profile, 'read', () =>

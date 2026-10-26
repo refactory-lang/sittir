@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { useRecordConstruction } from '@sittir/common/engine';
+import { writeUnitSides } from '@sittir/common/utils';
+import arena from '../src/arena.ts';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
@@ -75,6 +78,22 @@ describe('edits on a flat alias display', () => {
 			expect(out).toBe('interface A {}');
 			expect(engine.parse(out).$errors).toEqual([]);
 			expect(root.$render()).toBe('interface A { x: number }\nlet b = 1;\n');
+		} finally {
+			engine.dispose();
+		}
+	});
+
+	it.each(['objects', 'arena objects', 'records'] as const)('%s: a built display keeps the sides written on its unit', async (construction) => {
+		const engine = construction === 'objects' ? await createEngine(typescript) : await arena.createEngine();
+		if (construction === 'records') useRecordConstruction(engine, await import('../src/factories/records.ts'));
+		try {
+			const declaration = engine.parse('interface A { x: number }\n').statements()[0];
+			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))
+				throw new Error('expected an interface declaration');
+			const built = engine.build.interfaceBody.curly({ members: declaration.body().members() });
+			expect(built.$type).toBe(engine.kinds.InterfaceBody);
+			writeUnitSides(built, [{ slot: '_opening', item: 0, trailing: [engine.build.commentBlock(' c ')] }]);
+			expect(built.$render()).toBe('{ /* c */ x: number }');
 		} finally {
 			engine.dispose();
 		}

@@ -11,7 +11,7 @@
 
 import type { AnyUntypedNode } from '@sittir/types';
 import { sliceSpan, sourceSpans } from '@sittir/common';
-import { nodeText, slotSeparatorOf, spanOf } from '@sittir/common/utils';
+import { listSeparatorOf, nodeText, spanOf } from '@sittir/common/utils';
 import type { TokenInterior, TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { requireGrammarModule } from '../grammar-internals.ts';
@@ -29,6 +29,7 @@ import {
 	hydrateOf,
 	loadSlotAccessorOf,
 	materialize,
+	materializeBuildInput,
 	readNodeOf,
 	collectKinds,
 	emitValidatorMetrics,
@@ -83,21 +84,6 @@ function findUndefined(node: AnyUntypedNode, path = ''): string[] {
 	return results;
 }
 
-/**
- * Shallow structural diff: compare type, factory-declared field keys,
- * named children count.
- *
- * The factory output `b` is the ground truth for "what fields this kind
- * declares." Any field in `from()` output `a` that isn't in `b` is
- * acceptable runtime metadata (promoted anonymous keywords like `fn`,
- * `{`, `;` from `readUntypedNode.promoteAnonymousKeyword`, tree-sitter
- * punctuation, etc.) — those don't count as divergence. Only mismatches
- * on keys the factory actually declared are real bugs.
- *
- * Undefined-valued entries are dropped before comparison — property
- * access can't distinguish `{a: undefined}` from `{}`, so the structural
- * comparison shouldn't either.
- */
 export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode, read: object = a): string[] {
 	const diffs: string[] = [];
 	if (a.$type !== b.$type) diffs.push(`$type: ${a.$type} vs ${b.$type}`);
@@ -110,10 +96,9 @@ export function structuralDiff(a: AnyUntypedNode, b: AnyUntypedNode, read: objec
 	};
 
 	const bKeys = new Set(extractSlotKeys(b));
-	if (slotSeparatorOf(read) === (b as unknown as Record<string, unknown>)['_separator']) bKeys.delete('separator');
+	if (listSeparatorOf(read) === (b as unknown as Record<string, unknown>)['_separator']) bKeys.delete('separator');
 	const aKeysMatchingB = extractSlotKeys(a).filter((k) => bKeys.has(k));
 
-	// One-way check: fields factory declared that from() didn't fill in.
 	const missingInA = [...bKeys].filter((k) => !aKeysMatchingB.includes(k)).sort();
 	if (missingInA.length) diffs.push(`from() missing declared fields: ${missingInA.join(', ')}`);
 
@@ -343,13 +328,6 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			return undefined;
 		}
 
-		// The read node's $type is the storage stamp; in an alias context the
-		// CST face name (`kind`) differs from it (a decorator's member chain
-		// wears the member_expression face over the decorator_member_expression
-		// storage kind). Storage identity picks the from/factory pair and the
-		// slot tables the config reads, for the node and every child it holds —
-		// the face is only how the corpus walk found the node, and a display
-		// that two storage kinds share has no slot table of its own.
 		const readKind = (typeof readData.$type === 'number' ? factoryStorageKind(readData.$type) : undefined) ?? kind;
 		const readKindId = kindIdFromName(readKind);
 		const readText = nodeText(readData);
@@ -370,15 +348,9 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 			const fromResult = fromMap[readKind]!(aliasRead ? (readText as never) : readData) as AnyUntypedNode;
 			let factoryResult: AnyUntypedNode;
 			try {
-				// Route by the shape declared at codegen time — same
-				// pattern as validate-factory-roundtrip.ts. Guessing
-				// from `readData.fields` alone mis-routes empty
-				// containers (python `()` has promoted `(`/`)` fields
-				// but `children === undefined`, yet is a children-shape
-				// factory that must dispatch as `factory()` with no args).
 				const shape = factoryShapes[readKind] ?? 'config';
 				const factory = factoryMap[readKind]!;
-				const readStorage = materialize(readData, accessorOf);
+				const readStorage = materializeBuildInput(readData, accessorOf);
 				const configOf = (): Record<string, unknown> =>
 					nodeToConfig(readStorage, {
 						accessorOf,
@@ -394,13 +366,8 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 						kindNameFromId: factoryKindNameFromId
 					});
 				if (shape === 'config' || shape === 'direct' || shape === 'forwarded') {
-					// ReadNode emits `_<name>` top-level keys, not
-					// `$fields`. Use `nodeToConfig` which handles both shapes
-					// and recursively resolves children through factories.
 					const config = configOf();
 					if (shape === 'direct' || shape === 'forwarded') {
-						// Direct-call shape: use the sole field when metadata
-						// names one, otherwise treat it as a single child call.
 						const fieldNames = factoryFields[readKind];
 						const rawName = fieldNames?.[0];
 						const value =
@@ -409,30 +376,21 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 								: getChildFactoryArgs(readKind, config, factorySlots, factoryFields)[0];
 						factoryResult = (factory as (v: unknown) => AnyUntypedNode)(value);
 					} else {
-						// Config-shaped factories with flank capture take `(config,
-						// options)` — factories without options ignore the extra argument.
 						factoryResult = (factory as (c: unknown, o?: unknown) => AnyUntypedNode)(
 							config,
-							separatedListFactoryOptions(readStorage, factorySlots[readKind])
+							separatedListFactoryOptions(readData, accessorOf, factorySlots[readKind])
 						);
 					}
 				} else if (shape === 'constant') {
 					factoryResult = factory as AnyUntypedNode;
 				} else if (shape === 'text') {
-					// A text-shaped factory takes the node's bytes, which its span
-					// addresses whether or not the reader captured them as `$text`.
 					const span = spanOf(readData);
 					const textForFactory = span ? sliceSpan(entry.source, span) : (nodeText(readData) ?? '');
 					factoryResult = (factory as (text: string) => AnyUntypedNode)(textForFactory);
 				} else if (shape === 'elements') {
-					// separatedList factory: spread with a LEADING optional
-					// options bag — `(...elements)` / `({separatorKind?,
-					// leading?, trailing?}, ...elements)` — distinct calling
-					// convention from 'spread's plain rest-param factories (see
-					// classifyFactoryShape's separatedList case).
 					const config = configOf();
 					const elements = getChildFactoryArgs(readKind, config, factorySlots, factoryFields);
-					const options = separatedListFactoryOptions(readStorage, factorySlots[readKind]);
+					const options = separatedListFactoryOptions(readData, accessorOf, factorySlots[readKind]);
 					const listFactory = factory as (...args: unknown[]) => AnyUntypedNode;
 					factoryResult = options !== undefined ? listFactory(options, ...elements) : listFactory(...elements);
 				} else {
@@ -450,8 +408,6 @@ export async function validateFrom(grammar: string): Promise<FromValidationResul
 				return undefined;
 			}
 
-			// A kind stored as its id (a keyword) has no node: both sides are
-			// the id, and equality is the whole round-trip.
 			const idDiffs = kindIdDiffs(fromResult, factoryResult);
 			if (idDiffs !== undefined) {
 				if (idDiffs.length > 0) {

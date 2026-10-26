@@ -1,7 +1,7 @@
 import { NATIVE_TARGETS, grammarDisplayName, nativeBinaryName, type GrammarName } from '../grammars.ts';
 import { TRIVIA_NODE } from './render-module.ts';
 
-export const NATIVE_RENDER_NODE_ABI = 25;
+export const NATIVE_RENDER_NODE_ABI = 26;
 
 export interface NativeCrateFile {
 	readonly path: string;
@@ -34,7 +34,7 @@ arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
-napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
+napi = { version = "3", default-features = false, features = ["napi8", "serde-json"], optional = true }
 napi-derive = { version = "3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -268,6 +268,30 @@ sittir_core::records_codec! {
             ctx: &sittir_core::prepare::RenderContext<'_>,
         ) -> std::result::Result<String, sittir_core::render::RenderError> {
             render::node::render_record(root, trees, built, store, ctx)
+        }
+
+        fn render_entry(
+            self,
+            root: sittir_core::arena::CellAt,
+            trees: &mut dyn sittir_core::arena::RecordTrees,
+            built: &dyn sittir_core::arena::ArenaRead,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+            w: &mut dyn sittir_core::render::RenderSink,
+        ) -> sittir_core::render::RenderResult {
+            render::node::render_entry_record(root, trees, built, store, ctx, w)
+        }
+
+        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
+            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
+        }
+
+        fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_key(kind, word)
+        }
+
+        fn slot_word(kind: sittir_core::types::KindId, key: &str) -> Option<u32> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_word(kind, key)
         }
     }
 }

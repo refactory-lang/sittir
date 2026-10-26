@@ -17,6 +17,8 @@ pub enum RenderError {
     /// A built list's item at this position, past the last index an
     /// `ItemIndex` holds.
     ItemIndex(usize),
+    /// A side holding entries nested past `trivia::SIDE_NESTING_BOUND`.
+    SideNesting,
     /// A record's cell or word that no record writer writes, met by a view.
     #[cfg(feature = "arena")]
     Record(crate::arena::ArenaError),
@@ -28,6 +30,7 @@ impl fmt::Display for RenderError {
             Self::Fmt(e) => fmt::Display::fmt(e, f),
             Self::Coordinate(e) => fmt::Display::fmt(e, f),
             Self::ItemIndex(at) => write!(f, "list item {at} is past the last item index a u32 holds"),
+            Self::SideNesting => f.write_str(crate::trivia::SIDE_NESTING_REFUSAL),
             #[cfg(feature = "arena")]
             Self::Record(e) => fmt::Display::fmt(e, f),
         }
@@ -217,7 +220,27 @@ pub trait SourceTable {
         let _ = tree;
         None
     }
+
+    /// Renders the built record `record`, which the store `held` answered,
+    /// into `w` as a trivia entry in the side that holds it: from the arena
+    /// that wrote it, its own sides left to that side (they are its
+    /// neighbours there), under `options`. A table that reaches no arena
+    /// refuses.
+    ///
+    /// # Errors
+    ///
+    /// What the record's render refuses, and `RenderError::Record` when no
+    /// arena is reachable from here.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&self, record: crate::trivia::BuiltEntry, held: &dyn std::any::Any, options: &crate::options::ResolvedOptions, w: &mut dyn RenderSink) -> RenderResult {
+        let _ = (record, held, options, w);
+        Err(RenderError::Record(NO_ARENA))
+    }
 }
+
+/// The refusal of a record entry rendered where no arena is reachable.
+#[cfg(feature = "arena")]
+pub(crate) const NO_ARENA: crate::arena::ArenaError = crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable");
 
 /// Why a coordinate cannot be turned into bytes. Both arms carry the handle:
 /// a coordinate is only meaningful beside the tree that minted it, and the
@@ -364,6 +387,12 @@ pub trait RenderSink {
     fn layout_depth(&mut self, delta: i32) {
         let _ = delta;
     }
+    /// The nesting of the side whose entry renders here
+    /// (`trivia::SIDE_NESTING_BOUND`): 0 outside every side.
+    fn side_nesting(&self) -> usize;
+    /// What renders next renders inside a side at `nesting`; answers the
+    /// nesting it replaces.
+    fn set_side_nesting(&mut self, nesting: usize) -> usize;
     fn trivia_seam(&mut self, gap: crate::layout_kinds::LayoutKinds, text: Option<&str>) {
         let _ = text;
         self.seam(gap);
@@ -391,6 +420,27 @@ pub trait RenderSink {
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, CoordinateError> {
         let _ = coord;
         Ok(crate::trivia::Frames::default())
+    }
+    /// The options and tree table this sink prepares what it looks up with,
+    /// a coordinate's frames (`frames`) and a built record's sides; none for
+    /// a sink that holds no table or no options.
+    fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
+        None
+    }
+    /// Writes the built record `record`, which the store `held` (whose
+    /// identity is `store`) answered, as a trivia entry here, through this
+    /// sink's tree table (`SourceTable::render_record_entry`). Refuses a
+    /// record the entries it is being written inside already hold, and a
+    /// sink that holds no table or no options.
+    ///
+    /// # Errors
+    ///
+    /// `RenderError::Record` for a record inside its own entry, and what the
+    /// table refuses.
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, store: usize, held: &dyn std::any::Any) -> RenderResult {
+        let _ = (record, store, held);
+        Err(RenderError::Record(crate::arena::ArenaError::Unwritable("a record entry renders only where the arena that wrote it is reachable")))
     }
     /// A coordinate's text has just been written: hold the line end of each
     /// kind the text ends in, its own kind first.

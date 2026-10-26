@@ -26,9 +26,8 @@ import {
 import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface } from './factories.ts';
 import { collectKindEntries, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
-import { nodeRecordLayout } from './render-module.ts';
+import { recordPlacesOf } from './record-construction.ts';
 import type { RecordPlace } from './record-layout.ts';
-import { rustFieldIdent } from './node-common.ts';
 
 export function listKindIds(nodeMap: NodeMap): number[] {
 	return [...nodeMap.nodes.values()].flatMap((node) => (node instanceof AssembledList && node.kindId !== undefined ? [node.kindId] : [])).sort((a, b) => a - b);
@@ -36,7 +35,7 @@ export function listKindIds(nodeMap: NodeMap): number[] {
 
 function unitKindIdsWhere(nodeMap: NodeMap, keep: (node: AssembledNode) => boolean): number[] {
 	return [...nodeMap.nodes.values()]
-		.flatMap((node) => ((node.modelType === 'keyword' || node.modelType === 'punctuation') && node.kindId !== undefined && keep(node) ? [node.kindId] : []))
+		.flatMap((node) => (node.unit && node.kindId !== undefined && keep(node) ? [node.kindId] : []))
 		.sort((a, b) => a - b);
 }
 
@@ -144,7 +143,7 @@ export namespace wrap {
 
 	export function view(output: string[], node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): boolean {
 		if (!node.rawFactoryName) return false;
-		const storage = recordStorageOf(node, nodeMap, kindEntries);
+		const storage = recordStorageOf(node, nodeMap);
 		if (storage === undefined) return false;
 		const source = node instanceof AssembledList ? emitSeparatedListWrap(node, kindEntries, nodeMap, storage) : emitFieldCarryingWrap(node, kindEntries, nodeMap, storage);
 		if (source === undefined) return false;
@@ -159,19 +158,9 @@ type WrapStorage =
 
 const OBJECT: WrapStorage = { mode: 'object' };
 
-function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): WrapStorage | undefined {
-	if (seatPlanOf(node, nodeMap, kindEntries, 'RAW.').groups.length > 0) return undefined;
-	const layout = nodeRecordLayout(node, nodeMap);
-	if (layout === undefined) return undefined;
-	const fields = new Map(layout.places.map((place) => [place.field, place]));
-	const places = new Map<string, RecordPlace>();
-	for (const slot of node.slots) {
-		const field = rustFieldIdent(slot.storageName);
-		const place = fields.get(field);
-		if (place === undefined) return undefined;
-		places.set(slot.storageKey, place);
-	}
-	return { mode: 'record', places };
+function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap): WrapStorage | undefined {
+	const places = recordPlacesOf(node, nodeMap);
+	return places === undefined ? undefined : { mode: 'record', places };
 }
 
 function placeOf(storage: WrapStorage & { readonly mode: 'record' }, storageKey: string): RecordPlace {
@@ -324,11 +313,18 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 						'view'
 					)
 			: undefined;
-	const groups = groupSeatParts(
-		plan,
-		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
-		(stored) => dataAccessExpr('data', stored)
-	);
+	const groups =
+		storage.mode === 'object'
+			? groupSeatParts(
+					plan,
+					({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
+					(stored) => dataAccessExpr('data', stored)
+				)
+			: groupSeatParts(
+					plan,
+					({ stored, group }) => `() => viewSlot<T.${group} | undefined>(node, tree, ${cellArgs(placeOf(storage, stored))})`,
+					(stored) => `recordSlot(data, tree, ${cellArgs(placeOf(storage, stored))})`
+				);
 	return [
 		wrapHeader(node, storage, parsedType),
 		'  const handle = currentHandle();',

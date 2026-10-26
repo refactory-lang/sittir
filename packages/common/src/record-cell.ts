@@ -22,6 +22,7 @@ export interface RecordCodecConstants {
 	readonly SIDE_FIELD_SEPARATOR: number;
 	readonly SIDE_WORDS_SEPARATOR: number;
 	readonly SIDE_FIELD_DELIMITER: number;
+	readonly SIDE_FIELD_SEPARATOR_KIND: number;
 }
 
 /** A side record field before a list's delimiters setting: its mask bit and its words. */
@@ -46,6 +47,10 @@ export interface CellFormat {
 	/** The fields a side record holds before a list's delimiters setting, in its order, `at` first. */
 	readonly sideBeforeDelimiter: readonly SideField[];
 	readonly sideDelimiter: number;
+	/** The side record's `sides`: the parsed node a built one stands for, by its tree, rows and byte span. */
+	readonly sideSides: SideField;
+	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
+	readonly sideSeparatorKind: number;
 }
 
 /** A parsed node's place as its record's side record stamps it. */
@@ -104,7 +109,8 @@ const CODEC_KEYS = [
 	'SIDE_WORDS_SIDES',
 	'SIDE_FIELD_SEPARATOR',
 	'SIDE_WORDS_SEPARATOR',
-	'SIDE_FIELD_DELIMITER'
+	'SIDE_FIELD_DELIMITER',
+	'SIDE_FIELD_SEPARATOR_KIND'
 ] as const satisfies readonly (keyof RecordCodecConstants)[];
 
 /** The cell format of `native`, `undefined` for an addon built without the record codec. */
@@ -130,7 +136,9 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 			{ bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
 			{ bit: codec.SIDE_FIELD_SEPARATOR, words: codec.SIDE_WORDS_SEPARATOR }
 		],
-		sideDelimiter: codec.SIDE_FIELD_DELIMITER
+		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
+		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
+		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND
 	};
 }
 
@@ -254,16 +262,25 @@ export function decodeSideRow(words: ArrayLike<number>, at: number, format: Cell
 	return { index: word(1), end: word(2), span: { start: word(3), end: word(4) } };
 }
 
-/** A list's delimiters setting as the side record at `at` in `words` holds it, `undefined` when it holds none. */
 export function decodeSideDelimiter(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {
+	return sideListSetting(words, at, format, format.sideDelimiter, 'delimiters setting');
+}
+
+export function decodeSideSeparatorKind(words: ArrayLike<number>, at: number, format: CellFormat): number | undefined {
+	return sideListSetting(words, at, format, format.sideSeparatorKind, 'chosen separator');
+}
+
+export function sideListSettingOffset(mask: number, format: CellFormat, bit: number): number {
+	const before = format.sideBeforeDelimiter.reduce((sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words), 1);
+	return bit === format.sideDelimiter || (mask & format.sideDelimiter) === 0 ? before : before + 1;
+}
+
+function sideListSetting(words: ArrayLike<number>, at: number, format: CellFormat, bit: number, what: string): number | undefined {
 	const mask = words[at];
 	if (mask === undefined) throw new Error(`no side record at word ${at}`);
-	if ((mask & format.sideDelimiter) === 0) return undefined;
-	const offset = format.sideBeforeDelimiter.reduce(
-		(sum, field) => sum + ((mask & field.bit) === 0 ? 0 : field.words),
-		1
-	);
-	const delimiter = words[at + offset];
-	if (delimiter === undefined) throw new Error(`a side record's delimiters setting ends at word ${at + offset}`);
-	return delimiter;
+	if ((mask & bit) === 0) return undefined;
+	const offset = sideListSettingOffset(mask, format, bit);
+	const setting = words[at + offset];
+	if (setting === undefined) throw new Error(`a side record's ${what} ends at word ${at + offset}`);
+	return setting;
 }

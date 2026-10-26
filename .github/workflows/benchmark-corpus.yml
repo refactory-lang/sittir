@@ -9,6 +9,9 @@ on:
       grammars:
         type: string
         required: true
+      construction:
+        type: string
+        default: objects
 
 permissions:
   contents: read
@@ -38,9 +41,10 @@ jobs:
         env:
           NODE_ENV: production
           GRAMMAR: ${{ matrix.grammar }}
+          CONSTRUCTION: ${{ inputs.construction }}
         shell: bash
         run: |
-          node --import tsx packages/cli/dist/cli.js tool bench-storage "$GRAMMAR" --validation \
+          node --import tsx packages/cli/dist/cli.js tool bench-storage "$GRAMMAR" --validation --construction "$CONSTRUCTION" \
             --idle-gate scripts/ci/arena-benchmark-idle.sh \
             --output "$RUNNER_TEMP/arena-benchmarks/corpus.json" \
             2>&1 | tee "$RUNNER_TEMP/arena-benchmarks/corpus.log"

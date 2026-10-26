@@ -1025,9 +1025,9 @@ export async function emitFactorySourceText(
 		typeof table[id] === 'string' ? (table[id] as string) : undefined;
 	const catalog = catalogEntriesOf(await invoke('generatedMetadata', 'loadGeneratedIdTables', grammar));
 	const { findEntryForLiteralText } = await load('symbolTable');
-	const accessorOf = slotAccessorOf(model, (id) => types.KIND_NAMES.get(id));
+	const { triviaFacts, querySlots } = await requireGrammarModule(grammar, 'utils.ts');
+	const accessorOf = slotAccessorOf(querySlots, model, (id) => types.KIND_NAMES.get(id));
 	const root = materialize(readNode(handle), accessorOf) as ReadNodeLike;
-	const { triviaFacts } = await requireGrammarModule(grammar, 'utils.ts');
 	seatTableSides(root, triviaFacts?.layout ?? new Set());
 	seatFormTree(root, { kindNameFromId, seats: model.seats });
 	const textLeafKinds = new Set(Object.keys(model.modelTypes).filter((k) => model.modelTypes[k] === 'pattern'));

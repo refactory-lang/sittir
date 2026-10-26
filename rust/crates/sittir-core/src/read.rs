@@ -1447,7 +1447,7 @@ mod tests {
             let measure = SnapshotCtx::new(&lines, None, root);
             let mut ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(measure).with_sides(&EdgeRun);
             let side = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at.clone(), false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
-            side.into_iter().map(|entry| entry.value.node().map(|text| text.text.clone()).expect("a snapshot entry is text")).collect::<Vec<_>>()
+            side.into_iter().map(|entry| entry.value().and_then(SlotValue::node).map(|text| text.text.clone()).expect("a snapshot entry is text")).collect::<Vec<_>>()
         };
         assert_eq!(leading(NodeIndex::ROOT), [" ", "// w"], "a node inside the snapshot keeps the run its neighbour faces");
         assert_eq!(leading(NodeIndex(3)), ["// w"], "the snapshot's own node drops the run toward a neighbour outside it");
@@ -1462,7 +1462,7 @@ mod tests {
         let mut ctx = ReadCtx::new(source, crate::types::TreeId(1), |_| false).snapshot(measure).with_sides(&OneOfEach);
         let at = Origin::Snapshot(PointSpan { start: Point::ZERO, end: Point::ZERO });
         let leading = ctx.layout::<crate::trivia::TriviaText>(NodeIndex(3), at, false).trivia.and_then(|trivia| trivia.leading).expect("a seated leading side");
-        let texts: Vec<_> = leading.into_iter().map(|entry| entry.value.node().cloned().expect("a snapshot entry is text")).collect();
+        let texts: Vec<_> = leading.into_iter().map(|entry| entry.value().and_then(SlotValue::node).cloned().expect("a snapshot entry is text")).collect();
         assert_eq!(texts, [
             crate::trivia::TriviaText { kind: KindId(7), text: "// x".into(), span: Some(PointSpan { start: Point { row: 0, column: 2 }, end: Point { row: 0, column: 6 } }), before: None, after: None },
             crate::trivia::TriviaText { kind: KindId(7), text: "\n".into(), span: None, before: None, after: None },

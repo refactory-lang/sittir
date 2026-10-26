@@ -788,10 +788,6 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	kindId: kindIdFromName,
 	slots: querySlots,
 	layout: triviaFacts.layout,
-	spread: new Set<number>([
-		195, 210, 216, 302, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 405,
-		406, 407, 408, 409, 410, 411, 412, 413, 435, 436
-	]),
 	leaves: new Set<number>([1, 132, 133, 146, 155, 157, 159, 160, 161, 162, 165, 166, 399, 404]),
 	textEnvelopes: new Map<number, number>([
 		[474, 1],
@@ -806,8 +802,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 156, 163, 164, 168, 169, 170, 171,
 		172, 173, 174, 175, 178, 244, 254, 281, 321, 338, 339, 363, 364, 421, 426, 473
 	]),
-	blank: 0,
-	options: Object.freeze<NodeJSONFacts['options']>({ 295: ['trailingComma'] })
+	blank: 0
 });
 
 export const structure: StructureTable = Object.freeze({
@@ -1800,7 +1795,8 @@ export const structure: StructureTable = Object.freeze({
 		],
 		kindIds: [['_trailing_comma', 'LastMatchArm.trailingComma', [0, 130]]],
 		config: ['attributes', 'match', 'value', 'trailingComma'],
-		lists: [['attributes', false, 'key']]
+		lists: [['attributes', false, 'key']],
+		options: ['trailingComma']
 	},
 	296: {
 		kind: 'match_pattern',

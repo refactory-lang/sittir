@@ -1,7 +1,7 @@
 import type { StructureRow } from '@sittir/types';
 import type { NodeMap } from '../compiler/types.ts';
 import { innerRegions, whitespaceTrivia, type WhitespaceTrivia } from '../compiler/model/trivia.ts';
-import { classifyFactoryShape, compareOrdinal, keywordPresenceValue, registeredSlots, wireRoutesOf, type WireRoutes } from './shared.ts';
+import { compareOrdinal, keywordPresenceValue, wireRoutesOf, type WireRoutes } from './shared.ts';
 import { AssembledSupertype, storageKeyOf, type AssembledNonterminal } from '../compiler/model/node-map.ts';
 import { grammarTypeMapName } from './engine.ts';
 import { nodeSlotNumbers } from './render-module.ts';
@@ -44,9 +44,7 @@ export function emitClientUtils(config: EmitClientUtilsConfig): string {
 		...emitJsonFacts(
 			storedTextKinds(config.nodeMap, config.kindEntries).flatMap(({ node }) => (node.kindId === undefined ? [] : [node.kindId])).sort((a, b) => a - b),
 			textEnvelopeContents(config.nodeMap, config.kindEntries),
-			unitKindIds(config.nodeMap),
-			spreadKindIds(config.nodeMap),
-			registeredOptionRows(config.nodeMap)
+			unitKindIds(config.nodeMap)
 		),
 		'',
 		...emitStructure(config.structure ?? new Map()),
@@ -153,9 +151,7 @@ function textEnvelopeContents(nodeMap: NodeMap, kindEntries: readonly KindEnumEn
 function emitJsonFacts(
 	leaves: readonly number[],
 	textEnvelopes: ReadonlyMap<number, number>,
-	units: readonly number[],
-	spread: readonly number[],
-	options: ReadonlyMap<number, readonly string[]>
+	units: readonly number[]
 ): string[] {
 	return [
 		'export const jsonFacts: NodeJSONFacts = Object.freeze({',
@@ -163,31 +159,10 @@ function emitJsonFacts(
 		'\tkindId: kindIdFromName,',
 		'\tslots: querySlots,',
 		'\tlayout: triviaFacts.layout,',
-		`\tspread: new Set<number>(${JSON.stringify(spread)}),`,
 		`\tleaves: new Set<number>(${JSON.stringify(leaves)}),`,
 		`\ttextEnvelopes: new Map<number, number>(${JSON.stringify([...textEnvelopes])}),`,
 		`\tunits: new Set<number>(${JSON.stringify(units)}),`,
-		`\tblank: ${BLANK_KIND_ID},`,
-		`\toptions: Object.freeze<NodeJSONFacts['options']>({${[...options].map(([kindId, names]) => ` ${kindId}: ${JSON.stringify(names)}`).join(',')}${options.size > 0 ? ' ' : ''}})`,
+		`\tblank: ${BLANK_KIND_ID}`,
 		'});'
 	];
-}
-
-function registeredOptionRows(nodeMap: NodeMap): ReadonlyMap<number, readonly string[]> {
-	const rows = new Map<number, readonly string[]>();
-	for (const node of nodeMap.nodes.values()) {
-		if (node.kindId === undefined || node.slots.length === 0) continue;
-		const registered = registeredSlots(node).map((slot) => slot.propertyName);
-		if (registered.length > 0) rows.set(node.kindId, registered);
-	}
-	return new Map([...rows].sort(([a], [b]) => a - b));
-}
-
-function spreadKindIds(nodeMap: NodeMap): number[] {
-	return [...nodeMap.nodes.values()]
-		.flatMap((node) => {
-			const shape = classifyFactoryShape(node, nodeMap);
-			return node.kindId !== undefined && (shape === 'elements' || shape === 'spread') ? [node.kindId] : [];
-		})
-		.sort((a, b) => a - b);
 }

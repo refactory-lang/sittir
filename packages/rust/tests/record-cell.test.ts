@@ -8,6 +8,7 @@ import {
 	decodeListCell,
 	decodeSideDelimiter,
 	decodeSideRow,
+	encodeCell,
 	wordOf,
 	type RecordCell
 } from '@sittir/common/engine';
@@ -82,6 +83,22 @@ describe('the record cell decoder reads what the native codec writes', () => {
 			expect(decodeCell(entry.words, 0, format!)).toEqual(expected(entry));
 		}
 	);
+
+	const written = new Set<RecordCell['form']>(['absent', 'child', 'unit', 'builtLeaf', 'builtText']);
+	it.each(fixture.cells.filter((entry) => written.has(entry.form)).map((entry) => [JSON.stringify(entry.words), entry] as const))(
+		'encodes %s as the codec writes it',
+		(_, entry) => {
+			const words = Array.from({ length: entry.words.length }, () => 0);
+			encodeCell(words, 0, format!, expected(entry));
+			expect(words).toEqual(entry.words);
+		}
+	);
+
+	it('refuses to encode a form only a parsed tree holds', () => {
+		for (const entry of fixture.cells.filter((cell) => !written.has(cell.form))) {
+			expect(() => encodeCell([], 0, format!, expected(entry))).toThrow(/never writes/);
+		}
+	});
 
 	it('decodes a cell at its offset in a record', () => {
 		const words = [7, 7, ...fixture.cells[1]!.words];

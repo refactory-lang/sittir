@@ -235,7 +235,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     }
                     ::sittir_core::arena::Cell::BuiltLeaf { kind, text, record } if #claims => {
                         let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;
-                        let place = ::sittir_core::arena::place_of(ctx, record, &side, site)?;
+                        let place = ::sittir_core::arena::place_of(ctx, record, &side)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), side.changed, side.sides),
                             #text: ctx.string(text)?,
@@ -268,7 +268,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     _ => return ::core::result::Result::Err(#refused),
                 };
                 let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, kind)?;
-                let place = ::sittir_core::arena::place_of(ctx, at, &side, site)?;
+                let place = ::sittir_core::arena::place_of(ctx, at, &side)?;
                 let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), if site.is_some() { held } else { side.changed }, side.sides);
                 ::core::result::Result::Ok(Self {
                     __layout: layout,

@@ -14,9 +14,11 @@ use crate::types::{Delimiter, KindId, NodeIndex, Span, TreeId};
 
 /// The fields a reader of a record finds before a list's delimiters
 /// setting, in the order the side record holds them after its mask word:
-/// each one's mask bit and the words it takes. The addon exports them, and
-/// JavaScript reads a parsed record's row and a list's delimiters setting
-/// through them.
+/// each one's mask bit and the words it takes, then the list settings a
+/// builder writes, the delimiters and the chosen separator, one word each.
+/// The addon exports them: JavaScript reads a parsed record's row and a
+/// list's delimiters setting through them, and writes a built list's
+/// settings.
 pub mod field {
     pub const AT: u32 = super::mask::AT;
     pub const AT_WORDS: u32 = 4;
@@ -29,6 +31,7 @@ pub mod field {
     pub const SEPARATOR: u32 = super::mask::SEPARATOR;
     pub const SEPARATOR_WORDS: u32 = 1;
     pub const DELIMITER: u32 = super::mask::DELIMITER;
+    pub const SEPARATOR_KIND: u32 = super::mask::SEPARATOR_KIND;
 }
 
 mod mask {

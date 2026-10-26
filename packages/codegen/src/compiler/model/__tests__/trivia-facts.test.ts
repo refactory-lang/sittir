@@ -4,7 +4,15 @@ import { compileGrammar } from '../../compile.ts';
 import { loadGeneratedIdTables } from '../../generated-metadata.ts';
 import { grammarPackage } from '../../../grammars.ts';
 import { AbstractAssembledCompound } from '../node-map.ts';
-import { defaultTriviaForm, lexicalExtrasRun, lineBreakTerminated, lineTerminated, triviaKinds, whitespaceTrivia, whitespaceTriviaKinds } from '../trivia.ts';
+import {
+	defaultTriviaForm,
+	lexicalExtrasRun,
+	lineBreakTerminated,
+	lineTerminated,
+	triviaKinds,
+	whitespaceTrivia,
+	whitespaceTriviaKinds
+} from '../trivia.ts';
 import { assertWhitespaceAdmitted } from '../../assemble.ts';
 import { evaluateTempGrammar } from '../../../__tests__/helpers/temp-grammar.ts';
 import type { NodeMap } from '../../types.ts';

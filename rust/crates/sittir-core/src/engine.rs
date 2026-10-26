@@ -1531,6 +1531,17 @@ impl<G: EngineGrammar> Engine<G> {
         &self.options
     }
 
+    /// The grammar the engine parses and renders with.
+    pub fn grammar(&self) -> G {
+        self.grammar
+    }
+
+    /// The store of the sides a write set, shared with every tree the
+    /// engine parses.
+    pub fn written(&self) -> &TriviaStore<G::Trivia> {
+        &self.written
+    }
+
     pub fn render_module_hash(&self) -> &'static str {
         self.grammar.render_module_hash()
     }
@@ -2373,7 +2384,7 @@ mod tests {
         let f = index_of_kind(&tree, "function_item", 0);
         let comment = index_of_kind(&tree, "line_comment", 0);
         let leading = tree.trivia_side(f, TriviaSide::Leading);
-        let SlotValue::Coord(coord) = &leading[0].value else { panic!("an extra reads as its coordinate: {leading:?}") };
+        let Some(SlotValue::Coord(coord)) = leading[0].value() else { panic!("an extra reads as its coordinate: {leading:?}") };
         assert_eq!((coord.tree, coord.index, coord.span.start, coord.span.end), (tree.tree_id(), comment, 0, 4));
         let newline = TriviaEntry::new(SlotValue::Node(TestTrivia::Newline));
         assert_eq!(leading[1..], *std::slice::from_ref(&newline));
@@ -2395,14 +2406,14 @@ mod tests {
         let (tree, _) = parsed("fn f() {} // c\nfn g() {}\n");
         let f = index_of_kind(&tree, "function_item", 0);
         let trailing = tree.trivia_side(f, TriviaSide::Trailing);
-        assert!(matches!(trailing.first().map(|entry| &entry.value), Some(SlotValue::Coord(_))), "{trailing:?}");
+        assert!(matches!(trailing.first().and_then(TriviaEntry::value), Some(SlotValue::Coord(_))), "{trailing:?}");
     }
 
     #[test]
     fn a_changed_edge_drops_the_layout_runs_between_the_side_and_its_neighbour() {
         let (tree, _) = parsed("mod m {\n    // c\n    fn f() {}\n}\n");
         let f = index_of_kind(&tree, "function_item", 0);
-        let runs = |side, changed| tree.side_entries(f, side, changed).into_iter().map(|entry| SideEntry::into_entry(entry).value).collect::<Vec<_>>();
+        let runs = |side, changed| tree.side_entries(f, side, changed).into_iter().map(|entry| SideEntry::into_entry(entry).value().cloned()).collect::<Vec<_>>();
         assert_eq!(runs(TriviaSide::Leading, true), runs(TriviaSide::Leading, false)[1..], "the run between the comment and its owner stays");
         assert_eq!(runs(TriviaSide::Trailing, false).len(), 1);
         assert_eq!(runs(TriviaSide::Trailing, true), [], "the run after the owner spelled the gap to its old neighbour");

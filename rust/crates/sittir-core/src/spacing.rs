@@ -242,6 +242,13 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// Set on a recording render (`with_recording`): the line breaks written
     /// at each gap, by the source bytes around them.
     recorder: Option<crate::baseline::Recorder<'a>>,
+    /// The built records whose entries are being written, outermost first,
+    /// each by the store that answered it and its address.
+    #[cfg(feature = "arena")]
+    entries: Vec<(usize, crate::arena::Address)>,
+    /// The nesting of the side whose entry is being written
+    /// (`RenderSink::side_nesting`).
+    side_nesting: usize,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -332,6 +339,9 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             tail: None,
             open_before: 0,
             recorder: None,
+            #[cfg(feature = "arena")]
+            entries: Vec::new(),
+            side_nesting: 0,
         }
     }
 
@@ -1053,12 +1063,30 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
     fn frames(&self, coord: &crate::slot::NodeCoordinate) -> Result<crate::trivia::Frames, crate::render::CoordinateError> {
         let Some(sources) = self.sources else { return Ok(crate::trivia::Frames::default()) };
         let mut frames = sources.frames(coord);
-        if let Some(options) = self.options {
+        if let Some(ctx) = self.render_context() {
             for frame in frames.iter_mut() {
-                frame.prepare(&crate::prepare::RenderContext { options, sources })?;
+                frame.prepare(&ctx)?;
             }
         }
         Ok(frames)
+    }
+
+    fn render_context(&self) -> Option<crate::prepare::RenderContext<'_>> {
+        Some(crate::prepare::RenderContext { options: self.options?, sources: self.sources? })
+    }
+
+    #[cfg(feature = "arena")]
+    fn render_record_entry(&mut self, record: crate::trivia::BuiltEntry, store: usize, held: &dyn std::any::Any) -> crate::render::RenderResult {
+        let unreachable = || crate::render::RenderError::Record(crate::render::NO_ARENA);
+        let (sources, options) = (self.sources.ok_or_else(unreachable)?, self.options.ok_or_else(unreachable)?);
+        let key = (store, record.at);
+        if self.entries.contains(&key) {
+            return Err(crate::render::RenderError::Record(crate::trivia::SIDE_CYCLE));
+        }
+        self.entries.push(key);
+        let rendered = sources.render_record_entry(record, held, options, self);
+        self.entries.pop();
+        rendered
     }
 
     fn end_lines_after(&mut self, coord: &crate::slot::NodeCoordinate) {
@@ -1144,6 +1172,14 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
 
     fn in_frame_of(&self, coord: &crate::slot::NodeCoordinate) -> bool {
         self.frames.last().is_some_and(|frame| frame.origin == Some((coord.tree, coord.index)))
+    }
+
+    fn side_nesting(&self) -> usize {
+        self.side_nesting
+    }
+
+    fn set_side_nesting(&mut self, nesting: usize) -> usize {
+        std::mem::replace(&mut self.side_nesting, nesting)
     }
 
     fn layout_depth(&mut self, delta: i32) {

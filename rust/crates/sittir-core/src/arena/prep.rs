@@ -74,6 +74,24 @@ pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: 
     Ok(prepared)
 }
 
+/// `prepare_root` for the record of a trivia entry, which renders without its
+/// own leading and trailing sides: they are its neighbours in the side that
+/// holds it (`trivia::spliced`). Its inner side stays.
+///
+/// # Errors
+///
+/// What `prepare_root` refuses.
+pub fn prepare_entry_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>) -> Result<Prepared<T>, CoordinateError> {
+    let mut prepared = prepare_root::<T, N>(trees, built, store, root, ctx)?;
+    if let Cell::Child { at, link: None, .. } = root.cell {
+        if let Some(trivia) = prepared.node_mut(Place::Record(at).into()).trivia.as_mut() {
+            trivia.leading = None;
+            trivia.trailing = None;
+        }
+    }
+    Ok(prepared)
+}
+
 /// What a record's prepare reads and writes besides the record: the overlay
 /// it fills and the parsed trees' arenas it may write a first read into,
 /// beside the built arena, the render's trees and the store of written
@@ -140,6 +158,12 @@ pub trait PrepareRecord<T>: Sized {
     fn snapshot_edge(prep: &RecordPrep<'_, T>, at: CellAt) -> Option<SnapshotEdge>;
     /// `KindOf::kind_in`.
     fn kind_in(prep: &RecordPrep<'_, T>, at: CellAt, kinds: &[KindId]) -> bool;
+    /// The storage key of the slot whose cell a record of `kind` holds at
+    /// `word`, `None` for any other word or kind.
+    fn slot_key(kind: KindId, word: u32) -> Option<&'static str>;
+    /// The word a record of `kind` holds the cell of the slot `key` at,
+    /// `None` for any other slot or kind. The inverse of `slot_key`.
+    fn slot_word(kind: KindId, key: &str) -> Option<u32>;
 }
 
 impl<T, N: PrepareRecord<T>> PrepareRecord<T> for Box<N> {
@@ -169,6 +193,14 @@ impl<T, N: PrepareRecord<T>> PrepareRecord<T> for Box<N> {
 
     fn kind_in(prep: &RecordPrep<'_, T>, at: CellAt, kinds: &[KindId]) -> bool {
         N::kind_in(prep, at, kinds)
+    }
+
+    fn slot_key(kind: KindId, word: u32) -> Option<&'static str> {
+        N::slot_key(kind, word)
+    }
+
+    fn slot_word(kind: KindId, key: &str) -> Option<u32> {
+        N::slot_word(kind, key)
     }
 }
 
@@ -202,6 +234,14 @@ impl<T> PrepareRecord<T> for crate::verbatim::VerbatimNode {
     fn kind_in(_: &RecordPrep<'_, T>, _: CellAt, _: &[KindId]) -> bool {
         false
     }
+
+    fn slot_key(_: KindId, _: u32) -> Option<&'static str> {
+        None
+    }
+
+    fn slot_word(_: KindId, _: &str) -> Option<u32> {
+        None
+    }
 }
 
 /// Where one record is, as its prepare body's handles name it.
@@ -229,7 +269,7 @@ impl RecordKey {
                     None => view,
                 };
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                let place = place_of(view, record, &side, at.site)?;
+                let place = place_of(view, record, &side)?;
                 Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: if at.site.is_some() { changed } else { side.changed } })
             }
             Cell::BuiltLeaf { kind, record, .. } if claims(kind) => {

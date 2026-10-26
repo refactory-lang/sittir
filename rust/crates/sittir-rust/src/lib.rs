@@ -33,7 +33,7 @@ use render::{render_node_parts, AnyNode, RENDER_MODULE_HASH};
 use render::RenderRoot;
 
 #[cfg(feature = "napi-bindings")]
-const NATIVE_RENDER_NODE_ABI: u32 = 25;
+const NATIVE_RENDER_NODE_ABI: u32 = 26;
 
 #[derive(Clone, Copy, Default)]
 pub struct RustGrammar;
@@ -113,6 +113,30 @@ sittir_core::records_codec! {
             ctx: &sittir_core::prepare::RenderContext<'_>,
         ) -> std::result::Result<String, sittir_core::render::RenderError> {
             render::node::render_record(root, trees, built, store, ctx)
+        }
+
+        fn render_entry(
+            self,
+            root: sittir_core::arena::CellAt,
+            trees: &mut dyn sittir_core::arena::RecordTrees,
+            built: &dyn sittir_core::arena::ArenaRead,
+            store: &sittir_core::trivia_store::TriviaStore<Self::Trivia>,
+            ctx: &sittir_core::prepare::RenderContext<'_>,
+            w: &mut dyn sittir_core::render::RenderSink,
+        ) -> sittir_core::render::RenderResult {
+            render::node::render_entry_record(root, trees, built, store, ctx, w)
+        }
+
+        fn shape(kind: sittir_core::types::KindId) -> Option<sittir_core::arena::RecordShape> {
+            <AnyNode as sittir_core::arena::RecordCells>::shape(kind)
+        }
+
+        fn slot_key(kind: sittir_core::types::KindId, word: u32) -> Option<&'static str> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_key(kind, word)
+        }
+
+        fn slot_word(kind: sittir_core::types::KindId, key: &str) -> Option<u32> {
+            <AnyNode as sittir_core::arena::PrepareRecord<Self::Trivia>>::slot_word(kind, key)
         }
     }
 }

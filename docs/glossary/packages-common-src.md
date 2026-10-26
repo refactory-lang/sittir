@@ -78,6 +78,8 @@ An engine's identity plus its `render` and `query`: what a node's `$render` and 
 
 The one object an engine shares with every node it stamps. `current` is the live engine, or its identity once the engine is disposed, so swapping it detaches every node of that engine at once with no registry of nodes and no walk over them. A node holds the handle strongly, so `$render` never depends on when the collector runs. `lineGapsOf` is the engine's line-gap query while it lives, the one `readTrivia` derives a read node's whitespace from; dispose removes it, so a detached node reads only the trivia it stores. `settle` is what a build or rebuild hands its result through before returning it (`settlerOf`). `admit(kindId, args, declared?)` is what a call's input is handed to before the build is trusted (`admitterOf`); `declared` is the key list a refine form passes, since the parent kind's row would refuse its valid keys: each generated raw builder and loose coercer of a kind whose row has `config` or `lists` calls it first, through `currentHandle()`, with its own kind id and the arguments it was given (`admitStatement`).
 
+`records` and `builtArena`, when present, are the record builder module the engine's builders dispatch to and the arena those builders write into (`useRecordConstruction`); `verifyStored` is the writer check a record builder runs on the values it stores (`storedVerifierOf`).
+
 ### `packages/common/src/engine-scope.ts::inEngine`
 
 Runs a synchronous call with a handle in scope and restores the previous one afterwards, also when the call throws. Every builder call, wrap and lazy child hydration, and `$with` and `$trivia` setter runs inside it, so a node created there is stamped with that engine's handle. It never wraps an `await`: the scope is a module-level variable that only a synchronous call may hold.
@@ -354,7 +356,7 @@ The engine a value belongs to when that engine is of another language than `iden
 
 ### `packages/common/src/engine-scope.ts::admitChildren`
 
-The refusal of a child from another language's engine, at the two writers of a node's children: every generated builder that has an engine in scope (`builderHandleLines`), which a direct call, a call through an engine's build table and a built node's `$with` all reach, and a parsed node's `$with`, slot by slot (`admitSlot`). `slots` maps each slot's config key to its value; a list's items are each checked, one level down and no further. A child of another language (`foreignEngine`) throws `cannot build a <language> <kind> with a <language> node in its <slot>`. It is the early refusal: a foreign coordinate that reaches the native engine another way names no tree of it and is refused at lookup.
+The refusal of a child from another language's engine, at the two writers of a node's children: every generated builder that has an engine in scope (`builderHandleLines`), which a direct call, a call through an engine's build table and a built node's `$with` all reach, and a parsed node's `$with`, slot by slot (`admitSlot`). `slots` maps each slot's config key to its value; a list's items are each checked, one level down and no further. A child of another language throws `cannot build a <language> <kind> with a <language> node in its <slot>`. A child of an engine of the same language that stores its nodes differently (`stampEngineStorage`) throws too: an object node and a record never hold one another, so neither backend has a case for the other's nodes. It is the early refusal: a foreign coordinate that reaches the native engine another way names no tree of it and is refused at lookup.
 
 ### `packages/common/src/engine-scope.ts::admitSlot`
 
@@ -382,11 +384,11 @@ Adapts one grammar's native engine to the language hooks' native engine shape, t
 
 ### `packages/common/src/engine.ts::renderNativeNode`
 
-Renders through the calling engine's native instance, so that engine supplies render defaults for both object nodes and record views. A record view supplies its source tree and record address; its tree reader owns storage access and carries no render callback. Deferred render handles retain the input node, keeping every source tree it names alive until the render finishes.
+Renders through the calling engine's native instance, so that engine supplies render defaults for object nodes and record views alike. A view of a built record (`builtArenaOf`) renders from its arena's chunks, which the render handle borrows for one native call each time it renders (`renderBuilt`); the arena holds every parsed tree its records link. A view read from a parsed tree supplies its tree and record address; its tree reader owns storage access and carries no render callback. Either renders as a render root whose edges have no neighbour (`rootEdges`). Deferred render handles retain the input node, keeping every source tree it names alive until the render finishes.
 
 ### `packages/common/src/engine.ts::NativeEngineLike`
 
-The shared TypeScript contract of a grammar addon. Record lookup, deep hydration, typed candidate metadata, chunk copies, address rendering and candidate rendering are independent capabilities. Candidate enumeration exports only coordinates and addresses from the native typed record tree. Candidate rendering renders a native parsed row or record with its outer trivia excluded; it does not export node fields.
+The shared TypeScript contract of a grammar addon. Record lookup, deep hydration, typed candidate metadata, chunk copies, address rendering, candidate rendering and built-record rendering are independent capabilities. Built-record rendering borrows a built arena's chunks for the one call, without copying them, and refuses a chunk that is not a typed array of its kind over an ordinary `ArrayBuffer`: a `SharedArrayBuffer` could be written by another thread while the render reads it. Candidate enumeration exports only coordinates and addresses from the native typed record tree. Candidate rendering renders a native parsed row or record with its outer trivia excluded; it does not export node fields.
 
 ### `packages/common/src/engine.ts::recordReader`
 
@@ -461,7 +463,7 @@ Binds the runtime to a grammar's type map. `isNode` is the shared implementation
 
 ### `packages/common/src/verify-structure.ts::verifyStructure`
 
-`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
+`verifyStructure(value, table, seen)` checks a built node against the facts its generated types prove: each kind's row in the language's structure table (`StructureRow`). A required slot holds a value (`Missing required slot '<slot>' on <kind>`), a non-empty list holds an item (`<label>: requires at least one element`, an absent list included), and a node-only slot holds no bare text, through `rejectBareText` so the message is the builder's. It walks depth-first through every slot value that is an object or an array, so a node is checked wherever it sits. It checks the node it is given whatever wrote it, and below it only the nodes a builder wrote: those whose source stamp is `Source.Factory` (`sourceOf`), and those a `$with` rebuild returned (`isRebuilt`), since a rebuild of a read node writes its slots but keeps its read provenance, from whichever engine ran it. A coordinate or an untouched read node it holds is the reader's shape, checked when it was read. A built record's node is skipped too (`isBuiltNode`): its builder checked its values as it wrote them. A node joins `seen` after it and everything under it pass, so one engine's per-engine set walks each built node once, and a refused node is refused again on the next walk. An engine in `verifyStructure: 'runtime'` mode runs it on the result of each top-level build and rebuild; in the default mode nothing calls it, and the native decode refuses a malformed node at render.
 
 ### `packages/common/src/verify-structure.ts::checkInput`
 
@@ -626,7 +628,7 @@ What a parsed node's `$query` runs: the query facet its engine makes for it. It 
 
 ### `packages/common/src/utils.ts::rebuilt`
 
-What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carryPlace`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), a built source's stored trivia, and the unit sides it holds, realigned to the new slots (`carryUnitSides`). It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
+What every `$with` setter runs its rebuild through. It runs the rebuild inside the node's own engine (or plainly, when the node has none), stamps the node the rebuild returns as rebuilt (`markRebuilt`), and hands it what it keeps of the source node: that a read produced it (`carryRead`), its source identity (`carryPlace`), through which the sides it does not hold are its source's (`sideOf`; the render fills them from the table through `$_layout.sides`), and the sides a write gave the source itself (`writtenSides`), written on the rebuilt node where its sides are held (`writeTrivia`), and the unit sides it holds, realigned to the new slots (`carryUnitSides`). It gives each fresh node the rebuild minted in a slot the source node held the same (`carryRebuiltSlots`). Inner comments can only travel to a node that is still empty: once the rebuild gives the node a child, a comment would sit beside it, so the call throws and names the kind. Inner layout alone (whitespace and depth members, which cross as bare kinds) spelled the inside of the empty node, so a node that gains a child takes an empty inner side in its place: `{\n}` takes its first statement as `{}` does. A rebuild inside an engine returns through the handle's `settle`, so a `'runtime'` engine checks the edited node's structure, read node or built.
 
 ### `packages/common/src/utils.ts::triviaSide`
 
@@ -747,7 +749,7 @@ The elements a list stores: its array, or the one element it holds, or none. The
 
 ### `packages/common/src/utils.ts::ownerView`
 
-What a list owner knows of the list it holds, read once when the owner is built: the list itself, and its stored elements. An owner normally holds the list node already read, with its elements as stubs. A list stored only as a read stub (a parent handle and a child index) carries no count, so the owner's `hydrate` reads it. A wrap passes its own `hydrateChild`, the path its accessors take, so the list arrives wrapped, with its children seated in the model's slots, and `count` names a model slot whatever key the parser gave the items. Without a hydrator (a factory) the elements are unknown and the owner cannot count them.
+What a list owner knows of the list it holds, read once when the owner is built: the list itself, and its stored elements. An owner normally holds the list node already read, with its elements as stubs. A list stored only as a read stub (a parent handle and a child index) carries no count, so the owner's `hydrate` reads it. A wrap passes its own `hydrateChild`, the path its accessors take, so the list arrives wrapped, with its children seated in the model's slots, and `count` names a model slot whatever key the parser gave the items. Without a hydrator (a factory) the elements are unknown and the owner cannot count them. A built record's list view is already the list, so it is used as it is.
 
 ### `packages/common/src/utils.ts::ownerElements`
 
@@ -894,13 +896,21 @@ Records a wrapper for a node of a tree, by index and role, weakly. A finalizatio
 
 The descendant index a read node or a coordinate names itself by: `decodeIndex` of `treeHandleOf`. `undefined` for a node with no coordinate (a built node, a draft).
 
-### `packages/common/src/utils.ts::wrapRegistered`
+### `packages/common/src/identity.ts::wrapRegistered`
 
 The one seat that wraps and registers: the wrapper the registry holds at the value's index and role, or the value wrapped and registered there. A value that names no index of `tree` (none at all, or one of another tree) is wrapped and not registered. The registry stores wrappers as `object` because one registry serves every kind; that what is registered at a tree, an index and a role is always the wrapper of one storage kind (measured over every corpus entry of rust, typescript and python, across the nested read, the read at the index and the query yield) is what makes returning it as `T` sound.
 
 ### `packages/common/src/utils.ts::contentRole`
 
 The role an alias envelope's content accessor hydrates in: `aliasContent` when the content stamps the envelope's own index (the alias renamed one parser node), `node` when the content is its own parser node, which a query may also reach and which must then be one object. It compares the two values' stamped indexes, so it re-derives nothing the reader did not stamp.
+
+### `packages/common/src/utils.ts::writeTrivia`
+
+The one writer of a node's sides. Each side `trivia` holds replaces the one the node held, and the sides it leaves out stay. A node whose sides a table holds (`tableAt`) is written there: a parsed node's in its tree's table at its index, a built record's in its arena's table at its address, which is the engine's store a native render reads. Any other node is written in its own data (`$_layout.trivia`). A table takes each entry as detached data (`snapshotOf`): it outlives any other tree the entry was read from, and a snapshot of the tree returns its sides as they are. The trivia writes (`triviaWriter`), a rebuild's carried sides (`rebuilt`) and the validator's copied sides (`writeSides`, `carryGroupTrivia`) all go through it, so a built record's sides reach its render whoever writes them.
+
+### `packages/common/src/utils.ts::triviaWriter`
+
+The `$trivia` reads and writes of one node, bound to its engine: each item becomes an entry under the engine (`triviaEntryOf`), and each write goes where the node's sides are held (`writeTrivia`). `inner` writes only to an empty node of a kind with an inner site; a read hydrates what the side holds (`sideOf`).
 
 ### `packages/common/src/utils.ts::isEmptyNode`
 
@@ -918,7 +928,7 @@ Whether a node stores nothing that owns sides in the slots `region` names, or in
 
 ### `packages/common/src/node-data.ts::sideOf`
 
-The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools: the entries of `sideRead`, which decides per side where it lives. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built node's side is the one it stores, else the side of the node it was rebuilt from (`placeOf`), while that tree lives. An alias envelope and its content are one parser node, and the envelope holds that node's sides: the content (`envelopeKindOf`) reads none from the table, so every reader meets a comment there once.
+The entries of one side of a node, the one source of a node's sides for the `$trivia` surface, the crossing and the tools: the entries of `sideRead`, which decides per side where it lives. A parsed node's side is its live tree's trivia table's at its own index (`tableAt`): the entries a write gave it, else the ones the table assigns it. A built record's side is the one a write gave it in its arena's table (`tableAt`), an object node's the one it stores; either way, a node that holds none of that side has the side of the node it was rebuilt from (`placeOf`), while that tree lives. A table answers `undefined` for a side no write gave a built record, which is what lets it fall through. An alias envelope and its content are one parser node, and the envelope holds that node's sides: the content (`envelopeKindOf`) reads none from the table, so every reader meets a comment there once.
 
 ### `packages/common/src/node-data.ts::sidesOf`
 
@@ -926,7 +936,7 @@ Every non-empty side of a node (`sideOf`), as a `NodeTrivia`; `undefined` when i
 
 ### `packages/common/src/node-data.ts::tableAt`
 
-The trivia table that answers for a parsed node: its live tree's, at its own index; `undefined` for a built node or one whose tree is gone. `tableOf` is the check both it and a built node's source lookup share: a tree that reads and writes sides, and an index.
+The trivia table that answers for a node: a parsed node's live tree's, at its own index, and a built record's arena's (`BuiltRecords`), at its record's address; `undefined` for an object node, a copy of a built node, and a node whose tree is gone. `tableOf` is the check a parsed node and a built node's source lookup share: a tree that reads and writes sides, and an index. A built record is found through the leaf module that names built nodes (`builtRefOf`), so this module never imports the arena.
 
 ### `packages/common/src/node-data.ts::rootEdges`
 
@@ -972,13 +982,17 @@ Whether a value has a text member in either form, a node's `$text()` method or n
 
 `holdReadTree` for one object that a read of `from` produced. `to` gets `from`'s tree token (`carryTree`), its source stamp (`carrySourceStamp`) and its read provenance (`carryRead`), and is returned. A record view reads each child leaf and child record stub out of its holder's cells (`cellData`) instead of through the engine's read sites. This gives those objects the same three facts a read object holds, so a view of a child is a `Source.Ts` node on the arena wire just as a read node is on the object wire.
 
+### `packages/common/src/node-data.ts::writtenSides`
+
+The sides a write gave a node itself, which a rebuild of it carries (`rebuilt`): a built record's from its arena's table, each side a write gave it, and any other node's from its data. The sides a built record inherits from the node it was rebuilt from are left out, so a rebuild keeps naming that node for them (the identity `carryPlace` hands on) instead of copying them as written.
+
 ### `packages/common/src/node-data.ts::envelopeKindOf`
 
 The display id of the alias envelope whose content a node is, read from the same parser node, else `undefined`. The reader stamps a coordinate with the grammar id, except at an alias envelope, where it stamps the display id; the envelope and its content are wrapped from that one coordinate, so the content is the node whose stamp (its own coordinate's, or the one an edit carried forward, `placeOf`) differs from its own kind. Over the corpora this matches "shares its holder's tree handle" exactly. The contract: an alias content's comments belong to its envelope. `sideRead` reads the content nothing from a table, whose entries for that parser node are the envelope's (a content an edit rebuilt still reads the sides it holds as its own data), and a `$trivia` write through the content lands on the one parser node, which the envelope reads once and every writer (JSON, render) writes once. `isAliasContent` asks this of a holder's child.
 
 ### `packages/common/src/node-data.ts::sideRead`
 
-One side of a node and the tree whose trivia table holds it, decided per side, the one source `sideOf` and the `$trivia` reader share: a parsed node's live table at its own index, else the side the node holds as its own data (no tree), else the table of the node it was rebuilt from (`placeOf`) while that tree lives. So a rebuilt node that wrote one side and inherits the other reads each from where it lives, and the reader hydrates each through its own tree. An alias envelope's content (`envelopeKindOf`) reads nothing from either table, since that parser node's entries are its envelope's; a side it holds as its own data, after an edit rebuilt it, is still read.
+One side of a node and the tree whose trivia table holds it, decided per side, the one source `sideOf` and the `$trivia` reader share: its live table at its own index (a parsed node's, or a built record's once a write gave it that side), else the side the node holds as its own data (no tree), else the table of the node it was rebuilt from (`placeOf`) while that tree lives. So a rebuilt node that wrote one side and inherits the other reads each from where it lives, and the reader hydrates each through its own tree. An alias envelope's content (`envelopeKindOf`) reads nothing from either table, since that parser node's entries are its envelope's; a side it holds as its own data, after an edit rebuilt it, is still read.
 
 ### `packages/common/src/node-data.ts::setUnitSides`
 
@@ -1087,6 +1101,144 @@ Reads the item count using emitted numeric cell arguments without hydrating item
 ### `packages/common/src/record-view.ts::recordFlag`
 
 Reads the emitted presence word and bit directly after checking the word slice. Kind-specific placement is resolved at generation rather than looked up through a runtime table.
+
+### `packages/common/src/built-arena.ts::BuiltArena`
+
+The records one engine's builders write, in chunks of words and of UTF-8 bytes that JavaScript owns. Native code is handed the chunks for one synchronous call (`chunks`), each cut to what is written, so nothing native holds them between calls. The arena only appends: a record is written once, by its builder, and never changes, so a `$with` writes a new record that names the unchanged children by their addresses.
+
+Allocation follows the native arena's chunk policy. The first shared chunk is small and each later one doubles, up to the words a packed address can name within a chunk (`2 ** chunkShift`); an allocation larger than that gets a chunk of its own, and the arena refuses once it holds as many chunks as an address can name. Word 0 of the first chunk is never allocated, so address 0 means no record, as it does natively.
+
+Text is interned: equal strings share one reference, and the string a builder was given is kept beside its bytes, so reading a built leaf's text back returns that string without decoding. Empty text takes no bytes; its reference is offset 0 with length 0, it is never entered in the by-offset table, and reading any length-0 reference returns `''`, so it cannot collide with the first string written at byte 0.
+
+The arena also owns the nodes that view its records. A compound record's node is a view from the language's view table, the same accessors a parsed record's view has, over the handle `tree`, whose `built` is this arena and whose trivia table is the engine's store of built records' sides, by address (`BuiltRecords`); the handle is bound to the engine, so a view made outside a builder call still finds its engine. Each node is held weakly by its record's address: a read of a child cell returns the node its builder returned while anything holds it, else a fresh view of the record. A parent's row holds the inputs of its rebuilds, which hold its children's nodes, so a reachable parent keeps its children's nodes.
+
+### `packages/common/src/built-arena.ts::BuiltArena::view`
+
+The node of the compound record its builder just wrote: a view of the record, which also records the record's length, a fact the builder knows as it allocates and `storeInline` needs to copy the record into a parent.
+
+### `packages/common/src/built-arena.ts::BuiltArena::adoptLeaf`
+
+Gives a built leaf, the object node its builder made, a header-only record of its kind and its interned text. The record is the key the leaf's sides take in the built trivia table, and a parent's cell names the leaf by its kind, its text and that record.
+
+### `packages/common/src/built-arena.ts::storeCell`
+
+Writes one slot's cell into a fresh record at the literal word offset a generated builder passes: nothing for no value (a fresh record is zeroed, which is an absent cell), a unit for a kind id, a captured string for text, a built leaf for a leaf node, and a child for a compound node, each naming the record of a node this arena's builders made. Which cell a value takes is a fact of the value, not of the layout, so it is decided here; the layout's offsets stay literal in the builder. A node from another arena or engine, or one no builder made, is refused.
+
+### `packages/common/src/built-arena.ts::storeList`
+
+Writes a list slot's cell: a run of the items' cells, each `stride` words, and the run's address and length. An empty list writes nothing, the absent list cell.
+
+### `packages/common/src/built-arena.ts::storeInline`
+
+Writes a bounded slot's cell. A compound node is copied whole into the cell after the inline header, at the length its builder stamped. A unit or leaf in a slot that also admits bounded compounds takes its ordinary cell, which the decoder tells apart by its tag.
+
+### `packages/common/src/built-arena.ts::storeListOptions`
+
+Gives a built list record a side record when its builder chose a delimiters setting or a separator, in the side record's field order, and names it from the record's header. A list with neither keeps no side record.
+
+### `packages/common/src/built-arena.ts::encodeCell`
+
+The inverse of `decodeCell` for every form a builder writes, pinned with the decoder against the shared `cell-forms.json` fixture so both directions agree with the native codec. The stores write cells through the same positional writers.
+
+### `packages/common/src/built-arena.ts::isBuiltNode`
+
+Whether a value is a built record's node. Its builder checked its stored values as it wrote them (`EngineHandle.verifyStored`), so the storage-key verifier leaves it alone.
+
+### `packages/common/src/built-arena.ts::builtRecordOf`
+
+The address of the record a node is the node of, in one arena.
+
+### `packages/common/src/record-view.ts::bindRow`
+
+Makes an object the target of a built view's writes. A parsed view's `$with` and `$trivia` go through its row, the object node read once from its tree; a built record has no row in any tree, so its builder binds the setters and trivia members it made, the same ones an object node of the kind has.
+
+### `packages/common/src/read.ts::RecordWords`
+
+What every record view reads its words through, a parsed tree's records and a built arena alike: the cell format and the words of a chunk.
+
+### `packages/common/src/create-engine.ts::useRecordConstruction`
+
+Gives an engine that reads trees as records the language's record builder module (`factories/records.ts`) and a built arena, so the dispatching builders of `raw.ts` run the record builders in that engine from then on. The caller imports the module, so a process that never builds records never loads it. It is internal: tests and measurements use it until an arena engine loads the record builders itself, and that switch removes it.
+
+### `packages/common/src/engine.ts::nativeBuiltRecords`
+
+What the built arena of a language engine that reads trees as records is made with (`BuiltRecords`), kept beside the engine rather than on its public interface, which a types-only package declares. `createEngine` reads it when it gives the engine its record builders (`useRecordConstruction`).
+
+### `packages/common/src/engine.ts::builtRecordsOf`
+
+The `BuiltRecords` of a native engine that reads trees as records: its cell format, and its trivia table of built records, which reads and writes the engine's store of written sides by record address (`builtTriviaSide`, `writeBuiltTriviaSide`). A read of a side no write gave answers `undefined`, as the table contract has it (`TreeHandle.triviaSide`), so the side falls back to the one of the node the record was rebuilt from. An addon without the record codec has no such table, and is refused.
+
+### `packages/common/src/built-arena.ts::BuiltArena::node`
+
+The node a child cell names by its record's address: the one its builder returned while anything holds it, else a fresh view of the record, which the arena then holds weakly in its place.
+
+### `packages/common/src/built-arena.ts::BuiltArena::hold`
+
+Keeps a parsed tree alive for as long as a record of this arena links one of its records. The tree is held with its token, the fact that marks a node as read from it, so a view made from the link later is a read node of that tree, as the tree's own views are. Tree ids are never reused, so a link names its tree by id.
+
+### `packages/common/src/built-arena.ts::BuiltArena::linked`
+
+The node a child cell that links a parsed tree's record names: that tree's own registered view of the record (`wrapRegistered`), so reading a built record's untouched parsed child returns the node the parsed tree gives for it, holding that tree's token. A record that is not its row's own record is alias content sharing its envelope's row, so it is looked up in the `aliasContent` role, as the envelope's own view reads it; in the `node` role the registry would return the envelope.
+
+### `packages/common/src/built-arena.ts::BuiltArena::parsedLeaf`
+
+The record a built record names a parsed leaf by. A parsed leaf has no record in its tree, so the built record holds it as a built leaf: its kind, its text interned here, and a header-only record whose side record holds `sides`, the leaf's tree, row, subtree end and byte span. Its sides are read from its tree through those. The record holds the leaf node weakly, as a built leaf's does.
+
+### `packages/common/src/built-arena.ts::BuiltArena::leaf`
+
+The node of the built leaf whose cell names the record at `at`. A built leaf's node is the object node its builder made, or the parsed leaf a built record holds, so no view can be made afresh: the record has no words to view. A leaf released while a record still names it is refused.
+
+### `packages/common/src/built-arena.ts::storeFlag`
+
+Sets presence bits in a fresh record's flag word, so a builder's literal offset and mask are its only facts and the generated code needs no indexed read-modify-write.
+
+### `packages/common/src/built-arena.ts::storeParsed`
+
+The cell of an untouched node a parsed tree read, so a built record holds the read children of its inputs by link, as the native writer does. Edits drop a node's coordinate (`detachCoordinate`), so a node that still has one and its tree's token is untouched.
+
+A compound node becomes a child cell that links its record in the parsed tree. Its kind is the node's own `$type`, not its coordinate's: alias content shares its envelope's parser row, so the coordinate and the row's record are the envelope's. When the row's record is of another kind, the content's own record is the candidate at that row with the node's kind (`rowRecordOf`). A parsed leaf, which has no record, becomes a built leaf through `BuiltArena::parsedLeaf`. Either way the arena holds the tree from then on (`BuiltArena::hold`).
+
+A node read through an engine that does not read trees as records, or an object no read or builder produced, is refused.
+
+### `packages/common/src/built-arena.ts::rowRecordOf`
+
+The record of the parsed node of `kind` at a row: the row's record when it is of that kind, else the record of the content sharing the row (`RecordReader.candidates`) that is. `undefined` for a leaf, which has no record.
+
+### `packages/common/src/built-arena.ts::builtArenaOf`
+
+The arena whose record a node is the node of: the one its builder wrote it into, as `builtRecordOf` reads it. A view of a built record holds no tree token, so this, not `treeOf`, is how a render finds the chunks it borrows. `undefined` for a parsed node, an object node, and a copy of a built node: a copy carries the record's stamp but is no node of the arena.
+
+### `packages/common/src/built-arena.ts::BuiltRecords`
+
+What a built arena is made with, from the engine that owns it: the cell format its records are written in, and the trivia table its records' sides live in, keyed by record address. The arena puts the table on its tree handle (`BuiltArena.tree`), so a built record's sides are read and written where a parsed node's are (`tableAt`), and the native render of a built record finds them in the same store (`renderBuilt`).
+
+### `packages/common/src/create-engine.ts::storedVerifierOf`
+
+The writer check a record builder runs before it writes (`EngineHandle.verifyStored`): the stored values checked against the kind's structure row, as `verifyStructure` checks an object node's. Only an engine in `verifyStructure: 'runtime'` mode has one. A built record's node is checked here, as it is written, so the walk after a build leaves it alone (`isBuiltNode`).
+
+### `packages/common/src/verify-structure.ts::checkRow`
+
+One kind's structure row checked against one node's stored values: its required slots, its non-empty lists and its node-only slots. `verifyStructure` runs it on each object node it walks; a record builder runs it on the values it is about to write (`storedVerifierOf`).
+
+### `packages/common/src/engine-scope.ts::dispatched`
+
+A builder that calls, on each call, the builder `pick` returns, with the same `this` and arguments. A language's `raw.ts` exports one per builder, picking the backend of the engine in scope, so every module that imports builders reaches the right one without knowing there are two.
+
+### `packages/common/src/engine-scope.ts::recordBuilders`
+
+The record builder module of the engine in scope (`EngineHandle.records`), `undefined` outside an engine or in one that builds objects. The cast to the caller's module type is the one place a backend's type is asserted: both backends are generated from the same signatures.
+
+### `packages/common/src/engine-scope.ts::builtArenaOf`
+
+The arena a record builder writes into: the built arena of the engine in scope. A record builder called outside such an engine is refused, since its records would have no arena to live in.
+
+### `packages/common/src/engine-scope.ts::stampEngineStorage`
+
+Records how an engine stores its nodes, for the live engine and its identity alike, since a node names its engine through either (`engineOf`) and a disposed engine's handle holds its identity. `createEngine` stamps every engine it makes; admission compares the stamps.
+
+### `packages/common/src/built-ref.ts::builtRefOf`
+
+What a built node names: its arena, its record's address, and a leaf's interned text; `undefined` for any other value, a copy of a built node included. The map lives in a module that imports nothing at run time, so the arena (`adoptBuilt`) and the node data that finds a built record's trivia table (`tableAt`) share it without importing each other.
 
 ### `packages/common/src/node-json.ts::nodeJSON`
 

@@ -1145,6 +1145,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return false;
 	}
 
+	get unit(): boolean {
+		return this.modelType === 'keyword' || this.modelType === 'punctuation';
+	}
+
 	get rawFactoryName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
 		return `build${this.typeName}`;
