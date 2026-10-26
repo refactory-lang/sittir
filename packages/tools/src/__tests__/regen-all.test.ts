@@ -57,6 +57,8 @@ vi.mock('../validate/grammar-diagnostics-file.ts', async (importOriginal) => ({
 	...(await importOriginal<typeof import('../validate/grammar-diagnostics-file.ts')>()),
 	readGrammarDiagnostics: (grammar: string) => ({ entries: diagnosticsOf.get(grammar) ?? [] })
 }));
+const { regenerateEagerProbe } = vi.hoisted(() => ({ regenerateEagerProbe: vi.fn((_cwd: string, _verbose: boolean) => 0) }));
+vi.mock('../eager-probe.ts', () => ({ regenerateEagerProbe }));
 vi.mock('../regen-record.ts', () => ({
 	readRegenRecord: (_cwd: string, grammar: string) => records.get(grammar),
 	writeRegenRecord,
@@ -107,6 +109,7 @@ beforeEach(() => {
 	diagnosticsOf.clear();
 	spawn.mockReset().mockImplementation(fakeChild);
 	spawnSync.mockReset().mockReturnValue(built(0));
+	regenerateEagerProbe.mockReset().mockReturnValue(0);
 });
 afterEach(() => vi.restoreAllMocks());
 
@@ -431,5 +434,51 @@ describe('regen:all when only what the fixtures come from changed', () => {
 		await expect(run).rejects.toThrow('exit');
 		expect(exit).toHaveBeenCalledWith(3);
 		expect(writeRegenRecord).not.toHaveBeenCalled();
+	});
+});
+
+describe('regen:all and the eager probe', () => {
+	it('regenerates the probe once every grammar is generated and built natively', async () => {
+		process.env.SITTIR_REGEN_VERBOSE = '1';
+		vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		expect(regenerateEagerProbe).not.toHaveBeenCalled();
+		for (const child of children) child.finish(0);
+		await run;
+		expect(regenerateEagerProbe.mock.calls).toEqual([['/repo', true]]);
+		expect(regenerateEagerProbe.mock.invocationCallOrder[0]).toBeGreaterThan(spawnSync.mock.invocationCallOrder.at(-1)!);
+	});
+
+	it('regenerates the probe after the workspace check when every grammar is fresh', async () => {
+		finished('rust', 'typescript', 'python');
+		vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		await import('../scripts/regen-all.ts');
+		expect(regenerateEagerProbe.mock.calls).toEqual([['/repo', false]]);
+		expect(regenerateEagerProbe.mock.invocationCallOrder[0]).toBeGreaterThan(runWorkspaceCheck.mock.invocationCallOrder[0]!);
+	});
+
+	it('leaves the probe alone when a generation fails', async () => {
+		vi.spyOn(process, 'exit').mockImplementation(() => {
+			throw new Error('exit');
+		});
+		const run = import('../scripts/regen-all.ts');
+		await generationsStarted(3);
+		children[0]!.finish(4);
+		children[1]!.finish(0);
+		children[2]!.finish(0);
+		await expect(run).rejects.toThrow('exit');
+		expect(regenerateEagerProbe).not.toHaveBeenCalled();
+	});
+
+	it('exits with the status of a failed probe', async () => {
+		finished('rust', 'typescript', 'python');
+		regenerateEagerProbe.mockReturnValue(5);
+		vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+		const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
+			throw new Error('exit');
+		});
+		await expect(import('../scripts/regen-all.ts')).rejects.toThrow('exit');
+		expect(exit).toHaveBeenCalledWith(5);
 	});
 });

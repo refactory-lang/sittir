@@ -33,12 +33,13 @@ From the repository root:
 
 ```sh
 pnpm run regen:all --force
-pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts
 pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/generate.mts --check
 pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/build.mts
 pnpm exec tsx --expose-gc docs/superpowers/probes/2026-10-12-record-wire/eager/verify.mts
 ```
 
+`regen:all` runs the generator after the grammars, so the builders follow
+every regeneration, and a stale copy shows as a path regeneration writes.
 The generator consumes the source compiler and source emitters together so
 their model classes have one identity. It checks its record layout against
 the generated `records.ts` and consumes the existing `slotStoredIds`
