@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "5ff9877e5cec654e4a08847a95027a4fc4739a8a70f1e2f4f74c2ab3e26af56c";
+export const hash = "3f11ee1ceb25b3a7f1ab4f1941ed0ac3e331f65ed1ce48f102e0f0184ced0a4a";
 
 export const renames = {
 	module: "file",
@@ -69,7 +69,7 @@ export const renames = {
 	pattern_list: "bare_tuple_pattern",
 	list_splat_pattern: "rest_pattern",
 	dictionary_splat_pattern: "map_rest_pattern",
-	union_pattern: "or_case_pattern",
+	union_pattern: "or_pattern",
 	dict_pattern: "dictionary_case_pattern",
 	keyword_pattern: "keyword_case_pattern",
 	splat_pattern: "splat_case_pattern",
@@ -77,7 +77,7 @@ export const renames = {
 	complex_pattern: "complex_case_pattern",
 	case_tuple_pattern: "tuple_case_pattern",
 	case_list_pattern: "list_case_pattern",
-	member_type: "path_type",
+	member_type: "qualified_identifier",
 	splat_type: "rest_type",
 	string: "string_literal",
 	escape_sequence: "escape_string_literal",
@@ -91,6 +91,7 @@ export const renames = {
 	float_point: "float_number_literal",
 	float_leading_point: "leading_point_float_number_literal",
 	float_scientific: "scientific_float_number_literal",
+	simple_pattern_negative: "negative_number_literal",
 	true: "true_boolean_literal",
 	false: "false_boolean_literal",
 	none: "null_literal",
@@ -119,6 +120,7 @@ export default grammar(
 			list: { "1/0": field("elements") },
 			list_pattern: { "1/0": field("elements") },
 			list_splat_pattern: { "1": field("pattern") },
+			member_type: { "0": field("qualifier") },
 			named_expression: { "0": field("left"), "2": field("right") },
 			set: { "1": field("elements") },
 			splat_type: { "1": field("type") },

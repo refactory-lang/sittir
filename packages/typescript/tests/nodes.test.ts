@@ -1244,8 +1244,8 @@ describe('array_pattern', () => {
 describe('nested_identifier', () => {
 	it('factory produces correct type', () => {
 		const node = ir.nestedIdentifier({
-			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			property: stampBuilt({
+			qualifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({
 				$type: TSKindId.PropertyIdentifier,
 				$text: 'test',
 				$named: true,
@@ -1257,8 +1257,8 @@ describe('nested_identifier', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.nestedIdentifier({
-			object: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			property: stampBuilt({
+			qualifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			name: stampBuilt({
 				$type: TSKindId.PropertyIdentifier,
 				$text: 'test',
 				$named: true,
@@ -2819,7 +2819,7 @@ describe('import_alias', () => {
 describe('nested_type_identifier', () => {
 	it('factory produces correct type', () => {
 		const node = ir.nestedTypeIdentifier({
-			module: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			qualifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			name: stampBuilt({
 				$type: TSKindId.TypeIdentifier,
 				$text: 'test',
@@ -2832,7 +2832,7 @@ describe('nested_type_identifier', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.nestedTypeIdentifier({
-			module: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			qualifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
 			name: stampBuilt({
 				$type: TSKindId.TypeIdentifier,
 				$text: 'test',

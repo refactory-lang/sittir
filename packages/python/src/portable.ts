@@ -218,8 +218,9 @@ export interface PortableIds {
 	'expression.yield': TSKindId.Yield | TSKindId.YieldFromClause;
 	'expression.yield.delegate': TSKindId.YieldFromClause;
 	file: TSKindId.Module;
-	identifier: TSKindId.DottedName | TSKindId.Identifier;
+	identifier: TSKindId.DottedName | TSKindId.Identifier | TSKindId.MemberType;
 	'identifier.dotted': TSKindId.DottedName;
+	'identifier.qualified': TSKindId.MemberType;
 	literal:
 		| TSKindId.ConcatenatedString
 		| TSKindId.Ellipsis
@@ -243,6 +244,7 @@ export interface PortableIds {
 		| TSKindId.IntegerHex
 		| TSKindId.IntegerOctal
 		| TSKindId.None
+		| TSKindId.SimplePatternNegative
 		| TSKindId.String
 		| TSKindId.StringFragment
 		| TSKindId.True;
@@ -260,7 +262,8 @@ export interface PortableIds {
 		| TSKindId.IntegerDecimalLong
 		| TSKindId.IntegerDecimalPlain
 		| TSKindId.IntegerHex
-		| TSKindId.IntegerOctal;
+		| TSKindId.IntegerOctal
+		| TSKindId.SimplePatternNegative;
 	'literal.number.float': TSKindId.FloatLeadingPoint | TSKindId.FloatPoint | TSKindId.FloatScientific;
 	'literal.number.float.leading_point': TSKindId.FloatLeadingPoint;
 	'literal.number.float.scientific': TSKindId.FloatScientific;
@@ -276,6 +279,7 @@ export interface PortableIds {
 	'literal.number.integer.hex': TSKindId.IntegerHex;
 	'literal.number.integer.imaginary': TSKindId.IntegerDecimalImaginary;
 	'literal.number.integer.octal': TSKindId.IntegerOctal;
+	'literal.number.negative': TSKindId.SimplePatternNegative;
 	'literal.string':
 		| TSKindId.ConcatenatedString
 		| TSKindId.EscapeInterpolation
@@ -337,17 +341,16 @@ export interface PortableIds {
 		| TSKindId.ComplexPattern
 		| TSKindId.DictPattern
 		| TSKindId.KeywordPattern
-		| TSKindId.SplatPattern
-		| TSKindId.UnionPattern;
+		| TSKindId.SplatPattern;
 	'pattern.case.class': TSKindId.ClassPattern;
 	'pattern.case.complex': TSKindId.ComplexPattern;
 	'pattern.case.dictionary': TSKindId.DictPattern;
 	'pattern.case.keyword': TSKindId.KeywordPattern;
 	'pattern.case.list': TSKindId.CaseListPattern;
-	'pattern.case.or': TSKindId.UnionPattern;
 	'pattern.case.splat': TSKindId.SplatPattern;
 	'pattern.case.tuple': TSKindId.CaseTuplePattern;
 	'pattern.list': TSKindId.CaseListPattern | TSKindId.ListPattern;
+	'pattern.or': TSKindId.UnionPattern;
 	'pattern.rest': TSKindId.DictionarySplatPattern | TSKindId.ListSplatPattern;
 	'pattern.rest.map': TSKindId.DictionarySplatPattern;
 	'pattern.tuple': TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
@@ -402,16 +405,9 @@ export interface PortableIds {
 	'statement.return': TSKindId.ReturnStatement;
 	'statement.throw': TSKindId.RaiseStatement;
 	'statement.try': TSKindId.TryStatement;
-	type:
-		| TSKindId.ConstrainedType
-		| TSKindId.GenericType
-		| TSKindId.MemberType
-		| TSKindId.SplatType
-		| TSKindId.Type
-		| TSKindId.UnionType;
+	type: TSKindId.ConstrainedType | TSKindId.GenericType | TSKindId.SplatType | TSKindId.Type | TSKindId.UnionType;
 	'type.constrained': TSKindId.ConstrainedType;
 	'type.generic': TSKindId.GenericType;
-	'type.path': TSKindId.MemberType;
 	'type.rest': TSKindId.SplatType;
 	'type.rest.map': TSKindId.SplatType;
 	'type.union': TSKindId.UnionType;
@@ -743,8 +739,13 @@ export interface PortableKindsAt {
 	};
 	'expression.yield.delegate': { readonly $path: 'expression.yield.delegate' };
 	file: { readonly $path: 'file' };
-	identifier: { readonly $path: 'identifier'; readonly dotted: PortableKindsAt['identifier.dotted'] };
+	identifier: {
+		readonly $path: 'identifier';
+		readonly dotted: PortableKindsAt['identifier.dotted'];
+		readonly qualified: PortableKindsAt['identifier.qualified'];
+	};
 	'identifier.dotted': { readonly $path: 'identifier.dotted' };
+	'identifier.qualified': { readonly $path: 'identifier.qualified' };
 	literal: {
 		readonly $path: 'literal';
 		readonly boolean: PortableKindsAt['literal.boolean'];
@@ -766,6 +767,7 @@ export interface PortableKindsAt {
 		readonly $path: 'literal.number';
 		readonly float: PortableKindsAt['literal.number.float'];
 		readonly integer: PortableKindsAt['literal.number.integer'];
+		readonly negative: PortableKindsAt['literal.number.negative'];
 	};
 	'literal.number.float': {
 		readonly $path: 'literal.number.float';
@@ -787,6 +789,7 @@ export interface PortableKindsAt {
 	'literal.number.integer.hex': { readonly $path: 'literal.number.integer.hex' };
 	'literal.number.integer.imaginary': { readonly $path: 'literal.number.integer.imaginary' };
 	'literal.number.integer.octal': { readonly $path: 'literal.number.integer.octal' };
+	'literal.number.negative': { readonly $path: 'literal.number.negative' };
 	'literal.string': {
 		readonly $path: 'literal.string';
 		readonly bytes: PortableKindsAt['literal.string.bytes'];
@@ -833,6 +836,7 @@ export interface PortableKindsAt {
 		readonly as: PortableKindsAt['pattern.as'];
 		readonly case: PortableKindsAt['pattern.case'];
 		readonly list: PortableKindsAt['pattern.list'];
+		readonly or: PortableKindsAt['pattern.or'];
 		readonly rest: PortableKindsAt['pattern.rest'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 	};
@@ -844,7 +848,6 @@ export interface PortableKindsAt {
 		readonly dictionary: PortableKindsAt['pattern.case.dictionary'];
 		readonly keyword: PortableKindsAt['pattern.case.keyword'];
 		readonly list: PortableKindsAt['pattern.case.list'];
-		readonly or: PortableKindsAt['pattern.case.or'];
 		readonly splat: PortableKindsAt['pattern.case.splat'];
 		readonly tuple: PortableKindsAt['pattern.case.tuple'];
 	};
@@ -853,10 +856,10 @@ export interface PortableKindsAt {
 	'pattern.case.dictionary': { readonly $path: 'pattern.case.dictionary' };
 	'pattern.case.keyword': { readonly $path: 'pattern.case.keyword' };
 	'pattern.case.list': { readonly $path: 'pattern.case.list' };
-	'pattern.case.or': { readonly $path: 'pattern.case.or' };
 	'pattern.case.splat': { readonly $path: 'pattern.case.splat' };
 	'pattern.case.tuple': { readonly $path: 'pattern.case.tuple' };
 	'pattern.list': { readonly $path: 'pattern.list' };
+	'pattern.or': { readonly $path: 'pattern.or' };
 	'pattern.rest': { readonly $path: 'pattern.rest'; readonly map: PortableKindsAt['pattern.rest.map'] };
 	'pattern.rest.map': { readonly $path: 'pattern.rest.map' };
 	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly bare: PortableKindsAt['pattern.tuple.bare'] };
@@ -922,13 +925,11 @@ export interface PortableKindsAt {
 		readonly $path: 'type';
 		readonly constrained: PortableKindsAt['type.constrained'];
 		readonly generic: PortableKindsAt['type.generic'];
-		readonly path: PortableKindsAt['type.path'];
 		readonly rest: PortableKindsAt['type.rest'];
 		readonly union: PortableKindsAt['type.union'];
 	};
 	'type.constrained': { readonly $path: 'type.constrained' };
 	'type.generic': { readonly $path: 'type.generic' };
-	'type.path': { readonly $path: 'type.path' };
 	'type.rest': { readonly $path: 'type.rest'; readonly map: PortableKindsAt['type.rest.map'] };
 	'type.rest.map': { readonly $path: 'type.rest.map' };
 	'type.union': { readonly $path: 'type.union' };
@@ -1464,8 +1465,10 @@ export interface PortableIsAt {
 	file: PortableGuard<PortableIds['file'], PythonNode, TSKindId> & {};
 	identifier: PortableGuard<PortableIds['identifier'], PythonNode, TSKindId> & {
 		readonly dotted: PortableIsAt['identifier.dotted'];
+		readonly qualified: PortableIsAt['identifier.qualified'];
 	};
 	'identifier.dotted': PortableGuard<PortableIds['identifier.dotted'], PythonNode, TSKindId> & {};
+	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], PythonNode, TSKindId> & {};
 	literal: PortableGuard<PortableIds['literal'], PythonNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly ellipsis: PortableIsAt['literal.ellipsis'];
@@ -1484,6 +1487,7 @@ export interface PortableIsAt {
 	'literal.number': PortableGuard<PortableIds['literal.number'], PythonNode, TSKindId> & {
 		readonly float: PortableIsAt['literal.number.float'];
 		readonly integer: PortableIsAt['literal.number.integer'];
+		readonly negative: PortableIsAt['literal.number.negative'];
 	};
 	'literal.number.float': PortableGuard<PortableIds['literal.number.float'], PythonNode, TSKindId> & {
 		readonly leading_point: PortableIsAt['literal.number.float.leading_point'];
@@ -1519,6 +1523,7 @@ export interface PortableIsAt {
 		TSKindId
 	> & {};
 	'literal.number.integer.octal': PortableGuard<PortableIds['literal.number.integer.octal'], PythonNode, TSKindId> & {};
+	'literal.number.negative': PortableGuard<PortableIds['literal.number.negative'], PythonNode, TSKindId> & {};
 	'literal.string': PortableGuard<PortableIds['literal.string'], PythonNode, TSKindId> & {
 		readonly bytes: PortableIsAt['literal.string.bytes'];
 		readonly concatenated: PortableIsAt['literal.string.concatenated'];
@@ -1576,6 +1581,7 @@ export interface PortableIsAt {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly case: PortableIsAt['pattern.case'];
 		readonly list: PortableIsAt['pattern.list'];
+		readonly or: PortableIsAt['pattern.or'];
 		readonly rest: PortableIsAt['pattern.rest'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
 	};
@@ -1586,7 +1592,6 @@ export interface PortableIsAt {
 		readonly dictionary: PortableIsAt['pattern.case.dictionary'];
 		readonly keyword: PortableIsAt['pattern.case.keyword'];
 		readonly list: PortableIsAt['pattern.case.list'];
-		readonly or: PortableIsAt['pattern.case.or'];
 		readonly splat: PortableIsAt['pattern.case.splat'];
 		readonly tuple: PortableIsAt['pattern.case.tuple'];
 	};
@@ -1595,10 +1600,10 @@ export interface PortableIsAt {
 	'pattern.case.dictionary': PortableGuard<PortableIds['pattern.case.dictionary'], PythonNode, TSKindId> & {};
 	'pattern.case.keyword': PortableGuard<PortableIds['pattern.case.keyword'], PythonNode, TSKindId> & {};
 	'pattern.case.list': PortableGuard<PortableIds['pattern.case.list'], PythonNode, TSKindId> & {};
-	'pattern.case.or': PortableGuard<PortableIds['pattern.case.or'], PythonNode, TSKindId> & {};
 	'pattern.case.splat': PortableGuard<PortableIds['pattern.case.splat'], PythonNode, TSKindId> & {};
 	'pattern.case.tuple': PortableGuard<PortableIds['pattern.case.tuple'], PythonNode, TSKindId> & {};
 	'pattern.list': PortableGuard<PortableIds['pattern.list'], PythonNode, TSKindId> & {};
+	'pattern.or': PortableGuard<PortableIds['pattern.or'], PythonNode, TSKindId> & {};
 	'pattern.rest': PortableGuard<PortableIds['pattern.rest'], PythonNode, TSKindId> & {
 		readonly map: PortableIsAt['pattern.rest.map'];
 	};
@@ -1663,13 +1668,11 @@ export interface PortableIsAt {
 	type: PortableGuard<PortableIds['type'], PythonNode, TSKindId> & {
 		readonly constrained: PortableIsAt['type.constrained'];
 		readonly generic: PortableIsAt['type.generic'];
-		readonly path: PortableIsAt['type.path'];
 		readonly rest: PortableIsAt['type.rest'];
 		readonly union: PortableIsAt['type.union'];
 	};
 	'type.constrained': PortableGuard<PortableIds['type.constrained'], PythonNode, TSKindId> & {};
 	'type.generic': PortableGuard<PortableIds['type.generic'], PythonNode, TSKindId> & {};
-	'type.path': PortableGuard<PortableIds['type.path'], PythonNode, TSKindId> & {};
 	'type.rest': PortableGuard<PortableIds['type.rest'], PythonNode, TSKindId> & {
 		readonly map: PortableIsAt['type.rest.map'];
 	};
@@ -1968,8 +1971,9 @@ const table: PortableTable = {
 		'expression.yield': { ids: [TSKindId.Yield, TSKindId.YieldFromClause], exact: true },
 		'expression.yield.delegate': { ids: [TSKindId.YieldFromClause], exact: true },
 		file: { ids: [TSKindId.Module], exact: true },
-		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier], exact: true },
+		identifier: { ids: [TSKindId.DottedName, TSKindId.Identifier, TSKindId.MemberType], exact: true },
 		'identifier.dotted': { ids: [TSKindId.DottedName], exact: true },
+		'identifier.qualified': { ids: [TSKindId.MemberType], exact: true },
 		literal: {
 			ids: [
 				TSKindId.ConcatenatedString,
@@ -1994,6 +1998,7 @@ const table: PortableTable = {
 				TSKindId.IntegerHex,
 				TSKindId.IntegerOctal,
 				TSKindId.None,
+				TSKindId.SimplePatternNegative,
 				TSKindId.String,
 				TSKindId.StringFragment,
 				TSKindId.True
@@ -2015,7 +2020,8 @@ const table: PortableTable = {
 				TSKindId.IntegerDecimalLong,
 				TSKindId.IntegerDecimalPlain,
 				TSKindId.IntegerHex,
-				TSKindId.IntegerOctal
+				TSKindId.IntegerOctal,
+				TSKindId.SimplePatternNegative
 			],
 			exact: true
 		},
@@ -2041,6 +2047,7 @@ const table: PortableTable = {
 		'literal.number.integer.hex': { ids: [TSKindId.IntegerHex], exact: true },
 		'literal.number.integer.imaginary': { ids: [TSKindId.IntegerDecimalImaginary], exact: true },
 		'literal.number.integer.octal': { ids: [TSKindId.IntegerOctal], exact: true },
+		'literal.number.negative': { ids: [TSKindId.SimplePatternNegative], exact: true },
 		'literal.string': {
 			ids: [
 				TSKindId.ConcatenatedString,
@@ -2115,8 +2122,7 @@ const table: PortableTable = {
 				TSKindId.ComplexPattern,
 				TSKindId.DictPattern,
 				TSKindId.KeywordPattern,
-				TSKindId.SplatPattern,
-				TSKindId.UnionPattern
+				TSKindId.SplatPattern
 			],
 			exact: true
 		},
@@ -2125,10 +2131,10 @@ const table: PortableTable = {
 		'pattern.case.dictionary': { ids: [TSKindId.DictPattern], exact: true },
 		'pattern.case.keyword': { ids: [TSKindId.KeywordPattern], exact: true },
 		'pattern.case.list': { ids: [TSKindId.CaseListPattern], exact: true },
-		'pattern.case.or': { ids: [TSKindId.UnionPattern], exact: true },
 		'pattern.case.splat': { ids: [TSKindId.SplatPattern], exact: true },
 		'pattern.case.tuple': { ids: [TSKindId.CaseTuplePattern], exact: true },
 		'pattern.list': { ids: [TSKindId.CaseListPattern, TSKindId.ListPattern], exact: true },
+		'pattern.or': { ids: [TSKindId.UnionPattern], exact: true },
 		'pattern.rest': { ids: [TSKindId.DictionarySplatPattern, TSKindId.ListSplatPattern], exact: true },
 		'pattern.rest.map': { ids: [TSKindId.DictionarySplatPattern], exact: true },
 		'pattern.tuple': { ids: [TSKindId.CaseTuplePattern, TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
@@ -2194,19 +2200,11 @@ const table: PortableTable = {
 		'statement.throw': { ids: [TSKindId.RaiseStatement], exact: true },
 		'statement.try': { ids: [TSKindId.TryStatement], exact: true },
 		type: {
-			ids: [
-				TSKindId.ConstrainedType,
-				TSKindId.GenericType,
-				TSKindId.MemberType,
-				TSKindId.SplatType,
-				TSKindId.Type,
-				TSKindId.UnionType
-			],
+			ids: [TSKindId.ConstrainedType, TSKindId.GenericType, TSKindId.SplatType, TSKindId.Type, TSKindId.UnionType],
 			exact: true
 		},
 		'type.constrained': { ids: [TSKindId.ConstrainedType], exact: true },
 		'type.generic': { ids: [TSKindId.GenericType], exact: true },
-		'type.path': { ids: [TSKindId.MemberType], exact: true },
 		'type.rest': { ids: [TSKindId.SplatType], exact: true },
 		'type.rest.map': { ids: [TSKindId.SplatType], exact: false },
 		'type.union': { ids: [TSKindId.UnionType], exact: true }
@@ -2643,17 +2641,17 @@ const table: PortableTable = {
 		[TSKindId.ListSplat]: [{ path: 'element.spread', within: [], test: [] }],
 		[TSKindId.ListSplatPattern]: [{ path: 'pattern.rest', within: [], test: [] }],
 		[TSKindId.MatchStatement]: [{ path: 'statement.match', within: [], test: [] }],
-		[TSKindId.MemberType]: [{ path: 'type.path', within: [], test: [] }],
+		[TSKindId.MemberType]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '344': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '343': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '344': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '343': 1 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -2675,6 +2673,7 @@ const table: PortableTable = {
 		[TSKindId.ReturnStatement]: [{ path: 'statement.return', within: [], test: [] }],
 		[TSKindId.Set]: [{ path: 'expression.collection.set', within: [], test: [] }],
 		[TSKindId.SetComprehension]: [{ path: 'expression.comprehension.set', within: [], test: [] }],
+		[TSKindId.SimplePatternNegative]: [{ path: 'literal.number.negative', within: [], test: [] }],
 		[TSKindId.Slice]: [{ path: 'expression.slice', within: [], test: [] }],
 		[TSKindId.SplatPattern]: [{ path: 'pattern.case.splat', within: [], test: [] }],
 		[TSKindId.SplatType]: [
@@ -2796,7 +2795,7 @@ const table: PortableTable = {
 			},
 			{ path: 'expression.unary', within: [], test: [] }
 		],
-		[TSKindId.UnionPattern]: [{ path: 'pattern.case.or', within: [], test: [] }],
+		[TSKindId.UnionPattern]: [{ path: 'pattern.or', within: [], test: [] }],
 		[TSKindId.UnionType]: [{ path: 'type.union', within: [], test: [] }],
 		[TSKindId.WhileStatement]: [{ path: 'statement.loop.while', within: [], test: [] }],
 		[TSKindId.WildcardImport]: [{ path: 'clause.import.wildcard', within: [], test: [] }],
@@ -2870,6 +2869,7 @@ const table: PortableTable = {
 		[TSKindId.Lbrack]: '[',
 		[TSKindId.Rbrack]: ']',
 		[TSKindId.At]: '@',
+		[TSKindId.Pipe]: '|',
 		[TSKindId.Lbrace]: '{',
 		[TSKindId.Rbrace]: '}',
 		[TSKindId.Underscore]: '_',
@@ -2881,7 +2881,6 @@ const table: PortableTable = {
 		[TSKindId.Slash]: '/',
 		[TSKindId.Percent]: '%',
 		[TSKindId.SlashSlash]: '//',
-		[TSKindId.Pipe]: '|',
 		[TSKindId.Amp]: '&',
 		[TSKindId.Caret]: '^',
 		[TSKindId.LtLt]: '<<',
@@ -2928,7 +2927,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '344': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '343': 0 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '162': 0 } } }
 } satisfies QueryFlags);
 
@@ -2939,8 +2938,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	282: { contents: { async: { types: [], kinds: [244] } } },
-	302: { statements: { async: { types: [], kinds: [157, 162, 300, 344] } } },
-	304: { definition: { async: { types: [], kinds: [300, 344] } } }
+	302: { statements: { async: { types: [], kinds: [157, 162, 300, 343] } } },
+	304: { definition: { async: { types: [], kinds: [300, 343] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

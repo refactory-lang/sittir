@@ -109,6 +109,14 @@ describe('wire() checks patch keys per rule, from the base it is given', () => {
 		wire({ name: 'rust', edits: { or_pattern: [{ '1/rhs:/0': variant('x'), '1': authoringField('rhs') }] } }, enriched);
 	});
 
+	it('a later map may walk under a member an earlier map replaced with a function, and only under that member', () => {
+		wire({ name: 'rust', edits: { or_pattern: [{ '1': ($, member) => member }, { '1/9': variant('x') }] } }, enriched);
+		// @ts-expect-error — the earlier map replaced member 1, not member 0
+		wire({ name: 'rust', edits: { or_pattern: [{ '1': ($, member) => member }, { '0/9': variant('x') }] } }, enriched);
+		// @ts-expect-error — a member is never replaced by the map that walks under it
+		wire({ name: 'rust', edits: { or_pattern: [{ '1/9': variant('x'), '1': ($) => $._pattern }] } }, enriched);
+	});
+
 	it('an unshaped base checks nothing', () => {
 		wire({ name: 'loose', edits: { anything: { '99/99': field('x') } } }, emptyBase);
 	});

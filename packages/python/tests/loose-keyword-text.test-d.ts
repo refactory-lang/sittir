@@ -11,5 +11,5 @@ import { createEngine } from '@sittir/common';
 const py = await createEngine(python);
 
 export function keywordTextAdmitted(): string[] {
-	return [py.build.unionPattern('True', '_').$render(), py.build.unionPattern(['None', 'False']).$render()];
+	return [py.build.list('True', 'None').$render(), py.build.list(['None', 'False']).$render()];
 }

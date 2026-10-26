@@ -2,8 +2,13 @@ import type { SerializedNodeModel } from '../codegen-surface.ts';
 
 export type DisplayFamilies = SerializedNodeModel['displayUnions'];
 
-export function sharedDisplayStorageKinds(display: string, families: DisplayFamilies): readonly string[] {
+export function displayStorageKinds(display: string, families: DisplayFamilies): readonly string[] {
 	const members = families[display]?.filter((member) => !member.literal).map((member) => member.storage) ?? [];
+	return members.length > 0 ? members : [display];
+}
+
+export function sharedDisplayStorageKinds(display: string, families: DisplayFamilies): readonly string[] {
+	const members = displayStorageKinds(display, families);
 	return members.length > 1 ? members : [display];
 }
 

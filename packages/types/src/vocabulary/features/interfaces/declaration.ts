@@ -16,7 +16,7 @@ export namespace Declaration {
 		// rt only
 		readonly extends?: (G['slots']['clause.extends.type']['types'] | G['slots']['clause.bounds']['bounds'])[];
 		// rt only
-		readonly name: V.Identifier.Type<G>;
+		readonly name: V.Identifier<G>;
 		// rt only
 	}
 	export namespace Interface {
@@ -25,7 +25,7 @@ export namespace Declaration {
 			readonly $kind: 'declaration.interface.trait';
 			readonly body: G['slots']['declaration.interface.trait']['body'][];
 			readonly extends?: G['slots']['clause.bounds']['bounds'][];
-			readonly name: V.Identifier.Type<G>;
+			readonly name: V.Identifier<G>;
 		}
 	}
 }

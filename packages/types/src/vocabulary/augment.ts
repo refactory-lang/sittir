@@ -2274,25 +2274,16 @@ declare module './identifier.ts' {
 		interface Metavariable<G extends GrammarContext<G>> extends syntacticMetaprogramming.Identifier.Metavariable<G> {
 			readonly attributes?: gate.In<G, features.Attributes, attributes.Identifier.Metavariable<G>['attributes']>;
 		}
-		namespace Property {
-			type Any<G extends GrammarContext<G>> = V.Identifier.Property<G> | V.Identifier.Property.Shorthand<G>;
-		}
 		interface Receiver<G extends GrammarContext<G>> extends methods.Identifier.Receiver<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Identifier<G>
-			| V.Identifier.Crate<G>
 			| V.Identifier.Dotted<G>
-			| V.Identifier.Field<G>
 			| V.Identifier.Label<G>
 			| V.Identifier.Lifetime<G>
 			| V.Identifier.Metavariable<G>
-			| V.Identifier.Nested<G>
-			| V.Identifier.Property<G>
-			| V.Identifier.Property.Shorthand<G>
+			| V.Identifier.Qualified<G>
 			| V.Identifier.Receiver<G>
-			| V.Identifier.Scoped<G>
-			| V.Identifier.Super<G>
-			| V.Identifier.Type<G>;
+			| V.Identifier.Super<G>;
 	}
 }
 
@@ -2538,7 +2529,6 @@ declare module './pattern.ts' {
 			interface Dictionary<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Dictionary<G> {}
 			interface Keyword<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Keyword<G> {}
 			interface List<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.List<G> {}
-			interface Or<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Or<G> {}
 			interface Splat<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Splat<G> {}
 			interface Tuple<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Tuple<G> {}
 			type Any<G extends GrammarContext<G>> =
@@ -2548,7 +2538,6 @@ declare module './pattern.ts' {
 				| V.Pattern.Case.Dictionary<G>
 				| V.Pattern.Case.Keyword<G>
 				| V.Pattern.Case.List<G>
-				| V.Pattern.Case.Or<G>
 				| V.Pattern.Case.Splat<G>
 				| V.Pattern.Case.Tuple<G>;
 		}
@@ -2612,7 +2601,6 @@ declare module './pattern.ts' {
 			| V.Pattern.Case.Dictionary<G>
 			| V.Pattern.Case.Keyword<G>
 			| V.Pattern.Case.List<G>
-			| V.Pattern.Case.Or<G>
 			| V.Pattern.Case.Splat<G>
 			| V.Pattern.Case.Tuple<G>
 			| V.Pattern.Generic<G>
@@ -2867,20 +2855,10 @@ declare module './type.ts' {
 		interface Intersection<G extends GrammarContext<G>> extends typeAnnotations.Type.Intersection<G> {}
 		interface Literal<G extends GrammarContext<G>> extends typeAnnotations.Type.Literal<G> {}
 		interface Lookup<G extends GrammarContext<G>> extends typeAnnotations.Type.Lookup<G> {}
-		interface Named<G extends GrammarContext<G>> extends typeAnnotations.Type.Named<G> {}
-		namespace Named {
-			interface Prelude<G extends GrammarContext<G>> extends typeAnnotations.Type.Named.Prelude<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Named<G> | V.Type.Named.Prelude<G>;
-		}
 		interface Nullable<G extends GrammarContext<G>> extends nullableTypes.Type.Nullable<G> {}
 		interface Object<G extends GrammarContext<G>> extends typeAnnotations.Type.Object<G> {}
 		interface Optional<G extends GrammarContext<G>> extends typeAnnotations.Type.Optional<G> {}
 		interface Parenthesized<G extends GrammarContext<G>> extends typeAnnotations.Type.Parenthesized<G> {}
-		interface Path<G extends GrammarContext<G>> extends typeAnnotations.Type.Path<G> {}
-		namespace Path {
-			interface Expression<G extends GrammarContext<G>> extends typeAnnotations.Type.Path.Expression<G> {}
-			type Any<G extends GrammarContext<G>> = V.Type.Path<G> | V.Type.Path.Expression<G>;
-		}
 		interface Pointer<G extends GrammarContext<G>> extends typeAnnotations.Type.Pointer<G> {
 			readonly writable?: gate.In<G, features.References, references.Type.Pointer<G>['writable']>;
 		}
@@ -2983,14 +2961,10 @@ declare module './type.ts' {
 			| V.Type.Intersection<G>
 			| V.Type.Literal<G>
 			| V.Type.Lookup<G>
-			| V.Type.Named<G>
-			| V.Type.Named.Prelude<G>
 			| V.Type.Nullable<G>
 			| V.Type.Object<G>
 			| V.Type.Optional<G>
 			| V.Type.Parenthesized<G>
-			| V.Type.Path<G>
-			| V.Type.Path.Expression<G>
 			| V.Type.Pointer<G>
 			| V.Type.Predicate<G>
 			| V.Type.Predicate.Asserts<G>

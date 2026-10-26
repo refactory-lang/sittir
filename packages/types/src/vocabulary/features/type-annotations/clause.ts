@@ -6,7 +6,7 @@ export namespace Clause {
 		// claimed by t
 		readonly $kind: 'clause.mapped_type';
 		readonly alias?: G['slots']['clause.mapped_type']['alias'];
-		readonly name: V.Identifier.Type<G>;
+		readonly name: V.Identifier<G>;
 		readonly type: G['slots']['clause.mapped_type']['type'];
 	}
 }

@@ -76,6 +76,17 @@ describe('a function entry receives the member and the layer symbols', () => {
 		});
 		expect(withoutIds(membersOf(raw)[0])).toMatchObject({ type: 'CHOICE', members: [withoutIds(membersOf(base)[0]), { type: 'SYMBOL', name: 'word' }] });
 	}, 60_000);
+
+	it('replaces one arm of a choice by its index and leaves the other arms, which hold the same position, alone', async () => {
+		const arms = "k: ($) => choice($.word, seq($.word, ','), seq($.word, ';'))";
+		const base = await evaluateTempGrammar({ extras: '', rules: arms }, '', { bindings: '' });
+		const raw = await evaluateTempGrammar({ extras: '', rules: arms }, '', {
+			bindings: "edits: { k: { '1': ($, member) => seq(member, '!') } }"
+		});
+		expect(withoutIds(membersOf(raw)[0])).toEqual(withoutIds(membersOf(base)[0]));
+		expect(withoutIds(membersOf(raw)[1])).toMatchObject({ type: 'SEQ', members: [withoutIds(membersOf(base)[1]), { type: 'STRING', value: '!' }] });
+		expect(withoutIds(membersOf(raw)[2])).toEqual(withoutIds(membersOf(base)[2]));
+	}, 60_000);
 });
 
 describe('replace() inline records what the replacing entry records', () => {

@@ -11,7 +11,7 @@ describe('the wordsets a slot is stamped with', () => {
 
 	it('stamps a slot that no envelope places with its own set', () => {
 		expect(slotOf('member_expression', 'property').effectiveWordsets).toEqual(['properties']);
-		expect(slotOf('nested_identifier', 'property').effectiveWordsets).toEqual(['global']);
+		expect(slotOf('nested_identifier', 'name').effectiveWordsets).toEqual(['global']);
 	});
 
 	it('stamps the leaf with the words reserved under every set a holder stamps', () => {
@@ -19,7 +19,7 @@ describe('the wordsets a slot is stamped with', () => {
 	});
 
 	it('checks reserved text at a slot whose set differs from the leaf set, and only there', () => {
-		expect(slotOf('nested_identifier', 'property').checksReserved).toBe(true);
+		expect(slotOf('nested_identifier', 'name').checksReserved).toBe(true);
 		expect(slotOf('member_expression', 'property').checksReserved).toBe(true);
 		expect(slotOf('program', 'statements').checksReserved).toBe(false);
 	});

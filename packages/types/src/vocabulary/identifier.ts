@@ -12,47 +12,19 @@ export interface IdentifierSynonyms {
 }
 
 export namespace Identifier {
-	export interface Crate<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by r
-		readonly $kind: 'identifier.crate';
-	}
 	export interface Dotted<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by p
 		readonly $kind: 'identifier.dotted';
 		readonly names: G['identifier'][];
 	}
-	export interface Field<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by r
-		readonly $kind: 'identifier.field';
-	}
-	export interface Nested<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by t
-		readonly $kind: 'identifier.nested';
-		readonly object: G['identifier'];
-		readonly property: V.Identifier.Property<G>;
-	}
-	export interface Property<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by t
-		readonly $kind: 'identifier.property';
-	}
-	export namespace Property {
-		export interface Shorthand<G extends GrammarContext<G>> extends SubKindOf<V.Identifier.Property<G>> {
-			// claimed by t
-			readonly $kind: 'identifier.property.shorthand';
-		}
-	}
-	export interface Scoped<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by r
-		readonly $kind: 'identifier.scoped';
+	export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
+		// claimed by prt
+		readonly $kind: 'identifier.qualified';
 		readonly name: G['identifier'];
-		readonly path?: G['slots']['identifier.scoped']['path'];
+		readonly qualifier?: G['slots']['identifier.qualified']['qualifier'];
 	}
 	export interface Super<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by rt
+		// claimed by t
 		readonly $kind: 'identifier.super';
-	}
-	export interface Type<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by prt
-		readonly $kind: 'identifier.type';
 	}
 }

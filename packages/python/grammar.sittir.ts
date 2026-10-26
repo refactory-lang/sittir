@@ -150,6 +150,7 @@ export default grammar(enrich(base), wire({
 		},
 		keyword_argument: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
+		keyword_pattern: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
 		splat_pattern: { 'operator:/after': preference('tight') },
 		list_splat: { '"*"/after': preference('tight') },
@@ -158,10 +159,20 @@ export default grammar(enrich(base), wire({
 		dictionary_splat_pattern: { '"**"/after': preference('tight') },
 		splat_type: { 'operator:/after': preference('tight') },
 		unary_operator: { 'operator:/after': preference('tight') },
-		interpolation: { before: preference('tight'), after: preference('tight') },
+		interpolation: {
+			before: preference('tight'),
+			after: preference('tight'),
+			'debug:/before': preference('tight'),
+			'debug:/after': preference('tight')
+		},
 		comprehension_clauses: { 'content:/separator': preference('space') },
 		comparison_operator: { 'comparators:/separator': preference('space') },
 		concatenated_string: { 'string:/separator': preference('space') },
+		union_pattern: { '"|"/after': preference('space') },
+		union_type: { '"|"/after': preference('space') },
+		simple_pattern_negative: { '"-"/after': preference('tight') },
+		complex_pattern: { 'sign:/after': preference('tight') },
+		chevron: { '">>"/after': preference('space'), after: preference('tight') },
 
 		_labels: {
 			'block/statements:/separator': 'gap/separator',
@@ -263,7 +274,10 @@ export default grammar(enrich(base), wire({
 		},
 
 		// See docs/python-grammar-sittir-glossary.md::_simple_pattern
-		_simple_pattern: [{ '11/0': field('sign'), '11/1': field('value') }, { '11': variant('negative') }],
+		_simple_pattern: [
+			{ '11': ($) => choice($.integer, $.float, seq('-', field('value', choice($.integer, $.float)))) },
+			{ '11/2': variant('negative') }
+		],
 
 		constrained_type: {
 			0: field('base_type'),
@@ -358,7 +372,7 @@ export default grammar(enrich(base), wire({
 		global_statement: { 1: field('names') },
 		nonlocal_statement: { 1: field('names') },
 		dotted_name: { 0: field('names'), 1: field('names') },
-		union_pattern: { 0: field('patterns'), 1: field('patterns') },
+		union_pattern: { 0: field('left'), 1: ($) => seq('|', field('right', $._simple_pattern)) },
 		if_clause: { 1: field('condition') },
 		await: { 1: field('expression') },
 

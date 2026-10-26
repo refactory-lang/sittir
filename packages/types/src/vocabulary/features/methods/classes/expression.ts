@@ -14,6 +14,6 @@ export namespace Expression {
 		// claimed by t
 		readonly $kind: 'expression.class';
 		readonly body: G['slots']['expression.class']['body'][];
-		readonly name?: V.Identifier.Type<G>;
+		readonly name?: V.Identifier<G>;
 	}
 }

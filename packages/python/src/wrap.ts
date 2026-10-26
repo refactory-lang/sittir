@@ -2,6 +2,7 @@
 
 import {
 	restItems,
+	admitSplicedEnvelope,
 	markEdited as $edited,
 	asTextNode,
 	carryRead,
@@ -36,7 +37,7 @@ import {
 } from '@sittir/common/utils';
 import type { Role, TreeHandle } from '@sittir/common/utils';
 import type { ParsedRoot } from '@sittir/common/engine';
-import type { AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
+import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';
 import { TSKindId } from './kinds.js';
 import type { EmptyModule } from './types.js';
 import type * as T from './types-internal.js';
@@ -1680,6 +1681,8 @@ export function wrapSimplePattern(data: T.SimplePattern, tree: TreeHandle): T.Si
 				| TSKindId.True
 				| TSKindId.False
 				| TSKindId.None
+				| T.Integer
+				| T.Float
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
@@ -1740,8 +1743,8 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 	const node = {
 		...data,
 		$type: TSKindId.UnionPattern as const,
-		patterns() {
-			return hydrateSlots<
+		left() {
+			return hydrateSlot<
 				| T.ClassPattern
 				| T.SplatPattern
 				| T.UnionPattern
@@ -1753,20 +1756,58 @@ export function wrapUnionPattern(data: T.UnionPattern, tree: TreeHandle): T.Unio
 				| TSKindId.True
 				| TSKindId.False
 				| TSKindId.None
+				| T.Integer
+				| T.Float
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
 				| TSKindId.WildcardPattern
-			>(this, '_patterns', tree);
+			>(this, '_left', tree);
+		},
+		right() {
+			return hydrateSlot<
+				| T.ClassPattern
+				| T.SplatPattern
+				| T.UnionPattern
+				| T.CaseListPattern
+				| T.CaseTuplePattern
+				| T.DictPattern
+				| T.String
+				| T.ConcatenatedString
+				| TSKindId.True
+				| TSKindId.False
+				| TSKindId.None
+				| T.Integer
+				| T.Float
+				| T.SimplePatternNegative
+				| T.ComplexPattern
+				| T.DottedName
+				| TSKindId.WildcardPattern
+			>(this, '_right', tree);
 		},
 		$with: {
-			patterns: (...args: unknown[]) =>
+			left: (v: NonNullable<T.UnionPattern['_left']> | Admit<T.SimplePattern>) =>
 				rebuilt(node, handle, () =>
-					elementsWith(
-						args,
-						{ slot: 'patterns', keys: ['sign', 'value'], make: RAW.buildSimplePatternNegative },
-						(...v: NonEmptyArray<NonNullable<T.UnionPattern['_patterns']>[number]>) =>
-							wrapUnionPattern({ ...$edited(data), _patterns: restItems('patterns', v) }, tree)
+					wrapUnionPattern(
+						{
+							...$edited(data),
+							_left: admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'UnionPattern.left')
+						},
+						tree
+					)
+				),
+			right: (v: NonNullable<T.UnionPattern['_right']> | Admit<T.SimplePattern>) =>
+				rebuilt(node, handle, () =>
+					wrapUnionPattern(
+						{
+							...$edited(data),
+							_right: admitSplicedEnvelope(
+								v,
+								[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+								'UnionPattern.right'
+							)
+						},
+						tree
 					)
 				)
 		},
@@ -1845,6 +1886,8 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 				| TSKindId.True
 				| TSKindId.False
 				| TSKindId.None
+				| T.Integer
+				| T.Float
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
@@ -1855,8 +1898,20 @@ export function wrapKeyValuePattern(data: T.KeyValuePattern, tree: TreeHandle): 
 			return hydrateSlot<T.CasePattern>(this, '_value', tree);
 		},
 		$with: {
-			key: (v: NonNullable<T.KeyValuePattern['_key']>) =>
-				rebuilt(node, handle, () => wrapKeyValuePattern({ ...$edited(data), _key: v }, tree)),
+			key: (v: NonNullable<T.KeyValuePattern['_key']> | Admit<T.SimplePattern>) =>
+				rebuilt(node, handle, () =>
+					wrapKeyValuePattern(
+						{
+							...$edited(data),
+							_key: admitSplicedEnvelope(
+								v,
+								[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+								'KeyValuePattern.key'
+							)
+						},
+						tree
+					)
+				),
 			value: (v: NonNullable<T.KeyValuePattern['_value']>) =>
 				rebuilt(node, handle, () => wrapKeyValuePattern({ ...$edited(data), _value: v }, tree))
 		},
@@ -1895,6 +1950,8 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 				| TSKindId.True
 				| TSKindId.False
 				| TSKindId.None
+				| T.Integer
+				| T.Float
 				| T.SimplePatternNegative
 				| T.ComplexPattern
 				| T.DottedName
@@ -1904,8 +1961,20 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 		$with: {
 			name: (v: NonNullable<T.KeywordPattern['_name']>) =>
 				rebuilt(node, handle, () => wrapKeywordPattern({ ...$edited(data), _name: v }, tree)),
-			value: (v: NonNullable<T.KeywordPattern['_value']>) =>
-				rebuilt(node, handle, () => wrapKeywordPattern({ ...$edited(data), _value: v }, tree))
+			value: (v: NonNullable<T.KeywordPattern['_value']> | Admit<T.SimplePattern>) =>
+				rebuilt(node, handle, () =>
+					wrapKeywordPattern(
+						{
+							...$edited(data),
+							_value: admitSplicedEnvelope(
+								v,
+								[TSKindId.SimplePattern, 'content', 'simple_pattern'],
+								'KeywordPattern.value'
+							)
+						},
+						tree
+					)
+				)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -3029,15 +3098,15 @@ export function wrapMemberType(data: T.MemberType, tree: TreeHandle): T.MemberTy
 	const node = {
 		...data,
 		$type: TSKindId.MemberType as const,
-		baseType() {
-			return hydrateSlot<T.Type>(this, '_base_type', tree);
+		qualifier() {
+			return hydrateSlot<T.Type>(this, '_qualifier', tree);
 		},
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
-			baseType: (v: NonNullable<T.MemberType['_base_type']>) =>
-				rebuilt(node, handle, () => wrapMemberType({ ...$edited(data), _base_type: v }, tree)),
+			qualifier: (v: NonNullable<T.MemberType['_qualifier']>) =>
+				rebuilt(node, handle, () => wrapMemberType({ ...$edited(data), _qualifier: v }, tree)),
 			name: (v: NonNullable<T.MemberType['_name']>) =>
 				rebuilt(node, handle, () => wrapMemberType({ ...$edited(data), _name: v }, tree))
 		},
@@ -5029,15 +5098,10 @@ export function wrapSimplePatternNegative(
 	const node = {
 		...data,
 		$type: TSKindId.SimplePatternNegative as const,
-		sign() {
-			return this._sign;
-		},
 		value() {
 			return hydrateSlot<T.Integer | T.Float>(this, '_value', tree);
 		},
 		$with: {
-			sign: (v: NonNullable<T.SimplePatternNegative['_sign']>) =>
-				rebuilt(node, handle, () => wrapSimplePatternNegative({ ...$edited(data), _sign: v }, tree)),
 			value: (v: NonNullable<T.SimplePatternNegative['_value']>) =>
 				rebuilt(node, handle, () => wrapSimplePatternNegative({ ...$edited(data), _value: v }, tree))
 		},
@@ -5402,7 +5466,18 @@ export function wrapSuiteInline(data: T.SuiteInline, tree: TreeHandle): T.SuiteI
 							optional: false,
 							make: RAW.buildSimpleStatementsElements
 						},
-						(v: NonNullable<T.SuiteInline['_elements']>) => wrapSuiteInline({ ...$edited(data), _elements: v }, tree)
+						(v: NonNullable<T.SuiteInline['_elements']> | Admit<T.SimpleStatements>) =>
+							wrapSuiteInline(
+								{
+									...$edited(data),
+									_elements: admitSplicedEnvelope(
+										v,
+										[TSKindId.SimpleStatements, 'elements', 'simple_statements'],
+										'SuiteInline.elements'
+									)
+								},
+								tree
+							)
 					)
 				)
 		},

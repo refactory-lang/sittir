@@ -6,6 +6,6 @@ export namespace Declaration {
 		// claimed by r
 		readonly $kind: 'declaration.union';
 		readonly body: G['slots']['declaration.union']['body'][];
-		readonly name: V.Identifier.Type<G>;
+		readonly name: V.Identifier<G>;
 	}
 }

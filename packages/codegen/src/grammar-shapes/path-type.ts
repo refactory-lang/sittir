@@ -10,6 +10,7 @@ import type { LeadPlaceholder } from '../dsl/primitives/lead.ts';
 import type { NarrowPlaceholder } from '../dsl/primitives/narrow.ts';
 import type { RenamePlaceholder } from '../dsl/primitives/rename.ts';
 import type { FieldLike } from '../types/runtime-shapes.ts';
+import type { ReplacingFn } from '../dsl/transform/transform.ts';
 
 type PeelPrec<N> = N extends PrecRuleUnion ? PeelPrec<N['content']> : N;
 
@@ -135,6 +136,7 @@ export type TransformPatchValue =
 	| RegexPlaceholder
 	| NarrowPlaceholder
 	| LeadPlaceholder
-	| RenamePlaceholder;
+	| RenamePlaceholder
+	| ReplacingFn;
 
 export type TransformPatchMap = Partial<Record<string, TransformPatchValue>>;

@@ -1145,6 +1145,10 @@ export abstract class AssembledNodeBase<R extends AnyRule = RenderRule> {
 		return false;
 	}
 
+	get unit(): boolean {
+		return this.modelType === 'keyword' || this.modelType === 'punctuation';
+	}
+
 	get rawFactoryName(): string | undefined {
 		if (this.factoryName === undefined) return undefined;
 		return `build${this.typeName}`;
@@ -1208,6 +1212,7 @@ export class AssembledNonterminal {
 	registeredOption?: 'spelling' | 'choice';
 	effectiveWordsets?: readonly string[];
 	checksReserved?: boolean;
+	splicedEnvelope?: string;
 
 	get storageName(): string {
 		return projectSlotNaming(this).storageName;

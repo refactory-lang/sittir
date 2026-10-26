@@ -29,6 +29,7 @@ const ctx: PrintContext = {
 		listElementKinds: {},
 		hoistedKinds: new Set(),
 		oneSurfaceKinds: new Set<string>(),
+		unitKinds: new Set<string>(),
 		kindIdOfName: (kind) => ({ source_file: 1, function_item: 2, identifier: 3, comma: 4, arguments: 5 })[kind]
 	},
 	kindNameFromId: (id) =>
@@ -96,7 +97,7 @@ describe('printValue', () => {
 			{
 				...ctx,
 				memberNameOfId: (id) => (id === 11 ? 'PassStatement' : ctx.memberNameOfId(id)),
-				keywordKinds: new Set(['pass_statement'])
+				facts: { ...ctx.facts, unitKinds: new Set(['pass_statement']) }
 			}
 		);
 		expect(expectPrinted(map.pass_statement!('pass')).source).toBe('rs.kinds.PassStatement');
@@ -114,7 +115,6 @@ describe('printValue', () => {
 		);
 		const surface = printingIrSurface(
 			map,
-			{},
 			{
 				...ctx,
 				irPathOfKind: (kind) => (kind === 'visibility_modifier' ? 'ir.visibilityModifier' : ctx.irPathOfKind(kind)),
