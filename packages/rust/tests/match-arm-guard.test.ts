@@ -36,11 +36,4 @@ describe('a match arm whose pattern has a guard', () => {
 		const { arm } = firstArm();
 		expect(b.matchArmWithComma({ match: arm.match(), value: arm.value() }).$render()).toBe('a if a > 0 => 1,');
 	});
-
-	it('round-trips the guard through JSON', () => {
-		const { parsed } = firstArm();
-		const revived = JSON.parse(JSON.stringify(parsed), rs.reviver) as typeof parsed;
-		expect(JSON.stringify(revived)).toBe(JSON.stringify(parsed));
-		expect(revived.$render()).toContain('a if a > 0 => 1,');
-	});
 });

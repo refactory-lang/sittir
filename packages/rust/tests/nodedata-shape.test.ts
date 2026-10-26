@@ -2,7 +2,7 @@
  * UntypedNode surface shape verification.
  *
  * Verifies the de-hoisted storage contract, non-enumerable accessor functions,
- * Object.freeze, $with immutability, JSON.stringify, and unified factory/wrap
+ * Object.freeze, $with immutability, the JSON refusal, and unified factory/wrap
  * surface (SC-001 through SC-008, FR-001 through FR-004).
  *
  * Uses the rust grammar as a concrete example.
@@ -113,10 +113,9 @@ describe('Factory shape — branch node', () => {
 		}
 	});
 
-	it('SC-004: sourceOf gives no provenance for a config, a JSON copy or a string-key copy', () => {
+	it('SC-004: sourceOf gives no provenance for a config or a string-key copy', () => {
 		const built = rs.build.block({ statements: [] });
 		expect(sourceOf({ $type: rs.kinds.Block, statements: [] })).toBeUndefined();
-		expect(sourceOf(JSON.parse(JSON.stringify(built)) as object)).toBeUndefined();
 		expect(sourceOf(Object.fromEntries(Object.entries(built)))).toBeUndefined();
 	});
 
@@ -167,7 +166,7 @@ describe('Factory shape — leaf node', () => {
 // `$with` EXISTS on factory output — the factories emitter builds it inline
 // per kind (the passing plain-`it` case below pins that). Still unshipped,
 // pinned by the `it.fails` cases: $with non-enumerability, the frozen-result
-// contract, and Object.keys exclusion. A node's JSON never holds `$with`.
+// contract, and Object.keys exclusion.
 describe('$with namespace', () => {
 	const original = rs.build.functionItem({ name: 'original', parameters: [], body: minimalBlock } as any);
 
@@ -199,35 +198,18 @@ describe('$with namespace', () => {
 	it.fails('$with is not included in Object.keys()', () => {
 		expect(Object.keys(original)).not.toContain('$with');
 	});
-
-	it('$with is not included in JSON.stringify() output', () => {
-		const json = JSON.stringify(original);
-		expect(json).not.toContain('$with');
-	});
 });
 
 // ---------- JSON serialization ----------
 
 describe('JSON serialization', () => {
-	const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
-
-	it('SC-007: JSON.stringify writes the kind name and the slots by accessor name, with no storage or $source', () => {
-		const parsed = JSON.parse(JSON.stringify(node)) as Record<string, unknown>;
-		expect(parsed['$type']).toBe('function_item');
-		expect(parsed['name']).toEqual({ $type: 'identifier', $text: 'serialize_me' });
-		expect(parsed['_name']).toBeUndefined();
-		expect(parsed['$source']).toBeUndefined();
-	});
-
-	it('SC-007: JSON.stringify does NOT include $fields', () => {
-		const json = JSON.stringify(node);
-		expect(json).not.toContain('"$fields"');
-	});
-
-	it('SC-007: JSON.stringify does NOT include render function artifacts', () => {
-		const json = JSON.stringify(node);
-		expect(json).not.toContain('"render"');
-		expect(json).not.toContain('"$render"');
+	it('refuses a node by name, and with one function every node shares', () => {
+		const node = rs.build.functionItem({ name: 'serialize_me', parameters: [], body: minimalBlock } as any);
+		const parsed = rs.parse('fn f() {}').statements()[0]!;
+		expect(() => JSON.stringify(node)).toThrow('toJSON: a node has no JSON form');
+		expect(() => JSON.stringify({ wrapped: [parsed] })).toThrow('toJSON: a node has no JSON form');
+		expect((node as unknown as { toJSON: unknown }).toJSON).toBe((parsed as unknown as { toJSON: unknown }).toJSON);
+		expect(() => JSON.parse('{}', rs.reviver)).toThrow('reviver: a node has no JSON form to revive');
 	});
 });
 

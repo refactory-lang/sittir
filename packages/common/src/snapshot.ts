@@ -51,7 +51,7 @@ interface Detaching {
 function detached(read: unknown, from: Detaching): unknown {
 	const work: unknown[] = [read];
 	const visit = (entry: unknown): unknown => {
-		if (isBuiltEntry(entry)) return snapshotIn(builtEntryNode(entry), undefined, undefined);
+		if (isBuiltEntry(entry)) return snapshotIn(builtEntryNode(entry, from.tree), undefined, undefined);
 		if (isCoordinate(entry)) return snapshotIn(readCoordinate(from.tree, entry, from.own), undefined, undefined);
 		work.push(entry);
 		return entry;

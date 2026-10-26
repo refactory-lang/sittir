@@ -29,7 +29,6 @@ import { hoistedCensus } from './hoisted-census.ts';
 import { inspectRefs } from './inspect-refs.ts';
 import { inspectType } from './inspect-type.ts';
 import { listKinds } from './list-kinds.ts';
-import { nodeJsonCensus } from './node-json-census.ts';
 import { outputGate } from './output-gate.ts';
 import { overrideCensus } from './override-census.ts';
 import { phantomKinds } from './phantom-kinds.ts';
@@ -81,7 +80,6 @@ export const toolModules: readonly CommandModule[] = [
 	inspectRefs,
 	inspectType,
 	listKinds,
-	nodeJsonCensus,
 	outputGate,
 	overrideCensus,
 	phantomKinds,

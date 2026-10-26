@@ -618,48 +618,6 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
     }
 }
 
-/// A trivia entry as a write passes it. A built record is `{ $type, $record,
-/// $owner }`: `$owner` is the engine whose arena wrote it, which only that
-/// engine's class resolves to its store.
-#[cfg(feature = "napi-bindings")]
-pub struct WireEntry<'e, T> {
-    entry: TriviaEntry<T>,
-    owner: Option<::napi::Unknown<'e>>,
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<'e, T> WireEntry<'e, T> {
-    /// The entry, a built record holding the store `store_of` resolves its
-    /// owner to.
-    ///
-    /// # Errors
-    ///
-    /// What `store_of` refuses.
-    #[cfg_attr(not(feature = "arena"), allow(unused_variables, reason = "an entry names a built record only in the arena build"))]
-    pub fn resolve(self, store_of: &impl Fn(::napi::Unknown<'e>) -> ::napi::Result<crate::trivia_store::TriviaStore<T>>) -> ::napi::Result<TriviaEntry<T>> {
-        match (self.entry, self.owner) {
-            #[cfg(feature = "arena")]
-            (TriviaEntry::Record(record), Some(owner)) => Ok(TriviaEntry::Record(RecordEntry { store: Some(store_of(owner)?), ..record })),
-            (entry, _) => Ok(entry),
-        }
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for WireEntry<'_, T> {
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        let entry = unsafe { TriviaEntry::from_napi_value(env, napi_val)? };
-        let owner = match entry {
-            #[cfg(feature = "arena")]
-            // SAFETY: a record entry decoded from `napi_val`, a live object in `env`.
-            TriviaEntry::Record(_) => Some(unsafe { crate::boundary::required(env, napi_val, c"$owner", "TriviaEntry")? }),
-            TriviaEntry::Value(_) => None,
-        };
-        Ok(Self { entry, owner })
-    }
-}
-
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
     for NodeTrivia<T>
@@ -698,21 +656,16 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiVal
 
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for TriviaEntry<T> {
-    /// The value's own form; a built record, its `{ $type, $record, $owner }`.
-    /// Refuses a record whose store, or whose store's engine, is gone.
+    /// The value's own form; a built record, its `{ $type, $record }`.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
         match val {
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
             Self::Value(value) => unsafe { SlotValue::to_napi_value(env, value) },
             #[cfg(feature = "arena")]
-            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, store }) => {
-                use crate::boundary::{object_with_present, present, present_with};
-                use ::napi::JsValue;
-                let scope = ::napi::Env::from_raw(env);
-                let released = || ::napi::Error::from_reason(crate::arena::ARENA_RELEASED.to_string());
-                let owner = store.ok_or_else(released)?.built().owner(&scope).map_err(|_| released())?.raw();
+            Self::Record(RecordEntry { record: BuiltEntry { kind, at }, .. }) => {
+                use crate::boundary::{object_with_present, present};
                 // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-                unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?, present_with(c"$owner", Some(owner), Ok)?]) }
+                unsafe { object_with_present(env, &[present(env, c"$type", Some(kind.0))?, present(env, c"$record", Some(at.0))?]) }
             }
         }
     }

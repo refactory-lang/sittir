@@ -37,7 +37,7 @@ function shape(value: unknown): unknown {
 	if (Array.isArray(value)) return value.map(shape);
 	if (!isNode(value)) return value;
 	const accessors = Object.keys(value)
-		.filter((key) => !key.startsWith('$') && !key.startsWith('_') && key !== 'toString' && !(key in Array.prototype))
+		.filter((key) => !key.startsWith('$') && !key.startsWith('_') && key !== 'toJSON' && !(key in Array.prototype))
 		.filter((key) => typeof value[key] === 'function' && (value[key] as () => unknown).length === 0)
 		.sort();
 	const text = typeof value.$text === 'function' ? (value.$text as () => unknown)() : undefined;

@@ -19,7 +19,7 @@ function shapeOf(node: unknown): unknown {
 function memberNames(node: object): string[] {
 	const names = new Set<string>();
 	for (let o: object | null = node; o !== null && o !== Object.prototype && o !== Array.prototype; o = Object.getPrototypeOf(o)) {
-		for (const name of Object.getOwnPropertyNames(o)) if (/^[a-z]/.test(name) && !(name in Array.prototype)) names.add(name);
+		for (const name of Object.getOwnPropertyNames(o)) if (/^[a-z]/.test(name) && name !== 'toJSON' && !(name in Array.prototype)) names.add(name);
 	}
 	return [...names];
 }

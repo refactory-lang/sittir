@@ -15,7 +15,7 @@ function targetFile(name: string, source: string): string {
 	return path;
 }
 
-describe('the dogfood contract compares trees by their node JSON', () => {
+describe('the dogfood contract compares trees by their structure', () => {
 	it('tells apart two python definitions whose decorators differ', () => {
 		const target = targetFile('a.py', '@a\ndef f():\n    pass\n');
 		expect(dogfoodContract(py, py.parse('@b\ndef f():\n    pass\n'), target).reparsesEqual).toBe(false);

@@ -21,9 +21,3 @@ export function builderInputs(slots: readonly QuerySlotEntry[], shape: Structure
 	}
 	return { config, options, elements };
 }
-
-export function builderArgs({ config, options, elements }: BuilderInputs): readonly unknown[] {
-	const hasOptions = Object.keys(options).length > 0;
-	if (elements !== undefined) return hasOptions ? [options, ...elements] : elements;
-	return hasOptions ? [config, options] : [config];
-}

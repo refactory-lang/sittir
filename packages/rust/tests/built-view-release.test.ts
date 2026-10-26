@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { TSKindId } from '../src/kinds.ts';
 
 const fixture = fileURLToPath(new URL('../../common/tests/fixtures/built-view-release.mts', import.meta.url));
 
@@ -14,16 +15,16 @@ function released(construction: string): unknown {
 }
 
 const remade = {
-	json: true,
+	unchanged: true,
 	node: true,
 	leaf: 'y',
 	edited: 'z()',
 	sided: '{\n    y() /* c */;\n    x();\n}',
-	parsedName: JSON.stringify({ $type: 'identifier', $text: 'f', trailingComments: [{ $type: 'block_comment', content: { $type: 'block_comment_regular', $text: ' kept ' } }] }),
+	parsedName: { $type: TSKindId.Identifier, $text: 'f', $trivia: { trailing: [{ $type: TSKindId.BlockComment, $text: '/* kept */' }] } },
 	parsed: true,
 	snapshots: true,
 	namedRender: 'f /* kept */()',
-	content: JSON.stringify({ $type: 'identifier', $text: 'Foo' }),
+	content: { $type: TSKindId.Identifier, $text: 'Foo' },
 	aliasedRender: 'Foo()',
 	envelope: true
 };

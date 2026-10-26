@@ -154,7 +154,7 @@ function emitNamespaceImports(lines: string[]): void {
 	lines.push(`import { KIND_NAMES } from '../types.js';`);
 	lines.push(DELIMITER_IMPORT);
 	lines.push(`import type { ${[TYPES_IMPORT_ALWAYS, ...TYPES_IMPORT_OPTIONAL].join(', ')} } from '@sittir/types';`);
-	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, isNodeOfKind, isNodeValue, listStorage, withOptions } from '@sittir/common/utils';");
+	lines.push("import { coerceKindEnumStorage, coerceMixedEnumStorage, configFieldOr, currentHandle, describeValue, isNodeOfKind, isNodeValue, listStorage, withOptions } from '@sittir/common/utils';");
 	lines.push('');
 	lines.push('const F = RawBuilders as PlainBuilders<typeof RawBuilders>;');
 	lines.push('');
@@ -1123,12 +1123,6 @@ function emitResolveByKindHelper(lines: string[]): void {
 	lines.push('  return fn(rest);');
 	lines.push('}');
 	lines.push('');
-	lines.push('export function buildByKind(kind: string, ...input: unknown[]): unknown {');
-	lines.push('  if (!Object.hasOwn(_fromMap, kind)) throw new Error(`no builder for kind ${JSON.stringify(kind)}`);');
-	lines.push('  if (input.length === 1) return _resolveByKind(kind as keyof _FromMap, input[0] as _LooseFieldInput);');
-	lines.push('  return (_fromMap[kind as keyof _FromMap] as (...args: unknown[]) => unknown)(...input);');
-	lines.push('}');
-	lines.push('');
 }
 
 interface ScalarResolution {
@@ -1341,7 +1335,7 @@ function emitResolveOneHelper(lines: string[], resolvesScalars: boolean): void {
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
-		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${JSON.stringify(v)}`);'
+		'    throw new Error(`_resolveOne: cannot resolve value to any of [${[...leafKinds, ...branchKinds].join(", ")}]: ${describeValue(v)}`);'
 	);
 	lines.push('  }');
 	lines.push('  if (typeof v === "string") {');
@@ -1672,7 +1666,7 @@ function emitResolverHelpers(
 	lines.push('    const tagged = _splitTag(e);');
 	lines.push('    if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, tagKinds), tagged.rest);');
 	lines.push('    if (bagKinds === undefined || bagKinds.length === 0) return e;');
-	lines.push('    if (bagKinds.length > 1) throw new Error(`a bag in this list needs a $type tag naming one of [${bagKinds.join(", ")}]: ${JSON.stringify(e)}`);');
+	lines.push('    if (bagKinds.length > 1) throw new Error(`a bag in this list needs a $type tag naming one of [${bagKinds.join(", ")}]: ${describeValue(e)}`);');
 	lines.push('    return _isFromKind(bagKinds[0]!) ? _resolveByKind(bagKinds[0]!, e) : e;');
 	lines.push('  });');
 	lines.push(
@@ -1691,7 +1685,7 @@ function emitResolverHelpers(
 	lines.push('  if (tagged !== undefined) return _resolveByKind(_fromOfTag(tagged.tag, [kind]), tagged.rest) as Admit<T>;');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
-		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${JSON.stringify(v)}`);"
+		"    throw new Error(`_resolveOneLeaf: cannot resolve value to leaf kind '${kind}': ${describeValue(v)}`);"
 	);
 	lines.push('  }');
 	lines.push('  return v as Admit<T>;');
@@ -1739,7 +1733,7 @@ function emitResolverHelpers(
 	lines.push('  }');
 	lines.push('  if (typeof v === "object") {');
 	lines.push(
-		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${JSON.stringify(v)}`);"
+		"    throw new Error(`_resolveOneBranch: cannot resolve value to branch kind '${kind}': ${describeValue(v)}`);"
 	);
 	lines.push('  }');
 	lines.push('  return v as Admit<T>;');
@@ -1889,6 +1883,6 @@ export class FromEmitter implements CodegenEmitter<string> {
 			}
 			return [l];
 		});
-		return pruneUnusedImports(pruned, ['Delimiter', 'listStorage', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
+		return pruneUnusedImports(pruned, ['Delimiter', 'describeValue', 'listStorage', 'withOptions', ...TYPES_IMPORT_OPTIONAL]).join('\n');
 	}
 }

@@ -21,7 +21,7 @@ function build(engine: typeof objects): Built {
 	}) as unknown as Built;
 }
 
-const SKIP = new Set(['$with', '$trivia', '$render', 'toString', '$engine', '$query', '$snapshot', '$text', ...Object.getOwnPropertyNames(Array.prototype)]);
+const SKIP = new Set(['$with', '$trivia', '$render', 'toString', 'toJSON', '$engine', '$query', '$snapshot', '$text', ...Object.getOwnPropertyNames(Array.prototype)]);
 
 function accessorsOf(node: Built): string[] {
 	return Object.keys(node).filter((key) => !key.startsWith('$') && !SKIP.has(key) && typeof node[key] === 'function' && (node[key] as () => unknown).length === 0);

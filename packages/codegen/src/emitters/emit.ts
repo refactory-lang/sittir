@@ -195,7 +195,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const irNamespace = emitIr({ grammar, nodeMap });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
-	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure, kindEntries });
+	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure });
 
 	const overlays: Record<OverlayName, string> = {
 		refines: emitRefinesOverlay({ nodeMap, generatedIdTables }),

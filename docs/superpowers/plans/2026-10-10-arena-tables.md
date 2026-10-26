@@ -750,13 +750,14 @@ raw-string routing metadata where the type alone cannot express its parser behav
 
 **Records and cells are immutable.** Once written, nothing rewrites a cell or a record: a first read writes a new record and leaves its parent's cell alone, and an edit builds new records. Three stores change, all outside the records: the arena and the row index, which only append, and the store of written trivia sides (step 1a), where a write replaces one place's side. Written trivia is a layout overlay, outside this invariant: setting or replacing a side of an existing place is not an edit of the node. The prepared overlay is built for one render and dropped after it.
 
-At the cutover, a parsed leaf is identified by (tree, row) and a parsed unit by its record.
+At the cutover, a parsed leaf is identified by (tree, row) and a parsed unit by its site: its tree and the row its holder's cell names.
 
 5. Tests:
    - each kind's macro expansion;
    - read parity over every corpus entry of the five grammars: `render_record(read_record(i))` equals `render(read(i))`, and every view accessor answers what the node's field holds (kind, presence, coordinate, text span), compared through the fields trait;
    - the fuzzed view (Review Focus 1): arbitrary words are refused or rendered, and none reads outside its chunk or aborts;
-   - a render of `render_record` equal to `render` for every parity fixture, built trivia included.
+   - a render of `render_record` equal to `render` for every parity fixture, built trivia included;
+   - building a node appends no record for a unit it holds, and a parsed unit's sides still render beside it after its holder is rebuilt and placed (the shared-arena spec's Verification 17).
 
 ### Task 9: JavaScript over records
 
@@ -802,7 +803,7 @@ Detail against the measured implementation after Task 10 and the resulting optim
 - **A parsed record is written on first read** (encoding item 8): the reader writes a node's record the first time any route reads it, and the views read it from then on.
 - **Eager immutable built records are required.** Builders append kind-specific packed records; accessors read them, and updates publish new records. `$with` reuses unchanged child addresses, including shared children, without mutating the original record. There is no in-place node setter option. Reclaim unreferenced records/chunks only while preserving the lifetime of all live snapshots and views.
   - **Open question: the built arena's growth.** The built arena is append-only (step 1a), so on a long-lived engine every build stays for the engine's life. That growth is what a reset or reclaim of the built arena is designed against; it clears the store's `Record` and `Unit` entries in the same call.
-- **Parsed units are records.** A parsed unit (a variant with no fields, such as `;`) reads as a reference to its record, not a bare kind-id number, so it has identity: alignment matches units by record as it matches read nodes, and the `is` guards classify them.
+- **Units have no record.** A unit (a variant with no fields, such as `;`) has no record, address or view, parsed or built: its holder's cell names its kind, it reads as the bare kind id from either origin, and its identity is its site. Alignment matches identical units by order, so two identical units that trade places keep their sides by position.
 - **Built nodes' trivia, native only.** The store lands in Task 8 (the trivia-table spec's § 7.1). At the cutover the render reads trivia from native storage only, and a built holder keeps nothing for its children.
   - **Retires:** `$_layout.trivia`, `setTriviaData` and the trivia writer's client store; `NodeLayout::trivia`, `NodeTrivia` and `TriviaEntry` with their napi decode.
 - **A native file-based parse** (the maintainer, 2026-10-12). `parseFile(path)`, only for grammars that declare file types: native code reads the file, JavaScript gets records, and a node's text comes by the native text call (ruling 1.1), so the source never exists in JavaScript. Its API shape (the name, options, errors for an unreadable file, and encoding and BOM handling) is designed here and goes to the maintainer before code.

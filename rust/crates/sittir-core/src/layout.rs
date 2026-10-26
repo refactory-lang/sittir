@@ -663,46 +663,6 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
     }
 }
 
-/// A unit's sides as a write passes them: `{ slot, item, leading?, trailing?,
-/// inner? }`, each entry a `WireEntry`, so a built record names its owner.
-#[cfg(feature = "napi-bindings")]
-pub struct WireUnit<'e, T> {
-    slot: String,
-    item: crate::types::ItemIndex,
-    sides: [Option<Vec<crate::trivia::WireEntry<'e, T>>>; 3],
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<'e, T> WireUnit<'e, T> {
-    /// The unit's sides, each built record holding the store `store_of`
-    /// resolves its owner to.
-    ///
-    /// # Errors
-    ///
-    /// What `store_of` refuses.
-    pub fn resolve(self, store_of: &impl Fn(::napi::Unknown<'e>) -> ::napi::Result<crate::trivia_store::TriviaStore<T>>) -> ::napi::Result<UnitSides<T>> {
-        let side = |entries: Option<Vec<crate::trivia::WireEntry<'e, T>>>| entries.map(|entries| entries.into_iter().map(|entry| entry.resolve(store_of)).collect::<::napi::Result<Vec<_>>>()).transpose();
-        let [leading, trailing, inner] = self.sides;
-        Ok(UnitSides { slot: self.slot, item: self.item, trivia: NodeTrivia { leading: side(leading)?, trailing: side(trailing)?, inner: side(inner)? } })
-    }
-}
-
-#[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue for WireUnit<'_, T> {
-    /// `{ slot, item, leading?, trailing?, inner? }`.
-    unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
-        use crate::boundary::property;
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        unsafe {
-            Ok(Self {
-                slot: property(env, napi_val, c"slot")?.ok_or_else(|| ::napi::Error::from_reason("a unit's sides name its slot"))?,
-                item: property(env, napi_val, c"item")?.unwrap_or(crate::types::ItemIndex(0)),
-                sides: [property(env, napi_val, c"leading")?, property(env, napi_val, c"trailing")?, property(env, napi_val, c"inner")?],
-            })
-        }
-    }
-}
-
 #[cfg(feature = "napi-bindings")]
 impl<T: ::napi::bindgen_prelude::ToNapiValue> ::napi::bindgen_prelude::ToNapiValue for UnitSides<T> {
     /// `{ slot, item, leading?, trailing?, inner? }`, each side only when present.
