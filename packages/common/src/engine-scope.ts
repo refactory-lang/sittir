@@ -60,19 +60,24 @@ export function stampEngineStorage(engine: object, storage: NodeStorage): void {
 }
 
 export function admitChildren(handle: EngineHandle, kind: string, slots: Readonly<Record<string, unknown>>): void {
-	const ours = engineStorages.get(handle.current);
-	for (const [slot, value] of Object.entries(slots)) {
-		for (const child of Array.isArray(value) ? value : [value]) {
-			const engine = engineOf(child);
-			if (engine === undefined) continue;
-			if (!sameLanguage(engine, handle.current)) {
-				throw new Error(`cannot build a ${handle.current.language.name} ${kind} with a ${engine.language.name} node in its ${slot}`);
-			}
-			const theirs = engineStorages.get(engine);
-			if (ours !== undefined && theirs !== undefined && theirs !== ours) {
-				throw new Error(`cannot build a ${kind} with a node of an engine storing nodes as ${theirs} in its ${slot}; this engine stores them as ${ours}`);
-			}
-		}
+	const current = handle.current;
+	for (const slot in slots) {
+		const value = slots[slot];
+		if (!Array.isArray(value)) admitChild(current, kind, slot, value);
+		else for (const child of value) admitChild(current, kind, slot, child);
+	}
+}
+
+function admitChild(current: EngineIdentity, kind: string, slot: string, child: unknown): void {
+	const engine = engineOf(child);
+	if (engine === undefined || engine === current) return;
+	if (!sameLanguage(engine, current)) {
+		throw new Error(`cannot build a ${current.language.name} ${kind} with a ${engine.language.name} node in its ${slot}`);
+	}
+	const ours = engineStorages.get(current);
+	const theirs = engineStorages.get(engine);
+	if (ours !== undefined && theirs !== undefined && theirs !== ours) {
+		throw new Error(`cannot build a ${kind} with a node of an engine storing nodes as ${theirs} in its ${slot}; this engine stores them as ${ours}`);
 	}
 }
 

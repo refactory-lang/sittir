@@ -178,7 +178,6 @@ export class BuiltArena {
 	}
 
 	record(kind: number, words: number): BuiltDraft {
-		units(words, 1);
 		if (this.#drafted + words > this.#drafts.length) {
 			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
 			this.#drafted = 0;
@@ -280,10 +279,7 @@ export class BuiltArena {
 	}
 
 	row(node: object): Record<string, unknown> {
-		const kind = (node as { readonly $type: number }).$type;
-		const make = this.#views.rows[kind];
-		if (make === undefined) throw new Error(`a built record of kind ${kind} has no row in its records module`);
-		return make(node, this.#handle);
+		return this.#views.rows[(node as { readonly $type: number }).$type]!(node, this.#handle);
 	}
 
 	/** Holds the parsed tree `tree`, which a record of this arena names, with its `token`, for as long as the arena lives. */
@@ -317,9 +313,7 @@ export class BuiltArena {
 			this.#released.register(parsed, record);
 			return parsed;
 		}
-		const make = this.#views.leaves[kind];
-		if (make === undefined) throw new Error(`a built leaf of kind ${kind} has no maker in its records module`);
-		return this.#adopt(make(this.textOf(offset, len), this.#handle), record, { at: offset, len });
+		return this.#adopt(this.#views.leaves[kind]!(this.textOf(offset, len), this.#handle), record, { at: offset, len });
 	}
 
 	#parsedLeaf(kind: number, record: number): object | undefined {

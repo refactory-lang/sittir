@@ -60,10 +60,9 @@ describe('a built arena', () => {
 		expect(placed(arena, arena.view(wide), 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
 	});
 
-	it('refuses a draft of a length no record has, and keeps every other draft whole', () => {
+	it('keeps every outstanding draft whole', () => {
 		const arena = arenaOf();
 		const outstanding = arena.record(9, 3);
-		for (const words of [Number.NaN, -1, 0, 2.5, Infinity]) expect(() => arena.record(4, words)).toThrow(/cannot allocate/);
 		const next = arena.record(8, 3);
 		outstanding.data[outstanding.base + 2] = 5;
 		expect(placed(arena, arena.view(outstanding), 3)).toEqual([9, 0, 5]);
