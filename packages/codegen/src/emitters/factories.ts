@@ -783,14 +783,20 @@ export function splicedEnvelopeType(f: AssembledNonterminal, nodeMap: NodeMap): 
 }
 
 export function widenSlotInputs(type: string, node: AssembledNode, nodeMap: NodeMap): string {
-	const inputs = new Map<string, string[]>();
+	const whole = new Map<string, string[]>();
+	const elements = new Map<string, string[]>();
 	const envelopes = node.slots.flatMap((slot) => {
 		const input = splicedEnvelopeType(slot, nodeMap);
-		return input === undefined ? [] : [[slot.propertyName, input] as const];
+		return input === undefined ? [] : [[slot, input] as const];
 	});
-	for (const [slot, input] of [...numericSlotInputs(node), ...envelopes]) inputs.set(slot, [...(inputs.get(slot) ?? []), input]);
-	if (inputs.size === 0) return type;
-	return `WidenSlots<${type}, { ${[...inputs].map(([slot, types]) => `${JSON.stringify(slot)}: ${types.join(' | ')}`).join('; ')} }>`;
+	for (const [slot, input] of [...numericSlotInputs(node), ...envelopes]) {
+		const inputs = isMultiple(slot) ? elements : whole;
+		inputs.set(slot.propertyName, [...(inputs.get(slot.propertyName) ?? []), input]);
+	}
+	if (whole.size === 0 && elements.size === 0) return type;
+	const map = (inputs: ReadonlyMap<string, readonly string[]>): string =>
+		inputs.size === 0 ? '{}' : `{ ${[...inputs].map(([slot, types]) => `${JSON.stringify(slot)}: ${types.join(' | ')}`).join('; ')} }`;
+	return elements.size === 0 ? `WidenSlots<${type}, ${map(whole)}>` : `WidenSlots<${type}, ${map(whole)}, ${map(elements)}>`;
 }
 
 function admittedTypes(slots: readonly AssembledNonterminal[], nodeMap: NodeMap): string[] {

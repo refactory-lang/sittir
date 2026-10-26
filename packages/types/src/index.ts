@@ -645,8 +645,16 @@ type OptionalKeys<T> = {
  *   1 of spec 009 — cached indexed access instead of fresh `LooseConfigOf`
  *   instantiation). When `{}` (default), falls back to recursive projection.
  */
-/** A config type whose slots named in `W` also accept the inputs `W` gives them: a numeric text slot's JavaScript number (and bigint for an integer slot), or a spliced slot's envelope. The base builder converts either to what the slot stores. */
-export type WidenSlots<C, W> = { [P in keyof C]: P extends keyof W ? C[P] | W[P] : C[P] };
+/** A config type whose slots named in `W` also accept the inputs `W` gives them, and whose list slots named in `E` also accept the inputs `E` gives as elements: a numeric text slot's JavaScript number (and bigint for an integer slot), or a spliced slot's envelope. The base builder converts either to what the slot stores. */
+export type WidenSlots<C, W, E = {}> = {
+	[P in keyof C]: P extends keyof W ? C[P] | W[P] : P extends keyof E ? WidenElements<C[P], E[P]> : C[P];
+};
+
+type WidenElements<A, X> = A extends readonly [infer F, ...infer R]
+	? readonly [F | X, ...(R[number] | X)[]]
+	: A extends readonly (infer I)[]
+		? readonly (I | X)[]
+		: A;
 
 type NumericRefusal<M extends string, V> = { readonly [K in M]: V };
 

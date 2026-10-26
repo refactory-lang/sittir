@@ -318,10 +318,10 @@ export function numberInputTest(shape: NumberShape, value: string): string {
 	return shape.base === 'float' ? `(typeof ${value} === 'number')` : `(typeof ${value} === 'number' || typeof ${value} === 'bigint')`;
 }
 
-export function numericSlotInputs(node: AssembledNode): readonly (readonly [slot: string, input: string])[] {
+export function numericSlotInputs(node: AssembledNode): readonly (readonly [slot: AssembledNonterminal, input: string])[] {
 	return node.slots.flatMap((slot) => {
 		const shape = numericSlotShape(slot);
-		return shape === undefined ? [] : [[slot.propertyName, numberInputType(shape)] as const];
+		return shape === undefined ? [] : [[slot, numberInputType(shape)] as const];
 	});
 }
 
