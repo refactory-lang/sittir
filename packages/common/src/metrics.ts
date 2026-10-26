@@ -13,6 +13,7 @@
 import { writeFileSync } from 'node:fs';
 import { join as pathJoin } from 'node:path';
 import os from 'node:os';
+import { snapshotOf } from './snapshot.ts';
 
 // ---------------------------------------------------------------------------
 // Boot-time flag — evaluated ONCE, never re-read.
@@ -39,7 +40,7 @@ export interface PerKindMetrics {
 	readonly outputBytes: number;
 	/** Heap delta (heapUsed after − before) summed across calls, bytes. */
 	readonly heapDeltaBytes: number;
-	/** FFI payload bytes, estimated by the JSON size of each rendered node's snapshot — native backend only. */
+	/** FFI payload bytes, estimated by the size of each rendered node's snapshot (`dataBytes`) — native backend only. */
 	readonly napiCopyBytes?: number;
 }
 
@@ -141,7 +142,7 @@ export function withMetrics<T>(grammar: string, kind: string, fn: () => T): T {
 	const result = fn();
 	const afterMs = performance.now() - before;
 	const heapDelta = process.memoryUsage().heapUsed - heapBefore;
-	const outputBytes = typeof result === 'string' ? (result as string).length : JSON.stringify(result).length;
+	const outputBytes = dataBytes(result);
 
 	const k = _key(grammar, kind);
 	const existing = _perKind.get(k);
@@ -290,3 +291,9 @@ export function dumpMetrics(backend: 'ts' | 'native', outDir?: string): void {
  * than re-evaluating the env var.
  */
 export const metricsEnabled: boolean = METRICS_ENABLED;
+
+export function dataBytes(value: unknown): number {
+	if (typeof value === 'string') return value.length;
+	if (typeof value !== 'object' || value === null) return String(value).length;
+	return JSON.stringify(snapshotOf(value)).length;
+}

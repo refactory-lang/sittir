@@ -24,14 +24,13 @@ import type {
 } from '@sittir/types';
 import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
-import { metricsEnabled, recordFfi } from './metrics.ts';
+import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
 import { BuiltArena, type BuiltViews } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
-import { snapshotOf } from './snapshot.ts';
 import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
@@ -243,8 +242,7 @@ function assembleEngine<API extends LanguageAPI>(
 			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
 		const before = performance.now();
 		const text = rendered.toString();
-		const payload = typeof target === 'number' ? String(target) : JSON.stringify(snapshotOf(target));
-		recordFfi(language.name, kind, payload.length, performance.now() - before, text.length);
+		recordFfi(language.name, kind, dataBytes(target), performance.now() - before, text.length);
 		return text;
 	};
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
