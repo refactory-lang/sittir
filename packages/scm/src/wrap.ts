@@ -22,9 +22,9 @@ import {
 	triviaInner,
 	textOf,
 	recordOf,
-	recordSlot,
 	recordFlag,
-	recordItems,
+	keptSlot,
+	keptItems,
 	rowData,
 	rowOf,
 	rowWith,
@@ -62,7 +62,7 @@ function viewSlot<T>(
 	inline = 0,
 	role?: Role
 ): ParsedOfData<T> {
-	return hydrateWith(recordSlot(view, tree, word, width, inline), tree, _wrap, undefined, role) as ParsedOfData<T>;
+	return keptSlot(view, tree, word, width, inline, _wrap, role) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: object,
@@ -72,15 +72,7 @@ function viewSlots<T>(
 	run?: number,
 	inline = 0
 ): readonly ParsedOfData<T>[] {
-	return recordItems(
-		view,
-		tree,
-		word,
-		width,
-		run,
-		(data) => hydrateWith(data, tree, _wrap),
-		inline
-	) as readonly ParsedOfData<T>[];
+	return keptItems(view, tree, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];
 }
 
 export function wrapProgram(data: T.Program, tree: TreeHandle): T.Program.Parsed {
@@ -1379,13 +1371,13 @@ function viewPredicate(data: RecordStub, tree: TreeHandle): T.Predicate.Parsed {
 		...data,
 		$type: TSKindId.Predicate as const,
 		prefix() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		name() {
 			return viewSlot<T.ImmediateIdentifier>(this, tree, 7, 5, 0);
 		},
 		type() {
-			return recordSlot(this, tree, 12, 5, 0);
+			return keptSlot(this, tree, 12, 5, 0);
 		},
 		parameters() {
 			return viewSlot<T.Parameters | undefined>(this, tree, 17, 6, 4);
@@ -1416,7 +1408,7 @@ function viewListElementQuantifier(data: RecordStub, tree: TreeHandle): T.ListEl
 		...data,
 		$type: TSKindId.ListElementQuantifier as const,
 		quantifier() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		$with: {
 			quantifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'quantifier', args)

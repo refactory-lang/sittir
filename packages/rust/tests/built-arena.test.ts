@@ -167,7 +167,7 @@ describe('a built arena', () => {
 		expect(cell.form).toBe('builtLeaf');
 		if (cell.form !== 'builtLeaf') return;
 		expect([cell.kind, arena.textOf(cell.offset, cell.len)]).toEqual([4, 'name']);
-		expect(arena.leaf(cell)).toBe(leaf);
+		expect(cell.record).toBe(builtRecordOf(leaf, arena));
 	});
 
 	it('refuses a child no builder of the arena made', () => {

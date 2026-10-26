@@ -22,9 +22,9 @@ import {
 	triviaInner,
 	textOf,
 	recordOf,
-	recordSlot,
 	recordFlag,
-	recordItems,
+	keptSlot,
+	keptItems,
 	rowData,
 	rowOf,
 	rowWith,
@@ -61,7 +61,7 @@ function viewSlot<T>(
 	inline = 0,
 	role?: Role
 ): ParsedOfData<T> {
-	return hydrateWith(recordSlot(view, tree, word, width, inline), tree, _wrap, undefined, role) as ParsedOfData<T>;
+	return keptSlot(view, tree, word, width, inline, _wrap, role) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: object,
@@ -71,15 +71,7 @@ function viewSlots<T>(
 	run?: number,
 	inline = 0
 ): readonly ParsedOfData<T>[] {
-	return recordItems(
-		view,
-		tree,
-		word,
-		width,
-		run,
-		(data) => hydrateWith(data, tree, _wrap),
-		inline
-	) as readonly ParsedOfData<T>[];
+	return keptItems(view, tree, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];
 }
 
 export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed {
@@ -1346,7 +1338,7 @@ function viewLookaheadAssertion(data: RecordStub, tree: TreeHandle): T.Lookahead
 		...data,
 		$type: TSKindId.LookaheadAssertion as const,
 		content() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		pattern() {
 			return viewSlot<T.Pattern>(this, tree, 7, 10, 8);
@@ -1375,7 +1367,7 @@ function viewLookbehindAssertion(data: RecordStub, tree: TreeHandle): T.Lookbehi
 		...data,
 		$type: TSKindId.LookbehindAssertion as const,
 		content() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		pattern() {
 			return viewSlot<T.Pattern>(this, tree, 7, 10, 8);
@@ -1542,7 +1534,7 @@ function viewNamedCapturingGroup(data: RecordStub, tree: TreeHandle): T.NamedCap
 		...data,
 		$type: TSKindId.NamedCapturingGroup as const,
 		content() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		groupName() {
 			return viewSlot<T.GroupName>(this, tree, 7, 5, 0);

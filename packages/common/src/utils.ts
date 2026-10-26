@@ -11,7 +11,7 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, recordOf } from './record-view.ts';
+import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, SLOTS, type KeptSlots } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
 
@@ -678,6 +678,29 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
 }
 
+function keptOf(view: object): KeptSlots {
+	const holder = view as { [SLOTS]?: KeptSlots };
+	return (holder[SLOTS] ??= {});
+}
+
+export function keptSlot(view: object, tree: TreeHandle, word: number, width: number, inline = 0, wrap?: WrapNode, role: Role = 'node'): unknown {
+	const kept = keptOf(view);
+	if (word in kept) return kept[word] ?? undefined;
+	const value = recordSlot(view, tree, word, width, inline);
+	return (kept[word] = wrap === undefined ? value : hydrateWith(value, tree, wrap, undefined, role));
+}
+
+export function keptItems(view: object, tree: TreeHandle, word: number, width: number, run?: number, inline = 0, wrap?: WrapNode): readonly unknown[] {
+	const kept = keptOf(view);
+	const known = kept[word];
+	if (Array.isArray(known) && Object.isFrozen(known)) return known;
+	const items =
+		word in kept
+			? Array.isArray(known) ? known.slice() : known == null ? [] : [known]
+			: recordSlots(view, tree, word, width, run, inline).map((item) => (wrap === undefined ? item : hydrateWith(item, tree, wrap)));
+	return (kept[word] = Object.freeze(items)) as readonly unknown[];
+}
+
 /** `hydrateSlotWith` for a list slot. */
 export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode): readonly unknown[] {
 	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
@@ -731,7 +754,6 @@ export {
 	recordDelimiter,
 	recordSeparator,
 	recordFlag,
-	recordItems,
 	recordLength,
 	recordOf,
 	recordSlot,

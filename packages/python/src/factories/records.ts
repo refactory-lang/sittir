@@ -110,7 +110,7 @@ export function buildModule(...children: Admit<T.Statement[]>): T.Module.Bound {
 	handle?.verifyStored?.(TSKindId.Module as const, { _statements });
 	const record = arena.record(TSKindId.Module as const, 4);
 	storeList(arena, record.data, record.base + 2, _statements, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _statements });
 	return node as unknown as T.Module.Bound;
 }
 
@@ -165,7 +165,7 @@ function _buildSimpleStatements(value: Admit<T.SimpleStatementsElements>): T.Sim
 	handle?.verifyStored?.(TSKindId.SimpleStatements as const, { _elements });
 	const record = arena.record(TSKindId.SimpleStatements as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.SimpleStatements.Bound;
 }
 
@@ -223,7 +223,7 @@ function _buildImportStatement(value: Admit<T.Names>): T.ImportStatement.Bound {
 	handle?.verifyStored?.(TSKindId.ImportStatement as const, { _names });
 	const record = arena.record(TSKindId.ImportStatement as const, 8);
 	storeCell(arena, record.data, record.base + 2, _names);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _names });
 	return node as unknown as T.ImportStatement.Bound;
 }
 
@@ -292,7 +292,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 	const record = arena.record(TSKindId.RelativeImport as const, 13);
 	storeCell(arena, record.data, record.base + 2, _prefix);
 	storeCell(arena, record.data, record.base + 7, _name);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _prefix, 7: _name });
 	return node as unknown as T.RelativeImport.Bound;
 }
 
@@ -326,7 +326,7 @@ export function buildFutureImportStatement(
 	handle?.verifyStored?.(TSKindId.FutureImportStatement as const, { _content });
 	const record = arena.record(TSKindId.FutureImportStatement as const, 12);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.FutureImportStatement.Bound;
 }
 
@@ -361,7 +361,7 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 	const record = arena.record(TSKindId.ImportFromStatement as const, 27);
 	storeCell(arena, record.data, record.base + 2, _module_name);
 	storeCell(arena, record.data, record.base + 17, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _module_name, 17: _content });
 	return node as unknown as T.ImportFromStatement.Bound;
 }
 
@@ -418,7 +418,7 @@ function _buildImportList(
 	const record = arena.record(TSKindId.ImportList as const, 4);
 	storeList(arena, record.data, record.base + 2, _name, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name });
 	return node as unknown as T.ImportList.Bound;
 }
 
@@ -455,7 +455,7 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 	const record = arena.record(TSKindId.AliasedImport as const, 13);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 8, _alias);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 8: _alias });
 	return node as unknown as T.AliasedImport.Bound;
 }
 
@@ -490,7 +490,7 @@ export function buildPrintStatement(
 	handle?.verifyStored?.(TSKindId.PrintStatement as const, { _content });
 	const record = arena.record(TSKindId.PrintStatement as const, 21);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.PrintStatement.Bound;
 }
 
@@ -516,7 +516,7 @@ export function buildChevron(value: Admit<T.Expression>): T.Chevron.Bound {
 	handle?.verifyStored?.(TSKindId.Chevron as const, { _expression });
 	const record = arena.record(TSKindId.Chevron as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.Chevron.Bound;
 }
 
@@ -544,7 +544,7 @@ export function buildAssertStatement(...children: NonEmptyArray<Admit<T.Expressi
 	handle?.verifyStored?.(TSKindId.AssertStatement as const, { _expression });
 	const record = arena.record(TSKindId.AssertStatement as const, 4);
 	storeList(arena, record.data, record.base + 2, _expression, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.AssertStatement.Bound;
 }
 
@@ -574,7 +574,7 @@ export function buildExpressionStatement(
 	handle?.verifyStored?.(TSKindId.ExpressionStatement as const, { _content });
 	const record = arena.record(TSKindId.ExpressionStatement as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.ExpressionStatement.Bound;
 }
 
@@ -609,7 +609,7 @@ export function buildNamedExpression(config: T.NamedExpression.Config): T.NamedE
 	const record = arena.record(TSKindId.NamedExpression as const, 12);
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _right });
 	return node as unknown as T.NamedExpression.Bound;
 }
 
@@ -642,7 +642,7 @@ export function buildNamedExpressionLhs(config: T.NamedExpressionLhs.Config): T.
 	handle?.verifyStored?.(TSKindId.NamedExpressionLhs as const, { _identifier });
 	const record = arena.record(TSKindId.NamedExpressionLhs as const, 7);
 	storeCell(arena, record.data, record.base + 2, _identifier);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _identifier });
 	return node as unknown as T.NamedExpressionLhs.Bound;
 }
 
@@ -672,7 +672,7 @@ export function buildReturnStatement(value?: Admit<T.Expression | T.ExpressionLi
 	handle?.verifyStored?.(TSKindId.ReturnStatement as const, { _expressions });
 	const record = arena.record(TSKindId.ReturnStatement as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expressions);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expressions });
 	return node as unknown as T.ReturnStatement.Bound;
 }
 
@@ -700,7 +700,7 @@ export function buildDeleteStatement(value: Admit<T.Expression | T.ExpressionLis
 	handle?.verifyStored?.(TSKindId.DeleteStatement as const, { _expressions });
 	const record = arena.record(TSKindId.DeleteStatement as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expressions);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expressions });
 	return node as unknown as T.DeleteStatement.Bound;
 }
 
@@ -734,7 +734,7 @@ export function buildRaiseStatement(config: Partial<T.RaiseStatement.Config> = {
 	const record = arena.record(TSKindId.RaiseStatement as const, 12);
 	storeCell(arena, record.data, record.base + 2, _expressions);
 	storeCell(arena, record.data, record.base + 7, _cause);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expressions, 7: _cause });
 	return node as unknown as T.RaiseStatement.Bound;
 }
 
@@ -789,7 +789,7 @@ export function buildIfStatement(config: T.IfStatement.Config): T.IfStatement.Bo
 	storeCell(arena, record.data, record.base + 2, _condition);
 	storeCell(arena, record.data, record.base + 7, _consequence);
 	storeList(arena, record.data, record.base + 17, _alternative, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _condition, 7: _consequence, 17: _alternative });
 	return node as unknown as T.IfStatement.Bound;
 }
 
@@ -829,7 +829,7 @@ export function buildElifClause(config: T.ElifClause.Config): T.ElifClause.Bound
 	const record = arena.record(TSKindId.ElifClause as const, 17);
 	storeCell(arena, record.data, record.base + 2, _condition);
 	storeCell(arena, record.data, record.base + 7, _consequence);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _condition, 7: _consequence });
 	return node as unknown as T.ElifClause.Bound;
 }
 
@@ -859,7 +859,7 @@ export function buildElseClause(value: Admit<T.Suite>): T.ElseClause.Bound {
 	handle?.verifyStored?.(TSKindId.ElseClause as const, { _body });
 	const record = arena.record(TSKindId.ElseClause as const, 12);
 	storeCell(arena, record.data, record.base + 2, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body });
 	return node as unknown as T.ElseClause.Bound;
 }
 
@@ -890,7 +890,7 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 	const record = arena.record(TSKindId.MatchStatement as const, 17);
 	storeCell(arena, record.data, record.base + 2, _subjects);
 	storeCell(arena, record.data, record.base + 8, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _subjects, 8: _body });
 	return node as unknown as T.MatchStatement.Bound;
 }
 
@@ -940,7 +940,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 	storeCell(arena, record.data, record.base + 2, _case_patterns);
 	storeCell(arena, record.data, record.base + 8, _guard);
 	storeCell(arena, record.data, record.base + 17, _consequence);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _case_patterns, 8: _guard, 17: _consequence });
 	return node as unknown as T.CaseClause.Bound;
 }
 
@@ -1003,7 +1003,7 @@ export function buildForStatement(config: T.ForStatement.Config): T.ForStatement
 	storeCell(arena, record.data, record.base + 8, _right);
 	storeCell(arena, record.data, record.base + 13, _body);
 	storeCell(arena, record.data, record.base + 23, _alternative);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _left, 8: _right, 13: _body, 23: _alternative });
 	return node as unknown as T.ForStatement.Bound;
 }
 
@@ -1053,7 +1053,7 @@ export function buildWhileStatement(config: T.WhileStatement.Config): T.WhileSta
 	storeCell(arena, record.data, record.base + 2, _condition);
 	storeCell(arena, record.data, record.base + 7, _body);
 	storeCell(arena, record.data, record.base + 17, _alternative);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _condition, 7: _body, 17: _alternative });
 	return node as unknown as T.WhileStatement.Bound;
 }
 
@@ -1107,7 +1107,7 @@ export function buildTryStatement(config: T.TryStatement.Config): T.TryStatement
 	storeList(arena, record.data, record.base + 12, _handlers, 5);
 	storeCell(arena, record.data, record.base + 14, _alternative);
 	storeCell(arena, record.data, record.base + 28, _finalizer);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body, 12: _handlers, 14: _alternative, 28: _finalizer });
 	return node as unknown as T.TryStatement.Bound;
 }
 
@@ -1149,7 +1149,7 @@ export function buildExceptClause(config: T.ExceptClause.Config): T.ExceptClause
 	if (_group) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record.data, record.base + 3, _exception);
 	storeCell(arena, record.data, record.base + 21, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _exception, 21: _body });
 	return node as unknown as T.ExceptClause.Bound;
 }
 
@@ -1180,7 +1180,7 @@ export function buildFinallyClause(value: Admit<T.Suite>): T.FinallyClause.Bound
 	handle?.verifyStored?.(TSKindId.FinallyClause as const, { _body });
 	const record = arena.record(TSKindId.FinallyClause as const, 12);
 	storeCell(arena, record.data, record.base + 2, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body });
 	return node as unknown as T.FinallyClause.Bound;
 }
 
@@ -1216,7 +1216,7 @@ export function buildWithStatement(config: T.WithStatement.Config): T.WithStatem
 	if (_async) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record.data, record.base + 3, _with_clause);
 	storeCell(arena, record.data, record.base + 13, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _with_clause, 13: _body });
 	return node as unknown as T.WithStatement.Bound;
 }
 
@@ -1247,7 +1247,7 @@ export function buildWithItem(value: Admit<T.Expression>): T.WithItem.Bound {
 	handle?.verifyStored?.(TSKindId.WithItem as const, { _value });
 	const record = arena.record(TSKindId.WithItem as const, 7);
 	storeCell(arena, record.data, record.base + 2, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _value });
 	return node as unknown as T.WithItem.Bound;
 }
 
@@ -1315,7 +1315,7 @@ export function buildFunctionDefinition(config: T.FunctionDefinition.Config): T.
 	storeCell(arena, record.data, record.base + 18, _parameters);
 	storeCell(arena, record.data, record.base + 28, _return_type);
 	storeCell(arena, record.data, record.base + 33, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _name, 8: _type_parameters, 18: _parameters, 28: _return_type, 33: _body });
 	return node as unknown as T.FunctionDefinition.Bound;
 }
 
@@ -1391,7 +1391,7 @@ function _buildParameters(value?: Admit<T.ParametersElements>): T.Parameters.Bou
 	handle?.verifyStored?.(TSKindId.Parameters as const, { _elements });
 	const record = arena.record(TSKindId.Parameters as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.Parameters.Bound;
 }
 
@@ -1452,7 +1452,7 @@ function _buildLambdaParameters(value: Admit<T.ParametersElements>): T.LambdaPar
 	handle?.verifyStored?.(TSKindId.LambdaParameters as const, { _parameters_elements });
 	const record = arena.record(TSKindId.LambdaParameters as const, 8);
 	storeCell(arena, record.data, record.base + 2, _parameters_elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _parameters_elements });
 	return node as unknown as T.LambdaParameters.Bound;
 }
 
@@ -1484,7 +1484,7 @@ export function buildListSplat(value: Admit<T.Expression>): T.ListSplat.Bound {
 	handle?.verifyStored?.(TSKindId.ListSplat as const, { _expression });
 	const record = arena.record(TSKindId.ListSplat as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.ListSplat.Bound;
 }
 
@@ -1511,7 +1511,7 @@ export function buildDictionarySplat(value: Admit<T.Expression>): T.DictionarySp
 	handle?.verifyStored?.(TSKindId.DictionarySplat as const, { _expression });
 	const record = arena.record(TSKindId.DictionarySplat as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.DictionarySplat.Bound;
 }
 
@@ -1539,7 +1539,7 @@ export function buildGlobalStatement(...children: NonEmptyArray<Admit<T.Identifi
 	handle?.verifyStored?.(TSKindId.GlobalStatement as const, { _names });
 	const record = arena.record(TSKindId.GlobalStatement as const, 4);
 	storeList(arena, record.data, record.base + 2, _names, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _names });
 	return node as unknown as T.GlobalStatement.Bound;
 }
 
@@ -1568,7 +1568,7 @@ export function buildNonlocalStatement(...children: NonEmptyArray<Admit<T.Identi
 	handle?.verifyStored?.(TSKindId.NonlocalStatement as const, { _names });
 	const record = arena.record(TSKindId.NonlocalStatement as const, 4);
 	storeList(arena, record.data, record.base + 2, _names, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _names });
 	return node as unknown as T.NonlocalStatement.Bound;
 }
 
@@ -1600,7 +1600,7 @@ export function buildExecStatement(config: T.ExecStatement.Config): T.ExecStatem
 	const record = arena.record(TSKindId.ExecStatement as const, 20);
 	storeCell(arena, record.data, record.base + 2, _code);
 	storeList(arena, record.data, record.base + 18, _in_clause, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _code, 18: _in_clause });
 	return node as unknown as T.ExecStatement.Bound;
 }
 
@@ -1638,7 +1638,7 @@ export function buildTypeAliasStatement(config: T.TypeAliasStatement.Config): T.
 	const record = arena.record(TSKindId.TypeAliasStatement as const, 12);
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _right });
 	return node as unknown as T.TypeAliasStatement.Bound;
 }
 
@@ -1689,7 +1689,7 @@ export function buildClassDefinition(config: T.ClassDefinition.Config): T.ClassD
 	storeCell(arena, record.data, record.base + 7, _type_parameters);
 	storeCell(arena, record.data, record.base + 17, _bases);
 	storeCell(arena, record.data, record.base + 27, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _type_parameters, 17: _bases, 27: _body });
 	return node as unknown as T.ClassDefinition.Bound;
 }
 
@@ -1761,7 +1761,7 @@ function _buildTypeParameter(value: Admit<T.Types>): T.TypeParameter.Bound {
 	handle?.verifyStored?.(TSKindId.TypeParameter as const, { _types });
 	const record = arena.record(TSKindId.TypeParameter as const, 8);
 	storeCell(arena, record.data, record.base + 2, _types);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _types });
 	return node as unknown as T.TypeParameter.Bound;
 }
 
@@ -1797,7 +1797,7 @@ export function buildParenthesizedListSplat(
 	handle?.verifyStored?.(TSKindId.ParenthesizedListSplat as const, { _content });
 	const record = arena.record(TSKindId.ParenthesizedListSplat as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.ParenthesizedListSplat.Bound;
 }
 
@@ -1856,7 +1856,7 @@ function _buildArgumentList(value?: Admit<T.ArgumentListElements>): T.ArgumentLi
 	handle?.verifyStored?.(TSKindId.ArgumentList as const, { _arguments });
 	const record = arena.record(TSKindId.ArgumentList as const, 8);
 	storeCell(arena, record.data, record.base + 2, _arguments);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _arguments });
 	return node as unknown as T.ArgumentList.Bound;
 }
 
@@ -1898,7 +1898,7 @@ export function buildDecoratedDefinition(config: T.DecoratedDefinition.Config): 
 	const record = arena.record(TSKindId.DecoratedDefinition as const, 49);
 	storeList(arena, record.data, record.base + 2, _decorator, 5);
 	storeCell(arena, record.data, record.base + 4, _definition);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _decorator, 4: _definition });
 	return node as unknown as T.DecoratedDefinition.Bound;
 }
 
@@ -1930,7 +1930,7 @@ export function buildDecorator(value: Admit<T.Expression>): T.Decorator.Bound {
 	handle?.verifyStored?.(TSKindId.Decorator as const, { _expression });
 	const record = arena.record(TSKindId.Decorator as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.Decorator.Bound;
 }
 
@@ -1956,7 +1956,7 @@ export function buildBlock(...children: Admit<T.Statement[]>): T.Block.Bound {
 	handle?.verifyStored?.(TSKindId.Block as const, { _statements });
 	const record = arena.record(TSKindId.Block as const, 4);
 	storeList(arena, record.data, record.base + 2, _statements, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _statements });
 	return node as unknown as T.Block.Bound;
 }
 
@@ -2007,7 +2007,7 @@ function _buildExpressionList(
 	const record = arena.record(TSKindId.ExpressionList as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.ExpressionList.Bound;
 }
 
@@ -2041,7 +2041,7 @@ export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>)
 	handle?.verifyStored?.(TSKindId.DottedName as const, { _names });
 	const record = arena.record(TSKindId.DottedName as const, 4);
 	storeList(arena, record.data, record.base + 2, _names, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _names });
 	return node as unknown as T.DottedName.Bound;
 }
 
@@ -2071,7 +2071,7 @@ export function buildCasePattern(
 	handle?.verifyStored?.(TSKindId.CasePattern as const, { _content });
 	const record = arena.record(TSKindId.CasePattern as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.CasePattern.Bound;
 }
 
@@ -2137,7 +2137,7 @@ export function buildSimplePattern(
 	handle?.verifyStored?.(TSKindId.SimplePattern as const, { _content });
 	const record = arena.record(TSKindId.SimplePattern as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.SimplePattern.Bound;
 }
 
@@ -2193,7 +2193,7 @@ export function buildCaseAsPattern(config: T.CaseAsPattern.Config): T.CaseAsPatt
 	const record = arena.record(TSKindId.CaseAsPattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _case_pattern);
 	storeCell(arena, record.data, record.base + 7, _identifier);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _case_pattern, 7: _identifier });
 	return node as unknown as T.CaseAsPattern.Bound;
 }
 
@@ -2244,7 +2244,7 @@ export function buildUnionPattern(
 	const record = arena.record(TSKindId.UnionPattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _right });
 	return node as unknown as T.UnionPattern.Bound;
 }
 
@@ -2301,7 +2301,7 @@ function _buildDictPattern(value?: Admit<T.DictPatternElements>): T.DictPattern.
 	handle?.verifyStored?.(TSKindId.DictPattern as const, { _elements });
 	const record = arena.record(TSKindId.DictPattern as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.DictPattern.Bound;
 }
 
@@ -2351,7 +2351,7 @@ export function buildKeyValuePattern(
 	const record = arena.record(TSKindId.KeyValuePattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _key);
 	storeCell(arena, record.data, record.base + 7, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _key, 7: _value });
 	return node as unknown as T.KeyValuePattern.Bound;
 }
 
@@ -2398,7 +2398,7 @@ export function buildKeywordPattern(
 	const record = arena.record(TSKindId.KeywordPattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _value });
 	return node as unknown as T.KeywordPattern.Bound;
 }
 
@@ -2438,7 +2438,7 @@ export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern
 	const record = arena.record(TSKindId.SplatPattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _operator);
 	storeCell(arena, record.data, record.base + 7, _name);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _operator, 7: _name });
 	return node as unknown as T.SplatPattern.Bound;
 }
 
@@ -2474,7 +2474,7 @@ export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern
 	const record = arena.record(TSKindId.ClassPattern as const, 14);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 8, _arguments);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 8: _arguments });
 	return node as unknown as T.ClassPattern.Bound;
 }
 
@@ -2522,7 +2522,7 @@ export function buildComplexPattern(config: T.ComplexPattern.Config): T.ComplexP
 	storeCell(arena, record.data, record.base + 3, _real);
 	storeCell(arena, record.data, record.base + 31, _operator);
 	storeCell(arena, record.data, record.base + 36, _imaginary);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _real, 31: _operator, 36: _imaginary });
 	return node as unknown as T.ComplexPattern.Bound;
 }
 
@@ -2581,7 +2581,7 @@ function _buildParametersElements(
 	const record = arena.record(TSKindId.ParametersElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.ParametersElements.Bound;
 }
 
@@ -2635,7 +2635,7 @@ function _buildPatterns(
 	const record = arena.record(TSKindId.Patterns as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.Patterns.Bound;
 }
 
@@ -2692,7 +2692,7 @@ function _buildTuplePattern(value?: Admit<T.TuplePatternElements>): T.TuplePatte
 	handle?.verifyStored?.(TSKindId.TuplePattern as const, { _elements });
 	const record = arena.record(TSKindId.TuplePattern as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.TuplePattern.Bound;
 }
 
@@ -2752,7 +2752,7 @@ function _buildListPattern(value?: Admit<T.Patterns>): T.ListPattern.Bound {
 	handle?.verifyStored?.(TSKindId.ListPattern as const, { _elements });
 	const record = arena.record(TSKindId.ListPattern as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.ListPattern.Bound;
 }
 
@@ -2793,7 +2793,7 @@ export function buildDefaultParameter(config: T.DefaultParameter.Config): T.Defa
 	const record = arena.record(TSKindId.DefaultParameter as const, 17);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 12, _default);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 12: _default });
 	return node as unknown as T.DefaultParameter.Bound;
 }
 
@@ -2835,7 +2835,7 @@ export function buildTypedDefaultParameter(config: T.TypedDefaultParameter.Confi
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _type);
 	storeCell(arena, record.data, record.base + 12, _default);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _type, 12: _default });
 	return node as unknown as T.TypedDefaultParameter.Bound;
 }
 
@@ -2871,7 +2871,7 @@ export function buildListSplatPattern(
 	handle?.verifyStored?.(TSKindId.ListSplatPattern as const, { _pattern });
 	const record = arena.record(TSKindId.ListSplatPattern as const, 7);
 	storeCell(arena, record.data, record.base + 2, _pattern);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _pattern });
 	return node as unknown as T.ListSplatPattern.Bound;
 }
 
@@ -2901,7 +2901,7 @@ export function buildDictionarySplatPattern(
 	handle?.verifyStored?.(TSKindId.DictionarySplatPattern as const, { _pattern });
 	const record = arena.record(TSKindId.DictionarySplatPattern as const, 7);
 	storeCell(arena, record.data, record.base + 2, _pattern);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _pattern });
 	return node as unknown as T.DictionarySplatPattern.Bound;
 }
 
@@ -2941,7 +2941,7 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const record = arena.record(TSKindId.AsPattern as const, 12);
 	storeCell(arena, record.data, record.base + 2, _expression);
 	storeCell(arena, record.data, record.base + 7, _alias);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression, 7: _alias });
 	return node as unknown as T.AsPattern.Bound;
 }
 
@@ -2971,7 +2971,7 @@ export function buildNotOperator(value: Admit<T.Expression>): T.NotOperator.Boun
 	handle?.verifyStored?.(TSKindId.NotOperator as const, { _argument });
 	const record = arena.record(TSKindId.NotOperator as const, 7);
 	storeCell(arena, record.data, record.base + 2, _argument);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _argument });
 	return node as unknown as T.NotOperator.Bound;
 }
 
@@ -3005,7 +3005,7 @@ export function buildBooleanOperator(config: T.BooleanOperator.Config): T.Boolea
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _operator);
 	storeCell(arena, record.data, record.base + 12, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _operator, 12: _right });
 	return node as unknown as T.BooleanOperator.Bound;
 }
 
@@ -3046,7 +3046,7 @@ export function buildBinaryOperator(config: T.BinaryOperator.Config): T.BinaryOp
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _operator);
 	storeCell(arena, record.data, record.base + 12, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _operator, 12: _right });
 	return node as unknown as T.BinaryOperator.Bound;
 }
 
@@ -3083,7 +3083,7 @@ export function buildUnaryOperator(config: T.UnaryOperator.Config): T.UnaryOpera
 	const record = arena.record(TSKindId.UnaryOperator as const, 12);
 	storeCell(arena, record.data, record.base + 2, _operator);
 	storeCell(arena, record.data, record.base + 7, _argument);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _operator, 7: _argument });
 	return node as unknown as T.UnaryOperator.Bound;
 }
 
@@ -3121,7 +3121,7 @@ export function buildComparisonOperator(config: T.ComparisonOperator.Config): T.
 	const record = arena.record(TSKindId.ComparisonOperator as const, 9);
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeList(arena, record.data, record.base + 7, _comparators, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _comparators });
 	return node as unknown as T.ComparisonOperator.Bound;
 }
 
@@ -3164,7 +3164,7 @@ export function buildLambda(config: T.Lambda.Config): T.Lambda.Bound {
 	const record = arena.record(TSKindId.Lambda as const, 17);
 	storeCell(arena, record.data, record.base + 2, _parameters);
 	storeCell(arena, record.data, record.base + 12, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _parameters, 12: _body });
 	return node as unknown as T.Lambda.Bound;
 }
 
@@ -3211,7 +3211,7 @@ export function buildLambdaWithinForInClause(
 	const record = arena.record(TSKindId.LambdaWithinForInClause as const, 17);
 	storeCell(arena, record.data, record.base + 2, _parameters);
 	storeCell(arena, record.data, record.base + 12, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _parameters, 12: _body });
 	return node as unknown as T.LambdaWithinForInClause.Bound;
 }
 
@@ -3258,7 +3258,7 @@ export function buildAugmentedAssignment(config: T.AugmentedAssignment.Config): 
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _operator);
 	storeCell(arena, record.data, record.base + 12, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _operator, 12: _right });
 	return node as unknown as T.AugmentedAssignment.Bound;
 }
 
@@ -3313,7 +3313,7 @@ function _buildPatternList(
 	const record = arena.record(TSKindId.PatternList as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.PatternList.Bound;
 }
 
@@ -3345,7 +3345,7 @@ export function buildYield(value?: Admit<T.YieldFromClause | T.Expression | T.Ex
 	handle?.verifyStored?.(TSKindId.Yield as const, { _content });
 	const record = arena.record(TSKindId.Yield as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.Yield.Bound;
 }
 
@@ -3377,7 +3377,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	const record = arena.record(TSKindId.Attribute as const, 12);
 	storeCell(arena, record.data, record.base + 2, _object);
 	storeCell(arena, record.data, record.base + 7, _property);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _object, 7: _property });
 	return node as unknown as T.Attribute.Bound;
 }
 
@@ -3413,7 +3413,7 @@ export function buildSubscript(config: T.Subscript.Config): T.Subscript.Bound {
 	const record = arena.record(TSKindId.Subscript as const, 13);
 	storeCell(arena, record.data, record.base + 2, _object);
 	storeCell(arena, record.data, record.base + 7, _subscripts);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _object, 7: _subscripts });
 	return node as unknown as T.Subscript.Bound;
 }
 
@@ -3460,7 +3460,7 @@ export function buildSlice(config: Partial<T.Slice.Config> = {}): T.Slice.Bound 
 	storeCell(arena, record.data, record.base + 2, _start);
 	storeCell(arena, record.data, record.base + 7, _stop);
 	storeCell(arena, record.data, record.base + 12, _step);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _start, 7: _stop, 12: _step });
 	return node as unknown as T.Slice.Bound;
 }
 
@@ -3510,7 +3510,7 @@ export function buildCall(config: T.Call.Config): T.Call.Bound {
 	const record = arena.record(TSKindId.Call as const, 12);
 	storeCell(arena, record.data, record.base + 2, _function);
 	storeCell(arena, record.data, record.base + 7, _arguments);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _function, 7: _arguments });
 	return node as unknown as T.Call.Bound;
 }
 
@@ -3546,7 +3546,7 @@ export function buildTypedParameter(config: T.TypedParameter.Config): T.TypedPar
 	const record = arena.record(TSKindId.TypedParameter as const, 12);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _type);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _type });
 	return node as unknown as T.TypedParameter.Bound;
 }
 
@@ -3579,7 +3579,7 @@ export function buildType(
 	handle?.verifyStored?.(TSKindId.Type as const, { _content });
 	const record = arena.record(TSKindId.Type as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.Type.Bound;
 }
 
@@ -3613,7 +3613,7 @@ export function buildSplatType(config: T.SplatType.Config): T.SplatType.Bound {
 	const record = arena.record(TSKindId.SplatType as const, 12);
 	storeCell(arena, record.data, record.base + 2, _operator);
 	storeCell(arena, record.data, record.base + 7, _type);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _operator, 7: _type });
 	return node as unknown as T.SplatType.Bound;
 }
 
@@ -3650,7 +3650,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	const record = arena.record(TSKindId.GenericType as const, 17);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _type_parameter);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _type_parameter });
 	return node as unknown as T.GenericType.Bound;
 }
 
@@ -3691,7 +3691,7 @@ export function buildUnionType(config: T.UnionType.Config): T.UnionType.Bound {
 	const record = arena.record(TSKindId.UnionType as const, 12);
 	storeCell(arena, record.data, record.base + 2, _left);
 	storeCell(arena, record.data, record.base + 7, _right);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _left, 7: _right });
 	return node as unknown as T.UnionType.Bound;
 }
 
@@ -3728,7 +3728,7 @@ export function buildConstrainedType(config: T.ConstrainedType.Config): T.Constr
 	const record = arena.record(TSKindId.ConstrainedType as const, 12);
 	storeCell(arena, record.data, record.base + 2, _base_type);
 	storeCell(arena, record.data, record.base + 7, _constraint);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _base_type, 7: _constraint });
 	return node as unknown as T.ConstrainedType.Bound;
 }
 
@@ -3764,7 +3764,7 @@ export function buildMemberType(config: T.MemberType.Config): T.MemberType.Bound
 	const record = arena.record(TSKindId.MemberType as const, 12);
 	storeCell(arena, record.data, record.base + 2, _qualifier);
 	storeCell(arena, record.data, record.base + 7, _name);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _qualifier, 7: _name });
 	return node as unknown as T.MemberType.Bound;
 }
 
@@ -3799,7 +3799,7 @@ export function buildKeywordArgument(config: T.KeywordArgument.Config): T.Keywor
 	const record = arena.record(TSKindId.KeywordArgument as const, 12);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _value });
 	return node as unknown as T.KeywordArgument.Bound;
 }
 
@@ -3858,7 +3858,7 @@ function _buildList(value?: Admit<T.CollectionElements>): T.List.Bound {
 	handle?.verifyStored?.(TSKindId.List as const, { _elements });
 	const record = arena.record(TSKindId.List as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.List.Bound;
 }
 
@@ -3917,7 +3917,7 @@ function _buildSet(value: Admit<T.CollectionElements>): T.Set.Bound {
 	handle?.verifyStored?.(TSKindId.Set as const, { _elements });
 	const record = arena.record(TSKindId.Set as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.Set.Bound;
 }
 
@@ -3976,7 +3976,7 @@ function _buildTuple(value?: Admit<T.TupleElements>): T.Tuple.Bound {
 	handle?.verifyStored?.(TSKindId.Tuple as const, { _elements });
 	const record = arena.record(TSKindId.Tuple as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.Tuple.Bound;
 }
 
@@ -4036,7 +4036,7 @@ function _buildDictionary(value?: Admit<T.DictionaryElements>): T.Dictionary.Bou
 	handle?.verifyStored?.(TSKindId.Dictionary as const, { _elements });
 	const record = arena.record(TSKindId.Dictionary as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.Dictionary.Bound;
 }
 
@@ -4074,7 +4074,7 @@ export function buildPair(config: T.Pair.Config): T.Pair.Bound {
 	const record = arena.record(TSKindId.Pair as const, 12);
 	storeCell(arena, record.data, record.base + 2, _key);
 	storeCell(arena, record.data, record.base + 7, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _key, 7: _value });
 	return node as unknown as T.Pair.Bound;
 }
 
@@ -4112,7 +4112,7 @@ export function buildListComprehension(config: T.ListComprehension.Config): T.Li
 	const record = arena.record(TSKindId.ListComprehension as const, 13);
 	storeCell(arena, record.data, record.base + 2, _body);
 	storeCell(arena, record.data, record.base + 7, _clauses);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body, 7: _clauses });
 	return node as unknown as T.ListComprehension.Bound;
 }
 
@@ -4152,7 +4152,7 @@ export function buildDictionaryComprehension(
 	const record = arena.record(TSKindId.DictionaryComprehension as const, 13);
 	storeCell(arena, record.data, record.base + 2, _body);
 	storeCell(arena, record.data, record.base + 7, _clauses);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body, 7: _clauses });
 	return node as unknown as T.DictionaryComprehension.Bound;
 }
 
@@ -4190,7 +4190,7 @@ export function buildSetComprehension(config: T.SetComprehension.Config): T.SetC
 	const record = arena.record(TSKindId.SetComprehension as const, 13);
 	storeCell(arena, record.data, record.base + 2, _body);
 	storeCell(arena, record.data, record.base + 7, _clauses);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body, 7: _clauses });
 	return node as unknown as T.SetComprehension.Bound;
 }
 
@@ -4228,7 +4228,7 @@ export function buildGeneratorExpression(config: T.GeneratorExpression.Config): 
 	const record = arena.record(TSKindId.GeneratorExpression as const, 13);
 	storeCell(arena, record.data, record.base + 2, _body);
 	storeCell(arena, record.data, record.base + 7, _clauses);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _body, 7: _clauses });
 	return node as unknown as T.GeneratorExpression.Bound;
 }
 
@@ -4260,7 +4260,7 @@ export function buildParenthesizedExpression(value: Admit<T.Expression | T.Yield
 	handle?.verifyStored?.(TSKindId.ParenthesizedExpression as const, { _expression });
 	const record = arena.record(TSKindId.ParenthesizedExpression as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.ParenthesizedExpression.Bound;
 }
 
@@ -4318,7 +4318,7 @@ function _buildCollectionElements(
 	const record = arena.record(TSKindId.CollectionElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.CollectionElements.Bound;
 }
 
@@ -4373,7 +4373,7 @@ export function buildForInClause(config: T.ForInClause.Config, options?: T.ForIn
 	storeCell(arena, record.data, record.base + 3, _left);
 	storeList(arena, record.data, record.base + 8, _right, 5);
 	storeCell(arena, record.data, record.base + 10, _trailing_comma);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _left, 8: _right, 10: _trailing_comma });
 	return node as unknown as T.ForInClause.Bound;
 }
 
@@ -4408,7 +4408,7 @@ export function buildIfClause(value: Admit<T.Expression>): T.IfClause.Bound {
 	handle?.verifyStored?.(TSKindId.IfClause as const, { _condition });
 	const record = arena.record(TSKindId.IfClause as const, 7);
 	storeCell(arena, record.data, record.base + 2, _condition);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _condition });
 	return node as unknown as T.IfClause.Bound;
 }
 
@@ -4452,7 +4452,7 @@ export function buildConditionalExpression(config: T.ConditionalExpression.Confi
 	storeCell(arena, record.data, record.base + 2, _consequence);
 	storeCell(arena, record.data, record.base + 7, _condition);
 	storeCell(arena, record.data, record.base + 12, _alternative);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _consequence, 7: _condition, 12: _alternative });
 	return node as unknown as T.ConditionalExpression.Bound;
 }
 
@@ -4487,7 +4487,7 @@ export function buildConcatenatedString(...children: NonEmptyArray<Admit<T.Strin
 	handle?.verifyStored?.(TSKindId.ConcatenatedString as const, { _string });
 	const record = arena.record(TSKindId.ConcatenatedString as const, 4);
 	storeList(arena, record.data, record.base + 2, _string, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _string });
 	return node as unknown as T.ConcatenatedString.Bound;
 }
 
@@ -4528,7 +4528,7 @@ export function buildString(config: T.String.Config): T.String.Bound {
 	storeCell(arena, record.data, record.base + 2, _string_start);
 	storeList(arena, record.data, record.base + 7, _content, 5);
 	storeCell(arena, record.data, record.base + 9, _string_end);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _string_start, 7: _content, 9: _string_end });
 	checkDelimited(handle, node, _delimited_buildString, [_content], _string_start, _string_end);
 	return node as unknown as T.String.Bound;
 }
@@ -4570,7 +4570,7 @@ export function buildStringContent(
 	handle?.verifyStored?.(TSKindId.StringContent as const, { _elements });
 	const record = arena.record(TSKindId.StringContent as const, 4);
 	storeList(arena, record.data, record.base + 2, _elements, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.StringContent.Bound;
 }
 
@@ -4621,7 +4621,7 @@ export function buildInterpolation(config: T.Interpolation.Config): T.Interpolat
 	if (_debug) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record.data, record.base + 8, _type_conversion);
 	storeCell(arena, record.data, record.base + 13, _format_specifier);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _expression, 8: _type_conversion, 13: _format_specifier });
 	return node as unknown as T.Interpolation.Bound;
 }
 
@@ -4662,7 +4662,7 @@ export function buildFormatSpecifier(
 	handle?.verifyStored?.(TSKindId.FormatSpecifier as const, { _elements });
 	const record = arena.record(TSKindId.FormatSpecifier as const, 4);
 	storeList(arena, record.data, record.base + 2, _elements, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.FormatSpecifier.Bound;
 }
 
@@ -4759,7 +4759,7 @@ export function buildAwait(value: Admit<T.PrimaryExpression>): T.Await.Bound {
 	handle?.verifyStored?.(TSKindId.Await as const, { _expression });
 	const record = arena.record(TSKindId.Await as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.Await.Bound;
 }
 
@@ -4794,7 +4794,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	handle?.verifyStored?.(TSKindId.Comment as const, { _content });
 	const record = arena.record(TSKindId.Comment as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.Comment.Bound;
 }
 
@@ -4844,7 +4844,7 @@ function _buildSimpleStatementsElements(
 	const record = arena.record(TSKindId.SimpleStatementsElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.SimpleStatementsElements.Bound;
 }
 
@@ -4898,7 +4898,7 @@ function _buildSubjects(
 	const record = arena.record(TSKindId.Subjects as const, 4);
 	storeList(arena, record.data, record.base + 2, _subject, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _subject });
 	return node as unknown as T.Subjects.Bound;
 }
 
@@ -4954,7 +4954,7 @@ function _buildCasePatterns(
 	const record = arena.record(TSKindId.CasePatterns as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.CasePatterns.Bound;
 }
 
@@ -5010,7 +5010,7 @@ function _buildWithClauseWithItems(
 	const record = arena.record(TSKindId.WithClauseWithItems as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.WithClauseWithItems.Bound;
 }
 
@@ -5064,7 +5064,7 @@ function _buildTypes(
 	const record = arena.record(TSKindId.Types as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.Types.Bound;
 }
 
@@ -5132,7 +5132,7 @@ function _buildArgumentListElements(
 	const record = arena.record(TSKindId.ArgumentListElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.ArgumentListElements.Bound;
 }
 
@@ -5193,7 +5193,7 @@ function _buildListPatternCasePatterns(
 	const record = arena.record(TSKindId.ListPatternCasePatterns as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.ListPatternCasePatterns.Bound;
 }
 
@@ -5251,7 +5251,7 @@ function _buildDictPatternElements(
 	const record = arena.record(TSKindId.DictPatternElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.DictPatternElements.Bound;
 }
 
@@ -5307,7 +5307,7 @@ function _buildSubscripts(
 	const record = arena.record(TSKindId.Subscripts as const, 4);
 	storeList(arena, record.data, record.base + 2, _subscript, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _subscript });
 	return node as unknown as T.Subscripts.Bound;
 }
 
@@ -5363,7 +5363,7 @@ function _buildDictionaryElements(
 	const record = arena.record(TSKindId.DictionaryElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.DictionaryElements.Bound;
 }
 
@@ -5396,7 +5396,7 @@ export function buildSliceGroup(value?: Admit<T.Expression>): T.SliceGroup.Bound
 	handle?.verifyStored?.(TSKindId.SliceGroup as const, { _expression });
 	const record = arena.record(TSKindId.SliceGroup as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.SliceGroup.Bound;
 }
 
@@ -5477,7 +5477,7 @@ function _buildTuplePatternElements(
 	const record = arena.record(TSKindId.TuplePatternElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.TuplePatternElements.Bound;
 }
 
@@ -5540,7 +5540,7 @@ function _buildTupleElements(
 	const record = arena.record(TSKindId.TupleElements as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.TupleElements.Bound;
 }
 
@@ -5583,7 +5583,7 @@ export function buildExceptClauseExceptionAs(
 	const record = arena.record(TSKindId.ExceptClauseExceptionAs as const, 12);
 	storeCell(arena, record.data, record.base + 2, _value);
 	storeCell(arena, record.data, record.base + 7, _alias);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _value, 7: _alias });
 	return node as unknown as T.ExceptClauseExceptionAs.Bound;
 }
 
@@ -5642,7 +5642,7 @@ function _buildCaseTuplePattern(value?: Admit<T.ListPatternCasePatterns>): T.Cas
 	handle?.verifyStored?.(TSKindId.CaseTuplePattern as const, { _elements });
 	const record = arena.record(TSKindId.CaseTuplePattern as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.CaseTuplePattern.Bound;
 }
 
@@ -5704,7 +5704,7 @@ function _buildCaseListPattern(value?: Admit<T.ListPatternCasePatterns>): T.Case
 	handle?.verifyStored?.(TSKindId.CaseListPattern as const, { _elements });
 	const record = arena.record(TSKindId.CaseListPattern as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.CaseListPattern.Bound;
 }
 
@@ -5762,7 +5762,7 @@ function _buildPrintArguments(
 	const record = arena.record(TSKindId.PrintArguments as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.PrintArguments.Bound;
 }
 
@@ -5818,7 +5818,7 @@ function _buildPrintChevronArguments(
 	const record = arena.record(TSKindId.PrintChevronArguments as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.PrintChevronArguments.Bound;
 }
 
@@ -5866,7 +5866,7 @@ export function buildPrintStatementChevron(config: T.PrintStatementChevron.Confi
 	const record = arena.record(TSKindId.PrintStatementChevron as const, 17);
 	storeCell(arena, record.data, record.base + 2, _chevron);
 	storeCell(arena, record.data, record.base + 11, _print_chevron_arguments);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _chevron, 11: _print_chevron_arguments });
 	return node as unknown as T.PrintStatementChevron.Bound;
 }
 
@@ -5931,7 +5931,7 @@ function _buildPrintStatementPlain(value: Admit<T.PrintArguments>): T.PrintState
 	handle?.verifyStored?.(TSKindId.PrintStatementPlain as const, { _print_arguments });
 	const record = arena.record(TSKindId.PrintStatementPlain as const, 8);
 	storeCell(arena, record.data, record.base + 2, _print_arguments);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _print_arguments });
 	return node as unknown as T.PrintStatementPlain.Bound;
 }
 
@@ -5993,7 +5993,7 @@ function _buildParenthesizedImportList(value: Admit<T.ImportList>): T.Parenthesi
 	handle?.verifyStored?.(TSKindId.ParenthesizedImportList as const, { _import_list });
 	const record = arena.record(TSKindId.ParenthesizedImportList as const, 8);
 	storeCell(arena, record.data, record.base + 2, _import_list);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _import_list });
 	return node as unknown as T.ParenthesizedImportList.Bound;
 }
 
@@ -6030,7 +6030,7 @@ export function buildComprehensionClauses(
 	handle?.verifyStored?.(TSKindId.ComprehensionClauses as const, { _content });
 	const record = arena.record(TSKindId.ComprehensionClauses as const, 4);
 	storeList(arena, record.data, record.base + 2, _content, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.ComprehensionClauses.Bound;
 }
 
@@ -6072,7 +6072,7 @@ export function buildIntegerHex(
 	const record = arena.record(TSKindId.IntegerHex as const, 10);
 	storeCell(arena, record.data, record.base + 2, _prefix);
 	storeCell(arena, record.data, record.base + 6, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _prefix, 6: _content });
 	return node as unknown as T.IntegerHex.Bound;
 }
 
@@ -6118,7 +6118,7 @@ export function buildIntegerOctal(
 	const record = arena.record(TSKindId.IntegerOctal as const, 10);
 	storeCell(arena, record.data, record.base + 2, _prefix);
 	storeCell(arena, record.data, record.base + 6, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _prefix, 6: _content });
 	return node as unknown as T.IntegerOctal.Bound;
 }
 
@@ -6165,7 +6165,7 @@ export function buildIntegerBinary(
 	const record = arena.record(TSKindId.IntegerBinary as const, 10);
 	storeCell(arena, record.data, record.base + 2, _prefix);
 	storeCell(arena, record.data, record.base + 6, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _prefix, 6: _content });
 	return node as unknown as T.IntegerBinary.Bound;
 }
 
@@ -6371,7 +6371,7 @@ export function buildFloatPoint(
 	storeCell(arena, record.data, record.base + 14, _sign);
 	storeCell(arena, record.data, record.base + 18, _exponent);
 	storeCell(arena, record.data, record.base + 22, _imaginary);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _integer, 6: _fraction, 10: _marker, 14: _sign, 18: _exponent, 22: _imaginary });
 	return node as unknown as T.FloatPoint.Bound;
 }
 
@@ -6494,7 +6494,7 @@ export function buildFloatLeadingPoint(
 	storeCell(arena, record.data, record.base + 14, _sign);
 	storeCell(arena, record.data, record.base + 18, _exponent);
 	storeCell(arena, record.data, record.base + 22, _imaginary);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _integer, 6: _fraction, 10: _marker, 14: _sign, 18: _exponent, 22: _imaginary });
 	return node as unknown as T.FloatLeadingPoint.Bound;
 }
 
@@ -6587,7 +6587,7 @@ export function buildFloatScientific(
 	storeCell(arena, record.data, record.base + 10, _sign);
 	storeCell(arena, record.data, record.base + 14, _exponent);
 	storeCell(arena, record.data, record.base + 18, _imaginary);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _integer, 6: _marker, 10: _sign, 14: _exponent, 18: _imaginary });
 	return node as unknown as T.FloatScientific.Bound;
 }
 
@@ -6638,7 +6638,7 @@ export function buildEscapeSequenceUnicodeFixed(
 	handle?.verifyStored?.(TSKindId.EscapeSequenceUnicodeFixed as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceUnicodeFixed as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceUnicodeFixed.Bound;
 }
 
@@ -6677,7 +6677,7 @@ export function buildEscapeSequenceUnicodeWide(
 	handle?.verifyStored?.(TSKindId.EscapeSequenceUnicodeWide as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceUnicodeWide as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceUnicodeWide.Bound;
 }
 
@@ -6713,7 +6713,7 @@ export function buildEscapeSequenceHex(input: string, affix: boolean = true): T.
 	handle?.verifyStored?.(TSKindId.EscapeSequenceHex as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceHex as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceHex.Bound;
 }
 
@@ -6755,7 +6755,7 @@ export function buildEscapeSequenceOctal(
 	handle?.verifyStored?.(TSKindId.EscapeSequenceOctal as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceOctal as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceOctal.Bound;
 }
 
@@ -6791,7 +6791,7 @@ export function buildEscapeSequenceLineBreak(input: string, affix: boolean = tru
 	handle?.verifyStored?.(TSKindId.EscapeSequenceLineBreak as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceLineBreak as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceLineBreak.Bound;
 }
 
@@ -6827,7 +6827,7 @@ export function buildEscapeSequenceSimple(input: string, affix: boolean = true):
 	handle?.verifyStored?.(TSKindId.EscapeSequenceSimple as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceSimple as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceSimple.Bound;
 }
 
@@ -6863,7 +6863,7 @@ export function buildEscapeSequenceNamed(input: string, affix: boolean = true): 
 	handle?.verifyStored?.(TSKindId.EscapeSequenceNamed as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequenceNamed as const, 6);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.EscapeSequenceNamed.Bound;
 }
 
@@ -6920,7 +6920,7 @@ export function buildSimplePatternNegative(value: Admit<T.Integer | T.Float>): T
 	handle?.verifyStored?.(TSKindId.SimplePatternNegative as const, { _value });
 	const record = arena.record(TSKindId.SimplePatternNegative as const, 30);
 	storeCell(arena, record.data, record.base + 2, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _value });
 	return node as unknown as T.SimplePatternNegative.Bound;
 }
 
@@ -6950,7 +6950,7 @@ export function buildExceptClauseExceptionList(
 	handle?.verifyStored?.(TSKindId.ExceptClauseExceptionList as const, { _value });
 	const record = arena.record(TSKindId.ExceptClauseExceptionList as const, 4);
 	storeList(arena, record.data, record.base + 2, _value, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _value });
 	return node as unknown as T.ExceptClauseExceptionList.Bound;
 }
 
@@ -6980,7 +6980,7 @@ export function buildExceptClauseException(
 	handle?.verifyStored?.(TSKindId.ExceptClauseException as const, { _content });
 	const record = arena.record(TSKindId.ExceptClauseException as const, 16);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.ExceptClauseException.Bound;
 }
 
@@ -7012,7 +7012,7 @@ export function buildAssignmentEq(config: T.AssignmentEq.Config): T.AssignmentEq
 	const record = arena.record(TSKindId.AssignmentEq as const, 12);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _value });
 	return node as unknown as T.AssignmentEq.Bound;
 }
 
@@ -7048,7 +7048,7 @@ export function buildAssignmentType(config: T.AssignmentType.Config): T.Assignme
 	const record = arena.record(TSKindId.AssignmentType as const, 12);
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _type);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _type });
 	return node as unknown as T.AssignmentType.Bound;
 }
 
@@ -7088,7 +7088,7 @@ export function buildAssignmentTyped(config: T.AssignmentTyped.Config): T.Assign
 	storeCell(arena, record.data, record.base + 2, _name);
 	storeCell(arena, record.data, record.base + 7, _type);
 	storeCell(arena, record.data, record.base + 12, _value);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name, 7: _type, 12: _value });
 	return node as unknown as T.AssignmentTyped.Bound;
 }
 
@@ -7144,7 +7144,7 @@ function _buildExpressionStatementTuple(
 	const record = arena.record(TSKindId.ExpressionStatementTuple as const, 4);
 	storeList(arena, record.data, record.base + 2, _item, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _item });
 	return node as unknown as T.ExpressionStatementTuple.Bound;
 }
 
@@ -7200,7 +7200,7 @@ function _buildWithClauseBare(
 	const record = arena.record(TSKindId.WithClauseBare as const, 4);
 	storeList(arena, record.data, record.base + 2, _items, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _items });
 	return node as unknown as T.WithClauseBare.Bound;
 }
 
@@ -7259,7 +7259,7 @@ function _buildWithClauseParen(value: Admit<T.WithClauseWithItems>): T.WithClaus
 	handle?.verifyStored?.(TSKindId.WithClauseParen as const, { _items });
 	const record = arena.record(TSKindId.WithClauseParen as const, 8);
 	storeCell(arena, record.data, record.base + 2, _items);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _items });
 	return node as unknown as T.WithClauseParen.Bound;
 }
 
@@ -7295,7 +7295,7 @@ export function buildMatchBlockBlock(...children: Admit<T.CaseClause[]>): T.Matc
 	handle?.verifyStored?.(TSKindId.MatchBlockBlock as const, { _alternative });
 	const record = arena.record(TSKindId.MatchBlockBlock as const, 4);
 	storeList(arena, record.data, record.base + 2, _alternative, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _alternative });
 	return node as unknown as T.MatchBlockBlock.Bound;
 }
 
@@ -7340,7 +7340,7 @@ function _buildMatchBlockEmpty(value?: Admit<TSKindId.Newline>): T.MatchBlockEmp
 	handle?.verifyStored?.(TSKindId.MatchBlockEmpty as const, { _newline });
 	const record = arena.record(TSKindId.MatchBlockEmpty as const, 7);
 	storeCell(arena, record.data, record.base + 2, _newline);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _newline });
 	return node as unknown as T.MatchBlockEmpty.Bound;
 }
 
@@ -7397,7 +7397,7 @@ function _buildSuiteInline(value: Admit<T.SimpleStatementsElements | Admit<T.Sim
 	handle?.verifyStored?.(TSKindId.SuiteInline as const, { _elements });
 	const record = arena.record(TSKindId.SuiteInline as const, 8);
 	storeCell(arena, record.data, record.base + 2, _elements);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _elements });
 	return node as unknown as T.SuiteInline.Bound;
 }
 
@@ -7450,7 +7450,7 @@ function _buildSuiteBlock(value: Admit<T.Block>): T.SuiteBlock.Bound {
 	handle?.verifyStored?.(TSKindId.SuiteBlock as const, { _block });
 	const record = arena.record(TSKindId.SuiteBlock as const, 8);
 	storeCell(arena, record.data, record.base + 2, _block);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _block });
 	return node as unknown as T.SuiteBlock.Bound;
 }
 
@@ -7493,7 +7493,7 @@ function _buildSuiteEmpty(value?: Admit<TSKindId.Newline>): T.SuiteEmpty.Bound {
 	handle?.verifyStored?.(TSKindId.SuiteEmpty as const, { _newline });
 	const record = arena.record(TSKindId.SuiteEmpty as const, 7);
 	storeCell(arena, record.data, record.base + 2, _newline);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _newline });
 	return node as unknown as T.SuiteEmpty.Bound;
 }
 
@@ -7533,7 +7533,7 @@ export function buildComparisonOperatorComparator(
 	const record = arena.record(TSKindId.ComparisonOperatorComparator as const, 12);
 	storeCell(arena, record.data, record.base + 2, _operators);
 	storeCell(arena, record.data, record.base + 7, _primary_expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _operators, 7: _primary_expression });
 	return node as unknown as T.ComparisonOperatorComparator.Bound;
 }
 
@@ -7565,7 +7565,7 @@ export function buildYieldFromClause(value: Admit<T.Expression>): T.YieldFromCla
 	handle?.verifyStored?.(TSKindId.YieldFromClause as const, { _expression });
 	const record = arena.record(TSKindId.YieldFromClause as const, 7);
 	storeCell(arena, record.data, record.base + 2, _expression);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _expression });
 	return node as unknown as T.YieldFromClause.Bound;
 }
 
@@ -7762,7 +7762,7 @@ export function buildConstructorDeclaration(config: T.ConstructorDeclaration.Con
 	storeCell(arena, record.data, record.base + 13, _parameters);
 	storeCell(arena, record.data, record.base + 23, _return_type);
 	storeCell(arena, record.data, record.base + 28, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _type_parameters, 13: _parameters, 23: _return_type, 28: _body });
 	return node as unknown as T.ConstructorDeclaration.Bound;
 }
 
@@ -7815,7 +7815,7 @@ export function buildBlockClassDeclaration(
 	handle?.verifyStored?.(TSKindId.BlockClassDeclaration as const, { _statements });
 	const record = arena.record(TSKindId.BlockClassDeclaration as const, 4);
 	storeList(arena, record.data, record.base + 2, _statements, 5);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _statements });
 	return node as unknown as T.BlockClassDeclaration.Bound;
 }
 
@@ -7869,7 +7869,7 @@ function _buildSuiteBlockClassDeclaration(value: Admit<T.BlockClassDeclaration>)
 	handle?.verifyStored?.(TSKindId.SuiteBlockClassDeclaration as const, { _block_class_declaration });
 	const record = arena.record(TSKindId.SuiteBlockClassDeclaration as const, 8);
 	storeCell(arena, record.data, record.base + 2, _block_class_declaration);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _block_class_declaration });
 	return node as unknown as T.SuiteBlockClassDeclaration.Bound;
 }
 
@@ -7912,7 +7912,7 @@ export function buildDecoratedDefinitionClassDeclaration(
 	const record = arena.record(TSKindId.DecoratedDefinitionClassDeclaration as const, 49);
 	storeList(arena, record.data, record.base + 2, _decorator, 5);
 	storeCell(arena, record.data, record.base + 4, _definition);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _decorator, 4: _definition });
 	return node as unknown as T.DecoratedDefinitionClassDeclaration.Bound;
 }
 
@@ -7971,7 +7971,7 @@ function _buildNames(
 	const record = arena.record(TSKindId.Names as const, 4);
 	storeList(arena, record.data, record.base + 2, _name, 5);
 	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _name });
 	return node as unknown as T.Names.Bound;
 }
 
@@ -8004,7 +8004,7 @@ export function buildAsPatternTarget(value: Admit<T.Expression>): T.AsPatternTar
 	handle?.verifyStored?.(TSKindId.AsPatternTarget as const, { _content });
 	const record = arena.record(TSKindId.AsPatternTarget as const, 7);
 	storeCell(arena, record.data, record.base + 2, _content);
-	const node = arena.view(record);
+	const node = arena.view(record, { 2: _content });
 	return node as unknown as T.AsPatternTarget.Bound;
 }
 
@@ -8056,7 +8056,7 @@ export function buildFormatExpression(config: T.FormatExpression.Config): T.Form
 	if (_debug) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record.data, record.base + 8, _type_conversion);
 	storeCell(arena, record.data, record.base + 13, _format_specifier);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _expression, 8: _type_conversion, 13: _format_specifier });
 	return node as unknown as T.FormatExpression.Bound;
 }
 
@@ -8133,7 +8133,7 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 	storeCell(arena, record.data, record.base + 18, _parameters);
 	storeCell(arena, record.data, record.base + 28, _return_type);
 	storeCell(arena, record.data, record.base + 33, _body);
-	const node = arena.view(record);
+	const node = arena.view(record, { 3: _name, 8: _type_parameters, 18: _parameters, 28: _return_type, 33: _body });
 	return node as unknown as T.MethodDeclaration.Bound;
 }
 

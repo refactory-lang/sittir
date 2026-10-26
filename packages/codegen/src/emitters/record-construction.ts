@@ -53,11 +53,13 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), after: [] };
-	const stores = spec.slots.map((slot) => {
+	const placed = spec.slots.map((slot) => {
 		const place = places.get(slot.storageKey);
 		if (place === undefined) throw new Error(`recordTailLines: ${spec.node.kind}.${slot.name} has no record place`);
-		return slotStore(place, slot.storageKey);
+		return { place, local: slot.storageKey };
 	});
+	const stores = placed.map(({ place, local }) => slotStore(place, local));
+	const kept = placed.flatMap(({ place, local }) => ('bit' in place ? [] : [`${place.word}: ${local}`]));
 	const options = spec.listOptions;
 	const tail = [
 		'  const arena = builtArenaOf(handle);',
@@ -67,7 +69,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		...(options === undefined
 			? []
 			: [`  storeListOptions(arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'});`]),
-		'  const node = arena.view(record);',
+		`  const node = arena.view(record${kept.length === 0 ? '' : `, { ${kept.join(', ')} }`});`,
 		...spec.checks,
 		`  return node as unknown as ${spec.result};`
 	];
