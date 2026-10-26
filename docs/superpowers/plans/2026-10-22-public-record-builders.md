@@ -100,16 +100,14 @@ the last slice.
   - Links to children read by another engine of the same language: a built
     record holds such a child by link, renders it and rebuilds over it, and
     renders after that engine is disposed.
-  - A built record written into a side of a node another engine of the
-    language holds names its owner, the engine whose arena wrote it. The side
-    renders it from that engine's arena, with the sides that engine wrote on
-    it, and reads it back as its builder's node. The holder's table keeps that
-    arena and its engine alive while the side holds the record; the store keeps
-    the other engine's store weakly.
+  - A built record in a side is a record of the holder's own engine: the side
+    renders it from that engine's arena, with the sides the engine wrote on it,
+    and reads it back as its builder's node. A record another engine built is
+    refused by name at the write, so the wire names no owner and the addon
+    needs no type tag.
   - Written sides go to the native store. So do a built record's unit sides,
     from a rebuild, which carries them realigned to where their units moved;
-    the store is the only copy, and the holder's table keeps the arena of any
-    record they hold.
+    the store is the only copy.
   - A parsed entry of a live tree crosses into any native table as its
     coordinate, and the table holds that tree, so the entry's own sides are
     read at render and it reads back as its parsed view. A parsed entry of

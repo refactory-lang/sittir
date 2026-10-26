@@ -1,5 +1,5 @@
 import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
-import { bindTree, engineOf, sameLanguage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, sameLanguage, treeBuiltArena, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { stampBuilt } from './source-stamp.ts';
 import { wrapRegistered, type Role } from './identity.ts';
 import { coordinateOf, holdReadTree, isRead, isRebuilt } from './node-data.ts';
@@ -112,14 +112,9 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 	}
 }
 
-const arenasByOwner = new WeakMap<object, BuiltArena>();
-const sideHolds = new WeakMap<object, Map<string, SideHold>>();
-
-interface SideHold {
-	readonly arenas: readonly BuiltArena[];
-	readonly trees: readonly TreeToken[];
-}
+const sideHolds = new WeakMap<object, Map<string, readonly TreeToken[]>>();
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
+const OTHER_ENGINE_RECORD = "cannot write another engine's record into a side: a side holds only records its holder's engine built";
 
 export type BuiltRow = {
 	readonly $with?: Readonly<Record<string, (...args: never[]) => unknown>>;
@@ -156,7 +151,6 @@ export class BuiltArena {
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
-		arenasByOwner.set(owner, this);
 		this.tree = {
 			built: this,
 			triviaSide: (at, side) => {
@@ -350,16 +344,15 @@ function rowRole(tree: TreeHandle, row: number, record: number | undefined): Rol
 export interface BuiltEntry {
 	readonly $type: number;
 	readonly $record: number;
-	readonly $owner: object;
 }
 
 export function isBuiltEntry(entry: unknown): entry is BuiltEntry {
 	return typeof entry === 'object' && entry !== null && typeof (entry as Partial<BuiltEntry>).$record === 'number';
 }
 
-export function builtEntries(entries: readonly unknown[]): unknown[] {
+export function builtEntries(entries: readonly unknown[], table: object): unknown[] {
 	if (!entries.some(isBuiltEntry)) return entries as unknown[];
-	return entries.map((entry) => (isBuiltEntry(entry) ? builtEntryNode(entry) : entry));
+	return entries.map((entry) => (isBuiltEntry(entry) ? builtEntryNode(entry, table) : entry));
 }
 
 export function readEntries(table: object, entries: readonly unknown[], own?: TreeToken): unknown[] {
@@ -367,7 +360,7 @@ export function readEntries(table: object, entries: readonly unknown[], own?: Tr
 		if (isCoordinate(entry)) readCoordinate(table, entry, own);
 		else if (own !== undefined && !isBuiltEntry(entry)) holdReadTree(entry, own);
 	}
-	return builtEntries(entries);
+	return builtEntries(entries, table);
 }
 
 export function readCoordinate(table: object, coordinate: NodeCoordinate, own?: TreeToken): NodeCoordinate {
@@ -382,15 +375,15 @@ export function readUnits(table: object, units: readonly unknown[], own?: TreeTo
 
 function heldTree(table: object, treeId: number, own: TreeToken | undefined): TreeToken | undefined {
 	if (own?.treeId === treeId) return own;
-	for (const hold of sideHolds.get(table)?.values() ?? []) {
-		const token = hold.trees.find((tree) => tree.treeId === treeId);
+	for (const trees of sideHolds.get(table)?.values() ?? []) {
+		const token = trees.find((tree) => tree.treeId === treeId);
 		if (token !== undefined) return token;
 	}
 	return undefined;
 }
 
-export function builtEntryNode(entry: BuiltEntry): object {
-	const arena = arenasByOwner.get(entry.$owner);
+export function builtEntryNode(entry: BuiltEntry, table: object): object {
+	const arena = treeBuiltArena(table);
 	if (arena === undefined) throw new Error(NO_RECORDS);
 	return arena.node(entry.$record);
 }
@@ -404,8 +397,9 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	refuseForeignEntry(entry, holder);
 	if (arena === undefined && isBuiltNode(entry)) throw new Error(NO_RECORDS);
 	const built = recordRefOf(entry);
-	if (built !== undefined) return { $type: (entry as { readonly $type: number }).$type, $record: built.at, $owner: built.arena.owner };
-	return readCoordinateOf(entry);
+	if (built === undefined) return readCoordinateOf(entry);
+	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
+	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 
 export function refuseForeignEntry(entry: object, holder: EngineIdentity | undefined): void {
@@ -425,19 +419,16 @@ export function refuseBuiltEntries(trivia: TriviaSides<unknown>): void {
 }
 
 export function holdSideEntries(table: object, place: string, entries: readonly unknown[]): void {
-	const arenas = new Set<BuiltArena>();
 	const trees = new Set<TreeToken>();
 	for (const entry of entries) {
 		if (typeof entry !== 'object' || entry === null) continue;
-		const arena = recordRefOf(entry)?.arena;
 		const tree = readCoordinateOf(entry) === undefined ? undefined : treeTokenOf(entry);
-		if (arena !== undefined) arenas.add(arena);
 		if (tree !== undefined) trees.add(tree);
 	}
 	let held = sideHolds.get(table);
 	if (held === undefined) sideHolds.set(table, (held = new Map()));
-	if (arenas.size === 0 && trees.size === 0) held.delete(place);
-	else held.set(place, { arenas: [...arenas], trees: [...trees] });
+	if (trees.size === 0) held.delete(place);
+	else held.set(place, [...trees]);
 }
 
 export function isBuiltNode(value: object): boolean {
