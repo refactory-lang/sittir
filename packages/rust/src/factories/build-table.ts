@@ -2,7 +2,7 @@
 import * as F from './raw.js';
 import * as K from './combinators.js';
 import { delegate } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared, Seat } from '@sittir/types';
 import { TSKindId } from '../types.js';
 import type * as LooseTable from './loose.js';
 import type * as StrictTable from './strict.js';
@@ -10,9 +10,10 @@ import type * as StrictTable from './strict.js';
 export type AnyTable = typeof LooseTable | typeof StrictTable;
 
 export interface Routes<Table extends AnyTable> {
-	readonly expressionStatement$withSemi: <const A extends ArgsOf<Table['buildExpressionStatementWithSemi']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildExpressionStatementWithSemi']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
+	readonly expressionStatement$withSemi: Seat<
+		ArgsOf<Table['buildExpressionStatementWithSemi']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
 	readonly expressionStatement: Table['buildExpressionStatement'] & {
 		readonly withSemi: Routes<Table>['expressionStatement$withSemi'];
 	};
@@ -45,36 +46,36 @@ export interface Routes<Table extends AnyTable> {
 	readonly visibilityModifierPubScope$crate: (
 		options?: OptionsArg<Table['buildVisibilityModifierPubScope']>
 	) => ReturnType<Table['buildVisibilityModifierPubScope']>;
-	readonly visibilityModifierPubScope$inPath: <const A extends ArgsOf<Table['buildVisibilityModifierPubScopeInPath']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildVisibilityModifierPubScopeInPath']>>
-	) => ReturnType<typeof F.buildVisibilityModifierPubScope>;
+	readonly visibilityModifierPubScope$inPath: Seat<
+		ArgsOf<Table['buildVisibilityModifierPubScopeInPath']>,
+		ReturnType<typeof F.buildVisibilityModifierPubScope>
+	>;
 	readonly visibilityModifierPubScope: {
 		readonly self: Routes<Table>['visibilityModifierPubScope$self'];
 		readonly super: Routes<Table>['visibilityModifierPubScope$super'];
 		readonly crate: Routes<Table>['visibilityModifierPubScope$crate'];
 		readonly inPath: Routes<Table>['visibilityModifierPubScope$inPath'];
 	};
-	readonly visibilityModifierPub$scope: <const A extends ArgsOf<Table['buildVisibilityModifierPubScope']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildVisibilityModifierPubScope']>>
-	) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	readonly visibilityModifierPub$scope$self: <const A extends ArgsOf<Routes<Table>['visibilityModifierPubScope$self']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPubScope$self']>>
-	) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	readonly visibilityModifierPub$scope$super: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPubScope$super']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPubScope$super']>>
-	) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	readonly visibilityModifierPub$scope$crate: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPubScope$crate']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPubScope$crate']>>
-	) => ReturnType<typeof F.buildVisibilityModifierPub>;
-	readonly visibilityModifierPub$scope$inPath: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath']>>
-	) => ReturnType<typeof F.buildVisibilityModifierPub>;
+	readonly visibilityModifierPub$scope: Seat<
+		ArgsOf<Table['buildVisibilityModifierPubScope']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$self: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$self']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$super: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$super']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$crate: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$crate']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
+	readonly visibilityModifierPub$scope$inPath: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPubScope$inPath']>,
+		ReturnType<typeof F.buildVisibilityModifierPub>
+	>;
 	readonly visibilityModifierPub: {
 		readonly scope: Routes<Table>['visibilityModifierPub$scope'] & {
 			readonly self: Routes<Table>['visibilityModifierPub$scope$self'];
@@ -86,52 +87,37 @@ export interface Routes<Table extends AnyTable> {
 	readonly visibilityModifier$crate: (
 		options?: OptionsArg<Table['buildVisibilityModifier']>
 	) => ReturnType<Table['buildVisibilityModifier']>;
-	readonly visibilityModifier$pub: <const A extends ArgsOf<Table['buildVisibilityModifierPub']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildVisibilityModifierPub']>>
-	) => ReturnType<typeof F.buildVisibilityModifier>;
-	readonly visibilityModifier$pub$scope: <
-		const A extends ArgsOf<
+	readonly visibilityModifier$pub: Seat<
+		ArgsOf<Table['buildVisibilityModifierPub']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope: Seat<
+		ArgsOf<
 			Routes<Table>['visibilityModifierPub$scope'] & {
 				readonly self: Routes<Table>['visibilityModifierPub$scope$self'];
 				readonly super: Routes<Table>['visibilityModifierPub$scope$super'];
 				readonly crate: Routes<Table>['visibilityModifierPub$scope$crate'];
 				readonly inPath: Routes<Table>['visibilityModifierPub$scope$inPath'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['visibilityModifierPub$scope'] & {
-						readonly self: Routes<Table>['visibilityModifierPub$scope$self'];
-						readonly super: Routes<Table>['visibilityModifierPub$scope$super'];
-						readonly crate: Routes<Table>['visibilityModifierPub$scope$crate'];
-						readonly inPath: Routes<Table>['visibilityModifierPub$scope$inPath'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildVisibilityModifier>;
-	readonly visibilityModifier$pub$scope$self: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPub$scope$self']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPub$scope$self']>>
-	) => ReturnType<typeof F.buildVisibilityModifier>;
-	readonly visibilityModifier$pub$scope$super: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPub$scope$super']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPub$scope$super']>>
-	) => ReturnType<typeof F.buildVisibilityModifier>;
-	readonly visibilityModifier$pub$scope$crate: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPub$scope$crate']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPub$scope$crate']>>
-	) => ReturnType<typeof F.buildVisibilityModifier>;
-	readonly visibilityModifier$pub$scope$inPath: <
-		const A extends ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath']>>
-	) => ReturnType<typeof F.buildVisibilityModifier>;
+		>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$self: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$self']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$super: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$super']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$crate: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$crate']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
+	readonly visibilityModifier$pub$scope$inPath: Seat<
+		ArgsOf<Routes<Table>['visibilityModifierPub$scope$inPath']>,
+		ReturnType<typeof F.buildVisibilityModifier>
+	>;
 	readonly visibilityModifier: Table['buildVisibilityModifier'] & {
 		readonly crate: Routes<Table>['visibilityModifier$crate'];
 		readonly pub: Routes<Table>['visibilityModifier$pub'] & {
@@ -184,33 +170,31 @@ export interface Routes<Table extends AnyTable> {
 	readonly lastMatchArm: Table['lastMatchArm$seated'];
 	readonly tupleStructPattern: Table['tupleStructPattern$seated'];
 	readonly structPattern: Table['structPattern$seated'];
-	readonly lineComment$extraSlashes: <const A extends ArgsOf<Table['buildLineCommentExtraSlashes']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLineCommentExtraSlashes']>>
-	) => ReturnType<typeof F.buildLineComment>;
-	readonly lineComment$docOuter: <const A extends ArgsOf<Table['buildLineCommentDocOuter']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLineCommentDocOuter']>>
-	) => ReturnType<typeof F.buildLineComment>;
-	readonly lineComment$docInner: <const A extends ArgsOf<Table['buildLineCommentDocInner']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLineCommentDocInner']>>
-	) => ReturnType<typeof F.buildLineComment>;
-	readonly lineComment$regular: <const A extends ArgsOf<Table['buildLineCommentRegular']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLineCommentRegular']>>
-	) => ReturnType<typeof F.buildLineComment>;
+	readonly lineComment$extraSlashes: Seat<
+		ArgsOf<Table['buildLineCommentExtraSlashes']>,
+		ReturnType<typeof F.buildLineComment>
+	>;
+	readonly lineComment$docOuter: Seat<ArgsOf<Table['buildLineCommentDocOuter']>, ReturnType<typeof F.buildLineComment>>;
+	readonly lineComment$docInner: Seat<ArgsOf<Table['buildLineCommentDocInner']>, ReturnType<typeof F.buildLineComment>>;
+	readonly lineComment$regular: Seat<ArgsOf<Table['buildLineCommentRegular']>, ReturnType<typeof F.buildLineComment>>;
 	readonly lineComment: Table['buildLineComment'] & {
 		readonly extraSlashes: Routes<Table>['lineComment$extraSlashes'];
 		readonly docOuter: Routes<Table>['lineComment$docOuter'];
 		readonly docInner: Routes<Table>['lineComment$docInner'];
 		readonly regular: Routes<Table>['lineComment$regular'];
 	};
-	readonly blockComment$docOuter: <const A extends ArgsOf<Table['buildBlockCommentDocOuter']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBlockCommentDocOuter']>>
-	) => ReturnType<typeof F.buildBlockComment>;
-	readonly blockComment$docInner: <const A extends ArgsOf<Table['buildBlockCommentDocInner']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBlockCommentDocInner']>>
-	) => ReturnType<typeof F.buildBlockComment>;
-	readonly blockComment$regular: <const A extends ArgsOf<Table['buildBlockCommentRegular']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBlockCommentRegular']>>
-	) => ReturnType<typeof F.buildBlockComment>;
+	readonly blockComment$docOuter: Seat<
+		ArgsOf<Table['buildBlockCommentDocOuter']>,
+		ReturnType<typeof F.buildBlockComment>
+	>;
+	readonly blockComment$docInner: Seat<
+		ArgsOf<Table['buildBlockCommentDocInner']>,
+		ReturnType<typeof F.buildBlockComment>
+	>;
+	readonly blockComment$regular: Seat<
+		ArgsOf<Table['buildBlockCommentRegular']>,
+		ReturnType<typeof F.buildBlockComment>
+	>;
 	readonly blockComment: Table['buildBlockComment'] & {
 		readonly docOuter: Routes<Table>['blockComment$docOuter'];
 		readonly docInner: Routes<Table>['blockComment$docInner'];
@@ -513,24 +497,21 @@ export interface Routes<Table extends AnyTable> {
 		readonly plain: Table['buildCharLiteralPlain'];
 		readonly empty: typeof F.buildCharLiteralEmpty;
 	};
-	readonly nonSpecialToken$string: <const A extends ArgsOf<Table['buildStringLiteral']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildStringLiteral']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$rawString: <const A extends ArgsOf<Table['buildRawStringLiteral']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildRawStringLiteral']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$char: <const A extends ArgsOf<Routes<Table>['charLiteral']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['charLiteral']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$integer: <const A extends ArgsOf<Routes<Table>['integerLiteral']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['integerLiteral']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$float: <const A extends ArgsOf<Table['buildFloatLiteral']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFloatLiteral']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$identifier: <const A extends ArgsOf<Table['buildIdentifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIdentifier']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
+	readonly nonSpecialToken$string: Seat<ArgsOf<Table['buildStringLiteral']>, ReturnType<typeof F.buildNonSpecialToken>>;
+	readonly nonSpecialToken$rawString: Seat<
+		ArgsOf<Table['buildRawStringLiteral']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$char: Seat<ArgsOf<Routes<Table>['charLiteral']>, ReturnType<typeof F.buildNonSpecialToken>>;
+	readonly nonSpecialToken$integer: Seat<
+		ArgsOf<Routes<Table>['integerLiteral']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$float: Seat<ArgsOf<Table['buildFloatLiteral']>, ReturnType<typeof F.buildNonSpecialToken>>;
+	readonly nonSpecialToken$identifier: Seat<
+		ArgsOf<Table['buildIdentifier']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
 	readonly nonSpecialToken$mutableSpecifier: (
 		options?: OptionsArg<Table['buildNonSpecialToken']>
 	) => ReturnType<Table['buildNonSpecialToken']>;
@@ -543,27 +524,34 @@ export interface Routes<Table extends AnyTable> {
 	readonly nonSpecialToken$crate: (
 		options?: OptionsArg<Table['buildNonSpecialToken']>
 	) => ReturnType<Table['buildNonSpecialToken']>;
-	readonly nonSpecialToken$char$escaped: <const A extends ArgsOf<Routes<Table>['charLiteralEscaped']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['charLiteralEscaped']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$char$plain: <const A extends ArgsOf<Table['buildCharLiteralPlain']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCharLiteralPlain']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$char$empty: <const A extends ArgsOf<Table['buildCharLiteralEmpty']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCharLiteralEmpty']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$integer$decimal: <const A extends ArgsOf<Table['buildIntegerLiteralDecimal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerLiteralDecimal']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$integer$hex: <const A extends ArgsOf<Table['buildIntegerLiteralHex']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerLiteralHex']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$integer$binary: <const A extends ArgsOf<Table['buildIntegerLiteralBinary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerLiteralBinary']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
-	readonly nonSpecialToken$integer$octal: <const A extends ArgsOf<Table['buildIntegerLiteralOctal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerLiteralOctal']>>
-	) => ReturnType<typeof F.buildNonSpecialToken>;
+	readonly nonSpecialToken$char$escaped: Seat<
+		ArgsOf<Routes<Table>['charLiteralEscaped']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$char$plain: Seat<
+		ArgsOf<Table['buildCharLiteralPlain']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$char$empty: Seat<
+		ArgsOf<Table['buildCharLiteralEmpty']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$integer$decimal: Seat<
+		ArgsOf<Table['buildIntegerLiteralDecimal']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$integer$hex: Seat<
+		ArgsOf<Table['buildIntegerLiteralHex']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$integer$binary: Seat<
+		ArgsOf<Table['buildIntegerLiteralBinary']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
+	readonly nonSpecialToken$integer$octal: Seat<
+		ArgsOf<Table['buildIntegerLiteralOctal']>,
+		ReturnType<typeof F.buildNonSpecialToken>
+	>;
 	readonly nonSpecialToken: Table['buildNonSpecialToken'] & {
 		readonly string: Routes<Table>['nonSpecialToken$string'];
 		readonly rawString: Routes<Table>['nonSpecialToken$rawString'];

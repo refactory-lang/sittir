@@ -2,7 +2,7 @@
 import * as F from './raw.js';
 import * as K from './combinators.js';
 import { delegate } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared, Seat } from '@sittir/types';
 import { TSKindId } from '../types.js';
 import type * as LooseTable from './loose.js';
 import type * as StrictTable from './strict.js';
@@ -10,14 +10,14 @@ import type * as StrictTable from './strict.js';
 export type AnyTable = typeof LooseTable | typeof StrictTable;
 
 export interface Routes<Table extends AnyTable> {
-	readonly futureImportStatement$importList: <const A extends ArgsOf<Table['buildImportList']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildImportList']>>
-	) => ReturnType<typeof F.buildFutureImportStatement>;
-	readonly futureImportStatement$parenthesizedImportList: <
-		const A extends ArgsOf<Table['buildParenthesizedImportList']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildParenthesizedImportList']>>
-	) => ReturnType<typeof F.buildFutureImportStatement>;
+	readonly futureImportStatement$importList: Seat<
+		ArgsOf<Table['buildImportList']>,
+		ReturnType<typeof F.buildFutureImportStatement>
+	>;
+	readonly futureImportStatement$parenthesizedImportList: Seat<
+		ArgsOf<Table['buildParenthesizedImportList']>,
+		ReturnType<typeof F.buildFutureImportStatement>
+	>;
 	readonly futureImportStatement: Table['buildFutureImportStatement'] & {
 		readonly importList: Routes<Table>['futureImportStatement$importList'];
 		readonly parenthesizedImportList: Routes<Table>['futureImportStatement$parenthesizedImportList'];
@@ -85,20 +85,22 @@ export interface Routes<Table extends AnyTable> {
 		readonly printChevronArguments: Routes<Table>['printStatementChevron$printChevronArguments'];
 		readonly comma: Routes<Table>['printStatementChevron$comma'];
 	};
-	readonly printStatement$chevron: <const A extends ArgsOf<Table['buildPrintStatementChevron']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildPrintStatementChevron']>>
-	) => ReturnType<typeof F.buildPrintStatement>;
-	readonly printStatement$plain: <const A extends ArgsOf<Table['buildPrintStatementPlain']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildPrintStatementPlain']>>
-	) => ReturnType<typeof F.buildPrintStatement>;
-	readonly printStatement$chevron$printChevronArguments: <
-		const A extends ArgsOf<Routes<Table>['printStatementChevron$printChevronArguments']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['printStatementChevron$printChevronArguments']>>
-	) => ReturnType<typeof F.buildPrintStatement>;
-	readonly printStatement$chevron$comma: <const A extends ArgsOf<Routes<Table>['printStatementChevron$comma']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['printStatementChevron$comma']>>
-	) => ReturnType<typeof F.buildPrintStatement>;
+	readonly printStatement$chevron: Seat<
+		ArgsOf<Table['buildPrintStatementChevron']>,
+		ReturnType<typeof F.buildPrintStatement>
+	>;
+	readonly printStatement$plain: Seat<
+		ArgsOf<Table['buildPrintStatementPlain']>,
+		ReturnType<typeof F.buildPrintStatement>
+	>;
+	readonly printStatement$chevron$printChevronArguments: Seat<
+		ArgsOf<Routes<Table>['printStatementChevron$printChevronArguments']>,
+		ReturnType<typeof F.buildPrintStatement>
+	>;
+	readonly printStatement$chevron$comma: Seat<
+		ArgsOf<Routes<Table>['printStatementChevron$comma']>,
+		ReturnType<typeof F.buildPrintStatement>
+	>;
 	readonly printStatement: Table['buildPrintStatement'] & {
 		readonly chevron: Routes<Table>['printStatement$chevron'] & {
 			readonly printChevronArguments: Routes<Table>['printStatement$chevron$printChevronArguments'];
@@ -124,12 +126,14 @@ export interface Routes<Table extends AnyTable> {
 		readonly identifier: Routes<Table>['namedExpression$identifier'];
 	};
 	readonly matchStatement: Table['matchStatement$seated'];
-	readonly exceptClauseException$as: <const A extends ArgsOf<Table['buildExceptClauseExceptionAs']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildExceptClauseExceptionAs']>>
-	) => ReturnType<typeof F.buildExceptClauseException>;
-	readonly exceptClauseException$list: <const A extends ArgsOf<Table['buildExceptClauseExceptionList']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildExceptClauseExceptionList']>>
-	) => ReturnType<typeof F.buildExceptClauseException>;
+	readonly exceptClauseException$as: Seat<
+		ArgsOf<Table['buildExceptClauseExceptionAs']>,
+		ReturnType<typeof F.buildExceptClauseException>
+	>;
+	readonly exceptClauseException$list: Seat<
+		ArgsOf<Table['buildExceptClauseExceptionList']>,
+		ReturnType<typeof F.buildExceptClauseException>
+	>;
 	readonly exceptClauseException: {
 		readonly as: Routes<Table>['exceptClauseException$as'];
 		readonly list: Routes<Table>['exceptClauseException$list'];
@@ -581,33 +585,33 @@ export interface Routes<Table extends AnyTable> {
 		readonly dottedName: Routes<Table>['keywordPattern$dottedName'];
 		readonly wildcardPattern: Routes<Table>['keywordPattern$wildcardPattern'];
 	};
-	readonly simplePattern$classPattern: <const A extends ArgsOf<Routes<Table>['classPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['classPattern']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$list: <const A extends ArgsOf<Table['buildSplatPatternList']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSplatPatternList']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$dictionary: <const A extends ArgsOf<Table['buildSplatPatternDictionary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSplatPatternDictionary']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$unionPattern: <const A extends ArgsOf<Table['buildUnionPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnionPattern']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$caseListPattern: <const A extends ArgsOf<Table['buildCaseListPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCaseListPattern']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$caseTuplePattern: <const A extends ArgsOf<Table['buildCaseTuplePattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCaseTuplePattern']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$dictPattern: <const A extends ArgsOf<Table['buildDictPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictPattern']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$string: <const A extends ArgsOf<Table['buildString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildString']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$concatenatedString: <const A extends ArgsOf<Table['buildConcatenatedString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConcatenatedString']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
+	readonly simplePattern$classPattern: Seat<
+		ArgsOf<Routes<Table>['classPattern']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$list: Seat<ArgsOf<Table['buildSplatPatternList']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$dictionary: Seat<
+		ArgsOf<Table['buildSplatPatternDictionary']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$unionPattern: Seat<
+		ArgsOf<Table['buildUnionPattern']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$caseListPattern: Seat<
+		ArgsOf<Table['buildCaseListPattern']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$caseTuplePattern: Seat<
+		ArgsOf<Table['buildCaseTuplePattern']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$dictPattern: Seat<ArgsOf<Table['buildDictPattern']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$string: Seat<ArgsOf<Table['buildString']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
 	readonly simplePattern$true: (
 		options?: OptionsArg<Table['buildSimplePattern']>
 	) => ReturnType<Table['buildSimplePattern']>;
@@ -617,48 +621,46 @@ export interface Routes<Table extends AnyTable> {
 	readonly simplePattern$none: (
 		options?: OptionsArg<Table['buildSimplePattern']>
 	) => ReturnType<Table['buildSimplePattern']>;
-	readonly simplePattern$hex: <const A extends ArgsOf<Table['buildIntegerHex']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerHex']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$octal: <const A extends ArgsOf<Table['buildIntegerOctal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerOctal']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$binary: <const A extends ArgsOf<Table['buildIntegerBinary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerBinary']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$decimal: <const A extends ArgsOf<Routes<Table>['integerDecimal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['integerDecimal']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$point: <const A extends ArgsOf<Table['buildFloatPoint']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFloatPoint']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$leadingPoint: <const A extends ArgsOf<Table['buildFloatLeadingPoint']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFloatLeadingPoint']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$scientific: <const A extends ArgsOf<Table['buildFloatScientific']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFloatScientific']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$negative: <const A extends ArgsOf<Table['buildSimplePatternNegative']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSimplePatternNegative']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$complexPattern: <const A extends ArgsOf<Table['buildComplexPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildComplexPattern']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$dottedName: <const A extends ArgsOf<Table['buildDottedName']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDottedName']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
+	readonly simplePattern$hex: Seat<ArgsOf<Table['buildIntegerHex']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$octal: Seat<ArgsOf<Table['buildIntegerOctal']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$binary: Seat<ArgsOf<Table['buildIntegerBinary']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$decimal: Seat<
+		ArgsOf<Routes<Table>['integerDecimal']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$point: Seat<ArgsOf<Table['buildFloatPoint']>, ReturnType<typeof F.buildSimplePattern>>;
+	readonly simplePattern$leadingPoint: Seat<
+		ArgsOf<Table['buildFloatLeadingPoint']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$scientific: Seat<
+		ArgsOf<Table['buildFloatScientific']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$negative: Seat<
+		ArgsOf<Table['buildSimplePatternNegative']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$complexPattern: Seat<
+		ArgsOf<Table['buildComplexPattern']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$dottedName: Seat<ArgsOf<Table['buildDottedName']>, ReturnType<typeof F.buildSimplePattern>>;
 	readonly simplePattern$wildcardPattern: (
 		options?: OptionsArg<Table['buildSimplePattern']>
 	) => ReturnType<Table['buildSimplePattern']>;
-	readonly simplePattern$decimal$long: <const A extends ArgsOf<Table['buildIntegerDecimalLong']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerDecimalLong']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$decimal$imaginary: <const A extends ArgsOf<Table['buildIntegerDecimalImaginary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerDecimalImaginary']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
-	readonly simplePattern$decimal$plain: <const A extends ArgsOf<Table['buildIntegerDecimalPlain']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIntegerDecimalPlain']>>
-	) => ReturnType<typeof F.buildSimplePattern>;
+	readonly simplePattern$decimal$long: Seat<
+		ArgsOf<Table['buildIntegerDecimalLong']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$decimal$imaginary: Seat<
+		ArgsOf<Table['buildIntegerDecimalImaginary']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
+	readonly simplePattern$decimal$plain: Seat<
+		ArgsOf<Table['buildIntegerDecimalPlain']>,
+		ReturnType<typeof F.buildSimplePattern>
+	>;
 	readonly simplePattern: Table['buildSimplePattern'] & {
 		readonly classPattern: Routes<Table>['simplePattern$classPattern'];
 		readonly list: Routes<Table>['simplePattern$list'];
@@ -688,253 +690,232 @@ export interface Routes<Table extends AnyTable> {
 		readonly dottedName: Routes<Table>['simplePattern$dottedName'];
 		readonly wildcardPattern: Routes<Table>['simplePattern$wildcardPattern'];
 	};
-	readonly casePattern$caseAsPattern: <const A extends ArgsOf<Table['buildCaseAsPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCaseAsPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern: <const A extends ArgsOf<Table['buildKeywordPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildKeywordPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern: <const A extends ArgsOf<Table['buildSimplePattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSimplePattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$classPattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$classPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$classPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$list: <const A extends ArgsOf<Routes<Table>['keywordPattern$list']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$list']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$dictionary: <const A extends ArgsOf<Routes<Table>['keywordPattern$dictionary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$dictionary']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$unionPattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$unionPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$unionPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$caseListPattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$caseListPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$caseListPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$caseTuplePattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$caseTuplePattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$caseTuplePattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$dictPattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$dictPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$dictPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$string: <const A extends ArgsOf<Routes<Table>['keywordPattern$string']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$string']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$concatenatedString: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$concatenatedString']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$concatenatedString']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$true: <const A extends ArgsOf<Routes<Table>['keywordPattern$true']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$true']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$false: <const A extends ArgsOf<Routes<Table>['keywordPattern$false']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$false']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$none: <const A extends ArgsOf<Routes<Table>['keywordPattern$none']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$none']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$hex: <const A extends ArgsOf<Routes<Table>['keywordPattern$hex']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$hex']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$octal: <const A extends ArgsOf<Routes<Table>['keywordPattern$octal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$octal']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$binary: <const A extends ArgsOf<Routes<Table>['keywordPattern$binary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$binary']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$decimal: <
-		const A extends ArgsOf<
+	readonly casePattern$caseAsPattern: Seat<ArgsOf<Table['buildCaseAsPattern']>, ReturnType<typeof F.buildCasePattern>>;
+	readonly casePattern$keywordPattern: Seat<
+		ArgsOf<Table['buildKeywordPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern: Seat<ArgsOf<Table['buildSimplePattern']>, ReturnType<typeof F.buildCasePattern>>;
+	readonly casePattern$keywordPattern$classPattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$classPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$list: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$list']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$dictionary: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$dictionary']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$unionPattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$unionPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$caseListPattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$caseListPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$caseTuplePattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$caseTuplePattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$dictPattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$dictPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$string: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$string']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$concatenatedString: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$concatenatedString']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$true: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$true']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$false: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$false']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$none: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$none']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$hex: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$hex']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$octal: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$octal']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$binary: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$binary']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$decimal: Seat<
+		ArgsOf<
 			Routes<Table>['keywordPattern$decimal'] & {
 				readonly long: Routes<Table>['keywordPattern$decimal$long'];
 				readonly imaginary: Routes<Table>['keywordPattern$decimal$imaginary'];
 				readonly plain: Routes<Table>['keywordPattern$decimal$plain'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['keywordPattern$decimal'] & {
-						readonly long: Routes<Table>['keywordPattern$decimal$long'];
-						readonly imaginary: Routes<Table>['keywordPattern$decimal$imaginary'];
-						readonly plain: Routes<Table>['keywordPattern$decimal$plain'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$point: <const A extends ArgsOf<Routes<Table>['keywordPattern$point']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$point']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$leadingPoint: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$leadingPoint']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$leadingPoint']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$scientific: <const A extends ArgsOf<Routes<Table>['keywordPattern$scientific']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$scientific']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$negative: <const A extends ArgsOf<Routes<Table>['keywordPattern$negative']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$negative']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$complexPattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$complexPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$complexPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$dottedName: <const A extends ArgsOf<Routes<Table>['keywordPattern$dottedName']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$dottedName']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$wildcardPattern: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$wildcardPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$wildcardPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$decimal$long: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$decimal$long']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$decimal$long']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$decimal$imaginary: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$decimal$imaginary']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$decimal$imaginary']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$keywordPattern$decimal$plain: <
-		const A extends ArgsOf<Routes<Table>['keywordPattern$decimal$plain']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['keywordPattern$decimal$plain']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$classPattern: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$classPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$classPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$list: <const A extends ArgsOf<Routes<Table>['simplePattern$list']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$list']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$dictionary: <const A extends ArgsOf<Routes<Table>['simplePattern$dictionary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$dictionary']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$unionPattern: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$unionPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$unionPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$caseListPattern: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$caseListPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$caseListPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$caseTuplePattern: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$caseTuplePattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$caseTuplePattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$dictPattern: <const A extends ArgsOf<Routes<Table>['simplePattern$dictPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$dictPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$string: <const A extends ArgsOf<Routes<Table>['simplePattern$string']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$string']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$concatenatedString: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$concatenatedString']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$concatenatedString']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$true: <const A extends ArgsOf<Routes<Table>['simplePattern$true']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$true']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$false: <const A extends ArgsOf<Routes<Table>['simplePattern$false']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$false']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$none: <const A extends ArgsOf<Routes<Table>['simplePattern$none']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$none']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$hex: <const A extends ArgsOf<Routes<Table>['simplePattern$hex']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$hex']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$octal: <const A extends ArgsOf<Routes<Table>['simplePattern$octal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$octal']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$binary: <const A extends ArgsOf<Routes<Table>['simplePattern$binary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$binary']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$decimal: <
-		const A extends ArgsOf<
+		>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$point: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$point']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$leadingPoint: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$leadingPoint']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$scientific: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$scientific']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$negative: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$negative']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$complexPattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$complexPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$dottedName: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$dottedName']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$wildcardPattern: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$wildcardPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$decimal$long: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$decimal$long']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$decimal$imaginary: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$decimal$imaginary']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$keywordPattern$decimal$plain: Seat<
+		ArgsOf<Routes<Table>['keywordPattern$decimal$plain']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$classPattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$classPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$list: Seat<
+		ArgsOf<Routes<Table>['simplePattern$list']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$dictionary: Seat<
+		ArgsOf<Routes<Table>['simplePattern$dictionary']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$unionPattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$unionPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$caseListPattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$caseListPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$caseTuplePattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$caseTuplePattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$dictPattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$dictPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$string: Seat<
+		ArgsOf<Routes<Table>['simplePattern$string']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$concatenatedString: Seat<
+		ArgsOf<Routes<Table>['simplePattern$concatenatedString']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$true: Seat<
+		ArgsOf<Routes<Table>['simplePattern$true']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$false: Seat<
+		ArgsOf<Routes<Table>['simplePattern$false']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$none: Seat<
+		ArgsOf<Routes<Table>['simplePattern$none']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$hex: Seat<
+		ArgsOf<Routes<Table>['simplePattern$hex']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$octal: Seat<
+		ArgsOf<Routes<Table>['simplePattern$octal']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$binary: Seat<
+		ArgsOf<Routes<Table>['simplePattern$binary']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$decimal: Seat<
+		ArgsOf<
 			Routes<Table>['simplePattern$decimal'] & {
 				readonly long: Routes<Table>['simplePattern$decimal$long'];
 				readonly imaginary: Routes<Table>['simplePattern$decimal$imaginary'];
 				readonly plain: Routes<Table>['simplePattern$decimal$plain'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['simplePattern$decimal'] & {
-						readonly long: Routes<Table>['simplePattern$decimal$long'];
-						readonly imaginary: Routes<Table>['simplePattern$decimal$imaginary'];
-						readonly plain: Routes<Table>['simplePattern$decimal$plain'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$point: <const A extends ArgsOf<Routes<Table>['simplePattern$point']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$point']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$leadingPoint: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$leadingPoint']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$leadingPoint']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$scientific: <const A extends ArgsOf<Routes<Table>['simplePattern$scientific']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$scientific']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$negative: <const A extends ArgsOf<Routes<Table>['simplePattern$negative']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$negative']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$complexPattern: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$complexPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$complexPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$dottedName: <const A extends ArgsOf<Routes<Table>['simplePattern$dottedName']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$dottedName']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$wildcardPattern: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$wildcardPattern']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$wildcardPattern']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$decimal$long: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$decimal$long']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$decimal$long']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$decimal$imaginary: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$decimal$imaginary']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$decimal$imaginary']>>
-	) => ReturnType<typeof F.buildCasePattern>;
-	readonly casePattern$simplePattern$decimal$plain: <
-		const A extends ArgsOf<Routes<Table>['simplePattern$decimal$plain']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['simplePattern$decimal$plain']>>
-	) => ReturnType<typeof F.buildCasePattern>;
+		>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$point: Seat<
+		ArgsOf<Routes<Table>['simplePattern$point']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$leadingPoint: Seat<
+		ArgsOf<Routes<Table>['simplePattern$leadingPoint']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$scientific: Seat<
+		ArgsOf<Routes<Table>['simplePattern$scientific']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$negative: Seat<
+		ArgsOf<Routes<Table>['simplePattern$negative']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$complexPattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$complexPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$dottedName: Seat<
+		ArgsOf<Routes<Table>['simplePattern$dottedName']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$wildcardPattern: Seat<
+		ArgsOf<Routes<Table>['simplePattern$wildcardPattern']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$decimal$long: Seat<
+		ArgsOf<Routes<Table>['simplePattern$decimal$long']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$decimal$imaginary: Seat<
+		ArgsOf<Routes<Table>['simplePattern$decimal$imaginary']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
+	readonly casePattern$simplePattern$decimal$plain: Seat<
+		ArgsOf<Routes<Table>['simplePattern$decimal$plain']>,
+		ReturnType<typeof F.buildCasePattern>
+	>;
 	readonly casePattern: Table['buildCasePattern'] & {
 		readonly caseAsPattern: Routes<Table>['casePattern$caseAsPattern'];
 		readonly keywordPattern: Routes<Table>['casePattern$keywordPattern'] & {
@@ -1326,95 +1307,98 @@ export interface Routes<Table extends AnyTable> {
 		readonly ellipsis: typeof F.buildEllipsis;
 		readonly listSplat: Table['buildListSplatPattern'];
 	};
-	readonly yieldFromClause$comparison: <const A extends ArgsOf<Routes<Table>['comparisonOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['comparisonOperator']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$not: <const A extends ArgsOf<Table['buildNotOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNotOperator']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$boolean: <const A extends ArgsOf<Table['buildBooleanOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBooleanOperator']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$lambda: <const A extends ArgsOf<Table['buildLambda']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLambda']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$conditional: <const A extends ArgsOf<Table['buildConditionalExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConditionalExpression']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$named: <const A extends ArgsOf<Table['buildNamedExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamedExpression']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$as: <const A extends ArgsOf<Table['buildAsPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAsPattern']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$await: <const A extends ArgsOf<Table['buildAwait']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAwait']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$binary: <const A extends ArgsOf<Table['buildBinaryOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBinaryOperator']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$identifier: <const A extends ArgsOf<Table['buildIdentifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIdentifier']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$string: <const A extends ArgsOf<Table['buildString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildString']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$concatenatedString: <const A extends ArgsOf<Table['buildConcatenatedString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConcatenatedString']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$integer: <const A extends ArgsOf<Routes<Table>['integer']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['integer']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$float: <const A extends ArgsOf<Routes<Table>['float']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['float']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$unary: <const A extends ArgsOf<Table['buildUnaryOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnaryOperator']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$attribute: <const A extends ArgsOf<Table['buildAttribute']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAttribute']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$subscript: <const A extends ArgsOf<Routes<Table>['subscript']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['subscript']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$call: <const A extends ArgsOf<Table['buildCall']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCall']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$list: <const A extends ArgsOf<Table['buildList']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildList']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$listComprehension: <const A extends ArgsOf<Table['buildListComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildListComprehension']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$dictionary: <const A extends ArgsOf<Table['buildDictionary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictionary']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$dictionaryComprehension: <
-		const A extends ArgsOf<Table['buildDictionaryComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictionaryComprehension']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$set: <const A extends ArgsOf<Table['buildSet']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSet']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$setComprehension: <const A extends ArgsOf<Table['buildSetComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSetComprehension']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$tuple: <const A extends ArgsOf<Table['buildTuple']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTuple']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$parenthesized: <const A extends ArgsOf<Table['buildParenthesizedExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildParenthesizedExpression']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$generator: <const A extends ArgsOf<Table['buildGeneratorExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildGeneratorExpression']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$primary$listSplat: <const A extends ArgsOf<Table['buildListSplatPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildListSplatPattern']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
-	readonly yieldFromClause$named$identifier: <const A extends ArgsOf<Routes<Table>['namedExpression$identifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['namedExpression$identifier']>>
-	) => ReturnType<typeof F.buildYieldFromClause>;
+	readonly yieldFromClause$comparison: Seat<
+		ArgsOf<Routes<Table>['comparisonOperator']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$not: Seat<ArgsOf<Table['buildNotOperator']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$boolean: Seat<
+		ArgsOf<Table['buildBooleanOperator']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$lambda: Seat<ArgsOf<Table['buildLambda']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$conditional: Seat<
+		ArgsOf<Table['buildConditionalExpression']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$named: Seat<
+		ArgsOf<Table['buildNamedExpression']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$as: Seat<ArgsOf<Table['buildAsPattern']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$primary$binary: Seat<
+		ArgsOf<Table['buildBinaryOperator']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$identifier: Seat<
+		ArgsOf<Table['buildIdentifier']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$string: Seat<
+		ArgsOf<Table['buildString']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$integer: Seat<
+		ArgsOf<Routes<Table>['integer']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$float: Seat<
+		ArgsOf<Routes<Table>['float']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$unary: Seat<
+		ArgsOf<Table['buildUnaryOperator']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$attribute: Seat<
+		ArgsOf<Table['buildAttribute']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['subscript']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$call: Seat<ArgsOf<Table['buildCall']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$primary$list: Seat<ArgsOf<Table['buildList']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$primary$listComprehension: Seat<
+		ArgsOf<Table['buildListComprehension']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$dictionary: Seat<
+		ArgsOf<Table['buildDictionary']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$dictionaryComprehension: Seat<
+		ArgsOf<Table['buildDictionaryComprehension']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$set: Seat<ArgsOf<Table['buildSet']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$primary$setComprehension: Seat<
+		ArgsOf<Table['buildSetComprehension']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$tuple: Seat<ArgsOf<Table['buildTuple']>, ReturnType<typeof F.buildYieldFromClause>>;
+	readonly yieldFromClause$primary$parenthesized: Seat<
+		ArgsOf<Table['buildParenthesizedExpression']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$generator: Seat<
+		ArgsOf<Table['buildGeneratorExpression']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$primary$listSplat: Seat<
+		ArgsOf<Table['buildListSplatPattern']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
+	readonly yieldFromClause$named$identifier: Seat<
+		ArgsOf<Routes<Table>['namedExpression$identifier']>,
+		ReturnType<typeof F.buildYieldFromClause>
+	>;
 	readonly yieldFromClause: {
 		readonly comparison: Routes<Table>['yieldFromClause$comparison'];
 		readonly not: Routes<Table>['yieldFromClause$not'];
@@ -1449,136 +1433,121 @@ export interface Routes<Table extends AnyTable> {
 		};
 		readonly as: Routes<Table>['yieldFromClause$as'];
 	};
-	readonly yield_$fromClause: <const A extends ArgsOf<Table['buildYieldFromClause']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildYieldFromClause']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$comparison: <const A extends ArgsOf<Routes<Table>['yieldFromClause$comparison']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$comparison']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$not: <const A extends ArgsOf<Routes<Table>['yieldFromClause$not']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$not']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$boolean: <const A extends ArgsOf<Routes<Table>['yieldFromClause$boolean']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$boolean']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$lambda: <const A extends ArgsOf<Routes<Table>['yieldFromClause$lambda']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$lambda']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$conditional: <const A extends ArgsOf<Routes<Table>['yieldFromClause$conditional']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$conditional']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$named: <
-		const A extends ArgsOf<
+	readonly yield_$fromClause: Seat<ArgsOf<Table['buildYieldFromClause']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$fromClause$comparison: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$comparison']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$not: Seat<ArgsOf<Routes<Table>['yieldFromClause$not']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$fromClause$boolean: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$boolean']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$lambda: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$lambda']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$conditional: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$conditional']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$named: Seat<
+		ArgsOf<
 			Routes<Table>['yieldFromClause$named'] & {
 				readonly identifier: Routes<Table>['yieldFromClause$named$identifier'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['yieldFromClause$named'] & {
-						readonly identifier: Routes<Table>['yieldFromClause$named$identifier'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$as: <const A extends ArgsOf<Routes<Table>['yieldFromClause$as']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$as']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$await: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$await']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$await']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$binary: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$binary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$binary']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$identifier: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$identifier']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$identifier']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$string: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$string']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$string']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$concatenatedString: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$concatenatedString']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$concatenatedString']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$integer: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$integer']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$integer']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$float: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$float']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$float']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$unary: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$unary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$unary']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$attribute: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$attribute']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$attribute']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$subscript: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$subscript']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$subscript']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$call: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$call']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$call']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$list: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$list']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$list']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$listComprehension: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$listComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$listComprehension']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$dictionary: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$dictionary']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$dictionary']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$dictionaryComprehension: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$dictionaryComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$dictionaryComprehension']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$set: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$set']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$set']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$setComprehension: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$setComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$setComprehension']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$tuple: <const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$tuple']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$tuple']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$parenthesized: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$parenthesized']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$parenthesized']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$generator: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$generator']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$generator']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$primary$listSplat: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$primary$listSplat']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$primary$listSplat']>>
-	) => ReturnType<typeof F.buildYield>;
-	readonly yield_$fromClause$named$identifier: <
-		const A extends ArgsOf<Routes<Table>['yieldFromClause$named$identifier']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldFromClause$named$identifier']>>
-	) => ReturnType<typeof F.buildYield>;
+		>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$as: Seat<ArgsOf<Routes<Table>['yieldFromClause$as']>, ReturnType<typeof F.buildYield>>;
+	readonly yield_$fromClause$primary$await: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$await']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$binary: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$binary']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$identifier: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$identifier']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$string: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$string']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$concatenatedString: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$concatenatedString']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$integer: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$integer']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$float: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$float']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$unary: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$unary']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$attribute: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$attribute']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$subscript']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$call: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$call']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$list: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$list']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$listComprehension: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$listComprehension']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$dictionary: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$dictionary']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$dictionaryComprehension: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$dictionaryComprehension']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$set: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$set']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$setComprehension: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$setComprehension']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$tuple: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$tuple']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$parenthesized: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$parenthesized']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$generator: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$generator']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$primary$listSplat: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$primary$listSplat']>,
+		ReturnType<typeof F.buildYield>
+	>;
+	readonly yield_$fromClause$named$identifier: Seat<
+		ArgsOf<Routes<Table>['yieldFromClause$named$identifier']>,
+		ReturnType<typeof F.buildYield>
+	>;
 	readonly yield_: Table['buildYield'] & {
 		readonly fromClause: Routes<Table>['yield_$fromClause'] & {
 			readonly comparison: Routes<Table>['yield_$fromClause$comparison'];
@@ -1615,115 +1584,142 @@ export interface Routes<Table extends AnyTable> {
 			readonly as: Routes<Table>['yield_$fromClause$as'];
 		};
 	};
-	readonly expressionStatement$comparison: <const A extends ArgsOf<Routes<Table>['comparisonOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['comparisonOperator']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$not: <const A extends ArgsOf<Table['buildNotOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNotOperator']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$boolean: <const A extends ArgsOf<Table['buildBooleanOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBooleanOperator']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$lambda: <const A extends ArgsOf<Table['buildLambda']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLambda']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$conditional: <const A extends ArgsOf<Table['buildConditionalExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConditionalExpression']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$named: <const A extends ArgsOf<Table['buildNamedExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamedExpression']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$as: <const A extends ArgsOf<Table['buildAsPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAsPattern']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$tuple: <const A extends ArgsOf<Table['buildExpressionStatementTuple']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildExpressionStatementTuple']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$eq: <const A extends ArgsOf<Table['buildAssignmentEq']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAssignmentEq']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$type: <const A extends ArgsOf<Table['buildAssignmentType']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAssignmentType']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$typed: <const A extends ArgsOf<Table['buildAssignmentTyped']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAssignmentTyped']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$augmentedAssignment: <const A extends ArgsOf<Table['buildAugmentedAssignment']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAugmentedAssignment']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield: <const A extends ArgsOf<Table['buildYield']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildYield']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$await: <const A extends ArgsOf<Table['buildAwait']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAwait']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$binary: <const A extends ArgsOf<Table['buildBinaryOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBinaryOperator']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$identifier: <const A extends ArgsOf<Table['buildIdentifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIdentifier']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$string: <const A extends ArgsOf<Table['buildString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildString']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$concatenatedString: <const A extends ArgsOf<Table['buildConcatenatedString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConcatenatedString']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$integer: <const A extends ArgsOf<Routes<Table>['integer']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['integer']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$float: <const A extends ArgsOf<Routes<Table>['float']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['float']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$unary: <const A extends ArgsOf<Table['buildUnaryOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnaryOperator']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$attribute: <const A extends ArgsOf<Table['buildAttribute']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAttribute']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$subscript: <const A extends ArgsOf<Routes<Table>['subscript']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['subscript']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$call: <const A extends ArgsOf<Table['buildCall']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCall']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$list: <const A extends ArgsOf<Table['buildList']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildList']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$listComprehension: <const A extends ArgsOf<Table['buildListComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildListComprehension']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$dictionary: <const A extends ArgsOf<Table['buildDictionary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictionary']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$dictionaryComprehension: <
-		const A extends ArgsOf<Table['buildDictionaryComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictionaryComprehension']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$set: <const A extends ArgsOf<Table['buildSet']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSet']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$setComprehension: <const A extends ArgsOf<Table['buildSetComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSetComprehension']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$tuple: <const A extends ArgsOf<Table['buildTuple']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTuple']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$parenthesized: <const A extends ArgsOf<Table['buildParenthesizedExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildParenthesizedExpression']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$generator: <const A extends ArgsOf<Table['buildGeneratorExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildGeneratorExpression']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$primary$listSplat: <const A extends ArgsOf<Table['buildListSplatPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildListSplatPattern']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$named$identifier: <const A extends ArgsOf<Routes<Table>['namedExpression$identifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['namedExpression$identifier']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause: <
-		const A extends ArgsOf<
+	readonly expressionStatement$comparison: Seat<
+		ArgsOf<Routes<Table>['comparisonOperator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$not: Seat<
+		ArgsOf<Table['buildNotOperator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$boolean: Seat<
+		ArgsOf<Table['buildBooleanOperator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$lambda: Seat<
+		ArgsOf<Table['buildLambda']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$conditional: Seat<
+		ArgsOf<Table['buildConditionalExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$named: Seat<
+		ArgsOf<Table['buildNamedExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$as: Seat<ArgsOf<Table['buildAsPattern']>, ReturnType<typeof F.buildExpressionStatement>>;
+	readonly expressionStatement$tuple: Seat<
+		ArgsOf<Table['buildExpressionStatementTuple']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$eq: Seat<
+		ArgsOf<Table['buildAssignmentEq']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$type: Seat<
+		ArgsOf<Table['buildAssignmentType']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$typed: Seat<
+		ArgsOf<Table['buildAssignmentTyped']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$augmentedAssignment: Seat<
+		ArgsOf<Table['buildAugmentedAssignment']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield: Seat<ArgsOf<Table['buildYield']>, ReturnType<typeof F.buildExpressionStatement>>;
+	readonly expressionStatement$primary$await: Seat<
+		ArgsOf<Table['buildAwait']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$binary: Seat<
+		ArgsOf<Table['buildBinaryOperator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$identifier: Seat<
+		ArgsOf<Table['buildIdentifier']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$string: Seat<
+		ArgsOf<Table['buildString']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$integer: Seat<
+		ArgsOf<Routes<Table>['integer']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$float: Seat<
+		ArgsOf<Routes<Table>['float']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$unary: Seat<
+		ArgsOf<Table['buildUnaryOperator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$attribute: Seat<
+		ArgsOf<Table['buildAttribute']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['subscript']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$call: Seat<
+		ArgsOf<Table['buildCall']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$list: Seat<
+		ArgsOf<Table['buildList']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$listComprehension: Seat<
+		ArgsOf<Table['buildListComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$dictionary: Seat<
+		ArgsOf<Table['buildDictionary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$dictionaryComprehension: Seat<
+		ArgsOf<Table['buildDictionaryComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$set: Seat<
+		ArgsOf<Table['buildSet']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$setComprehension: Seat<
+		ArgsOf<Table['buildSetComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$tuple: Seat<
+		ArgsOf<Table['buildTuple']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$parenthesized: Seat<
+		ArgsOf<Table['buildParenthesizedExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$generator: Seat<
+		ArgsOf<Table['buildGeneratorExpression']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$primary$listSplat: Seat<
+		ArgsOf<Table['buildListSplatPattern']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$named$identifier: Seat<
+		ArgsOf<Routes<Table>['namedExpression$identifier']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause: Seat<
+		ArgsOf<
 			Routes<Table>['yield_$fromClause'] & {
 				readonly comparison: Routes<Table>['yield_$fromClause$comparison'];
 				readonly not: Routes<Table>['yield_$fromClause$not'];
@@ -1758,202 +1754,129 @@ export interface Routes<Table extends AnyTable> {
 				};
 				readonly as: Routes<Table>['yield_$fromClause$as'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['yield_$fromClause'] & {
-						readonly comparison: Routes<Table>['yield_$fromClause$comparison'];
-						readonly not: Routes<Table>['yield_$fromClause$not'];
-						readonly boolean: Routes<Table>['yield_$fromClause$boolean'];
-						readonly lambda: Routes<Table>['yield_$fromClause$lambda'];
-						readonly primary: {
-							readonly await: Routes<Table>['yield_$fromClause$primary$await'];
-							readonly binary: Routes<Table>['yield_$fromClause$primary$binary'];
-							readonly identifier: Routes<Table>['yield_$fromClause$primary$identifier'];
-							readonly string: Routes<Table>['yield_$fromClause$primary$string'];
-							readonly concatenatedString: Routes<Table>['yield_$fromClause$primary$concatenatedString'];
-							readonly integer: Routes<Table>['yield_$fromClause$primary$integer'];
-							readonly float: Routes<Table>['yield_$fromClause$primary$float'];
-							readonly unary: Routes<Table>['yield_$fromClause$primary$unary'];
-							readonly attribute: Routes<Table>['yield_$fromClause$primary$attribute'];
-							readonly subscript: Routes<Table>['yield_$fromClause$primary$subscript'];
-							readonly call: Routes<Table>['yield_$fromClause$primary$call'];
-							readonly list: Routes<Table>['yield_$fromClause$primary$list'];
-							readonly listComprehension: Routes<Table>['yield_$fromClause$primary$listComprehension'];
-							readonly dictionary: Routes<Table>['yield_$fromClause$primary$dictionary'];
-							readonly dictionaryComprehension: Routes<Table>['yield_$fromClause$primary$dictionaryComprehension'];
-							readonly set: Routes<Table>['yield_$fromClause$primary$set'];
-							readonly setComprehension: Routes<Table>['yield_$fromClause$primary$setComprehension'];
-							readonly tuple: Routes<Table>['yield_$fromClause$primary$tuple'];
-							readonly parenthesized: Routes<Table>['yield_$fromClause$primary$parenthesized'];
-							readonly generator: Routes<Table>['yield_$fromClause$primary$generator'];
-							readonly listSplat: Routes<Table>['yield_$fromClause$primary$listSplat'];
-						};
-						readonly conditional: Routes<Table>['yield_$fromClause$conditional'];
-						readonly named: Routes<Table>['yield_$fromClause$named'] & {
-							readonly identifier: Routes<Table>['yield_$fromClause$named$identifier'];
-						};
-						readonly as: Routes<Table>['yield_$fromClause$as'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$comparison: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$comparison']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$comparison']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$not: <const A extends ArgsOf<Routes<Table>['yield_$fromClause$not']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$not']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$boolean: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$boolean']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$boolean']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$lambda: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$lambda']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$lambda']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$conditional: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$conditional']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$conditional']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$named: <
-		const A extends ArgsOf<
+		>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$comparison: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$comparison']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$not: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$not']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$boolean: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$boolean']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$lambda: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$lambda']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$conditional: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$conditional']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$named: Seat<
+		ArgsOf<
 			Routes<Table>['yield_$fromClause$named'] & {
 				readonly identifier: Routes<Table>['yield_$fromClause$named$identifier'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['yield_$fromClause$named'] & {
-						readonly identifier: Routes<Table>['yield_$fromClause$named$identifier'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$as: <const A extends ArgsOf<Routes<Table>['yield_$fromClause$as']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$as']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$await: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$await']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$await']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$binary: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$binary']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$binary']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$identifier: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$identifier']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$identifier']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$string: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$string']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$string']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$concatenatedString: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$concatenatedString']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$concatenatedString']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$integer: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$integer']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$integer']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$float: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$float']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$float']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$unary: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$unary']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$unary']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$attribute: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$attribute']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$attribute']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$subscript: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$subscript']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$subscript']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$call: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$call']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$call']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$list: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$list']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$list']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$listComprehension: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$listComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$listComprehension']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$dictionary: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$dictionary']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$dictionary']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$dictionaryComprehension: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$dictionaryComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$dictionaryComprehension']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$set: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$set']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$set']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$setComprehension: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$setComprehension']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$setComprehension']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$tuple: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$tuple']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$tuple']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$parenthesized: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$parenthesized']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$parenthesized']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$generator: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$generator']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$generator']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$primary$listSplat: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$primary$listSplat']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$primary$listSplat']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
-	readonly expressionStatement$yield$fromClause$named$identifier: <
-		const A extends ArgsOf<Routes<Table>['yield_$fromClause$named$identifier']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yield_$fromClause$named$identifier']>>
-	) => ReturnType<typeof F.buildExpressionStatement>;
+		>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$as: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$as']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$await: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$await']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$binary: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$binary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$identifier: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$identifier']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$string: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$string']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$concatenatedString: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$concatenatedString']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$integer: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$integer']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$float: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$float']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$unary: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$unary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$attribute: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$attribute']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$subscript: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$subscript']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$call: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$call']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$list: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$list']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$listComprehension: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$listComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$dictionary: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$dictionary']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$dictionaryComprehension: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$dictionaryComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$set: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$set']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$setComprehension: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$setComprehension']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$tuple: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$tuple']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$parenthesized: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$parenthesized']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$generator: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$generator']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$primary$listSplat: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$primary$listSplat']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
+	readonly expressionStatement$yield$fromClause$named$identifier: Seat<
+		ArgsOf<Routes<Table>['yield_$fromClause$named$identifier']>,
+		ReturnType<typeof F.buildExpressionStatement>
+	>;
 	readonly expressionStatement: Table['buildExpressionStatement'] & {
 		readonly comparison: Routes<Table>['expressionStatement$comparison'];
 		readonly not: Routes<Table>['expressionStatement$not'];
@@ -2029,108 +1952,55 @@ export interface Routes<Table extends AnyTable> {
 			};
 		};
 	};
-	readonly type$comparison: <const A extends ArgsOf<Routes<Table>['comparisonOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['comparisonOperator']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$not: <const A extends ArgsOf<Table['buildNotOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNotOperator']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$boolean: <const A extends ArgsOf<Table['buildBooleanOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBooleanOperator']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$lambda: <const A extends ArgsOf<Table['buildLambda']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLambda']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$conditional: <const A extends ArgsOf<Table['buildConditionalExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConditionalExpression']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$named: <const A extends ArgsOf<Table['buildNamedExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamedExpression']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$as: <const A extends ArgsOf<Table['buildAsPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAsPattern']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$splatType: <const A extends ArgsOf<Table['buildSplatType']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSplatType']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$genericType: <const A extends ArgsOf<Table['buildGenericType']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildGenericType']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$unionType: <const A extends ArgsOf<Table['buildUnionType']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnionType']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$constrainedType: <const A extends ArgsOf<Table['buildConstrainedType']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConstrainedType']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$memberType: <const A extends ArgsOf<Table['buildMemberType']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildMemberType']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$await: <const A extends ArgsOf<Table['buildAwait']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAwait']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$binary: <const A extends ArgsOf<Table['buildBinaryOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBinaryOperator']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$identifier: <const A extends ArgsOf<Table['buildIdentifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildIdentifier']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$string: <const A extends ArgsOf<Table['buildString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildString']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$concatenatedString: <const A extends ArgsOf<Table['buildConcatenatedString']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildConcatenatedString']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$integer: <const A extends ArgsOf<Routes<Table>['integer']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['integer']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$float: <const A extends ArgsOf<Routes<Table>['float']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['float']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$unary: <const A extends ArgsOf<Table['buildUnaryOperator']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnaryOperator']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$attribute: <const A extends ArgsOf<Table['buildAttribute']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAttribute']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$subscript: <const A extends ArgsOf<Routes<Table>['subscript']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['subscript']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$call: <const A extends ArgsOf<Table['buildCall']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCall']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$list: <const A extends ArgsOf<Table['buildList']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildList']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$listComprehension: <const A extends ArgsOf<Table['buildListComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildListComprehension']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$dictionary: <const A extends ArgsOf<Table['buildDictionary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictionary']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$dictionaryComprehension: <const A extends ArgsOf<Table['buildDictionaryComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildDictionaryComprehension']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$set: <const A extends ArgsOf<Table['buildSet']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSet']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$setComprehension: <const A extends ArgsOf<Table['buildSetComprehension']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSetComprehension']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$tuple: <const A extends ArgsOf<Table['buildTuple']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTuple']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$parenthesized: <const A extends ArgsOf<Table['buildParenthesizedExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildParenthesizedExpression']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$generator: <const A extends ArgsOf<Table['buildGeneratorExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildGeneratorExpression']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$primary$listSplat: <const A extends ArgsOf<Table['buildListSplatPattern']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildListSplatPattern']>>
-	) => ReturnType<typeof F.buildType>;
-	readonly type$named$identifier: <const A extends ArgsOf<Routes<Table>['namedExpression$identifier']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['namedExpression$identifier']>>
-	) => ReturnType<typeof F.buildType>;
+	readonly type$comparison: Seat<ArgsOf<Routes<Table>['comparisonOperator']>, ReturnType<typeof F.buildType>>;
+	readonly type$not: Seat<ArgsOf<Table['buildNotOperator']>, ReturnType<typeof F.buildType>>;
+	readonly type$boolean: Seat<ArgsOf<Table['buildBooleanOperator']>, ReturnType<typeof F.buildType>>;
+	readonly type$lambda: Seat<ArgsOf<Table['buildLambda']>, ReturnType<typeof F.buildType>>;
+	readonly type$conditional: Seat<ArgsOf<Table['buildConditionalExpression']>, ReturnType<typeof F.buildType>>;
+	readonly type$named: Seat<ArgsOf<Table['buildNamedExpression']>, ReturnType<typeof F.buildType>>;
+	readonly type$as: Seat<ArgsOf<Table['buildAsPattern']>, ReturnType<typeof F.buildType>>;
+	readonly type$splatType: Seat<ArgsOf<Table['buildSplatType']>, ReturnType<typeof F.buildType>>;
+	readonly type$genericType: Seat<ArgsOf<Table['buildGenericType']>, ReturnType<typeof F.buildType>>;
+	readonly type$unionType: Seat<ArgsOf<Table['buildUnionType']>, ReturnType<typeof F.buildType>>;
+	readonly type$constrainedType: Seat<ArgsOf<Table['buildConstrainedType']>, ReturnType<typeof F.buildType>>;
+	readonly type$memberType: Seat<ArgsOf<Table['buildMemberType']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$await: Seat<ArgsOf<Table['buildAwait']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$binary: Seat<ArgsOf<Table['buildBinaryOperator']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$identifier: Seat<ArgsOf<Table['buildIdentifier']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$string: Seat<ArgsOf<Table['buildString']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$concatenatedString: Seat<
+		ArgsOf<Table['buildConcatenatedString']>,
+		ReturnType<typeof F.buildType>
+	>;
+	readonly type$primary$integer: Seat<ArgsOf<Routes<Table>['integer']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$float: Seat<ArgsOf<Routes<Table>['float']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$unary: Seat<ArgsOf<Table['buildUnaryOperator']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$attribute: Seat<ArgsOf<Table['buildAttribute']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$subscript: Seat<ArgsOf<Routes<Table>['subscript']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$call: Seat<ArgsOf<Table['buildCall']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$list: Seat<ArgsOf<Table['buildList']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$listComprehension: Seat<
+		ArgsOf<Table['buildListComprehension']>,
+		ReturnType<typeof F.buildType>
+	>;
+	readonly type$primary$dictionary: Seat<ArgsOf<Table['buildDictionary']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$dictionaryComprehension: Seat<
+		ArgsOf<Table['buildDictionaryComprehension']>,
+		ReturnType<typeof F.buildType>
+	>;
+	readonly type$primary$set: Seat<ArgsOf<Table['buildSet']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$setComprehension: Seat<ArgsOf<Table['buildSetComprehension']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$tuple: Seat<ArgsOf<Table['buildTuple']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$parenthesized: Seat<
+		ArgsOf<Table['buildParenthesizedExpression']>,
+		ReturnType<typeof F.buildType>
+	>;
+	readonly type$primary$generator: Seat<ArgsOf<Table['buildGeneratorExpression']>, ReturnType<typeof F.buildType>>;
+	readonly type$primary$listSplat: Seat<ArgsOf<Table['buildListSplatPattern']>, ReturnType<typeof F.buildType>>;
+	readonly type$named$identifier: Seat<
+		ArgsOf<Routes<Table>['namedExpression$identifier']>,
+		ReturnType<typeof F.buildType>
+	>;
 	readonly type: Table['buildType'] & {
 		readonly comparison: Routes<Table>['type$comparison'];
 		readonly not: Routes<Table>['type$not'];

@@ -14,6 +14,10 @@ import type {
 	NumericInput,
 	PlainBuilders,
 	RefuseUndeclared,
+	Seat,
+	ConfigSeat,
+	OptionalConfigSeat,
+	EmptyForm,
 	SpelledAffix,
 	WithSpelling
 } from '@sittir/types';
@@ -24,291 +28,14 @@ import {
 	currentHandle,
 	isNodeOfKind,
 	isNodeValue,
-	listStorage
+	listStorage,
+	withEmptyForm
 } from '@sittir/common/utils';
 
 const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
-
-export const _fromMap = {
-	program: coerceToProgram,
-	hash_bang_line: coerceToHashBangLine,
-	namespace_export: coerceToNamespaceExport,
-	export_clause: coerceToExportClause,
-	export_specifier: coerceToExportSpecifier,
-	import: coerceToImport,
-	import_statement: coerceToImportStatement,
-	import_clause: coerceToImportClause,
-	namespace_import: coerceToNamespaceImport,
-	named_imports: coerceToNamedImports,
-	import_attribute: coerceToImportAttribute,
-	expression_statement: coerceToExpressionStatement,
-	variable_declaration: coerceToVariableDeclaration,
-	lexical_declaration: coerceToLexicalDeclaration,
-	using_declaration: coerceToUsingDeclaration,
-	statement_block: coerceToStatementBlock,
-	else_clause: coerceToElseClause,
-	if_statement: coerceToIfStatement,
-	switch_statement: coerceToSwitchStatement,
-	for_statement: coerceToForStatement,
-	for_in_statement: coerceToForInStatement,
-	while_statement: coerceToWhileStatement,
-	do_statement: coerceToDoStatement,
-	try_statement: coerceToTryStatement,
-	with_statement: coerceToWithStatement,
-	break_statement: coerceToBreakStatement,
-	continue_statement: coerceToContinueStatement,
-	debugger_statement: coerceToDebuggerStatement,
-	return_statement: coerceToReturnStatement,
-	throw_statement: coerceToThrowStatement,
-	empty_statement: coerceToEmptyStatement,
-	labeled_statement: coerceToLabeledStatement,
-	switch_body: coerceToSwitchBody,
-	switch_case: coerceToSwitchCase,
-	switch_default: coerceToSwitchDefault,
-	catch_clause: coerceToCatchClause,
-	finally_clause: coerceToFinallyClause,
-	yield_expression: coerceToYieldExpression,
-	object: coerceToObject,
-	object_pattern: coerceToObjectPattern,
-	assignment_pattern: coerceToAssignmentPattern,
-	object_assignment_pattern: coerceToObjectAssignmentPattern,
-	array: coerceToArray,
-	array_pattern: coerceToArrayPattern,
-	nested_identifier: coerceToNestedIdentifier,
-	class: coerceToClass,
-	class_declaration: coerceToClassDeclaration,
-	class_heritage: coerceToClassHeritage,
-	function_expression: coerceToFunctionExpression,
-	function_declaration: coerceToFunctionDeclaration,
-	generator_function: coerceToGeneratorFunction,
-	generator_function_declaration: coerceToGeneratorFunctionDeclaration,
-	arrow_function: coerceToArrowFunction,
-	optional_chain: coerceToOptionalChain,
-	new_expression: coerceToNewExpression,
-	await_expression: coerceToAwaitExpression,
-	member_expression: coerceToMemberExpression,
-	subscript_expression: coerceToSubscriptExpression,
-	_lhs_expression: coerceToLhsExpression,
-	assignment_expression: coerceToAssignmentExpression,
-	augmented_assignment_expression: coerceToAugmentedAssignmentExpression,
-	spread_element: coerceToSpreadElement,
-	ternary_expression: coerceToTernaryExpression,
-	binary_expression: coerceToBinaryExpression,
-	unary_expression: coerceToUnaryExpression,
-	sequence_expression: coerceToSequenceExpression,
-	unescaped_double_string_fragment: coerceToUnescapedDoubleStringFragment,
-	unescaped_single_string_fragment: coerceToUnescapedSingleStringFragment,
-	escape_sequence: coerceToEscapeSequence,
-	template_string: coerceToTemplateString,
-	template_substitution: coerceToTemplateSubstitution,
-	regex: coerceToRegex,
-	regex_pattern: coerceToRegexPattern,
-	regex_flags: coerceToRegexFlags,
-	identifier: coerceToIdentifier,
-	private_property_identifier: coerceToPrivatePropertyIdentifier,
-	this: coerceToThis,
-	super: coerceToSuper,
-	true: coerceToTrue,
-	false: coerceToFalse,
-	null: coerceToNull,
-	undefined: coerceToUndefined,
-	arguments: coerceToArguments,
-	decorator: coerceToDecorator,
-	decorator_member_expression: coerceToDecoratorMemberExpression,
-	decorator_call_expression: coerceToDecoratorCallExpression,
-	class_body: coerceToClassBody,
-	formal_parameters: coerceToFormalParameters,
-	class_static_block: coerceToClassStaticBlock,
-	rest_pattern: coerceToRestPattern,
-	pair: coerceToPair,
-	pair_pattern: coerceToPairPattern,
-	computed_property_name: coerceToComputedPropertyName,
-	non_null_expression: coerceToNonNullExpression,
-	function_signature: coerceToFunctionSignature,
-	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression,
-	type_assertion: coerceToTypeAssertion,
-	as_expression: coerceToAsExpression,
-	satisfies_expression: coerceToSatisfiesExpression,
-	instantiation_expression: coerceToInstantiationExpression,
-	import_require_clause: coerceToImportRequireClause,
-	extends_clause: coerceToExtendsClause,
-	extends_clause_single: coerceToExtendsClauseSingle,
-	implements_clause: coerceToImplementsClause,
-	ambient_declaration: coerceToAmbientDeclaration,
-	abstract_class_declaration: coerceToAbstractClassDeclaration,
-	module: coerceToModule,
-	internal_module: coerceToInternalModule,
-	import_alias: coerceToImportAlias,
-	nested_type_identifier: coerceToNestedTypeIdentifier,
-	interface_declaration: coerceToInterfaceDeclaration,
-	extends_type_clause: coerceToExtendsTypeClause,
-	enum_declaration: coerceToEnumDeclaration,
-	enum_body: coerceToEnumBody,
-	enum_assignment: coerceToEnumAssignment,
-	type_alias_declaration: coerceToTypeAliasDeclaration,
-	override_modifier: coerceToOverrideModifier,
-	required_parameter: coerceToRequiredParameter,
-	optional_parameter: coerceToOptionalParameter,
-	omitting_type_annotation: coerceToOmittingTypeAnnotation,
-	adding_type_annotation: coerceToAddingTypeAnnotation,
-	opting_type_annotation: coerceToOptingTypeAnnotation,
-	type_annotation: coerceToTypeAnnotation,
-	type_query_member_expression_in_type_annotation: coerceToTypeQueryMemberExpressionInTypeAnnotation,
-	type_query_call_expression_in_type_annotation: coerceToTypeQueryCallExpressionInTypeAnnotation,
-	asserts: coerceToAsserts,
-	asserts_annotation: coerceToAssertsAnnotation,
-	tuple_parameter: coerceToTupleParameter,
-	optional_tuple_parameter: coerceToOptionalTupleParameter,
-	optional_type: coerceToOptionalType,
-	rest_type: coerceToRestType,
-	constructor_type: coerceToConstructorType,
-	template_type: coerceToTemplateType,
-	template_literal_type: coerceToTemplateLiteralType,
-	infer_type: coerceToInferType,
-	conditional_type: coerceToConditionalType,
-	generic_type: coerceToGenericType,
-	type_predicate: coerceToTypePredicate,
-	type_predicate_annotation: coerceToTypePredicateAnnotation,
-	type_query_member_expression: coerceToTypeQueryMemberExpression,
-	type_query_subscript_expression: coerceToTypeQuerySubscriptExpression,
-	type_query_call_expression: coerceToTypeQueryCallExpression,
-	type_query_instantiation_expression: coerceToTypeQueryInstantiationExpression,
-	type_query: coerceToTypeQuery,
-	index_type_query: coerceToIndexTypeQuery,
-	lookup_type: coerceToLookupType,
-	mapped_type_clause: coerceToMappedTypeClause,
-	literal_type: coerceToLiteralType,
-	existential_type: coerceToExistentialType,
-	flow_maybe_type: coerceToFlowMaybeType,
-	parenthesized_type: coerceToParenthesizedType,
-	type_arguments: coerceToTypeArguments,
-	object_type: coerceToObjectType,
-	call_signature: coerceToCallSignature,
-	property_signature: coerceToPropertySignature,
-	type_parameters: coerceToTypeParameters,
-	type_parameter: coerceToTypeParameter,
-	default_type: coerceToDefaultType,
-	constraint: coerceToConstraint,
-	construct_signature: coerceToConstructSignature,
-	array_type: coerceToArrayType,
-	tuple_type: coerceToTupleType,
-	readonly_type: coerceToReadonlyType,
-	union_type: coerceToUnionType,
-	intersection_type: coerceToIntersectionType,
-	function_type: coerceToFunctionType,
-	export_specifiers: coerceToExportSpecifiers,
-	import_specifiers: coerceToImportSpecifiers,
-	formal_parameters_elements: coerceToFormalParametersElements,
-	enum_body_element_name: coerceToEnumBodyElementName,
-	enum_body_elements: coerceToEnumBodyElements,
-	types: coerceToTypes,
-	type_parameters_elements: coerceToTypeParametersElements,
-	tuple_type_members: coerceToTupleTypeMembers,
-	import_clause_group: coerceToImportClauseGroup,
-	using_declaration_arm: coerceToUsingDeclarationArm,
-	catch_clause_group: coerceToCatchClauseGroup,
-	ambient_declaration_global: coerceToAmbientDeclarationGlobal,
-	ambient_declaration_module: coerceToAmbientDeclarationModule,
-	object_type_content: coerceToObjectTypeContent,
-	export_statement_namespace_export: coerceToExportStatementNamespaceExport,
-	export_statement_equals_export: coerceToExportStatementEqualsExport,
-	comment_line: coerceToCommentLine,
-	comment_block: coerceToCommentBlock,
-	literal_type_negative_number: coerceToLiteralTypeNegativeNumber,
-	number_hex: coerceToNumberHex,
-	number_float_point: coerceToNumberFloatPoint,
-	number_float_leading_point: coerceToNumberFloatLeadingPoint,
-	number_float_scientific: coerceToNumberFloatScientific,
-	number_decimal: coerceToNumberDecimal,
-	number_binary: coerceToNumberBinary,
-	number_octal: coerceToNumberOctal,
-	number_bigint_hex: coerceToNumberBigintHex,
-	number_bigint_binary: coerceToNumberBigintBinary,
-	number_bigint_octal: coerceToNumberBigintOctal,
-	number_bigint_decimal: coerceToNumberBigintDecimal,
-	binary_expression_in: coerceToBinaryExpressionIn,
-	empty_member: coerceToEmptyMember,
-	class_body_member_method: coerceToClassBodyMemberMethod,
-	class_body_member_method_sig: coerceToClassBodyMemberMethodSig,
-	class_body_member_declaration: coerceToClassBodyMemberDeclaration,
-	index_signature_colon: coerceToIndexSignatureColon,
-	index_signature_mapped_type_clause: coerceToIndexSignatureMappedTypeClause,
-	import_statement_clause_from: coerceToImportStatementClauseFrom,
-	yield_expression_delegate: coerceToYieldExpressionDelegate,
-	optional_chain_marker: coerceToOptionalChainMarker,
-	import_specifier_name: coerceToImportSpecifierName,
-	import_specifier_as: coerceToImportSpecifierAs,
-	parenthesized_expression_typed: coerceToParenthesizedExpressionTyped,
-	parenthesized_expression_sequence: coerceToParenthesizedExpressionSequence,
-	call_expression_call: coerceToCallExpressionCall,
-	call_expression_template_call: coerceToCallExpressionTemplateCall,
-	call_expression_member: coerceToCallExpressionMember,
-	string_double: coerceToStringDouble,
-	string_single: coerceToStringSingle,
-	update_expression_postfix: coerceToUpdateExpressionPostfix,
-	update_expression_prefix: coerceToUpdateExpressionPrefix,
-	arrow_function_parameter: coerceToArrowFunctionParameter,
-	class_heritage_extends_clause: coerceToClassHeritageExtendsClause,
-	import_clause_default_import: coerceToImportClauseDefaultImport,
-	export_statement_default_from: coerceToExportStatementDefaultFrom,
-	export_statement_default_declaration: coerceToExportStatementDefaultDeclaration,
-	export_statement_default_from_star_from: coerceToExportStatementDefaultFromStarFrom,
-	export_statement_default_from_ns_from: coerceToExportStatementDefaultFromNsFrom,
-	export_statement_default_from_clause_from: coerceToExportStatementDefaultFromClauseFrom,
-	export_statement_default_declaration_default_kw: coerceToExportStatementDefaultDeclarationDefaultKw,
-	export_statement_default_declaration_default_kw_value: coerceToExportStatementDefaultDeclarationDefaultKwValue,
-	variable_declarator_plain: coerceToVariableDeclaratorPlain,
-	variable_declarator_definite: coerceToVariableDeclaratorDefinite,
-	meta_property_new_target: coerceToMetaPropertyNewTarget,
-	meta_property_import_meta: coerceToMetaPropertyImportMeta,
-	for_header_lhs: coerceToForHeaderLhs,
-	for_header_var_kind: coerceToForHeaderVarKind,
-	for_header_let_const_kind: coerceToForHeaderLetConstKind,
-	for_header_using_kind: coerceToForHeaderUsingKind,
-	_formal_parameters_get_accessor_signature: coerceToFormalParametersGetAccessorSignature,
-	_formal_parameters_set_accessor_signature: coerceToFormalParametersSetAccessorSignature,
-	_formal_parameters_elements_set_accessor_signature: coerceToFormalParametersElementsSetAccessorSignature,
-	setter_parameter: coerceToSetterParameter,
-	method_definition_plain: coerceToMethodDefinitionPlain,
-	method_definition_getter: coerceToMethodDefinitionGetter,
-	method_definition_setter: coerceToMethodDefinitionSetter,
-	method_signature_plain: coerceToMethodSignaturePlain,
-	method_signature_getter: coerceToMethodSignatureGetter,
-	method_signature_setter: coerceToMethodSignatureSetter,
-	abstract_method_signature_plain: coerceToAbstractMethodSignaturePlain,
-	abstract_method_signature_getter: coerceToAbstractMethodSignatureGetter,
-	abstract_method_signature_setter: coerceToAbstractMethodSignatureSetter,
-	public_field_definition_plain: coerceToPublicFieldDefinitionPlain,
-	public_field_definition_accessor: coerceToPublicFieldDefinitionAccessor,
-	html_comment: coerceToHtmlComment,
-	jsx_text: coerceToJsxText,
-	_template_chars: coerceToTemplateChars,
-	_automatic_semicolon: coerceToAutomaticSemicolon,
-	_function_signature_automatic_semicolon: coerceToFunctionSignatureAutomaticSemicolon,
-	_tight: coerceToTight,
-	_space: coerceToSpace,
-	_tab: coerceToTab,
-	_newline: coerceToNewline,
-	_blankline: coerceToBlankline,
-	_double_blankline: coerceToDoubleBlankline,
-	_indent: coerceToIndent,
-	_dedent: coerceToDedent,
-	constructor_declaration: coerceToConstructorDeclaration,
-	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
-	formal_parameters_elements_receiver: coerceToFormalParametersElementsReceiver,
-	formal_parameters_elements_receiver_group: coerceToFormalParametersElementsReceiverGroup,
-	statement_identifier: coerceToStatementIdentifier,
-	shorthand_property_identifier: coerceToShorthandPropertyIdentifier,
-	shorthand_property_identifier_pattern: coerceToShorthandPropertyIdentifierPattern,
-	property_identifier: coerceToPropertyIdentifier,
-	type_identifier: coerceToTypeIdentifier,
-	interface_body: coerceToInterfaceBody,
-	this_type: coerceToThisType
-} as const;
-export type _FromMap = typeof _fromMap;
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
 interface _LeafEntry {
@@ -2616,14 +2343,11 @@ export function resolveExportClause_exportSpecifiers(
 	return _resolveOneBranch<T.ExportSpecifiers>(value, 'export_specifiers', undefined, true);
 }
 
-export function coerceToExportClause(): T.EmptyExportClause;
-export function coerceToExportClause<const A extends T.ExportSpecifiers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ExportSpecifiers.LooseArgs>
-): ReturnType<typeof F.buildExportClause>;
-export function coerceToExportClause<const I extends T.ExportClause.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.ExportClause.Loose>
-): ReturnType<typeof F.buildExportClause>;
-export function coerceToExportClause(...args: unknown[]): ReturnType<typeof F.buildExportClause> {
+export const coerceToExportClause: EmptyForm<
+	T.EmptyExportClause,
+	Seat<T.ExportSpecifiers.LooseArgs, ReturnType<typeof F.buildExportClause>> &
+		OptionalConfigSeat<T.ExportClause.Loose, ReturnType<typeof F.buildExportClause>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildExportClause> => {
 	if (args.length > 1)
 		return F.buildExportClause(coerceToExportSpecifiers(...(args as Parameters<typeof coerceToExportSpecifiers>)));
 	const input = args[0] as T.ExportClause.Loose | undefined;
@@ -2637,7 +2361,7 @@ export function coerceToExportClause(...args: unknown[]): ReturnType<typeof F.bu
 			true
 		)
 	);
-}
+});
 
 export function resolveExportSpecifier_typeOnly(
 	value: T.ExportSpecifier.LooseConfig['typeOnly']
@@ -2780,14 +2504,11 @@ export function resolveNamedImports_importSpecifiers(
 	return _resolveOneBranch<T.ImportSpecifiers>(value, 'import_specifiers', undefined, true);
 }
 
-export function coerceToNamedImports(): T.EmptyNamedImports;
-export function coerceToNamedImports<const A extends T.ImportSpecifiers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ImportSpecifiers.LooseArgs>
-): ReturnType<typeof F.buildNamedImports>;
-export function coerceToNamedImports<const I extends T.NamedImports.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.NamedImports.Loose>
-): ReturnType<typeof F.buildNamedImports>;
-export function coerceToNamedImports(...args: unknown[]): ReturnType<typeof F.buildNamedImports> {
+export const coerceToNamedImports: EmptyForm<
+	T.EmptyNamedImports,
+	Seat<T.ImportSpecifiers.LooseArgs, ReturnType<typeof F.buildNamedImports>> &
+		OptionalConfigSeat<T.NamedImports.Loose, ReturnType<typeof F.buildNamedImports>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildNamedImports> => {
 	if (args.length > 1)
 		return F.buildNamedImports(coerceToImportSpecifiers(...(args as Parameters<typeof coerceToImportSpecifiers>)));
 	const input = args[0] as T.NamedImports.Loose | undefined;
@@ -2801,7 +2522,7 @@ export function coerceToNamedImports(...args: unknown[]): ReturnType<typeof F.bu
 			true
 		)
 	);
-}
+});
 
 export function resolveImportAttribute_attributeKind(
 	value: T.ImportAttribute.LooseConfig['attributeKind']
@@ -2868,12 +2589,10 @@ export function coerceToExpressionStatement(
 	);
 }
 
-export function coerceToVariableDeclaration<const A extends T.VariableDeclaration.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.VariableDeclaration.LooseArgs>
-): ReturnType<typeof F.buildVariableDeclaration>;
-export function coerceToVariableDeclaration(
-	...input: T.VariableDeclaration.LooseArgs
-): ReturnType<typeof F.buildVariableDeclaration> {
+export const coerceToVariableDeclaration: Seat<
+	T.VariableDeclaration.LooseArgs,
+	ReturnType<typeof F.buildVariableDeclaration>
+> = (...input: T.VariableDeclaration.LooseArgs): ReturnType<typeof F.buildVariableDeclaration> => {
 	currentHandle()?.admit(TSKindId.VariableDeclaration, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -2914,7 +2633,7 @@ export function coerceToVariableDeclaration(
 			_super_variable_declarator
 		) as readonly unknown[])
 	);
-}
+};
 
 export function resolveLexicalDeclaration_kind(
 	value: T.LexicalDeclaration.LooseConfig['kind']
@@ -2992,11 +2711,10 @@ export function coerceToUsingDeclaration(
 	);
 }
 
-export function coerceToStatementBlock(): T.EmptyStatementBlock;
-export function coerceToStatementBlock<const A extends T.StatementBlock.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StatementBlock.LooseArgs>
-): ReturnType<typeof F.buildStatementBlock>;
-export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): ReturnType<typeof F.buildStatementBlock> {
+export const coerceToStatementBlock: EmptyForm<
+	T.EmptyStatementBlock,
+	Seat<T.StatementBlock.LooseArgs, ReturnType<typeof F.buildStatementBlock>>
+> = withEmptyForm((...input: T.StatementBlock.LooseArgs): ReturnType<typeof F.buildStatementBlock> => {
 	currentHandle()?.admit(TSKindId.StatementBlock, input);
 	const _optsFirst =
 		typeof input[0] === 'object' &&
@@ -3021,7 +2739,7 @@ export function coerceToStatementBlock(...input: T.StatementBlock.LooseArgs): Re
 			(item) => coerceMixedEnumStorage(item, [])
 		) as readonly unknown[])
 	);
-}
+});
 
 export function resolveElseClause_body(value: T.ElseClause.LooseConfig['body']): Admit<T.ElseClause['_body']> {
 	return coerceMixedEnumStorage(
@@ -3511,11 +3229,10 @@ export function coerceToLabeledStatement(input: T.LabeledStatement.Loose): Retur
 	});
 }
 
-export function coerceToSwitchBody(): T.EmptySwitchBody;
-export function coerceToSwitchBody<const A extends T.SwitchBody.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.SwitchBody.LooseArgs>
-): ReturnType<typeof F.buildSwitchBody>;
-export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType<typeof F.buildSwitchBody> {
+export const coerceToSwitchBody: EmptyForm<
+	T.EmptySwitchBody,
+	Seat<T.SwitchBody.LooseArgs, ReturnType<typeof F.buildSwitchBody>>
+> = withEmptyForm((...input: T.SwitchBody.LooseArgs): ReturnType<typeof F.buildSwitchBody> => {
 	currentHandle()?.admit(TSKindId.SwitchBody, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchBody)) {
 		const data = input[0];
@@ -3540,7 +3257,7 @@ export function coerceToSwitchBody(...input: T.SwitchBody.LooseArgs): ReturnType
 			typeof F.buildSwitchBody
 		>)
 	);
-}
+});
 
 export function resolveSwitchCase_value(value: T.SwitchCase.LooseConfig['value']): Admit<T.SwitchCase['_value']> {
 	return coerceMixedEnumStorage(
@@ -3568,10 +3285,9 @@ export function coerceToSwitchCase(input: T.SwitchCase.Loose): ReturnType<typeof
 	});
 }
 
-export function coerceToSwitchDefault<const A extends T.SwitchDefault.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.SwitchDefault.LooseArgs>
-): ReturnType<typeof F.buildSwitchDefault>;
-export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): ReturnType<typeof F.buildSwitchDefault> {
+export const coerceToSwitchDefault: Seat<T.SwitchDefault.LooseArgs, ReturnType<typeof F.buildSwitchDefault>> = (
+	...input: T.SwitchDefault.LooseArgs
+): ReturnType<typeof F.buildSwitchDefault> => {
 	currentHandle()?.admit(TSKindId.SwitchDefault, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SwitchDefault)) {
 		const data = input[0];
@@ -3598,7 +3314,7 @@ export function coerceToSwitchDefault(...input: T.SwitchDefault.LooseArgs): Retu
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildSwitchDefault>)
 	);
-}
+};
 
 export function resolveCatchClause_catchClauseGroup(
 	value: T.CatchClause.LooseConfig['catchClauseGroup']
@@ -3631,13 +3347,10 @@ export function resolveFinallyClause_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-export function coerceToFinallyClause<const A extends T.StatementBlock.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StatementBlock.LooseArgs>
-): ReturnType<typeof F.buildFinallyClause>;
-export function coerceToFinallyClause<const I extends T.FinallyClause.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.FinallyClause.Loose>
-): ReturnType<typeof F.buildFinallyClause>;
-export function coerceToFinallyClause(...args: unknown[]): ReturnType<typeof F.buildFinallyClause> {
+export const coerceToFinallyClause: Seat<T.StatementBlock.LooseArgs, ReturnType<typeof F.buildFinallyClause>> &
+	OptionalConfigSeat<T.FinallyClause.Loose, ReturnType<typeof F.buildFinallyClause>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildFinallyClause> => {
 	if (args.length > 1)
 		return F.buildFinallyClause(coerceToStatementBlock(...(args as Parameters<typeof coerceToStatementBlock>)));
 	const input = args[0] as T.FinallyClause.Loose | undefined;
@@ -3649,7 +3362,7 @@ export function coerceToFinallyClause(...args: unknown[]): ReturnType<typeof F.b
 			'statement_block'
 		) ?? F.buildStatementBlock()
 	);
-}
+};
 
 export function resolveYieldExpression_expression(
 	value: T.YieldExpression.LooseConfig['expression']
@@ -3681,11 +3394,10 @@ export function coerceToYieldExpression(input?: T.YieldExpression.Loose): Return
 	);
 }
 
-export function coerceToObject(): T.EmptyObject;
-export function coerceToObject<const A extends T.Object.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Object.LooseArgs>
-): ReturnType<typeof F.buildObject>;
-export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof F.buildObject> {
+export const coerceToObject: EmptyForm<
+	T.EmptyObject,
+	Seat<T.Object.LooseArgs, ReturnType<typeof F.buildObject>>
+> = withEmptyForm((...input: T.Object.LooseArgs): ReturnType<typeof F.buildObject> => {
 	currentHandle()?.admit(TSKindId.Object, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Object)) {
 		const data = input[0];
@@ -3714,13 +3426,12 @@ export function coerceToObject(...input: T.Object.LooseArgs): ReturnType<typeof 
 			_K12
 		) as unknown as Parameters<typeof F.buildObject>)
 	);
-}
+});
 
-export function coerceToObjectPattern(): T.EmptyObjectPattern;
-export function coerceToObjectPattern<const A extends T.ObjectPattern.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ObjectPattern.LooseArgs>
-): ReturnType<typeof F.buildObjectPattern>;
-export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): ReturnType<typeof F.buildObjectPattern> {
+export const coerceToObjectPattern: EmptyForm<
+	T.EmptyObjectPattern,
+	Seat<T.ObjectPattern.LooseArgs, ReturnType<typeof F.buildObjectPattern>>
+> = withEmptyForm((...input: T.ObjectPattern.LooseArgs): ReturnType<typeof F.buildObjectPattern> => {
 	currentHandle()?.admit(TSKindId.ObjectPattern, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectPattern)) {
 		const data = input[0];
@@ -3747,7 +3458,7 @@ export function coerceToObjectPattern(...input: T.ObjectPattern.LooseArgs): Retu
 			_K13
 		) as unknown as Parameters<typeof F.buildObjectPattern>)
 	);
-}
+});
 
 export function resolveAssignmentPattern_left(
 	value: T.AssignmentPattern.LooseConfig['left']
@@ -3809,11 +3520,10 @@ export function coerceToObjectAssignmentPattern(
 	});
 }
 
-export function coerceToArray(): T.EmptyArray;
-export function coerceToArray<const A extends T.Array.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Array.LooseArgs>
-): ReturnType<typeof F.buildArray>;
-export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.buildArray> {
+export const coerceToArray: EmptyForm<
+	T.EmptyArray,
+	Seat<T.Array.LooseArgs, ReturnType<typeof F.buildArray>>
+> = withEmptyForm((...input: T.Array.LooseArgs): ReturnType<typeof F.buildArray> => {
 	currentHandle()?.admit(TSKindId.Array, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -3830,13 +3540,12 @@ export function coerceToArray(...input: T.Array.LooseArgs): ReturnType<typeof F.
 			true
 		) as unknown as Parameters<typeof F.buildArray>)
 	);
-}
+});
 
-export function coerceToArrayPattern(): T.EmptyArrayPattern;
-export function coerceToArrayPattern<const A extends T.ArrayPattern.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ArrayPattern.LooseArgs>
-): ReturnType<typeof F.buildArrayPattern>;
-export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): ReturnType<typeof F.buildArrayPattern> {
+export const coerceToArrayPattern: EmptyForm<
+	T.EmptyArrayPattern,
+	Seat<T.ArrayPattern.LooseArgs, ReturnType<typeof F.buildArrayPattern>>
+> = withEmptyForm((...input: T.ArrayPattern.LooseArgs): ReturnType<typeof F.buildArrayPattern> => {
 	currentHandle()?.admit(TSKindId.ArrayPattern, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArrayPattern)) {
 		const data = input[0];
@@ -3861,7 +3570,7 @@ export function coerceToArrayPattern(...input: T.ArrayPattern.LooseArgs): Return
 			typeof F.buildArrayPattern
 		>)
 	);
-}
+});
 
 export function resolveNestedIdentifier_qualifier(
 	value: T.NestedIdentifier.LooseConfig['qualifier']
@@ -4785,12 +4494,10 @@ export function coerceToUnaryExpression(input: T.UnaryExpression.Loose): ReturnT
 	});
 }
 
-export function coerceToSequenceExpression<const A extends T.SequenceExpression.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.SequenceExpression.LooseArgs>
-): ReturnType<typeof F.buildSequenceExpression>;
-export function coerceToSequenceExpression(
-	...input: T.SequenceExpression.LooseArgs
-): ReturnType<typeof F.buildSequenceExpression> {
+export const coerceToSequenceExpression: Seat<
+	T.SequenceExpression.LooseArgs,
+	ReturnType<typeof F.buildSequenceExpression>
+> = (...input: T.SequenceExpression.LooseArgs): ReturnType<typeof F.buildSequenceExpression> => {
 	currentHandle()?.admit(TSKindId.SequenceExpression, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.SequenceExpression)) {
 		const data = input[0];
@@ -4817,7 +4524,7 @@ export function coerceToSequenceExpression(
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildSequenceExpression>)
 	);
-}
+};
 
 export function coerceToUnescapedDoubleStringFragment<const V extends T.UnescapedDoubleStringFragment.Loose>(
 	input: V & RefuseUndeclared<V, T.UnescapedDoubleStringFragment.Loose>
@@ -4861,10 +4568,9 @@ export function coerceToEscapeSequence(input: T.EscapeSequence.Loose): ReturnTyp
 	);
 }
 
-export function coerceToTemplateString<const A extends T.TemplateString.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TemplateString.LooseArgs>
-): ReturnType<typeof F.buildTemplateString>;
-export function coerceToTemplateString(...input: T.TemplateString.LooseArgs): ReturnType<typeof F.buildTemplateString> {
+export const coerceToTemplateString: Seat<T.TemplateString.LooseArgs, ReturnType<typeof F.buildTemplateString>> = (
+	...input: T.TemplateString.LooseArgs
+): ReturnType<typeof F.buildTemplateString> => {
 	currentHandle()?.admit(TSKindId.TemplateString, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateString)) {
 		const data = input[0];
@@ -4893,7 +4599,7 @@ export function coerceToTemplateString(...input: T.TemplateString.LooseArgs): Re
 			_K30
 		) as unknown as Parameters<typeof F.buildTemplateString>)
 	);
-}
+};
 
 export function resolveTemplateSubstitution_expression(
 	value: T.TemplateSubstitution.LooseConfig['expression']
@@ -5023,11 +4729,10 @@ export function coerceToUndefined(_input?: T.Undefined.Loose): typeof F.buildUnd
 	return F.buildUndefined;
 }
 
-export function coerceToArguments(): T.EmptyArguments;
-export function coerceToArguments<const A extends T.Arguments.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Arguments.LooseArgs>
-): ReturnType<typeof F.buildArguments>;
-export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<typeof F.buildArguments> {
+export const coerceToArguments: EmptyForm<
+	T.EmptyArguments,
+	Seat<T.Arguments.LooseArgs, ReturnType<typeof F.buildArguments>>
+> = withEmptyForm((...input: T.Arguments.LooseArgs): ReturnType<typeof F.buildArguments> => {
 	currentHandle()?.admit(TSKindId.Arguments, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Arguments)) {
 		const data = input[0];
@@ -5056,7 +4761,7 @@ export function coerceToArguments(...input: T.Arguments.LooseArgs): ReturnType<t
 			true
 		) as unknown as Parameters<typeof F.buildArguments>)
 	);
-}
+});
 
 export function resolveDecorator_content(value: T.Decorator.LooseConfig['content']): Admit<T.Decorator['_content']> {
 	return _resolveOne<
@@ -5148,11 +4853,10 @@ export function coerceToDecoratorCallExpression(
 	});
 }
 
-export function coerceToClassBody(): T.EmptyClassBody;
-export function coerceToClassBody<const A extends T.ClassBody.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ClassBody.LooseArgs>
-): ReturnType<typeof F.buildClassBody>;
-export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<typeof F.buildClassBody> {
+export const coerceToClassBody: EmptyForm<
+	T.EmptyClassBody,
+	Seat<T.ClassBody.LooseArgs, ReturnType<typeof F.buildClassBody>>
+> = withEmptyForm((...input: T.ClassBody.LooseArgs): ReturnType<typeof F.buildClassBody> => {
 	currentHandle()?.admit(TSKindId.ClassBody, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClassBody)) {
 		const data = input[0];
@@ -5179,7 +4883,7 @@ export function coerceToClassBody(...input: T.ClassBody.LooseArgs): ReturnType<t
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildClassBody>)
 	);
-}
+});
 
 export function resolveFormalParameters_elements(
 	value: T.FormalParameters.LooseConfig['elements']
@@ -5630,10 +5334,9 @@ export function coerceToImportRequireClause(
 	});
 }
 
-export function coerceToExtendsClause<const A extends T.ExtendsClause.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ExtendsClause.LooseArgs>
-): ReturnType<typeof F.buildExtendsClause>;
-export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): ReturnType<typeof F.buildExtendsClause> {
+export const coerceToExtendsClause: Seat<T.ExtendsClause.LooseArgs, ReturnType<typeof F.buildExtendsClause>> = (
+	...input: T.ExtendsClause.LooseArgs
+): ReturnType<typeof F.buildExtendsClause> => {
 	currentHandle()?.admit(TSKindId.ExtendsClause, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsClause)) {
 		const data = input[0];
@@ -5658,7 +5361,7 @@ export function coerceToExtendsClause(...input: T.ExtendsClause.LooseArgs): Retu
 			typeof F.buildExtendsClause
 		>)
 	);
-}
+};
 
 export function resolveExtendsClauseSingle_value(
 	value: T.ExtendsClauseSingle.LooseConfig['value']
@@ -5690,12 +5393,10 @@ export function coerceToExtendsClauseSingle(
 	});
 }
 
-export function coerceToImplementsClause<const A extends T.ImplementsClause.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ImplementsClause.LooseArgs>
-): ReturnType<typeof F.buildImplementsClause>;
-export function coerceToImplementsClause(
-	...input: T.ImplementsClause.LooseArgs
-): ReturnType<typeof F.buildImplementsClause> {
+export const coerceToImplementsClause: Seat<
+	T.ImplementsClause.LooseArgs,
+	ReturnType<typeof F.buildImplementsClause>
+> = (...input: T.ImplementsClause.LooseArgs): ReturnType<typeof F.buildImplementsClause> => {
 	currentHandle()?.admit(TSKindId.ImplementsClause, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImplementsClause)) {
 		const data = input[0];
@@ -5722,7 +5423,7 @@ export function coerceToImplementsClause(
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildImplementsClause>)
 	);
-}
+};
 
 export function resolveAmbientDeclaration_content(
 	value: T.AmbientDeclaration.LooseConfig['content']
@@ -5934,12 +5635,10 @@ export function coerceToInterfaceDeclaration(
 	});
 }
 
-export function coerceToExtendsTypeClause<const A extends T.ExtendsTypeClause.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ExtendsTypeClause.LooseArgs>
-): ReturnType<typeof F.buildExtendsTypeClause>;
-export function coerceToExtendsTypeClause(
-	...input: T.ExtendsTypeClause.LooseArgs
-): ReturnType<typeof F.buildExtendsTypeClause> {
+export const coerceToExtendsTypeClause: Seat<
+	T.ExtendsTypeClause.LooseArgs,
+	ReturnType<typeof F.buildExtendsTypeClause>
+> = (...input: T.ExtendsTypeClause.LooseArgs): ReturnType<typeof F.buildExtendsTypeClause> => {
 	currentHandle()?.admit(TSKindId.ExtendsTypeClause, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtendsTypeClause)) {
 		const data = input[0];
@@ -5968,7 +5667,7 @@ export function coerceToExtendsTypeClause(
 			_K44
 		) as unknown as Parameters<typeof F.buildExtendsTypeClause>)
 	);
-}
+};
 
 export function resolveEnumDeclaration_const(
 	value: T.EnumDeclaration.LooseConfig['const']
@@ -6006,14 +5705,11 @@ export function resolveEnumBody_elements(value: T.EnumBody.LooseConfig['elements
 	return _resolveOneBranch<T.EnumBodyElements>(value, 'enum_body_elements', undefined, true);
 }
 
-export function coerceToEnumBody(): T.EmptyEnumBody;
-export function coerceToEnumBody<const A extends T.EnumBodyElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.EnumBodyElements.LooseArgs>
-): ReturnType<typeof F.buildEnumBody>;
-export function coerceToEnumBody<const I extends T.EnumBody.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.EnumBody.Loose>
-): ReturnType<typeof F.buildEnumBody>;
-export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildEnumBody> {
+export const coerceToEnumBody: EmptyForm<
+	T.EmptyEnumBody,
+	Seat<T.EnumBodyElements.LooseArgs, ReturnType<typeof F.buildEnumBody>> &
+		OptionalConfigSeat<T.EnumBody.Loose, ReturnType<typeof F.buildEnumBody>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildEnumBody> => {
 	if (args.length > 1)
 		return F.buildEnumBody(coerceToEnumBodyElements(...(args as Parameters<typeof coerceToEnumBodyElements>)));
 	const input = args[0] as T.EnumBody.Loose | undefined;
@@ -6027,7 +5723,7 @@ export function coerceToEnumBody(...args: unknown[]): ReturnType<typeof F.buildE
 			true
 		)
 	);
-}
+});
 
 export function resolveEnumAssignment_name(
 	value: T.EnumAssignment.LooseConfig['name']
@@ -6717,12 +6413,10 @@ export function coerceToTemplateType(input: T.TemplateType.Loose): ReturnType<ty
 	);
 }
 
-export function coerceToTemplateLiteralType<const A extends T.TemplateLiteralType.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TemplateLiteralType.LooseArgs>
-): ReturnType<typeof F.buildTemplateLiteralType>;
-export function coerceToTemplateLiteralType(
-	...input: T.TemplateLiteralType.LooseArgs
-): ReturnType<typeof F.buildTemplateLiteralType> {
+export const coerceToTemplateLiteralType: Seat<
+	T.TemplateLiteralType.LooseArgs,
+	ReturnType<typeof F.buildTemplateLiteralType>
+> = (...input: T.TemplateLiteralType.LooseArgs): ReturnType<typeof F.buildTemplateLiteralType> => {
 	currentHandle()?.admit(TSKindId.TemplateLiteralType, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TemplateLiteralType)) {
 		const data = input[0];
@@ -6747,7 +6441,7 @@ export function coerceToTemplateLiteralType(
 			typeof F.buildTemplateLiteralType
 		>)
 	);
-}
+};
 
 export function resolveInferType_name(value: T.InferType.LooseConfig['name']): Admit<T.InferType['_name']> {
 	return _resolveOneBranch<T.TypeIdentifier>(value, 'type_identifier');
@@ -7484,13 +7178,10 @@ export function resolveTypeArguments_types(
 	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
-export function coerceToTypeArguments<const A extends T.Types.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
-): ReturnType<typeof F.buildTypeArguments>;
-export function coerceToTypeArguments<const I extends T.TypeArguments.Loose>(
-	input: I & RefuseUndeclared<I, T.TypeArguments.Loose>
-): ReturnType<typeof F.buildTypeArguments>;
-export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
+export const coerceToTypeArguments: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTypeArguments>> &
+	ConfigSeat<T.TypeArguments.Loose, ReturnType<typeof F.buildTypeArguments>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildTypeArguments> => {
 	if (args.length > 1) return F.buildTypeArguments(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
 	const input = args[0] as T.TypeArguments.Loose;
 	if (isNodeOfKind(input, TSKindId.TypeArguments)) return input as unknown as ReturnType<typeof F.buildTypeArguments>;
@@ -7500,7 +7191,7 @@ export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.b
 			'types'
 		)
 	);
-}
+};
 
 export function resolveObjectType_opening(value: T.ObjectType.LooseConfig['opening']): Admit<T.ObjectType['_opening']> {
 	return coerceKindEnumStorage(
@@ -7650,13 +7341,13 @@ export function resolveTypeParameters_elements(
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
-export function coerceToTypeParameters<const A extends T.TypeParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
-): ReturnType<typeof F.buildTypeParameters>;
-export function coerceToTypeParameters<const I extends T.TypeParameters.Loose>(
-	input: I & RefuseUndeclared<I, T.TypeParameters.Loose>
-): ReturnType<typeof F.buildTypeParameters>;
-export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.buildTypeParameters> {
+export const coerceToTypeParameters: Seat<
+	T.TypeParametersElements.LooseArgs,
+	ReturnType<typeof F.buildTypeParameters>
+> &
+	ConfigSeat<T.TypeParameters.Loose, ReturnType<typeof F.buildTypeParameters>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildTypeParameters> => {
 	if (args.length > 1)
 		return F.buildTypeParameters(
 			coerceToTypeParametersElements(...(args as Parameters<typeof coerceToTypeParametersElements>))
@@ -7669,7 +7360,7 @@ export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.
 			'type_parameters_elements'
 		)
 	);
-}
+};
 
 export function resolveTypeParameter_const(
 	value: T.TypeParameter.LooseConfig['const']
@@ -7838,14 +7529,11 @@ export function resolveTupleType_tupleTypeMembers(
 	return _resolveOneBranch<T.TupleTypeMembers>(value, 'tuple_type_members', undefined, true);
 }
 
-export function coerceToTupleType(): T.EmptyTupleType;
-export function coerceToTupleType<const A extends T.TupleTypeMembers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TupleTypeMembers.LooseArgs>
-): ReturnType<typeof F.buildTupleType>;
-export function coerceToTupleType<const I extends T.TupleType.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.TupleType.Loose>
-): ReturnType<typeof F.buildTupleType>;
-export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
+export const coerceToTupleType: EmptyForm<
+	T.EmptyTupleType,
+	Seat<T.TupleTypeMembers.LooseArgs, ReturnType<typeof F.buildTupleType>> &
+		OptionalConfigSeat<T.TupleType.Loose, ReturnType<typeof F.buildTupleType>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildTupleType> => {
 	if (args.length > 1)
 		return F.buildTupleType(coerceToTupleTypeMembers(...(args as Parameters<typeof coerceToTupleTypeMembers>)));
 	const input = args[0] as T.TupleType.Loose | undefined;
@@ -7857,7 +7545,7 @@ export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.build
 			true
 		)
 	);
-}
+});
 
 export function resolveReadonlyType_type(value: T.ReadonlyType.LooseConfig['type']): Admit<T.ReadonlyType['_type']> {
 	return coerceMixedEnumStorage(
@@ -7979,12 +7667,10 @@ export function coerceToFunctionType(input: T.FunctionType.Loose): ReturnType<ty
 	});
 }
 
-export function coerceToExportSpecifiers<const A extends T.ExportSpecifiers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ExportSpecifiers.LooseArgs>
-): ReturnType<typeof F.buildExportSpecifiers>;
-export function coerceToExportSpecifiers(
-	...input: T.ExportSpecifiers.LooseArgs
-): ReturnType<typeof F.buildExportSpecifiers> {
+export const coerceToExportSpecifiers: Seat<
+	T.ExportSpecifiers.LooseArgs,
+	ReturnType<typeof F.buildExportSpecifiers>
+> = (...input: T.ExportSpecifiers.LooseArgs): ReturnType<typeof F.buildExportSpecifiers> => {
 	currentHandle()?.admit(TSKindId.ExportSpecifiers, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExportSpecifiers)) {
 		const data = input[0];
@@ -8012,14 +7698,12 @@ export function coerceToExportSpecifiers(
 			['export_specifier', 'string_double', 'string_single']
 		) as unknown as NonEmptyArray<Admit<T.ExportSpecifier | T.Identifier | T.String | TSKindId.DefaultKeyword>>)
 	);
-}
+};
 
-export function coerceToImportSpecifiers<const A extends T.ImportSpecifiers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ImportSpecifiers.LooseArgs>
-): ReturnType<typeof F.buildImportSpecifiers>;
-export function coerceToImportSpecifiers(
-	...input: T.ImportSpecifiers.LooseArgs
-): ReturnType<typeof F.buildImportSpecifiers> {
+export const coerceToImportSpecifiers: Seat<
+	T.ImportSpecifiers.LooseArgs,
+	ReturnType<typeof F.buildImportSpecifiers>
+> = (...input: T.ImportSpecifiers.LooseArgs): ReturnType<typeof F.buildImportSpecifiers> => {
 	currentHandle()?.admit(TSKindId.ImportSpecifiers, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ImportSpecifiers)) {
 		const data = input[0];
@@ -8044,14 +7728,12 @@ export function coerceToImportSpecifiers(
 			['import_specifier_name', 'import_specifier_as']
 		) as unknown as NonEmptyArray<Admit<T.ImportSpecifier>>)
 	);
-}
+};
 
-export function coerceToFormalParametersElements<const A extends T.FormalParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FormalParametersElements.LooseArgs>
-): ReturnType<typeof F.buildFormalParametersElements>;
-export function coerceToFormalParametersElements(
-	...input: T.FormalParametersElements.LooseArgs
-): ReturnType<typeof F.buildFormalParametersElements> {
+export const coerceToFormalParametersElements: Seat<
+	T.FormalParametersElements.LooseArgs,
+	ReturnType<typeof F.buildFormalParametersElements>
+> = (...input: T.FormalParametersElements.LooseArgs): ReturnType<typeof F.buildFormalParametersElements> => {
 	currentHandle()?.admit(TSKindId.FormalParametersElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FormalParametersElements)) {
 		const data = input[0];
@@ -8076,7 +7758,7 @@ export function coerceToFormalParametersElements(
 			['required_parameter', 'optional_parameter']
 		) as unknown as NonEmptyArray<Admit<T.RequiredParameter | T.OptionalParameter>>)
 	);
-}
+};
 
 export function resolveEnumBodyElementName_name(
 	value: T.EnumBodyElementName.LooseConfig['name']
@@ -8107,12 +7789,10 @@ export function coerceToEnumBodyElementName(
 	);
 }
 
-export function coerceToEnumBodyElements<const A extends T.EnumBodyElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.EnumBodyElements.LooseArgs>
-): ReturnType<typeof F.buildEnumBodyElements>;
-export function coerceToEnumBodyElements(
-	...input: T.EnumBodyElements.LooseArgs
-): ReturnType<typeof F.buildEnumBodyElements> {
+export const coerceToEnumBodyElements: Seat<
+	T.EnumBodyElements.LooseArgs,
+	ReturnType<typeof F.buildEnumBodyElements>
+> = (...input: T.EnumBodyElements.LooseArgs): ReturnType<typeof F.buildEnumBodyElements> => {
 	currentHandle()?.admit(TSKindId.EnumBodyElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumBodyElements)) {
 		const data = input[0];
@@ -8137,12 +7817,11 @@ export function coerceToEnumBodyElements(
 			['enum_body_element_name', 'enum_assignment']
 		) as unknown as NonEmptyArray<Admit<T.EnumBodyElement>>)
 	);
-}
+};
 
-export function coerceToTypes<const A extends T.Types.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
-): ReturnType<typeof F.buildTypes>;
-export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
+export const coerceToTypes: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTypes>> = (
+	...input: T.Types.LooseArgs
+): ReturnType<typeof F.buildTypes> => {
 	currentHandle()?.admit(TSKindId.Types, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
@@ -8197,14 +7876,12 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 			]
 		) as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
 	);
-}
+};
 
-export function coerceToTypeParametersElements<const A extends T.TypeParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
-): ReturnType<typeof F.buildTypeParametersElements>;
-export function coerceToTypeParametersElements(
-	...input: T.TypeParametersElements.LooseArgs
-): ReturnType<typeof F.buildTypeParametersElements> {
+export const coerceToTypeParametersElements: Seat<
+	T.TypeParametersElements.LooseArgs,
+	ReturnType<typeof F.buildTypeParametersElements>
+> = (...input: T.TypeParametersElements.LooseArgs): ReturnType<typeof F.buildTypeParametersElements> => {
 	currentHandle()?.admit(TSKindId.TypeParametersElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
 		const data = input[0];
@@ -8230,14 +7907,12 @@ export function coerceToTypeParametersElements(
 			['type_parameter', 'type_identifier']
 		) as unknown as NonEmptyArray<Admit<T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types>>)
 	);
-}
+};
 
-export function coerceToTupleTypeMembers<const A extends T.TupleTypeMembers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TupleTypeMembers.LooseArgs>
-): ReturnType<typeof F.buildTupleTypeMembers>;
-export function coerceToTupleTypeMembers(
-	...input: T.TupleTypeMembers.LooseArgs
-): ReturnType<typeof F.buildTupleTypeMembers> {
+export const coerceToTupleTypeMembers: Seat<
+	T.TupleTypeMembers.LooseArgs,
+	ReturnType<typeof F.buildTupleTypeMembers>
+> = (...input: T.TupleTypeMembers.LooseArgs): ReturnType<typeof F.buildTupleTypeMembers> => {
 	currentHandle()?.admit(TSKindId.TupleTypeMembers, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TupleTypeMembers)) {
 		const data = input[0];
@@ -8311,7 +7986,7 @@ export function coerceToTupleTypeMembers(
 			Admit<T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type | T.TypeIdentifier.Types>
 		>)
 	);
-}
+};
 
 export function resolveImportClauseGroup_content(
 	value: T.ImportClauseGroup.LooseConfig['content']
@@ -8371,15 +8046,13 @@ export function resolveAmbientDeclarationGlobal_body(
 	return _resolveOneBranch<T.StatementBlock>(value, 'statement_block');
 }
 
-export function coerceToAmbientDeclarationGlobal<const A extends T.StatementBlock.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StatementBlock.LooseArgs>
-): ReturnType<typeof F.buildAmbientDeclarationGlobal>;
-export function coerceToAmbientDeclarationGlobal<const I extends T.AmbientDeclarationGlobal.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.AmbientDeclarationGlobal.Loose>
-): ReturnType<typeof F.buildAmbientDeclarationGlobal>;
-export function coerceToAmbientDeclarationGlobal(
+export const coerceToAmbientDeclarationGlobal: Seat<
+	T.StatementBlock.LooseArgs,
+	ReturnType<typeof F.buildAmbientDeclarationGlobal>
+> &
+	OptionalConfigSeat<T.AmbientDeclarationGlobal.Loose, ReturnType<typeof F.buildAmbientDeclarationGlobal>> = (
 	...args: unknown[]
-): ReturnType<typeof F.buildAmbientDeclarationGlobal> {
+): ReturnType<typeof F.buildAmbientDeclarationGlobal> => {
 	if (args.length > 1)
 		return F.buildAmbientDeclarationGlobal(
 			coerceToStatementBlock(...(args as Parameters<typeof coerceToStatementBlock>))
@@ -8393,7 +8066,7 @@ export function coerceToAmbientDeclarationGlobal(
 			'statement_block'
 		) ?? F.buildStatementBlock()
 	);
-}
+};
 
 export function resolveAmbientDeclarationModule_name(
 	value: T.AmbientDeclarationModule.LooseConfig['name']
@@ -8430,12 +8103,10 @@ export function coerceToAmbientDeclarationModule(
 	);
 }
 
-export function coerceToObjectTypeContent<const A extends T.ObjectTypeContent.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ObjectTypeContent.LooseArgs>
-): ReturnType<typeof F.buildObjectTypeContent>;
-export function coerceToObjectTypeContent(
-	...input: T.ObjectTypeContent.LooseArgs
-): ReturnType<typeof F.buildObjectTypeContent> {
+export const coerceToObjectTypeContent: Seat<
+	T.ObjectTypeContent.LooseArgs,
+	ReturnType<typeof F.buildObjectTypeContent>
+> = (...input: T.ObjectTypeContent.LooseArgs): ReturnType<typeof F.buildObjectTypeContent> => {
 	currentHandle()?.admit(TSKindId.ObjectTypeContent, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ObjectTypeContent)) {
 		const data = input[0];
@@ -8502,7 +8173,7 @@ export function coerceToObjectTypeContent(
 			>
 		>)
 	);
-}
+};
 
 export function resolveExportStatementNamespaceExport_name(
 	value: T.ExportStatementNamespaceExport.LooseConfig['name']
@@ -9442,15 +9113,13 @@ export function resolveParenthesizedExpressionSequence_sequenceExpression(
 	return _resolveOneBranch<T.SequenceExpression>(value, 'sequence_expression');
 }
 
-export function coerceToParenthesizedExpressionSequence<const A extends T.SequenceExpression.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.SequenceExpression.LooseArgs>
-): ReturnType<typeof F.buildParenthesizedExpressionSequence>;
-export function coerceToParenthesizedExpressionSequence<const I extends T.ParenthesizedExpressionSequence.Loose>(
-	input: I & RefuseUndeclared<I, T.ParenthesizedExpressionSequence.Loose>
-): ReturnType<typeof F.buildParenthesizedExpressionSequence>;
-export function coerceToParenthesizedExpressionSequence(
+export const coerceToParenthesizedExpressionSequence: Seat<
+	T.SequenceExpression.LooseArgs,
+	ReturnType<typeof F.buildParenthesizedExpressionSequence>
+> &
+	ConfigSeat<T.ParenthesizedExpressionSequence.Loose, ReturnType<typeof F.buildParenthesizedExpressionSequence>> = (
 	...args: unknown[]
-): ReturnType<typeof F.buildParenthesizedExpressionSequence> {
+): ReturnType<typeof F.buildParenthesizedExpressionSequence> => {
 	if (args.length > 1)
 		return F.buildParenthesizedExpressionSequence(
 			coerceToSequenceExpression(...(args as Parameters<typeof coerceToSequenceExpression>))
@@ -9462,7 +9131,7 @@ export function coerceToParenthesizedExpressionSequence(
 			'sequence_expression'
 		)
 	);
-}
+};
 
 export function resolveCallExpressionCall_function(
 	value: T.CallExpressionCall.LooseConfig['function']
@@ -9570,10 +9239,9 @@ export function coerceToCallExpressionMember(
 	});
 }
 
-export function coerceToStringDouble<const A extends T.StringDouble.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StringDouble.LooseArgs>
-): ReturnType<typeof F.buildStringDouble>;
-export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): ReturnType<typeof F.buildStringDouble> {
+export const coerceToStringDouble: Seat<T.StringDouble.LooseArgs, ReturnType<typeof F.buildStringDouble>> = (
+	...input: T.StringDouble.LooseArgs
+): ReturnType<typeof F.buildStringDouble> => {
 	currentHandle()?.admit(TSKindId.StringDouble, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringDouble)) {
 		const data = input[0];
@@ -9600,12 +9268,11 @@ export function coerceToStringDouble(...input: T.StringDouble.LooseArgs): Return
 			typeof F.buildStringDouble
 		>)
 	);
-}
+};
 
-export function coerceToStringSingle<const A extends T.StringSingle.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StringSingle.LooseArgs>
-): ReturnType<typeof F.buildStringSingle>;
-export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): ReturnType<typeof F.buildStringSingle> {
+export const coerceToStringSingle: Seat<T.StringSingle.LooseArgs, ReturnType<typeof F.buildStringSingle>> = (
+	...input: T.StringSingle.LooseArgs
+): ReturnType<typeof F.buildStringSingle> => {
 	currentHandle()?.admit(TSKindId.StringSingle, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringSingle)) {
 		const data = input[0];
@@ -9632,7 +9299,7 @@ export function coerceToStringSingle(...input: T.StringSingle.LooseArgs): Return
 			typeof F.buildStringSingle
 		>)
 	);
-}
+};
 
 export function resolveUpdateExpressionPostfix_argument(
 	value: T.UpdateExpressionPostfix.LooseConfig['argument']
@@ -11504,17 +11171,14 @@ export function resolveFormalParametersElementsReceiverGroup_elements(
 	return _resolveOneBranch<T.FormalParametersElements>(value, 'formal_parameters_elements', undefined, true);
 }
 
-export function coerceToFormalParametersElementsReceiverGroup<const A extends T.FormalParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FormalParametersElements.LooseArgs>
-): ReturnType<typeof F.buildFormalParametersElementsReceiverGroup>;
-export function coerceToFormalParametersElementsReceiverGroup<
-	const I extends T.FormalParametersElementsReceiverGroup.Loose
->(
-	...input: [input?: I] & RefuseUndeclared<I, T.FormalParametersElementsReceiverGroup.Loose>
-): ReturnType<typeof F.buildFormalParametersElementsReceiverGroup>;
-export function coerceToFormalParametersElementsReceiverGroup(
-	...args: unknown[]
-): ReturnType<typeof F.buildFormalParametersElementsReceiverGroup> {
+export const coerceToFormalParametersElementsReceiverGroup: Seat<
+	T.FormalParametersElements.LooseArgs,
+	ReturnType<typeof F.buildFormalParametersElementsReceiverGroup>
+> &
+	OptionalConfigSeat<
+		T.FormalParametersElementsReceiverGroup.Loose,
+		ReturnType<typeof F.buildFormalParametersElementsReceiverGroup>
+	> = (...args: unknown[]): ReturnType<typeof F.buildFormalParametersElementsReceiverGroup> => {
 	if (args.length > 1)
 		return F.buildFormalParametersElementsReceiverGroup(
 			coerceToFormalParametersElements(...(args as Parameters<typeof coerceToFormalParametersElements>))
@@ -11530,7 +11194,7 @@ export function coerceToFormalParametersElementsReceiverGroup(
 			true
 		)
 	);
-}
+};
 
 export function resolveStatementIdentifier_content(
 	value: T.StatementIdentifier.LooseConfig['content']
@@ -11680,3 +11344,556 @@ export function coerceToInterfaceBody(input: T.InterfaceBody.Loose): ReturnType<
 export function coerceToThisType(_input?: T.ThisType.Loose): typeof F.buildThisType {
 	return F.buildThisType;
 }
+
+export interface _FromMap {
+	readonly program: typeof coerceToProgram;
+	readonly hash_bang_line: typeof coerceToHashBangLine;
+	readonly namespace_export: typeof coerceToNamespaceExport;
+	readonly export_clause: typeof coerceToExportClause;
+	readonly export_specifier: typeof coerceToExportSpecifier;
+	readonly import: typeof coerceToImport;
+	readonly import_statement: typeof coerceToImportStatement;
+	readonly import_clause: typeof coerceToImportClause;
+	readonly namespace_import: typeof coerceToNamespaceImport;
+	readonly named_imports: typeof coerceToNamedImports;
+	readonly import_attribute: typeof coerceToImportAttribute;
+	readonly expression_statement: typeof coerceToExpressionStatement;
+	readonly variable_declaration: typeof coerceToVariableDeclaration;
+	readonly lexical_declaration: typeof coerceToLexicalDeclaration;
+	readonly using_declaration: typeof coerceToUsingDeclaration;
+	readonly statement_block: typeof coerceToStatementBlock;
+	readonly else_clause: typeof coerceToElseClause;
+	readonly if_statement: typeof coerceToIfStatement;
+	readonly switch_statement: typeof coerceToSwitchStatement;
+	readonly for_statement: typeof coerceToForStatement;
+	readonly for_in_statement: typeof coerceToForInStatement;
+	readonly while_statement: typeof coerceToWhileStatement;
+	readonly do_statement: typeof coerceToDoStatement;
+	readonly try_statement: typeof coerceToTryStatement;
+	readonly with_statement: typeof coerceToWithStatement;
+	readonly break_statement: typeof coerceToBreakStatement;
+	readonly continue_statement: typeof coerceToContinueStatement;
+	readonly debugger_statement: typeof coerceToDebuggerStatement;
+	readonly return_statement: typeof coerceToReturnStatement;
+	readonly throw_statement: typeof coerceToThrowStatement;
+	readonly empty_statement: typeof coerceToEmptyStatement;
+	readonly labeled_statement: typeof coerceToLabeledStatement;
+	readonly switch_body: typeof coerceToSwitchBody;
+	readonly switch_case: typeof coerceToSwitchCase;
+	readonly switch_default: typeof coerceToSwitchDefault;
+	readonly catch_clause: typeof coerceToCatchClause;
+	readonly finally_clause: typeof coerceToFinallyClause;
+	readonly yield_expression: typeof coerceToYieldExpression;
+	readonly object: typeof coerceToObject;
+	readonly object_pattern: typeof coerceToObjectPattern;
+	readonly assignment_pattern: typeof coerceToAssignmentPattern;
+	readonly object_assignment_pattern: typeof coerceToObjectAssignmentPattern;
+	readonly array: typeof coerceToArray;
+	readonly array_pattern: typeof coerceToArrayPattern;
+	readonly nested_identifier: typeof coerceToNestedIdentifier;
+	readonly class: typeof coerceToClass;
+	readonly class_declaration: typeof coerceToClassDeclaration;
+	readonly class_heritage: typeof coerceToClassHeritage;
+	readonly function_expression: typeof coerceToFunctionExpression;
+	readonly function_declaration: typeof coerceToFunctionDeclaration;
+	readonly generator_function: typeof coerceToGeneratorFunction;
+	readonly generator_function_declaration: typeof coerceToGeneratorFunctionDeclaration;
+	readonly arrow_function: typeof coerceToArrowFunction;
+	readonly optional_chain: typeof coerceToOptionalChain;
+	readonly new_expression: typeof coerceToNewExpression;
+	readonly await_expression: typeof coerceToAwaitExpression;
+	readonly member_expression: typeof coerceToMemberExpression;
+	readonly subscript_expression: typeof coerceToSubscriptExpression;
+	readonly _lhs_expression: typeof coerceToLhsExpression;
+	readonly assignment_expression: typeof coerceToAssignmentExpression;
+	readonly augmented_assignment_expression: typeof coerceToAugmentedAssignmentExpression;
+	readonly spread_element: typeof coerceToSpreadElement;
+	readonly ternary_expression: typeof coerceToTernaryExpression;
+	readonly binary_expression: typeof coerceToBinaryExpression;
+	readonly unary_expression: typeof coerceToUnaryExpression;
+	readonly sequence_expression: typeof coerceToSequenceExpression;
+	readonly unescaped_double_string_fragment: typeof coerceToUnescapedDoubleStringFragment;
+	readonly unescaped_single_string_fragment: typeof coerceToUnescapedSingleStringFragment;
+	readonly escape_sequence: typeof coerceToEscapeSequence;
+	readonly template_string: typeof coerceToTemplateString;
+	readonly template_substitution: typeof coerceToTemplateSubstitution;
+	readonly regex: typeof coerceToRegex;
+	readonly regex_pattern: typeof coerceToRegexPattern;
+	readonly regex_flags: typeof coerceToRegexFlags;
+	readonly identifier: typeof coerceToIdentifier;
+	readonly private_property_identifier: typeof coerceToPrivatePropertyIdentifier;
+	readonly this: typeof coerceToThis;
+	readonly super: typeof coerceToSuper;
+	readonly true: typeof coerceToTrue;
+	readonly false: typeof coerceToFalse;
+	readonly null: typeof coerceToNull;
+	readonly undefined: typeof coerceToUndefined;
+	readonly arguments: typeof coerceToArguments;
+	readonly decorator: typeof coerceToDecorator;
+	readonly decorator_member_expression: typeof coerceToDecoratorMemberExpression;
+	readonly decorator_call_expression: typeof coerceToDecoratorCallExpression;
+	readonly class_body: typeof coerceToClassBody;
+	readonly formal_parameters: typeof coerceToFormalParameters;
+	readonly class_static_block: typeof coerceToClassStaticBlock;
+	readonly rest_pattern: typeof coerceToRestPattern;
+	readonly pair: typeof coerceToPair;
+	readonly pair_pattern: typeof coerceToPairPattern;
+	readonly computed_property_name: typeof coerceToComputedPropertyName;
+	readonly non_null_expression: typeof coerceToNonNullExpression;
+	readonly function_signature: typeof coerceToFunctionSignature;
+	readonly decorator_parenthesized_expression: typeof coerceToDecoratorParenthesizedExpression;
+	readonly type_assertion: typeof coerceToTypeAssertion;
+	readonly as_expression: typeof coerceToAsExpression;
+	readonly satisfies_expression: typeof coerceToSatisfiesExpression;
+	readonly instantiation_expression: typeof coerceToInstantiationExpression;
+	readonly import_require_clause: typeof coerceToImportRequireClause;
+	readonly extends_clause: typeof coerceToExtendsClause;
+	readonly extends_clause_single: typeof coerceToExtendsClauseSingle;
+	readonly implements_clause: typeof coerceToImplementsClause;
+	readonly ambient_declaration: typeof coerceToAmbientDeclaration;
+	readonly abstract_class_declaration: typeof coerceToAbstractClassDeclaration;
+	readonly module: typeof coerceToModule;
+	readonly internal_module: typeof coerceToInternalModule;
+	readonly import_alias: typeof coerceToImportAlias;
+	readonly nested_type_identifier: typeof coerceToNestedTypeIdentifier;
+	readonly interface_declaration: typeof coerceToInterfaceDeclaration;
+	readonly extends_type_clause: typeof coerceToExtendsTypeClause;
+	readonly enum_declaration: typeof coerceToEnumDeclaration;
+	readonly enum_body: typeof coerceToEnumBody;
+	readonly enum_assignment: typeof coerceToEnumAssignment;
+	readonly type_alias_declaration: typeof coerceToTypeAliasDeclaration;
+	readonly override_modifier: typeof coerceToOverrideModifier;
+	readonly required_parameter: typeof coerceToRequiredParameter;
+	readonly optional_parameter: typeof coerceToOptionalParameter;
+	readonly omitting_type_annotation: typeof coerceToOmittingTypeAnnotation;
+	readonly adding_type_annotation: typeof coerceToAddingTypeAnnotation;
+	readonly opting_type_annotation: typeof coerceToOptingTypeAnnotation;
+	readonly type_annotation: typeof coerceToTypeAnnotation;
+	readonly type_query_member_expression_in_type_annotation: typeof coerceToTypeQueryMemberExpressionInTypeAnnotation;
+	readonly type_query_call_expression_in_type_annotation: typeof coerceToTypeQueryCallExpressionInTypeAnnotation;
+	readonly asserts: typeof coerceToAsserts;
+	readonly asserts_annotation: typeof coerceToAssertsAnnotation;
+	readonly tuple_parameter: typeof coerceToTupleParameter;
+	readonly optional_tuple_parameter: typeof coerceToOptionalTupleParameter;
+	readonly optional_type: typeof coerceToOptionalType;
+	readonly rest_type: typeof coerceToRestType;
+	readonly constructor_type: typeof coerceToConstructorType;
+	readonly template_type: typeof coerceToTemplateType;
+	readonly template_literal_type: typeof coerceToTemplateLiteralType;
+	readonly infer_type: typeof coerceToInferType;
+	readonly conditional_type: typeof coerceToConditionalType;
+	readonly generic_type: typeof coerceToGenericType;
+	readonly type_predicate: typeof coerceToTypePredicate;
+	readonly type_predicate_annotation: typeof coerceToTypePredicateAnnotation;
+	readonly type_query_member_expression: typeof coerceToTypeQueryMemberExpression;
+	readonly type_query_subscript_expression: typeof coerceToTypeQuerySubscriptExpression;
+	readonly type_query_call_expression: typeof coerceToTypeQueryCallExpression;
+	readonly type_query_instantiation_expression: typeof coerceToTypeQueryInstantiationExpression;
+	readonly type_query: typeof coerceToTypeQuery;
+	readonly index_type_query: typeof coerceToIndexTypeQuery;
+	readonly lookup_type: typeof coerceToLookupType;
+	readonly mapped_type_clause: typeof coerceToMappedTypeClause;
+	readonly literal_type: typeof coerceToLiteralType;
+	readonly existential_type: typeof coerceToExistentialType;
+	readonly flow_maybe_type: typeof coerceToFlowMaybeType;
+	readonly parenthesized_type: typeof coerceToParenthesizedType;
+	readonly type_arguments: typeof coerceToTypeArguments;
+	readonly object_type: typeof coerceToObjectType;
+	readonly call_signature: typeof coerceToCallSignature;
+	readonly property_signature: typeof coerceToPropertySignature;
+	readonly type_parameters: typeof coerceToTypeParameters;
+	readonly type_parameter: typeof coerceToTypeParameter;
+	readonly default_type: typeof coerceToDefaultType;
+	readonly constraint: typeof coerceToConstraint;
+	readonly construct_signature: typeof coerceToConstructSignature;
+	readonly array_type: typeof coerceToArrayType;
+	readonly tuple_type: typeof coerceToTupleType;
+	readonly readonly_type: typeof coerceToReadonlyType;
+	readonly union_type: typeof coerceToUnionType;
+	readonly intersection_type: typeof coerceToIntersectionType;
+	readonly function_type: typeof coerceToFunctionType;
+	readonly export_specifiers: typeof coerceToExportSpecifiers;
+	readonly import_specifiers: typeof coerceToImportSpecifiers;
+	readonly formal_parameters_elements: typeof coerceToFormalParametersElements;
+	readonly enum_body_element_name: typeof coerceToEnumBodyElementName;
+	readonly enum_body_elements: typeof coerceToEnumBodyElements;
+	readonly types: typeof coerceToTypes;
+	readonly type_parameters_elements: typeof coerceToTypeParametersElements;
+	readonly tuple_type_members: typeof coerceToTupleTypeMembers;
+	readonly import_clause_group: typeof coerceToImportClauseGroup;
+	readonly using_declaration_arm: typeof coerceToUsingDeclarationArm;
+	readonly catch_clause_group: typeof coerceToCatchClauseGroup;
+	readonly ambient_declaration_global: typeof coerceToAmbientDeclarationGlobal;
+	readonly ambient_declaration_module: typeof coerceToAmbientDeclarationModule;
+	readonly object_type_content: typeof coerceToObjectTypeContent;
+	readonly export_statement_namespace_export: typeof coerceToExportStatementNamespaceExport;
+	readonly export_statement_equals_export: typeof coerceToExportStatementEqualsExport;
+	readonly comment_line: typeof coerceToCommentLine;
+	readonly comment_block: typeof coerceToCommentBlock;
+	readonly literal_type_negative_number: typeof coerceToLiteralTypeNegativeNumber;
+	readonly number_hex: typeof coerceToNumberHex;
+	readonly number_float_point: typeof coerceToNumberFloatPoint;
+	readonly number_float_leading_point: typeof coerceToNumberFloatLeadingPoint;
+	readonly number_float_scientific: typeof coerceToNumberFloatScientific;
+	readonly number_decimal: typeof coerceToNumberDecimal;
+	readonly number_binary: typeof coerceToNumberBinary;
+	readonly number_octal: typeof coerceToNumberOctal;
+	readonly number_bigint_hex: typeof coerceToNumberBigintHex;
+	readonly number_bigint_binary: typeof coerceToNumberBigintBinary;
+	readonly number_bigint_octal: typeof coerceToNumberBigintOctal;
+	readonly number_bigint_decimal: typeof coerceToNumberBigintDecimal;
+	readonly binary_expression_in: typeof coerceToBinaryExpressionIn;
+	readonly empty_member: typeof coerceToEmptyMember;
+	readonly class_body_member_method: typeof coerceToClassBodyMemberMethod;
+	readonly class_body_member_method_sig: typeof coerceToClassBodyMemberMethodSig;
+	readonly class_body_member_declaration: typeof coerceToClassBodyMemberDeclaration;
+	readonly index_signature_colon: typeof coerceToIndexSignatureColon;
+	readonly index_signature_mapped_type_clause: typeof coerceToIndexSignatureMappedTypeClause;
+	readonly import_statement_clause_from: typeof coerceToImportStatementClauseFrom;
+	readonly yield_expression_delegate: typeof coerceToYieldExpressionDelegate;
+	readonly optional_chain_marker: typeof coerceToOptionalChainMarker;
+	readonly import_specifier_name: typeof coerceToImportSpecifierName;
+	readonly import_specifier_as: typeof coerceToImportSpecifierAs;
+	readonly parenthesized_expression_typed: typeof coerceToParenthesizedExpressionTyped;
+	readonly parenthesized_expression_sequence: typeof coerceToParenthesizedExpressionSequence;
+	readonly call_expression_call: typeof coerceToCallExpressionCall;
+	readonly call_expression_template_call: typeof coerceToCallExpressionTemplateCall;
+	readonly call_expression_member: typeof coerceToCallExpressionMember;
+	readonly string_double: typeof coerceToStringDouble;
+	readonly string_single: typeof coerceToStringSingle;
+	readonly update_expression_postfix: typeof coerceToUpdateExpressionPostfix;
+	readonly update_expression_prefix: typeof coerceToUpdateExpressionPrefix;
+	readonly arrow_function_parameter: typeof coerceToArrowFunctionParameter;
+	readonly class_heritage_extends_clause: typeof coerceToClassHeritageExtendsClause;
+	readonly import_clause_default_import: typeof coerceToImportClauseDefaultImport;
+	readonly export_statement_default_from: typeof coerceToExportStatementDefaultFrom;
+	readonly export_statement_default_declaration: typeof coerceToExportStatementDefaultDeclaration;
+	readonly export_statement_default_from_star_from: typeof coerceToExportStatementDefaultFromStarFrom;
+	readonly export_statement_default_from_ns_from: typeof coerceToExportStatementDefaultFromNsFrom;
+	readonly export_statement_default_from_clause_from: typeof coerceToExportStatementDefaultFromClauseFrom;
+	readonly export_statement_default_declaration_default_kw: typeof coerceToExportStatementDefaultDeclarationDefaultKw;
+	readonly export_statement_default_declaration_default_kw_value: typeof coerceToExportStatementDefaultDeclarationDefaultKwValue;
+	readonly variable_declarator_plain: typeof coerceToVariableDeclaratorPlain;
+	readonly variable_declarator_definite: typeof coerceToVariableDeclaratorDefinite;
+	readonly meta_property_new_target: typeof coerceToMetaPropertyNewTarget;
+	readonly meta_property_import_meta: typeof coerceToMetaPropertyImportMeta;
+	readonly for_header_lhs: typeof coerceToForHeaderLhs;
+	readonly for_header_var_kind: typeof coerceToForHeaderVarKind;
+	readonly for_header_let_const_kind: typeof coerceToForHeaderLetConstKind;
+	readonly for_header_using_kind: typeof coerceToForHeaderUsingKind;
+	readonly _formal_parameters_get_accessor_signature: typeof coerceToFormalParametersGetAccessorSignature;
+	readonly _formal_parameters_set_accessor_signature: typeof coerceToFormalParametersSetAccessorSignature;
+	readonly _formal_parameters_elements_set_accessor_signature: typeof coerceToFormalParametersElementsSetAccessorSignature;
+	readonly setter_parameter: typeof coerceToSetterParameter;
+	readonly method_definition_plain: typeof coerceToMethodDefinitionPlain;
+	readonly method_definition_getter: typeof coerceToMethodDefinitionGetter;
+	readonly method_definition_setter: typeof coerceToMethodDefinitionSetter;
+	readonly method_signature_plain: typeof coerceToMethodSignaturePlain;
+	readonly method_signature_getter: typeof coerceToMethodSignatureGetter;
+	readonly method_signature_setter: typeof coerceToMethodSignatureSetter;
+	readonly abstract_method_signature_plain: typeof coerceToAbstractMethodSignaturePlain;
+	readonly abstract_method_signature_getter: typeof coerceToAbstractMethodSignatureGetter;
+	readonly abstract_method_signature_setter: typeof coerceToAbstractMethodSignatureSetter;
+	readonly public_field_definition_plain: typeof coerceToPublicFieldDefinitionPlain;
+	readonly public_field_definition_accessor: typeof coerceToPublicFieldDefinitionAccessor;
+	readonly html_comment: typeof coerceToHtmlComment;
+	readonly jsx_text: typeof coerceToJsxText;
+	readonly _template_chars: typeof coerceToTemplateChars;
+	readonly _automatic_semicolon: typeof coerceToAutomaticSemicolon;
+	readonly _function_signature_automatic_semicolon: typeof coerceToFunctionSignatureAutomaticSemicolon;
+	readonly _tight: typeof coerceToTight;
+	readonly _space: typeof coerceToSpace;
+	readonly _tab: typeof coerceToTab;
+	readonly _newline: typeof coerceToNewline;
+	readonly _blankline: typeof coerceToBlankline;
+	readonly _double_blankline: typeof coerceToDoubleBlankline;
+	readonly _indent: typeof coerceToIndent;
+	readonly _dedent: typeof coerceToDedent;
+	readonly constructor_declaration: typeof coerceToConstructorDeclaration;
+	readonly receiver_parameter_declaration: typeof coerceToReceiverParameterDeclaration;
+	readonly formal_parameters_elements_receiver: typeof coerceToFormalParametersElementsReceiver;
+	readonly formal_parameters_elements_receiver_group: typeof coerceToFormalParametersElementsReceiverGroup;
+	readonly statement_identifier: typeof coerceToStatementIdentifier;
+	readonly shorthand_property_identifier: typeof coerceToShorthandPropertyIdentifier;
+	readonly shorthand_property_identifier_pattern: typeof coerceToShorthandPropertyIdentifierPattern;
+	readonly property_identifier: typeof coerceToPropertyIdentifier;
+	readonly type_identifier: typeof coerceToTypeIdentifier;
+	readonly interface_body: typeof coerceToInterfaceBody;
+	readonly this_type: typeof coerceToThisType;
+}
+export const _fromMap: _FromMap = {
+	program: coerceToProgram,
+	hash_bang_line: coerceToHashBangLine,
+	namespace_export: coerceToNamespaceExport,
+	export_clause: coerceToExportClause,
+	export_specifier: coerceToExportSpecifier,
+	import: coerceToImport,
+	import_statement: coerceToImportStatement,
+	import_clause: coerceToImportClause,
+	namespace_import: coerceToNamespaceImport,
+	named_imports: coerceToNamedImports,
+	import_attribute: coerceToImportAttribute,
+	expression_statement: coerceToExpressionStatement,
+	variable_declaration: coerceToVariableDeclaration,
+	lexical_declaration: coerceToLexicalDeclaration,
+	using_declaration: coerceToUsingDeclaration,
+	statement_block: coerceToStatementBlock,
+	else_clause: coerceToElseClause,
+	if_statement: coerceToIfStatement,
+	switch_statement: coerceToSwitchStatement,
+	for_statement: coerceToForStatement,
+	for_in_statement: coerceToForInStatement,
+	while_statement: coerceToWhileStatement,
+	do_statement: coerceToDoStatement,
+	try_statement: coerceToTryStatement,
+	with_statement: coerceToWithStatement,
+	break_statement: coerceToBreakStatement,
+	continue_statement: coerceToContinueStatement,
+	debugger_statement: coerceToDebuggerStatement,
+	return_statement: coerceToReturnStatement,
+	throw_statement: coerceToThrowStatement,
+	empty_statement: coerceToEmptyStatement,
+	labeled_statement: coerceToLabeledStatement,
+	switch_body: coerceToSwitchBody,
+	switch_case: coerceToSwitchCase,
+	switch_default: coerceToSwitchDefault,
+	catch_clause: coerceToCatchClause,
+	finally_clause: coerceToFinallyClause,
+	yield_expression: coerceToYieldExpression,
+	object: coerceToObject,
+	object_pattern: coerceToObjectPattern,
+	assignment_pattern: coerceToAssignmentPattern,
+	object_assignment_pattern: coerceToObjectAssignmentPattern,
+	array: coerceToArray,
+	array_pattern: coerceToArrayPattern,
+	nested_identifier: coerceToNestedIdentifier,
+	class: coerceToClass,
+	class_declaration: coerceToClassDeclaration,
+	class_heritage: coerceToClassHeritage,
+	function_expression: coerceToFunctionExpression,
+	function_declaration: coerceToFunctionDeclaration,
+	generator_function: coerceToGeneratorFunction,
+	generator_function_declaration: coerceToGeneratorFunctionDeclaration,
+	arrow_function: coerceToArrowFunction,
+	optional_chain: coerceToOptionalChain,
+	new_expression: coerceToNewExpression,
+	await_expression: coerceToAwaitExpression,
+	member_expression: coerceToMemberExpression,
+	subscript_expression: coerceToSubscriptExpression,
+	_lhs_expression: coerceToLhsExpression,
+	assignment_expression: coerceToAssignmentExpression,
+	augmented_assignment_expression: coerceToAugmentedAssignmentExpression,
+	spread_element: coerceToSpreadElement,
+	ternary_expression: coerceToTernaryExpression,
+	binary_expression: coerceToBinaryExpression,
+	unary_expression: coerceToUnaryExpression,
+	sequence_expression: coerceToSequenceExpression,
+	unescaped_double_string_fragment: coerceToUnescapedDoubleStringFragment,
+	unescaped_single_string_fragment: coerceToUnescapedSingleStringFragment,
+	escape_sequence: coerceToEscapeSequence,
+	template_string: coerceToTemplateString,
+	template_substitution: coerceToTemplateSubstitution,
+	regex: coerceToRegex,
+	regex_pattern: coerceToRegexPattern,
+	regex_flags: coerceToRegexFlags,
+	identifier: coerceToIdentifier,
+	private_property_identifier: coerceToPrivatePropertyIdentifier,
+	this: coerceToThis,
+	super: coerceToSuper,
+	true: coerceToTrue,
+	false: coerceToFalse,
+	null: coerceToNull,
+	undefined: coerceToUndefined,
+	arguments: coerceToArguments,
+	decorator: coerceToDecorator,
+	decorator_member_expression: coerceToDecoratorMemberExpression,
+	decorator_call_expression: coerceToDecoratorCallExpression,
+	class_body: coerceToClassBody,
+	formal_parameters: coerceToFormalParameters,
+	class_static_block: coerceToClassStaticBlock,
+	rest_pattern: coerceToRestPattern,
+	pair: coerceToPair,
+	pair_pattern: coerceToPairPattern,
+	computed_property_name: coerceToComputedPropertyName,
+	non_null_expression: coerceToNonNullExpression,
+	function_signature: coerceToFunctionSignature,
+	decorator_parenthesized_expression: coerceToDecoratorParenthesizedExpression,
+	type_assertion: coerceToTypeAssertion,
+	as_expression: coerceToAsExpression,
+	satisfies_expression: coerceToSatisfiesExpression,
+	instantiation_expression: coerceToInstantiationExpression,
+	import_require_clause: coerceToImportRequireClause,
+	extends_clause: coerceToExtendsClause,
+	extends_clause_single: coerceToExtendsClauseSingle,
+	implements_clause: coerceToImplementsClause,
+	ambient_declaration: coerceToAmbientDeclaration,
+	abstract_class_declaration: coerceToAbstractClassDeclaration,
+	module: coerceToModule,
+	internal_module: coerceToInternalModule,
+	import_alias: coerceToImportAlias,
+	nested_type_identifier: coerceToNestedTypeIdentifier,
+	interface_declaration: coerceToInterfaceDeclaration,
+	extends_type_clause: coerceToExtendsTypeClause,
+	enum_declaration: coerceToEnumDeclaration,
+	enum_body: coerceToEnumBody,
+	enum_assignment: coerceToEnumAssignment,
+	type_alias_declaration: coerceToTypeAliasDeclaration,
+	override_modifier: coerceToOverrideModifier,
+	required_parameter: coerceToRequiredParameter,
+	optional_parameter: coerceToOptionalParameter,
+	omitting_type_annotation: coerceToOmittingTypeAnnotation,
+	adding_type_annotation: coerceToAddingTypeAnnotation,
+	opting_type_annotation: coerceToOptingTypeAnnotation,
+	type_annotation: coerceToTypeAnnotation,
+	type_query_member_expression_in_type_annotation: coerceToTypeQueryMemberExpressionInTypeAnnotation,
+	type_query_call_expression_in_type_annotation: coerceToTypeQueryCallExpressionInTypeAnnotation,
+	asserts: coerceToAsserts,
+	asserts_annotation: coerceToAssertsAnnotation,
+	tuple_parameter: coerceToTupleParameter,
+	optional_tuple_parameter: coerceToOptionalTupleParameter,
+	optional_type: coerceToOptionalType,
+	rest_type: coerceToRestType,
+	constructor_type: coerceToConstructorType,
+	template_type: coerceToTemplateType,
+	template_literal_type: coerceToTemplateLiteralType,
+	infer_type: coerceToInferType,
+	conditional_type: coerceToConditionalType,
+	generic_type: coerceToGenericType,
+	type_predicate: coerceToTypePredicate,
+	type_predicate_annotation: coerceToTypePredicateAnnotation,
+	type_query_member_expression: coerceToTypeQueryMemberExpression,
+	type_query_subscript_expression: coerceToTypeQuerySubscriptExpression,
+	type_query_call_expression: coerceToTypeQueryCallExpression,
+	type_query_instantiation_expression: coerceToTypeQueryInstantiationExpression,
+	type_query: coerceToTypeQuery,
+	index_type_query: coerceToIndexTypeQuery,
+	lookup_type: coerceToLookupType,
+	mapped_type_clause: coerceToMappedTypeClause,
+	literal_type: coerceToLiteralType,
+	existential_type: coerceToExistentialType,
+	flow_maybe_type: coerceToFlowMaybeType,
+	parenthesized_type: coerceToParenthesizedType,
+	type_arguments: coerceToTypeArguments,
+	object_type: coerceToObjectType,
+	call_signature: coerceToCallSignature,
+	property_signature: coerceToPropertySignature,
+	type_parameters: coerceToTypeParameters,
+	type_parameter: coerceToTypeParameter,
+	default_type: coerceToDefaultType,
+	constraint: coerceToConstraint,
+	construct_signature: coerceToConstructSignature,
+	array_type: coerceToArrayType,
+	tuple_type: coerceToTupleType,
+	readonly_type: coerceToReadonlyType,
+	union_type: coerceToUnionType,
+	intersection_type: coerceToIntersectionType,
+	function_type: coerceToFunctionType,
+	export_specifiers: coerceToExportSpecifiers,
+	import_specifiers: coerceToImportSpecifiers,
+	formal_parameters_elements: coerceToFormalParametersElements,
+	enum_body_element_name: coerceToEnumBodyElementName,
+	enum_body_elements: coerceToEnumBodyElements,
+	types: coerceToTypes,
+	type_parameters_elements: coerceToTypeParametersElements,
+	tuple_type_members: coerceToTupleTypeMembers,
+	import_clause_group: coerceToImportClauseGroup,
+	using_declaration_arm: coerceToUsingDeclarationArm,
+	catch_clause_group: coerceToCatchClauseGroup,
+	ambient_declaration_global: coerceToAmbientDeclarationGlobal,
+	ambient_declaration_module: coerceToAmbientDeclarationModule,
+	object_type_content: coerceToObjectTypeContent,
+	export_statement_namespace_export: coerceToExportStatementNamespaceExport,
+	export_statement_equals_export: coerceToExportStatementEqualsExport,
+	comment_line: coerceToCommentLine,
+	comment_block: coerceToCommentBlock,
+	literal_type_negative_number: coerceToLiteralTypeNegativeNumber,
+	number_hex: coerceToNumberHex,
+	number_float_point: coerceToNumberFloatPoint,
+	number_float_leading_point: coerceToNumberFloatLeadingPoint,
+	number_float_scientific: coerceToNumberFloatScientific,
+	number_decimal: coerceToNumberDecimal,
+	number_binary: coerceToNumberBinary,
+	number_octal: coerceToNumberOctal,
+	number_bigint_hex: coerceToNumberBigintHex,
+	number_bigint_binary: coerceToNumberBigintBinary,
+	number_bigint_octal: coerceToNumberBigintOctal,
+	number_bigint_decimal: coerceToNumberBigintDecimal,
+	binary_expression_in: coerceToBinaryExpressionIn,
+	empty_member: coerceToEmptyMember,
+	class_body_member_method: coerceToClassBodyMemberMethod,
+	class_body_member_method_sig: coerceToClassBodyMemberMethodSig,
+	class_body_member_declaration: coerceToClassBodyMemberDeclaration,
+	index_signature_colon: coerceToIndexSignatureColon,
+	index_signature_mapped_type_clause: coerceToIndexSignatureMappedTypeClause,
+	import_statement_clause_from: coerceToImportStatementClauseFrom,
+	yield_expression_delegate: coerceToYieldExpressionDelegate,
+	optional_chain_marker: coerceToOptionalChainMarker,
+	import_specifier_name: coerceToImportSpecifierName,
+	import_specifier_as: coerceToImportSpecifierAs,
+	parenthesized_expression_typed: coerceToParenthesizedExpressionTyped,
+	parenthesized_expression_sequence: coerceToParenthesizedExpressionSequence,
+	call_expression_call: coerceToCallExpressionCall,
+	call_expression_template_call: coerceToCallExpressionTemplateCall,
+	call_expression_member: coerceToCallExpressionMember,
+	string_double: coerceToStringDouble,
+	string_single: coerceToStringSingle,
+	update_expression_postfix: coerceToUpdateExpressionPostfix,
+	update_expression_prefix: coerceToUpdateExpressionPrefix,
+	arrow_function_parameter: coerceToArrowFunctionParameter,
+	class_heritage_extends_clause: coerceToClassHeritageExtendsClause,
+	import_clause_default_import: coerceToImportClauseDefaultImport,
+	export_statement_default_from: coerceToExportStatementDefaultFrom,
+	export_statement_default_declaration: coerceToExportStatementDefaultDeclaration,
+	export_statement_default_from_star_from: coerceToExportStatementDefaultFromStarFrom,
+	export_statement_default_from_ns_from: coerceToExportStatementDefaultFromNsFrom,
+	export_statement_default_from_clause_from: coerceToExportStatementDefaultFromClauseFrom,
+	export_statement_default_declaration_default_kw: coerceToExportStatementDefaultDeclarationDefaultKw,
+	export_statement_default_declaration_default_kw_value: coerceToExportStatementDefaultDeclarationDefaultKwValue,
+	variable_declarator_plain: coerceToVariableDeclaratorPlain,
+	variable_declarator_definite: coerceToVariableDeclaratorDefinite,
+	meta_property_new_target: coerceToMetaPropertyNewTarget,
+	meta_property_import_meta: coerceToMetaPropertyImportMeta,
+	for_header_lhs: coerceToForHeaderLhs,
+	for_header_var_kind: coerceToForHeaderVarKind,
+	for_header_let_const_kind: coerceToForHeaderLetConstKind,
+	for_header_using_kind: coerceToForHeaderUsingKind,
+	_formal_parameters_get_accessor_signature: coerceToFormalParametersGetAccessorSignature,
+	_formal_parameters_set_accessor_signature: coerceToFormalParametersSetAccessorSignature,
+	_formal_parameters_elements_set_accessor_signature: coerceToFormalParametersElementsSetAccessorSignature,
+	setter_parameter: coerceToSetterParameter,
+	method_definition_plain: coerceToMethodDefinitionPlain,
+	method_definition_getter: coerceToMethodDefinitionGetter,
+	method_definition_setter: coerceToMethodDefinitionSetter,
+	method_signature_plain: coerceToMethodSignaturePlain,
+	method_signature_getter: coerceToMethodSignatureGetter,
+	method_signature_setter: coerceToMethodSignatureSetter,
+	abstract_method_signature_plain: coerceToAbstractMethodSignaturePlain,
+	abstract_method_signature_getter: coerceToAbstractMethodSignatureGetter,
+	abstract_method_signature_setter: coerceToAbstractMethodSignatureSetter,
+	public_field_definition_plain: coerceToPublicFieldDefinitionPlain,
+	public_field_definition_accessor: coerceToPublicFieldDefinitionAccessor,
+	html_comment: coerceToHtmlComment,
+	jsx_text: coerceToJsxText,
+	_template_chars: coerceToTemplateChars,
+	_automatic_semicolon: coerceToAutomaticSemicolon,
+	_function_signature_automatic_semicolon: coerceToFunctionSignatureAutomaticSemicolon,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_tab: coerceToTab,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
+	constructor_declaration: coerceToConstructorDeclaration,
+	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
+	formal_parameters_elements_receiver: coerceToFormalParametersElementsReceiver,
+	formal_parameters_elements_receiver_group: coerceToFormalParametersElementsReceiverGroup,
+	statement_identifier: coerceToStatementIdentifier,
+	shorthand_property_identifier: coerceToShorthandPropertyIdentifier,
+	shorthand_property_identifier_pattern: coerceToShorthandPropertyIdentifierPattern,
+	property_identifier: coerceToPropertyIdentifier,
+	type_identifier: coerceToTypeIdentifier,
+	interface_body: coerceToInterfaceBody,
+	this_type: coerceToThisType
+};

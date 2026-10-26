@@ -2,7 +2,7 @@
 import * as F from './raw.js';
 import * as K from './combinators.js';
 import { delegate } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared, Seat } from '@sittir/types';
 import { TSKindId } from '../types.js';
 import type * as LooseTable from './loose.js';
 import type * as StrictTable from './strict.js';
@@ -39,12 +39,14 @@ export interface Routes<Table extends AnyTable> {
 	readonly importStatement: Table['buildImportStatement'] & {
 		readonly clauseFrom: Routes<Table>['importStatement$clauseFrom'];
 	};
-	readonly importClauseGroup$namespaceImport: <const A extends ArgsOf<Table['buildNamespaceImport']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamespaceImport']>>
-	) => ReturnType<typeof F.buildImportClauseGroup>;
-	readonly importClauseGroup$namedImports: <const A extends ArgsOf<Table['buildNamedImports']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamedImports']>>
-	) => ReturnType<typeof F.buildImportClauseGroup>;
+	readonly importClauseGroup$namespaceImport: Seat<
+		ArgsOf<Table['buildNamespaceImport']>,
+		ReturnType<typeof F.buildImportClauseGroup>
+	>;
+	readonly importClauseGroup$namedImports: Seat<
+		ArgsOf<Table['buildNamedImports']>,
+		ReturnType<typeof F.buildImportClauseGroup>
+	>;
 	readonly importClauseGroup: {
 		readonly namespaceImport: Routes<Table>['importClauseGroup$namespaceImport'];
 		readonly namedImports: Routes<Table>['importClauseGroup$namedImports'];
@@ -97,45 +99,32 @@ export interface Routes<Table extends AnyTable> {
 			readonly namedImports: Routes<Table>['importClauseDefaultImport$importClauseGroup$namedImports'];
 		};
 	};
-	readonly importClause$namespaceImport: <const A extends ArgsOf<Table['buildNamespaceImport']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamespaceImport']>>
-	) => ReturnType<typeof F.buildImportClause>;
-	readonly importClause$namedImports: <const A extends ArgsOf<Table['buildNamedImports']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNamedImports']>>
-	) => ReturnType<typeof F.buildImportClause>;
-	readonly importClause$defaultImport: <const A extends ArgsOf<Table['buildImportClauseDefaultImport']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildImportClauseDefaultImport']>>
-	) => ReturnType<typeof F.buildImportClause>;
-	readonly importClause$defaultImport$importClauseGroup: <
-		const A extends ArgsOf<
+	readonly importClause$namespaceImport: Seat<
+		ArgsOf<Table['buildNamespaceImport']>,
+		ReturnType<typeof F.buildImportClause>
+	>;
+	readonly importClause$namedImports: Seat<ArgsOf<Table['buildNamedImports']>, ReturnType<typeof F.buildImportClause>>;
+	readonly importClause$defaultImport: Seat<
+		ArgsOf<Table['buildImportClauseDefaultImport']>,
+		ReturnType<typeof F.buildImportClause>
+	>;
+	readonly importClause$defaultImport$importClauseGroup: Seat<
+		ArgsOf<
 			Routes<Table>['importClauseDefaultImport$importClauseGroup'] & {
 				readonly namespaceImport: Routes<Table>['importClauseDefaultImport$importClauseGroup$namespaceImport'];
 				readonly namedImports: Routes<Table>['importClauseDefaultImport$importClauseGroup$namedImports'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['importClauseDefaultImport$importClauseGroup'] & {
-						readonly namespaceImport: Routes<Table>['importClauseDefaultImport$importClauseGroup$namespaceImport'];
-						readonly namedImports: Routes<Table>['importClauseDefaultImport$importClauseGroup$namedImports'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildImportClause>;
-	readonly importClause$defaultImport$importClauseGroup$namespaceImport: <
-		const A extends ArgsOf<Routes<Table>['importClauseDefaultImport$importClauseGroup$namespaceImport']>
-	>(
-		...args: A &
-			RefuseUndeclared<A, ArgsOf<Routes<Table>['importClauseDefaultImport$importClauseGroup$namespaceImport']>>
-	) => ReturnType<typeof F.buildImportClause>;
-	readonly importClause$defaultImport$importClauseGroup$namedImports: <
-		const A extends ArgsOf<Routes<Table>['importClauseDefaultImport$importClauseGroup$namedImports']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['importClauseDefaultImport$importClauseGroup$namedImports']>>
-	) => ReturnType<typeof F.buildImportClause>;
+		>,
+		ReturnType<typeof F.buildImportClause>
+	>;
+	readonly importClause$defaultImport$importClauseGroup$namespaceImport: Seat<
+		ArgsOf<Routes<Table>['importClauseDefaultImport$importClauseGroup$namespaceImport']>,
+		ReturnType<typeof F.buildImportClause>
+	>;
+	readonly importClause$defaultImport$importClauseGroup$namedImports: Seat<
+		ArgsOf<Routes<Table>['importClauseDefaultImport$importClauseGroup$namedImports']>,
+		ReturnType<typeof F.buildImportClause>
+	>;
 	readonly importClause: Table['buildImportClause'] & {
 		readonly namespaceImport: Routes<Table>['importClause$namespaceImport'];
 		readonly namedImports: Routes<Table>['importClause$namedImports'];
@@ -178,12 +167,14 @@ export interface Routes<Table extends AnyTable> {
 		options?: OptionsArg<Table['buildBinaryExpression']>
 	) => ReturnType<Table['buildBinaryExpression']>;
 	readonly binaryExpression: Table['buildBinaryExpression'] & { readonly in: Routes<Table>['binaryExpression$in'] };
-	readonly classHeritage$extendsClause: <const A extends ArgsOf<Table['buildClassHeritageExtendsClause']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildClassHeritageExtendsClause']>>
-	) => ReturnType<typeof F.buildClassHeritage>;
-	readonly classHeritage$implementsClause: <const A extends ArgsOf<Table['buildImplementsClause']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildImplementsClause']>>
-	) => ReturnType<typeof F.buildClassHeritage>;
+	readonly classHeritage$extendsClause: Seat<
+		ArgsOf<Table['buildClassHeritageExtendsClause']>,
+		ReturnType<typeof F.buildClassHeritage>
+	>;
+	readonly classHeritage$implementsClause: Seat<
+		ArgsOf<Table['buildImplementsClause']>,
+		ReturnType<typeof F.buildClassHeritage>
+	>;
 	readonly classHeritage: Table['buildClassHeritage'] & {
 		readonly extendsClause: Routes<Table>['classHeritage$extendsClause'];
 		readonly implementsClause: Routes<Table>['classHeritage$implementsClause'];
@@ -216,87 +207,108 @@ export interface Routes<Table extends AnyTable> {
 		readonly parameter: Routes<Table>['arrowFunction$parameter'];
 		readonly callSignature: Routes<Table>['arrowFunction$callSignature'];
 	};
-	readonly lhsExpression$memberExpression: <const A extends ArgsOf<Table['buildMemberExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildMemberExpression']>>
-	) => ReturnType<typeof F.buildLhsExpression>;
-	readonly lhsExpression$subscriptExpression: <const A extends ArgsOf<Table['buildSubscriptExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSubscriptExpression']>>
-	) => ReturnType<typeof F.buildLhsExpression>;
-	readonly lhsExpression$nonNullExpression: <const A extends ArgsOf<Table['buildNonNullExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNonNullExpression']>>
-	) => ReturnType<typeof F.buildLhsExpression>;
+	readonly lhsExpression$memberExpression: Seat<
+		ArgsOf<Table['buildMemberExpression']>,
+		ReturnType<typeof F.buildLhsExpression>
+	>;
+	readonly lhsExpression$subscriptExpression: Seat<
+		ArgsOf<Table['buildSubscriptExpression']>,
+		ReturnType<typeof F.buildLhsExpression>
+	>;
+	readonly lhsExpression$nonNullExpression: Seat<
+		ArgsOf<Table['buildNonNullExpression']>,
+		ReturnType<typeof F.buildLhsExpression>
+	>;
 	readonly lhsExpression: Table['buildLhsExpression'] & {
 		readonly memberExpression: Routes<Table>['lhsExpression$memberExpression'];
 		readonly subscriptExpression: Routes<Table>['lhsExpression$subscriptExpression'];
 		readonly nonNullExpression: Routes<Table>['lhsExpression$nonNullExpression'];
 	};
-	readonly restPattern$memberExpression: <const A extends ArgsOf<Table['buildMemberExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildMemberExpression']>>
-	) => ReturnType<typeof F.buildRestPattern>;
-	readonly restPattern$subscriptExpression: <const A extends ArgsOf<Table['buildSubscriptExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSubscriptExpression']>>
-	) => ReturnType<typeof F.buildRestPattern>;
-	readonly restPattern$nonNullExpression: <const A extends ArgsOf<Table['buildNonNullExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNonNullExpression']>>
-	) => ReturnType<typeof F.buildRestPattern>;
+	readonly restPattern$memberExpression: Seat<
+		ArgsOf<Table['buildMemberExpression']>,
+		ReturnType<typeof F.buildRestPattern>
+	>;
+	readonly restPattern$subscriptExpression: Seat<
+		ArgsOf<Table['buildSubscriptExpression']>,
+		ReturnType<typeof F.buildRestPattern>
+	>;
+	readonly restPattern$nonNullExpression: Seat<
+		ArgsOf<Table['buildNonNullExpression']>,
+		ReturnType<typeof F.buildRestPattern>
+	>;
 	readonly restPattern: Table['buildRestPattern'] & {
 		readonly memberExpression: Routes<Table>['restPattern$memberExpression'];
 		readonly subscriptExpression: Routes<Table>['restPattern$subscriptExpression'];
 		readonly nonNullExpression: Routes<Table>['restPattern$nonNullExpression'];
 	};
-	readonly ambientDeclaration$function: <const A extends ArgsOf<Table['buildFunctionDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFunctionDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$generatorFunction: <const A extends ArgsOf<Table['buildGeneratorFunctionDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildGeneratorFunctionDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$class: <const A extends ArgsOf<Table['buildClassDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildClassDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$lexical: <const A extends ArgsOf<Table['buildLexicalDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLexicalDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$variable: <const A extends ArgsOf<Table['buildVariableDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildVariableDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$using: <const A extends ArgsOf<Table['buildUsingDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUsingDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$functionSignature: <const A extends ArgsOf<Table['buildFunctionSignature']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFunctionSignature']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$abstractClass: <const A extends ArgsOf<Table['buildAbstractClassDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAbstractClassDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$internalModule: <const A extends ArgsOf<Table['buildInternalModule']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildInternalModule']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$typeAlias: <const A extends ArgsOf<Table['buildTypeAliasDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTypeAliasDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$enum: <const A extends ArgsOf<Table['buildEnumDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildEnumDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$interface: <const A extends ArgsOf<Table['buildInterfaceDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildInterfaceDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$importAlias: <const A extends ArgsOf<Table['buildImportAlias']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildImportAlias']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$ambient: <const A extends ArgsOf<Table['buildAmbientDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAmbientDeclaration']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$global: <const A extends ArgsOf<Table['buildAmbientDeclarationGlobal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAmbientDeclarationGlobal']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$using$automaticSemicolon: <
-		const A extends ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
-	readonly ambientDeclaration$using$semi: <const A extends ArgsOf<Routes<Table>['usingDeclaration$semi']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['usingDeclaration$semi']>>
-	) => ReturnType<typeof F.buildAmbientDeclaration>;
+	readonly ambientDeclaration$function: Seat<
+		ArgsOf<Table['buildFunctionDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$generatorFunction: Seat<
+		ArgsOf<Table['buildGeneratorFunctionDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$class: Seat<
+		ArgsOf<Table['buildClassDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$lexical: Seat<
+		ArgsOf<Table['buildLexicalDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$variable: Seat<
+		ArgsOf<Table['buildVariableDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$using: Seat<
+		ArgsOf<Table['buildUsingDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$functionSignature: Seat<
+		ArgsOf<Table['buildFunctionSignature']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$abstractClass: Seat<
+		ArgsOf<Table['buildAbstractClassDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$internalModule: Seat<
+		ArgsOf<Table['buildInternalModule']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$typeAlias: Seat<
+		ArgsOf<Table['buildTypeAliasDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$enum: Seat<
+		ArgsOf<Table['buildEnumDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$interface: Seat<
+		ArgsOf<Table['buildInterfaceDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$importAlias: Seat<
+		ArgsOf<Table['buildImportAlias']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$ambient: Seat<
+		ArgsOf<Table['buildAmbientDeclaration']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$global: Seat<
+		ArgsOf<Table['buildAmbientDeclarationGlobal']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$using$automaticSemicolon: Seat<
+		ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
+	readonly ambientDeclaration$using$semi: Seat<
+		ArgsOf<Routes<Table>['usingDeclaration$semi']>,
+		ReturnType<typeof F.buildAmbientDeclaration>
+	>;
 	readonly ambientDeclaration: Table['buildAmbientDeclaration'] & {
 		readonly function: Routes<Table>['ambientDeclaration$function'];
 		readonly generatorFunction: Routes<Table>['ambientDeclaration$generatorFunction'];
@@ -435,11 +447,10 @@ export interface Routes<Table extends AnyTable> {
 	readonly importSpecifierAs: Table['buildImportSpecifierAs'] & {
 		readonly default: Routes<Table>['importSpecifierAs$default'];
 	};
-	readonly parenthesizedExpressionSequence$sequenceExpression: <
-		const A extends ArgsOf<Table['buildSequenceExpression']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSequenceExpression']>>
-	) => ReturnType<typeof F.buildParenthesizedExpressionSequence>;
+	readonly parenthesizedExpressionSequence$sequenceExpression: Seat<
+		ArgsOf<Table['buildSequenceExpression']>,
+		ReturnType<typeof F.buildParenthesizedExpressionSequence>
+	>;
 	readonly parenthesizedExpressionSequence: Table['buildParenthesizedExpressionSequence'] & {
 		readonly sequenceExpression: Routes<Table>['parenthesizedExpressionSequence$sequenceExpression'];
 	};
@@ -502,196 +513,159 @@ export interface Routes<Table extends AnyTable> {
 		readonly automaticSemicolon: Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon'];
 		readonly semi: Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$semi'];
 	};
-	readonly exportStatementDefaultDeclarationDefaultKw$function: <
-		const A extends ArgsOf<Table['buildFunctionDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFunctionDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$generatorFunction: <
-		const A extends ArgsOf<Table['buildGeneratorFunctionDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildGeneratorFunctionDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$class: <const A extends ArgsOf<Table['buildClassDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildClassDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$lexical: <
-		const A extends ArgsOf<Table['buildLexicalDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLexicalDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$variable: <
-		const A extends ArgsOf<Table['buildVariableDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildVariableDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$using: <const A extends ArgsOf<Table['buildUsingDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUsingDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$functionSignature: <
-		const A extends ArgsOf<Table['buildFunctionSignature']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFunctionSignature']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$abstractClass: <
-		const A extends ArgsOf<Table['buildAbstractClassDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAbstractClassDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$module: <const A extends ArgsOf<Table['buildModule']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildModule']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$internalModule: <
-		const A extends ArgsOf<Table['buildInternalModule']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildInternalModule']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$typeAlias: <
-		const A extends ArgsOf<Table['buildTypeAliasDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTypeAliasDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$enum: <const A extends ArgsOf<Table['buildEnumDeclaration']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildEnumDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$interface: <
-		const A extends ArgsOf<Table['buildInterfaceDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildInterfaceDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$importAlias: <const A extends ArgsOf<Table['buildImportAlias']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildImportAlias']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient: <
-		const A extends ArgsOf<Table['buildAmbientDeclaration']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAmbientDeclaration']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$value: <
-		const A extends ArgsOf<Table['buildExportStatementDefaultDeclarationDefaultKwValue']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildExportStatementDefaultDeclarationDefaultKwValue']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon: <
-		const A extends ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$using$semi: <
-		const A extends ArgsOf<Routes<Table>['usingDeclaration$semi']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['usingDeclaration$semi']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$function: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$function']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$function']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$generatorFunction']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$generatorFunction']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$class: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$class']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$class']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$lexical: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$lexical']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$lexical']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$variable: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$variable']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$variable']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using: <
-		const A extends ArgsOf<
+	readonly exportStatementDefaultDeclarationDefaultKw$function: Seat<
+		ArgsOf<Table['buildFunctionDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$generatorFunction: Seat<
+		ArgsOf<Table['buildGeneratorFunctionDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$class: Seat<
+		ArgsOf<Table['buildClassDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$lexical: Seat<
+		ArgsOf<Table['buildLexicalDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$variable: Seat<
+		ArgsOf<Table['buildVariableDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$using: Seat<
+		ArgsOf<Table['buildUsingDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$functionSignature: Seat<
+		ArgsOf<Table['buildFunctionSignature']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$abstractClass: Seat<
+		ArgsOf<Table['buildAbstractClassDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$module: Seat<
+		ArgsOf<Table['buildModule']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$internalModule: Seat<
+		ArgsOf<Table['buildInternalModule']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$typeAlias: Seat<
+		ArgsOf<Table['buildTypeAliasDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$enum: Seat<
+		ArgsOf<Table['buildEnumDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$interface: Seat<
+		ArgsOf<Table['buildInterfaceDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$importAlias: Seat<
+		ArgsOf<Table['buildImportAlias']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient: Seat<
+		ArgsOf<Table['buildAmbientDeclaration']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$value: Seat<
+		ArgsOf<Table['buildExportStatementDefaultDeclarationDefaultKwValue']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$using$automaticSemicolon: Seat<
+		ArgsOf<Routes<Table>['usingDeclaration$automaticSemicolon']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$using$semi: Seat<
+		ArgsOf<Routes<Table>['usingDeclaration$semi']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$function: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$function']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$generatorFunction: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$generatorFunction']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$class: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$class']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$lexical: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$lexical']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$variable: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$variable']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using: Seat<
+		ArgsOf<
 			Routes<Table>['ambientDeclaration$using'] & {
 				readonly automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'];
 				readonly semi: Routes<Table>['ambientDeclaration$using$semi'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['ambientDeclaration$using'] & {
-						readonly automaticSemicolon: Routes<Table>['ambientDeclaration$using$automaticSemicolon'];
-						readonly semi: Routes<Table>['ambientDeclaration$using$semi'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$functionSignature']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$functionSignature']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$abstractClass']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$abstractClass']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$internalModule: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$internalModule']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$internalModule']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$typeAlias']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$typeAlias']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$enum: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$enum']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$enum']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$interface: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$interface']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$interface']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$importAlias: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$importAlias']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$importAlias']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$ambient: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$ambient']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$ambient']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$global: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$global']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$global']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$using$automaticSemicolon']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$using$automaticSemicolon']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$semi: <
-		const A extends ArgsOf<Routes<Table>['ambientDeclaration$using$semi']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['ambientDeclaration$using$semi']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon: <
-		const A extends ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon']>
-	>(
-		...args: A &
-			RefuseUndeclared<A, ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
-	readonly exportStatementDefaultDeclarationDefaultKw$value$semi: <
-		const A extends ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$semi']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$semi']>>
-	) => ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>;
+		>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$functionSignature: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$functionSignature']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$abstractClass: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$abstractClass']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$internalModule: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$internalModule']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$typeAlias: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$typeAlias']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$enum: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$enum']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$interface: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$interface']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$importAlias: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$importAlias']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$ambient: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$ambient']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$global: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$global']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$automaticSemicolon: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$using$automaticSemicolon']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$ambient$using$semi: Seat<
+		ArgsOf<Routes<Table>['ambientDeclaration$using$semi']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$value$automaticSemicolon: Seat<
+		ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$automaticSemicolon']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
+	readonly exportStatementDefaultDeclarationDefaultKw$value$semi: Seat<
+		ArgsOf<Routes<Table>['exportStatementDefaultDeclarationDefaultKwValue$semi']>,
+		ReturnType<typeof F.buildExportStatementDefaultDeclarationDefaultKw>
+	>;
 	readonly exportStatementDefaultDeclarationDefaultKw: {
 		readonly function: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$function'];
 		readonly generatorFunction: Routes<Table>['exportStatementDefaultDeclarationDefaultKw$generatorFunction'];
@@ -1885,11 +1859,10 @@ export interface Routes<Table extends AnyTable> {
 			};
 		};
 	};
-	readonly formalParametersSetAccessorSignature$elements: <
-		const A extends ArgsOf<Table['buildFormalParametersElementsSetAccessorSignature']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildFormalParametersElementsSetAccessorSignature']>>
-	) => ReturnType<typeof F.buildFormalParametersSetAccessorSignature>;
+	readonly formalParametersSetAccessorSignature$elements: Seat<
+		ArgsOf<Table['buildFormalParametersElementsSetAccessorSignature']>,
+		ReturnType<typeof F.buildFormalParametersSetAccessorSignature>
+	>;
 	readonly formalParametersSetAccessorSignature: Table['buildFormalParametersSetAccessorSignature'] & {
 		readonly elements: Routes<Table>['formalParametersSetAccessorSignature$elements'];
 	};
@@ -1938,59 +1911,74 @@ export interface Routes<Table extends AnyTable> {
 		readonly postfix: Table['buildUpdateExpressionPostfix'];
 		readonly prefix: Table['buildUpdateExpressionPrefix'];
 	};
-	readonly yieldExpressionDelegate$as: <const A extends ArgsOf<Table['buildAsExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAsExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$satisfies: <const A extends ArgsOf<Table['buildSatisfiesExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildSatisfiesExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$instantiation: <const A extends ArgsOf<Table['buildInstantiationExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildInstantiationExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$internalModule: <const A extends ArgsOf<Table['buildInternalModule']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildInternalModule']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$typeAssertion: <const A extends ArgsOf<Table['buildTypeAssertion']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTypeAssertion']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$assignment: <const A extends ArgsOf<Table['buildAssignmentExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAssignmentExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$augmentedAssignment: <
-		const A extends ArgsOf<Table['buildAugmentedAssignmentExpression']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAugmentedAssignmentExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$await: <const A extends ArgsOf<Table['buildAwaitExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAwaitExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$unary: <const A extends ArgsOf<Table['buildUnaryExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnaryExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$binary: <const A extends ArgsOf<Table['buildBinaryExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildBinaryExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$ternary: <const A extends ArgsOf<Table['buildTernaryExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildTernaryExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$update: <const A extends ArgsOf<Routes<Table>['updateExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['updateExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$new: <const A extends ArgsOf<Table['buildNewExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNewExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$yield: <const A extends ArgsOf<Table['buildYieldExpression']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildYieldExpression']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$binary$in: <const A extends ArgsOf<Routes<Table>['binaryExpression$in']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['binaryExpression$in']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$update$postfix: <const A extends ArgsOf<Table['buildUpdateExpressionPostfix']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUpdateExpressionPostfix']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
-	readonly yieldExpressionDelegate$update$prefix: <const A extends ArgsOf<Table['buildUpdateExpressionPrefix']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUpdateExpressionPrefix']>>
-	) => ReturnType<typeof F.buildYieldExpressionDelegate>;
+	readonly yieldExpressionDelegate$as: Seat<
+		ArgsOf<Table['buildAsExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$satisfies: Seat<
+		ArgsOf<Table['buildSatisfiesExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$instantiation: Seat<
+		ArgsOf<Table['buildInstantiationExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$internalModule: Seat<
+		ArgsOf<Table['buildInternalModule']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$typeAssertion: Seat<
+		ArgsOf<Table['buildTypeAssertion']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$assignment: Seat<
+		ArgsOf<Table['buildAssignmentExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$augmentedAssignment: Seat<
+		ArgsOf<Table['buildAugmentedAssignmentExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$await: Seat<
+		ArgsOf<Table['buildAwaitExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$unary: Seat<
+		ArgsOf<Table['buildUnaryExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$binary: Seat<
+		ArgsOf<Table['buildBinaryExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$ternary: Seat<
+		ArgsOf<Table['buildTernaryExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$update: Seat<
+		ArgsOf<Routes<Table>['updateExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$new: Seat<
+		ArgsOf<Table['buildNewExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$yield: Seat<
+		ArgsOf<Table['buildYieldExpression']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$binary$in: Seat<
+		ArgsOf<Routes<Table>['binaryExpression$in']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$update$postfix: Seat<
+		ArgsOf<Table['buildUpdateExpressionPostfix']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
+	readonly yieldExpressionDelegate$update$prefix: Seat<
+		ArgsOf<Table['buildUpdateExpressionPrefix']>,
+		ReturnType<typeof F.buildYieldExpressionDelegate>
+	>;
 	readonly yieldExpressionDelegate: {
 		readonly as: Routes<Table>['yieldExpressionDelegate$as'];
 		readonly satisfies: Routes<Table>['yieldExpressionDelegate$satisfies'];
@@ -2012,108 +2000,87 @@ export interface Routes<Table extends AnyTable> {
 		readonly new: Routes<Table>['yieldExpressionDelegate$new'];
 		readonly yield: Routes<Table>['yieldExpressionDelegate$yield'];
 	};
-	readonly yieldExpression$delegate: <const A extends ArgsOf<Table['buildYieldExpressionDelegate']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildYieldExpressionDelegate']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$as: <const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$as']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$as']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$satisfies: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$satisfies']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$satisfies']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$instantiation: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$instantiation']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$instantiation']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$internalModule: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$internalModule']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$internalModule']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$typeAssertion: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$typeAssertion']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$typeAssertion']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$assignment: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$assignment']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$assignment']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$augmentedAssignment: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$augmentedAssignment']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$augmentedAssignment']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$await: <const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$await']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$await']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$unary: <const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$unary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$unary']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$binary: <
-		const A extends ArgsOf<
+	readonly yieldExpression$delegate: Seat<
+		ArgsOf<Table['buildYieldExpressionDelegate']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$as: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$as']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$satisfies: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$satisfies']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$instantiation: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$instantiation']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$internalModule: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$internalModule']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$typeAssertion: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$typeAssertion']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$assignment: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$assignment']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$augmentedAssignment: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$augmentedAssignment']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$await: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$await']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$unary: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$unary']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$binary: Seat<
+		ArgsOf<
 			Routes<Table>['yieldExpressionDelegate$binary'] & {
 				readonly in: Routes<Table>['yieldExpressionDelegate$binary$in'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['yieldExpressionDelegate$binary'] & {
-						readonly in: Routes<Table>['yieldExpressionDelegate$binary$in'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$ternary: <const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$ternary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$ternary']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$update: <
-		const A extends ArgsOf<
+		>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$ternary: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$ternary']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$update: Seat<
+		ArgsOf<
 			Routes<Table>['yieldExpressionDelegate$update'] & {
 				readonly postfix: Routes<Table>['yieldExpressionDelegate$update$postfix'];
 				readonly prefix: Routes<Table>['yieldExpressionDelegate$update$prefix'];
 			}
-		>
-	>(
-		...args: A &
-			RefuseUndeclared<
-				A,
-				ArgsOf<
-					Routes<Table>['yieldExpressionDelegate$update'] & {
-						readonly postfix: Routes<Table>['yieldExpressionDelegate$update$postfix'];
-						readonly prefix: Routes<Table>['yieldExpressionDelegate$update$prefix'];
-					}
-				>
-			>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$new: <const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$new']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$new']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$yield: <const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$yield']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$yield']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$binary$in: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$binary$in']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$binary$in']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$update$postfix: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$update$postfix']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$update$postfix']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
-	readonly yieldExpression$delegate$update$prefix: <
-		const A extends ArgsOf<Routes<Table>['yieldExpressionDelegate$update$prefix']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['yieldExpressionDelegate$update$prefix']>>
-	) => ReturnType<typeof F.buildYieldExpression>;
+		>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$new: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$new']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$yield: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$yield']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$binary$in: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$binary$in']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$update$postfix: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$update$postfix']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
+	readonly yieldExpression$delegate$update$prefix: Seat<
+		ArgsOf<Routes<Table>['yieldExpressionDelegate$update$prefix']>,
+		ReturnType<typeof F.buildYieldExpression>
+	>;
 	readonly yieldExpression: Table['buildYieldExpression'] & {
 		readonly delegate: Routes<Table>['yieldExpression$delegate'] & {
 			readonly as: Routes<Table>['yieldExpression$delegate$as'];
@@ -2191,39 +2158,26 @@ export interface Routes<Table extends AnyTable> {
 		readonly octal: typeof F.buildNumberBigintOctal;
 		readonly decimal: typeof F.buildNumberBigintDecimal;
 	};
-	readonly literalType$negativeNumber: <const A extends ArgsOf<Table['buildLiteralTypeNegativeNumber']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLiteralTypeNegativeNumber']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$hex: <const A extends ArgsOf<Table['buildNumberHex']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberHex']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$floatPoint: <const A extends ArgsOf<Table['buildNumberFloatPoint']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberFloatPoint']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$floatLeadingPoint: <const A extends ArgsOf<Table['buildNumberFloatLeadingPoint']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberFloatLeadingPoint']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$floatScientific: <const A extends ArgsOf<Table['buildNumberFloatScientific']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberFloatScientific']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$decimal: <const A extends ArgsOf<Table['buildNumberDecimal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberDecimal']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$binary: <const A extends ArgsOf<Table['buildNumberBinary']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberBinary']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$octal: <const A extends ArgsOf<Table['buildNumberOctal']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildNumberOctal']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$bigint: <const A extends ArgsOf<Routes<Table>['numberBigint']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['numberBigint']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$double: <const A extends ArgsOf<Table['buildStringDouble']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildStringDouble']>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$single: <const A extends ArgsOf<Table['buildStringSingle']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildStringSingle']>>
-	) => ReturnType<typeof F.buildLiteralType>;
+	readonly literalType$negativeNumber: Seat<
+		ArgsOf<Table['buildLiteralTypeNegativeNumber']>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
+	readonly literalType$hex: Seat<ArgsOf<Table['buildNumberHex']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$floatPoint: Seat<ArgsOf<Table['buildNumberFloatPoint']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$floatLeadingPoint: Seat<
+		ArgsOf<Table['buildNumberFloatLeadingPoint']>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
+	readonly literalType$floatScientific: Seat<
+		ArgsOf<Table['buildNumberFloatScientific']>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
+	readonly literalType$decimal: Seat<ArgsOf<Table['buildNumberDecimal']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$binary: Seat<ArgsOf<Table['buildNumberBinary']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$octal: Seat<ArgsOf<Table['buildNumberOctal']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$bigint: Seat<ArgsOf<Routes<Table>['numberBigint']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$double: Seat<ArgsOf<Table['buildStringDouble']>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$single: Seat<ArgsOf<Table['buildStringSingle']>, ReturnType<typeof F.buildLiteralType>>;
 	readonly literalType$true: (options?: OptionsArg<Table['buildLiteralType']>) => ReturnType<Table['buildLiteralType']>;
 	readonly literalType$false: (
 		options?: OptionsArg<Table['buildLiteralType']>
@@ -2232,18 +2186,19 @@ export interface Routes<Table extends AnyTable> {
 	readonly literalType$undefined: (
 		options?: OptionsArg<Table['buildLiteralType']>
 	) => ReturnType<Table['buildLiteralType']>;
-	readonly literalType$bigint$hex: <const A extends ArgsOf<typeof F.buildNumberBigintHex>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintHex>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$bigint$binary: <const A extends ArgsOf<typeof F.buildNumberBigintBinary>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintBinary>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$bigint$octal: <const A extends ArgsOf<typeof F.buildNumberBigintOctal>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintOctal>>
-	) => ReturnType<typeof F.buildLiteralType>;
-	readonly literalType$bigint$decimal: <const A extends ArgsOf<typeof F.buildNumberBigintDecimal>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<typeof F.buildNumberBigintDecimal>>
-	) => ReturnType<typeof F.buildLiteralType>;
+	readonly literalType$bigint$hex: Seat<ArgsOf<typeof F.buildNumberBigintHex>, ReturnType<typeof F.buildLiteralType>>;
+	readonly literalType$bigint$binary: Seat<
+		ArgsOf<typeof F.buildNumberBigintBinary>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
+	readonly literalType$bigint$octal: Seat<
+		ArgsOf<typeof F.buildNumberBigintOctal>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
+	readonly literalType$bigint$decimal: Seat<
+		ArgsOf<typeof F.buildNumberBigintDecimal>,
+		ReturnType<typeof F.buildLiteralType>
+	>;
 	readonly literalType: Table['buildLiteralType'] & {
 		readonly negativeNumber: Routes<Table>['literalType$negativeNumber'];
 		readonly hex: Routes<Table>['literalType$hex'];

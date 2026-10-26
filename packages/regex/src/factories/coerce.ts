@@ -5,7 +5,7 @@ import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../kinds.js';
 import { KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode, Admit, PlainBuilders, RefuseUndeclared } from '@sittir/types';
+import type { AnyUntypedNode, Admit, PlainBuilders, RefuseUndeclared, Seat } from '@sittir/types';
 import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
@@ -20,64 +20,6 @@ const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
-
-export const _fromMap = {
-	pattern: coerceToPattern,
-	alternation: coerceToAlternation,
-	term: coerceToTerm,
-	any_character: coerceToAnyCharacter,
-	start_assertion: coerceToStartAssertion,
-	end_assertion: coerceToEndAssertion,
-	boundary_assertion: coerceToBoundaryAssertion,
-	non_boundary_assertion: coerceToNonBoundaryAssertion,
-	lookaround_assertion: coerceToLookaroundAssertion,
-	lookahead_assertion: coerceToLookaheadAssertion,
-	lookbehind_assertion: coerceToLookbehindAssertion,
-	pattern_character: coerceToPatternCharacter,
-	character_class: coerceToCharacterClass,
-	posix_character_class: coerceToPosixCharacterClass,
-	posix_class_name: coerceToPosixClassName,
-	class_range: coerceToClassRange,
-	class_character: coerceToClassCharacter,
-	anonymous_capturing_group: coerceToAnonymousCapturingGroup,
-	named_capturing_group: coerceToNamedCapturingGroup,
-	non_capturing_group: coerceToNonCapturingGroup,
-	flags: coerceToFlags,
-	zero_or_more: coerceToZeroOrMore,
-	one_or_more: coerceToOneOrMore,
-	optional: coerceToOptional,
-	count_quantifier: coerceToCountQuantifier,
-	backreference_escape: coerceToBackreferenceEscape,
-	named_group_backreference: coerceToNamedGroupBackreference,
-	decimal_escape: coerceToDecimalEscape,
-	character_class_escape: coerceToCharacterClassEscape,
-	unicode_character_escape: coerceToUnicodeCharacterEscape,
-	unicode_property_value_expression: coerceToUnicodePropertyValueExpression,
-	unicode_property_value: coerceToUnicodePropertyValue,
-	control_escape: coerceToControlEscape,
-	control_letter_escape: coerceToControlLetterEscape,
-	identity_escape: coerceToIdentityEscape,
-	group_name: coerceToGroupName,
-	decimal_digits: coerceToDecimalDigits,
-	term_group: coerceToTermGroup,
-	count_quantifier_group: coerceToCountQuantifierGroup,
-	count_quantifier_arm: coerceToCountQuantifierArm,
-	character_class_escape_arm: coerceToCharacterClassEscapeArm,
-	unicode_property_value_expression_group: coerceToUnicodePropertyValueExpressionGroup,
-	character_class_escape_text1: coerceToCharacterClassEscapeText1,
-	character_class_escape_text2: coerceToCharacterClassEscapeText2,
-	negation: coerceToNegation,
-	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
-	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,
-	inline_flags_group_disable: coerceToInlineFlagsGroupDisable,
-	_tight: coerceToTight,
-	_newline: coerceToNewline,
-	_blankline: coerceToBlankline,
-	_double_blankline: coerceToDoubleBlankline,
-	lazy: coerceToLazy,
-	unicode_property_name: coerceToUnicodePropertyName
-} as const;
-export type _FromMap = typeof _fromMap;
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
 interface _LeafEntry {
@@ -689,10 +631,9 @@ export function coerceToPattern(input: T.Pattern.Loose): ReturnType<typeof F.bui
 	);
 }
 
-export function coerceToAlternation<const A extends T.Alternation.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Alternation.LooseArgs>
-): ReturnType<typeof F.buildAlternation>;
-export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnType<typeof F.buildAlternation> {
+export const coerceToAlternation: Seat<T.Alternation.LooseArgs, ReturnType<typeof F.buildAlternation>> = (
+	...input: T.Alternation.LooseArgs
+): ReturnType<typeof F.buildAlternation> => {
 	currentHandle()?.admit(TSKindId.Alternation, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Alternation)) {
 		const data = input[0];
@@ -713,12 +654,11 @@ export function coerceToAlternation(...input: T.Alternation.LooseArgs): ReturnTy
 	return F.buildAlternation(
 		...(_resolveManyBranch<T.Term>(_elems, 'term') as unknown as Parameters<typeof F.buildAlternation>)
 	);
-}
+};
 
-export function coerceToTerm<const A extends T.Term.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Term.LooseArgs>
-): ReturnType<typeof F.buildTerm>;
-export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.buildTerm> {
+export const coerceToTerm: Seat<T.Term.LooseArgs, ReturnType<typeof F.buildTerm>> = (
+	...input: T.Term.LooseArgs
+): ReturnType<typeof F.buildTerm> => {
 	currentHandle()?.admit(TSKindId.Term, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Term)) {
 		const data = input[0];
@@ -739,7 +679,7 @@ export function coerceToTerm(...input: T.Term.LooseArgs): ReturnType<typeof F.bu
 	return F.buildTerm(
 		...(_resolveManyBranch<T.TermGroup>(_elems, 'term_group') as unknown as Parameters<typeof F.buildTerm>)
 	);
-}
+};
 
 export function coerceToAnyCharacter(_input?: T.AnyCharacter.Loose): typeof F.buildAnyCharacter {
 	return F.buildAnyCharacter;
@@ -1646,3 +1586,116 @@ export function coerceToUnicodePropertyName(
 	if (typeof input !== 'string') return input as unknown as ReturnType<typeof F.buildUnicodePropertyName>;
 	return F.buildUnicodePropertyName(input as Parameters<typeof F.buildUnicodePropertyName>[0]);
 }
+
+export interface _FromMap {
+	readonly pattern: typeof coerceToPattern;
+	readonly alternation: typeof coerceToAlternation;
+	readonly term: typeof coerceToTerm;
+	readonly any_character: typeof coerceToAnyCharacter;
+	readonly start_assertion: typeof coerceToStartAssertion;
+	readonly end_assertion: typeof coerceToEndAssertion;
+	readonly boundary_assertion: typeof coerceToBoundaryAssertion;
+	readonly non_boundary_assertion: typeof coerceToNonBoundaryAssertion;
+	readonly lookaround_assertion: typeof coerceToLookaroundAssertion;
+	readonly lookahead_assertion: typeof coerceToLookaheadAssertion;
+	readonly lookbehind_assertion: typeof coerceToLookbehindAssertion;
+	readonly pattern_character: typeof coerceToPatternCharacter;
+	readonly character_class: typeof coerceToCharacterClass;
+	readonly posix_character_class: typeof coerceToPosixCharacterClass;
+	readonly posix_class_name: typeof coerceToPosixClassName;
+	readonly class_range: typeof coerceToClassRange;
+	readonly class_character: typeof coerceToClassCharacter;
+	readonly anonymous_capturing_group: typeof coerceToAnonymousCapturingGroup;
+	readonly named_capturing_group: typeof coerceToNamedCapturingGroup;
+	readonly non_capturing_group: typeof coerceToNonCapturingGroup;
+	readonly flags: typeof coerceToFlags;
+	readonly zero_or_more: typeof coerceToZeroOrMore;
+	readonly one_or_more: typeof coerceToOneOrMore;
+	readonly optional: typeof coerceToOptional;
+	readonly count_quantifier: typeof coerceToCountQuantifier;
+	readonly backreference_escape: typeof coerceToBackreferenceEscape;
+	readonly named_group_backreference: typeof coerceToNamedGroupBackreference;
+	readonly decimal_escape: typeof coerceToDecimalEscape;
+	readonly character_class_escape: typeof coerceToCharacterClassEscape;
+	readonly unicode_character_escape: typeof coerceToUnicodeCharacterEscape;
+	readonly unicode_property_value_expression: typeof coerceToUnicodePropertyValueExpression;
+	readonly unicode_property_value: typeof coerceToUnicodePropertyValue;
+	readonly control_escape: typeof coerceToControlEscape;
+	readonly control_letter_escape: typeof coerceToControlLetterEscape;
+	readonly identity_escape: typeof coerceToIdentityEscape;
+	readonly group_name: typeof coerceToGroupName;
+	readonly decimal_digits: typeof coerceToDecimalDigits;
+	readonly term_group: typeof coerceToTermGroup;
+	readonly count_quantifier_group: typeof coerceToCountQuantifierGroup;
+	readonly count_quantifier_arm: typeof coerceToCountQuantifierArm;
+	readonly character_class_escape_arm: typeof coerceToCharacterClassEscapeArm;
+	readonly unicode_property_value_expression_group: typeof coerceToUnicodePropertyValueExpressionGroup;
+	readonly character_class_escape_text1: typeof coerceToCharacterClassEscapeText1;
+	readonly character_class_escape_text2: typeof coerceToCharacterClassEscapeText2;
+	readonly negation: typeof coerceToNegation;
+	readonly inline_flags_group_enable: typeof coerceToInlineFlagsGroupEnable;
+	readonly inline_flags_group_toggle: typeof coerceToInlineFlagsGroupToggle;
+	readonly inline_flags_group_disable: typeof coerceToInlineFlagsGroupDisable;
+	readonly _tight: typeof coerceToTight;
+	readonly _newline: typeof coerceToNewline;
+	readonly _blankline: typeof coerceToBlankline;
+	readonly _double_blankline: typeof coerceToDoubleBlankline;
+	readonly lazy: typeof coerceToLazy;
+	readonly unicode_property_name: typeof coerceToUnicodePropertyName;
+}
+export const _fromMap: _FromMap = {
+	pattern: coerceToPattern,
+	alternation: coerceToAlternation,
+	term: coerceToTerm,
+	any_character: coerceToAnyCharacter,
+	start_assertion: coerceToStartAssertion,
+	end_assertion: coerceToEndAssertion,
+	boundary_assertion: coerceToBoundaryAssertion,
+	non_boundary_assertion: coerceToNonBoundaryAssertion,
+	lookaround_assertion: coerceToLookaroundAssertion,
+	lookahead_assertion: coerceToLookaheadAssertion,
+	lookbehind_assertion: coerceToLookbehindAssertion,
+	pattern_character: coerceToPatternCharacter,
+	character_class: coerceToCharacterClass,
+	posix_character_class: coerceToPosixCharacterClass,
+	posix_class_name: coerceToPosixClassName,
+	class_range: coerceToClassRange,
+	class_character: coerceToClassCharacter,
+	anonymous_capturing_group: coerceToAnonymousCapturingGroup,
+	named_capturing_group: coerceToNamedCapturingGroup,
+	non_capturing_group: coerceToNonCapturingGroup,
+	flags: coerceToFlags,
+	zero_or_more: coerceToZeroOrMore,
+	one_or_more: coerceToOneOrMore,
+	optional: coerceToOptional,
+	count_quantifier: coerceToCountQuantifier,
+	backreference_escape: coerceToBackreferenceEscape,
+	named_group_backreference: coerceToNamedGroupBackreference,
+	decimal_escape: coerceToDecimalEscape,
+	character_class_escape: coerceToCharacterClassEscape,
+	unicode_character_escape: coerceToUnicodeCharacterEscape,
+	unicode_property_value_expression: coerceToUnicodePropertyValueExpression,
+	unicode_property_value: coerceToUnicodePropertyValue,
+	control_escape: coerceToControlEscape,
+	control_letter_escape: coerceToControlLetterEscape,
+	identity_escape: coerceToIdentityEscape,
+	group_name: coerceToGroupName,
+	decimal_digits: coerceToDecimalDigits,
+	term_group: coerceToTermGroup,
+	count_quantifier_group: coerceToCountQuantifierGroup,
+	count_quantifier_arm: coerceToCountQuantifierArm,
+	character_class_escape_arm: coerceToCharacterClassEscapeArm,
+	unicode_property_value_expression_group: coerceToUnicodePropertyValueExpressionGroup,
+	character_class_escape_text1: coerceToCharacterClassEscapeText1,
+	character_class_escape_text2: coerceToCharacterClassEscapeText2,
+	negation: coerceToNegation,
+	inline_flags_group_enable: coerceToInlineFlagsGroupEnable,
+	inline_flags_group_toggle: coerceToInlineFlagsGroupToggle,
+	inline_flags_group_disable: coerceToInlineFlagsGroupDisable,
+	_tight: coerceToTight,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	lazy: coerceToLazy,
+	unicode_property_name: coerceToUnicodePropertyName
+};

@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, GrammarTypeMap } from '@sittir/types';
+import type { AnyUntypedNode, EmptyForm, GrammarTypeMap } from '@sittir/types';
 import { isNode as isAnyNode, nodeText } from './utils.ts';
 import { sidesOf } from './node-data.ts';
 
@@ -171,6 +171,6 @@ export function delegate<F extends (...args: never[]) => unknown>(builder: F): N
 	return ((...args: never[]) => builder(...args)) as F;
 }
 
-export function withEmptyForm<Empty, F extends (...args: never[]) => unknown>(builder: F): (() => Empty) & F {
-	return builder as (() => Empty) & F;
+export function withEmptyForm<Empty, F extends (...args: never[]) => unknown>(builder: F): EmptyForm<Empty, F> {
+	return builder as EmptyForm<Empty, F>;
 }

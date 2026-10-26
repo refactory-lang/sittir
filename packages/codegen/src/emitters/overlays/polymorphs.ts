@@ -11,6 +11,7 @@ import {
 	functionTypeOf,
 	plainParams,
 	refusingParam,
+	seatDeclaration,
 	withTrailingParam,
 	type RefusingParams
 } from '../shared.ts';
@@ -23,7 +24,6 @@ import {
 	type BuiltTypeSurface
 } from '../factories.ts';
 import { kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
-import { emptyForms } from '../../compiler/model/trivia.ts';
 import {
 	armConfigKeys,
 	seatsConfigChild,
@@ -402,13 +402,10 @@ function composeSeats(
 		);
 	}
 	const name = seatedKeyOf(wireSet.parentKey);
-	const empty = emptyForms(nodeMap).get(wireSet.node.kind);
-	const seated = (argsType: string, returnType: string, expr: string): string[] =>
-		empty === undefined
-			? [`export const ${name}: Seat<${argsType}, ${returnType}> = ${expr};`]
-			: [`export const ${name} = withEmptyForm<T.${empty.typeName}, Seat<${argsType}, ${returnType}>>(${expr});`];
-	out.seated.strict.push(...seated(`T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, strictExpr));
-	out.seated.loose.push(...seated(`T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, coerceExpr));
+	const seated = (argsType: string, returnType: string, expr: string): string =>
+		seatDeclaration(nodeMap, wireSet.node.kind, name, functionTypeOf(refusingParam('args', argsType, { rest: true, loose: true }), returnType), expr);
+	out.seated.strict.push(seated(`T.${wireSet.node.typeName}.BuildArgs`, `ReturnType<${p.strict.type}>`, strictExpr));
+	out.seated.loose.push(seated(`T.${wireSet.node.typeName}.LooseArgs`, `ReturnType<${p.coerce.type}>`, coerceExpr));
 	const ref = tableRef(name);
 	return { refs: { strict: ref, coerce: ref }, callable: ref };
 }
@@ -927,7 +924,7 @@ function referencedDecls(decls: readonly Decl[], roots: readonly string[]): Decl
 	return decls.filter((decl) => kept.has(decl.name));
 }
 
-const SITTIR_TYPES = ['ArgsOf', 'ElementsOf', 'NoneOf', 'OmitEach', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
+const SITTIR_TYPES = ['ArgsOf', 'ConfigSeat', 'ElementsOf', 'EmptyForm', 'NoneOf', 'OmitEach', 'OptionalConfigSeat', 'OptionsArg', 'RefuseUndeclared', 'RenameKeys', 'Seat', 'WithoutGroup'];
 
 export function sittirTypesImport(body: readonly string[]): string[] {
 	const text = body.join('\n');

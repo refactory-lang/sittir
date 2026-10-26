@@ -73,7 +73,8 @@ function looseRow(nodeMap: ReturnType<typeof makeMemberNodeMap>): string {
 	return surface.looseArgs;
 }
 
-const TAKES_ITS_ROW = 'export function coerceToMemberList(...input: T.MemberList.LooseArgs)';
+const TAKES_ITS_ROW =
+	'export const coerceToMemberList: Seat<T.MemberList.LooseArgs, ReturnType<typeof F.buildMemberList>> = (...input: T.MemberList.LooseArgs)';
 
 describe('from emitter — separatedList', () => {
 	it('coerceToMemberList spreads the elements into the factory call, preserving captured flank options on self-unwrap', () => {
@@ -85,7 +86,7 @@ describe('from emitter — separatedList', () => {
 		};
 		const emitted = emit(withIdTables((kindEntries) => makeMemberNodeMap(rule, { separatorRule: undefined }, kindEntries), ID_TABLES).nodeMap);
 
-		expect(emitted).toContain('export function coerceToMemberList(...input');
+		expect(emitted).toContain('export const coerceToMemberList: Seat<');
 		// The factory's signature is spread-with-leading-options — elements go
 		// in as REST arguments, never as one array argument and never indexed
 		// (that's the 'direct'/singular container shape, wrong for a

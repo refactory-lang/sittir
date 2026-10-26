@@ -2,7 +2,7 @@
 import * as F from './raw.js';
 import * as K from './combinators.js';
 import { withEmptyForm } from '@sittir/common/utils';
-import type { Seat } from '@sittir/types';
+import type { EmptyForm, Seat } from '@sittir/types';
 import type * as T from '../types.js';
 
 export {
@@ -286,20 +286,20 @@ export const enumVariantListElements$seated: Seat<
 	ReturnType<typeof F.buildEnumVariantListElements>
 > = K.enumVariantListElements$items(F.buildEnumVariantListElements, F.buildAttributedEnumVariant);
 
-export const enumVariantList$seated = withEmptyForm<
+export const enumVariantList$seated: EmptyForm<
 	T.EmptyEnumVariantList,
 	Seat<T.EnumVariantList.BuildArgs, ReturnType<typeof F.buildEnumVariantList>>
->(K.enumVariantList$items(F.buildEnumVariantList, F.buildAttributedEnumVariant));
+> = withEmptyForm(K.enumVariantList$items(F.buildEnumVariantList, F.buildAttributedEnumVariant));
 
 export const fieldDeclarationListElements$seated: Seat<
 	T.FieldDeclarationListElements.BuildArgs,
 	ReturnType<typeof F.buildFieldDeclarationListElements>
 > = K.fieldDeclarationListElements$items(F.buildFieldDeclarationListElements, F.buildAttributedFieldDeclaration);
 
-export const fieldDeclarationList$seated = withEmptyForm<
+export const fieldDeclarationList$seated: EmptyForm<
 	T.EmptyFieldDeclarationList,
 	Seat<T.FieldDeclarationList.BuildArgs, ReturnType<typeof F.buildFieldDeclarationList>>
->(K.fieldDeclarationList$items(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration));
+> = withEmptyForm(K.fieldDeclarationList$items(F.buildFieldDeclarationList, F.buildAttributedFieldDeclaration));
 
 export const orderedFieldDeclarationListElements$seated: Seat<
 	T.OrderedFieldDeclarationListElements.BuildArgs,
@@ -309,10 +309,12 @@ export const orderedFieldDeclarationListElements$seated: Seat<
 	F.buildAttributedOrderedField
 );
 
-export const orderedFieldDeclarationList$seated = withEmptyForm<
+export const orderedFieldDeclarationList$seated: EmptyForm<
 	T.EmptyOrderedFieldDeclarationList,
 	Seat<T.OrderedFieldDeclarationList.BuildArgs, ReturnType<typeof F.buildOrderedFieldDeclarationList>>
->(K.orderedFieldDeclarationList$items(F.buildOrderedFieldDeclarationList, F.buildAttributedOrderedField));
+> = withEmptyForm(
+	K.orderedFieldDeclarationList$items(F.buildOrderedFieldDeclarationList, F.buildAttributedOrderedField)
+);
 
 export const typeParametersElements$seated: Seat<
 	T.TypeParametersElements.BuildArgs,
@@ -344,20 +346,20 @@ export const argumentsElements$seated: Seat<
 	ReturnType<typeof F.buildArgumentsElements>
 > = K.argumentsElements$items(F.buildArgumentsElements, F.buildAttributedArgument);
 
-export const arguments_$seated = withEmptyForm<
+export const arguments_$seated: EmptyForm<
 	T.EmptyArguments,
 	Seat<T.Arguments.BuildArgs, ReturnType<typeof F.buildArguments>>
->(K.arguments_$items(F.buildArguments, F.buildAttributedArgument));
+> = withEmptyForm(K.arguments_$items(F.buildArguments, F.buildAttributedArgument));
 
 export const tupleExpression$seated: Seat<
 	T.TupleExpression.BuildArgs,
 	ReturnType<typeof F.buildTupleExpression>
 > = K.tupleExpression$elements(F.buildTupleExpression, F.buildExpressions);
 
-export const matchBlock$seated = withEmptyForm<
+export const matchBlock$seated: EmptyForm<
 	T.EmptyMatchBlock,
 	Seat<T.MatchBlock.BuildArgs, ReturnType<typeof F.buildMatchBlock>>
->(K.matchBlock$flatten$matchBlockArms(F.buildMatchBlock, F.buildMatchBlockArms));
+> = withEmptyForm(K.matchBlock$flatten$matchBlockArms(F.buildMatchBlock, F.buildMatchBlockArms));
 
 export const lastMatchArm$seated: Seat<
 	T.LastMatchArm.BuildArgs,
@@ -379,10 +381,10 @@ export const parametersElements$seated: Seat<
 	ReturnType<typeof F.buildParametersElements>
 > = K.parametersElements$items(F.buildParametersElements, F.buildAttributedParameter);
 
-export const arrayExpressionList$seated = withEmptyForm<
+export const arrayExpressionList$seated: EmptyForm<
 	T.EmptyArrayExpressionList,
 	Seat<T.ArrayExpressionList.BuildArgs, ReturnType<typeof F.buildArrayExpressionList>>
->(K.arrayExpressionList$elements(F.buildArrayExpressionList, argumentsElements$seated));
+> = withEmptyForm(K.arrayExpressionList$elements(F.buildArrayExpressionList, argumentsElements$seated));
 
 export const matchArmWithComma$seated: Seat<
 	T.MatchArmWithComma.BuildArgs,

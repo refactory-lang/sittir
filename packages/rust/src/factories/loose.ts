@@ -2,7 +2,7 @@
 import * as C from './coerce.js';
 import * as K from './combinators.js';
 import { withEmptyForm } from '@sittir/common/utils';
-import type { Seat } from '@sittir/types';
+import type { EmptyForm, Seat } from '@sittir/types';
 import type * as T from '../types.js';
 
 export {
@@ -286,20 +286,20 @@ export const enumVariantListElements$seated: Seat<
 	ReturnType<typeof C.coerceToEnumVariantListElements>
 > = K.enumVariantListElements$items(C.coerceToEnumVariantListElements, C.coerceToAttributedEnumVariant);
 
-export const enumVariantList$seated = withEmptyForm<
+export const enumVariantList$seated: EmptyForm<
 	T.EmptyEnumVariantList,
 	Seat<T.EnumVariantList.LooseArgs, ReturnType<typeof C.coerceToEnumVariantList>>
->(K.enumVariantList$items(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant));
+> = withEmptyForm(K.enumVariantList$items(C.coerceToEnumVariantList, C.coerceToAttributedEnumVariant));
 
 export const fieldDeclarationListElements$seated: Seat<
 	T.FieldDeclarationListElements.LooseArgs,
 	ReturnType<typeof C.coerceToFieldDeclarationListElements>
 > = K.fieldDeclarationListElements$items(C.coerceToFieldDeclarationListElements, C.coerceToAttributedFieldDeclaration);
 
-export const fieldDeclarationList$seated = withEmptyForm<
+export const fieldDeclarationList$seated: EmptyForm<
 	T.EmptyFieldDeclarationList,
 	Seat<T.FieldDeclarationList.LooseArgs, ReturnType<typeof C.coerceToFieldDeclarationList>>
->(K.fieldDeclarationList$items(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration));
+> = withEmptyForm(K.fieldDeclarationList$items(C.coerceToFieldDeclarationList, C.coerceToAttributedFieldDeclaration));
 
 export const orderedFieldDeclarationListElements$seated: Seat<
 	T.OrderedFieldDeclarationListElements.LooseArgs,
@@ -309,10 +309,12 @@ export const orderedFieldDeclarationListElements$seated: Seat<
 	C.coerceToAttributedOrderedField
 );
 
-export const orderedFieldDeclarationList$seated = withEmptyForm<
+export const orderedFieldDeclarationList$seated: EmptyForm<
 	T.EmptyOrderedFieldDeclarationList,
 	Seat<T.OrderedFieldDeclarationList.LooseArgs, ReturnType<typeof C.coerceToOrderedFieldDeclarationList>>
->(K.orderedFieldDeclarationList$items(C.coerceToOrderedFieldDeclarationList, C.coerceToAttributedOrderedField));
+> = withEmptyForm(
+	K.orderedFieldDeclarationList$items(C.coerceToOrderedFieldDeclarationList, C.coerceToAttributedOrderedField)
+);
 
 export const typeParametersElements$seated: Seat<
 	T.TypeParametersElements.LooseArgs,
@@ -344,20 +346,20 @@ export const argumentsElements$seated: Seat<
 	ReturnType<typeof C.coerceToArgumentsElements>
 > = K.argumentsElements$items(C.coerceToArgumentsElements, C.coerceToAttributedArgument);
 
-export const arguments_$seated = withEmptyForm<
+export const arguments_$seated: EmptyForm<
 	T.EmptyArguments,
 	Seat<T.Arguments.LooseArgs, ReturnType<typeof C.coerceToArguments>>
->(K.arguments_$items(C.coerceToArguments, C.coerceToAttributedArgument));
+> = withEmptyForm(K.arguments_$items(C.coerceToArguments, C.coerceToAttributedArgument));
 
 export const tupleExpression$seated: Seat<
 	T.TupleExpression.LooseArgs,
 	ReturnType<typeof C.coerceToTupleExpression>
 > = K.tupleExpression$elements(C.coerceToTupleExpression, C.coerceToExpressions);
 
-export const matchBlock$seated = withEmptyForm<
+export const matchBlock$seated: EmptyForm<
 	T.EmptyMatchBlock,
 	Seat<T.MatchBlock.LooseArgs, ReturnType<typeof C.coerceToMatchBlock>>
->(K.matchBlock$flatten$matchBlockArms(C.coerceToMatchBlock, C.coerceToMatchBlockArms));
+> = withEmptyForm(K.matchBlock$flatten$matchBlockArms(C.coerceToMatchBlock, C.coerceToMatchBlockArms));
 
 export const lastMatchArm$seated: Seat<
 	T.LastMatchArm.LooseArgs,
@@ -379,10 +381,10 @@ export const parametersElements$seated: Seat<
 	ReturnType<typeof C.coerceToParametersElements>
 > = K.parametersElements$items(C.coerceToParametersElements, C.coerceToAttributedParameter);
 
-export const arrayExpressionList$seated = withEmptyForm<
+export const arrayExpressionList$seated: EmptyForm<
 	T.EmptyArrayExpressionList,
 	Seat<T.ArrayExpressionList.LooseArgs, ReturnType<typeof C.coerceToArrayExpressionList>>
->(K.arrayExpressionList$elements(C.coerceToArrayExpressionList, argumentsElements$seated));
+> = withEmptyForm(K.arrayExpressionList$elements(C.coerceToArrayExpressionList, argumentsElements$seated));
 
 export const matchArmWithComma$seated: Seat<
 	T.MatchArmWithComma.LooseArgs,

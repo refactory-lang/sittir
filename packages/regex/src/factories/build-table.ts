@@ -2,7 +2,7 @@
 import * as F from './raw.js';
 import * as K from './combinators.js';
 import { delegate } from '@sittir/common/utils';
-import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared } from '@sittir/types';
+import type { ArgsOf, OmitEach, OptionsArg, RefuseUndeclared, Seat } from '@sittir/types';
 import { TSKindId } from '../types.js';
 import type * as LooseTable from './loose.js';
 import type * as StrictTable from './strict.js';
@@ -36,30 +36,30 @@ export interface Routes<Table extends AnyTable> {
 		readonly eq: Routes<Table>['lookbehindAssertion$eq'];
 		readonly bang: Routes<Table>['lookbehindAssertion$bang'];
 	};
-	readonly lookaroundAssertion$lookaheadAssertion: <const A extends ArgsOf<Table['buildLookaheadAssertion']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLookaheadAssertion']>>
-	) => ReturnType<typeof F.buildLookaroundAssertion>;
-	readonly lookaroundAssertion$lookbehindAssertion: <const A extends ArgsOf<Table['buildLookbehindAssertion']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildLookbehindAssertion']>>
-	) => ReturnType<typeof F.buildLookaroundAssertion>;
-	readonly lookaroundAssertion$lookaheadAssertion$eq: <const A extends ArgsOf<Routes<Table>['lookaheadAssertion$eq']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['lookaheadAssertion$eq']>>
-	) => ReturnType<typeof F.buildLookaroundAssertion>;
-	readonly lookaroundAssertion$lookaheadAssertion$bang: <
-		const A extends ArgsOf<Routes<Table>['lookaheadAssertion$bang']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['lookaheadAssertion$bang']>>
-	) => ReturnType<typeof F.buildLookaroundAssertion>;
-	readonly lookaroundAssertion$lookbehindAssertion$eq: <
-		const A extends ArgsOf<Routes<Table>['lookbehindAssertion$eq']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['lookbehindAssertion$eq']>>
-	) => ReturnType<typeof F.buildLookaroundAssertion>;
-	readonly lookaroundAssertion$lookbehindAssertion$bang: <
-		const A extends ArgsOf<Routes<Table>['lookbehindAssertion$bang']>
-	>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['lookbehindAssertion$bang']>>
-	) => ReturnType<typeof F.buildLookaroundAssertion>;
+	readonly lookaroundAssertion$lookaheadAssertion: Seat<
+		ArgsOf<Table['buildLookaheadAssertion']>,
+		ReturnType<typeof F.buildLookaroundAssertion>
+	>;
+	readonly lookaroundAssertion$lookbehindAssertion: Seat<
+		ArgsOf<Table['buildLookbehindAssertion']>,
+		ReturnType<typeof F.buildLookaroundAssertion>
+	>;
+	readonly lookaroundAssertion$lookaheadAssertion$eq: Seat<
+		ArgsOf<Routes<Table>['lookaheadAssertion$eq']>,
+		ReturnType<typeof F.buildLookaroundAssertion>
+	>;
+	readonly lookaroundAssertion$lookaheadAssertion$bang: Seat<
+		ArgsOf<Routes<Table>['lookaheadAssertion$bang']>,
+		ReturnType<typeof F.buildLookaroundAssertion>
+	>;
+	readonly lookaroundAssertion$lookbehindAssertion$eq: Seat<
+		ArgsOf<Routes<Table>['lookbehindAssertion$eq']>,
+		ReturnType<typeof F.buildLookaroundAssertion>
+	>;
+	readonly lookaroundAssertion$lookbehindAssertion$bang: Seat<
+		ArgsOf<Routes<Table>['lookbehindAssertion$bang']>,
+		ReturnType<typeof F.buildLookaroundAssertion>
+	>;
 	readonly lookaroundAssertion: Table['buildLookaroundAssertion'] & {
 		readonly lookaheadAssertion: Routes<Table>['lookaroundAssertion$lookaheadAssertion'] & {
 			readonly eq: Routes<Table>['lookaroundAssertion$lookaheadAssertion$eq'];
@@ -70,12 +70,14 @@ export interface Routes<Table extends AnyTable> {
 			readonly bang: Routes<Table>['lookaroundAssertion$lookbehindAssertion$bang'];
 		};
 	};
-	readonly characterClassEscape$arm: <const A extends ArgsOf<Table['buildCharacterClassEscapeArm']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildCharacterClassEscapeArm']>>
-	) => ReturnType<typeof F.buildCharacterClassEscape>;
-	readonly characterClassEscape$unicodeCharacterEscape: <const A extends ArgsOf<Table['buildUnicodeCharacterEscape']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildUnicodeCharacterEscape']>>
-	) => ReturnType<typeof F.buildCharacterClassEscape>;
+	readonly characterClassEscape$arm: Seat<
+		ArgsOf<Table['buildCharacterClassEscapeArm']>,
+		ReturnType<typeof F.buildCharacterClassEscape>
+	>;
+	readonly characterClassEscape$unicodeCharacterEscape: Seat<
+		ArgsOf<Table['buildUnicodeCharacterEscape']>,
+		ReturnType<typeof F.buildCharacterClassEscape>
+	>;
 	readonly characterClassEscape: Table['buildCharacterClassEscape'] & {
 		readonly arm: Routes<Table>['characterClassEscape$arm'];
 		readonly unicodeCharacterEscape: Routes<Table>['characterClassEscape$unicodeCharacterEscape'];
@@ -489,12 +491,8 @@ export interface Routes<Table extends AnyTable> {
 		readonly disable: Routes<Table>['termGroup$disable'];
 	};
 	readonly term: Table['term$seated'] & { readonly group: Table['buildTermGroup'] & Routes<Table>['termGroup'] };
-	readonly pattern$alternation: <const A extends ArgsOf<Table['buildAlternation']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Table['buildAlternation']>>
-	) => ReturnType<typeof F.buildPattern>;
-	readonly pattern$term: <const A extends ArgsOf<Routes<Table>['term']>>(
-		...args: A & RefuseUndeclared<A, ArgsOf<Routes<Table>['term']>>
-	) => ReturnType<typeof F.buildPattern>;
+	readonly pattern$alternation: Seat<ArgsOf<Table['buildAlternation']>, ReturnType<typeof F.buildPattern>>;
+	readonly pattern$term: Seat<ArgsOf<Routes<Table>['term']>, ReturnType<typeof F.buildPattern>>;
 	readonly pattern: Table['buildPattern'] & {
 		readonly alternation: Routes<Table>['pattern$alternation'];
 		readonly term: Routes<Table>['pattern$term'];

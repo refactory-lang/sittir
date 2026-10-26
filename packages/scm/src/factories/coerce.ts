@@ -5,59 +5,29 @@ import { spelledInterior } from '@sittir/common/utils';
 import type * as T from '../types-internal.js';
 import { TSKindId } from '../kinds.js';
 import { KIND_NAMES } from '../types.js';
-import type { AnyUntypedNode, Admit, PlainBuilders, RefuseUndeclared } from '@sittir/types';
+import type {
+	AnyUntypedNode,
+	Admit,
+	PlainBuilders,
+	RefuseUndeclared,
+	Seat,
+	OptionalConfigSeat,
+	EmptyForm
+} from '@sittir/types';
 import {
 	coerceKindEnumStorage,
 	coerceMixedEnumStorage,
 	configFieldOr,
 	currentHandle,
 	isNodeOfKind,
-	isNodeValue
+	isNodeValue,
+	withEmptyForm
 } from '@sittir/common/utils';
 
 const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
-
-export const _fromMap = {
-	program: coerceToProgram,
-	escape_sequence: coerceToEscapeSequence,
-	identifier: coerceToIdentifier,
-	_immediate_identifier: coerceToImmediateIdentifier,
-	capture: coerceToCapture,
-	string: coerceToString,
-	immediate_string: coerceToImmediateString,
-	string_content: coerceToStringContent,
-	parameters: coerceToParameters,
-	comment: coerceToComment,
-	list: coerceToList,
-	grouping: coerceToGrouping,
-	missing_node: coerceToMissingNode,
-	anonymous_node: coerceToAnonymousNode,
-	field_definition: coerceToFieldDefinition,
-	negated_field: coerceToNegatedField,
-	predicate: coerceToPredicate,
-	list_element_quantifier: coerceToListElementQuantifier,
-	group_expression_arm: coerceToGroupExpressionArm,
-	named_node_expression_arm: coerceToNamedNodeExpressionArm,
-	grouping_group: coerceToGroupingGroup,
-	string_content_text: coerceToStringContentText,
-	anchor: coerceToAnchor,
-	named_node_plain: coerceToNamedNodePlain,
-	named_node_supertyped: coerceToNamedNodeSupertyped,
-	named_node_group_children: coerceToNamedNodeGroupChildren,
-	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast,
-	_tight: coerceToTight,
-	_space: coerceToSpace,
-	_tab: coerceToTab,
-	_newline: coerceToNewline,
-	_blankline: coerceToBlankline,
-	_double_blankline: coerceToDoubleBlankline,
-	_indent: coerceToIndent,
-	_dedent: coerceToDedent
-} as const;
-export type _FromMap = typeof _fromMap;
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
 interface _LeafEntry {
@@ -554,11 +524,10 @@ const _K7: readonly string[] = [
 const _K8: readonly string[] = ['_immediate_identifier'];
 const _K9: readonly string[] = ['immediate_string'];
 
-export function coerceToProgram(): T.EmptyProgram;
-export function coerceToProgram<const A extends T.Program.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Program.LooseArgs>
-): ReturnType<typeof F.buildProgram>;
-export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram> {
+export const coerceToProgram: EmptyForm<
+	T.EmptyProgram,
+	Seat<T.Program.LooseArgs, ReturnType<typeof F.buildProgram>>
+> = withEmptyForm((...input: T.Program.LooseArgs): ReturnType<typeof F.buildProgram> => {
 	currentHandle()?.admit(TSKindId.Program, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Program)) {
 		const data = input[0];
@@ -579,7 +548,7 @@ export function coerceToProgram(...input: T.Program.LooseArgs): ReturnType<typeo
 	return F.buildProgram(
 		...(_resolveMany<T.Definition>(_elems, _K0, _K1) as unknown as Parameters<typeof F.buildProgram>)
 	);
-}
+});
 
 export function resolveEscapeSequence_content(
 	value: T.EscapeSequence.LooseConfig['content']
@@ -644,13 +613,10 @@ export function resolveString_stringContent(
 	return _resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true);
 }
 
-export function coerceToString<const A extends T.StringContent.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StringContent.LooseArgs>
-): ReturnType<typeof F.buildString>;
-export function coerceToString<const I extends T.String.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.String.Loose>
-): ReturnType<typeof F.buildString>;
-export function coerceToString(...args: unknown[]): ReturnType<typeof F.buildString> {
+export const coerceToString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F.buildString>> &
+	OptionalConfigSeat<T.String.Loose, ReturnType<typeof F.buildString>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildString> => {
 	if (args.length > 1)
 		return F.buildString(coerceToStringContent(...(args as Parameters<typeof coerceToStringContent>)));
 	const input = args[0] as T.String.Loose | undefined;
@@ -664,7 +630,7 @@ export function coerceToString(...args: unknown[]): ReturnType<typeof F.buildStr
 			true
 		)
 	);
-}
+};
 
 export function resolveImmediateString_stringContent(
 	value: T.ImmediateString.LooseConfig['stringContent']
@@ -672,13 +638,10 @@ export function resolveImmediateString_stringContent(
 	return _resolveOneBranch<T.StringContent>(value, 'string_content', undefined, true);
 }
 
-export function coerceToImmediateString<const A extends T.StringContent.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StringContent.LooseArgs>
-): ReturnType<typeof F.buildImmediateString>;
-export function coerceToImmediateString<const I extends T.ImmediateString.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.ImmediateString.Loose>
-): ReturnType<typeof F.buildImmediateString>;
-export function coerceToImmediateString(...args: unknown[]): ReturnType<typeof F.buildImmediateString> {
+export const coerceToImmediateString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F.buildImmediateString>> &
+	OptionalConfigSeat<T.ImmediateString.Loose, ReturnType<typeof F.buildImmediateString>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildImmediateString> => {
 	if (args.length > 1)
 		return F.buildImmediateString(coerceToStringContent(...(args as Parameters<typeof coerceToStringContent>)));
 	const input = args[0] as T.ImmediateString.Loose | undefined;
@@ -692,12 +655,11 @@ export function coerceToImmediateString(...args: unknown[]): ReturnType<typeof F
 			true
 		)
 	);
-}
+};
 
-export function coerceToStringContent<const A extends T.StringContent.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StringContent.LooseArgs>
-): ReturnType<typeof F.buildStringContent>;
-export function coerceToStringContent(...input: T.StringContent.LooseArgs): ReturnType<typeof F.buildStringContent> {
+export const coerceToStringContent: Seat<T.StringContent.LooseArgs, ReturnType<typeof F.buildStringContent>> = (
+	...input: T.StringContent.LooseArgs
+): ReturnType<typeof F.buildStringContent> => {
 	currentHandle()?.admit(TSKindId.StringContent, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StringContent)) {
 		const data = input[0];
@@ -722,12 +684,11 @@ export function coerceToStringContent(...input: T.StringContent.LooseArgs): Retu
 			typeof F.buildStringContent
 		>)
 	);
-}
+};
 
-export function coerceToParameters<const A extends T.Parameters.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Parameters.LooseArgs>
-): ReturnType<typeof F.buildParameters>;
-export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType<typeof F.buildParameters> {
+export const coerceToParameters: Seat<T.Parameters.LooseArgs, ReturnType<typeof F.buildParameters>> = (
+	...input: T.Parameters.LooseArgs
+): ReturnType<typeof F.buildParameters> => {
 	currentHandle()?.admit(TSKindId.Parameters, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Parameters)) {
 		const data = input[0];
@@ -754,7 +715,7 @@ export function coerceToParameters(...input: T.Parameters.LooseArgs): ReturnType
 			typeof F.buildParameters
 		>)
 	);
-}
+};
 
 export function resolveComment_content(value: T.Comment.LooseConfig['content']): Admit<T.Comment['_content']> {
 	return _resolveOne<string>(value, _K0, _K0);
@@ -1255,3 +1216,78 @@ export function coerceToIndent(_input?: T.Indent.Loose): typeof F.buildIndent {
 export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
 	return F.buildDedent;
 }
+
+export interface _FromMap {
+	readonly program: typeof coerceToProgram;
+	readonly escape_sequence: typeof coerceToEscapeSequence;
+	readonly identifier: typeof coerceToIdentifier;
+	readonly _immediate_identifier: typeof coerceToImmediateIdentifier;
+	readonly capture: typeof coerceToCapture;
+	readonly string: typeof coerceToString;
+	readonly immediate_string: typeof coerceToImmediateString;
+	readonly string_content: typeof coerceToStringContent;
+	readonly parameters: typeof coerceToParameters;
+	readonly comment: typeof coerceToComment;
+	readonly list: typeof coerceToList;
+	readonly grouping: typeof coerceToGrouping;
+	readonly missing_node: typeof coerceToMissingNode;
+	readonly anonymous_node: typeof coerceToAnonymousNode;
+	readonly field_definition: typeof coerceToFieldDefinition;
+	readonly negated_field: typeof coerceToNegatedField;
+	readonly predicate: typeof coerceToPredicate;
+	readonly list_element_quantifier: typeof coerceToListElementQuantifier;
+	readonly group_expression_arm: typeof coerceToGroupExpressionArm;
+	readonly named_node_expression_arm: typeof coerceToNamedNodeExpressionArm;
+	readonly grouping_group: typeof coerceToGroupingGroup;
+	readonly string_content_text: typeof coerceToStringContentText;
+	readonly anchor: typeof coerceToAnchor;
+	readonly named_node_plain: typeof coerceToNamedNodePlain;
+	readonly named_node_supertyped: typeof coerceToNamedNodeSupertyped;
+	readonly named_node_group_children: typeof coerceToNamedNodeGroupChildren;
+	readonly named_node_group_anchored_last: typeof coerceToNamedNodeGroupAnchoredLast;
+	readonly _tight: typeof coerceToTight;
+	readonly _space: typeof coerceToSpace;
+	readonly _tab: typeof coerceToTab;
+	readonly _newline: typeof coerceToNewline;
+	readonly _blankline: typeof coerceToBlankline;
+	readonly _double_blankline: typeof coerceToDoubleBlankline;
+	readonly _indent: typeof coerceToIndent;
+	readonly _dedent: typeof coerceToDedent;
+}
+export const _fromMap: _FromMap = {
+	program: coerceToProgram,
+	escape_sequence: coerceToEscapeSequence,
+	identifier: coerceToIdentifier,
+	_immediate_identifier: coerceToImmediateIdentifier,
+	capture: coerceToCapture,
+	string: coerceToString,
+	immediate_string: coerceToImmediateString,
+	string_content: coerceToStringContent,
+	parameters: coerceToParameters,
+	comment: coerceToComment,
+	list: coerceToList,
+	grouping: coerceToGrouping,
+	missing_node: coerceToMissingNode,
+	anonymous_node: coerceToAnonymousNode,
+	field_definition: coerceToFieldDefinition,
+	negated_field: coerceToNegatedField,
+	predicate: coerceToPredicate,
+	list_element_quantifier: coerceToListElementQuantifier,
+	group_expression_arm: coerceToGroupExpressionArm,
+	named_node_expression_arm: coerceToNamedNodeExpressionArm,
+	grouping_group: coerceToGroupingGroup,
+	string_content_text: coerceToStringContentText,
+	anchor: coerceToAnchor,
+	named_node_plain: coerceToNamedNodePlain,
+	named_node_supertyped: coerceToNamedNodeSupertyped,
+	named_node_group_children: coerceToNamedNodeGroupChildren,
+	named_node_group_anchored_last: coerceToNamedNodeGroupAnchoredLast,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_tab: coerceToTab,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent
+};

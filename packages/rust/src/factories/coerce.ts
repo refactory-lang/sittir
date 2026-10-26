@@ -14,6 +14,10 @@ import type {
 	NumericInput,
 	PlainBuilders,
 	RefuseUndeclared,
+	Seat,
+	ConfigSeat,
+	OptionalConfigSeat,
+	EmptyForm,
 	SiblingLeadRefusal
 } from '@sittir/types';
 import {
@@ -23,290 +27,14 @@ import {
 	currentHandle,
 	isNodeOfKind,
 	isNodeValue,
-	listStorage
+	listStorage,
+	withEmptyForm
 } from '@sittir/common/utils';
 
 const F = RawBuilders as PlainBuilders<typeof RawBuilders>;
 
 /** Runtime-narrowed field input bag for generated from() helpers. */
 type _LooseFieldInput = unknown;
-
-export const _fromMap = {
-	source_file: coerceToSourceFile,
-	empty_statement: coerceToEmptyStatement,
-	expression_statement: coerceToExpressionStatement,
-	macro_rule: coerceToMacroRule,
-	token_binding_pattern: coerceToTokenBindingPattern,
-	token_repetition_pattern: coerceToTokenRepetitionPattern,
-	token_repetition: coerceToTokenRepetition,
-	non_special_token: coerceToNonSpecialToken,
-	attribute_item: coerceToAttributeItem,
-	inner_attribute_item: coerceToInnerAttributeItem,
-	attribute: coerceToAttribute,
-	declaration_list: coerceToDeclarationList,
-	union_item: coerceToUnionItem,
-	enum_item: coerceToEnumItem,
-	enum_variant_list: coerceToEnumVariantList,
-	enum_variant: coerceToEnumVariant,
-	field_declaration_list: coerceToFieldDeclarationList,
-	field_declaration: coerceToFieldDeclaration,
-	ordered_field_declaration_list: coerceToOrderedFieldDeclarationList,
-	extern_crate_declaration: coerceToExternCrateDeclaration,
-	const_item: coerceToConstItem,
-	static_item: coerceToStaticItem,
-	type_item: coerceToTypeItem,
-	function_item: coerceToFunctionItem,
-	function_signature_item: coerceToFunctionSignatureItem,
-	function_modifiers: coerceToFunctionModifiers,
-	where_clause: coerceToWhereClause,
-	where_predicate: coerceToWherePredicate,
-	trait_item: coerceToTraitItem,
-	associated_type: coerceToAssociatedType,
-	trait_bounds: coerceToTraitBounds,
-	higher_ranked_trait_bound: coerceToHigherRankedTraitBound,
-	removed_trait_bound: coerceToRemovedTraitBound,
-	type_parameters: coerceToTypeParameters,
-	const_parameter: coerceToConstParameter,
-	type_parameter: coerceToTypeParameter,
-	lifetime_parameter: coerceToLifetimeParameter,
-	let_declaration: coerceToLetDeclaration,
-	use_declaration: coerceToUseDeclaration,
-	scoped_use_list: coerceToScopedUseList,
-	use_list: coerceToUseList,
-	use_as_clause: coerceToUseAsClause,
-	use_wildcard: coerceToUseWildcard,
-	parameters: coerceToParameters,
-	self_parameter: coerceToSelfParameter,
-	variadic_parameter: coerceToVariadicParameter,
-	parameter: coerceToParameter,
-	extern_modifier: coerceToExternModifier,
-	visibility_modifier: coerceToVisibilityModifier,
-	bracketed_type: coerceToBracketedType,
-	qualified_type: coerceToQualifiedType,
-	lifetime: coerceToLifetime,
-	array_type: coerceToArrayType,
-	for_lifetimes: coerceToForLifetimes,
-	function_type: coerceToFunctionType,
-	tuple_type: coerceToTupleType,
-	unit_type: coerceToUnitType,
-	generic_function: coerceToGenericFunction,
-	generic_type: coerceToGenericType,
-	generic_type_with_turbofish: coerceToGenericTypeWithTurbofish,
-	bounded_type: coerceToBoundedType,
-	use_bounds: coerceToUseBounds,
-	type_arguments: coerceToTypeArguments,
-	type_binding: coerceToTypeBinding,
-	reference_type: coerceToReferenceType,
-	never_type: coerceToNeverType,
-	abstract_type: coerceToAbstractType,
-	dynamic_type: coerceToDynamicType,
-	mutable_specifier: coerceToMutableSpecifier,
-	macro_invocation: coerceToMacroInvocation,
-	scoped_identifier: coerceToScopedIdentifier,
-	scoped_type_identifier_in_expression_position: coerceToScopedTypeIdentifierInExpressionPosition,
-	scoped_type_identifier: coerceToScopedTypeIdentifier,
-	unary_expression: coerceToUnaryExpression,
-	try_expression: coerceToTryExpression,
-	binary_expression: coerceToBinaryExpression,
-	assignment_expression: coerceToAssignmentExpression,
-	compound_assignment_expr: coerceToCompoundAssignmentExpr,
-	type_cast_expression: coerceToTypeCastExpression,
-	return_expression: coerceToReturnExpression,
-	yield_expression: coerceToYieldExpression,
-	call_expression: coerceToCallExpression,
-	arguments: coerceToArguments,
-	parenthesized_expression: coerceToParenthesizedExpression,
-	tuple_expression: coerceToTupleExpression,
-	unit_expression: coerceToUnitExpression,
-	struct_expression: coerceToStructExpression,
-	field_initializer_list: coerceToFieldInitializerList,
-	shorthand_field_initializer: coerceToShorthandFieldInitializer,
-	field_initializer: coerceToFieldInitializer,
-	base_field_initializer: coerceToBaseFieldInitializer,
-	if_expression: coerceToIfExpression,
-	let_condition: coerceToLetCondition,
-	_let_chain: coerceToLetChain,
-	else_clause: coerceToElseClause,
-	match_expression: coerceToMatchExpression,
-	match_block: coerceToMatchBlock,
-	last_match_arm: coerceToLastMatchArm,
-	match_pattern: coerceToMatchPattern,
-	while_expression: coerceToWhileExpression,
-	loop_expression: coerceToLoopExpression,
-	for_expression: coerceToForExpression,
-	const_block: coerceToConstBlock,
-	closure_parameters: coerceToClosureParameters,
-	label: coerceToLabel,
-	break_expression: coerceToBreakExpression,
-	continue_expression: coerceToContinueExpression,
-	index_expression: coerceToIndexExpression,
-	await_expression: coerceToAwaitExpression,
-	field_expression: coerceToFieldExpression,
-	unsafe_block: coerceToUnsafeBlock,
-	async_block: coerceToAsyncBlock,
-	gen_block: coerceToGenBlock,
-	try_block: coerceToTryBlock,
-	block: coerceToBlock,
-	generic_pattern: coerceToGenericPattern,
-	tuple_pattern: coerceToTuplePattern,
-	slice_pattern: coerceToSlicePattern,
-	tuple_struct_pattern: coerceToTupleStructPattern,
-	struct_pattern: coerceToStructPattern,
-	remaining_field_pattern: coerceToRemainingFieldPattern,
-	mut_pattern: coerceToMutPattern,
-	ref_pattern: coerceToRefPattern,
-	captured_pattern: coerceToCapturedPattern,
-	reference_pattern: coerceToReferencePattern,
-	negative_literal: coerceToNegativeLiteral,
-	string_literal: coerceToStringLiteral,
-	raw_string_literal: coerceToRawStringLiteral,
-	line_comment: coerceToLineComment,
-	inner_line_doc_comment_marker: coerceToInnerLineDocCommentMarker,
-	outer_line_doc_comment_marker: coerceToOuterLineDocCommentMarker,
-	block_comment: coerceToBlockComment,
-	identifier: coerceToIdentifier,
-	shebang: coerceToShebang,
-	self: coerceToSelf,
-	super: coerceToSuper,
-	crate: coerceToCrate,
-	metavariable: coerceToMetavariable,
-	macro_rules: coerceToMacroRules,
-	enum_variant_list_elements: coerceToEnumVariantListElements,
-	field_declaration_list_elements: coerceToFieldDeclarationListElements,
-	ordered_field_declaration_list_elements: coerceToOrderedFieldDeclarationListElements,
-	where_predicates: coerceToWherePredicates,
-	type_parameters_elements: coerceToTypeParametersElements,
-	use_clauses: coerceToUseClauses,
-	parameters_elements: coerceToParametersElements,
-	lifetimes: coerceToLifetimes,
-	types: coerceToTypes,
-	use_bounds_elements: coerceToUseBoundsElements,
-	type_arguments_elements: coerceToTypeArgumentsElements,
-	arguments_elements: coerceToArgumentsElements,
-	expressions: coerceToExpressions,
-	field_initializer_list_elements: coerceToFieldInitializerListElements,
-	tuple_pattern_elements: coerceToTuplePatternElements,
-	patterns: coerceToPatterns,
-	struct_pattern_elements: coerceToStructPatternElements,
-	use_wildcard_group: coerceToUseWildcardGroup,
-	token_repetition_pattern_text: coerceToTokenRepetitionPatternText,
-	string_open: coerceToStringOpen,
-	integer_literal_decimal: coerceToIntegerLiteralDecimal,
-	integer_literal_hex: coerceToIntegerLiteralHex,
-	integer_literal_binary: coerceToIntegerLiteralBinary,
-	integer_literal_octal: coerceToIntegerLiteralOctal,
-	char_literal_plain: coerceToCharLiteralPlain,
-	char_literal_empty: coerceToCharLiteralEmpty,
-	char_literal_escaped_simple: coerceToCharLiteralEscapedSimple,
-	char_literal_escaped_unicode_fixed: coerceToCharLiteralEscapedUnicodeFixed,
-	char_literal_escaped_unicode_braced: coerceToCharLiteralEscapedUnicodeBraced,
-	char_literal_escaped_hex: coerceToCharLiteralEscapedHex,
-	escape_sequence_simple: coerceToEscapeSequenceSimple,
-	escape_sequence_unicode_fixed: coerceToEscapeSequenceUnicodeFixed,
-	escape_sequence_unicode_braced: coerceToEscapeSequenceUnicodeBraced,
-	escape_sequence_hex: coerceToEscapeSequenceHex,
-	array_expression_semi: coerceToArrayExpressionSemi,
-	array_expression_list: coerceToArrayExpressionList,
-	attribute_input: coerceToAttributeInput,
-	closure_expression_block: coerceToClosureExpressionBlock,
-	closure_expression_expr: coerceToClosureExpressionExpr,
-	reference_expression_raw_const: coerceToReferenceExpressionRawConst,
-	reference_expression_raw_mut: coerceToReferenceExpressionRawMut,
-	reference_expression_mut: coerceToReferenceExpressionMut,
-	reference_expression_bare: coerceToReferenceExpressionBare,
-	impl_item_positive_clause: coerceToImplItemPositiveClause,
-	impl_item_negative_clause: coerceToImplItemNegativeClause,
-	impl_item_body: coerceToImplItemBody,
-	impl_item_semi: coerceToImplItemSemi,
-	visibility_modifier_pub_scope_in_path: coerceToVisibilityModifierPubScopeInPath,
-	visibility_modifier_pub_scope: coerceToVisibilityModifierPubScope,
-	visibility_modifier_pub: coerceToVisibilityModifierPub,
-	function_type_trait_form: coerceToFunctionTypeTraitForm,
-	function_type_fn_form: coerceToFunctionTypeFnForm,
-	mod_item_external: coerceToModItemExternal,
-	mod_item_inline: coerceToModItemInline,
-	or_pattern_binary: coerceToOrPatternBinary,
-	or_pattern_prefix: coerceToOrPatternPrefix,
-	pointer_type_const: coerceToPointerTypeConst,
-	pointer_type_mut: coerceToPointerTypeMut,
-	range_expression_binary: coerceToRangeExpressionBinary,
-	range_expression_postfix: coerceToRangeExpressionPostfix,
-	range_expression_prefix: coerceToRangeExpressionPrefix,
-	range_expression_bare: coerceToRangeExpressionBare,
-	expression_statement_with_semi: coerceToExpressionStatementWithSemi,
-	foreign_mod_item_semi: coerceToForeignModItemSemi,
-	foreign_mod_item_body: coerceToForeignModItemBody,
-	match_arm_with_comma: coerceToMatchArmWithComma,
-	match_arm_block_ending: coerceToMatchArmBlockEnding,
-	line_comment_extra_slashes: coerceToLineCommentExtraSlashes,
-	line_comment_doc_outer: coerceToLineCommentDocOuter,
-	line_comment_doc_inner: coerceToLineCommentDocInner,
-	line_comment_regular: coerceToLineCommentRegular,
-	block_comment_doc_outer: coerceToBlockCommentDocOuter,
-	block_comment_doc_inner: coerceToBlockCommentDocInner,
-	block_comment_regular: coerceToBlockCommentRegular,
-	token_tree_pattern_paren: coerceToTokenTreePatternParen,
-	token_tree_pattern_bracket: coerceToTokenTreePatternBracket,
-	token_tree_pattern_brace: coerceToTokenTreePatternBrace,
-	token_tree_paren: coerceToTokenTreeParen,
-	token_tree_bracket: coerceToTokenTreeBracket,
-	token_tree_brace: coerceToTokenTreeBrace,
-	delim_token_tree_paren: coerceToDelimTokenTreeParen,
-	delim_token_tree_bracket: coerceToDelimTokenTreeBracket,
-	delim_token_tree_brace: coerceToDelimTokenTreeBrace,
-	field_pattern_shorthand: coerceToFieldPatternShorthand,
-	field_pattern_named: coerceToFieldPatternNamed,
-	macro_definition_paren: coerceToMacroDefinitionParen,
-	macro_definition_bracket: coerceToMacroDefinitionBracket,
-	macro_definition_brace: coerceToMacroDefinitionBrace,
-	range_pattern_prefix: coerceToRangePatternPrefix,
-	range_pattern_with_left_with_right: coerceToRangePatternWithLeftWithRight,
-	range_pattern_with_left_bare: coerceToRangePatternWithLeftBare,
-	range_pattern_with_left: coerceToRangePatternWithLeft,
-	struct_item_brace: coerceToStructItemBrace,
-	struct_item_tuple: coerceToStructItemTuple,
-	struct_item_unit: coerceToStructItemUnit,
-	wildcard_pattern: coerceToWildcardPattern,
-	attributed_field_declaration: coerceToAttributedFieldDeclaration,
-	attributed_enum_variant: coerceToAttributedEnumVariant,
-	attributed_parameter: coerceToAttributedParameter,
-	attributed_type_parameter: coerceToAttributedTypeParameter,
-	attributed_argument: coerceToAttributedArgument,
-	attributed_ordered_field: coerceToAttributedOrderedField,
-	type_argument: coerceToTypeArgument,
-	match_block_arms: coerceToMatchBlockArms,
-	float_literal: coerceToFloatLiteral,
-	string_content: coerceToStringContent,
-	raw_string_literal_content: coerceToRawStringLiteralContent,
-	outer_doc_comment_marker: coerceToOuterDocCommentMarker,
-	inner_doc_comment_marker: coerceToInnerDocCommentMarker,
-	raw_string_literal_start: coerceToRawStringLiteralStart,
-	raw_string_literal_end: coerceToRawStringLiteralEnd,
-	doc_comment: coerceToDocComment,
-	_block_comment_content: coerceToBlockCommentContent,
-	_tight: coerceToTight,
-	_space: coerceToSpace,
-	_tab: coerceToTab,
-	_newline: coerceToNewline,
-	_blankline: coerceToBlankline,
-	_double_blankline: coerceToDoubleBlankline,
-	_indent: coerceToIndent,
-	_dedent: coerceToDedent,
-	trait_interface_declaration_body: coerceToTraitInterfaceDeclarationBody,
-	extension_declaration_body: coerceToExtensionDeclarationBody,
-	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
-	attributed_parameter_receiver: coerceToAttributedParameterReceiver,
-	parameters_elements_receiver: coerceToParametersElementsReceiver,
-	parameters_elements_receiver_group: coerceToParametersElementsReceiverGroup,
-	self_module: coerceToSelfModule,
-	type_identifier: coerceToTypeIdentifier,
-	field_identifier: coerceToFieldIdentifier,
-	crate_visibility_modifier: coerceToCrateVisibilityModifier,
-	shorthand_field_identifier: coerceToShorthandFieldIdentifier,
-	method_declaration: coerceToMethodDeclaration,
-	signature_method_declaration: coerceToSignatureMethodDeclaration
-} as const;
-export type _FromMap = typeof _fromMap;
 
 // --- Loose-input resolver helpers (see C6-prereq) ---
 interface _LeafEntry {
@@ -3703,13 +3431,10 @@ export function coerceToAttribute(input: T.Attribute.Loose): ReturnType<typeof F
 	});
 }
 
-export function coerceToDeclarationList(): T.EmptyDeclarationList;
-export function coerceToDeclarationList<const A extends T.DeclarationList.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.DeclarationList.LooseArgs>
-): ReturnType<typeof F.buildDeclarationList>;
-export function coerceToDeclarationList(
-	...input: T.DeclarationList.LooseArgs
-): ReturnType<typeof F.buildDeclarationList> {
+export const coerceToDeclarationList: EmptyForm<
+	T.EmptyDeclarationList,
+	Seat<T.DeclarationList.LooseArgs, ReturnType<typeof F.buildDeclarationList>>
+> = withEmptyForm((...input: T.DeclarationList.LooseArgs): ReturnType<typeof F.buildDeclarationList> => {
 	currentHandle()?.admit(TSKindId.DeclarationList, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.DeclarationList)) {
 		const data = input[0];
@@ -3736,7 +3461,7 @@ export function coerceToDeclarationList(
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildDeclarationList>)
 	);
-}
+});
 
 export function resolveUnionItem_visibilityModifier(
 	value: T.UnionItem.LooseConfig['visibilityModifier']
@@ -3826,14 +3551,11 @@ export function resolveEnumVariantList_elements(
 	return _resolveOneBranch<T.EnumVariantListElements>(value, 'enum_variant_list_elements', undefined, true);
 }
 
-export function coerceToEnumVariantList(): T.EmptyEnumVariantList;
-export function coerceToEnumVariantList<const A extends T.EnumVariantListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
-): ReturnType<typeof F.buildEnumVariantList>;
-export function coerceToEnumVariantList<const I extends T.EnumVariantList.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.EnumVariantList.Loose>
-): ReturnType<typeof F.buildEnumVariantList>;
-export function coerceToEnumVariantList(...args: unknown[]): ReturnType<typeof F.buildEnumVariantList> {
+export const coerceToEnumVariantList: EmptyForm<
+	T.EmptyEnumVariantList,
+	Seat<T.EnumVariantListElements.LooseArgs, ReturnType<typeof F.buildEnumVariantList>> &
+		OptionalConfigSeat<T.EnumVariantList.Loose, ReturnType<typeof F.buildEnumVariantList>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildEnumVariantList> => {
 	if (args.length > 1)
 		return F.buildEnumVariantList(
 			coerceToEnumVariantListElements(...(args as Parameters<typeof coerceToEnumVariantListElements>))
@@ -3849,7 +3571,7 @@ export function coerceToEnumVariantList(...args: unknown[]): ReturnType<typeof F
 			true
 		)
 	);
-}
+});
 
 export function resolveEnumVariant_visibilityModifier(
 	value: T.EnumVariant.LooseConfig['visibilityModifier']
@@ -3898,14 +3620,11 @@ export function resolveFieldDeclarationList_elements(
 	return _resolveOneBranch<T.FieldDeclarationListElements>(value, 'field_declaration_list_elements', undefined, true);
 }
 
-export function coerceToFieldDeclarationList(): T.EmptyFieldDeclarationList;
-export function coerceToFieldDeclarationList<const A extends T.FieldDeclarationListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FieldDeclarationListElements.LooseArgs>
-): ReturnType<typeof F.buildFieldDeclarationList>;
-export function coerceToFieldDeclarationList<const I extends T.FieldDeclarationList.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.FieldDeclarationList.Loose>
-): ReturnType<typeof F.buildFieldDeclarationList>;
-export function coerceToFieldDeclarationList(...args: unknown[]): ReturnType<typeof F.buildFieldDeclarationList> {
+export const coerceToFieldDeclarationList: EmptyForm<
+	T.EmptyFieldDeclarationList,
+	Seat<T.FieldDeclarationListElements.LooseArgs, ReturnType<typeof F.buildFieldDeclarationList>> &
+		OptionalConfigSeat<T.FieldDeclarationList.Loose, ReturnType<typeof F.buildFieldDeclarationList>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildFieldDeclarationList> => {
 	if (args.length > 1)
 		return F.buildFieldDeclarationList(
 			coerceToFieldDeclarationListElements(...(args as Parameters<typeof coerceToFieldDeclarationListElements>))
@@ -3921,7 +3640,7 @@ export function coerceToFieldDeclarationList(...args: unknown[]): ReturnType<typ
 			true
 		)
 	);
-}
+});
 
 export function resolveFieldDeclaration_visibilityModifier(
 	value: T.FieldDeclaration.LooseConfig['visibilityModifier']
@@ -3969,16 +3688,11 @@ export function resolveOrderedFieldDeclarationList_attributes(
 	);
 }
 
-export function coerceToOrderedFieldDeclarationList(): T.EmptyOrderedFieldDeclarationList;
-export function coerceToOrderedFieldDeclarationList<const A extends T.OrderedFieldDeclarationListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.OrderedFieldDeclarationListElements.LooseArgs>
-): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
-export function coerceToOrderedFieldDeclarationList<const I extends T.OrderedFieldDeclarationList.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.OrderedFieldDeclarationList.Loose>
-): ReturnType<typeof F.buildOrderedFieldDeclarationList>;
-export function coerceToOrderedFieldDeclarationList(
-	...args: unknown[]
-): ReturnType<typeof F.buildOrderedFieldDeclarationList> {
+export const coerceToOrderedFieldDeclarationList: EmptyForm<
+	T.EmptyOrderedFieldDeclarationList,
+	Seat<T.OrderedFieldDeclarationListElements.LooseArgs, ReturnType<typeof F.buildOrderedFieldDeclarationList>> &
+		OptionalConfigSeat<T.OrderedFieldDeclarationList.Loose, ReturnType<typeof F.buildOrderedFieldDeclarationList>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildOrderedFieldDeclarationList> => {
 	if (args.length > 1)
 		return F.buildOrderedFieldDeclarationList(
 			coerceToOrderedFieldDeclarationListElements(
@@ -3996,7 +3710,7 @@ export function coerceToOrderedFieldDeclarationList(
 			true
 		)
 	);
-}
+});
 
 export function resolveExternCrateDeclaration_visibilityModifier(
 	value: T.ExternCrateDeclaration.LooseConfig['visibilityModifier']
@@ -4302,12 +4016,10 @@ export function coerceToFunctionSignatureItem(
 	});
 }
 
-export function coerceToFunctionModifiers<const A extends T.FunctionModifiers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FunctionModifiers.LooseArgs>
-): ReturnType<typeof F.buildFunctionModifiers>;
-export function coerceToFunctionModifiers(
-	...input: T.FunctionModifiers.LooseArgs
-): ReturnType<typeof F.buildFunctionModifiers> {
+export const coerceToFunctionModifiers: Seat<
+	T.FunctionModifiers.LooseArgs,
+	ReturnType<typeof F.buildFunctionModifiers>
+> = (...input: T.FunctionModifiers.LooseArgs): ReturnType<typeof F.buildFunctionModifiers> => {
 	currentHandle()?.admit(TSKindId.FunctionModifiers, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FunctionModifiers)) {
 		const data = input[0];
@@ -4398,7 +4110,7 @@ export function coerceToFunctionModifiers(
 			)
 			.filter((_e) => _e !== undefined) as unknown as Parameters<typeof F.buildFunctionModifiers>)
 	);
-}
+};
 
 export function resolveWhereClause_wherePredicates(
 	value: T.WhereClause.LooseConfig['wherePredicates']
@@ -4406,13 +4118,10 @@ export function resolveWhereClause_wherePredicates(
 	return _resolveOneBranch<T.WherePredicates>(value, 'where_predicates', undefined, true);
 }
 
-export function coerceToWhereClause<const A extends T.WherePredicates.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.WherePredicates.LooseArgs>
-): ReturnType<typeof F.buildWhereClause>;
-export function coerceToWhereClause<const I extends T.WhereClause.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.WhereClause.Loose>
-): ReturnType<typeof F.buildWhereClause>;
-export function coerceToWhereClause(...args: unknown[]): ReturnType<typeof F.buildWhereClause> {
+export const coerceToWhereClause: Seat<T.WherePredicates.LooseArgs, ReturnType<typeof F.buildWhereClause>> &
+	OptionalConfigSeat<T.WhereClause.Loose, ReturnType<typeof F.buildWhereClause>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildWhereClause> => {
 	if (args.length > 1)
 		return F.buildWhereClause(coerceToWherePredicates(...(args as Parameters<typeof coerceToWherePredicates>)));
 	const input = args[0] as T.WhereClause.Loose | undefined;
@@ -4426,7 +4135,7 @@ export function coerceToWhereClause(...args: unknown[]): ReturnType<typeof F.bui
 			true
 		)
 	);
-}
+};
 
 export function resolveWherePredicate_left(
 	value: T.WherePredicate.LooseConfig['left']
@@ -4637,10 +4346,9 @@ export function coerceToAssociatedType(input: T.AssociatedType.Loose): ReturnTyp
 	});
 }
 
-export function coerceToTraitBounds<const A extends T.TraitBounds.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TraitBounds.LooseArgs>
-): ReturnType<typeof F.buildTraitBounds>;
-export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnType<typeof F.buildTraitBounds> {
+export const coerceToTraitBounds: Seat<T.TraitBounds.LooseArgs, ReturnType<typeof F.buildTraitBounds>> = (
+	...input: T.TraitBounds.LooseArgs
+): ReturnType<typeof F.buildTraitBounds> => {
 	currentHandle()?.admit(TSKindId.TraitBounds, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitBounds)) {
 		const data = input[0];
@@ -4671,7 +4379,7 @@ export function coerceToTraitBounds(...input: T.TraitBounds.LooseArgs): ReturnTy
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildTraitBounds>)
 	);
-}
+};
 
 export function resolveHigherRankedTraitBound_typeParameters(
 	value: T.HigherRankedTraitBound.LooseConfig['typeParameters']
@@ -4741,13 +4449,13 @@ export function resolveTypeParameters_elements(
 	return _resolveOneBranch<T.TypeParametersElements>(value, 'type_parameters_elements');
 }
 
-export function coerceToTypeParameters<const A extends T.TypeParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
-): ReturnType<typeof F.buildTypeParameters>;
-export function coerceToTypeParameters<const I extends T.TypeParameters.Loose>(
-	input: I & RefuseUndeclared<I, T.TypeParameters.Loose>
-): ReturnType<typeof F.buildTypeParameters>;
-export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.buildTypeParameters> {
+export const coerceToTypeParameters: Seat<
+	T.TypeParametersElements.LooseArgs,
+	ReturnType<typeof F.buildTypeParameters>
+> &
+	ConfigSeat<T.TypeParameters.Loose, ReturnType<typeof F.buildTypeParameters>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildTypeParameters> => {
 	if (args.length > 1)
 		return F.buildTypeParameters(
 			coerceToTypeParametersElements(...(args as Parameters<typeof coerceToTypeParametersElements>))
@@ -4760,7 +4468,7 @@ export function coerceToTypeParameters(...args: unknown[]): ReturnType<typeof F.
 			'type_parameters_elements'
 		)
 	);
-}
+};
 
 export function resolveConstParameter_name(
 	value: T.ConstParameter.LooseConfig['name']
@@ -5004,14 +4712,11 @@ export function resolveUseList_useClauses(
 	return _resolveOneBranch<T.UseClauses>(value, 'use_clauses', undefined, true);
 }
 
-export function coerceToUseList(): T.EmptyUseList;
-export function coerceToUseList<const A extends T.UseClauses.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.UseClauses.LooseArgs>
-): ReturnType<typeof F.buildUseList>;
-export function coerceToUseList<const I extends T.UseList.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.UseList.Loose>
-): ReturnType<typeof F.buildUseList>;
-export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUseList> {
+export const coerceToUseList: EmptyForm<
+	T.EmptyUseList,
+	Seat<T.UseClauses.LooseArgs, ReturnType<typeof F.buildUseList>> &
+		OptionalConfigSeat<T.UseList.Loose, ReturnType<typeof F.buildUseList>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildUseList> => {
 	if (args.length > 1) return F.buildUseList(coerceToUseClauses(...(args as Parameters<typeof coerceToUseClauses>)));
 	const input = args[0] as T.UseList.Loose | undefined;
 	return F.buildUseList(
@@ -5022,7 +4727,7 @@ export function coerceToUseList(...args: unknown[]): ReturnType<typeof F.buildUs
 			true
 		)
 	);
-}
+});
 
 export function resolveUseAsClause_name(value: T.UseAsClause.LooseConfig['name']): Admit<T.UseAsClause['_name']> {
 	return _keywordOr(
@@ -5364,13 +5069,10 @@ export function resolveForLifetimes_lifetimes(
 	return _resolveOneBranch<T.Lifetimes>(value, 'lifetimes');
 }
 
-export function coerceToForLifetimes<const A extends T.Lifetimes.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Lifetimes.LooseArgs>
-): ReturnType<typeof F.buildForLifetimes>;
-export function coerceToForLifetimes<const I extends T.ForLifetimes.Loose>(
-	input: I & RefuseUndeclared<I, T.ForLifetimes.Loose>
-): ReturnType<typeof F.buildForLifetimes>;
-export function coerceToForLifetimes(...args: unknown[]): ReturnType<typeof F.buildForLifetimes> {
+export const coerceToForLifetimes: Seat<T.Lifetimes.LooseArgs, ReturnType<typeof F.buildForLifetimes>> &
+	ConfigSeat<T.ForLifetimes.Loose, ReturnType<typeof F.buildForLifetimes>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildForLifetimes> => {
 	if (args.length > 1) return F.buildForLifetimes(coerceToLifetimes(...(args as Parameters<typeof coerceToLifetimes>)));
 	const input = args[0] as T.ForLifetimes.Loose;
 	if (isNodeOfKind(input, TSKindId.ForLifetimes)) return input as unknown as ReturnType<typeof F.buildForLifetimes>;
@@ -5380,7 +5082,7 @@ export function coerceToForLifetimes(...args: unknown[]): ReturnType<typeof F.bu
 			'lifetimes'
 		)
 	);
-}
+};
 
 export function resolveFunctionType_forLifetimes(
 	value: T.FunctionType.LooseConfig['forLifetimes']
@@ -5428,13 +5130,10 @@ export function resolveTupleType_types(value: T.TupleType.LooseConfig['types']):
 	return _resolveOneBranch<T.Types>(value, 'types');
 }
 
-export function coerceToTupleType<const A extends T.Types.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
-): ReturnType<typeof F.buildTupleType>;
-export function coerceToTupleType<const I extends T.TupleType.Loose>(
-	input: I & RefuseUndeclared<I, T.TupleType.Loose>
-): ReturnType<typeof F.buildTupleType>;
-export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.buildTupleType> {
+export const coerceToTupleType: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTupleType>> &
+	ConfigSeat<T.TupleType.Loose, ReturnType<typeof F.buildTupleType>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildTupleType> => {
 	if (args.length > 1) return F.buildTupleType(coerceToTypes(...(args as Parameters<typeof coerceToTypes>)));
 	const input = args[0] as T.TupleType.Loose;
 	return F.buildTupleType(
@@ -5443,7 +5142,7 @@ export function coerceToTupleType(...args: unknown[]): ReturnType<typeof F.build
 			'types'
 		)
 	);
-}
+};
 
 export function coerceToUnitType(_input?: T.UnitType.Loose): typeof F.buildUnitType {
 	return F.buildUnitType;
@@ -5555,14 +5254,11 @@ export function resolveUseBounds_bounds(value: T.UseBounds.LooseConfig['bounds']
 	return _resolveOneBranch<T.UseBoundsElements>(value, 'use_bounds_elements', undefined, true);
 }
 
-export function coerceToUseBounds(): T.EmptyUseBounds;
-export function coerceToUseBounds<const A extends T.UseBoundsElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.UseBoundsElements.LooseArgs>
-): ReturnType<typeof F.buildUseBounds>;
-export function coerceToUseBounds<const I extends T.UseBounds.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.UseBounds.Loose>
-): ReturnType<typeof F.buildUseBounds>;
-export function coerceToUseBounds(...args: unknown[]): ReturnType<typeof F.buildUseBounds> {
+export const coerceToUseBounds: EmptyForm<
+	T.EmptyUseBounds,
+	Seat<T.UseBoundsElements.LooseArgs, ReturnType<typeof F.buildUseBounds>> &
+		OptionalConfigSeat<T.UseBounds.Loose, ReturnType<typeof F.buildUseBounds>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildUseBounds> => {
 	if (args.length > 1)
 		return F.buildUseBounds(coerceToUseBoundsElements(...(args as Parameters<typeof coerceToUseBoundsElements>)));
 	const input = args[0] as T.UseBounds.Loose | undefined;
@@ -5576,7 +5272,7 @@ export function coerceToUseBounds(...args: unknown[]): ReturnType<typeof F.build
 			true
 		)
 	);
-}
+});
 
 export function resolveTypeArguments_elements(
 	value: T.TypeArguments.LooseConfig['elements']
@@ -5584,13 +5280,10 @@ export function resolveTypeArguments_elements(
 	return _resolveOneBranch<T.TypeArgumentsElements>(value, 'type_arguments_elements');
 }
 
-export function coerceToTypeArguments<const A extends T.TypeArgumentsElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
-): ReturnType<typeof F.buildTypeArguments>;
-export function coerceToTypeArguments<const I extends T.TypeArguments.Loose>(
-	input: I & RefuseUndeclared<I, T.TypeArguments.Loose>
-): ReturnType<typeof F.buildTypeArguments>;
-export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.buildTypeArguments> {
+export const coerceToTypeArguments: Seat<T.TypeArgumentsElements.LooseArgs, ReturnType<typeof F.buildTypeArguments>> &
+	ConfigSeat<T.TypeArguments.Loose, ReturnType<typeof F.buildTypeArguments>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildTypeArguments> => {
 	if (args.length > 1)
 		return F.buildTypeArguments(
 			coerceToTypeArgumentsElements(...(args as Parameters<typeof coerceToTypeArgumentsElements>))
@@ -5603,7 +5296,7 @@ export function coerceToTypeArguments(...args: unknown[]): ReturnType<typeof F.b
 			'type_arguments_elements'
 		)
 	);
-}
+};
 
 export function resolveTypeBinding_name(value: T.TypeBinding.LooseConfig['name']): Admit<T.TypeBinding['_name']> {
 	return _resolveOneBranch<T.TypeIdentifier>(value, 'type_identifier');
@@ -6303,14 +5996,11 @@ export function resolveArguments_elements(value: T.Arguments.LooseConfig['elemen
 	return _resolveOneBranch<T.ArgumentsElements>(value, 'arguments_elements', undefined, true);
 }
 
-export function coerceToArguments(): T.EmptyArguments;
-export function coerceToArguments<const A extends T.ArgumentsElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
-): ReturnType<typeof F.buildArguments>;
-export function coerceToArguments<const I extends T.Arguments.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.Arguments.Loose>
-): ReturnType<typeof F.buildArguments>;
-export function coerceToArguments(...args: unknown[]): ReturnType<typeof F.buildArguments> {
+export const coerceToArguments: EmptyForm<
+	T.EmptyArguments,
+	Seat<T.ArgumentsElements.LooseArgs, ReturnType<typeof F.buildArguments>> &
+		OptionalConfigSeat<T.Arguments.Loose, ReturnType<typeof F.buildArguments>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildArguments> => {
 	if (args.length > 1)
 		return F.buildArguments(coerceToArgumentsElements(...(args as Parameters<typeof coerceToArgumentsElements>)));
 	const input = args[0] as T.Arguments.Loose | undefined;
@@ -6324,7 +6014,7 @@ export function coerceToArguments(...args: unknown[]): ReturnType<typeof F.build
 			true
 		)
 	);
-}
+});
 
 export function resolveParenthesizedExpression_expression(
 	value: T.ParenthesizedExpression.LooseConfig['expression']
@@ -6422,14 +6112,11 @@ export function resolveFieldInitializerList_initializers(
 	return _resolveOneBranch<T.FieldInitializerListElements>(value, 'field_initializer_list_elements', undefined, true);
 }
 
-export function coerceToFieldInitializerList(): T.EmptyFieldInitializerList;
-export function coerceToFieldInitializerList<const A extends T.FieldInitializerListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FieldInitializerListElements.LooseArgs>
-): ReturnType<typeof F.buildFieldInitializerList>;
-export function coerceToFieldInitializerList<const I extends T.FieldInitializerList.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.FieldInitializerList.Loose>
-): ReturnType<typeof F.buildFieldInitializerList>;
-export function coerceToFieldInitializerList(...args: unknown[]): ReturnType<typeof F.buildFieldInitializerList> {
+export const coerceToFieldInitializerList: EmptyForm<
+	T.EmptyFieldInitializerList,
+	Seat<T.FieldInitializerListElements.LooseArgs, ReturnType<typeof F.buildFieldInitializerList>> &
+		OptionalConfigSeat<T.FieldInitializerList.Loose, ReturnType<typeof F.buildFieldInitializerList>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildFieldInitializerList> => {
 	if (args.length > 1)
 		return F.buildFieldInitializerList(
 			coerceToFieldInitializerListElements(...(args as Parameters<typeof coerceToFieldInitializerListElements>))
@@ -6445,7 +6132,7 @@ export function coerceToFieldInitializerList(...args: unknown[]): ReturnType<typ
 			true
 		)
 	);
-}
+});
 
 export function resolveShorthandFieldInitializer_attributes(
 	value: T.ShorthandFieldInitializer.LooseConfig['attributes']
@@ -6892,13 +6579,10 @@ export function coerceToConstBlock(input?: T.ConstBlock.Loose): ReturnType<typeo
 	);
 }
 
-export function coerceToClosureParameters(): T.EmptyClosureParameters;
-export function coerceToClosureParameters<const A extends T.ClosureParameters.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ClosureParameters.LooseArgs>
-): ReturnType<typeof F.buildClosureParameters>;
-export function coerceToClosureParameters(
-	...input: T.ClosureParameters.LooseArgs
-): ReturnType<typeof F.buildClosureParameters> {
+export const coerceToClosureParameters: EmptyForm<
+	T.EmptyClosureParameters,
+	Seat<T.ClosureParameters.LooseArgs, ReturnType<typeof F.buildClosureParameters>>
+> = withEmptyForm((...input: T.ClosureParameters.LooseArgs): ReturnType<typeof F.buildClosureParameters> => {
 	currentHandle()?.admit(TSKindId.ClosureParameters, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ClosureParameters)) {
 		const data = input[0];
@@ -6925,7 +6609,7 @@ export function coerceToClosureParameters(
 			(item) => coerceMixedEnumStorage(item, [])
 		) as unknown as Parameters<typeof F.buildClosureParameters>)
 	);
-}
+});
 
 export function resolveLabel_name(value: T.Label.LooseConfig['name']): Admit<T.Label['_name']> {
 	return _resolveOneLeaf<T.Identifier>(value, 'identifier');
@@ -7233,14 +6917,11 @@ export function resolveTuplePattern_elements(
 	return _resolveOneBranch<T.TuplePatternElements>(value, 'tuple_pattern_elements', undefined, true);
 }
 
-export function coerceToTuplePattern(): T.EmptyTuplePattern;
-export function coerceToTuplePattern<const A extends T.TuplePatternElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TuplePatternElements.LooseArgs>
-): ReturnType<typeof F.buildTuplePattern>;
-export function coerceToTuplePattern<const I extends T.TuplePattern.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.TuplePattern.Loose>
-): ReturnType<typeof F.buildTuplePattern>;
-export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.buildTuplePattern> {
+export const coerceToTuplePattern: EmptyForm<
+	T.EmptyTuplePattern,
+	Seat<T.TuplePatternElements.LooseArgs, ReturnType<typeof F.buildTuplePattern>> &
+		OptionalConfigSeat<T.TuplePattern.Loose, ReturnType<typeof F.buildTuplePattern>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildTuplePattern> => {
 	if (args.length > 1)
 		return F.buildTuplePattern(
 			coerceToTuplePatternElements(...(args as Parameters<typeof coerceToTuplePatternElements>))
@@ -7254,7 +6935,7 @@ export function coerceToTuplePattern(...args: unknown[]): ReturnType<typeof F.bu
 			true
 		)
 	);
-}
+});
 
 export function resolveSlicePattern_elements(
 	value: T.SlicePattern.LooseConfig['elements']
@@ -7262,14 +6943,11 @@ export function resolveSlicePattern_elements(
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
-export function coerceToSlicePattern(): T.EmptySlicePattern;
-export function coerceToSlicePattern<const A extends T.Patterns.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Patterns.LooseArgs>
-): ReturnType<typeof F.buildSlicePattern>;
-export function coerceToSlicePattern<const I extends T.SlicePattern.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.SlicePattern.Loose>
-): ReturnType<typeof F.buildSlicePattern>;
-export function coerceToSlicePattern(...args: unknown[]): ReturnType<typeof F.buildSlicePattern> {
+export const coerceToSlicePattern: EmptyForm<
+	T.EmptySlicePattern,
+	Seat<T.Patterns.LooseArgs, ReturnType<typeof F.buildSlicePattern>> &
+		OptionalConfigSeat<T.SlicePattern.Loose, ReturnType<typeof F.buildSlicePattern>>
+> = withEmptyForm((...args: unknown[]): ReturnType<typeof F.buildSlicePattern> => {
 	if (args.length > 1) return F.buildSlicePattern(coerceToPatterns(...(args as Parameters<typeof coerceToPatterns>)));
 	const input = args[0] as T.SlicePattern.Loose | undefined;
 	return F.buildSlicePattern(
@@ -7280,7 +6958,7 @@ export function coerceToSlicePattern(...args: unknown[]): ReturnType<typeof F.bu
 			true
 		)
 	);
-}
+});
 
 export function resolveTupleStructPattern_type(
 	value: T.TupleStructPattern.LooseConfig['type']
@@ -7674,10 +7352,9 @@ export function coerceToMetavariable(input: T.Metavariable.Loose): ReturnType<ty
 	);
 }
 
-export function coerceToMacroRules<const A extends T.MacroRules.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.MacroRules.LooseArgs>
-): ReturnType<typeof F.buildMacroRules>;
-export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType<typeof F.buildMacroRules> {
+export const coerceToMacroRules: Seat<T.MacroRules.LooseArgs, ReturnType<typeof F.buildMacroRules>> = (
+	...input: T.MacroRules.LooseArgs
+): ReturnType<typeof F.buildMacroRules> => {
 	currentHandle()?.admit(TSKindId.MacroRules, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.MacroRules)) {
 		const data = input[0];
@@ -7698,14 +7375,12 @@ export function coerceToMacroRules(...input: T.MacroRules.LooseArgs): ReturnType
 			'macro_rule'
 		]) as unknown as NonEmptyArray<Admit<T.MacroRule>>)
 	);
-}
+};
 
-export function coerceToEnumVariantListElements<const A extends T.EnumVariantListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.EnumVariantListElements.LooseArgs>
-): ReturnType<typeof F.buildEnumVariantListElements>;
-export function coerceToEnumVariantListElements(
-	...input: T.EnumVariantListElements.LooseArgs
-): ReturnType<typeof F.buildEnumVariantListElements> {
+export const coerceToEnumVariantListElements: Seat<
+	T.EnumVariantListElements.LooseArgs,
+	ReturnType<typeof F.buildEnumVariantListElements>
+> = (...input: T.EnumVariantListElements.LooseArgs): ReturnType<typeof F.buildEnumVariantListElements> => {
 	currentHandle()?.admit(TSKindId.EnumVariantListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.EnumVariantListElements)) {
 		const data = input[0];
@@ -7731,14 +7406,12 @@ export function coerceToEnumVariantListElements(
 			['attributed_enum_variant', 'enum_variant']
 		) as unknown as NonEmptyArray<Admit<T.AttributedEnumVariant | T.EnumVariant>>)
 	);
-}
+};
 
-export function coerceToFieldDeclarationListElements<const A extends T.FieldDeclarationListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FieldDeclarationListElements.LooseArgs>
-): ReturnType<typeof F.buildFieldDeclarationListElements>;
-export function coerceToFieldDeclarationListElements(
-	...input: T.FieldDeclarationListElements.LooseArgs
-): ReturnType<typeof F.buildFieldDeclarationListElements> {
+export const coerceToFieldDeclarationListElements: Seat<
+	T.FieldDeclarationListElements.LooseArgs,
+	ReturnType<typeof F.buildFieldDeclarationListElements>
+> = (...input: T.FieldDeclarationListElements.LooseArgs): ReturnType<typeof F.buildFieldDeclarationListElements> => {
 	currentHandle()?.admit(TSKindId.FieldDeclarationListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldDeclarationListElements)) {
 		const data = input[0];
@@ -7764,16 +7437,14 @@ export function coerceToFieldDeclarationListElements(
 			['attributed_field_declaration', 'field_declaration']
 		) as unknown as NonEmptyArray<Admit<T.AttributedFieldDeclaration | T.FieldDeclaration>>)
 	);
-}
+};
 
-export function coerceToOrderedFieldDeclarationListElements<
-	const A extends T.OrderedFieldDeclarationListElements.LooseArgs
->(
-	...input: A & RefuseUndeclared<A, T.OrderedFieldDeclarationListElements.LooseArgs>
-): ReturnType<typeof F.buildOrderedFieldDeclarationListElements>;
-export function coerceToOrderedFieldDeclarationListElements(
+export const coerceToOrderedFieldDeclarationListElements: Seat<
+	T.OrderedFieldDeclarationListElements.LooseArgs,
+	ReturnType<typeof F.buildOrderedFieldDeclarationListElements>
+> = (
 	...input: T.OrderedFieldDeclarationListElements.LooseArgs
-): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> {
+): ReturnType<typeof F.buildOrderedFieldDeclarationListElements> => {
 	currentHandle()?.admit(TSKindId.OrderedFieldDeclarationListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.OrderedFieldDeclarationListElements)) {
 		const data = input[0];
@@ -7842,14 +7513,11 @@ export function coerceToOrderedFieldDeclarationListElements(
 			]
 		) as unknown as NonEmptyArray<Admit<T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types>>)
 	);
-}
+};
 
-export function coerceToWherePredicates<const A extends T.WherePredicates.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.WherePredicates.LooseArgs>
-): ReturnType<typeof F.buildWherePredicates>;
-export function coerceToWherePredicates(
+export const coerceToWherePredicates: Seat<T.WherePredicates.LooseArgs, ReturnType<typeof F.buildWherePredicates>> = (
 	...input: T.WherePredicates.LooseArgs
-): ReturnType<typeof F.buildWherePredicates> {
+): ReturnType<typeof F.buildWherePredicates> => {
 	currentHandle()?.admit(TSKindId.WherePredicates, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.WherePredicates)) {
 		const data = input[0];
@@ -7874,14 +7542,12 @@ export function coerceToWherePredicates(
 			['where_predicate']
 		) as unknown as NonEmptyArray<Admit<T.WherePredicate>>)
 	);
-}
+};
 
-export function coerceToTypeParametersElements<const A extends T.TypeParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TypeParametersElements.LooseArgs>
-): ReturnType<typeof F.buildTypeParametersElements>;
-export function coerceToTypeParametersElements(
-	...input: T.TypeParametersElements.LooseArgs
-): ReturnType<typeof F.buildTypeParametersElements> {
+export const coerceToTypeParametersElements: Seat<
+	T.TypeParametersElements.LooseArgs,
+	ReturnType<typeof F.buildTypeParametersElements>
+> = (...input: T.TypeParametersElements.LooseArgs): ReturnType<typeof F.buildTypeParametersElements> => {
 	currentHandle()?.admit(TSKindId.TypeParametersElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeParametersElements)) {
 		const data = input[0];
@@ -7914,12 +7580,11 @@ export function coerceToTypeParametersElements(
 			Admit<T.AttributedTypeParameter | T.Metavariable | T.TypeParameter | T.LifetimeParameter | T.ConstParameter>
 		>)
 	);
-}
+};
 
-export function coerceToUseClauses<const A extends T.UseClauses.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.UseClauses.LooseArgs>
-): ReturnType<typeof F.buildUseClauses>;
-export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType<typeof F.buildUseClauses> {
+export const coerceToUseClauses: Seat<T.UseClauses.LooseArgs, ReturnType<typeof F.buildUseClauses>> = (
+	...input: T.UseClauses.LooseArgs
+): ReturnType<typeof F.buildUseClauses> => {
 	currentHandle()?.admit(TSKindId.UseClauses, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseClauses)) {
 		const data = input[0];
@@ -8012,14 +7677,12 @@ export function coerceToUseClauses(...input: T.UseClauses.LooseArgs): ReturnType
 			>
 		>)
 	);
-}
+};
 
-export function coerceToParametersElements<const A extends T.ParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
-): ReturnType<typeof F.buildParametersElements>;
-export function coerceToParametersElements(
-	...input: T.ParametersElements.LooseArgs
-): ReturnType<typeof F.buildParametersElements> {
+export const coerceToParametersElements: Seat<
+	T.ParametersElements.LooseArgs,
+	ReturnType<typeof F.buildParametersElements>
+> = (...input: T.ParametersElements.LooseArgs): ReturnType<typeof F.buildParametersElements> => {
 	currentHandle()?.admit(TSKindId.ParametersElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ParametersElements)) {
 		const data = input[0];
@@ -8104,12 +7767,11 @@ export function coerceToParametersElements(
 			>
 		>)
 	);
-}
+};
 
-export function coerceToLifetimes<const A extends T.Lifetimes.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Lifetimes.LooseArgs>
-): ReturnType<typeof F.buildLifetimes>;
-export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<typeof F.buildLifetimes> {
+export const coerceToLifetimes: Seat<T.Lifetimes.LooseArgs, ReturnType<typeof F.buildLifetimes>> = (
+	...input: T.Lifetimes.LooseArgs
+): ReturnType<typeof F.buildLifetimes> => {
 	currentHandle()?.admit(TSKindId.Lifetimes, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Lifetimes)) {
 		const data = input[0];
@@ -8130,12 +7792,11 @@ export function coerceToLifetimes(...input: T.Lifetimes.LooseArgs): ReturnType<t
 			'lifetime'
 		]) as unknown as NonEmptyArray<Admit<T.Lifetime>>)
 	);
-}
+};
 
-export function coerceToTypes<const A extends T.Types.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Types.LooseArgs>
-): ReturnType<typeof F.buildTypes>;
-export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.buildTypes> {
+export const coerceToTypes: Seat<T.Types.LooseArgs, ReturnType<typeof F.buildTypes>> = (
+	...input: T.Types.LooseArgs
+): ReturnType<typeof F.buildTypes> => {
 	currentHandle()?.admit(TSKindId.Types, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Types)) {
 		const data = input[0];
@@ -8183,14 +7844,12 @@ export function coerceToTypes(...input: T.Types.LooseArgs): ReturnType<typeof F.
 			]
 		) as unknown as NonEmptyArray<Admit<T.Type | T.TypeIdentifier.Types>>)
 	);
-}
+};
 
-export function coerceToUseBoundsElements<const A extends T.UseBoundsElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.UseBoundsElements.LooseArgs>
-): ReturnType<typeof F.buildUseBoundsElements>;
-export function coerceToUseBoundsElements(
-	...input: T.UseBoundsElements.LooseArgs
-): ReturnType<typeof F.buildUseBoundsElements> {
+export const coerceToUseBoundsElements: Seat<
+	T.UseBoundsElements.LooseArgs,
+	ReturnType<typeof F.buildUseBoundsElements>
+> = (...input: T.UseBoundsElements.LooseArgs): ReturnType<typeof F.buildUseBoundsElements> => {
 	currentHandle()?.admit(TSKindId.UseBoundsElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.UseBoundsElements)) {
 		const data = input[0];
@@ -8215,14 +7874,12 @@ export function coerceToUseBoundsElements(
 			['lifetime', 'type_identifier']
 		) as unknown as NonEmptyArray<Admit<T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types>>)
 	);
-}
+};
 
-export function coerceToTypeArgumentsElements<const A extends T.TypeArgumentsElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TypeArgumentsElements.LooseArgs>
-): ReturnType<typeof F.buildTypeArgumentsElements>;
-export function coerceToTypeArgumentsElements(
-	...input: T.TypeArgumentsElements.LooseArgs
-): ReturnType<typeof F.buildTypeArgumentsElements> {
+export const coerceToTypeArgumentsElements: Seat<
+	T.TypeArgumentsElements.LooseArgs,
+	ReturnType<typeof F.buildTypeArgumentsElements>
+> = (...input: T.TypeArgumentsElements.LooseArgs): ReturnType<typeof F.buildTypeArgumentsElements> => {
 	currentHandle()?.admit(TSKindId.TypeArgumentsElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TypeArgumentsElements)) {
 		const data = input[0];
@@ -8328,14 +7985,12 @@ export function coerceToTypeArgumentsElements(
 			Admit<T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types>
 		>)
 	);
-}
+};
 
-export function coerceToArgumentsElements<const A extends T.ArgumentsElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ArgumentsElements.LooseArgs>
-): ReturnType<typeof F.buildArgumentsElements>;
-export function coerceToArgumentsElements(
-	...input: T.ArgumentsElements.LooseArgs
-): ReturnType<typeof F.buildArgumentsElements> {
+export const coerceToArgumentsElements: Seat<
+	T.ArgumentsElements.LooseArgs,
+	ReturnType<typeof F.buildArgumentsElements>
+> = (...input: T.ArgumentsElements.LooseArgs): ReturnType<typeof F.buildArgumentsElements> => {
 	currentHandle()?.admit(TSKindId.ArgumentsElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ArgumentsElements)) {
 		const data = input[0];
@@ -8485,12 +8140,11 @@ export function coerceToArgumentsElements(
 			]
 		) as unknown as NonEmptyArray<Admit<T.AttributedArgument | T.Expression>>)
 	);
-}
+};
 
-export function coerceToExpressions<const A extends T.Expressions.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Expressions.LooseArgs>
-): ReturnType<typeof F.buildExpressions>;
-export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnType<typeof F.buildExpressions> {
+export const coerceToExpressions: Seat<T.Expressions.LooseArgs, ReturnType<typeof F.buildExpressions>> = (
+	...input: T.Expressions.LooseArgs
+): ReturnType<typeof F.buildExpressions> => {
 	currentHandle()?.admit(TSKindId.Expressions, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Expressions)) {
 		const data = input[0];
@@ -8581,14 +8235,12 @@ export function coerceToExpressions(...input: T.Expressions.LooseArgs): ReturnTy
 			]
 		) as unknown as NonEmptyArray<Admit<T.Expression>>)
 	);
-}
+};
 
-export function coerceToFieldInitializerListElements<const A extends T.FieldInitializerListElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FieldInitializerListElements.LooseArgs>
-): ReturnType<typeof F.buildFieldInitializerListElements>;
-export function coerceToFieldInitializerListElements(
-	...input: T.FieldInitializerListElements.LooseArgs
-): ReturnType<typeof F.buildFieldInitializerListElements> {
+export const coerceToFieldInitializerListElements: Seat<
+	T.FieldInitializerListElements.LooseArgs,
+	ReturnType<typeof F.buildFieldInitializerListElements>
+> = (...input: T.FieldInitializerListElements.LooseArgs): ReturnType<typeof F.buildFieldInitializerListElements> => {
 	currentHandle()?.admit(TSKindId.FieldInitializerListElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.FieldInitializerListElements)) {
 		const data = input[0];
@@ -8615,14 +8267,12 @@ export function coerceToFieldInitializerListElements(
 			['shorthand_field_initializer', 'field_initializer', 'base_field_initializer']
 		) as unknown as NonEmptyArray<Admit<T.ShorthandFieldInitializer | T.FieldInitializer | T.BaseFieldInitializer>>)
 	);
-}
+};
 
-export function coerceToTuplePatternElements<const A extends T.TuplePatternElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TuplePatternElements.LooseArgs>
-): ReturnType<typeof F.buildTuplePatternElements>;
-export function coerceToTuplePatternElements(
-	...input: T.TuplePatternElements.LooseArgs
-): ReturnType<typeof F.buildTuplePatternElements> {
+export const coerceToTuplePatternElements: Seat<
+	T.TuplePatternElements.LooseArgs,
+	ReturnType<typeof F.buildTuplePatternElements>
+> = (...input: T.TuplePatternElements.LooseArgs): ReturnType<typeof F.buildTuplePatternElements> => {
 	currentHandle()?.admit(TSKindId.TuplePatternElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TuplePatternElements)) {
 		const data = input[0];
@@ -8688,12 +8338,11 @@ export function coerceToTuplePatternElements(
 			]
 		) as unknown as NonEmptyArray<Admit<T.Pattern | T.ClosureExpression>>)
 	);
-}
+};
 
-export function coerceToPatterns<const A extends T.Patterns.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.Patterns.LooseArgs>
-): ReturnType<typeof F.buildPatterns>;
-export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typeof F.buildPatterns> {
+export const coerceToPatterns: Seat<T.Patterns.LooseArgs, ReturnType<typeof F.buildPatterns>> = (
+	...input: T.Patterns.LooseArgs
+): ReturnType<typeof F.buildPatterns> => {
 	currentHandle()?.admit(TSKindId.Patterns, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.Patterns)) {
 		const data = input[0];
@@ -8757,14 +8406,12 @@ export function coerceToPatterns(...input: T.Patterns.LooseArgs): ReturnType<typ
 			]
 		) as unknown as NonEmptyArray<Admit<T.Pattern>>)
 	);
-}
+};
 
-export function coerceToStructPatternElements<const A extends T.StructPatternElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.StructPatternElements.LooseArgs>
-): ReturnType<typeof F.buildStructPatternElements>;
-export function coerceToStructPatternElements(
-	...input: T.StructPatternElements.LooseArgs
-): ReturnType<typeof F.buildStructPatternElements> {
+export const coerceToStructPatternElements: Seat<
+	T.StructPatternElements.LooseArgs,
+	ReturnType<typeof F.buildStructPatternElements>
+> = (...input: T.StructPatternElements.LooseArgs): ReturnType<typeof F.buildStructPatternElements> => {
 	currentHandle()?.admit(TSKindId.StructPatternElements, input);
 	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.StructPatternElements)) {
 		const data = input[0];
@@ -8795,7 +8442,7 @@ export function coerceToStructPatternElements(
 			['remaining_field_pattern', 'field_pattern_shorthand', 'field_pattern_named']
 		) as unknown as NonEmptyArray<Admit<T.FieldPattern | TSKindId.RemainingFieldPattern>>)
 	);
-}
+};
 
 export function resolveUseWildcardGroup_path(
 	value: T.UseWildcardGroup.LooseConfig['path']
@@ -9916,13 +9563,13 @@ export function resolveFunctionTypeFnForm_functionModifiers(
 	return _resolveOneBranch<T.FunctionModifiers>(value, 'function_modifiers', undefined, true);
 }
 
-export function coerceToFunctionTypeFnForm<const A extends T.FunctionModifiers.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.FunctionModifiers.LooseArgs>
-): ReturnType<typeof F.buildFunctionTypeFnForm>;
-export function coerceToFunctionTypeFnForm<const I extends T.FunctionTypeFnForm.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.FunctionTypeFnForm.Loose>
-): ReturnType<typeof F.buildFunctionTypeFnForm>;
-export function coerceToFunctionTypeFnForm(...args: unknown[]): ReturnType<typeof F.buildFunctionTypeFnForm> {
+export const coerceToFunctionTypeFnForm: Seat<
+	T.FunctionModifiers.LooseArgs,
+	ReturnType<typeof F.buildFunctionTypeFnForm>
+> &
+	OptionalConfigSeat<T.FunctionTypeFnForm.Loose, ReturnType<typeof F.buildFunctionTypeFnForm>> = (
+	...args: unknown[]
+): ReturnType<typeof F.buildFunctionTypeFnForm> => {
 	if (args.length > 1)
 		return F.buildFunctionTypeFnForm(
 			coerceToFunctionModifiers(...(args as Parameters<typeof coerceToFunctionModifiers>))
@@ -9938,7 +9585,7 @@ export function coerceToFunctionTypeFnForm(...args: unknown[]): ReturnType<typeo
 			true
 		)
 	);
-}
+};
 
 export function resolveModItemExternal_visibilityModifier(
 	value: T.ModItemExternal.LooseConfig['visibilityModifier']
@@ -10550,13 +10197,10 @@ export function coerceToBlockCommentRegular(
 	return F.buildBlockCommentRegular(input as Parameters<typeof F.buildBlockCommentRegular>[0]);
 }
 
-export function coerceToTokenTreePatternParen(): T.EmptyTokenTreePatternParen;
-export function coerceToTokenTreePatternParen<const A extends T.TokenTreePatternParen.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TokenTreePatternParen.LooseArgs>
-): ReturnType<typeof F.buildTokenTreePatternParen>;
-export function coerceToTokenTreePatternParen(
-	...input: T.TokenTreePatternParen.LooseArgs
-): ReturnType<typeof F.buildTokenTreePatternParen> {
+export const coerceToTokenTreePatternParen: EmptyForm<
+	T.EmptyTokenTreePatternParen,
+	Seat<T.TokenTreePatternParen.LooseArgs, ReturnType<typeof F.buildTokenTreePatternParen>>
+> = withEmptyForm((...input: T.TokenTreePatternParen.LooseArgs): ReturnType<typeof F.buildTokenTreePatternParen> => {
 	currentHandle()?.admit(TSKindId.TokenTreePatternParen, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10571,38 +10215,34 @@ export function coerceToTokenTreePatternParen(
 			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 		>(_elems, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternParen>)
 	);
-}
+});
 
-export function coerceToTokenTreePatternBracket(): T.EmptyTokenTreePatternBracket;
-export function coerceToTokenTreePatternBracket<const A extends T.TokenTreePatternBracket.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TokenTreePatternBracket.LooseArgs>
-): ReturnType<typeof F.buildTokenTreePatternBracket>;
-export function coerceToTokenTreePatternBracket(
-	...input: T.TokenTreePatternBracket.LooseArgs
-): ReturnType<typeof F.buildTokenTreePatternBracket> {
-	currentHandle()?.admit(TSKindId.TokenTreePatternBracket, input);
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('tokenPatterns' in head)) return input;
-		const v = (head as Record<string, unknown>)['tokenPatterns'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildTokenTreePatternBracket(
-		...(_resolveMany<
-			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
-		>(_elems, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
-	);
-}
+export const coerceToTokenTreePatternBracket: EmptyForm<
+	T.EmptyTokenTreePatternBracket,
+	Seat<T.TokenTreePatternBracket.LooseArgs, ReturnType<typeof F.buildTokenTreePatternBracket>>
+> = withEmptyForm(
+	(...input: T.TokenTreePatternBracket.LooseArgs): ReturnType<typeof F.buildTokenTreePatternBracket> => {
+		currentHandle()?.admit(TSKindId.TokenTreePatternBracket, input);
+		const _elems: readonly unknown[] = (() => {
+			if (input.length !== 1) return input;
+			const head: unknown = input[0];
+			if (Array.isArray(head)) return head;
+			if (typeof head !== 'object' || head === null || isNodeValue(head) || !('tokenPatterns' in head)) return input;
+			const v = (head as Record<string, unknown>)['tokenPatterns'];
+			return Array.isArray(v) ? v : [v];
+		})();
+		return F.buildTokenTreePatternBracket(
+			...(_resolveMany<
+				T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
+			>(_elems, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternBracket>)
+		);
+	}
+);
 
-export function coerceToTokenTreePatternBrace(): T.EmptyTokenTreePatternBrace;
-export function coerceToTokenTreePatternBrace<const A extends T.TokenTreePatternBrace.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TokenTreePatternBrace.LooseArgs>
-): ReturnType<typeof F.buildTokenTreePatternBrace>;
-export function coerceToTokenTreePatternBrace(
-	...input: T.TokenTreePatternBrace.LooseArgs
-): ReturnType<typeof F.buildTokenTreePatternBrace> {
+export const coerceToTokenTreePatternBrace: EmptyForm<
+	T.EmptyTokenTreePatternBrace,
+	Seat<T.TokenTreePatternBrace.LooseArgs, ReturnType<typeof F.buildTokenTreePatternBrace>>
+> = withEmptyForm((...input: T.TokenTreePatternBrace.LooseArgs): ReturnType<typeof F.buildTokenTreePatternBrace> => {
 	currentHandle()?.admit(TSKindId.TokenTreePatternBrace, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10617,13 +10257,12 @@ export function coerceToTokenTreePatternBrace(
 			T.TokenTreePattern | T.TokenRepetitionPattern | T.TokenBindingPattern | T.Metavariable | T.NonSpecialToken
 		>(_elems, _K2, _K4) as unknown as Parameters<typeof F.buildTokenTreePatternBrace>)
 	);
-}
+});
 
-export function coerceToTokenTreeParen(): T.EmptyTokenTreeParen;
-export function coerceToTokenTreeParen<const A extends T.TokenTreeParen.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TokenTreeParen.LooseArgs>
-): ReturnType<typeof F.buildTokenTreeParen>;
-export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): ReturnType<typeof F.buildTokenTreeParen> {
+export const coerceToTokenTreeParen: EmptyForm<
+	T.EmptyTokenTreeParen,
+	Seat<T.TokenTreeParen.LooseArgs, ReturnType<typeof F.buildTokenTreeParen>>
+> = withEmptyForm((...input: T.TokenTreeParen.LooseArgs): ReturnType<typeof F.buildTokenTreeParen> => {
 	currentHandle()?.admit(TSKindId.TokenTreeParen, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10640,15 +10279,12 @@ export function coerceToTokenTreeParen(...input: T.TokenTreeParen.LooseArgs): Re
 			_K5
 		) as unknown as Parameters<typeof F.buildTokenTreeParen>)
 	);
-}
+});
 
-export function coerceToTokenTreeBracket(): T.EmptyTokenTreeBracket;
-export function coerceToTokenTreeBracket<const A extends T.TokenTreeBracket.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TokenTreeBracket.LooseArgs>
-): ReturnType<typeof F.buildTokenTreeBracket>;
-export function coerceToTokenTreeBracket(
-	...input: T.TokenTreeBracket.LooseArgs
-): ReturnType<typeof F.buildTokenTreeBracket> {
+export const coerceToTokenTreeBracket: EmptyForm<
+	T.EmptyTokenTreeBracket,
+	Seat<T.TokenTreeBracket.LooseArgs, ReturnType<typeof F.buildTokenTreeBracket>>
+> = withEmptyForm((...input: T.TokenTreeBracket.LooseArgs): ReturnType<typeof F.buildTokenTreeBracket> => {
 	currentHandle()?.admit(TSKindId.TokenTreeBracket, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10665,13 +10301,12 @@ export function coerceToTokenTreeBracket(
 			_K5
 		) as unknown as Parameters<typeof F.buildTokenTreeBracket>)
 	);
-}
+});
 
-export function coerceToTokenTreeBrace(): T.EmptyTokenTreeBrace;
-export function coerceToTokenTreeBrace<const A extends T.TokenTreeBrace.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TokenTreeBrace.LooseArgs>
-): ReturnType<typeof F.buildTokenTreeBrace>;
-export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): ReturnType<typeof F.buildTokenTreeBrace> {
+export const coerceToTokenTreeBrace: EmptyForm<
+	T.EmptyTokenTreeBrace,
+	Seat<T.TokenTreeBrace.LooseArgs, ReturnType<typeof F.buildTokenTreeBrace>>
+> = withEmptyForm((...input: T.TokenTreeBrace.LooseArgs): ReturnType<typeof F.buildTokenTreeBrace> => {
 	currentHandle()?.admit(TSKindId.TokenTreeBrace, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10688,15 +10323,12 @@ export function coerceToTokenTreeBrace(...input: T.TokenTreeBrace.LooseArgs): Re
 			_K5
 		) as unknown as Parameters<typeof F.buildTokenTreeBrace>)
 	);
-}
+});
 
-export function coerceToDelimTokenTreeParen(): T.EmptyDelimTokenTreeParen;
-export function coerceToDelimTokenTreeParen<const A extends T.DelimTokenTreeParen.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.DelimTokenTreeParen.LooseArgs>
-): ReturnType<typeof F.buildDelimTokenTreeParen>;
-export function coerceToDelimTokenTreeParen(
-	...input: T.DelimTokenTreeParen.LooseArgs
-): ReturnType<typeof F.buildDelimTokenTreeParen> {
+export const coerceToDelimTokenTreeParen: EmptyForm<
+	T.EmptyDelimTokenTreeParen,
+	Seat<T.DelimTokenTreeParen.LooseArgs, ReturnType<typeof F.buildDelimTokenTreeParen>>
+> = withEmptyForm((...input: T.DelimTokenTreeParen.LooseArgs): ReturnType<typeof F.buildDelimTokenTreeParen> => {
 	currentHandle()?.admit(TSKindId.DelimTokenTreeParen, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10714,15 +10346,12 @@ export function coerceToDelimTokenTreeParen(
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeParen>)
 	);
-}
+});
 
-export function coerceToDelimTokenTreeBracket(): T.EmptyDelimTokenTreeBracket;
-export function coerceToDelimTokenTreeBracket<const A extends T.DelimTokenTreeBracket.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.DelimTokenTreeBracket.LooseArgs>
-): ReturnType<typeof F.buildDelimTokenTreeBracket>;
-export function coerceToDelimTokenTreeBracket(
-	...input: T.DelimTokenTreeBracket.LooseArgs
-): ReturnType<typeof F.buildDelimTokenTreeBracket> {
+export const coerceToDelimTokenTreeBracket: EmptyForm<
+	T.EmptyDelimTokenTreeBracket,
+	Seat<T.DelimTokenTreeBracket.LooseArgs, ReturnType<typeof F.buildDelimTokenTreeBracket>>
+> = withEmptyForm((...input: T.DelimTokenTreeBracket.LooseArgs): ReturnType<typeof F.buildDelimTokenTreeBracket> => {
 	currentHandle()?.admit(TSKindId.DelimTokenTreeBracket, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10740,15 +10369,12 @@ export function coerceToDelimTokenTreeBracket(
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBracket>)
 	);
-}
+});
 
-export function coerceToDelimTokenTreeBrace(): T.EmptyDelimTokenTreeBrace;
-export function coerceToDelimTokenTreeBrace<const A extends T.DelimTokenTreeBrace.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.DelimTokenTreeBrace.LooseArgs>
-): ReturnType<typeof F.buildDelimTokenTreeBrace>;
-export function coerceToDelimTokenTreeBrace(
-	...input: T.DelimTokenTreeBrace.LooseArgs
-): ReturnType<typeof F.buildDelimTokenTreeBrace> {
+export const coerceToDelimTokenTreeBrace: EmptyForm<
+	T.EmptyDelimTokenTreeBrace,
+	Seat<T.DelimTokenTreeBrace.LooseArgs, ReturnType<typeof F.buildDelimTokenTreeBrace>>
+> = withEmptyForm((...input: T.DelimTokenTreeBrace.LooseArgs): ReturnType<typeof F.buildDelimTokenTreeBrace> => {
 	currentHandle()?.admit(TSKindId.DelimTokenTreeBrace, input);
 	const _elems: readonly unknown[] = (() => {
 		if (input.length !== 1) return input;
@@ -10766,7 +10392,7 @@ export function coerceToDelimTokenTreeBrace(
 			(item) => coerceMixedEnumStorage(item, [['$', TSKindId.Dollar] as const])
 		) as unknown as Parameters<typeof F.buildDelimTokenTreeBrace>)
 	);
-}
+});
 
 export function resolveFieldPatternShorthand_byReference(
 	value: T.FieldPatternShorthand.LooseConfig['byReference']
@@ -11553,75 +11179,73 @@ export function coerceToDedent(_input?: T.Dedent.Loose): typeof F.buildDedent {
 	return F.buildDedent;
 }
 
-export function coerceToTraitInterfaceDeclarationBody(): T.EmptyTraitInterfaceDeclarationBody;
-export function coerceToTraitInterfaceDeclarationBody<const A extends T.TraitInterfaceDeclarationBody.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.TraitInterfaceDeclarationBody.LooseArgs>
-): ReturnType<typeof F.buildTraitInterfaceDeclarationBody>;
-export function coerceToTraitInterfaceDeclarationBody(
-	...input: T.TraitInterfaceDeclarationBody.LooseArgs
-): ReturnType<typeof F.buildTraitInterfaceDeclarationBody> {
-	currentHandle()?.admit(TSKindId.TraitInterfaceDeclarationBody, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitInterfaceDeclarationBody)) {
-		const data = input[0];
-		const stored = (data as unknown as { _declarations?: unknown })._declarations;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+export const coerceToTraitInterfaceDeclarationBody: EmptyForm<
+	T.EmptyTraitInterfaceDeclarationBody,
+	Seat<T.TraitInterfaceDeclarationBody.LooseArgs, ReturnType<typeof F.buildTraitInterfaceDeclarationBody>>
+> = withEmptyForm(
+	(...input: T.TraitInterfaceDeclarationBody.LooseArgs): ReturnType<typeof F.buildTraitInterfaceDeclarationBody> => {
+		currentHandle()?.admit(TSKindId.TraitInterfaceDeclarationBody, input);
+		if (input.length === 1 && isNodeOfKind(input[0], TSKindId.TraitInterfaceDeclarationBody)) {
+			const data = input[0];
+			const stored = (data as unknown as { _declarations?: unknown })._declarations;
+			const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+			return F.buildTraitInterfaceDeclarationBody(
+				...(listStorage(
+					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K75)),
+					(item) => coerceMixedEnumStorage(item, [])
+				) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
+			);
+		}
+		const _elems: readonly unknown[] = (() => {
+			if (input.length !== 1) return input;
+			const head: unknown = input[0];
+			if (Array.isArray(head)) return head;
+			if (typeof head !== 'object' || head === null || isNodeValue(head) || !('declarations' in head)) return input;
+			const v = (head as Record<string, unknown>)['declarations'];
+			return Array.isArray(v) ? v : [v];
+		})();
 		return F.buildTraitInterfaceDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K75)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K75)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
 		);
 	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('declarations' in head)) return input;
-		const v = (head as Record<string, unknown>)['declarations'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildTraitInterfaceDeclarationBody(
-		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementTraitItem>(_v, _K0, _K75)),
-			(item) => coerceMixedEnumStorage(item, [])
-		) as unknown as Parameters<typeof F.buildTraitInterfaceDeclarationBody>)
-	);
-}
+);
 
-export function coerceToExtensionDeclarationBody(): T.EmptyExtensionDeclarationBody;
-export function coerceToExtensionDeclarationBody<const A extends T.ExtensionDeclarationBody.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ExtensionDeclarationBody.LooseArgs>
-): ReturnType<typeof F.buildExtensionDeclarationBody>;
-export function coerceToExtensionDeclarationBody(
-	...input: T.ExtensionDeclarationBody.LooseArgs
-): ReturnType<typeof F.buildExtensionDeclarationBody> {
-	currentHandle()?.admit(TSKindId.ExtensionDeclarationBody, input);
-	if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtensionDeclarationBody)) {
-		const data = input[0];
-		const stored = (data as unknown as { _declarations?: unknown })._declarations;
-		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+export const coerceToExtensionDeclarationBody: EmptyForm<
+	T.EmptyExtensionDeclarationBody,
+	Seat<T.ExtensionDeclarationBody.LooseArgs, ReturnType<typeof F.buildExtensionDeclarationBody>>
+> = withEmptyForm(
+	(...input: T.ExtensionDeclarationBody.LooseArgs): ReturnType<typeof F.buildExtensionDeclarationBody> => {
+		currentHandle()?.admit(TSKindId.ExtensionDeclarationBody, input);
+		if (input.length === 1 && isNodeOfKind(input[0], TSKindId.ExtensionDeclarationBody)) {
+			const data = input[0];
+			const stored = (data as unknown as { _declarations?: unknown })._declarations;
+			const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
+			return F.buildExtensionDeclarationBody(
+				...(listStorage(
+					_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K76)),
+					(item) => coerceMixedEnumStorage(item, [])
+				) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
+			);
+		}
+		const _elems: readonly unknown[] = (() => {
+			if (input.length !== 1) return input;
+			const head: unknown = input[0];
+			if (Array.isArray(head)) return head;
+			if (typeof head !== 'object' || head === null || isNodeValue(head) || !('declarations' in head)) return input;
+			const v = (head as Record<string, unknown>)['declarations'];
+			return Array.isArray(v) ? v : [v];
+		})();
 		return F.buildExtensionDeclarationBody(
 			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K76)),
+				_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K76)),
 				(item) => coerceMixedEnumStorage(item, [])
 			) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
 		);
 	}
-	const _elems: readonly unknown[] = (() => {
-		if (input.length !== 1) return input;
-		const head: unknown = input[0];
-		if (Array.isArray(head)) return head;
-		if (typeof head !== 'object' || head === null || isNodeValue(head) || !('declarations' in head)) return input;
-		const v = (head as Record<string, unknown>)['declarations'];
-		return Array.isArray(v) ? v : [v];
-	})();
-	return F.buildExtensionDeclarationBody(
-		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.DeclarationStatementImplItemBody>(_v, _K0, _K76)),
-			(item) => coerceMixedEnumStorage(item, [])
-		) as unknown as Parameters<typeof F.buildExtensionDeclarationBody>)
-	);
-}
+);
 
 export function resolveReceiverParameterDeclaration_mutable(
 	value: T.ReceiverParameterDeclaration.LooseConfig['mutable']
@@ -11720,15 +11344,14 @@ export function resolveParametersElementsReceiverGroup_elements(
 	return _resolveOneBranch<T.ParametersElements>(value, 'parameters_elements', undefined, true);
 }
 
-export function coerceToParametersElementsReceiverGroup<const A extends T.ParametersElements.LooseArgs>(
-	...input: A & RefuseUndeclared<A, T.ParametersElements.LooseArgs>
-): ReturnType<typeof F.buildParametersElementsReceiverGroup>;
-export function coerceToParametersElementsReceiverGroup<const I extends T.ParametersElementsReceiverGroup.Loose>(
-	...input: [input?: I] & RefuseUndeclared<I, T.ParametersElementsReceiverGroup.Loose>
-): ReturnType<typeof F.buildParametersElementsReceiverGroup>;
-export function coerceToParametersElementsReceiverGroup(
-	...args: unknown[]
-): ReturnType<typeof F.buildParametersElementsReceiverGroup> {
+export const coerceToParametersElementsReceiverGroup: Seat<
+	T.ParametersElements.LooseArgs,
+	ReturnType<typeof F.buildParametersElementsReceiverGroup>
+> &
+	OptionalConfigSeat<
+		T.ParametersElementsReceiverGroup.Loose,
+		ReturnType<typeof F.buildParametersElementsReceiverGroup>
+	> = (...args: unknown[]): ReturnType<typeof F.buildParametersElementsReceiverGroup> => {
 	if (args.length > 1)
 		return F.buildParametersElementsReceiverGroup(
 			coerceToParametersElements(...(args as Parameters<typeof coerceToParametersElements>))
@@ -11744,7 +11367,7 @@ export function coerceToParametersElementsReceiverGroup(
 			true
 		)
 	);
-}
+};
 
 export function coerceToSelfModule(_input?: T.SelfModule.Loose): typeof F.buildSelfModule {
 	return F.buildSelfModule;
@@ -11953,3 +11576,554 @@ export function coerceToSignatureMethodDeclaration(
 		whereClause: resolveSignatureMethodDeclaration_whereClause(input.whereClause)
 	});
 }
+
+export interface _FromMap {
+	readonly source_file: typeof coerceToSourceFile;
+	readonly empty_statement: typeof coerceToEmptyStatement;
+	readonly expression_statement: typeof coerceToExpressionStatement;
+	readonly macro_rule: typeof coerceToMacroRule;
+	readonly token_binding_pattern: typeof coerceToTokenBindingPattern;
+	readonly token_repetition_pattern: typeof coerceToTokenRepetitionPattern;
+	readonly token_repetition: typeof coerceToTokenRepetition;
+	readonly non_special_token: typeof coerceToNonSpecialToken;
+	readonly attribute_item: typeof coerceToAttributeItem;
+	readonly inner_attribute_item: typeof coerceToInnerAttributeItem;
+	readonly attribute: typeof coerceToAttribute;
+	readonly declaration_list: typeof coerceToDeclarationList;
+	readonly union_item: typeof coerceToUnionItem;
+	readonly enum_item: typeof coerceToEnumItem;
+	readonly enum_variant_list: typeof coerceToEnumVariantList;
+	readonly enum_variant: typeof coerceToEnumVariant;
+	readonly field_declaration_list: typeof coerceToFieldDeclarationList;
+	readonly field_declaration: typeof coerceToFieldDeclaration;
+	readonly ordered_field_declaration_list: typeof coerceToOrderedFieldDeclarationList;
+	readonly extern_crate_declaration: typeof coerceToExternCrateDeclaration;
+	readonly const_item: typeof coerceToConstItem;
+	readonly static_item: typeof coerceToStaticItem;
+	readonly type_item: typeof coerceToTypeItem;
+	readonly function_item: typeof coerceToFunctionItem;
+	readonly function_signature_item: typeof coerceToFunctionSignatureItem;
+	readonly function_modifiers: typeof coerceToFunctionModifiers;
+	readonly where_clause: typeof coerceToWhereClause;
+	readonly where_predicate: typeof coerceToWherePredicate;
+	readonly trait_item: typeof coerceToTraitItem;
+	readonly associated_type: typeof coerceToAssociatedType;
+	readonly trait_bounds: typeof coerceToTraitBounds;
+	readonly higher_ranked_trait_bound: typeof coerceToHigherRankedTraitBound;
+	readonly removed_trait_bound: typeof coerceToRemovedTraitBound;
+	readonly type_parameters: typeof coerceToTypeParameters;
+	readonly const_parameter: typeof coerceToConstParameter;
+	readonly type_parameter: typeof coerceToTypeParameter;
+	readonly lifetime_parameter: typeof coerceToLifetimeParameter;
+	readonly let_declaration: typeof coerceToLetDeclaration;
+	readonly use_declaration: typeof coerceToUseDeclaration;
+	readonly scoped_use_list: typeof coerceToScopedUseList;
+	readonly use_list: typeof coerceToUseList;
+	readonly use_as_clause: typeof coerceToUseAsClause;
+	readonly use_wildcard: typeof coerceToUseWildcard;
+	readonly parameters: typeof coerceToParameters;
+	readonly self_parameter: typeof coerceToSelfParameter;
+	readonly variadic_parameter: typeof coerceToVariadicParameter;
+	readonly parameter: typeof coerceToParameter;
+	readonly extern_modifier: typeof coerceToExternModifier;
+	readonly visibility_modifier: typeof coerceToVisibilityModifier;
+	readonly bracketed_type: typeof coerceToBracketedType;
+	readonly qualified_type: typeof coerceToQualifiedType;
+	readonly lifetime: typeof coerceToLifetime;
+	readonly array_type: typeof coerceToArrayType;
+	readonly for_lifetimes: typeof coerceToForLifetimes;
+	readonly function_type: typeof coerceToFunctionType;
+	readonly tuple_type: typeof coerceToTupleType;
+	readonly unit_type: typeof coerceToUnitType;
+	readonly generic_function: typeof coerceToGenericFunction;
+	readonly generic_type: typeof coerceToGenericType;
+	readonly generic_type_with_turbofish: typeof coerceToGenericTypeWithTurbofish;
+	readonly bounded_type: typeof coerceToBoundedType;
+	readonly use_bounds: typeof coerceToUseBounds;
+	readonly type_arguments: typeof coerceToTypeArguments;
+	readonly type_binding: typeof coerceToTypeBinding;
+	readonly reference_type: typeof coerceToReferenceType;
+	readonly never_type: typeof coerceToNeverType;
+	readonly abstract_type: typeof coerceToAbstractType;
+	readonly dynamic_type: typeof coerceToDynamicType;
+	readonly mutable_specifier: typeof coerceToMutableSpecifier;
+	readonly macro_invocation: typeof coerceToMacroInvocation;
+	readonly scoped_identifier: typeof coerceToScopedIdentifier;
+	readonly scoped_type_identifier_in_expression_position: typeof coerceToScopedTypeIdentifierInExpressionPosition;
+	readonly scoped_type_identifier: typeof coerceToScopedTypeIdentifier;
+	readonly unary_expression: typeof coerceToUnaryExpression;
+	readonly try_expression: typeof coerceToTryExpression;
+	readonly binary_expression: typeof coerceToBinaryExpression;
+	readonly assignment_expression: typeof coerceToAssignmentExpression;
+	readonly compound_assignment_expr: typeof coerceToCompoundAssignmentExpr;
+	readonly type_cast_expression: typeof coerceToTypeCastExpression;
+	readonly return_expression: typeof coerceToReturnExpression;
+	readonly yield_expression: typeof coerceToYieldExpression;
+	readonly call_expression: typeof coerceToCallExpression;
+	readonly arguments: typeof coerceToArguments;
+	readonly parenthesized_expression: typeof coerceToParenthesizedExpression;
+	readonly tuple_expression: typeof coerceToTupleExpression;
+	readonly unit_expression: typeof coerceToUnitExpression;
+	readonly struct_expression: typeof coerceToStructExpression;
+	readonly field_initializer_list: typeof coerceToFieldInitializerList;
+	readonly shorthand_field_initializer: typeof coerceToShorthandFieldInitializer;
+	readonly field_initializer: typeof coerceToFieldInitializer;
+	readonly base_field_initializer: typeof coerceToBaseFieldInitializer;
+	readonly if_expression: typeof coerceToIfExpression;
+	readonly let_condition: typeof coerceToLetCondition;
+	readonly _let_chain: typeof coerceToLetChain;
+	readonly else_clause: typeof coerceToElseClause;
+	readonly match_expression: typeof coerceToMatchExpression;
+	readonly match_block: typeof coerceToMatchBlock;
+	readonly last_match_arm: typeof coerceToLastMatchArm;
+	readonly match_pattern: typeof coerceToMatchPattern;
+	readonly while_expression: typeof coerceToWhileExpression;
+	readonly loop_expression: typeof coerceToLoopExpression;
+	readonly for_expression: typeof coerceToForExpression;
+	readonly const_block: typeof coerceToConstBlock;
+	readonly closure_parameters: typeof coerceToClosureParameters;
+	readonly label: typeof coerceToLabel;
+	readonly break_expression: typeof coerceToBreakExpression;
+	readonly continue_expression: typeof coerceToContinueExpression;
+	readonly index_expression: typeof coerceToIndexExpression;
+	readonly await_expression: typeof coerceToAwaitExpression;
+	readonly field_expression: typeof coerceToFieldExpression;
+	readonly unsafe_block: typeof coerceToUnsafeBlock;
+	readonly async_block: typeof coerceToAsyncBlock;
+	readonly gen_block: typeof coerceToGenBlock;
+	readonly try_block: typeof coerceToTryBlock;
+	readonly block: typeof coerceToBlock;
+	readonly generic_pattern: typeof coerceToGenericPattern;
+	readonly tuple_pattern: typeof coerceToTuplePattern;
+	readonly slice_pattern: typeof coerceToSlicePattern;
+	readonly tuple_struct_pattern: typeof coerceToTupleStructPattern;
+	readonly struct_pattern: typeof coerceToStructPattern;
+	readonly remaining_field_pattern: typeof coerceToRemainingFieldPattern;
+	readonly mut_pattern: typeof coerceToMutPattern;
+	readonly ref_pattern: typeof coerceToRefPattern;
+	readonly captured_pattern: typeof coerceToCapturedPattern;
+	readonly reference_pattern: typeof coerceToReferencePattern;
+	readonly negative_literal: typeof coerceToNegativeLiteral;
+	readonly string_literal: typeof coerceToStringLiteral;
+	readonly raw_string_literal: typeof coerceToRawStringLiteral;
+	readonly line_comment: typeof coerceToLineComment;
+	readonly inner_line_doc_comment_marker: typeof coerceToInnerLineDocCommentMarker;
+	readonly outer_line_doc_comment_marker: typeof coerceToOuterLineDocCommentMarker;
+	readonly block_comment: typeof coerceToBlockComment;
+	readonly identifier: typeof coerceToIdentifier;
+	readonly shebang: typeof coerceToShebang;
+	readonly self: typeof coerceToSelf;
+	readonly super: typeof coerceToSuper;
+	readonly crate: typeof coerceToCrate;
+	readonly metavariable: typeof coerceToMetavariable;
+	readonly macro_rules: typeof coerceToMacroRules;
+	readonly enum_variant_list_elements: typeof coerceToEnumVariantListElements;
+	readonly field_declaration_list_elements: typeof coerceToFieldDeclarationListElements;
+	readonly ordered_field_declaration_list_elements: typeof coerceToOrderedFieldDeclarationListElements;
+	readonly where_predicates: typeof coerceToWherePredicates;
+	readonly type_parameters_elements: typeof coerceToTypeParametersElements;
+	readonly use_clauses: typeof coerceToUseClauses;
+	readonly parameters_elements: typeof coerceToParametersElements;
+	readonly lifetimes: typeof coerceToLifetimes;
+	readonly types: typeof coerceToTypes;
+	readonly use_bounds_elements: typeof coerceToUseBoundsElements;
+	readonly type_arguments_elements: typeof coerceToTypeArgumentsElements;
+	readonly arguments_elements: typeof coerceToArgumentsElements;
+	readonly expressions: typeof coerceToExpressions;
+	readonly field_initializer_list_elements: typeof coerceToFieldInitializerListElements;
+	readonly tuple_pattern_elements: typeof coerceToTuplePatternElements;
+	readonly patterns: typeof coerceToPatterns;
+	readonly struct_pattern_elements: typeof coerceToStructPatternElements;
+	readonly use_wildcard_group: typeof coerceToUseWildcardGroup;
+	readonly token_repetition_pattern_text: typeof coerceToTokenRepetitionPatternText;
+	readonly string_open: typeof coerceToStringOpen;
+	readonly integer_literal_decimal: typeof coerceToIntegerLiteralDecimal;
+	readonly integer_literal_hex: typeof coerceToIntegerLiteralHex;
+	readonly integer_literal_binary: typeof coerceToIntegerLiteralBinary;
+	readonly integer_literal_octal: typeof coerceToIntegerLiteralOctal;
+	readonly char_literal_plain: typeof coerceToCharLiteralPlain;
+	readonly char_literal_empty: typeof coerceToCharLiteralEmpty;
+	readonly char_literal_escaped_simple: typeof coerceToCharLiteralEscapedSimple;
+	readonly char_literal_escaped_unicode_fixed: typeof coerceToCharLiteralEscapedUnicodeFixed;
+	readonly char_literal_escaped_unicode_braced: typeof coerceToCharLiteralEscapedUnicodeBraced;
+	readonly char_literal_escaped_hex: typeof coerceToCharLiteralEscapedHex;
+	readonly escape_sequence_simple: typeof coerceToEscapeSequenceSimple;
+	readonly escape_sequence_unicode_fixed: typeof coerceToEscapeSequenceUnicodeFixed;
+	readonly escape_sequence_unicode_braced: typeof coerceToEscapeSequenceUnicodeBraced;
+	readonly escape_sequence_hex: typeof coerceToEscapeSequenceHex;
+	readonly array_expression_semi: typeof coerceToArrayExpressionSemi;
+	readonly array_expression_list: typeof coerceToArrayExpressionList;
+	readonly attribute_input: typeof coerceToAttributeInput;
+	readonly closure_expression_block: typeof coerceToClosureExpressionBlock;
+	readonly closure_expression_expr: typeof coerceToClosureExpressionExpr;
+	readonly reference_expression_raw_const: typeof coerceToReferenceExpressionRawConst;
+	readonly reference_expression_raw_mut: typeof coerceToReferenceExpressionRawMut;
+	readonly reference_expression_mut: typeof coerceToReferenceExpressionMut;
+	readonly reference_expression_bare: typeof coerceToReferenceExpressionBare;
+	readonly impl_item_positive_clause: typeof coerceToImplItemPositiveClause;
+	readonly impl_item_negative_clause: typeof coerceToImplItemNegativeClause;
+	readonly impl_item_body: typeof coerceToImplItemBody;
+	readonly impl_item_semi: typeof coerceToImplItemSemi;
+	readonly visibility_modifier_pub_scope_in_path: typeof coerceToVisibilityModifierPubScopeInPath;
+	readonly visibility_modifier_pub_scope: typeof coerceToVisibilityModifierPubScope;
+	readonly visibility_modifier_pub: typeof coerceToVisibilityModifierPub;
+	readonly function_type_trait_form: typeof coerceToFunctionTypeTraitForm;
+	readonly function_type_fn_form: typeof coerceToFunctionTypeFnForm;
+	readonly mod_item_external: typeof coerceToModItemExternal;
+	readonly mod_item_inline: typeof coerceToModItemInline;
+	readonly or_pattern_binary: typeof coerceToOrPatternBinary;
+	readonly or_pattern_prefix: typeof coerceToOrPatternPrefix;
+	readonly pointer_type_const: typeof coerceToPointerTypeConst;
+	readonly pointer_type_mut: typeof coerceToPointerTypeMut;
+	readonly range_expression_binary: typeof coerceToRangeExpressionBinary;
+	readonly range_expression_postfix: typeof coerceToRangeExpressionPostfix;
+	readonly range_expression_prefix: typeof coerceToRangeExpressionPrefix;
+	readonly range_expression_bare: typeof coerceToRangeExpressionBare;
+	readonly expression_statement_with_semi: typeof coerceToExpressionStatementWithSemi;
+	readonly foreign_mod_item_semi: typeof coerceToForeignModItemSemi;
+	readonly foreign_mod_item_body: typeof coerceToForeignModItemBody;
+	readonly match_arm_with_comma: typeof coerceToMatchArmWithComma;
+	readonly match_arm_block_ending: typeof coerceToMatchArmBlockEnding;
+	readonly line_comment_extra_slashes: typeof coerceToLineCommentExtraSlashes;
+	readonly line_comment_doc_outer: typeof coerceToLineCommentDocOuter;
+	readonly line_comment_doc_inner: typeof coerceToLineCommentDocInner;
+	readonly line_comment_regular: typeof coerceToLineCommentRegular;
+	readonly block_comment_doc_outer: typeof coerceToBlockCommentDocOuter;
+	readonly block_comment_doc_inner: typeof coerceToBlockCommentDocInner;
+	readonly block_comment_regular: typeof coerceToBlockCommentRegular;
+	readonly token_tree_pattern_paren: typeof coerceToTokenTreePatternParen;
+	readonly token_tree_pattern_bracket: typeof coerceToTokenTreePatternBracket;
+	readonly token_tree_pattern_brace: typeof coerceToTokenTreePatternBrace;
+	readonly token_tree_paren: typeof coerceToTokenTreeParen;
+	readonly token_tree_bracket: typeof coerceToTokenTreeBracket;
+	readonly token_tree_brace: typeof coerceToTokenTreeBrace;
+	readonly delim_token_tree_paren: typeof coerceToDelimTokenTreeParen;
+	readonly delim_token_tree_bracket: typeof coerceToDelimTokenTreeBracket;
+	readonly delim_token_tree_brace: typeof coerceToDelimTokenTreeBrace;
+	readonly field_pattern_shorthand: typeof coerceToFieldPatternShorthand;
+	readonly field_pattern_named: typeof coerceToFieldPatternNamed;
+	readonly macro_definition_paren: typeof coerceToMacroDefinitionParen;
+	readonly macro_definition_bracket: typeof coerceToMacroDefinitionBracket;
+	readonly macro_definition_brace: typeof coerceToMacroDefinitionBrace;
+	readonly range_pattern_prefix: typeof coerceToRangePatternPrefix;
+	readonly range_pattern_with_left_with_right: typeof coerceToRangePatternWithLeftWithRight;
+	readonly range_pattern_with_left_bare: typeof coerceToRangePatternWithLeftBare;
+	readonly range_pattern_with_left: typeof coerceToRangePatternWithLeft;
+	readonly struct_item_brace: typeof coerceToStructItemBrace;
+	readonly struct_item_tuple: typeof coerceToStructItemTuple;
+	readonly struct_item_unit: typeof coerceToStructItemUnit;
+	readonly wildcard_pattern: typeof coerceToWildcardPattern;
+	readonly attributed_field_declaration: typeof coerceToAttributedFieldDeclaration;
+	readonly attributed_enum_variant: typeof coerceToAttributedEnumVariant;
+	readonly attributed_parameter: typeof coerceToAttributedParameter;
+	readonly attributed_type_parameter: typeof coerceToAttributedTypeParameter;
+	readonly attributed_argument: typeof coerceToAttributedArgument;
+	readonly attributed_ordered_field: typeof coerceToAttributedOrderedField;
+	readonly type_argument: typeof coerceToTypeArgument;
+	readonly match_block_arms: typeof coerceToMatchBlockArms;
+	readonly float_literal: typeof coerceToFloatLiteral;
+	readonly string_content: typeof coerceToStringContent;
+	readonly raw_string_literal_content: typeof coerceToRawStringLiteralContent;
+	readonly outer_doc_comment_marker: typeof coerceToOuterDocCommentMarker;
+	readonly inner_doc_comment_marker: typeof coerceToInnerDocCommentMarker;
+	readonly raw_string_literal_start: typeof coerceToRawStringLiteralStart;
+	readonly raw_string_literal_end: typeof coerceToRawStringLiteralEnd;
+	readonly doc_comment: typeof coerceToDocComment;
+	readonly _block_comment_content: typeof coerceToBlockCommentContent;
+	readonly _tight: typeof coerceToTight;
+	readonly _space: typeof coerceToSpace;
+	readonly _tab: typeof coerceToTab;
+	readonly _newline: typeof coerceToNewline;
+	readonly _blankline: typeof coerceToBlankline;
+	readonly _double_blankline: typeof coerceToDoubleBlankline;
+	readonly _indent: typeof coerceToIndent;
+	readonly _dedent: typeof coerceToDedent;
+	readonly trait_interface_declaration_body: typeof coerceToTraitInterfaceDeclarationBody;
+	readonly extension_declaration_body: typeof coerceToExtensionDeclarationBody;
+	readonly receiver_parameter_declaration: typeof coerceToReceiverParameterDeclaration;
+	readonly attributed_parameter_receiver: typeof coerceToAttributedParameterReceiver;
+	readonly parameters_elements_receiver: typeof coerceToParametersElementsReceiver;
+	readonly parameters_elements_receiver_group: typeof coerceToParametersElementsReceiverGroup;
+	readonly self_module: typeof coerceToSelfModule;
+	readonly type_identifier: typeof coerceToTypeIdentifier;
+	readonly field_identifier: typeof coerceToFieldIdentifier;
+	readonly crate_visibility_modifier: typeof coerceToCrateVisibilityModifier;
+	readonly shorthand_field_identifier: typeof coerceToShorthandFieldIdentifier;
+	readonly method_declaration: typeof coerceToMethodDeclaration;
+	readonly signature_method_declaration: typeof coerceToSignatureMethodDeclaration;
+}
+export const _fromMap: _FromMap = {
+	source_file: coerceToSourceFile,
+	empty_statement: coerceToEmptyStatement,
+	expression_statement: coerceToExpressionStatement,
+	macro_rule: coerceToMacroRule,
+	token_binding_pattern: coerceToTokenBindingPattern,
+	token_repetition_pattern: coerceToTokenRepetitionPattern,
+	token_repetition: coerceToTokenRepetition,
+	non_special_token: coerceToNonSpecialToken,
+	attribute_item: coerceToAttributeItem,
+	inner_attribute_item: coerceToInnerAttributeItem,
+	attribute: coerceToAttribute,
+	declaration_list: coerceToDeclarationList,
+	union_item: coerceToUnionItem,
+	enum_item: coerceToEnumItem,
+	enum_variant_list: coerceToEnumVariantList,
+	enum_variant: coerceToEnumVariant,
+	field_declaration_list: coerceToFieldDeclarationList,
+	field_declaration: coerceToFieldDeclaration,
+	ordered_field_declaration_list: coerceToOrderedFieldDeclarationList,
+	extern_crate_declaration: coerceToExternCrateDeclaration,
+	const_item: coerceToConstItem,
+	static_item: coerceToStaticItem,
+	type_item: coerceToTypeItem,
+	function_item: coerceToFunctionItem,
+	function_signature_item: coerceToFunctionSignatureItem,
+	function_modifiers: coerceToFunctionModifiers,
+	where_clause: coerceToWhereClause,
+	where_predicate: coerceToWherePredicate,
+	trait_item: coerceToTraitItem,
+	associated_type: coerceToAssociatedType,
+	trait_bounds: coerceToTraitBounds,
+	higher_ranked_trait_bound: coerceToHigherRankedTraitBound,
+	removed_trait_bound: coerceToRemovedTraitBound,
+	type_parameters: coerceToTypeParameters,
+	const_parameter: coerceToConstParameter,
+	type_parameter: coerceToTypeParameter,
+	lifetime_parameter: coerceToLifetimeParameter,
+	let_declaration: coerceToLetDeclaration,
+	use_declaration: coerceToUseDeclaration,
+	scoped_use_list: coerceToScopedUseList,
+	use_list: coerceToUseList,
+	use_as_clause: coerceToUseAsClause,
+	use_wildcard: coerceToUseWildcard,
+	parameters: coerceToParameters,
+	self_parameter: coerceToSelfParameter,
+	variadic_parameter: coerceToVariadicParameter,
+	parameter: coerceToParameter,
+	extern_modifier: coerceToExternModifier,
+	visibility_modifier: coerceToVisibilityModifier,
+	bracketed_type: coerceToBracketedType,
+	qualified_type: coerceToQualifiedType,
+	lifetime: coerceToLifetime,
+	array_type: coerceToArrayType,
+	for_lifetimes: coerceToForLifetimes,
+	function_type: coerceToFunctionType,
+	tuple_type: coerceToTupleType,
+	unit_type: coerceToUnitType,
+	generic_function: coerceToGenericFunction,
+	generic_type: coerceToGenericType,
+	generic_type_with_turbofish: coerceToGenericTypeWithTurbofish,
+	bounded_type: coerceToBoundedType,
+	use_bounds: coerceToUseBounds,
+	type_arguments: coerceToTypeArguments,
+	type_binding: coerceToTypeBinding,
+	reference_type: coerceToReferenceType,
+	never_type: coerceToNeverType,
+	abstract_type: coerceToAbstractType,
+	dynamic_type: coerceToDynamicType,
+	mutable_specifier: coerceToMutableSpecifier,
+	macro_invocation: coerceToMacroInvocation,
+	scoped_identifier: coerceToScopedIdentifier,
+	scoped_type_identifier_in_expression_position: coerceToScopedTypeIdentifierInExpressionPosition,
+	scoped_type_identifier: coerceToScopedTypeIdentifier,
+	unary_expression: coerceToUnaryExpression,
+	try_expression: coerceToTryExpression,
+	binary_expression: coerceToBinaryExpression,
+	assignment_expression: coerceToAssignmentExpression,
+	compound_assignment_expr: coerceToCompoundAssignmentExpr,
+	type_cast_expression: coerceToTypeCastExpression,
+	return_expression: coerceToReturnExpression,
+	yield_expression: coerceToYieldExpression,
+	call_expression: coerceToCallExpression,
+	arguments: coerceToArguments,
+	parenthesized_expression: coerceToParenthesizedExpression,
+	tuple_expression: coerceToTupleExpression,
+	unit_expression: coerceToUnitExpression,
+	struct_expression: coerceToStructExpression,
+	field_initializer_list: coerceToFieldInitializerList,
+	shorthand_field_initializer: coerceToShorthandFieldInitializer,
+	field_initializer: coerceToFieldInitializer,
+	base_field_initializer: coerceToBaseFieldInitializer,
+	if_expression: coerceToIfExpression,
+	let_condition: coerceToLetCondition,
+	_let_chain: coerceToLetChain,
+	else_clause: coerceToElseClause,
+	match_expression: coerceToMatchExpression,
+	match_block: coerceToMatchBlock,
+	last_match_arm: coerceToLastMatchArm,
+	match_pattern: coerceToMatchPattern,
+	while_expression: coerceToWhileExpression,
+	loop_expression: coerceToLoopExpression,
+	for_expression: coerceToForExpression,
+	const_block: coerceToConstBlock,
+	closure_parameters: coerceToClosureParameters,
+	label: coerceToLabel,
+	break_expression: coerceToBreakExpression,
+	continue_expression: coerceToContinueExpression,
+	index_expression: coerceToIndexExpression,
+	await_expression: coerceToAwaitExpression,
+	field_expression: coerceToFieldExpression,
+	unsafe_block: coerceToUnsafeBlock,
+	async_block: coerceToAsyncBlock,
+	gen_block: coerceToGenBlock,
+	try_block: coerceToTryBlock,
+	block: coerceToBlock,
+	generic_pattern: coerceToGenericPattern,
+	tuple_pattern: coerceToTuplePattern,
+	slice_pattern: coerceToSlicePattern,
+	tuple_struct_pattern: coerceToTupleStructPattern,
+	struct_pattern: coerceToStructPattern,
+	remaining_field_pattern: coerceToRemainingFieldPattern,
+	mut_pattern: coerceToMutPattern,
+	ref_pattern: coerceToRefPattern,
+	captured_pattern: coerceToCapturedPattern,
+	reference_pattern: coerceToReferencePattern,
+	negative_literal: coerceToNegativeLiteral,
+	string_literal: coerceToStringLiteral,
+	raw_string_literal: coerceToRawStringLiteral,
+	line_comment: coerceToLineComment,
+	inner_line_doc_comment_marker: coerceToInnerLineDocCommentMarker,
+	outer_line_doc_comment_marker: coerceToOuterLineDocCommentMarker,
+	block_comment: coerceToBlockComment,
+	identifier: coerceToIdentifier,
+	shebang: coerceToShebang,
+	self: coerceToSelf,
+	super: coerceToSuper,
+	crate: coerceToCrate,
+	metavariable: coerceToMetavariable,
+	macro_rules: coerceToMacroRules,
+	enum_variant_list_elements: coerceToEnumVariantListElements,
+	field_declaration_list_elements: coerceToFieldDeclarationListElements,
+	ordered_field_declaration_list_elements: coerceToOrderedFieldDeclarationListElements,
+	where_predicates: coerceToWherePredicates,
+	type_parameters_elements: coerceToTypeParametersElements,
+	use_clauses: coerceToUseClauses,
+	parameters_elements: coerceToParametersElements,
+	lifetimes: coerceToLifetimes,
+	types: coerceToTypes,
+	use_bounds_elements: coerceToUseBoundsElements,
+	type_arguments_elements: coerceToTypeArgumentsElements,
+	arguments_elements: coerceToArgumentsElements,
+	expressions: coerceToExpressions,
+	field_initializer_list_elements: coerceToFieldInitializerListElements,
+	tuple_pattern_elements: coerceToTuplePatternElements,
+	patterns: coerceToPatterns,
+	struct_pattern_elements: coerceToStructPatternElements,
+	use_wildcard_group: coerceToUseWildcardGroup,
+	token_repetition_pattern_text: coerceToTokenRepetitionPatternText,
+	string_open: coerceToStringOpen,
+	integer_literal_decimal: coerceToIntegerLiteralDecimal,
+	integer_literal_hex: coerceToIntegerLiteralHex,
+	integer_literal_binary: coerceToIntegerLiteralBinary,
+	integer_literal_octal: coerceToIntegerLiteralOctal,
+	char_literal_plain: coerceToCharLiteralPlain,
+	char_literal_empty: coerceToCharLiteralEmpty,
+	char_literal_escaped_simple: coerceToCharLiteralEscapedSimple,
+	char_literal_escaped_unicode_fixed: coerceToCharLiteralEscapedUnicodeFixed,
+	char_literal_escaped_unicode_braced: coerceToCharLiteralEscapedUnicodeBraced,
+	char_literal_escaped_hex: coerceToCharLiteralEscapedHex,
+	escape_sequence_simple: coerceToEscapeSequenceSimple,
+	escape_sequence_unicode_fixed: coerceToEscapeSequenceUnicodeFixed,
+	escape_sequence_unicode_braced: coerceToEscapeSequenceUnicodeBraced,
+	escape_sequence_hex: coerceToEscapeSequenceHex,
+	array_expression_semi: coerceToArrayExpressionSemi,
+	array_expression_list: coerceToArrayExpressionList,
+	attribute_input: coerceToAttributeInput,
+	closure_expression_block: coerceToClosureExpressionBlock,
+	closure_expression_expr: coerceToClosureExpressionExpr,
+	reference_expression_raw_const: coerceToReferenceExpressionRawConst,
+	reference_expression_raw_mut: coerceToReferenceExpressionRawMut,
+	reference_expression_mut: coerceToReferenceExpressionMut,
+	reference_expression_bare: coerceToReferenceExpressionBare,
+	impl_item_positive_clause: coerceToImplItemPositiveClause,
+	impl_item_negative_clause: coerceToImplItemNegativeClause,
+	impl_item_body: coerceToImplItemBody,
+	impl_item_semi: coerceToImplItemSemi,
+	visibility_modifier_pub_scope_in_path: coerceToVisibilityModifierPubScopeInPath,
+	visibility_modifier_pub_scope: coerceToVisibilityModifierPubScope,
+	visibility_modifier_pub: coerceToVisibilityModifierPub,
+	function_type_trait_form: coerceToFunctionTypeTraitForm,
+	function_type_fn_form: coerceToFunctionTypeFnForm,
+	mod_item_external: coerceToModItemExternal,
+	mod_item_inline: coerceToModItemInline,
+	or_pattern_binary: coerceToOrPatternBinary,
+	or_pattern_prefix: coerceToOrPatternPrefix,
+	pointer_type_const: coerceToPointerTypeConst,
+	pointer_type_mut: coerceToPointerTypeMut,
+	range_expression_binary: coerceToRangeExpressionBinary,
+	range_expression_postfix: coerceToRangeExpressionPostfix,
+	range_expression_prefix: coerceToRangeExpressionPrefix,
+	range_expression_bare: coerceToRangeExpressionBare,
+	expression_statement_with_semi: coerceToExpressionStatementWithSemi,
+	foreign_mod_item_semi: coerceToForeignModItemSemi,
+	foreign_mod_item_body: coerceToForeignModItemBody,
+	match_arm_with_comma: coerceToMatchArmWithComma,
+	match_arm_block_ending: coerceToMatchArmBlockEnding,
+	line_comment_extra_slashes: coerceToLineCommentExtraSlashes,
+	line_comment_doc_outer: coerceToLineCommentDocOuter,
+	line_comment_doc_inner: coerceToLineCommentDocInner,
+	line_comment_regular: coerceToLineCommentRegular,
+	block_comment_doc_outer: coerceToBlockCommentDocOuter,
+	block_comment_doc_inner: coerceToBlockCommentDocInner,
+	block_comment_regular: coerceToBlockCommentRegular,
+	token_tree_pattern_paren: coerceToTokenTreePatternParen,
+	token_tree_pattern_bracket: coerceToTokenTreePatternBracket,
+	token_tree_pattern_brace: coerceToTokenTreePatternBrace,
+	token_tree_paren: coerceToTokenTreeParen,
+	token_tree_bracket: coerceToTokenTreeBracket,
+	token_tree_brace: coerceToTokenTreeBrace,
+	delim_token_tree_paren: coerceToDelimTokenTreeParen,
+	delim_token_tree_bracket: coerceToDelimTokenTreeBracket,
+	delim_token_tree_brace: coerceToDelimTokenTreeBrace,
+	field_pattern_shorthand: coerceToFieldPatternShorthand,
+	field_pattern_named: coerceToFieldPatternNamed,
+	macro_definition_paren: coerceToMacroDefinitionParen,
+	macro_definition_bracket: coerceToMacroDefinitionBracket,
+	macro_definition_brace: coerceToMacroDefinitionBrace,
+	range_pattern_prefix: coerceToRangePatternPrefix,
+	range_pattern_with_left_with_right: coerceToRangePatternWithLeftWithRight,
+	range_pattern_with_left_bare: coerceToRangePatternWithLeftBare,
+	range_pattern_with_left: coerceToRangePatternWithLeft,
+	struct_item_brace: coerceToStructItemBrace,
+	struct_item_tuple: coerceToStructItemTuple,
+	struct_item_unit: coerceToStructItemUnit,
+	wildcard_pattern: coerceToWildcardPattern,
+	attributed_field_declaration: coerceToAttributedFieldDeclaration,
+	attributed_enum_variant: coerceToAttributedEnumVariant,
+	attributed_parameter: coerceToAttributedParameter,
+	attributed_type_parameter: coerceToAttributedTypeParameter,
+	attributed_argument: coerceToAttributedArgument,
+	attributed_ordered_field: coerceToAttributedOrderedField,
+	type_argument: coerceToTypeArgument,
+	match_block_arms: coerceToMatchBlockArms,
+	float_literal: coerceToFloatLiteral,
+	string_content: coerceToStringContent,
+	raw_string_literal_content: coerceToRawStringLiteralContent,
+	outer_doc_comment_marker: coerceToOuterDocCommentMarker,
+	inner_doc_comment_marker: coerceToInnerDocCommentMarker,
+	raw_string_literal_start: coerceToRawStringLiteralStart,
+	raw_string_literal_end: coerceToRawStringLiteralEnd,
+	doc_comment: coerceToDocComment,
+	_block_comment_content: coerceToBlockCommentContent,
+	_tight: coerceToTight,
+	_space: coerceToSpace,
+	_tab: coerceToTab,
+	_newline: coerceToNewline,
+	_blankline: coerceToBlankline,
+	_double_blankline: coerceToDoubleBlankline,
+	_indent: coerceToIndent,
+	_dedent: coerceToDedent,
+	trait_interface_declaration_body: coerceToTraitInterfaceDeclarationBody,
+	extension_declaration_body: coerceToExtensionDeclarationBody,
+	receiver_parameter_declaration: coerceToReceiverParameterDeclaration,
+	attributed_parameter_receiver: coerceToAttributedParameterReceiver,
+	parameters_elements_receiver: coerceToParametersElementsReceiver,
+	parameters_elements_receiver_group: coerceToParametersElementsReceiverGroup,
+	self_module: coerceToSelfModule,
+	type_identifier: coerceToTypeIdentifier,
+	field_identifier: coerceToFieldIdentifier,
+	crate_visibility_modifier: coerceToCrateVisibilityModifier,
+	shorthand_field_identifier: coerceToShorthandFieldIdentifier,
+	method_declaration: coerceToMethodDeclaration,
+	signature_method_declaration: coerceToSignatureMethodDeclaration
+};
