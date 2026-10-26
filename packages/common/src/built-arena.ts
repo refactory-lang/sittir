@@ -112,6 +112,7 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 	}
 }
 
+const SIDE_BITS: Readonly<Record<TriviaSideName, number>> = { leading: 1, trailing: 2, inner: 4 };
 const sideHolds = new WeakMap<object, Map<string, readonly TreeToken[]>>();
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
 const OTHER_ENGINE_RECORD = "cannot write another engine's record into a side: a side holds only records its holder's engine built";
@@ -141,6 +142,8 @@ export class BuiltArena {
 	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
 	readonly #nodes = new Map<number, WeakRef<object>>();
 	readonly #trees = new Map<number, { readonly tree: TreeHandle; readonly token: TreeToken }>();
+	readonly #sided = new Map<number, number>();
+	readonly #unitSided = new Set<number>();
 	readonly #released = new FinalizationRegistry<number>((at) => {
 		if (this.#nodes.get(at)?.deref() === undefined) this.#nodes.delete(at);
 	});
@@ -154,12 +157,19 @@ export class BuiltArena {
 		this.tree = {
 			built: this,
 			triviaSide: (at, side) => {
+				if (((this.#sided.get(at) ?? 0) & SIDE_BITS[side]) === 0) return undefined;
 				const entries = trivia.triviaSide(at, side);
 				return entries === undefined ? undefined : readEntries(this.tree, entries);
 			},
-			writeTriviaSide: (at, side, entries) => trivia.writeTriviaSide(at, side, entries),
-			unitSides: (at) => readUnits(this.tree, trivia.unitSides(at)),
-			writeUnitSides: (at, units) => trivia.writeUnitSides(at, units)
+			writeTriviaSide: (at, side, entries) => {
+				trivia.writeTriviaSide(at, side, entries);
+				this.#sided.set(at, (this.#sided.get(at) ?? 0) | SIDE_BITS[side]);
+			},
+			unitSides: (at) => (this.#unitSided.has(at) ? readUnits(this.tree, trivia.unitSides(at)) : []),
+			writeUnitSides: (at, units) => {
+				trivia.writeUnitSides(at, units);
+				this.#unitSided.add(at);
+			}
 		};
 		bindTree(this.tree, handle);
 		const pushed = () => hold(this.#words.chunks, this.#bytes.chunks, this.#words.used, this.#bytes.used);

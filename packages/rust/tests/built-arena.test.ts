@@ -5,9 +5,11 @@ import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
 const format = backend.name === 'native' ? cellFormatOf(backend.native) : undefined;
-const arenaOf = (): BuiltArena =>
+type SideStore = ConstructorParameters<typeof BuiltArena>[0]['trivia'];
+const NO_SIDES: SideStore = { triviaSide: () => undefined, writeTriviaSide: () => undefined, unitSides: () => [], writeUnitSides: () => undefined };
+const arenaOf = (trivia: SideStore = NO_SIDES): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, hold: () => undefined, trivia: { triviaSide: () => undefined, writeTriviaSide: () => undefined, unitSides: () => [], writeUnitSides: () => undefined } },
+		{ format: format!, owner: {}, hold: () => undefined, trivia },
 		() => ({}),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		{ rows: {}, leaves: {} }
@@ -58,6 +60,30 @@ describe('a built arena', () => {
 		first.data[first.base + 3] = 5;
 		expect(placed(arena, arena.view(first), 4)).toEqual([7, 0, 0, 5]);
 		expect(placed(arena, arena.view(wide), 5000).slice(0, 4)).toEqual([6, 0, 0, 0]);
+	});
+
+	it('asks its native side store only about places a write gave sides', () => {
+		const asked: string[] = [];
+		const stored = new Map<string, readonly unknown[]>();
+		const arena = arenaOf({
+			triviaSide: (at, side) => (asked.push(`${side} of ${at}`), stored.get(`${at} ${side}`) as unknown[] | undefined),
+			writeTriviaSide: (at, side, entries) => void stored.set(`${at} ${side}`, entries),
+			unitSides: (at) => (asked.push(`units of ${at}`), [...(stored.get(`${at} units`) ?? [])]),
+			writeUnitSides: (at, units) => void stored.set(`${at} units`, units)
+		});
+		const a = builtRecordOf(arena.view(arena.record(7, 2)), arena)!;
+		const b = builtRecordOf(arena.view(arena.record(7, 2)), arena)!;
+		expect([arena.tree.triviaSide(a, 'leading'), arena.tree.triviaSide(b, 'inner'), arena.tree.unitSides(a)]).toEqual([undefined, undefined, []]);
+		expect(asked).toEqual([]);
+		arena.tree.writeTriviaSide(a, 'trailing', [3]);
+		arena.tree.writeTriviaSide(b, 'leading', []);
+		arena.tree.writeUnitSides(b, [{ slot: '_items', item: 0, leading: [4] }]);
+		expect(arena.tree.triviaSide(a, 'trailing')).toEqual([3]);
+		expect(arena.tree.triviaSide(a, 'leading')).toBeUndefined();
+		expect(arena.tree.triviaSide(b, 'leading')).toEqual([]);
+		expect(arena.tree.unitSides(a)).toEqual([]);
+		expect(arena.tree.unitSides(b)).toEqual([{ slot: '_items', item: 0, leading: [4] }]);
+		expect(asked).toEqual([`trailing of ${a}`, `leading of ${b}`, `units of ${b}`]);
 	});
 
 	it('keeps every outstanding draft whole', () => {

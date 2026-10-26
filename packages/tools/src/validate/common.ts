@@ -1543,9 +1543,9 @@ export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, bui
 
 function groupSides(source: ReadNodeLike, opts: NodeToConfigOpts): NodeTrivia | undefined {
 	const tree = treeOf(source as object);
-	const carried = writtenSides(source as object);
 	if (tree !== undefined) return tableSides(source, opts.accessorOf, (read) => resolveChild(read, { ...childOpts(opts), tree }));
-	return carried && (mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
+	const carried = writtenSides(source as object);
+	return carried &&(mapTriviaEntries(carried, (entries) => entries.map((entry) => resolveChild(entry, childOpts(opts)))) as NodeTrivia);
 }
 
 function writeSides(source: ReadNodeLike, built: unknown, opts: NodeToConfigOpts): unknown {
