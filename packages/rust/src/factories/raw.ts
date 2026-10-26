@@ -6380,10 +6380,6 @@ export function buildLineComment(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.LineComment.Bound;
@@ -6413,10 +6409,6 @@ export function buildBlockComment(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	checkDelimited(handle, node, _delimited_buildBlockComment, [_content]);
@@ -10112,10 +10104,6 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.LineCommentExtraSlashes.Bound;
@@ -10138,10 +10126,6 @@ export function buildLineCommentDocOuter(value: Admit<T.DocComment>): T.LineComm
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.LineCommentDocOuter.Bound;
@@ -10164,10 +10148,6 @@ export function buildLineCommentDocInner(value: Admit<T.DocComment>): T.LineComm
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.LineCommentDocInner.Bound;
@@ -10185,10 +10165,6 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.LineCommentRegular.Bound;
@@ -10211,10 +10187,6 @@ export function buildBlockCommentDocOuter(value?: Admit<T.BlockCommentContent>):
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.BlockCommentDocOuter.Bound;
@@ -10237,10 +10209,6 @@ export function buildBlockCommentDocInner(value?: Admit<T.BlockCommentContent>):
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.BlockCommentDocInner.Bound;
@@ -10258,10 +10226,6 @@ export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.BlockCommentRegular.Bound;
@@ -11626,10 +11590,6 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.DocComment.Bound;
@@ -11648,10 +11608,6 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.BlockCommentContent.Bound;

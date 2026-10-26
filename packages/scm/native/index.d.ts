@@ -139,6 +139,12 @@ storedLayout(treeId: TreeId): { deviations: number; slots: number; separators: n
  */
 layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
 /**
+ * The bytes the node at `index` of the live tree `treeId` renders
+ * between as its source (`ParsedTree::framed_span_at`): `{ start,
+ * end }`. A diagnostic. Refuses as `read` does.
+ */
+framedSpan(treeId: TreeId, index: NodeIndex): { start: number; end: number }
+/**
  * One batch of a pre-order walk of the named descendants under
  * the node `from` names (JSON, see `query::Address`), filtered to
  * `kinds` when given and to the `where` plan (JSON, see
@@ -215,19 +221,6 @@ export declare function liveTreeCount(): number
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex =
   number
-
-/**
- * The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
- * the JavaScript projection of a side's entries enforces as the
- * render does.
- */
-export const SIDE_NESTING_BOUND: number
-
-/**
- * The refusal of a side nested past `SIDE_NESTING_BOUND`
- * (`trivia::SIDE_NESTING_REFUSAL`).
- */
-export const SIDE_NESTING_REFUSAL: string
 
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId =

@@ -93,7 +93,7 @@ export interface GrammarTypeMap {
 	readonly trivia: unknown;
 }
 
-export interface NodeMethods<Trivia = any> {
+export interface NodeMethods {
 	$render(): string;
 	/**
 	 * The node's rendered text, the same as `$render()`, so a node interpolated into a template string or
@@ -113,6 +113,13 @@ export interface NodeMethods<Trivia = any> {
 	 * @returns The node's JSON.
 	 */
 	toJSON(): NodeJSON;
+}
+
+/**
+ * The trivia a node holds: its leading and trailing sides, read and written through `$trivia`. Every node
+ * holds them but a node of an extra's kind and the nodes it is made of: an extra gets no extras.
+ */
+export interface HoldsTrivia<Trivia = any> {
 	$trivia: TriviaSetter<this, Trivia>;
 }
 
@@ -386,8 +393,9 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 * sides; other values, and a document's fields around a node, are left as they are. A revived node is
 	 * a built node: it renders with the engine's formatting, not the source's.
 	 *
-	 * @throws When the JSON names a kind this language lacks, a slot its kind lacks, an ERROR node or a leaf
-	 * without its text, naming where in the JSON (`$.body.statements[2]: unknown kind 'foo'`); and, when the
+	 * @throws When the JSON names a kind this language lacks, a slot its kind lacks, an ERROR node, a leaf
+	 * without its text or comments on a trivia kind (`HoldsTrivia`), naming where in the JSON
+	 * (`$.body.statements[2]: unknown kind 'foo'`); and, when the
 	 * engine verifies structure, when a node misses a slot its kind requires.
 	 */
 	readonly reviver: (key: string, value: unknown) => unknown;

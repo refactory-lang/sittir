@@ -10,7 +10,7 @@ import { register, registered, type Role } from './identity.ts';
 import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
-import { entrySnapshotOf } from './snapshot.ts';
+import { snapshotOf } from './snapshot.ts';
 import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-entries.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -207,7 +207,7 @@ export function triviaInner(
 }
 
 function sideEntryWire(entry: TriviaEntry): unknown {
-	return typeof entry === 'number' ? entry : (readCoordinateOf(entry) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
+	return typeof entry === 'number' ? entry : (readCoordinateOf(entry) ?? toNodeData(snapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
 }
 
 function triviaEntryOf(item: unknown, holder: EngineIdentity): TriviaEntry {

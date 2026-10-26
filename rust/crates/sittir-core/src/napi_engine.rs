@@ -124,17 +124,6 @@ macro_rules! napi_engine {
             LIVE_TREES.with(|trees| trees.borrow().len() as u32)
         }
 
-        /// The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
-        /// the JavaScript projection of a side's entries enforces as the
-        /// render does.
-        #[::napi_derive::napi]
-        pub const SIDE_NESTING_BOUND: u32 = $crate::trivia::SIDE_NESTING_BOUND as u32;
-
-        /// The refusal of a side nested past `SIDE_NESTING_BOUND`
-        /// (`trivia::SIDE_NESTING_REFUSAL`).
-        #[::napi_derive::napi]
-        pub const SIDE_NESTING_REFUSAL: &str = $crate::trivia::SIDE_NESTING_REFUSAL;
-
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,
@@ -393,6 +382,16 @@ macro_rules! napi_engine {
             #[::napi_derive::napi(ts_return_type = "{ regionNodes: number; siblingItems: number }")]
             pub fn layout_work(&self, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::layout::LayoutWork> {
                 with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.layout_work()))
+            }
+
+            /// The bytes the node at `index` of the live tree `treeId` renders
+            /// between as its source (`ParsedTree::framed_span_at`): `{ start,
+            /// end }`. A diagnostic. Refuses as `read` does.
+            #[::napi_derive::napi(ts_return_type = "{ start: number; end: number }")]
+            pub fn framed_span(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<$crate::types::Span> {
+                with_live_node(tree_id, index, |parsed, index| {
+                    parsed.framed_span_at(index).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id} has no node {index}")))
+                })
             }
 
             /// One batch of a pre-order walk of the named descendants under

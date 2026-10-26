@@ -178,7 +178,7 @@ fn a_sink_writes_a_site_from_the_options_it_holds() {
     assert_eq!(out, "a b");
 }
 
-static EDGE_ROWS: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(1)), before_arms: &[], after_arms: &[] }];
+static EDGE_ROWS: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(1)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] }];
 static EDGE_ROW_OF: &[Option<EdgeRow>] = &[None, None, None, Some(EdgeRow(0))];
 static EDGE_SPECS: &[SiteSpec] = &[SiteSpec { default_arm: KindId(5), strength: SeamStrength::Cascade }, SiteSpec { default_arm: KindId(6), strength: SeamStrength::Cascade }];
 
@@ -225,7 +225,7 @@ fn a_wire_stamp_takes_its_site_spec_strength_and_a_render_stamp_keeps_its_own() 
 }
 
 static ARM_SITES: &[ArmSite] = &[ArmSite { arm: KindId(40), site: SiteId(2) }, ArmSite { arm: KindId(41), site: SiteId(3) }];
-static ARM_ROWS: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(1)), before_arms: ARM_SITES, after_arms: &[] }];
+static ARM_ROWS: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(1)), before_arms: ARM_SITES, after_arms: &[], before_bounds: &[], after_bounds: &[] }];
 static ARM_SPECS: &[SiteSpec] = &[
     SiteSpec { default_arm: KindId(5), strength: SeamStrength::Cascade },
     SiteSpec { default_arm: KindId(6), strength: SeamStrength::Cascade },
@@ -488,7 +488,7 @@ fn a_seated_coordinate_keeps_its_seat_when_it_prepares_its_kind_edges() {
     assert_eq!(coord_after_of(items[1].as_ref()), Some(KindId(6)));
 }
 
-static EDGE_ROWS_3: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(2)), before_arms: &[], after_arms: &[] }];
+static EDGE_ROWS_3: &[EdgeSite] = &[EdgeSite { before: Some(SiteId(0)), after: Some(SiteId(2)), before_arms: &[], after_arms: &[], before_bounds: &[], after_bounds: &[] }];
 static EDGE_SPECS_3: &[SiteSpec] = &[
     SiteSpec { default_arm: KindId(5), strength: SeamStrength::Cascade },
     SiteSpec { default_arm: KindId(70), strength: SeamStrength::Cascade },

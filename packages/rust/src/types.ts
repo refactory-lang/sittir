@@ -17,6 +17,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
 	TriviaSetter,
@@ -22714,11 +22715,11 @@ export namespace RawStringLiteral {
 }
 export namespace LineComment {
 	export type Config = ConfigFor<TSKindId.LineComment>;
-	export interface Bound extends BoundOf<T.LineComment, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LineComment, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineComment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.LineComment, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LineComment, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.LineComment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -22740,11 +22741,11 @@ export namespace LineComment {
 }
 export namespace BlockComment {
 	export type Config = ConfigFor<TSKindId.BlockComment>;
-	export interface Bound extends BoundOf<T.BlockComment, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.BlockComment, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.BlockComment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.BlockComment, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.BlockComment, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.BlockComment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25403,12 +25404,11 @@ export namespace MatchArmBlockEnding {
 }
 export namespace LineCommentDocOuter {
 	export type Config = ConfigFor<TSKindId.LineCommentDocOuter>;
-	export interface Bound extends BoundOf<T.LineCommentDocOuter, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LineCommentDocOuter, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed
-		extends ParsedOf<T.LineCommentDocOuter, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LineCommentDocOuter, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.LineCommentDocOuter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25428,12 +25428,11 @@ export namespace LineCommentDocOuter {
 }
 export namespace LineCommentDocInner {
 	export type Config = ConfigFor<TSKindId.LineCommentDocInner>;
-	export interface Bound extends BoundOf<T.LineCommentDocInner, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.LineCommentDocInner, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed
-		extends ParsedOf<T.LineCommentDocInner, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.LineCommentDocInner, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.LineCommentDocInner['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25453,12 +25452,12 @@ export namespace LineCommentDocInner {
 }
 export namespace BlockCommentDocOuter {
 	export type Config = ConfigFor<TSKindId.BlockCommentDocOuter>;
-	export interface Bound extends BoundOf<T.BlockCommentDocOuter, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.BlockCommentDocOuter, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.BlockCommentDocOuter['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.BlockCommentDocOuter, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		extends ParsedOf<T.BlockCommentDocOuter, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.BlockCommentDocOuter['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -25478,12 +25477,12 @@ export namespace BlockCommentDocOuter {
 }
 export namespace BlockCommentDocInner {
 	export type Config = ConfigFor<TSKindId.BlockCommentDocInner>;
-	export interface Bound extends BoundOf<T.BlockCommentDocInner, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.BlockCommentDocInner, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.BlockCommentDocInner['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
 	export interface Parsed
-		extends ParsedOf<T.BlockCommentDocInner, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		extends ParsedOf<T.BlockCommentDocInner, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.BlockCommentDocInner['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -27120,12 +27119,12 @@ export namespace CharLiteralEmpty {
 }
 export namespace LineCommentExtraSlashes {
 	export type Config = LineCommentExtraSlashesNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.LineCommentExtraSlashes;
 		readonly $named: true;
 		$text(): string;
@@ -27138,12 +27137,12 @@ export namespace LineCommentExtraSlashes {
 }
 export namespace LineCommentRegular {
 	export type Config = LineCommentRegularNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.LineCommentRegular;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.LineCommentRegular;
 		readonly $named: true;
 		$text(): string;
@@ -27156,12 +27155,12 @@ export namespace LineCommentRegular {
 }
 export namespace BlockCommentRegular {
 	export type Config = BlockCommentRegularNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.BlockCommentRegular;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.BlockCommentRegular;
 		readonly $named: true;
 		$text(): string;
@@ -27264,12 +27263,12 @@ export namespace RawStringLiteralEnd {
 }
 export namespace DocComment {
 	export type Config = DocCommentNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.DocComment;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.DocComment;
 		readonly $named: true;
 		$text(): string;
@@ -27282,12 +27281,12 @@ export namespace DocComment {
 }
 export namespace BlockCommentContent {
 	export type Config = BlockCommentContentNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.BlockCommentContent;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.BlockCommentContent;
 		readonly $named: true;
 		$text(): string;
@@ -27422,7 +27421,7 @@ export interface RustTypeMap extends GrammarTypeMap {
 	readonly trivia: Comment | Layout;
 }
 
-export type NodeMethodsOf = NodeMethods<RustTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods & HoldsTrivia<RustTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RustTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RustTypeMap['trivia']>;
 

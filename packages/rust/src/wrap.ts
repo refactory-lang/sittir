@@ -4970,10 +4970,6 @@ export function wrapLineComment(data: T.LineComment, tree: TreeHandle): T.LineCo
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -5000,10 +4996,6 @@ export function wrapBlockComment(data: T.BlockComment, tree: TreeHandle): T.Bloc
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -7496,10 +7488,6 @@ export function wrapLineCommentDocOuter(data: T.LineCommentDocOuter, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -7522,10 +7510,6 @@ export function wrapLineCommentDocInner(data: T.LineCommentDocInner, tree: TreeH
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -7551,10 +7535,6 @@ export function wrapBlockCommentDocOuter(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -7580,10 +7560,6 @@ export function wrapBlockCommentDocInner(
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -9209,6 +9185,21 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	return node;
 }
 
+function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$text: () => data.$text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node;
+}
+
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
 	[TSKindId.SourceFile]: (d, t) => wrapSourceFile(d as unknown as T.SourceFile, t),
 	[TSKindId.ExpressionStatement]: (d, t) => wrapExpressionStatement(d as unknown as T.ExpressionStatement, t),
@@ -9480,16 +9471,16 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.TokenRepetitionPatternText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringOpen]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.CharLiteralEmpty]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.LineCommentExtraSlashes]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.LineCommentRegular]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.BlockCommentRegular]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.LineCommentExtraSlashes]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.LineCommentRegular]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.BlockCommentRegular]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.FloatLiteral]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralContent]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralStart]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.RawStringLiteralEnd]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.DocComment]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.BlockCommentContent]: (d, t) => wrapLeaf(d, t)
+	[TSKindId.DocComment]: (d, t) => wrapInteriorLeaf(d, t),
+	[TSKindId.BlockCommentContent]: (d, t) => wrapInteriorLeaf(d, t)
 };
 
 /** The wrapped root of a whole-source parse — what `engine.parse()` returns. */
