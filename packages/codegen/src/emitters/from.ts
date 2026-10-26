@@ -218,12 +218,12 @@ export namespace from {
 	export function leaf(
 		output: string[],
 		node: AssembledNode,
-		_nodeMap: NodeMap,
+		nodeMap: NodeMap,
 		_kindEntries: readonly KindEnumEntry[]
 	): void {
 		if (!node.rawFactoryName || !node.fromFunctionName) return;
 		const form = leafFromForm(node);
-		if (form === 'string') output.push(emitStringLikeFrom(node, numericLeafShape(node.kind, node)));
+		if (form === 'string') output.push(emitStringLikeFrom(node, numericLeafShape(node.kind, node), nodeMap));
 		else if (form === 'keyword') output.push(emitKeywordFrom(node));
 	}
 
@@ -425,7 +425,10 @@ function emitBranchFrom(
 	const spreadTarget = canDirectFactoryCall ? listSpreadTarget(node, nodeMap, kindEntries) : null;
 	const config = spelledType === undefined && refusal === undefined && numericRefusal === undefined && optionsParam === '' ? refusingParam('input', inputType, { optional: opt === '?', loose: true }) : undefined;
 	const head = `export function ${fn}`;
-	let declare = (body: readonly string[]): string[] => [...withEmptyOverload(nodeMap, node.kind, head, [...publicOverloads, signature]), ...body, '}'];
+	let declare = (body: readonly string[]): string[] =>
+		config === undefined
+			? [...withEmptyOverload(nodeMap, node.kind, head, [...publicOverloads, signature]), ...body, '}']
+			: [seatDeclaration(nodeMap, node.kind, fn, functionTypeOf(config, returnType), { params: `input${opt}: ${inputType}`, returnType, body })];
 	if (spreadTarget !== null) {
 		if (spelledType !== undefined || refusal !== undefined) {
 			throw new Error(`from: '${node.kind}' forwards a list spread but its loose input is spelled or refuses sibling leads; no typed form covers both`);
@@ -675,20 +678,15 @@ function emitSingularChildrenFrom(
 	const typeCheck = kindDiscriminantCheck(kind, kindEntries, nodeMap);
 	const hasNumericDiscriminant = findOwnKindEntry(kindEntries, kind) !== undefined;
 	if (!hasNumericDiscriminant) {
-		return [
-			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
-			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
-			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
-			'}'
-		].join('\n');
+		return optionalConfigCoercer(nodeMap, kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
+			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
+		]);
 	}
 	const storageAccess = isIdentifierKey(storageKey)
 		? `(data as unknown as { ${storageKey}?: unknown }).${storageKey}`
 		: `(data as unknown as Record<string, unknown>)[${JSON.stringify(storageKey)}]`;
 	const inputType = `${resolvesLooseInput(slot, nodeMap) ? looseElementType(elementType, slot, nodeMap) : elementType}${inputWiden !== undefined ? ` | ${inputWiden}` : ''} | ${tName}`;
-	return [
-		declaredOverload(`export function ${fn}`, refusingParam('input', inputType, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
-		`export function ${fn}(input?: ${inputType}): ${factoryReturnTypeExpr(factory)} {`,
+	return optionalConfigCoercer(nodeMap, kind, fn, inputType, factoryReturnTypeExpr(factory), [
 		...(holdsOwnKind(nodeMap.nodes.get(kind), nodeMap)
 			? []
 			: [
@@ -702,9 +700,16 @@ function emitSingularChildrenFrom(
 			resolvesLooseInput(slot, nodeMap)
 				? resolveFieldCall('input', slot, false, nodeMap, intern, false, elementType, kindEntries)
 				: `input as Parameters<typeof ${factory}>[0]`
-		});`,
-		'}'
-	].join('\n');
+		});`
+	]);
+}
+
+function optionalConfigCoercer(nodeMap: NodeMap, kind: string, fn: string, input: string, returnType: string, body: readonly string[]): string {
+	return seatDeclaration(nodeMap, kind, fn, functionTypeOf(refusingParam('input', input, { optional: true, loose: true }), returnType), {
+		params: `input?: ${input}`,
+		returnType,
+		body
+	});
 }
 
 function emitChildrenFrom(
@@ -730,12 +735,9 @@ function emitChildrenFrom(
 	}
 	const storageKey = facts ? facts.slot.storageKey : '$other';
 	if (facts === null) {
-		return [
-			declaredOverload(`export function ${fn}`, refusingParam('input', `${elementType} | ${tName}`, { optional: true, loose: true }), factoryReturnTypeExpr(factory)),
-			`export function ${fn}(input?: ${elementType} | ${tName}): ${factoryReturnTypeExpr(factory)} {`,
-			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
-			'}'
-		].join('\n');
+		return optionalConfigCoercer(nodeMap, node.kind, fn, `${elementType} | ${tName}`, factoryReturnTypeExpr(factory), [
+			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
+		]);
 	}
 	if (facts.multiple) {
 		return emitRepeatedChildrenFrom(
@@ -835,6 +837,7 @@ function emitSeparatedListFrom(
 }
 
 interface LeafFromNode {
+	readonly kind: string;
 	readonly typeName: string;
 	readonly rawFactoryName?: string;
 	readonly fromFunctionName?: string;
@@ -850,16 +853,18 @@ export function keywordLeafArity(node: AssembledNode): number | undefined {
 	return leafFromForm(node) === 'keyword' ? 1 : undefined;
 }
 
-function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined): string {
-	const fn = node.fromFunctionName!;
+function emitStringLikeFrom(node: LeafFromNode, shape: NumberShape | undefined, nodeMap: NodeMap): string {
 	const factory = `F.${node.rawFactoryName!}`;
-	return [
-		declaredOverload(`export function ${fn}`, refusingParam('input', `T.${node.typeName}.Loose`, { loose: true }), factoryReturnTypeExpr(factory)),
-		`export function ${fn}(input: T.${node.typeName}.Loose): ${factoryReturnTypeExpr(factory)} {`,
-		`  if (typeof input !== 'string'${shape === undefined ? '' : ` && !${numberInputTest(shape, 'input')}`}) return input as unknown as ${factoryReturnTypeExpr(factory)};`,
-		`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`,
-		'}'
-	].join('\n');
+	const returnType = factoryReturnTypeExpr(factory);
+	const input = `T.${node.typeName}.Loose`;
+	return seatDeclaration(nodeMap, node.kind, node.fromFunctionName!, functionTypeOf(refusingParam('input', input, { loose: true }), returnType), {
+		params: `input: ${input}`,
+		returnType,
+		body: [
+			`  if (typeof input !== 'string'${shape === undefined ? '' : ` && !${numberInputTest(shape, 'input')}`}) return input as unknown as ${returnType};`,
+			`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`
+		]
+	});
 }
 
 function emitKeywordFrom(node: LeafFromNode): string {

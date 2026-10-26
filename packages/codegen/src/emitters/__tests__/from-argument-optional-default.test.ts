@@ -48,7 +48,7 @@ describe('the loose coercer takes no argument wherever the strict surface derive
 	const emitted = emitFrom({ grammar: 'synth', ...withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries))});
 
 	it("computes the wrapper's own optionality from argumentOptional, not a local required-field scan", () => {
-		expect(emitted).toContain('export function coerceToTryBlock(input?:');
+		expect(emitted).toContain('export const coerceToTryBlock: OptionalConfigSeat<');
 	});
 
 	it('defaults the omitted required field to an empty construction instead of throwing', () => {
