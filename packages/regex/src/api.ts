@@ -2,7 +2,8 @@
 import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
-import { ir } from './ir.js';
+import type { ir as looseTable } from './ir.js';
+import type { ir as strictTable } from './ir-strict.js';
 import { isMember, membersOf, type is } from './is.js';
 import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, RegexNode, RegexTypeMap } from './types.js';
@@ -15,7 +16,7 @@ import { wrapNode, hydrate, type PatternTree } from './wrap.js';
 
 export interface RegexAPI extends LanguageAPI {
 	readonly name: 'regex';
-	readonly build: typeof ir;
+	readonly build: { readonly default: typeof looseTable; readonly strict: typeof strictTable };
 	readonly is: typeof is;
 	readonly kinds: typeof TSKindId;
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
@@ -31,7 +32,10 @@ export interface RegexAPI extends LanguageAPI {
 export const hooks: LanguageHooks<RegexAPI> = Object.freeze<LanguageHooks<RegexAPI>>({
 	name: 'regex',
 	renderModuleHash: RENDER_MODULE_HASH,
-	build: ir,
+	tables: Object.freeze({
+		default: () => import('./ir.js').then((m) => m.ir),
+		strict: () => import('./ir-strict.js').then((m) => m.ir)
+	}),
 	trivia: triviaFacts,
 	querySlots,
 	json: jsonFacts,

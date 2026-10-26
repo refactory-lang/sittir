@@ -38,28 +38,30 @@ Each package's own README covers its full surface:
 ### Build and render
 
 A language package's default export creates an engine. `rs.build` has a
-builder for every kind. The strict form takes every slot as a node; the
-default form also takes strings, arrays and plain objects, and resolves each
-to the one kind the slot admits.
+builder for every kind. The default engine's builders also take strings,
+arrays and plain objects, and resolve each to the one kind the slot admits;
+an engine created with `api: 'strict'` builds with the strict builders, which
+take every slot as a node.
 
 ```ts
 import rust from '@sittir/rust';
 
 using rs = await rust.createEngine();
+using strict = await rust.createEngine({ api: 'strict' });
 
-const strict = rs.build.statement.function.strict({
-  visibilityModifier: rs.build.visibilityModifier.pub(),
-  name: rs.build.identifier('main'),
-  parameters: rs.build.parameters.strict(),
-  body: rs.build.block.strict()
+const fn = strict.build.statement.function({
+  visibilityModifier: strict.build.visibilityModifier.pub(),
+  name: strict.build.identifier('main'),
+  parameters: strict.build.parameters(),
+  body: strict.build.block()
 });
-strict.$render(); // "pub fn main() {}"
+fn.$render(); // "pub fn main() {}"
 
 const loose = rs.build.statement.function({
   visibilityModifier: 'pub',
   name: 'greet',
   parameters: rs.build.parameters(rs.build.parameter({ name: 'name', type: 'String' })),
-  body: rs.build.block.strict()
+  body: rs.build.block()
 });
 loose.$render(); // "pub fn greet(name: String) {}"
 ```

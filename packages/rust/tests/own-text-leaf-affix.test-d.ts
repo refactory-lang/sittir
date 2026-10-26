@@ -1,13 +1,17 @@
 /**
  * Type-level pin: a leaf that is its own text takes its content, or its text
  * spelled in full with the affix toggle off. The spelled form is typed by
- * the kind's affixes, a built node is not text, and there is no strict or
- * coerce form.
+ * the kind's affixes, a built node is not text, and the strict table holds
+ * the same builder.
  *
  * Compile-time only: `pnpm --filter @sittir/rust type-check`.
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
 
 export function ownTextLeafEntries(text: string): void {
 	const variable = ir.metavariable('x');
@@ -25,8 +29,7 @@ export function ownTextLeafEntries(text: string): void {
 	ir.metavariable(text, false);
 	// @ts-expect-error a built metavariable is not text
 	ir.metavariable(variable);
-	// @ts-expect-error a leaf has one builder, no strict form
-	void ir.shebang.strict;
-	// @ts-expect-error a leaf has one builder, no coerce form
-	void ir.escapeSequence.hex.coerce;
+
+	expectTrue<Equals<typeof strictIr.shebang, typeof ir.shebang>>();
+	expectTrue<Equals<typeof strictIr.escapeSequence.hex, typeof ir.escapeSequence.hex>>();
 }

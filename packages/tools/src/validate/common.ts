@@ -476,7 +476,6 @@ export interface LoadedNodeModel {
 	readonly splitFrom: Record<string, string>;
 	readonly leafPatterns: Record<string, RegExp>;
 	readonly hoistedKinds: ReadonlySet<string>;
-	readonly oneSurfaceKinds: ReadonlySet<string>;
 	readonly unitKinds: ReadonlySet<string>;
 	readonly seats: SeatTable;
 	readonly slotKinds: Record<string, Record<string, readonly string[]>>;
@@ -558,7 +557,6 @@ interface ParsedNodeModel {
 		}>;
 		elementSeats?: readonly Seat[];
 		elementKinds?: readonly string[];
-		oneSurface?: boolean;
 		factoryShape?: FactoryShape;
 		factoryFields?: readonly string[];
 		subtypes?: readonly string[];
@@ -594,7 +592,6 @@ const EMPTY_NODE_MODEL: LoadedNodeModel = {
 	splitFrom: {},
 	leafPatterns: {},
 	hoistedKinds: new Set(),
-	oneSurfaceKinds: new Set(),
 	unitKinds: new Set(),
 	seats: {},
 	slotKinds: {},
@@ -658,7 +655,6 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 	const typeNames: Record<string, string> = {};
 	const leafPatterns: Record<string, RegExp> = {};
 	const hoistedKinds = new Set<string>();
-	const oneSurfaceKinds = new Set<string>();
 	const unitKinds = new Set<string>();
 	const seats: SeatTable = {};
 	const seatAt = (kind: string, slot: string, seat: Seat): void => {
@@ -693,7 +689,6 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		if (node.splitFrom !== undefined) splitFrom[node.kind] = node.splitFrom;
 		if (node.leafPattern !== undefined) leafPatterns[node.kind] = regexOfLiteral(node.leafPattern);
 		if (node.seated === true) hoistedKinds.add(node.kind);
-		if (node.oneSurface === true) oneSurfaceKinds.add(node.kind);
 		if (node.unit === true) unitKinds.add(node.kind);
 		for (const seat of node.elementSeats ?? []) seatAt(node.kind, '*', seat);
 		slotAccessors[node.kind] = Object.fromEntries((node.slots ?? []).map((slot) => [storageKeyOf(slot.name), slotPropertyName(slot)]));
@@ -744,7 +739,6 @@ export function parseNodeModel(text: string): LoadedNodeModel {
 		splitFrom,
 		leafPatterns,
 		hoistedKinds,
-		oneSurfaceKinds,
 		unitKinds,
 		seats,
 		slotKinds,
@@ -961,7 +955,7 @@ function hasNumericType(v: unknown): v is TypedNode {
 	return !!v && typeof v === 'object' && typeof (v as { $type?: unknown }).$type === 'number';
 }
 
-export type IrEntry = { readonly strict?: (...args: unknown[]) => unknown } & Record<string, unknown>;
+export type IrEntry = Readonly<Record<string, unknown>>;
 
 export interface IrSurface {
 	readonly entries: Record<string, IrEntry>;
@@ -975,7 +969,7 @@ export async function loadScopedFactoryMap<T extends Record<string, unknown>>(gr
 }
 
 export async function loadIrSurface(grammar: string): Promise<IrSurface | undefined> {
-	const mod = await importGrammarModule(grammar, 'ir.ts');
+	const mod = await importGrammarModule(grammar, 'ir-strict.ts');
 	if (mod?.ir === undefined) return undefined;
 	const model = await loadNodeModel(grammar);
 	const entries: Record<string, IrEntry> = {};
@@ -1460,10 +1454,8 @@ function irStrictFor(
 	if (entry === undefined) return undefined;
 	const route = config === undefined ? undefined : armRouteOf(config);
 	const target = route === undefined ? entry : walkMount(entry, route.mount);
-	const strict = target?.strict;
-	if (typeof strict === 'function') return strict;
 	if (typeof target === 'function') return target as (...args: unknown[]) => unknown;
-	throw new Error(`ir surface: ${kind}${route === undefined ? '' : `.${route.mount}`}.strict is not a function`);
+	throw new Error(`ir surface: ${kind}${route === undefined ? '' : `.${route.mount}`} is not a function`);
 }
 
 function buildWithFactory(

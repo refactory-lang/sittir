@@ -442,22 +442,17 @@ function subFactoryCallArgs(
 	return objectFrom([...residualParts, `${sub.slot.propertyName}: ${tuple}`]);
 }
 
-interface SubFactoryBase {
-	readonly path: string;
-	readonly flavor: '' | '.coerce';
-}
-
-function subFactoryBase(node: AssembledNode, key: string, polymorphWires: PolymorphWires): SubFactoryBase | undefined {
-	if (polymorphWires.bundledKinds.has(node.kind)) return { path: key, flavor: '' };
+function subFactoryBase(node: AssembledNode, key: string, polymorphWires: PolymorphWires): string | undefined {
+	if (polymorphWires.bundledKinds.has(node.kind)) return key;
 	const route = node.builderPath;
-	return route === undefined || route.length < 2 ? undefined : { path: route.join('.'), flavor: '.coerce' };
+	return route === undefined || route.length < 2 ? undefined : route.join('.');
 }
 
 function emitSubFactoryTests(
 	lines: string[],
 	node: AssembledNode,
 	kind: string,
-	base: SubFactoryBase | undefined,
+	base: string | undefined,
 	nodeMap: NodeMap,
 	kindEntries: readonly KindEnumEntry[],
 	polymorphWires: PolymorphWires,
@@ -483,7 +478,7 @@ function emitSubFactoryTests(
 		cases.push(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(spelling)} builds the parent', () => {`
 		);
-		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${spelling}${base.flavor}` : `ir.${base.path}.${spelling}${base.flavor}`;
+		const callTarget = knownFailure !== undefined ? `(ir.${base} as any).${spelling}` : `ir.${base}.${spelling}`;
 		const registeredChain = (() => {
 			if (!(node instanceof AbstractAssembledCompound)) return '';
 			const required = registeredSlots(node).filter((f) => f !== sub.slot && isRequired(f));
@@ -523,7 +518,7 @@ function emitSubFactoryTests(
 		cases.push(
 			`  it${knownFailure !== undefined ? '.skip' : ''}('${escForSource(alias.name)} builds the ${escForSource(child.kind)} form', () => {`
 		);
-		const callTarget = knownFailure !== undefined ? `(ir.${base.path} as any).${alias.name}${base.flavor}` : `ir.${base.path}.${alias.name}${base.flavor}`;
+		const callTarget = knownFailure !== undefined ? `(ir.${base} as any).${alias.name}` : `ir.${base}.${alias.name}`;
 		const aliasRegisteredChain = (() => {
 			if (!(child instanceof AbstractAssembledCompound)) return '';
 			const required = registeredSlots(child).filter(isRequired);

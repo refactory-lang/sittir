@@ -6,11 +6,12 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 describe('a call whose function is a macro invocation', () => {
 	it('keeps each `arguments` on its own owner', () => {
 		const node = rs.build.callExpression({
-			function: rs.build.macroInvocation({ function: rs.build.identifier('m'), arguments: rs.build.delimTokenTree.paren.strict(rs.build.nonSpecialToken.strict(rs.build.identifier('x'))) }),
+			function: rs.build.macroInvocation({ function: rs.build.identifier('m'), arguments: rsStrict.build.delimTokenTree.paren(rsStrict.build.nonSpecialToken(rs.build.identifier('x'))) }),
 			arguments: rs.build.arguments(rs.build.identifier('y'))
 		});
 		expect(node.$type).toBe(rs.kinds.CallExpression);

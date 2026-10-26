@@ -13,7 +13,7 @@ describe('a polymorph parent nested in a polymorph parent', () => {
 	});
 
 	it('does not leak the chained route as a sibling key', () => {
-		expect(Object.keys((py.build as unknown as { yield: object }).yield)).toEqual(['strict', 'coerce', 'fromClause']);
+		expect(Object.keys((py.build as unknown as { yield: object }).yield)).toEqual(['fromClause']);
 	});
 
 	it('leaves a constant keyword arm without a route, since it has no builder to call', () => {

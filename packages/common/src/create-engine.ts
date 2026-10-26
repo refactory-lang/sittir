@@ -1,6 +1,7 @@
 import type {
 	AnyUntypedNode,
-	ApiSurface,
+	BuildSurface,
+	BuilderMode,
 	Engine,
 	EngineIdentity,
 	EngineOptions,
@@ -68,13 +69,20 @@ function loadLanguage<API extends LanguageAPI>(language: LanguageIdentity<API>):
 	return loading;
 }
 
-function refuseUnimplemented(options: EngineOptions<LanguageAPI, ApiSurface> | undefined): void {
-	const api = options?.api ?? 'default';
-	if (api !== 'default') throw new Error(`api "${api}" is not implemented`);
+async function loadTable<API extends LanguageAPI, M extends BuilderMode>(
+	language: LanguageIdentity<API>,
+	hooks: LanguageHooks<API>,
+	mode: M
+): Promise<API['build'][M]> {
+	try {
+		return await hooks.tables[mode]();
+	} catch (cause) {
+		throw new Error(`failed to load the ${mode} builder table of language "${language.name}"`, { cause });
+	}
 }
 
 function nativeEngineOptions<API extends LanguageAPI>(
-	options: EngineOptions<API, ApiSurface> | undefined
+	options: EngineOptions<API, BuilderMode> | undefined
 ): NativeEngineOptions<API['options']> {
 	return options?.render === undefined ? {} : { options: options.render };
 }
@@ -181,11 +189,12 @@ function admitterOf(mode: EngineOptions<LanguageAPI>['verifyStructure'], table: 
 	};
 }
 
-function assembleEngine<API extends LanguageAPI>(
+function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
-	options: EngineOptions<API> | undefined
-): Engine<API> {
+	table: API['build'][M],
+	options: EngineOptions<API, M> | undefined
+): Engine<API, M> {
 	const native = hooks.createNative(nativeEngineOptions(options));
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
@@ -204,7 +213,7 @@ function assembleEngine<API extends LanguageAPI>(
 	const buildChain = interceptorChain(interceptors.map((hook) => hook.build?.bind(hook)));
 	const parseChain = interceptorChain(interceptors.map((hook) => hook.parse?.bind(hook)));
 	const renderChain = interceptorChain(interceptors.map((hook) => hook.render?.bind(hook)));
-	const build = scopedBuild(hooks.build, handle, buildChain);
+	const build = scopedBuild(table, handle, buildChain) as BuildSurface<API, M>;
 	const materializeNative = (target: Parameters<typeof native.render>[0], rendered: Rendered): string => {
 		if (!metricsEnabled) return rendered.toString();
 		const kind =
@@ -230,7 +239,7 @@ function assembleEngine<API extends LanguageAPI>(
 		kindName: (kind) => hooks.trivia.kindName(kind),
 		wrap: hooks.wrap
 	};
-	const engine: Engine<API> = {
+	const engine: Engine<API, M> = {
 		...identity,
 		build,
 		is: guardsOf(language),
@@ -256,7 +265,7 @@ function assembleEngine<API extends LanguageAPI>(
 				hooks.trivia.innerKinds.has(kind) &&
 				isEmptyUntypedNode(node)
 			);
-		}) as Engine<API>['isEmptyNode'],
+		}) as Engine<API, M>['isEmptyNode'],
 		parse(source, parseOptions) {
 			const run = (): API['root'] => {
 				const { root, tree } = readAndBind(source, parseOptions);
@@ -273,11 +282,11 @@ function assembleEngine<API extends LanguageAPI>(
 				throw new Error(`cannot query a ${stamp.language.name} node through a ${language.name} engine`);
 			}
 			return queryFacet(node, queryHooks);
-		}) as Engine<API>['query'],
+		}) as Engine<API, M>['query'],
 		read() {
 			return Promise.reject(unimplementedVerb('read'));
 		},
-		render(node: RenderArgument<API>, renderOptions?: API['options']) {
+		render(node: RenderArgument<API, M>, renderOptions?: API['options']) {
 			const target = typeof node === 'function' ? node(build) : node;
 			const stamp = engineOf(target);
 			if (stamp !== undefined && !sameLanguage(stamp, identity)) {
@@ -332,16 +341,19 @@ function mergeRenderOptions<O extends object>(engine: O | undefined, call: O | u
 }
 
 /**
- * Creates an engine for `language`.
+ * Creates an engine for `language`, which builds with the builder table its `api` names: the loose builders of the
+ * default engine, or the strict builders of `api: 'strict'`.
  *
- * @param options - Engine options. `render` sets the engine's render options and is checked against the language's options.
- * @returns The engine, once the language has loaded.
- * @throws When an option the engine does not implement yet is set, or the language fails to load.
+ * @param options - Engine options. `api` picks the builder table, and only that table loads. `render` sets the engine's
+ * render options and is checked against the language's options.
+ * @returns The engine, once the language and its builder table have loaded.
+ * @throws When the language or its builder table fails to load.
  */
-export async function createEngine<API extends LanguageAPI, const R extends API['options'] = API['options']>(
-	language: Language<API>,
-	options?: CreateEngineOptions<API, R>
-): Promise<Engine<API>>;
+export async function createEngine<
+	API extends LanguageAPI,
+	const R extends API['options'] = API['options'],
+	const M extends BuilderMode = 'default'
+>(language: Language<API>, options?: CreateEngineOptions<API, R, M>): Promise<Engine<API, M>>;
 /**
  * Creates an engine for `language` over its portable vocabulary, the same as `createEngine(language, { api: 'portable' })`.
  *
@@ -352,12 +364,13 @@ export async function createEngine<API extends LanguageAPI, const R extends API[
 export async function createEngine<API extends PortableLanguageAPI>(language: Language<API>, options: PortableEngineOptions): Promise<PortableEngine<API>>;
 export async function createEngine<API extends LanguageAPI>(
 	language: Language<API>,
-	options?: CreateEngineOptions<API> | PortableEngineOptions
-): Promise<Engine<API> | PortableEngine<API & PortableLanguageAPI>> {
+	options?: CreateEngineOptions<API, API['options'], BuilderMode> | PortableEngineOptions
+): Promise<Engine<API, BuilderMode> | PortableEngine<API & PortableLanguageAPI>> {
 	if (options?.api === 'portable') {
 		const portableLanguage = language as unknown as Language<API & PortableLanguageAPI>;
 		return assemblePortableEngine(portableLanguage, await loadLanguage(portableLanguage));
 	}
-	refuseUnimplemented(options);
-	return assembleEngine(language, await loadLanguage(language), options);
+	const hooks = await loadLanguage(language);
+	const mode = options?.api ?? 'default';
+	return assembleEngine(language, hooks, await loadTable(language, hooks, mode), options);
 }

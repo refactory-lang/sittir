@@ -15,7 +15,8 @@ import { predictedSymbolSourceOf } from '../../dsl/symbol-table.ts';
 import { assemblePredicted } from '../../__tests__/helpers/linked.ts';
 import type { NodeMapWithIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { builtTypeSurfaceOf } from '../factories.ts';
-import { collectPolymorphWires, emitPolymorphsOverlay, seatedRowsOf } from '../overlays/polymorphs.ts';
+import { collectPolymorphWires, seatedRowsOf } from '../overlays/polymorphs.ts';
+import { emitTables } from '../../__tests__/helpers/emit-tables.ts';
 import { listRestParamType } from '../shared.ts';
 import { collectKindEntries } from '../kind-discriminant.ts';
 
@@ -183,54 +184,48 @@ function ambiguousNodeMap(): NodeMapWithIdTables {
 	});
 }
 
-describe('emitPolymorphsOverlay', () => {
+describe('the builder table wiring', () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 	});
 
-	it('emits one method per sub-factory, applied to the strict and coerce pairs', () => {
-		const { nodeMap, generatedIdTables } = polymorphNodeMap();
-		const text = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
+	it('emits one combinator per sub-factory, applied once over the table either engine passes in', () => {
+		const { nodeMap } = polymorphNodeMap();
+		const { wiring, combinators } = emitTables(nodeMap);
 
-		expect(text).toContain("import * as B from './refines.js';");
-		expect(text).toContain("import * as F from '../raw.js';");
-		expect(text).toContain("import * as C from '../coerce.js';");
-		expect(text).toContain("export * from './refines.js';");
+		expect(wiring).toContain("import * as F from './raw.js';");
+		expect(wiring).toContain("import * as K from './combinators.js';");
+		expect(wiring).toContain('export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {');
 
-		expect(text).toContain(
-			'const comment$doc = <PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>'
+		expect(combinators).toContain(
+			'export const comment$doc = <PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>'
 		);
-		expect(text).toContain('export const comment = Object.freeze({');
-		expect(text).toContain('	...B.comment,');
-		expect(text).toContain('const comment$doc$strict = comment$doc(F.buildComment, F.buildCommentDoc);');
-		expect(text).toContain('const comment$doc$coerce = comment$doc(F.buildComment, C.coerceToCommentDoc);');
-		expect(text).toContain('	doc: bundle(comment$doc$strict, comment$doc$coerce, { key: "comment.doc", max: 1 }),');
-		expect(text).toContain('	plain: bundle(comment$plain$strict, comment$plain$coerce, { key: "comment.plain", max: 1 }),');
+		expect(wiring).toContain("const comment$doc: Routes<Table>['comment$doc'] = K.comment$doc(F.buildComment, $at('buildCommentDoc'));");
+		expect(wiring).toContain(
+			"const comment: Routes<Table>['comment'] = Object.freeze(Object.assign(delegate($at('buildComment')), { doc: comment$doc, plain: comment$plain } as const));"
+		);
 
-		expect(text).toContain('const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
-		expect(text).toContain('const logic$and$strict = logic$and(F.buildLogic, TSKindId.AndKeyword);');
-		expect(text).toContain('const logic$and$coerce = logic$and(C.coerceToLogic, TSKindId.AndKeyword);');
-		expect(text).toContain('	and: bundle(logic$and$strict, logic$and$coerce, { key: "logic.and", max: 2 }),');
-		expect(text).toContain('	or: bundle(logic$or$strict, logic$or$coerce, { key: "logic.or", max: 2 }),');
+		expect(combinators).toContain('export const logic$and = <PF extends (config: never) => unknown>(parent: PF, value: unknown) =>');
+		expect(wiring).toContain("const logic$and: Routes<Table>['logic$and'] = K.logic$and($at('buildLogic'), TSKindId.AndKeyword);");
+		expect(wiring).toContain("const logic$or: Routes<Table>['logic$or'] = K.logic$or($at('buildLogic'), TSKindId.OrKeyword);");
 
-		expect(text).toContain('const annotated$plus$strict = annotated$plus(F.buildAnnotated, TSKindId.PlusKeyword);');
-		expect(text).toContain('	plus: bundle(annotated$plus$strict, annotated$plus$coerce, { key: "annotated.plus", max: 2 }),');
+		expect(wiring).toContain("const annotated$plus: Routes<Table>['annotated$plus'] = K.annotated$plus($at('buildAnnotated'), TSKindId.PlusKeyword);");
 	});
 
 	it('seats a keyword arm\'s stored text instead of asking the caller for the keyword child', () => {
-		const text = emitPolymorphsOverlay(parameterlessArmNodeMap()).text;
+		const { wiring, combinators } = emitTables(parameterlessArmNodeMap().nodeMap);
 
-		expect(text).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
-		expect(text).toContain('{ ...config, content: value }');
-		expect(text).toContain('const pair$kwSelf$strict = pair$kwSelf(F.buildPair, TSKindId.KwSelf);');
-		expect(text).not.toContain('_c(child)');
+		expect(combinators).toContain("\t(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>");
+		expect(combinators).toContain('{ ...config, content: value }');
+		expect(wiring).toContain("const pair$kwSelf: Routes<Table>['pair$kwSelf'] = K.pair$kwSelf($at('buildPair'), TSKindId.KwSelf);");
+		expect(combinators).not.toContain('_c(child)');
 	});
 
 	it('warns of a skipped sub-factory on stderr: the generated API omits it', () => {
-		const { nodeMap, generatedIdTables } = ambiguousNodeMap();
+		const { nodeMap } = ambiguousNodeMap();
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-		emitPolymorphsOverlay({ nodeMap, generatedIdTables });
+		emitTables(nodeMap);
 
 		expect(warn).toHaveBeenCalledWith(
 			'[codegen] twice: sub-factory same skipped (ambiguous): first, second'
@@ -262,20 +257,17 @@ describe('a single hoisted group flattens onto its parent', () => {
 			}
 		});
 		const seatKey = nodeMap.nodes.get('clause')!.slots.find((s) => s.values.length === 1)!.propertyName;
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toContain(`const clause$flatten$${seatKey} =`);
-		expect(out).toContain('function clause$seated<A extends T.Clause.BuildArgs>(...args: A & RefuseUndeclared<A>): ReturnType<typeof F.buildClause>;');
-		expect(out).toContain('function clause$seated(...args: T.Clause.BuildArgs): ReturnType<typeof F.buildClause> {');
+		const { wiring, combinators, strict } = emitTables(nodeMap);
+		expect(combinators).toContain(`export const clause$flatten$${seatKey} =`);
+		expect(strict).toContain(
+			`export const clause$seated: Seat<T.Clause.BuildArgs, ReturnType<typeof F.buildClause>> = K.clause$flatten$${seatKey}(F.buildClause, F.buildClauseGroup);`
+		);
 		const groupKeys = `OmitEach<NonNullable<T.ClauseGroup.Config>, '$type'>`;
 		const { buildArgs } = seatedRows({ nodeMap, generatedIdTables }, 'clause');
 		expect(buildArgs).toContain(`WithoutGroup<`);
 		expect(buildArgs).toContain(`, ${groupKeys}> | (OmitEach<NonNullable<`);
 		expect(buildArgs).toContain(`, '${seatKey}'> & (T.ClauseGroup.BuildArgs[0] | NoneOf<${groupKeys}>))`);
-		expect(out).toContain('export const clause = Object.freeze({');
-		expect(out).toContain(`return clause$flatten$${seatKey}(F.buildClause, F.buildClauseGroup)(...args);`);
-		const seated = '...bundle(clause$seated, clause$seatedCoerce, { key: "clause", max: 1 }),';
-		expect(out).toContain(seated);
-		expect(out.indexOf('...B.clause,')).toBeLessThan(out.indexOf(seated));
+		expect(wiring).toContain("const clause: Routes<Table>['clause'] = $at('clause$seated');");
 	});
 });
 
@@ -307,19 +299,20 @@ describe('a repeated hoisted group seats as an array of its configs', () => {
 				annotations: { hoisted: true }
 			}
 		});
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toContain('const comparison$comparators =');
-		expect(out).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
-		expect(out).toContain('return comparison$comparators(F.buildComparison, F.buildComparisonComparator)(...args);');
-		expect(out).toContain('...bundle(comparison$seated, comparison$seatedCoerce, { key: "comparison", max: 1 }),');
-		expect(out).toContain('function comparison$seated<A extends T.Comparison.BuildArgs>(...args: A & RefuseUndeclared<A>):');
+		const { wiring, combinators, strict } = emitTables(nodeMap);
+		expect(combinators).toContain('export const comparison$comparators =');
+		expect(combinators).toContain("comparators: seat.map((e) => (isConfig(e) ? _c(child)(e) : e))");
+		expect(strict).toContain(
+			'export const comparison$seated: Seat<T.Comparison.BuildArgs, ReturnType<typeof F.buildComparison>> = K.comparison$comparators(F.buildComparison, F.buildComparisonComparator);'
+		);
+		expect(wiring).toContain("const comparison: Routes<Table>['comparison'] = $at('comparison$seated');");
 		expect(seatedRows({ nodeMap, generatedIdTables }, 'comparison').buildArgs).toContain('{ comparators: ReadonlyArray<T.ComparisonComparator.BuildArgs[0]');
 	});
 });
 
 describe('a repeated hoisted group on a spread-shaped parent seats through the rest parameters', () => {
 	it('maps each rest argument through the group builder when it is a config', () => {
-		const { nodeMap, generatedIdTables } = assembledNodeMap({
+		const { nodeMap } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'u' }, { type: SYMBOL, name: 'union' }] },
 			union: {
 				type: SEQ,
@@ -346,15 +339,15 @@ describe('a repeated hoisted group on a spread-shaped parent seats through the r
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toContain('const union$patterns =');
-		expect(out).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
+		const { combinators } = emitTables(nodeMap);
+		expect(combinators).toContain('export const union$patterns =');
+		expect(combinators).toContain('_s<ReturnType<PF>>(parent)(...args.map((e) => (isConfig(e) ? _c(child)(e) : e)))');
 	});
 });
 
 describe('a mount route carries the seats of its own parent', () => {
 	it('builds the mount on the seated parent, not the raw factory', () => {
-		const { nodeMap, generatedIdTables } = assembledNodeMap({
+		const { nodeMap } = assembledNodeMap({
 			root: { type: SEQ, members: [{ type: STRING, value: 'c' }, { type: SYMBOL, name: 'clause' }] },
 			clause: {
 				type: SEQ,
@@ -386,10 +379,10 @@ describe('a mount route carries the seats of its own parent', () => {
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toContain('function clause$seated');
-		expect(out).toContain('clause$block(clause$seated,');
-		expect(out).not.toContain('clause$block(F.buildClause,');
+		const { wiring, strict } = emitTables(nodeMap);
+		expect(strict).toContain('export const clause$seated: ');
+		expect(wiring).toContain("K.clause$block($at('clause$seated'), ");
+		expect(wiring).not.toContain('K.clause$block(F.buildClause,');
 	});
 });
 
@@ -423,11 +416,11 @@ describe('a visible wrapper declared flattened seats on its parent', () => {
 		const { nodeMap } = wrapperGrammar();
 		const generatedIdTables: GeneratedIdTables = { kindIds: { root: 1, arm: 2, wrapper: 3 }, fieldIds: new Map(), folds: new Map(), sourceArtifact: 'test' };
 		stampIrSurface(nodeMap, generatedIdTables);
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toMatch(/const arm\$flatten\$match = <[^\n]*>\(parent: PF, child: CF\) =>\n/);
-		expect(out).toContain('if (key === "pattern" || key === "condition") {');
-		expect(out).not.toContain('key === "match"');
-		expect(out).toMatch(/return arm\$flatten\$match\(F\.buildArm, F\.buildWrapper\)\(\.\.\.args\);/);
+		const { combinators, strict } = emitTables(nodeMap);
+		expect(combinators).toMatch(/export const arm\$flatten\$match = <[^\n]*>\(parent: PF, child: CF\) =>\n/);
+		expect(combinators).toContain('if (key === "pattern" || key === "condition") {');
+		expect(combinators).not.toContain('key === "match"');
+		expect(strict).toContain('K.arm$flatten$match(F.buildArm, F.buildWrapper)');
 	});
 });
 
@@ -510,9 +503,8 @@ describe('a list takes its rest parameter by cardinality and options', () => {
 			},
 			literal: { type: PATTERN, value: '[0-9]+' }
 		});
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text.split('\n');
-		const seat = out.find((line) => line.startsWith('function items$seatedCoerce<'));
-		expect(seat).toContain('<const A extends T.Items.LooseArgs>(...args: A & RefuseUndeclared<A, T.Items.LooseArgs>)');
+		const { loose } = emitTables(nodeMap);
+		expect(loose).toContain('export const items$seated: Seat<T.Items.LooseArgs, ');
 		const row = builtTypeSurfaceOf(nodeMap.nodes.get('items')!, nodeMap, collectKindEntries(nodeMap, generatedIdTables))!.looseArgs;
 		expect(row.startsWith('[options: ')).toBe(true);
 		expect(row).not.toMatch(/(^|\| )\[element: /);
@@ -536,9 +528,9 @@ describe('a keyword literal arm named by its text', () => {
 			}
 		);
 		stampIrSurface(nodeMap, generatedIdTables);
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
-		expect(out).toContain('const junction$and$strict = junction$and(F.buildJunction, TSKindId.AndKeyword);');
-		expect(out).toContain('const junction$or$strict = junction$or(F.buildJunction, TSKindId.OrKeyword);');
+		const { wiring } = emitTables(nodeMap);
+		expect(wiring).toContain("const junction$and: Routes<Table>['junction$and'] = K.junction$and($at('buildJunction'), TSKindId.AndKeyword);");
+		expect(wiring).toContain("const junction$or: Routes<Table>['junction$or'] = K.junction$or($at('buildJunction'), TSKindId.OrKeyword);");
 	});
 
 	it('reports a keyword arm whose text names a node arm of the same owner as ambiguous', () => {
@@ -558,9 +550,10 @@ describe('a keyword literal arm named by its text', () => {
 		);
 		stampIrSurface(nodeMap, generatedIdTables);
 		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-		const out = emitPolymorphsOverlay({ nodeMap, generatedIdTables }).text;
+		const { wiring, combinators } = emitTables(nodeMap);
 		expect(warn).toHaveBeenCalledWith(expect.stringMatching(/^\[codegen\] junction: sub-factory and skipped \(ambiguous\)/));
-		expect(out).not.toContain('junction$and');
+		expect(wiring).not.toContain('junction$and');
+		expect(combinators).not.toContain('junction$and');
 		warn.mockRestore();
 	});
 });

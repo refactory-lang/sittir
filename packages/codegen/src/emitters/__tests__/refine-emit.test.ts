@@ -24,9 +24,8 @@ import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { emitTypes } from '../types.ts';
 import { emitFactories } from '../../__tests__/helpers/emit-factories.ts';
-import { emitIr } from '../ir.ts';
+import { emitTables } from '../../__tests__/helpers/emit-tables.ts';
 import { emitAll } from '../emit.ts';
-import { emitRefinesOverlay } from '../overlays/refines.ts';
 
 // ---------------------------------------------------------------------------
 // Synthetic grammar: `iface_body` with curly `{...}` and flow `{|...|}` forms
@@ -347,7 +346,7 @@ function runPipelineRaw(raw: RawGrammar) {
 		generatedIdTables,
 		typesSrc: emitTypes({ grammar: 'synth', nodeMap, generatedIdTables }),
 		factoriesSrc: emitFactories({ grammar: 'synth', nodeMap, generatedIdTables }),
-		irSrc: emitIr({ grammar: 'synth', nodeMap })
+		wiring: emitTables(nodeMap).wiring
 	};
 }
 
@@ -457,27 +456,19 @@ describe('factories emitter — per-form factory emission', () => {
 	}, 60_000);
 });
 
-describe('ir emitter — bundle composition', () => {
-	it('bundles the ir key on the raw factory; per-form keys are an overlay concern', () => {
-		const { irSrc } = runPipeline([
+describe('builder tables — a refined kind carries its form factories', () => {
+	it("attaches each form factory to the parent's table builder, typed by the form factory itself", () => {
+		const { wiring } = runPipeline([
 			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
 			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
 		]);
-		expect(irSrc).toContain('ifaceBody: F.ifaceBody,');
-	});
-});
-
-describe('refines overlay — attaches per-form factories on the parent builder', () => {
-	it('refines overlay attaches each form factory on the parent builder', () => {
-		const { nodeMap, generatedIdTables } = runPipeline([
-			{ name: 'curly', selections: { 'opening:': '{', 'closing:': '}' } },
-			{ name: 'flow', selections: { 'opening:': '{|', 'closing:': '|}' } }
-		]);
-		const text = emitRefinesOverlay({ nodeMap, generatedIdTables });
-		expect(text).toContain("import * as B from '../bundle.js';");
-		expect(text).toContain("import * as F from '../raw.js';");
-		expect(text).toContain('export const ifaceBody = Object.freeze({');
-		expect(text).toContain('	...B.ifaceBody,');
-		expect(text).toContain('	curly: bundle(F.buildIfaceBodyCurly, undefined, { key: "ifaceBody.curly", max: 1 }),');
+		expect(wiring).toContain("import * as F from './raw.js';");
+		expect(wiring).toContain(
+			"const ifaceBody: Routes<Table>['ifaceBody'] = Object.freeze(Object.assign(delegate($at('buildIfaceBody')), { curly: F.buildIfaceBodyCurly, flow: F.buildIfaceBodyFlow } as const));"
+		);
+		expect(wiring).toContain(
+			"readonly ifaceBody: Table['buildIfaceBody'] & { readonly curly: typeof F.buildIfaceBodyCurly; readonly flow: typeof F.buildIfaceBodyFlow };"
+		);
+		expect(wiring).toContain('ifaceBody: ifaceBody');
 	});
 });

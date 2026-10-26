@@ -5,15 +5,17 @@ import { _factoryMap } from '../src/factories/raw.ts';
 import rust from '../src/index.ts';
 
 const trusting = await createEngine(rust);
+const trustingStrict = await createEngine(rust, { api: 'strict' });
 const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
+const verifyingStrict = await createEngine(rust, { verifyStructure: 'runtime', api: 'strict' });
 
 describe('verifyStructure', () => {
 	it("refuses a strict build that leaves a required slot empty, in 'runtime' mode at the call", () => {
-		expect(() => (verifying.build.expressionStatement.strict as unknown as () => unknown)()).toThrow("Missing required slot 'content' on expression_statement");
+		expect(() => (verifyingStrict.build.expressionStatement as unknown as () => unknown)()).toThrow("Missing required slot 'content' on expression_statement");
 	});
 
 	it('trusts the types by default: the build stands, and the render refuses it natively', () => {
-		const built = (trusting.build.expressionStatement.strict as unknown as () => { $render(): string })();
+		const built = (trustingStrict.build.expressionStatement as unknown as () => { $render(): string })();
 		expect(() => built.$render()).toThrow('Missing field `_content`');
 	});
 

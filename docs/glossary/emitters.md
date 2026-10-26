@@ -9909,10 +9909,6 @@ The node's `splitFrom`, written only on a split clone. The validators place a sp
 
 The node's `variantOf`, written only on an owned variant. Route derivation reaches a supertype's forms by it (`formsOf`).
 
-### `packages/codegen/src/emitters/node-model.ts::SerializedNodeBase.oneSurface`
-
-Set on a kind with one builder and no strict/coerce pair (`hasOneSurface`). The predicate is the emitter's own, stamped here so a tool that spells calls reads it and does not re-derive it from the kind's shape.
-
 ### `packages/codegen/src/emitters/node-model.ts::serializeNode`
 
 Every node carries `seated` when it seats on its parent, and its provenance (`renamedFrom`, `splitFrom`, `variantOf`) where it has one. The tools read `seated`, never the rule's annotations, which the record does not write. A compound or list passes its factory-map slots on to `serializeSlot`.
@@ -11213,14 +11209,6 @@ The flat namespace holds each builder once, under its own `irKey`; a supertype-s
 
 A supertype gets an ir namespace if and only if the grammar declares it (`AssembledSupertype.declared`). An undeclared hidden choice gets no ir namespace however it would be emitted, neither a supertype group here nor flattened-parent routes (`flattenedVariantParents`); each of its arms keeps its own flat builder. Declare it in `grammar.sittir.ts` (`supertypes`) to give it one. The kind's type union is unaffected.
 
-### `packages/codegen/src/emitters/overlays/module.ts::ownTextEntries`
-
-The keyed kinds that have one surface (`ownTextKeyedNodes`) with their `maxArgs`. They get a flat `ir` entry that is the raw factory instead of a bundle.
-
-### `packages/codegen/src/emitters/overlays/module.ts::withMaxArgs`
-
-Adds each keyed node's `BuiltTypeSurface.maxArgs`, the one fact a bundle entry carries that is the emitter's own: it is computed from the built type surface, which the model does not hold.
-
 ### `packages/codegen/src/emitters/shared.ts::ownTextLeaf`
 
 The facts of a lexed kind that is nothing but its own text between two fixed affixes, or `undefined` for any other kind: the content slot, the opening and closing text, and the template-literal type of the text spelled in full (`\`<open>${string}<close>\``). The kind qualifies when it has a lexed content slot, that slot is its only slot, and it has a full form. A kind whose affix is a spelled slot or a choice of texts has no single spelled type and is a compile-time error here, so the classification cannot drift from what the builder can type.
@@ -11230,60 +11218,6 @@ Such a kind is a leaf. Its builder takes text only and has one surface. It never
 ### `packages/codegen/src/emitters/factories.ts::ownTextArgs`
 
 The argument row of an own-text leaf, as both its `BuildArgs` and its `LooseArgs`: `[content: T, affix?: true] | [text: <spelled type>, affix: false]`. `T` is `ownTextContentType`, the content slot's storage type widened by what its storage coercion accepts (a numeric content also takes `number | bigint`). With `affix` true or absent the first argument is the content, and the builder adds the affixes; with `affix: false` it is the token spelled in full, typed by the kind's affixes, and the builder refuses a non-string with its slot's type refusal (`textTypeMismatchThrow`, labelled `<kind>.<slot>` as the slot guard is), then removes the affixes (`unaffixed`), refusing text that lacks either. A non-string so gets the one refusal in both modes. Text that carries the affixes passed without `affix: false` is content like any other: it is refused when the content pattern excludes it, and renders with the affixes doubled when the pattern admits it.
-
-### `packages/codegen/src/emitters/ir.ts::emitIr`
-
-Prints the `ir` module from the model's plan (`irPlanOf`): the supertype groups as top-level consts, then the frozen `ir` table — bundled node factories, the variant parents, keyword factories, own-text leaves, leaf node factories and the group namespaces. Which kinds appear, under what key and through which factory export is the plan's decision (`deriveIrPlan`); the emitter only prints it.
-
-No emitted code attaches properties to a factory: a factory is shared under every key that reaches it, so a mutation made for one key shows under all of them.
-
-#### body
-
-```text
-// One hoisted const per bundle kind — the group/`ir` namespace consts
-// reference these by NAME (see bundleLine).
-```
-
-#### body
-
-```text
-// ----------------------------------------------------------------------
-// Supertype-grouped sub-namespaces — collected first so they can be
-// both exported as tree-shakeable top-level consts AND attached to
-// the flat `ir` namespace for nested access (`ir.expression.binary`).
-// ----------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// TSGrammar-only kinds (no parser symbol — tree-sitter inlined) can
-// never appear at runtime; no factory was emitted for them.
-```
-
-#### body
-
-```text
-// 'list' participates in this scan uniformly alongside 'branch' — see
-// isSlotBearingCompound's doc comment (shared.ts).
-```
-
-#### body
-
-```text
-// ----------------------------------------------------------------------
-// Flat `ir.*` namespace — every grammar kind by camelCase short name.
-// ----------------------------------------------------------------------
-```
-
-#### body
-
-```text
-// Explicit typeof-composed surface — same TS7056 rationale as the
-// hoisted bundle consts above.
-```
-
-`ir` is a frozen table: the emitted module is the one place it is built, and nothing writes to it afterwards.
 
 ### `packages/codegen/src/emitters/from.ts::module`
 
@@ -12758,53 +12692,6 @@ treats `false` as not present.
 // to the supertype kind that the SCC graph carries as a relay node.
 ```
 
-### `packages/codegen/src/emitters/overlays/module.ts::OVERLAY_CHAIN`
-
-```text
-/** Fixed decoration order for the factories overlay stack: `refines` wraps
- *  `raw`, `polymorphs` wraps `refines`, `supertypes` wraps `polymorphs`.
- *  The order is fixed rather than derived because each layer's
- *  decorations depend on facts only available once the layer before it
- *  has resolved — a supertype attachment reads the polymorph layer's
- *  resolved variant surface, which reads the refine layer's resolved
- *  refinement forms, which reads the raw builders — so reordering the
- *  chain would reorder which facts are visible to which layer. */
-```
-
-### `packages/codegen/src/emitters/overlays/module.ts::overlayImportPath`
-
-Import path each chain layer loads its predecessor from: index 0 (refines) imports `../bundle.js`; later layers import the previous overlay. The chain is raw → coerce → bundle → refines → polymorphs → supertypes → index.
-
-### `packages/codegen/src/emitters/overlays/module.ts::emitFactoriesIndex`
-
-Each entry is `export const <name>: Hoisted<typeof O.<name>> = hoistAs<typeof O.<name>>(O.<name>);`, so the annotation and the call carry the same type and nothing is related between the overlay's declared type and an inferred one.
-
-Emits `factories/index.ts`, the dynamic final chain step: re-exports the top overlay and, for every bundle entry, `export const <exportName> = hoist(O.<exportName>);` — the consumer surface where a bare call is the coerce flavor and `.strict` stays reachable (recursively, sub-factory pairs included).
-
-Every flattened parent is exported the same way through `hoistRoutes(O.<key>)`, so `ir.<parent>.<variant>(…)` is the coerce flavor and `.strict` stays reachable, just as for a bundled kind.
-
-The arity bound comes from the pair itself: `emitBundleModule` stamps each entry, and every overlay builds its pairs through `bundle`, so the index passes no stamp.
-
-### `packages/codegen/src/emitters/overlays/module.ts::overlayFrame`
-
-Shared header for a static overlay module: imports the previous layer as `B`, any extra imports, and re-exports the previous layer; a layer shadows only the bundles it decorates.
-
-### `packages/codegen/src/emitters/overlays/module.ts::BundleEntry`
-
-One bundled kind: the model's keyed node (`IrKeyedNode`: `key`, `exportName`, `node`) with `maxArgs`, the kind's `BuiltTypeSurface.maxArgs`: the stamp `emitBundleModule` gives the entry's pair, absent for an unbounded (rest) calling convention.
-
-### `packages/codegen/src/emitters/overlays/module.ts::bundleEntries`
-
-The bundled kinds (`bundleKeyedNodes`) with their `maxArgs` (`withMaxArgs`) — consumed by the bundle module, the overlays, the index hoisting, and `ir.ts`. Which kinds are keyed, and under what names, is the model's decision (`irKeyedNodes`).
-
-### `packages/codegen/src/emitters/overlays/module.ts::emitBundleModule`
-
-Emits `factories/bundle.ts`: re-exports raw and coerce, then one line per entry — `export const <exportName> = bundle(F.<build>, C.<coerceTo>, { key, max });`, stamped with the entry's `maxArgs` (`bundleExpr`). The pairing is the one dynamic stage below the index.
-
-### `packages/codegen/src/emitters/overlays/module.ts::bundleExpr`
-
-The one spelling of a pair construction in generated code: `bundle(<strict>, <coerce> | undefined, { key, max })`, the stamp omitted when `max` is undefined. `key` is the route's dotted path from its `ir` key, which the refusal message names.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::parentRefs`
 
 The strict/coerce expression pair for a parent builder; `coerce` is absent when the kind has no coercer.
@@ -12831,15 +12718,6 @@ private (a hoisted compound's const), whether it carries methods, and the
 kinds whose wiring consts its text reads (`uses`, collected from the `set`
 of every ref the emitters wrote into it).
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::withoutUnusedPrivateSets`
-
-Drops every private wiring const no other kept chunk reads, to a fixpoint (a
-private const read only by a dropped one goes too). What reads a const is
-exactly what the emitters wrote (`OverlayChunk.uses`): arms, seats, alias
-routes and supertype variant routes all report through their refs' `set`,
-so no reader is listed by hand. The helpers go before the first kept chunk
-that has methods.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::inDependencyOrder`
 
 Orders the overlay's chunks so each const is declared before any chunk that reads it. Each chunk is keyed by the node kind it provides, and a chunk waits until every kind in its `uses` that another chunk provides has been placed. Among ready chunks the original order wins, so chunks with no such dependency keep the order the overlay built them in. A sub-factory set that routes an arm through a flattened parent's const is placed after that const, and a flattened parent after the nested parents it names.
@@ -12848,49 +12726,9 @@ Orders the overlay's chunks so each const is declared before any chunk that read
 
 Renders an arm entry and its nested children as one object literal and its type, the arm's pair through `bundleExpr` under its dotted route path: `name: bundle(…)` for a leaf arm, `name: { ...bundle(…), child: … }` when it has children. A namespace arm (no pair) contributes only its children. Each rendered pair records its path's arity in `PolymorphWires.routes`, which a later arm referencing the route reads through `routeArity`.
 
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::ArmPair`
-
-An arm's pair as named flavor consts plus its arity stamp; the renderer spells it through `bundleExpr` once the arm's route path is known.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::armPair`
-
-Names an emission's composed flavors as consts, `<method>$strict` and `<method>$coerce`, pushes them among the overlay's methods, and returns the pair over those names. Every composed flavor is named before its `bundle` call because an inline generic composer call inside `bundle`'s arguments leaves TypeScript (7.0.2) unable to infer the flavor type while the stamp parameter depends on it: the flavor falls back to its constraint, `MaxArity` reads `number`, and every correct stamp is refused. A named const has a settled type, so the stamp is checked against the flavor exactly. Do not inline the composer calls back into `bundle`.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::armType`
-
-The declared `strict`/`coerce` member types of an emitted arm, `coerce` omitted for a strict-only route.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::pairExpr`
-
-Spells an arm pair at its route path and records the path's arity for later references.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::maxOf`
-
-A spreadable `{ max }` that is empty when the arity is unbounded.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::surfaceArity`
-
-The most arguments a kind's own factory flavor takes: its `BuiltTypeSurface.maxArgs`, or, for a keyword leaf with no surface, its coercer's (`keywordLeafArity`).
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::entryArity`
-
-The arity of the pair at a kind's own entry, the call `<childKey>(…)` makes. A flattened parent's entry is its default variant's entry. A seated kind's entry is the seated pair (`seatedArity`) when that pair is the hoisted target: it has a coercer, or the entry is a private hoisted-compound const with no bundle beneath it; otherwise the bundle's coercer is the target and the kind's surface arity holds.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::routeArity`
-
-The arity of a route referenced by its dotted path. A wire arm's path is read from `PolymorphWires.routes`, filled as each arm renders; children render before their parents. A flattened parent's variant routes render after the wire chunks, so their paths are resolved structurally: the variant's entry arity, or, for a deeper path, the same lookup under the variant's own entry key. A path that resolves to neither throws, since a reference to an unstamped route is a codegen defect.
-
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatsOf`
 
 A wire set's seat emissions, flatten first, then element seats, then tuple seats; `composeSeats` folds them and `seatedArity` reads them.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedOptionsType`
-
-The trailing options type a non-spread seated pair declares, present when the kind has a spelling option.
-
-### `packages/codegen/src/emitters/overlays/polymorphs.ts::seatedArity`
-
-The seated pair's arity and whether it has a coerce flavor. A spread seat makes it unbounded; otherwise it takes its config, plus the options argument when `seatedOptionsType` is present. It is coercible when the parent has a coercer and every seat's child has one.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
@@ -13030,12 +12868,6 @@ A positional parent (one direct slot) wraps with the raw builder in both flavors
 Renders one sub-factory's transformation method and its two applications. Methods are generic over the function types themselves (`PF` for the parent, `CF` for the child) with parameter and return types indexed off them (`Parameters<PF>[0]`, `ReturnType<PF>`), because a type parameter constrained by another inference variable and appearing only in a contravariant function-parameter position makes TypeScript fall back to the constraint instead of inferring — any parent with a residual field would then fail to apply. The two internal calls are made through erased views (`parent as (arg: unknown) => ReturnType<PF>`); the external signature and the emitted per-wire type annotations stay exact. Shapes: literal fix (with/without residual, positional/keyed), positional/keyed seat, config merge (path-empty arms only; keys split by a baked owner list), config seat (a path-empty config-shaped arm that does not merge, `seatsConfigChild`: the child's config object sits whole under the slot key, `{ function: { macro, arguments }, arguments }`), and tuple-spread for every other residual arm — flattened arms always tuple-spread, since their seated value is the sub-factory's own argument tuple.
 
 The emission carries its method's name, which `armPair` builds the flavor const names from, and its arity: the shape's own `max`, or the child refs' `max` for a shape that forwards the child's arguments.
-
-### `packages/codegen/src/emitters/overlays/refines.ts::emitRefinesOverlay`
-
-Static wiring for refine forms over bundles: for each kind with refine forms, spreads the bundle (`...B.<key>`) and wires each form as `bundle(F.<refineFormFactory>, undefined, { key, max })` under its camelCase key (plus the raw form name when it differs), stamped with the form's `refineFormBuiltTypeSurfaceOf` arity. Refine forms have no emitted coercers, so the pair carries only `strict`.
-
-The overlay table and each form's pair are frozen.
 
 ### `packages/codegen/src/emitters/overlays/polymorphs.ts::tupleShape`
 

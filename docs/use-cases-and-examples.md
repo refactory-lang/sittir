@@ -19,16 +19,16 @@ rs.isFactoryNode(name); // true
 
 ## Construction and coercion
 
-The ordinary builder resolves ergonomic inputs according to the slot's grammar-derived type. `.strict` takes the explicit constructor shape. A lexical builder still takes text, and fixed syntax may be represented by a kind ID rather than a node factory.
+The default engine's builder resolves ergonomic inputs according to the slot's grammar-derived type. An engine created with `api: 'strict'` builds with the explicit constructor shape. A lexical builder still takes text, and fixed syntax may be represented by a kind ID rather than a node factory.
 
 ```ts
 import rust from '@sittir/rust';
 
-using rs = await rust.createEngine();
-const fn = rs.build.statement.function.strict({
-	name: rs.build.identifier('main'),
-	parameters: rs.build.parameters.strict(),
-	body: rs.build.block.strict()
+using strict = await rust.createEngine({ api: 'strict' });
+const fn = strict.build.statement.function({
+	name: strict.build.identifier('main'),
+	parameters: strict.build.parameters(),
+	body: strict.build.block()
 });
 fn.$render(); // "fn main() {}"
 ```
@@ -122,7 +122,7 @@ fn.$trivia.leading('// entry point').$render(); // "// entry point\nfn main() {}
 
 ## Types and engine selection
 
-Use per-kind exported types for language-specific code, or `Engine<LanguageAPI>` and the engine type map for generic utilities. Use a builder's `.strict` entry for strict construction; engine-wide `api: 'strict'` selection is reserved and currently throws.
+Use per-kind exported types for language-specific code, or `Engine<LanguageAPI>` and the engine type map for generic utilities. Create an engine with `api: 'strict'` for strict construction; it loads only the strict builder table.
 
 ## Portable preview
 

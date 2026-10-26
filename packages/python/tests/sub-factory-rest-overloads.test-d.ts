@@ -11,6 +11,6 @@ import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
 
-py.build.matchBlock.block.coerce();
+py.build.matchBlock.block();
 // @ts-expect-error a number is not a case clause
-py.build.matchBlock.block.coerce(42);
+py.build.matchBlock.block(42);

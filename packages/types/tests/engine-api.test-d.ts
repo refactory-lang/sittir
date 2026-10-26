@@ -9,7 +9,6 @@ import type {
 	LanguageHooks,
 	ParsedRoot,
 	Project,
-	StrictSurface,
 	TriviaSetter,
 	Types
 } from '../src/index.ts';
@@ -37,8 +36,8 @@ interface StrictNode extends FakeNode {
 interface FakeAPI extends LanguageAPI {
 	readonly name: 'fake';
 	readonly build: {
-		leaf: ((text: string) => FakeNode) & { strict(text: string): StrictNode; coerce(text: string): FakeNode };
-		number: { bigint: ((v: bigint) => FakeNode) & { strict(v: bigint): StrictNode } };
+		readonly default: { leaf(text: string): FakeNode; readonly number: { bigint(v: bigint): FakeNode } };
+		readonly strict: { leaf(text: string): StrictNode; readonly number: { bigint(v: bigint): StrictNode } };
 	};
 	readonly is: { leaf(n: unknown): n is FakeNode };
 	readonly kinds: { readonly Leaf: 1 };
@@ -75,17 +74,18 @@ export const descriptor: Language<FakeAPI> = {
 	}
 };
 
-declare const strict: StrictSurface<FakeAPI['build']>;
-export const strictLeaf: StrictNode = strict.leaf('a');
-export const strictVariant: StrictNode = strict.number.bigint(1n);
-// @ts-expect-error the strict surface hides the flavours
-export const hidden = strict.leaf.strict;
-
 declare const portable: Engine<API, 'portable'>;
 export const noBuild: never = portable.build;
 
 declare const engine: Engine<API>;
 export const rendered: string = engine.render((b) => b.leaf('a')).toString();
+// @ts-expect-error the default engine builds from the loose table
+export const looseLeaf: StrictNode = engine.build.leaf('a');
+
+declare const strictEngine: Engine<API, 'strict'>;
+export const strictLeaf: StrictNode = strictEngine.build.leaf('a');
+export const strictVariant: StrictNode = strictEngine.build.number.bigint(1n);
+export const strictRendered: string = strictEngine.render((b) => b.leaf('a')).toString();
 // @ts-expect-error render options are the language's options
 engine.render(leaf, { indnet: '\t' });
 
@@ -108,7 +108,7 @@ interface OtherNode {
 }
 interface OtherAPI extends LanguageAPI {
 	readonly name: 'other';
-	readonly build: { leaf(text: string): OtherNode };
+	readonly build: { readonly default: { leaf(text: string): OtherNode }; readonly strict: { leaf(text: string): OtherNode } };
 	readonly is: object;
 	readonly kinds: object;
 	readonly types: { readonly leaf: OtherNode };

@@ -5,6 +5,7 @@ import { isCoordinate } from '../../common/src/read.ts';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 const shallowList = (engine = rs) => {
 	const item = engine.parse('fn f(a: u8, b: u16) {}').statements()[0];
@@ -17,8 +18,8 @@ const shallowList = (engine = rs) => {
 };
 
 const buildParameters = (list: unknown, strict = true) => {
-	const elements = Array.isArray(list) ? Reflect.apply(rs.build.parametersElements.strict, undefined, list) : list;
-	const built: unknown = Reflect.apply(strict ? rs.build.parameters.strict : rs.build.parameters, undefined, [
+	const elements = Array.isArray(list) ? Reflect.apply(rsStrict.build.parametersElements, undefined, list) : list;
+	const built: unknown = Reflect.apply(strict ? rsStrict.build.parameters : rs.build.parameters, undefined, [
 		elements
 	]);
 	if (typeof built !== 'object' || built === null || Reflect.get(built, '$type') !== rs.kinds.Parameters)

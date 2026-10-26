@@ -1,6 +1,7 @@
 import rust from '@sittir/rust';
 
 const rs = await rust.createEngine();
+const rsStrict = await rust.createEngine({ api: 'strict' });
 
 export function renderPublicStruct() {
 	return rs.build.statement.struct.unit({
@@ -15,8 +16,8 @@ export function renderSourceFile() {
 			rs.build.statement.function({
 				visibilityModifier: 'pub',
 				name: 'main',
-				parameters: rs.build.parameters.strict(),
-				body: rs.build.block.strict(),
+				parameters: rsStrict.build.parameters(),
+				body: rsStrict.build.block(),
 			}),
 		],
 	}).$render();

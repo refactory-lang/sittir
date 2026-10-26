@@ -12,6 +12,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 export function draftsIntoBuilders(): string[] {
 	const fn = rs.parse('fn f(a: u8) { a; }\n').statements()[0]!;
@@ -27,7 +28,7 @@ export function draftsIntoBuilders(): string[] {
 	return [
 		rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: draftBody }).$render(),
 		rs.build.functionItem({ name: 'g', parameters: draftParams, body: rs.build.block() }).$render(),
-		rs.build.functionItem.strict({ name: rs.build.identifier('g'), parameters: draftParams, body: draftBody }).$render(),
+		rsStrict.build.functionItem({ name: rs.build.identifier('g'), parameters: draftParams, body: draftBody }).$render(),
 		rs.build.block({ statements: [body.statements()[0]!] }).$render()
 	];
 }
@@ -36,7 +37,7 @@ export function wrongKindRefused(): void {
 	// @ts-expect-error a Parameters node is not a Block
 	rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: rs.build.parameters() });
 	// @ts-expect-error a Parameters node is not a Block
-	rs.build.functionItem.strict({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: rs.build.parameters() });
+	rsStrict.build.functionItem({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: rs.build.parameters() });
 }
 
 export function listNodeIsNotOptions(): void {
@@ -56,9 +57,9 @@ export function listBuilderOptionsRefuseNodes(): void {
 export function storageShapeRefused(storage: T.Block): void {
 	const fn = rs.build.functionItem({ name: 'g', parameters: rs.build.parameters(), body: rs.build.block() });
 	// @ts-expect-error the storage interface is not a node
-	rs.build.functionItem.strict({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: storage });
+	rsStrict.build.functionItem({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: storage });
 	// @ts-expect-error a storage-shaped literal is not a node
-	rs.build.functionItem.strict({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: { $type: rs.kinds.Block } });
+	rsStrict.build.functionItem({ name: rs.build.identifier('g'), parameters: rs.build.parameters(), body: { $type: rs.kinds.Block } });
 	// @ts-expect-error the storage interface is not a node
 	fn.$with.body(storage);
 	// @ts-expect-error a storage-shaped literal is not a node
@@ -71,10 +72,10 @@ export function parsedLeafAdmittedByItsTree(storage: T.Identifier): string {
 	const name = fn.name();
 	name.$render();
 	// @ts-expect-error the leaf storage interface is not a node
-	rs.build.functionItem.strict({ name: storage, parameters: rs.build.parameters(), body: rs.build.block() });
+	rsStrict.build.functionItem({ name: storage, parameters: rs.build.parameters(), body: rs.build.block() });
 	// @ts-expect-error a storage-shaped leaf literal is not a node
-	rs.build.functionItem.strict({ name: { $type: rs.kinds.Identifier, $text: 'g' }, parameters: rs.build.parameters(), body: rs.build.block() });
-	return rs.build.functionItem.strict({ name, parameters: rs.build.parameters(), body: rs.build.block() }).$render() + rs.render(name).toString();
+	rsStrict.build.functionItem({ name: { $type: rs.kinds.Identifier, $text: 'g' }, parameters: rs.build.parameters(), body: rs.build.block() });
+	return rsStrict.build.functionItem({ name, parameters: rs.build.parameters(), body: rs.build.block() }).$render() + rs.render(name).toString();
 }
 
 export function parsedNodesHoldTheirTree(): readonly HoldsTree[] {

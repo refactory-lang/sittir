@@ -1,13 +1,14 @@
 import rust from '@sittir/rust';
 
 const rs = await rust.createEngine();
+const strict = await rust.createEngine({ api: 'strict' });
 
 export function explicitMainFunction() {
-	const fn = rs.build.statement.function.strict({
-		visibilityModifier: rs.build.visibilityModifier.pub(),
-		name: rs.build.identifier('main'),
-		parameters: rs.build.parameters.strict(),
-		body: rs.build.block.strict(),
+	const fn = strict.build.statement.function({
+		visibilityModifier: strict.build.visibilityModifier.pub(),
+		name: strict.build.identifier('main'),
+		parameters: strict.build.parameters(),
+		body: strict.build.block(),
 	});
 
 	return {
@@ -18,17 +19,17 @@ export function explicitMainFunction() {
 }
 
 export function nestedGreetFunction() {
-	return rs.build.statement.function.strict({
+	return strict.build.statement.function({
 		// Each arm nests under the arm that reaches it: `pub`, its
 		// parenthesized `scope`, then the `in <path>` form.
-		visibilityModifier: rs.build.visibilityModifier.pub.scope.inPath(
-			rs.build.scopedIdentifier({ qualifier: rs.build.crate, name: rs.build.identifier('x') }),
+		visibilityModifier: strict.build.visibilityModifier.pub.scope.inPath(
+			strict.build.scopedIdentifier({ qualifier: strict.build.crate, name: strict.build.identifier('x') }),
 		),
-		name: rs.build.identifier('greet'),
-		parameters: rs.build.parameters.strict(
-			rs.build.parametersElements.strict(rs.build.parameter({ name: 'name', type: 'String' })),
+		name: strict.build.identifier('greet'),
+		parameters: strict.build.parameters(
+			strict.build.parametersElements(rs.build.parameter({ name: 'name', type: 'String' })),
 		),
-		body: rs.build.block.strict(),
+		body: strict.build.block(),
 	});
 }
 
@@ -62,22 +63,22 @@ export function immutableFunctionUpdates() {
 
 	return fn.$with
 		.name(rs.build.identifier('greet'))
-		.$with.body(rs.build.block.strict());
+		.$with.body(rs.build.block());
 }
 
 export function strictAndLooseFunctions() {
-	const strictFn = rs.build.statement.function.strict({
-		visibilityModifier: rs.build.visibilityModifier.pub(),
-		name: rs.build.identifier('config'),
-		parameters: rs.build.parameters.strict(),
-		body: rs.build.block.strict(),
+	const strictFn = strict.build.statement.function({
+		visibilityModifier: strict.build.visibilityModifier.pub(),
+		name: strict.build.identifier('config'),
+		parameters: strict.build.parameters(),
+		body: strict.build.block(),
 	});
 
 	const looseFn = rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'config',
-		parameters: rs.build.parameters.strict(),
-		body: rs.build.block.strict(),
+		parameters: rs.build.parameters(),
+		body: rs.build.block(),
 	});
 
 	return { strictFn, looseFn };

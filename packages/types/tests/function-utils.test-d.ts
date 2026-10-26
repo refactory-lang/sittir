@@ -1,5 +1,5 @@
 /**
- * Type-level tests for ArgsOf<F>, OmitEach<T,K>, and Hoisted<B> — the
+ * Type-level tests for ArgsOf<F>, OmitEach<T,K> and Seat<Args,R> — the
  * generic factory-shape utilities every grammar package imports rather
  * than re-declaring.
  *
@@ -9,7 +9,7 @@
  * Run with: pnpm --filter @sittir/types type-check
  */
 
-import type { ArgsOf, FlavorPair, Hoisted, OmitEach } from '../src/index.ts';
+import type { ArgsOf, OmitEach, Seat } from '../src/index.ts';
 
 // ---------------------------------------------------------------------------
 // Helper: assert types are equal
@@ -77,13 +77,13 @@ type WithoutKind = OmitEach<Union, 'kind'>;
 type _t5 = Expect<Equal<WithoutKind, { a: string } | { b: number }>>;
 
 // ---------------------------------------------------------------------------
-// 6. Hoisted<B> — a FlavorPair collapses to its coerce flavor (preferred
-//    over strict), with sibling keys still reachable on the callable.
+// 6. Seat<Args, R> — a seated builder takes its row, returns its node, and
+//    refuses a key its row does not declare.
 // ---------------------------------------------------------------------------
 
-interface Bundle extends FlavorPair<(v: { readonly kind: 'Strict' }) => number, (v: unknown) => number> {
-	readonly form: FlavorPair<() => string, () => string>;
-}
-type HoistedBundle = Hoisted<Bundle>;
-type _t6 = Expect<Equal<ReturnType<HoistedBundle>, number>>;
-type _t7 = Expect<Equal<ReturnType<HoistedBundle['form']>, string>>;
+declare const seat: Seat<[config?: { readonly a?: string }], number>;
+type _t6 = Expect<Equal<ReturnType<typeof seat>, number>>;
+export const seated: number = seat({ a: 'x' });
+export const seatedEmpty: number = seat();
+// @ts-expect-error a key the row does not declare
+export const refused = seat({ a: 'x', b: 1 });

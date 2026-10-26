@@ -183,7 +183,8 @@ export interface CommonRenderOptions {
 
 export interface LanguageAPI {
 	readonly name: string;
-	readonly build: object;
+	/** The language's builder tables, keyed by the engine mode that builds with each (`api`). */
+	readonly build: { readonly [M in BuilderMode]: object };
 	readonly is: object;
 	readonly kinds: object;
 	readonly types: object;
@@ -201,7 +202,7 @@ export interface LanguageAPI {
 export type LanguageIdentity<API extends LanguageAPI> = Omit<Language<API>, 'createEngine'>;
 
 /** The options `createEngine` takes: the engine options, with the `render` block checked against the language's render options. */
-export type CreateEngineOptions<API extends LanguageAPI, R = API['options']> = EngineOptions<API> & {
+export type CreateEngineOptions<API extends LanguageAPI, R = API['options'], M extends BuilderMode = 'default'> = EngineOptions<API, M> & {
 	readonly render?: R & RenderOptionsCheck<API, R>;
 };
 
@@ -226,12 +227,15 @@ export interface Language<API extends LanguageAPI> {
 	 * Creates an engine for this language, the same as `createEngine(language, options)` from
 	 * `@sittir/common`. The implementation loads on the first call; importing the descriptor does not.
 	 *
-	 * @param options - Engine options. `render` sets the engine's render options and is checked
-	 * against this language's options: an unknown key or a mistyped value is a type error.
-	 * @returns The engine, once the language has loaded.
-	 * @throws When an option the engine does not implement yet is set, or the language fails to load.
+	 * @param options - Engine options. `api` picks the builder table the engine builds with, the default engine's
+	 * loose builders or the strict ones (`'strict'`), and only that table loads. `render` sets the engine's render
+	 * options and is checked against this language's options: an unknown key or a mistyped value is a type error.
+	 * @returns The engine, once the language and its builder table have loaded.
+	 * @throws When the language or its builder table fails to load.
 	 */
-	createEngine<const R extends API['options'] = API['options']>(options?: CreateEngineOptions<API, R>): Promise<Engine<API>>;
+	createEngine<const R extends API['options'] = API['options'], const M extends BuilderMode = 'default'>(
+		options?: CreateEngineOptions<API, R, M>
+	): Promise<Engine<API, M>>;
 }
 
 export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
@@ -265,7 +269,8 @@ export type StructureTable = Readonly<Record<number, StructureRow>>;
 export interface LanguageHooks<API extends LanguageAPI> {
 	readonly name: API['name'];
 	readonly renderModuleHash: string;
-	readonly build: API['build'];
+	/** Loads each builder table, by the engine mode that builds with it, so an engine loads only its own. */
+	readonly tables: { readonly [M in BuilderMode]: () => Promise<API['build'][M]> };
 	readonly trivia: TriviaFacts<API['kindId']>;
 	readonly querySlots: QuerySlots;
 	/** What the language's nodes are written to JSON by and revived by. */
@@ -326,23 +331,11 @@ export interface FileChange {
 
 export type ApiSurface = 'default' | 'strict' | 'portable';
 
-export type StrictMembers<T> = {
-	[K in keyof T as K extends 'strict' | 'coerce' ? never : K]: StrictSurface<T[K]>;
-};
+/** The engine modes that build: the default engine's loose builders, and the strict engine's. */
+export type BuilderMode = Exclude<ApiSurface, 'portable'>;
 
-export type StrictSurface<T> = T extends { strict: infer S }
-	? S & StrictMembers<T>
-	: T extends (...args: never) => unknown
-		? T
-		: T extends object
-			? StrictMembers<T>
-			: T;
-
-export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M extends 'strict'
-	? StrictSurface<API['build']>
-	: M extends 'portable'
-		? never
-		: API['build'];
+/** The builder table an engine of mode `M` builds with; a portable engine has none. */
+export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M extends BuilderMode ? API['build'][M] : never;
 
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
@@ -427,8 +420,8 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API> | SnapshotInput<API>>;
-	readonly create: (path: string, fn: (build: API['build']) => API['root']) => Pending;
+	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
+	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
@@ -451,13 +444,13 @@ type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], n
 
 type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
 
-type RenderBuilder<API extends LanguageAPI> = (build: API['build']) => API['node'];
+type RenderBuilder<API extends LanguageAPI, M extends ApiSurface = 'default'> = (build: BuildSurface<API, M>) => API['node'];
 
 type SnapshotInput<API extends LanguageAPI> = Snapshot<Extract<API['node']['$type'], number>>;
 
 type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API> | SnapshotInput<API>;
 
-export type RenderArgument<API extends LanguageAPI> = RenderInput<API> | RenderBuilder<API>;
+export type RenderArgument<API extends LanguageAPI, M extends ApiSurface = 'default'> = RenderInput<API> | RenderBuilder<API, M>;
 
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true

@@ -34,22 +34,22 @@ A node belongs to the engine that built or read it, and renders, edits and takes
 
 ## Building
 
-A builder called with plain values is the coercing form: strings become leaf nodes, single values become lists where a list is expected. `.strict` takes only built nodes.
+The default engine's builders coerce plain values: strings become leaf nodes, single values become lists where a list is expected. An engine created with `api: 'strict'` builds with the strict builders, which take only built nodes.
 
 ```ts
 import rust from '@sittir/rust';
 
-using rs = await rust.createEngine();
+using strict = await rust.createEngine({ api: 'strict' });
 
-const strict = rs.build.statement.function.strict({
-	visibilityModifier: rs.build.visibilityModifier.pub(),
-	name: rs.build.identifier('main'),
-	parameters: rs.build.parameters.strict(),
-	body: rs.build.block.strict()
+const fn = strict.build.statement.function({
+	visibilityModifier: strict.build.visibilityModifier.pub(),
+	name: strict.build.identifier('main'),
+	parameters: strict.build.parameters(),
+	body: strict.build.block()
 });
 
-rs.render(strict.name()).toString(); // "main"
-strict.$render(); // "pub fn main() {}"
+strict.render(fn.name()).toString(); // "main"
+fn.$render(); // "pub fn main() {}"
 ```
 
 ## Reading

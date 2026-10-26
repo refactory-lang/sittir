@@ -15,7 +15,7 @@ import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/
  * Mirrors rust's `try_block.body`: a wrapper whose one required field
  * forwards positionally to a target (`block`) that is itself constructible
  * with no argument at all. The strict surface already derives this from
- * `argumentOptional`'s slot-multiplicity walk (`ir.tryBlock.strict()` builds
+ * `argumentOptional`'s slot-multiplicity walk (the strict engine's `build.tryBlock()` builds
  * `try{}`); the loose `.from()` coercer required an explicit `{}` for the
  * same shape (docs/factory-surface-issues.md, X2 — rule 7) because its own
  * optionality came from a shallow, local "does THIS node have a required

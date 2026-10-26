@@ -3,15 +3,15 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('statement terminator', () => {
 	it('takes either layout keyword as a kind id', () => {
 		expect(
-			ts.build.expressionStatement
-				.strict(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon })
+			tsStrict.build.expressionStatement(ts.build.identifier('x'), { terminator: ts.kinds.AutomaticSemicolon })
 				.$render()
 		).toBe('x\n');
-		expect(ts.build.expressionStatement.strict(ts.build.identifier('x'), { terminator: ts.kinds.Semi }).$render()).toBe(
+		expect(tsStrict.build.expressionStatement(ts.build.identifier('x'), { terminator: ts.kinds.Semi }).$render()).toBe(
 			'x;'
 		);
 	});
@@ -19,23 +19,23 @@ describe('statement terminator', () => {
 
 describe('an authored field over a registered group', () => {
 	it('takes the registered header form as the field value', () => {
-		const built = ts.build.forInStatement.strict({
-			header: ts.build.forHeader.letConstKind.strict({
+		const built = tsStrict.build.forInStatement({
+			header: tsStrict.build.forHeader.letConstKind({
 				kind: ts.kinds.ConstKeyword,
 				left: ts.build.identifier('item'),
 				operator: ts.kinds.OfKeyword,
 				right: ts.build.identifier('items')
 			}),
-			body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
+			body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 		});
 		expect(built.$render()).toBe('for (const item of items) {}\n');
 	});
 	it('refuses an unbuilt header config on the strict route', () => {
 		const refused = () =>
-			ts.build.forInStatement.strict({
+			tsStrict.build.forInStatement({
 				// @ts-expect-error a strict field takes a built header
 				header: { kind: ts.kinds.ConstKeyword, left: ts.build.identifier('item') },
-				body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
+				body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 			});
 		expect(refused).toBeDefined();
 	});
@@ -50,16 +50,16 @@ describe('a reserved word is checked at the slot it is placed in', () => {
 
 	it('places it after a dot, where the property wordset admits it', () => {
 		const member = (property: string) =>
-			ts.build.memberExpression.strict({ object: word('x'), optionalChain: ts.kinds.Dot, property: word(property) });
+			tsStrict.build.memberExpression({ object: word('x'), optionalChain: ts.kinds.Dot, property: word(property) });
 		expect(member('for').$render()).toBe('x.for');
 		expect(member('class').$render()).toBe('x.class');
 	});
 
 	it('refuses it in a slot under the global wordset', () => {
-		expect(() => ts.build.nestedIdentifier.strict({ qualifier: word('a'), name: word('for') })).toThrow(
+		expect(() => tsStrict.build.nestedIdentifier({ qualifier: word('a'), name: word('for') })).toThrow(
 			"NestedIdentifier.name: 'for' is a reserved word"
 		);
-		expect(() => ts.build.variableDeclaratorPlain.strict({ name: word('for') })).toThrow("'for' is a reserved word");
-		expect(() => ts.build.throwStatement.strict(word('for'))).toThrow("ThrowStatement.expression: 'for' is a reserved word");
+		expect(() => tsStrict.build.variableDeclaratorPlain({ name: word('for') })).toThrow("'for' is a reserved word");
+		expect(() => tsStrict.build.throwStatement(word('for'))).toThrow("ThrowStatement.expression: 'for' is a reserved word");
 	});
 });

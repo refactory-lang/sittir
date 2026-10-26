@@ -93,7 +93,6 @@ const facts: ModelFacts = {
 	listDefaults: { arguments: 'Delimiter.None', elements: 'Delimiter.None', args: 'Delimiter.None' },
 	listElementKinds: { arguments: ['identifier'], elements: ['identifier'], args: ['attributed'] },
 	hoistedKinds: new Set(),
-	oneSurfaceKinds: new Set<string>(),
 	unitKinds: new Set(['comma']),
 	kindIdOfName: (kind) => ids[kind]
 };
@@ -302,7 +301,7 @@ describe('hoisted routes, on both surfaces', () => {
 
 	it('an owner takes the arguments of the list it forwards to', () => {
 		expect(expectPrinted(strict.wrapper!(strict.elements!(strict.identifier!('x'), strict.identifier!('y')))).source).toBe(
-			'ir.wrapper.strict(ir.identifier("x"), ir.identifier("y"))'
+			'ir.wrapper(ir.identifier("x"), ir.identifier("y"))'
 		);
 		expect(expectPrinted(loose.wrapper!(loose.elements!(loose.identifier!('x'), loose.identifier!('y')))).source).toBe(
 			'ir.wrapper("x", "y")'
@@ -310,10 +309,10 @@ describe('hoisted routes, on both surfaces', () => {
 	});
 	it("a list's options bag that restates its default delimiter is dropped", () => {
 		expect(expectPrinted(strict.elements!({ delimiter: 7 }, strict.identifier!('x'))).source).toBe(
-			'ir.elements.strict(ir.identifier("x"))'
+			'ir.elements(ir.identifier("x"))'
 		);
 		expect(expectPrinted(strict.elements!({ delimiter: 8 }, strict.identifier!('x'))).source).toBe(
-			'ir.elements.strict({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
+			'ir.elements({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
 		);
 	});
 	it("a seated element that sets only the seat's required slot is that slot's value, on the strict surface too", () => {
@@ -324,13 +323,13 @@ describe('hoisted routes, on both surfaces', () => {
 			facts: { ...facts, slotRequired: { holder: { item: true } } }
 		});
 		expect(expectPrinted(seated.arguments!(holder({ item: seated.identifier!('x') }))).source).toBe(
-			'ir.arguments.strict(ir.identifier("x"))'
+			'ir.arguments(ir.identifier("x"))'
 		);
 	});
 	it('an owner keeps its list call when the list carries trivia of its own', () => {
 		const list = expectPrinted(strict.elements!(strict.identifier!('x')));
 		list.$_layout = { trivia: { leading: [{ $type: 3, $text: 'c' }] } } as never;
-		expect(expectPrinted(strict.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(ir\.elements\.strict\(/);
+		expect(expectPrinted(strict.wrapper!(list)).source).toMatch(/^ir\.wrapper\(ir\.elements\(/);
 	});
 	it('an owner takes a seat config element of its list', () => {
 		const seated = mapFor({
@@ -340,7 +339,7 @@ describe('hoisted routes, on both surfaces', () => {
 			facts: owning
 		});
 		const list = seated.elements!(attributed({ attrs: seated.identifier!('a'), expression: seated.identifier!('x') }));
-		expect(expectPrinted(seated.wrapper!(list)).source).toMatch(/^ir\.wrapper\.strict\(\{/);
+		expect(expectPrinted(seated.wrapper!(list)).source).toMatch(/^ir\.wrapper\(\{/);
 	});
 	it('a loose owner takes the options its list has to pass', () => {
 		expect(expectPrinted(loose.wrapper!(loose.elements!({ delimiter: 8 }, loose.identifier!('x')))).source).toBe(

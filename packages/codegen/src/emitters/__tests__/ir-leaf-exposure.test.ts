@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { AssembledEnum, AssembledKeyword, AssembledPattern } from '../../compiler/model/node-map.ts';
 import type { AssembledNode } from '../../compiler/model/node-map.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
-import { emitIr } from '../ir.ts';
+import { emitTables } from '../../__tests__/helpers/emit-tables.ts';
 
 // A hidden pattern leaf that is an alias source (rust `_string_open`,
 // visible as `string_open`) is user-facing; a hidden pattern that is
@@ -40,16 +40,16 @@ function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 
 describe('ir leaf exposure follows userFacing, not the name prefix', () => {
 	it('exposes a user-facing aliased pattern leaf and hides a non-user-facing one', () => {
-		const source = emitIr({ grammar: 'rust', nodeMap: withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries)).nodeMap });
+		const source = emitTables(withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries)).nodeMap).wiring;
 		expect(source).toContain('stringOpen: F.');
 		expect(source).not.toContain('space: F.');
 	});
 	it('gives an enum of literals no builder', () => {
-		const source = emitIr({ grammar: 'rust', nodeMap: withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries)).nodeMap });
+		const source = emitTables(withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries)).nodeMap).wiring;
 		expect(source).not.toContain('tokenTreePunctuation: F.');
 	});
 	it('gives a hidden keyword marker and an underscore-keyed hidden pattern no builder', () => {
-		const source = emitIr({ grammar: 'rust', nodeMap: withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries)).nodeMap });
+		const source = emitTables(withGeneratedIdTables((kindEntries) => makeNodeMap(kindEntries)).nodeMap).wiring;
 		expect(source).not.toContain('kwAsync: F.');
 		expect(source).not.toContain('_stringContent: F.');
 	});

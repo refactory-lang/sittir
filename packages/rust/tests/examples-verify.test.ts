@@ -33,6 +33,7 @@ import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 describe('examples/01 construct nodes', () => {
 	it('explicit strict construction renders a pub main', () => {
@@ -127,8 +128,8 @@ describe('dogfoodContract helper', () => {
 				rs.build.functionItem({
 					visibilityModifier: 'pub',
 					name: 'main',
-					parameters: rs.build.parameters.strict(),
-					body: rs.build.block.strict()
+					parameters: rsStrict.build.parameters(),
+					body: rsStrict.build.block()
 				})
 			]
 		});
@@ -144,8 +145,8 @@ describe('dogfoodContract helper', () => {
 		const rebuilt = rs.build.functionItem({
 			visibilityModifier: 'pub',
 			name: 'main',
-			parameters: rs.build.parameters.strict(),
-			body: rs.build.block.strict()
+			parameters: rsStrict.build.parameters(),
+			body: rsStrict.build.block()
 		});
 		const result = dogfoodContract(rs, rebuilt, target);
 		expect(result.sameModuloWhitespace).toBe(false);
@@ -184,8 +185,8 @@ describe('namespaced constructors reach the arm kinds', () => {
 	// caller types each authored form name, under the arm that reaches it.
 	it('reaches an in-path visibility modifier under the arm it nests in', () => {
 		const path = rs.build.scopedIdentifier({ qualifier: rs.build.crate, name: rs.build.identifier('x') });
-		expect(rs.build.visibilityModifier.pub.scope.inPath.strict(path).$render()).toBe('pub(in crate::x)');
-		expect(rs.build.visibilityModifier.pub.scope.self.strict().$render()).toBe('pub(self)');
+		expect(rsStrict.build.visibilityModifier.pub.scope.inPath(path).$render()).toBe('pub(in crate::x)');
+		expect(rsStrict.build.visibilityModifier.pub.scope.self().$render()).toBe('pub(self)');
 	});
 	// `crate` names both `visibility_modifier`'s own arm and the arm under
 	// `pub.scope`; each sits under the arm that reaches it, so neither claims

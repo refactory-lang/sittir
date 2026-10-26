@@ -4,6 +4,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 const structPattern = { $type: rs.kinds.StructPattern, type: 'T' } as const;
 
@@ -21,18 +22,18 @@ describe('a visible wrapper seated on its parent', () => {
 	});
 
 	it('builds the strict spelling', () => {
-		const arm = rs.build.matchArm.withComma.strict({
-			pattern: rs.build.structPattern.strict({ type: rs.build.identifier('T') }),
-			body: rs.build.block.strict({})
+		const arm = rsStrict.build.matchArm.withComma({
+			pattern: rsStrict.build.structPattern({ type: rs.build.identifier('T') }),
+			body: rsStrict.build.block({})
 		});
 		expect(arm.$render()).toBe('T {} => {},');
 	});
 
 	it('still builds the hand-spelled wrapper, as a config and as a built node', () => {
 		const config = rs.build.matchArm.withComma({ match: { pattern: structPattern }, body: rs.build.block({}) });
-		const built = rs.build.matchArm.withComma.strict({
-			match: rs.build.matchPattern.strict({ pattern: rs.build.structPattern.strict({ type: rs.build.identifier('T') }) }),
-			body: rs.build.block.strict({})
+		const built = rsStrict.build.matchArm.withComma({
+			match: rsStrict.build.matchPattern({ pattern: rsStrict.build.structPattern({ type: rs.build.identifier('T') }) }),
+			body: rsStrict.build.block({})
 		});
 		expect(config.$render()).toBe('T {} => {},');
 		expect(built.$render()).toBe('T {} => {},');

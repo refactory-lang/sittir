@@ -7,23 +7,26 @@ interface FakeRenderOptions {
 	readonly indent?: string;
 }
 
-function fakeLanguage(name = 'fake') {
+type TableLoader = () => Promise<object>;
+
+function fakeLanguage(name = 'fake', loaders: { readonly default?: TableLoader; readonly strict?: TableLoader } = {}) {
 	let loads = 0;
 	const created: (FakeRenderOptions | undefined)[] = [];
 	const natives: { readonly disposed: boolean }[] = [];
+	const loose = {
+		leaf: (text: string) => ({ $type: 1, text }),
+		number: { bigint: (v: bigint) => ({ $type: 2, text: String(v) }) }
+	};
+	const strict = {
+		leaf: (text: string) => ({ $type: 1, text, strict: true }),
+		number: { bigint: (v: bigint) => ({ $type: 2, text: String(v), strict: true }) }
+	};
 	const hooks = {
 		name,
 		renderModuleHash: 'hash',
-		build: {
-			leaf: Object.assign((text: string) => ({ $type: 1, text }), {
-				strict: (text: string) => ({ $type: 1, text, strict: true }),
-				coerce: (text: string) => ({ $type: 1, text })
-			}),
-			number: {
-				bigint: Object.assign((v: bigint) => ({ $type: 2, text: String(v) }), {
-					strict: (v: bigint) => ({ $type: 2, text: String(v), strict: true })
-				})
-			}
+		tables: {
+			default: loaders.default ?? (async () => loose),
+			strict: loaders.strict ?? (async () => strict)
 		},
 		trivia: { kindName: () => undefined, kinds: new Set<string>(), innerGaps: {} },
 		createNative: (opts?: { options?: FakeRenderOptions }) => {
@@ -97,10 +100,32 @@ describe('createEngine', () => {
 		expect(e.kinds).toEqual({ Leaf: 1 });
 	});
 
-	it('builds through nested variant builders and their flavours', async () => {
+	it('builds through nested variant builders, from the table its api names', async () => {
 		const e = await engineOf();
 		expect(String(e.render(e.build.number.bigint(1n)))).toBe('1');
-		expect(e.build.leaf.strict('a')).toMatchObject({ strict: true });
+		expect(e.build.leaf('a')).not.toHaveProperty('strict');
+		const s = await engineOf({ api: 'strict' });
+		expect(s.build.leaf('a')).toMatchObject({ strict: true });
+		expect(s.build.number.bigint(1n)).toMatchObject({ strict: true });
+	});
+
+	it('loads only the builder table its api names', async () => {
+		const cause = new Error('table not built');
+		const refuse = (): Promise<object> => {
+			throw cause;
+		};
+		const looseOnly = fakeLanguage('looseOnly', { strict: refuse });
+		expect((await engineOf(undefined, looseOnly)).build.leaf('a')).toMatchObject({ text: 'a' });
+		await expect(engineOf({ api: 'strict' }, looseOnly)).rejects.toMatchObject({
+			message: 'failed to load the strict builder table of language "looseOnly"',
+			cause
+		});
+		const strictOnly = fakeLanguage('strictOnly', { default: refuse });
+		expect((await engineOf({ api: 'strict' }, strictOnly)).build.leaf('a')).toMatchObject({ strict: true });
+		await expect(engineOf(undefined, strictOnly)).rejects.toMatchObject({
+			message: 'failed to load the default builder table of language "strictOnly"',
+			cause
+		});
 	});
 
 	it('maps the render option onto the native engine options', async () => {
@@ -163,12 +188,8 @@ describe('createEngine', () => {
 		expect(() => r.save('/dev/null')).toThrow('rendered text disposed');
 	});
 
-	it('rejects unimplemented surfaces and accepts interceptor options', async () => {
+	it('accepts interceptor options', async () => {
 		const f = fakeLanguage();
-		await expect(createEngine(f.language as never, { api: 'strict' } as never)).rejects.toThrow(
-			'api "strict" is not implemented'
-		);
-		expect(f.loads()).toBe(0);
 		await expect(createEngine(f.language as never, { intercept: [{}] } as never)).resolves.toBeDefined();
 		await expect(createEngine(f.language as never, { api: 'default', intercept: [] } as never)).resolves.toBeDefined();
 	});

@@ -3,10 +3,11 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('typescript float number arms name their parts', () => {
 	it('a point float takes an integer part, an optional fraction and an optional exponent group', () => {
-		expect(ts.build.number.floatPoint.strict({ integer: '1', fraction: '5' }).$render()).toBe('1.5');
+		expect(tsStrict.build.number.floatPoint({ integer: '1', fraction: '5' }).$render()).toBe('1.5');
 		expect(ts.build.number.floatPoint({ integer: '1' }).$render()).toBe('1.');
 		expect(
 			ts.build.number.floatPoint({ integer: '1', fraction: '5', sign: '-', exponent: '3' }).$render()

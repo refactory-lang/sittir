@@ -6,6 +6,7 @@
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
 
 export function integerBuildersRefuseUnbuildableLiterals(): void {
 	ir.integerLiteral({ content: 42 });
@@ -31,7 +32,7 @@ export function floatBuildersRefuseUnbuildableLiterals(): void {
 
 export function configLiteralsKeepTheirUnknownKeyCheck(): void {
 	// @ts-expect-error a misspelled key is refused, strict
-	ir.integerLiteral.strict({ content: 1, sufix: 'u8' });
+	strictIr.integerLiteral({ content: 1, sufix: 'u8' });
 	// @ts-expect-error a misspelled key is refused, loose
 	ir.integerLiteral({ content: 1, sufix: 'u8' });
 }

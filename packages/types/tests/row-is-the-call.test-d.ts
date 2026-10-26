@@ -38,25 +38,27 @@ export type AnAnyParameterDiffers = Expect<Same<SameArguments<[x: any], [x: stri
 type StrictRows = { readonly [Id in keyof Rows]: { readonly LooseArgs: Rows[Id]['BuildArgs'] } };
 export type AWrongRowDiffers = Expect<Same<RowDiffersFromCall<Entries, KeyOf, StrictRows>, 'leaf'>>;
 
-interface StrictKeyOf {
-	1: 'paired';
-	2: 'oneSurface';
-	3: 'overloaded';
+interface TableKeyOf {
+	1: 'plain';
+	2: 'overloaded';
 }
-interface StrictSideRows {
+interface TableRows {
 	1: { readonly LooseArgs: [input: string | number]; readonly BuildArgs: [value: number] };
-	2: { readonly LooseArgs: [text: string]; readonly BuildArgs: [text: string] };
-	3: { readonly LooseArgs: [input: string | number]; readonly BuildArgs: [value: number] };
+	2: { readonly LooseArgs: [input: string | number]; readonly BuildArgs: [value: number] };
 }
-interface StrictEntries {
-	readonly paired: ((input: string | number) => unknown) & { readonly strict: (value: number) => unknown };
-	readonly oneSurface: (text: string) => unknown;
-	readonly overloaded: ((input: string | number) => unknown) & {
-		readonly strict: { (value: number): unknown; (text: string): unknown };
-	};
+interface LooseTable {
+	readonly plain: (input: string | number) => unknown;
+	readonly overloaded: (input: string | number) => unknown;
+}
+interface StrictTable {
+	readonly plain: (value: number) => unknown;
+	readonly overloaded: { (value: number): unknown; (text: string): unknown };
 }
 
-export type TheStrictSideIsComparedWithTheBuildRow = Expect<
-	Same<RowDiffersFromCall<StrictEntries, StrictKeyOf, StrictSideRows, 'BuildArgs'>, 'overloaded'>
+export type TheStrictTableIsComparedWithTheBuildRow = Expect<
+	Same<RowDiffersFromCall<StrictTable, TableKeyOf, TableRows, 'BuildArgs'>, 'overloaded'>
 >;
-export type TheLooseSideIgnoresTheStrictMember = Expect<IsNever<RowDiffersFromCall<StrictEntries, StrictKeyOf, StrictSideRows>>>;
+export type TheLooseTableIsComparedWithTheLooseRow = Expect<IsNever<RowDiffersFromCall<LooseTable, TableKeyOf, TableRows>>>;
+export type ATableComparedWithTheOtherRowDiffers = Expect<
+	Same<RowDiffersFromCall<LooseTable, TableKeyOf, TableRows, 'BuildArgs'>, 'plain' | 'overloaded'>
+>;

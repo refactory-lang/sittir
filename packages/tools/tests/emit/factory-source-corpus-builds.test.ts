@@ -26,8 +26,8 @@ async function rebuildAndRender(grammar: 'rust' | 'typescript' | 'python' | 'reg
 describe('a corpus entry rebuilds through the printed builder source and renders', () => {
 	it('typescript: a string in an expression or type slot keeps its string node', async () => {
 		const { source, rendered } = await rebuildAndRender('typescript', 'throw "boom";\ntype T = "lit";\n');
-		expect(source).toContain('throwStatement.strict(ts.build.stringDouble.strict(');
-		expect(source).toContain('literalType.strict(ts.build.stringDouble.strict(');
+		expect(source).toContain('throwStatement(ts.build.stringDouble(');
+		expect(source).toContain('literalType(ts.build.stringDouble(');
 		expect(rendered).toContain('"boom"');
 		expect(rendered).toContain('"lit"');
 	});
@@ -54,13 +54,13 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 
 	it('typescript: an owner forwarding to a list with options of its own is printed with the list built as its value, its options second', async () => {
 		const { source, rendered } = await rebuildAndRender('typescript', 'class A {\n  static {\n    x = 1;\n  }\n}\n');
-		expect(source).toContain('ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(');
+		expect(source).toContain('ts.build.classStaticBlock(ts.build.statementBlock(');
 		expect(rendered.replace(/\s+/g, ' ')).toContain('static { x = 1; }');
 	});
 
 	it('rust: a comment with extra slashes is built from its text by the variant', async () => {
 		const { source, rendered } = await rebuildAndRender('rust', '//// - Only a comment\nfn f() {}\n');
-		expect(source).toContain('extraSlashes.strict("// - Only a comment")');
+		expect(source).toContain('extraSlashes("// - Only a comment")');
 		expect(source).not.toContain('identifier("// - Only a comment")');
 		expect(rendered).toContain('//// - Only a comment');
 	});
@@ -72,7 +72,7 @@ describe('a corpus entry rebuilds through the printed builder source and renders
 			expect(rendered).toBe(input);
 		}
 		const { source } = await rebuildAndRender('python', 'match x:\n    case -1 | 2:\n        pass\n');
-		expect(source).toContain('py.build.simplePattern.negative.strict(');
+		expect(source).toContain('py.build.simplePattern.negative(');
 	});
 
 	it('python: every = site rebuilds in its idiom, spaced for an assignment, an annotated default and a type alias, tight for a keyword and a debug interpolation', async () => {

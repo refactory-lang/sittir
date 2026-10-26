@@ -3,13 +3,14 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 describe('a number given to an integer or float literal is written in its base', () => {
 	it('every base, strict and loose', () => {
 		expect(rs.build.integerLiteral.decimal(255).$render()).toBe('255');
-		expect(rs.build.integerLiteral.decimal.strict({ content: 255 }).$render()).toBe('255');
+		expect(rsStrict.build.integerLiteral.decimal({ content: 255 }).$render()).toBe('255');
 		expect(rs.build.integerLiteral.hex(255).$render()).toBe('0xff');
-		expect(rs.build.integerLiteral.hex.strict({ content: 255 }).$render()).toBe('0xff');
+		expect(rsStrict.build.integerLiteral.hex({ content: 255 }).$render()).toBe('0xff');
 		expect(rs.build.integerLiteral.hex({ content: 255, suffix: 'u8' }).$render()).toBe('0xffu8');
 		expect(rs.build.integerLiteral.binary(5).$render()).toBe('0b101');
 		expect(rs.build.integerLiteral.octal(8).$render()).toBe('0o10');

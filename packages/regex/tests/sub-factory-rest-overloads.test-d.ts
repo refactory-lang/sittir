@@ -13,8 +13,8 @@ import { createEngine } from '@sittir/common';
 const rx = await createEngine(regex);
 
 declare const term: Term.Bound;
-rx.build.pattern.alternation.coerce(term);
+rx.build.pattern.alternation(term);
 // @ts-expect-error an alternation requires at least one term
-rx.build.pattern.alternation.coerce();
+rx.build.pattern.alternation();
 // @ts-expect-error a number is not an alternation term
-rx.build.pattern.alternation.coerce(42);
+rx.build.pattern.alternation(42);

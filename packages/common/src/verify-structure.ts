@@ -87,7 +87,7 @@ function rejectNonNode(value: unknown, label: string, expected: string): unknown
 		return value;
 	}
 	if (typeof value === 'function' || typeof value === 'boolean' || typeof value === 'symbol') {
-		throw new Error(`${label}: a strict factory takes a built node, not a ${typeof value}; expected ${expected}, or use .coerce`);
+		throw new Error(`${label}: a strict factory takes a built node, not a ${typeof value}; expected ${expected}, or the default engine's builder, which takes loose input`);
 	}
 	return value;
 }

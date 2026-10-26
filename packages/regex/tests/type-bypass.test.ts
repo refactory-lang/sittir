@@ -3,11 +3,11 @@ import { createEngine } from '@sittir/common';
 import regex from '../src/index.ts';
 import { buildCountQuantifierGroup } from '../src/factories/raw.ts';
 
-const trusting = await createEngine(regex);
-const verifying = await createEngine(regex, { verifyStructure: 'runtime' });
+const trusting = await createEngine(regex, { api: 'strict' });
+const verifying = await createEngine(regex, { api: 'strict', verifyStructure: 'runtime' });
 
 const quantifier = (engine: typeof trusting, content: unknown) =>
-	(engine.build.countQuantifier.strict as unknown as (config: { content: unknown }) => { $render(): string })({ content });
+	(engine.build.countQuantifier as unknown as (config: { content: unknown }) => { $render(): string })({ content });
 
 describe('a value the strict types refuse, given anyway: the default mode trusts the types', () => {
 	it('bare text in a node slot renders as verbatim by default, and is refused in runtime mode', () => {
