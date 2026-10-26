@@ -307,10 +307,12 @@ interface TableAt {
 	readonly index: number;
 }
 
+function writesSides(tree: TreeHandle | undefined): tree is TreeHandle & TableAt['tree'] {
+	return tree?.triviaSide !== undefined && tree.writeTriviaSide !== undefined;
+}
+
 function tableOf(tree: TreeHandle | undefined, index: number | undefined): TableAt | undefined {
-	return tree?.triviaSide === undefined || tree.writeTriviaSide === undefined || index === undefined
-		? undefined
-		: { tree: { triviaSide: tree.triviaSide, writeTriviaSide: tree.writeTriviaSide }, index };
+	return writesSides(tree) && index !== undefined ? { tree, index } : undefined;
 }
 
 /** The table that holds a parsed node's sides: its live tree's, at its own index; `undefined` for a built node. */
