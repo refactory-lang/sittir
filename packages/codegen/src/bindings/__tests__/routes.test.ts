@@ -216,6 +216,20 @@ describe("a base's claim on its clones", () => {
 		expect(await deep(['(function_definition body: (block (function_definition) @inner)) @declaration.function'])).toEqual([]);
 	});
 
+	it("keeps a clone's own members when its base's stopped claim reads through the slot that holds them", async () => {
+		const members = async (bindings: readonly string[]) =>
+			(
+				resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).members.get(
+					'constructor_declaration'
+				) ?? []
+			).map((r) => r.name);
+		const plain = await members(['(function_definition) @declaration.function']);
+		expect(plain).toContain('body');
+		expect(
+			await members(['(function_definition body: (block (function_definition) @inner)) @declaration.function'])
+		).toEqual(plain);
+	});
+
 	it('keeps reaching a clone whose own claim tests a field absent, since that claim does not always hold', async () => {
 		const routes = resolveRoutes(await cloned(['(function_definition) @declaration.function', '(constructor_declaration !modifiers) @declaration.constructor']));
 		expect(routes.stopped).toEqual([]);

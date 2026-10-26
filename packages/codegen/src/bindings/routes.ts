@@ -521,7 +521,8 @@ function membersOf(
 	const pathTo = (slot: ModelSlot): readonly SlotStep[] => [...through, { owner: holder, slot: slot.name }];
 	const names = claims === kind ? slotNamesOf(kind) : new Map([...slotNamesOf(claims), ...slotNamesOf(kind)]);
 	const owns = (member: { readonly owner: string }): boolean => member.owner === kind || member.owner === claims;
-	const routesHere = (member: MemberFact): boolean => owns(member) || (isDeep(member) && captureReaches(input.model, member, kind));
+	const routesHere = (member: MemberFact): boolean =>
+		owns(member) || (isDeep(member) && attaches(member, inherited) && captureReaches(input.model, member, kind));
 	const deepRoute = (member: DeepMember): MemberRoute => {
 		if (member.owner === kind) return deepRouteOf(input.model, kind, member);
 		if (envelope === undefined) return deepRouteOf(input.model, kind, member.route === 'nested' && member.parent === member.owner ? { ...member, parent: kind } : member);
