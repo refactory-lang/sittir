@@ -1332,6 +1332,10 @@ impl<G: EngineGrammar> crate::read::SideLookup for ParsedTree<G> {
         Box::new(self.side_entries(index, side, edge_changed))
     }
 
+    fn edited(&self, index: crate::types::NodeIndex) -> bool {
+        self.edited_within(index, true)
+    }
+
     fn slots(&self, index: crate::types::NodeIndex) -> Vec<crate::layout::SlotLayout> {
         self.slot_layouts(index)
     }

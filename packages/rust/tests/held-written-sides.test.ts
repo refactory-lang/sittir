@@ -80,6 +80,19 @@ describe.each(constructions)("a built comment in a parsed node's side is held by
 		expect(rendered(parsedG().root)).toBe('fn f() {\n    g();\n}\n');
 	});
 
+	it.each([
+		['held', () => [comment('b')], '/* b */ /* p */'],
+		['written natively', () => (rs.parse('/* q */\nfn x() {}\n').statements()[0] as unknown as Sided).$trivia.leading(), '/* q */\n    /* p */']
+	] as const)("snapshots a placed comment's own side, %s, as it renders", (_, entries, sided) => {
+		const { root, p } = parsedP();
+		p.$trivia.leading(...entries());
+		const expected = `fn f() {\n    ${sided}\n    g();\n}\n`;
+		expect(rendered(root)).toBe(expected);
+		const json = JSON.stringify(root.$snapshot());
+		expect(json).not.toContain('$treeHandle');
+		expect(rendered(JSON.parse(json))).toBe(expected);
+	});
+
 	it('snapshots a held comment that holds a parsed one as data that names no tree', () => {
 		const { root, g } = parsedG();
 		const { p } = parsedP();

@@ -204,6 +204,12 @@ pub trait SideLookup {
         let _ = index;
         None
     }
+    /// Whether a write lies on a side of the node at `index` or anywhere in
+    /// its range; none where the lookup holds no writes.
+    fn edited(&self, index: NodeIndex) -> bool {
+        let _ = index;
+        false
+    }
 }
 
 /// What a snapshot read measures with: the source's lines, the descendant
@@ -321,10 +327,12 @@ impl<'s> ReadCtx<'s> {
     }
 
     /// A seated entry in a snapshot: an extra as its text, an `ERROR` with
-    /// its span, both measured from the holder; a layout run or a written
-    /// entry as it is.
+    /// its span, both measured from the holder; an extra a write lies on or
+    /// in (`SideLookup::edited`) as its coordinate, which the client reads
+    /// with its own sides; a layout run or a written entry as it is.
     fn snapshot_entry<T: crate::trivia::FromTriviaText>(&self, snapshot: &SnapshotCtx<'_>, side: SideEntry<T>) -> TriviaEntry<T> {
         match side {
+            SideEntry::Source { entry, .. } if matches!(&entry.value, SlotValue::Coord(coord) if self.sides.is_some_and(|lookup| lookup.edited(coord.index))) => entry,
             SideEntry::Source { kind, span, adjacent, .. } => {
                 let text = crate::trivia::TriviaText::of_source(kind, self.source, span, adjacent, Some(snapshot.span_of(span)));
                 TriviaEntry::new(SlotValue::Node(T::from_text(text)))
