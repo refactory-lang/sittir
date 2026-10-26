@@ -6,7 +6,7 @@ import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNont
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry } from './node-members.ts';
+import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
@@ -208,7 +208,7 @@ function emitSeparatedListWrap(
 			setters: seatedSetters([], plan),
 			accessors: [],
 			extra: view.members,
-			inner: innerPositionsOf(node.kind, nodeMap),
+			trivia: triviaPositionsOf(node.kind, nodeMap),
 			parsed: true
 		}),
 		'  };',
@@ -262,7 +262,7 @@ function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly Kin
 			setters: seatedSetters(inlineSetters(node, nodeMap, kindEntries), plan),
 			accessors: [],
 			extra: [...(view?.members ?? []), ...groups.members],
-			inner: innerPositionsOf(node.kind, nodeMap),
+			trivia: triviaPositionsOf(node.kind, nodeMap),
 			parsed: true
 		}),
 		'  };',
@@ -302,6 +302,8 @@ function inlineSetters(node: AuthoredCompound, nodeMap: NodeMap, kindEntries: re
 	});
 }
 
+const LEAF_WRAPS: Readonly<Record<'wrapLeaf' | 'wrapInteriorLeaf', TriviaPositions | undefined>> = { wrapLeaf: { inner: false }, wrapInteriorLeaf: undefined };
+
 export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #nodeMap: NodeMap;
 	readonly #kindEntries: readonly KindEnumEntry[];
@@ -311,6 +313,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #rootKind: string | undefined;
 	readonly #output: string[] = [];
 	readonly #emittedStructuralKinds = new Set<string>();
+	readonly #leafWraps = new Set<keyof typeof LEAF_WRAPS>();
 	#rootTreeTypeName: string | undefined;
 	#rootMember: string | undefined;
 
@@ -401,7 +404,9 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			if (entry === undefined) continue;
 			const memberName = entry.member;
 			if (table.has(memberName)) continue;
-			table.set(memberName, `  [TSKindId.${memberName}]: (d, t) => wrapLeaf(d, t),`);
+			const leaf = triviaPositionsOf(kind, this.#nodeMap) === undefined ? 'wrapInteriorLeaf' : 'wrapLeaf';
+			this.#leafWraps.add(leaf);
+			table.set(memberName, `  [TSKindId.${memberName}]: (d, t) => ${leaf}(d, t),`);
 		}
 		return table;
 	}
@@ -461,17 +466,20 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			''
 		];
 		for (const source of this.#output) lines.push(source, '');
-		lines.push(
-			'function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {',
-			'  const handle = currentHandle();',
-			'  const node = {',
-			'    ...data,',
-			...nodeMemberLines({ accessors: [], parsed: true, inner: { inner: false }, text: 'data.$text' }).map((line) => line.slice(2)),
-			'  };',
-			'  return node;',
-			'}',
-			''
-		);
+		for (const [leaf, trivia] of Object.entries(LEAF_WRAPS) as [keyof typeof LEAF_WRAPS, TriviaPositions | undefined][]) {
+			if (!this.#leafWraps.has(leaf)) continue;
+			lines.push(
+				`function ${leaf}(data: _UntypedNode, _tree: TreeHandle): unknown {`,
+				'  const handle = currentHandle();',
+				'  const node = {',
+				'    ...data,',
+				...nodeMemberLines({ accessors: [], parsed: true, trivia, text: 'data.$text' }).map((line) => line.slice(2)),
+				'  };',
+				'  return node;',
+				'}',
+				''
+			);
+		}
 		lines.push(
 			'const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {',
 			...rows.values(),

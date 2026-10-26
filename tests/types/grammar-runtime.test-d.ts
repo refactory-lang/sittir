@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorNode, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
+import type { AnyUntypedNode, ErrorNode, HoldsTrivia, NodeMethods, GrammarTypeMap, NodeNs } from '@sittir/types';
 import { bindRuntime } from '../../packages/common/src/utils.ts';
 
 interface List {
@@ -27,6 +27,6 @@ const runtime = bindRuntime<FakeTypeMap>();
 declare const value: unknown;
 if (runtime.isNode(value)) value satisfies AnyUntypedNode;
 
-declare const built: Leaf & NodeMethods<Comment>;
+declare const built: Leaf & NodeMethods & HoldsTrivia<Comment>;
 built.$trivia.leading() satisfies readonly (Comment | ErrorNode)[];
 built.$trivia.leading('// note') satisfies typeof built;

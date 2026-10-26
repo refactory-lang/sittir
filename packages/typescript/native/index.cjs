@@ -579,5 +579,3 @@ module.exports = nativeBinding
 module.exports.SittirEngine = nativeBinding.SittirEngine
 module.exports.disposeTree = nativeBinding.disposeTree
 module.exports.liveTreeCount = nativeBinding.liveTreeCount
-module.exports.SIDE_NESTING_BOUND = nativeBinding.SIDE_NESTING_BOUND
-module.exports.SIDE_NESTING_REFUSAL = nativeBinding.SIDE_NESTING_REFUSAL

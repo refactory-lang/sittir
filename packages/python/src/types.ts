@@ -18,6 +18,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
 	TriviaSetter,
@@ -14601,11 +14602,11 @@ export namespace Await {
 }
 export namespace Comment {
 	export type Config = ConfigFor<TSKindId.Comment>;
-	export interface Bound extends BoundOf<T.Comment, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.Comment, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.Comment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Comment, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.Comment, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.Comment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -17076,12 +17077,12 @@ export namespace IntegerDecimalPlain {
 }
 export namespace LineContinuationNewline {
 	export type Config = LineContinuationNewlineNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.LineContinuationNewline;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.LineContinuationNewline;
 		readonly $named: true;
 		$text(): string;
@@ -17207,7 +17208,7 @@ export interface PythonTypeMap extends GrammarTypeMap {
 	readonly trivia: Comment | Dedent | Indent | Layout | LineContinuation;
 }
 
-export type NodeMethodsOf = NodeMethods<PythonTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods & HoldsTrivia<PythonTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, PythonTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, PythonTypeMap['trivia']>;
 

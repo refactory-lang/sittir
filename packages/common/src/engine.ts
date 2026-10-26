@@ -13,7 +13,7 @@ import type {
 	Rendered
 } from '@sittir/types';
 import { decodeTree, readObject, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
-import { adoptSideNesting, holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
+import { holdReadTree, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import { readEntries, readUnits } from './side-entries.ts';
 import type { DescendantBatch } from './query.ts';
@@ -366,7 +366,6 @@ export function createNativeEngine<
 	}
 
 	try {
-		adoptSideNesting(status.native);
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
@@ -374,19 +373,9 @@ export function createNativeEngine<
 
 		function renderNativeNode(node: AnyUntypedNode | number, opts?: RenderOptions<O>): Rendered {
 			const perCall = opts?.options;
-			// The projection is the one place a node's storage wins over the
-			// coordinate it read in with: it crosses here, on every render
-			// path, so a caller handing over raw read data cannot slice a
-			// pre-edit span past a rebuilt slot.
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
-			// The tree the node was read from, or rebuilt from, is the layer of
-			// options its source inferred; a built node has none.
 			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
 			const treeId = handle === undefined ? undefined : decodeTree(handle);
-			// The handle renders lazily, and the data's coordinates are
-			// numbers: the tokens stayed on `node`. Both closures name `node`,
-			// so the handle holds the trees it will slice for as long as it
-			// can still render.
 			const holdsTrees = (): unknown => node;
 			return createRenderHandle(
 				() => {
@@ -418,10 +407,6 @@ export function createNativeEngine<
 					buildProfile: engine.buildProfile,
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
-						// Held by `read` below and by every parsed object a read
-						// returns, so it stays reachable exactly as long as
-						// something can still read from this tree or names it.
-						// Its collection is what releases the tree.
 						const liveToken = mintTreeToken(parsed.treeId);
 						treeDisposalRegistry.register(liveToken, {
 							release: status.native.disposeTree,
@@ -432,10 +417,7 @@ export function createNativeEngine<
 							holdReadTree(node, liveToken);
 							return node;
 						};
-						// The parse's error regions ride beside the root and are stamped here.
 						const root = Object.assign(readObject(readAt(0, depthOf(parseOptions)), 'the root'), { $errors: Object.freeze(parsed.errors) }) as TRoot & ParsedRoot;
-						// One root per depth: the parse's own read seeds it, and a
-						// root asked for at another depth is read once.
 						const roots = new Map<number, unknown>([[depthOf(parseOptions), root]]);
 						const tree: TreeHandle = {
 							source,
