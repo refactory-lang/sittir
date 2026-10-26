@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { physicalDisplayKind, sharedDisplayEntries, sharedDisplayStorageKinds } from '../src/validate/display-families.ts';
+import { displayStorageKinds, physicalDisplayKind, sharedDisplayEntries, sharedDisplayStorageKinds } from '../src/validate/display-families.ts';
 
 const families = {
 	string_content: [
@@ -13,6 +13,18 @@ const families = {
 		{ storage: 'this', literal: true }
 	]
 };
+
+describe('displayStorageKinds', () => {
+	it("gives a display's non-literal storage members, one or many", () => {
+		expect(displayStorageKinds('property_identifier', families)).toEqual(['identifier']);
+		expect(displayStorageKinds('string_content', families)).toEqual(['raw_string_literal_content', 'string_content']);
+		expect(displayStorageKinds('keyword_display', families)).toEqual(['identifier']);
+	});
+
+	it('keeps a kind that is no display', () => {
+		expect(displayStorageKinds('unknown_display', families)).toEqual(['unknown_display']);
+	});
+});
 
 describe('sharedDisplayStorageKinds', () => {
 	it('expands a display whose family has two or more non-literal members to those members', () => {

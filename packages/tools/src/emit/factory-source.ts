@@ -788,6 +788,7 @@ import {
 	buildReadHandle,
 	loadKindNameFromId,
 	loadLanguageForGrammar,
+	loadNativeRender,
 	loadNodeModel,
 	readNodeOf,
 	hydrateOf,
@@ -799,6 +800,7 @@ import {
 import { Delimiter } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
 import { languageByName } from '../languages.ts';
+import { outputSpellingSites, refuseRespelledOutput } from './output-spellings.ts';
 import type { GeneratedIdTables, GeneratedKindEntry } from '../codegen-surface.ts';
 
 function pascalCase(name: string): string {
@@ -1007,6 +1009,7 @@ export async function emitFactorySourceText(
 	const hydrate = await hydrateOf(grammar);
 	const handle = await buildReadHandle(grammar, source);
 	const model = await loadNodeModel(grammar);
+	const outputSites = outputSpellingSites(grammar, model);
 	const types = await requireGrammarModule(grammar, 'types.ts');
 	const displayNameFromId = await loadKindNameFromId(grammar);
 	const kindNameFromId = (id: number): string => types.KIND_NAMES.get(id) ?? displayNameFromId(id);
@@ -1034,6 +1037,7 @@ export async function emitFactorySourceText(
 		slotDefaults: model.slotDefaults,
 		slotNameOf: slotNameOf(model)
 	});
+	refuseRespelledOutput(root, { grammar, source, sites: outputSites, kindNameFromId, render: await loadNativeRender(grammar) });
 	const leafFindings: string[] = [];
 	const binding = engineBinding(grammar, (await languageByName(grammar)).fileTypes);
 	const ctx: PrintContext = {
