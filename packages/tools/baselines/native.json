@@ -5,213 +5,57 @@
             "python": {
                 "builtRenderParse": {
                     "cases": {
-                        "function_definition": {
-                            "from": 34,
-                            "to": 30
-                        },
-                        "import_list": {
-                            "from": 6,
-                            "to": 4
+                        "simple_pattern_negative": {
+                            "from": 5,
+                            "to": 1
                         }
                     },
                     "from": {
-                        "pass": 2647,
-                        "total": 2647
-                    },
-                    "to": {
                         "pass": 2675,
                         "total": 2675
+                    },
+                    "to": {
+                        "pass": 2671,
+                        "total": 2671
                     }
                 },
                 "factoryStorage": {
                     "cases": {
-                        "function_definition": {
-                            "from": 17,
-                            "to": 15
-                        },
-                        "import_list": {
-                            "from": 3,
-                            "to": 2
+                        "simple_pattern_negative": {
+                            "from": 5,
+                            "to": 1
                         }
                     },
                     "from": {
-                        "pass": 1385,
-                        "total": 1385
-                    },
-                    "to": {
                         "pass": 1392,
                         "total": 1392
+                    },
+                    "to": {
+                        "pass": 1388,
+                        "total": 1388
                     }
                 },
                 "parityFixtures": {
                     "cases": {
-                        "block": {
-                            "from": 146,
-                            "to": 139
-                        },
-                        "decorated_definition": {
-                            "from": 4,
+                        "simple_pattern_negative": {
+                            "from": 30,
                             "to": 2
-                        },
-                        "function_definition": {
-                            "from": 40,
-                            "to": 35
-                        },
-                        "import_list": {
-                            "from": 13,
-                            "to": 10
-                        },
-                        "interpolation": {
-                            "from": 35,
-                            "to": 31
-                        },
-                        "suite_block": {
-                            "from": 146,
-                            "to": 139
                         }
                     },
                     "from": {
-                        "pass": 3821,
-                        "total": 3821
-                    },
-                    "to": {
                         "pass": 3814,
                         "total": 3814
-                    }
-                }
-            },
-            "rust": {
-                "builtRenderParse": {
-                    "cases": {
-                        "declaration_list": {
-                            "from": 44,
-                            "to": 8
-                        },
-                        "function_item": {
-                            "from": 70,
-                            "to": 64
-                        },
-                        "function_signature_item": {
-                            "from": 10,
-                            "to": 2
-                        }
-                    },
-                    "from": {
-                        "pass": 3079,
-                        "total": 3079
                     },
                     "to": {
-                        "pass": 3084,
-                        "total": 3084
-                    }
-                },
-                "factoryStorage": {
-                    "cases": {
-                        "declaration_list": {
-                            "from": 22,
-                            "to": 4
-                        },
-                        "function_item": {
-                            "from": 35,
-                            "to": 32
-                        },
-                        "function_signature_item": {
-                            "from": 5,
-                            "to": 1
-                        }
-                    },
-                    "from": {
-                        "pass": 1692,
-                        "total": 1692
-                    },
-                    "to": {
-                        "pass": 1694,
-                        "total": 1694
-                    }
-                },
-                "parityFixtures": {
-                    "cases": {
-                        "declaration_list": {
-                            "from": 38,
-                            "to": 9
-                        },
-                        "function_item": {
-                            "from": 64,
-                            "to": 58
-                        },
-                        "function_signature_item": {
-                            "from": 5,
-                            "to": 1
-                        }
-                    },
-                    "from": {
-                        "pass": 3810,
-                        "total": 3810
-                    },
-                    "to": {
-                        "pass": 3805,
-                        "total": 3805
-                    }
-                }
-            },
-            "typescript": {
-                "builtRenderParse": {
-                    "cases": {
-                        "object_type": {
-                            "from": 50,
-                            "to": 38
-                        }
-                    },
-                    "from": {
-                        "pass": 2497,
-                        "total": 2497
-                    },
-                    "to": {
-                        "pass": 2560,
-                        "total": 2560
-                    }
-                },
-                "factoryStorage": {
-                    "cases": {
-                        "object_type": {
-                            "from": 25,
-                            "to": 19
-                        }
-                    },
-                    "from": {
-                        "pass": 1326,
-                        "total": 1326
-                    },
-                    "to": {
-                        "pass": 1355,
-                        "total": 1355
-                    }
-                },
-                "parityFixtures": {
-                    "cases": {
-                        "method_definition_plain": {
-                            "from": 15,
-                            "to": 14
-                        },
-                        "object_type": {
-                            "from": 45,
-                            "to": 35
-                        }
-                    },
-                    "from": {
-                        "pass": 2904,
-                        "total": 2904
-                    },
-                    "to": {
-                        "pass": 2990,
-                        "total": 2990
+                        "pass": 3789,
+                        "total": 3789
                     }
                 }
             }
         },
-        "reason": "Class-body splits move cases from the kinds they split off, and a flat alias envelope counts one case where it counted two. Splits: a python class-body `function_definition` reads as `method_declaration` under the class-body clones (`block_class_declaration`, `suite_block_class_declaration`, `decorated_definition_class_declaration`), which take the class bodies' `block`, `suite_block` and `decorated_definition` cases; rust impl and trait bodies read as `extension_declaration_body` and `trait_interface_declaration_body` (from `declaration_list`), their functions as `method_declaration` (from `function_item`) and their signatures as `signature_method_declaration` (from `function_signature_item`); a TypeScript class constructor reads as `constructor_declaration` (from `method_definition_plain`), its name fixed text. Flat alias envelope: the rule is one record per parsed node, so an envelope is one node and its former content candidate is no longer a separate case: python `import_list` under `names` and `interpolation` under `format_expression`, TypeScript `object_type` under `interface_body`. The same spans are still built, rendered and compared under the envelope. No node goes untested."
+        "reason": "A python number in a case pattern is wrapped only when it is negative. simple_pattern_negative was the member seq(optional(-), choice(integer, float)), so every number in a pattern read as one; it is now seq(-, field(value, ...)) beside the bare integer and float arms. Four corpus entries hold only positive pattern numbers (If guards, Comma separated cases, Complex case patterns on classes, Complex case patterns on complex numbers) and lose their wrapper case, while Literals keeps its two negatives. In the parity fixtures the 30 wrapper sites become the 2 negatives. Each number is still built, rendered and compared as its own integer or float case, and those counts are unchanged. No node goes untested."
     },
-    "commit": "a3fe6a2",
+    "commit": "e71f485",
     "grammars": {
         "python": {
             "kinds": [
@@ -502,7 +346,7 @@
                     "return_statement": 18,
                     "set": 2,
                     "set_comprehension": 2,
-                    "simple_pattern_negative": 30,
+                    "simple_pattern_negative": 2,
                     "simple_statements_elements": 441,
                     "slice": 4,
                     "slice_group": 1,
@@ -527,7 +371,7 @@
                     "typed_parameter": 7,
                     "types": 22,
                     "unary_operator": 9,
-                    "union_pattern": 7,
+                    "union_pattern": 10,
                     "union_type": 1,
                     "while_statement": 4,
                     "with_clause_bare": 3,
@@ -541,12 +385,12 @@
                 "failingByKind": {},
                 "formatDeferredByKind": {},
                 "leftOutByKind": {},
-                "pass": 3814,
-                "total": 3814
+                "pass": 3789,
+                "total": 3789
             },
             "validators": {
                 "builtRenderParse": {
-                    "astMatchPass": 2675,
+                    "astMatchPass": 2671,
                     "casesByKind": {
                         "_simple_pattern": 38,
                         "_simple_statements": 230,
@@ -665,7 +509,7 @@
                         "return_statement": 22,
                         "set": 2,
                         "set_comprehension": 2,
-                        "simple_pattern_negative": 5,
+                        "simple_pattern_negative": 1,
                         "simple_statements_elements": 230,
                         "slice": 2,
                         "slice_group": 1,
@@ -703,8 +547,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 2675,
-                    "total": 2675
+                    "pass": 2671,
+                    "total": 2671
                 },
                 "coverage": {
                     "casesByKind": {
@@ -868,7 +712,7 @@
                     "total": 153
                 },
                 "factoryStorage": {
-                    "astMatchPass": 1392,
+                    "astMatchPass": 1388,
                     "casesByKind": {
                         "_simple_pattern": 19,
                         "_simple_statements": 115,
@@ -993,7 +837,7 @@
                         "return_statement": 11,
                         "set": 1,
                         "set_comprehension": 1,
-                        "simple_pattern_negative": 5,
+                        "simple_pattern_negative": 1,
                         "simple_statements_elements": 115,
                         "slice": 1,
                         "slice_group": 1,
@@ -1033,8 +877,8 @@
                     },
                     "failingKinds": [],
                     "formatDeferredKinds": [],
-                    "pass": 1392,
-                    "total": 1392
+                    "pass": 1388,
+                    "total": 1388
                 },
                 "from": {
                     "casesByKind": {
@@ -4366,7 +4210,7 @@
     },
     "totals": {
         "fail": 2,
-        "pass": 26920,
-        "total": 26922
+        "pass": 26887,
+        "total": 26889
     }
 }
