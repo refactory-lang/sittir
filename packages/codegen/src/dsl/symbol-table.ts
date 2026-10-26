@@ -614,6 +614,10 @@ export function reservedWordsAdmittedIn(
 	return [...first].filter((word) => rest.every((set) => set.has(word)));
 }
 
+export function treeNameOf(entry: KindEntryLike): string {
+	return entry.symbolName ?? entry.kind;
+}
+
 const visibleTreeNameCounts = new WeakMap<readonly KindEntryLike[], ReadonlyMap<string, number>>();
 
 function visibleTreeNameCount(entries: readonly KindEntryLike[], name: string): number {
@@ -622,7 +626,7 @@ function visibleTreeNameCount(entries: readonly KindEntryLike[], name: string): 
 		const tally = new Map<string, number>();
 		for (const entry of entries) {
 			if (entry.anon === true || entry.hidden === true) continue;
-			const treeName = entry.symbolName ?? entry.kind;
+			const treeName = treeNameOf(entry);
 			tally.set(treeName, (tally.get(treeName) ?? 0) + 1);
 		}
 		counts = tally;
@@ -687,6 +691,11 @@ export function isAliasedHiddenStorage(kind: string, entries: readonly KindEntry
 export function isShownConcreteKind(kind: string, entries: readonly KindEntryLike[]): boolean {
 	const entry = findOwnKindEntry(entries, kind);
 	return entry !== undefined && entry.supertype !== true && !surfaceHiddenOf(entry, kind);
+}
+
+export function parsesUnderOwnName(kind: string, entries: readonly KindEntryLike[]): boolean {
+	const entry = findOwnKindEntry(entries, kind);
+	return entry !== undefined && !surfaceHiddenOf(entry, kind) && treeNameOf(entry) === kind;
 }
 
 export function isParserHiddenKind(kind: string, entries: readonly KindEntryLike[]): boolean {

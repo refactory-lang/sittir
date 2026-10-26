@@ -16,14 +16,50 @@ import { flatten } from '../../compiler/flatten.ts';
 import { clauseNodeMap, comparisonNodeMap, twoChoiceSlotsNodeMap } from '../../compiler/model/__tests__/sub-factories.test.ts';
 
 describe('node-model emitter', () => {
+	const patternNodes = (kinds: readonly string[]) =>
+		withGeneratedIdTables((kindEntries) =>
+			makeNodeMapWith(
+				new Map<string, AssembledNode>(
+					kinds.map((kind) => [kind, new AssembledPattern(kind, { type: PATTERN, value: '[a-z]+' }, { kindEntries })])
+				)
+			)
+		);
 	it('serializes the canonical display family without deriving aliases again', () => {
-		const { nodeMap, generatedIdTables } = withGeneratedIdTables(() => makeNodeMapWith(new Map()));
+		const { nodeMap, generatedIdTables } = patternNodes(['string_content', 'raw_string_literal_content']);
 		const family = [
 			{ storage: 'string_content', literal: false },
 			{ storage: 'raw_string_literal_content', literal: false }
 		];
 		const withFamily = { ...nodeMap, displayUnions: new Map([['string_content', family]]) };
 		expect(buildNodeModel(withFamily, generatedIdTables)).toHaveProperty('displayUnions', { string_content: family });
+	});
+	it('stamps shownAs on a storage that never parses under its own name, and only there', () => {
+		const { nodeMap, generatedIdTables } = patternNodes([
+			'string_content',
+			'_string_chars',
+			'raw_string_literal_content'
+		]);
+		const family = ['string_content', '_string_chars', 'raw_string_literal_content'].map((storage) => ({
+			storage,
+			literal: false
+		}));
+		const model = buildNodeModel(
+			{ ...nodeMap, displayUnions: new Map([['string_content', family]]) },
+			generatedIdTables
+		);
+		const shownAs = Object.fromEntries(model.nodes.map((node) => [node.kind, node.shownAs]));
+		expect(shownAs).toEqual({
+			string_content: undefined,
+			_string_chars: ['string_content'],
+			raw_string_literal_content: undefined
+		});
+	});
+	it('refuses a storage that shows as a display but has no node to carry it', () => {
+		const { nodeMap, generatedIdTables } = patternNodes(['string_content']);
+		const family = ['string_content', '_string_chars'].map((storage) => ({ storage, literal: false }));
+		expect(() =>
+			buildNodeModel({ ...nodeMap, displayUnions: new Map([['string_content', family]]) }, generatedIdTables)
+		).toThrow('node model: _string_chars show as a display but have no node to carry it');
 	});
 	it('serializes a list\'s item slot beside its element kinds', () => {
 		const rule: SeparatedListElementRule = { type: SYMBOL, name: 'member', multiplicity: 'array', separator: { value: { type: STRING, value: ',' } } };

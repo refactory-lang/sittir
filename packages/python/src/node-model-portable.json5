@@ -1684,7 +1684,34 @@
           "parent": "expression_statement",
           "slot": "content",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "class_definition",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -4153,7 +4180,34 @@
           "parent": "expression_statement",
           "slot": "content",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "function_definition",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -4755,6 +4809,49 @@
         }
       ]
     },
+    "lambda": {
+      "vocab": "expression.lambda",
+      "read": [
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "lambda",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "lambda",
+              "slot": "body"
+            }
+          ]
+        }
+      ]
+    },
     "lambda_expression": {
       "vocab": "expression.lambda",
       "read": [
@@ -5266,7 +5363,34 @@
           "parent": "expression_statement",
           "slot": "content",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -7403,7 +7527,7 @@
       {
         "depth": 2,
         "paths": 75,
-        "kinds": 73,
+        "kinds": 74,
         "refinements": 6
       },
       {

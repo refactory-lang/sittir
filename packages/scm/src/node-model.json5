@@ -51,7 +51,7 @@
 		{"kind":"_dedent","modelType":"punctuation","typeName":"Dedent","builderPathAlternates":[["layout","dedent"]],"unit":true,"text":"﷑\n","oneSurface":true,"factoryShape":"constant"},
 		{"kind":"_double_blankline","modelType":"punctuation","typeName":"DoubleBlankline","builderPathAlternates":[["layout","doubleBlankline"]],"unit":true,"text":"\n\n\n","oneSurface":true,"factoryShape":"constant"},
 		{"kind":"_group_expression","modelType":"supertype","typeName":"GroupExpression","subtypes":["definition","group_expression_arm"]},
-		{"kind":"_immediate_identifier","modelType":"pattern","typeName":"ImmediateIdentifier","irKey":"immediateIdentifier","builderPath":["immediateIdentifier"],"pattern":"[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*","leafPattern":"/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u","oneSurface":true,"factoryShape":"text"},
+		{"kind":"_immediate_identifier","modelType":"pattern","typeName":"ImmediateIdentifier","irKey":"immediateIdentifier","builderPath":["immediateIdentifier"],"pattern":"[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*","leafPattern":"/^(?:(?:[a-zA-Z0-9\\-_][a-zA-Z0-9.\\-_]*))$/u","oneSurface":true,"factoryShape":"text","shownAs":["identifier"]},
 		{"kind":"_indent","modelType":"punctuation","typeName":"Indent","builderPathAlternates":[["layout","indent"]],"unit":true,"text":"﷐\n","oneSurface":true,"factoryShape":"constant"},
 		{"kind":"_layout","modelType":"supertype","typeName":"Layout","irKey":"layout","builderPath":["layout"],"subtypes":["_blankline","_dedent","_double_blankline","_indent","_newline","_space","_tab","_tight"]},
 		{"kind":"_list_element","modelType":"supertype","typeName":"ListElement","irKey":"listElement","builderPath":["listElement"],"subtypes":["capture","list_element_quantifier"]},
