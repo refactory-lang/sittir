@@ -505,11 +505,16 @@ pub fn write_slot<T: Clone, C: WriteCell<T>>(sink: &mut RecordSink<'_, T>, value
     unit_cell(sink, cell, layout, slot, ItemIndex(0))
 }
 
-/// Writes a bounded scalar child directly into its holder's record image.
-/// Coordinates, leaves, units and links keep their ordinary cell forms.
+/// Writes a bounded scalar child directly into its holder's parsed record
+/// image. Coordinates, leaves, units and links keep their ordinary cell
+/// forms, and a built record holds every child by its address, as an
+/// ordinary child cell.
 pub fn write_inline_slot<T: Clone, C: WriteCell<T>>(sink: &mut RecordSink<'_, T>, value: &C, layout: Option<&NodeLayout<T>>, slot: &str, word: u32, out: &mut [u32]) -> Result<(), ArenaError> {
     let width = u32::try_from(out.len()).map_err(|_| ArenaError::Malformed { what: "inline cell width", word: u32::MAX })?;
     word.checked_add(width).ok_or(ArenaError::Malformed { what: "inline record word", word })?;
+    if matches!(sink.to, Target::Built { .. }) {
+        return write_slot(sink, value, layout, slot)?.encode(out);
+    }
     let capture = std::mem::replace(&mut sink.capture, true);
     let result = write_slot(sink, value, layout, slot);
     sink.capture = capture;
@@ -820,7 +825,7 @@ mod tests {
     }
 
     #[test]
-    fn embedding_removes_the_separate_record_and_preserves_built_sides() {
+    fn a_built_sink_writes_a_bounded_child_as_a_child_cell_with_its_sides() {
         let trivia = Some(NodeTrivia { leading: Some(vec![entry("// child")]), trailing: None, inner: None });
         let child = pair(Some(Box::new(NodeLayout { trivia, ..NodeLayout::default() })), name("a", None), Vec::new());
         let write = |inline: bool| {
@@ -834,11 +839,12 @@ mod tests {
             let Cell::Child { at, .. } = cell else { panic!("a parent") };
             let slot = at.offset(2).expect("the slot");
             let child = Cell::decode_slot(arena.words(slot, width - 2).expect("the slot"), slot, if inline { 10 } else { 0 }).expect("the child");
-            let Cell::Child { at: child, .. } = child else { panic!("a child") };
+            let Cell::Child { at: child, .. } = child else { panic!("a child cell, never an inline copy") };
+            assert!(child < at, "the child is its own record, written before its holder");
             assert_eq!(store.side(Place::Record(child), TriviaSide::Leading), Some(vec![entry("// child")]));
             arena.chunk(0).expect("the chunk").len()
         };
-        assert_eq!(write(false) - write(true), 3, "inline tag and flags replace a five-word pointer cell");
+        assert_eq!(write(true) - write(false), 7, "only the inline slot's room differs: the child is a record and a child cell either way");
     }
 
     #[test]

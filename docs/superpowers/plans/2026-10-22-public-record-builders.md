@@ -44,7 +44,9 @@ public cutover evidence.
   are generated.
 - **Preserve everything the object path has:**
   - parsed coordinate links;
-  - bounded inline children, lists and list settings;
+  - bounded children, lists and list settings: a built record holds each
+    compound child by its address, as a child cell, and only a parsed record
+    embeds a bounded child inline;
   - string interning, with the original builder string kept;
   - trivia, provenance and retained views.
 
@@ -62,9 +64,7 @@ the gate, at the start of each slice and whenever master moves.
   builders at or above the eager probe in the `Arena benchmarks` workflow;
 - native parsed hydration writes records directly, without building typed
   Rust nodes first;
-- unreferenced built records and chunks are reclaimed;
-- a deeply nested built tree renders, or refuses by name, on every storage, on
-  the main thread and in a Worker, and never ends the process.
+- unreferenced built records and chunks are reclaimed.
 
 ## Slices, each a PR stacked on the arena-storage PR
 
@@ -94,8 +94,7 @@ the last slice.
     renders where the side renders, from its arena, with its own sides as its
     neighbours.
   - Every render reads through one table that answers every live tree.
-  - Sides nest at most 64 deep, the addon's stack-safety bound, with one
-    refusal on every storage.
+  - A side's entries hold no sides of their own, so sides never nest.
 - [ ] **Trivia and edits.**
   - Links to children read by another engine of the same language: a built
     record holds such a child by link, renders it and rebuilds over it, and
@@ -135,12 +134,6 @@ the last slice.
   `use_wildcard`, typescript `catch_clause`, and python `slice`. Only a kind
   with a slot the layout gives no cell would still have no view, and no
   compound kind of the five grammars has one.
-- [ ] **Deep built trees.** Native prepare and render grow the stack on
-  demand at each node they descend into, so a deeply nested built tree renders
-  on the main thread and in a Worker. Render stays recursive descent and tracks
-  no depth. No napi or V8 call runs on a grown stack: a render borrows every
-  chunk it can reach before it can grow, as a fact of its types. The
-  side-nesting bound stays.
 - [ ] **Switch.** Arena engines load the record backend. Prove that construction calls no
   object builder or serializer. Benchmark metadata names the construction
   backend. Both storages' complete validation history must be unchanged, and
@@ -190,6 +183,6 @@ These must not be mistaken for completed builder integration:
   stamp it. Reading the side back gives a fresh node where object construction
   gives the builder's. Every compound comment kind crosses as kind and address
   and reads back as the builder's node.
-- The broader cutover outline also calls for native-only built trivia, parsed
-  unit identity and native file parsing. Audit their live implementations
-  before claiming the whole migration complete.
+- The broader cutover outline also calls for native-only built trivia and
+  native file parsing. Audit their live implementations before claiming the
+  whole migration complete.
