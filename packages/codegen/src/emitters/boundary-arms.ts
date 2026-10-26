@@ -207,6 +207,10 @@ function excluded(path: Path, slot: string, kinds: ReadonlySet<string>): Path {
 	return { ...path, not: new Map(path.not).set(slot, new Set([...prior, ...kinds])) };
 }
 
+function presentIn(path: Path, name: string, slot: BoundarySlot): boolean | undefined {
+	return path.present.get(name) ?? (slot.presence === 'required' ? true : undefined);
+}
+
 function admits(path: Path, slot: string, element: BoundaryElement): boolean {
 	if (element.kind === undefined) return true;
 	return (path.only.get(slot)?.has(element.kind) ?? true) && !(path.not.get(slot)?.has(element.kind) ?? false);
@@ -330,7 +334,7 @@ class BoundaryWalk {
 		let open: Path | undefined = path;
 		for (const gated of step.arms) {
 			if (open === undefined) return;
-			const known = open.present.get(gated.test);
+			const known = presentIn(open, gated.test, template.slot(gated.test));
 			if (gated.kinds === undefined) {
 				if (known !== false) this.walk(template, gated.steps, 0, side, presence(open, gated.test, true), marks, rest, emit);
 				open = known === true ? undefined : presence(open, gated.test, false);
@@ -354,8 +358,8 @@ class BoundaryWalk {
 		emit: Emit
 	): void {
 		const slot = template.slot(name);
-		const known = path.present.get(name);
-		if (known === false || (known === undefined && slot.presence !== 'required')) rest(presence(path, name, false), marks);
+		const known = presentIn(path, name, slot);
+		if (known !== true) rest(presence(path, name, false), marks);
 		if (known === false || (known === undefined && slot.presence === 'never')) return;
 		const present = presence(path, name, true);
 		const outer = side === 'before' ? slot.prefix : slot.suffix;

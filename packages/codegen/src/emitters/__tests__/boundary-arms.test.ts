@@ -99,6 +99,21 @@ describe('boundaryTableOf', () => {
 		expect(table.dropped).toEqual([{ kind: 'holder', side: 'before', drop: 'unknown', variants: ['zz'] }]);
 	});
 
+	it('takes only the present arm of a test on a required slot, so the edge reaches nothing past it', () => {
+		const table = boundaryTableOf(
+			inputsOf(
+				[{ kind: 'if', arms: [{ test: 'left', body: [{ kind: 'slot', name: 'left' }] }], fallback: undefined }, { kind: 'seam', field: 'op' }, { kind: 'text', text: '+' }, { kind: 'slot', name: 'right' }],
+				{
+					left: { presence: 'required', prefix: '', suffix: '', elements: [{ kind: 'leaf' }], fields: [] },
+					right: { presence: 'required', prefix: '', suffix: '', elements: [{ kind: 'leaf' }], fields: [] }
+				},
+				{ '+': 30 }
+			)
+		);
+		expect(table.dropped).toEqual([]);
+		expect(table.rows).toEqual([]);
+	});
+
 	it("reaches a hidden kind's other arms past a recursion at its edge that places no marks", () => {
 		const table = boundaryTableOf(holding('_loop', { _loop: [slotOf('rest', '_loop', 'optional'), slotOf('last', 'leaf')] }));
 		expect(table.dropped).toEqual([]);
