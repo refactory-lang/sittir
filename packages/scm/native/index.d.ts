@@ -139,6 +139,12 @@ storedLayout(treeId: TreeId): { deviations: number; slots: number; separators: n
  */
 layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
 /**
+ * The bytes the node at `index` of the live tree `treeId` renders
+ * between as its source (`ParsedTree::framed_span_at`): `{ start,
+ * end }`. A diagnostic. Refuses as `read` does.
+ */
+framedSpan(treeId: TreeId, index: NodeIndex): { start: number; end: number }
+/**
  * One batch of a pre-order walk of the named descendants under
  * the node `from` names (JSON, see `query::Address`), filtered to
  * `kinds` when given and to the `where` plan (JSON, see

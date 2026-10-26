@@ -89,6 +89,17 @@ import {
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
+	boundaryTableOf,
+	type BoundaryDelimiting,
+	type BoundaryElement,
+	type BoundaryKind,
+	type BoundaryMember,
+	type BoundarySlot,
+	type BoundaryTable,
+	type BoundaryTemplate
+} from './boundary-arms.ts';
+import { queryRoutesOf } from './client-utils.ts';
+import {
 	collectKindEntries,
 	findKindEntry,
 	findKindEntryForLiteral,
@@ -135,7 +146,7 @@ import {
 	type Flanks,
 	type ViewKind
 } from './render-body.ts';
-import { generatedFieldIds, type GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { findEntryForLiteralText, generatedFieldIds, type GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import type { Rule } from '../types/rule.ts';
 import type { KindEntryLike } from '../dsl/symbol-table.ts';
@@ -980,15 +991,9 @@ function buildTypedTemplateBody(
 	lines.push(
 		...printRustBody(struct.body, {
 			field: rustFieldIdent,
-			optional: (name) => struct.fields.some((f) => rustFieldIdent(f.name) === rustFieldIdent(name) && !f.required),
+			optional: (name) => isOptionalField(struct, name),
 			edge: kindEdgeWriterOf(plan, node),
-			site: (name) => {
-				if (node === undefined)
-					throw new Error(`render body for '${struct.kind}' names spacing site '${name}' without its node`);
-				const site = plan.spacingSites.find((s) => s.source === node.kind && (s.address === name || s.fieldIdent === name));
-				if (site === undefined) throw new Error(`render body for '${struct.kind}' names spacing site '${name}', which has no site`);
-				return `options::${site.constName}`;
-			},
+			site: (name) => `options::${seamSiteOf(plan, node, struct.kind, name).constName}`,
 			kinds: (names) => rustKindIdSlice(names, nodeMap, kindIdByKind, struct.kind),
 			unitSlot: (name) => {
 				const f = struct.fields.find((field) => rustFieldIdent(field.name) === rustFieldIdent(name));
@@ -999,6 +1004,17 @@ function buildTypedTemplateBody(
 		})
 	);
 	return lines;
+}
+
+function isOptionalField(struct: EmittedStruct, name: string): boolean {
+	return struct.fields.some((f) => rustFieldIdent(f.name) === rustFieldIdent(name) && !f.required);
+}
+
+function seamSiteOf(plan: RenderPlan, node: AssembledNode | undefined, kind: string, name: string): SpacingSite {
+	if (node === undefined) throw new Error(`render body for '${kind}' names spacing site '${name}' without its node`);
+	const site = plan.spacingSites.find((s) => s.source === node.kind && (s.address === name || s.fieldIdent === name));
+	if (site === undefined) throw new Error(`render body for '${kind}' names spacing site '${name}', which has no site`);
+	return site;
 }
 
 function rustKindIdSlice(
@@ -1148,7 +1164,11 @@ export function emitRenderModule(
 			'',
 			support.text
 		].join('\n') + '\n';
-	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries);
+	if (support.boundaries.dropped.length > 0) {
+		const arms = support.boundaries.dropped.map((arm) => `  ${arm.drop} ${arm.kind} ${arm.side} next=${arm.next ?? '-'}: ${arm.variants.join(' | ')}`);
+		throw new Error(`render-module: ${lang} has boundary arms it cannot emit, so a coordinate at these edges would lose its holder's marks:\n${arms.join('\n')}`);
+	}
+	const optionsRs = renderOptionsRs(plan, addresses, optionsKindEntries, support.boundaries.rows);
 	const { hashRs, hashTs } = emitHashFiles(lang, [
 		{ filename: 'node.rs', content: nodeRs },
 		{ filename: 'options.rs', content: optionsRs }
@@ -1174,6 +1194,167 @@ export function emitRenderModule(
 			contents: recordsTs(lang, support.records)
 		}
 	};
+}
+
+interface BoundaryFacts {
+	readonly nodeMap: NodeMap;
+	readonly plan: RenderPlan;
+	readonly read: ReadPrint;
+	readonly siteId: (site: SpacingSite) => number;
+	readonly idByKind: ReadonlyMap<string, number>;
+	readonly fieldIds: ReadonlyMap<string, number>;
+	readonly tokenIdOf: (text: string) => number | undefined;
+}
+
+function boundaryTableFor(
+	structs: readonly EmittedStruct[],
+	nodeMap: NodeMap,
+	plan: RenderPlan,
+	meta: MetaData,
+	generatedIdTables: GeneratedIdTables,
+	read: ReadPrint
+): BoundaryTable {
+	if (plan.spacingSites.length === 0) return { rows: [], dropped: [] };
+	const kindEntries = read.ctx.kindEntries;
+	const siteIds = new Map(plan.spacingSites.map((site, id) => [site, id]));
+	const facts: BoundaryFacts = {
+		nodeMap,
+		plan,
+		read,
+		siteId: (site) => siteIds.get(site)!,
+		idByKind: buildKindIdByKind(kindEntries),
+		fieldIds: new Map(generatedFieldIds(generatedIdTables).map(({ name, id }) => [name, id])),
+		tokenIdOf: (text) => findEntryForLiteralText(kindEntries, text)?.id
+	};
+	const templates = new Map<string, BoundaryTemplate>();
+	for (const struct of structs) {
+		const node = nodeMap.nodes.get(struct.kind);
+		if (node !== undefined && readsItsSlots(node)) templates.set(struct.kind, boundaryTemplateOf(struct, node, facts, meta.separators.get(node.kind) ?? ''));
+	}
+	const members = new Map<string, BoundaryMember[]>();
+	for (const node of nodeMap.nodes.values()) {
+		if (!(node instanceof AssembledEnum)) continue;
+		const pairs = armSeamPairsOf(plan, node, kindEntries);
+		members.set(
+			node.kind,
+			node.values.map((text) => {
+				const pair = pairs.get(text);
+				const id = node.resolvedByText.get(text)?.id;
+				return pair === undefined ? { text, id } : { text, id, before: facts.siteId(pair.before), after: facts.siteId(pair.after) };
+			})
+		);
+	}
+	const known = new Map<string, BoundaryKind>();
+	return boundaryTableOf({
+		templates,
+		members,
+		kindOf: (kind) => {
+			const found = known.get(kind) ?? { id: nodeMap.nodes.get(kind)?.kindId ?? facts.idByKind.get(kind), hidden: isSurfaceHiddenIn(kind, nodeMap) };
+			known.set(kind, found);
+			return found;
+		},
+		tokenIdOf: facts.tokenIdOf,
+		concrete: (kinds) =>
+			new Set(
+				kinds.flatMap((kind) => {
+					const found = concreteKindsOf(kind, nodeMap);
+					return found.length > 0 ? found : [kind];
+				})
+			)
+	});
+}
+
+function boundaryTemplateOf(struct: EmittedStruct, node: AssembledNode, facts: BoundaryFacts, separator: string): BoundaryTemplate {
+	const edge = kindEdgeWriterOf(facts.plan, node);
+	const slotModel = renderSlotModelOf(node);
+	const slots = new Map([...slotModel.named, ...slotModel.unnamed].map((slot) => [slot.name, slot]));
+	return {
+		body: struct.body,
+		ownEdge: (seam) => edge(seam) !== undefined,
+		site: (seam) => facts.siteId(seamSiteOf(facts.plan, node, struct.kind, seam)),
+		optional: (slot) => isOptionalField(struct, slot),
+		slot: (name) => {
+			const field = struct.fields.find((f) => rustFieldIdent(f.name) === rustFieldIdent(name));
+			if (field === undefined) throw new Error(`render body for '${struct.kind}' names '${name}', which its node has no slot for`);
+			return boundarySlotOf(struct, field, slots.get(field.name), node, facts, separator);
+		}
+	};
+}
+
+function boundarySlotOf(
+	struct: EmittedStruct,
+	f: EmittedField,
+	slot: AssembledNonterminal | undefined,
+	node: AssembledNode,
+	facts: BoundaryFacts,
+	separator: string
+): BoundarySlot {
+	const flanks = struct.flanks.get(f.name);
+	const prefix = flanks?.prefix ?? '';
+	const suffix = flanks?.suffix ?? '';
+	const shape = slot === undefined ? undefined : nodeSlotShapeOf(slot, facts.nodeMap);
+	const fields = slot === undefined ? [] : boundaryFieldsOf(slot, facts);
+	if (slot !== undefined && shape?.tag === 'presence') {
+		const keyword: BoundaryElement = {
+			...(shape.kind === undefined ? { text: shape.text } : { kind: shape.kind.kind }),
+			id: presenceKeyword(shape, node, slot, facts.read.ctx).id,
+			hidden: false
+		};
+		return { presence: 'optional', prefix, suffix, elements: [keyword], fields };
+	}
+	const elements = slot === undefined ? [] : boundaryElementsOf(slot, facts);
+	if (shape?.tag === 'text') return { presence: f.required ? 'required' : 'optional', prefix, suffix, elements, fields };
+	if (f.view === 'list' || f.multiple) {
+		if (!f.hasNodeField) return { presence: 'never', prefix, suffix, elements, fields };
+		const list = node instanceof AssembledList ? node : undefined;
+		const sites = listSitesOf(facts.plan, node, f.name);
+		const fallback = (list === undefined ? undefined : separatorSiteOf(facts.plan, list)?.defaultText) ?? f.separator ?? separator;
+		const candidates = list?.separatorRule === undefined ? [] : separatorCandidateTexts(list, facts.nodeMap);
+		const separators = [...candidates.map(({ name, text }) => ({ text, id: facts.idByKind.get(name) })), { text: fallback, id: facts.tokenIdOf(fallback) }];
+		const trailing = delimitingOf(list?.trailingDelimiter);
+		return {
+			presence: slot !== undefined && isNodeRequired(slot) ? 'required' : 'optional',
+			prefix,
+			suffix,
+			elements,
+			fields,
+			list: {
+				...(sites.head === undefined ? {} : { head: facts.siteId(sites.head) }),
+				...(sites.tail === undefined ? {} : { tail: facts.siteId(sites.tail) }),
+				leading: delimitingOf(list?.leadingDelimiter),
+				trailing: list?.singleElementNeedsTrailing === true && trailing === 'none' ? 'optional' : trailing,
+				separators
+			}
+		};
+	}
+	if (f.required) return { presence: f.hasNodeField ? 'required' : 'never', prefix, suffix, elements, fields };
+	return { presence: f.hasNodeField || f.backingNodeField !== undefined ? 'optional' : 'never', prefix, suffix, elements, fields };
+}
+
+function boundaryElementsOf(slot: AssembledNonterminal, facts: BoundaryFacts): BoundaryElement[] {
+	return slot.values.flatMap((value): BoundaryElement[] => {
+		const kind = isNodeRef(value) ? storageKindOfRef(value.node) : value.resolvedKind;
+		const text = value.value ?? value.pattern;
+		if (kind === undefined && text === undefined) return [];
+		const parse = value.parseKind?.name;
+		return [
+			{
+				...(kind === undefined ? { text } : { kind }),
+				...(value.parseKindId === undefined ? {} : { id: value.parseKindId }),
+				...(parse === undefined ? {} : { hidden: isSurfaceHiddenIn(parse, facts.nodeMap) })
+			}
+		];
+	});
+}
+
+function boundaryFieldsOf(slot: AssembledNonterminal, facts: BoundaryFacts): readonly number[] {
+	const routes = queryRoutesOf(slot, facts.nodeMap);
+	const ids = routes.fields.flatMap((name) => facts.fieldIds.get(name) ?? []);
+	return routes.kinds.length > 0 || ids.length < routes.fields.length ? [] : ids;
+}
+
+function delimitingOf(mode: string | undefined): BoundaryDelimiting {
+	return mode === 'mandatory' || mode === 'optional' ? mode : 'none';
 }
 
 function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>): string {
@@ -1296,7 +1477,12 @@ function renderNodeSupport(
 	plan: RenderPlan,
 	boxedPayloads: readonly string[],
 	envelopePins: Readonly<Record<string, EnvelopePin>> | undefined
-): { readonly text: string; readonly records: ReadonlyMap<string, RecordLayout>; readonly choicePayloads: ReadonlySet<string> } {
+): {
+	readonly text: string;
+	readonly records: ReadonlyMap<string, RecordLayout>;
+	readonly choicePayloads: ReadonlySet<string>;
+	readonly boundaries: BoundaryTable;
+} {
 	const projection = getNodeProjection(nodeMap);
 	const nodes = projection.nodes;
 	const owned = nodes.filter((node) => layoutNodeOf(node) === node);
@@ -1389,7 +1575,12 @@ function renderNodeSupport(
 			...payloadCeilingAssertions(read.boxedPayloads, read.choicePayloads)
 		].join('\n')
 	);
-	return { text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'), records: read.records, choicePayloads: read.choicePayloads };
+	return {
+		text: [rendered, '', grammarTriviaStatement(read.nodes)].join('\n'),
+		records: read.records,
+		choicePayloads: read.choicePayloads,
+		boundaries: boundaryTableFor(structs, nodeMap, plan, meta, generatedIdTables, read)
+	};
 }
 
 function grammarTriviaStatement(nodes: ReadonlySet<string>): string {
@@ -2774,17 +2965,26 @@ function spacingFieldExprs(
 	node: AssembledNode | undefined,
 	fieldName: string
 ): { readonly before?: string; readonly after?: string; readonly head?: string; readonly tail?: string } {
-	if (node === undefined) return {};
-	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
+	const sites = listSitesOf(plan, node, fieldName);
 	const expr = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `node.${rustFieldIdent(site.fieldIdent)}`;
 	const flank = (site: SpacingSite | undefined): string | undefined =>
 		site === undefined ? undefined : `Some(options::${site.constName})`;
+	return { before: expr(sites.before), after: expr(sites.after), head: flank(sites.head), tail: flank(sites.tail) };
+}
+
+function listSitesOf(
+	plan: RenderPlan,
+	node: AssembledNode | undefined,
+	fieldName: string
+): { readonly before?: SpacingSite; readonly after?: SpacingSite; readonly head?: SpacingSite; readonly tail?: SpacingSite } {
+	if (node === undefined) return {};
+	const sites = synthesizedSpacingSites(plan, node).filter((site) => site.slot === fieldName);
 	return {
-		before: expr(sites.find(({ spacing }) => spacing.at === 'separator' && spacing.side === 'before')),
-		after: expr(sites.find(({ spacing }) => spacing.at === 'separator' && spacing.side !== 'before')),
-		head: flank(sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'start')),
-		tail: flank(sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'end'))
+		before: sites.find(({ spacing }) => spacing.at === 'separator' && spacing.side === 'before'),
+		after: sites.find(({ spacing }) => spacing.at === 'separator' && spacing.side !== 'before'),
+		head: sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'start'),
+		tail: sites.find(({ spacing }) => spacing.at === 'flank' && spacing.side === 'end')
 	};
 }
 
@@ -3962,21 +4162,21 @@ function armSeamPairsOf(
 	plan: RenderPlan,
 	node: AssembledEnum,
 	kindEntries: readonly KindEntryLike[]
-): Map<string, { before: string; after: string }> {
-	const bySlot = new Map<string, { before?: string; after?: string }>();
+): Map<string, { readonly token: string; readonly before: SpacingSite; readonly after: SpacingSite }> {
+	const bySlot = new Map<string, { before?: SpacingSite; after?: SpacingSite }>();
 	for (const site of plan.spacingSites) {
 		const seam = site.spacing;
 		if (site.source !== node.kind || seam?.at !== 'seam' || site.seat !== undefined) continue;
 		const entry = bySlot.get(site.slot) ?? {};
-		bySlot.set(site.slot, { ...entry, [seam.side]: site.constName });
+		bySlot.set(site.slot, { ...entry, [seam.side]: site });
 	}
-	const out = new Map<string, { before: string; after: string }>();
+	const out = new Map<string, { readonly token: string; readonly before: SpacingSite; readonly after: SpacingSite }>();
 	for (const text of node.values) {
 		const name = anonTokenNameOfText(text, kindEntries);
 		if (name === undefined) continue;
 		const pair = bySlot.get(name);
 		if (pair?.before === undefined || pair.after === undefined) continue;
-		out.set(text, { before: pair.before, after: pair.after });
+		out.set(text, { token: name, before: pair.before, after: pair.after });
 	}
 	return out;
 }
@@ -4024,7 +4224,7 @@ function renderEnumType(node: AssembledEnum, kindEntries: readonly KindEnumEntry
 			lines.push(
 				pair === undefined
 					? `            Self::${literalToVariantName(v)} => ${text},`
-					: `            Self::${literalToVariantName(v)} => { w.site_at(options::${pair.before}); ${text}?; w.site_at(options::${pair.after}); Ok(()) }`
+					: `            Self::${literalToVariantName(v)} => { w.site_at(options::${pair.before.constName}); ${text}?; w.site_at(options::${pair.after.constName}); Ok(()) }`
 			);
 		}
 		lines.push(`        }`);
