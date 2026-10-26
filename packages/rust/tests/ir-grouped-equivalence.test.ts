@@ -9,6 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
+import { snapshotOf } from '@sittir/common/utils';
 
 const rs = await createEngine(rust);
 
@@ -30,7 +31,7 @@ describe('ir grouped sub-namespaces (SC-012)', () => {
 		const leaf2 = rs.build.integerLiteral('2');
 		const flat = rs.build.binaryExpression({ left: leaf, operator: '&&', right: leaf2 });
 		const grouped = irExpression.binary({ left: leaf, operator: '&&', right: leaf2 });
-		expect(JSON.stringify(grouped)).toBe(JSON.stringify(flat));
+		expect(snapshotOf(grouped)).toEqual(snapshotOf(flat));
 	});
 
 	it('covers every supertype with at least one member', () => {

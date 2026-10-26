@@ -14,16 +14,17 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
+import { structureOf } from '../../../examples/helpers.ts';
 
 const REPO_ROOT = new URL('../../../', import.meta.url);
 
 interface Rendered {
 	$render(): string;
+	$snapshot(): unknown;
 }
 
-/** A parsed root's node JSON: kinds, slots, leaf text and comments, without layout. */
-function shapeOf(root: unknown): string {
-	return JSON.stringify(root);
+function shapeOf(root: Rendered): string {
+	return JSON.stringify(structureOf(root.$snapshot()));
 }
 
 const CASES: ReadonlyArray<{
@@ -55,7 +56,7 @@ describe('real repo files round-trip through parse -> render -> parse', () => {
 			// Nothing was hydrated below the root and nothing was rebuilt, so
 			// nothing is re-spelled — the file comes back as it went in.
 			expect(rendered).toBe(source);
-			expect(shapeOf(engine.parse(rendered))).toBe(shapeOf(root));
+			expect(shapeOf(engine.parse(rendered) as unknown as Rendered)).toBe(shapeOf(root));
 		});
 	}
 });

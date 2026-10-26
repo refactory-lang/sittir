@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
+import { TSKindId } from '../src/kinds.ts';
 
 const ts = await createEngine(typescript);
 
@@ -12,13 +13,16 @@ describe('object type and interface members separated by a line break', () => {
 		'type T = { a: number, b: string; c: 1 }\n'
 	])('parses and renders %j without an error', (source) => {
 		const tree = ts.parse(source);
-		expect(JSON.stringify(tree)).not.toContain('ERROR');
+		expect(tree.$errors).toEqual([]);
 		expect(tree.$render!().toString()).toBe(source);
 	});
 
 	it('reads a line break between members as the automatic semicolon', () => {
-		const tree = ts.parse('type T = {\n  a: number\n  b: number\n}\n');
-		expect(JSON.stringify(tree)).toContain('automatic_semicolon');
+		const statement = ts.parse('type T = {\n  a: number\n  b: number\n}\n').statements()[0];
+		if (statement === undefined || typeof statement === 'number' || !ts.is.typeAliasDeclaration(statement)) throw new Error('expected a type alias');
+		const value = statement.value();
+		if (!ts.is.objectType(value)) throw new Error('expected an object type');
+		expect(value.members()?.separator).toBe(TSKindId.AutomaticSemicolon);
 	});
 
 	it('renders a snapshot of a line-separated list with the line break, not the token name', () => {

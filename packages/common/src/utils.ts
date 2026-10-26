@@ -16,7 +16,7 @@ import { builtRefOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
-export { nodeJSON } from './node-json.ts';
+export { refuseJSON } from './json-refusal.ts';
 export { Source };
 export { ERROR_KIND_ID, ERROR_KIND_NAME } from './error-kind.ts';
 export type { ErrorNode };
@@ -556,7 +556,7 @@ export function isNode(v: unknown): v is AnyUntypedNode {
 export function describeValue(v: unknown): string {
 	if (typeof v === 'string') return v;
 	try {
-		return JSON.stringify(v, (_key, value) => (typeof value === 'bigint' ? `${value}n` : value)) ?? String(v);
+		return JSON.stringify(describedData(v)) ?? String(v);
 	} catch {
 		try {
 			return String(v);
@@ -564,6 +564,14 @@ export function describeValue(v: unknown): string {
 			return Object.prototype.toString.call(v);
 		}
 	}
+}
+
+function describedData(v: unknown): unknown {
+	if (typeof v === 'bigint') return `${v}n`;
+	if (isNode(v)) return String(v);
+	if (Array.isArray(v)) return v.map(describedData);
+	if (v === null || typeof v !== 'object') return v;
+	return Object.fromEntries(Object.entries(v).map(([key, member]) => [key, describedData(member)]));
 }
 
 /** Whether `v` is a node value a builder takes as one: a node, or a coordinate naming one past a read's depth. */

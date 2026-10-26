@@ -1,4 +1,3 @@
-import { collectKindEntries } from '../kind-discriminant.ts';
 import { describe, expect, it } from 'vitest';
 import { emitClientUtils } from '../client-utils.ts';
 import { grammarTypeMapName } from '../engine.ts';
@@ -8,8 +7,8 @@ import { makeMinimalNodeMap, withGeneratedIdTables } from '../../__tests__/helpe
 
 describe('utils runtime binding emission', () => {
 	it('emits the trivia facts and binds the runtime to the grammar type map', () => {
-		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
-		const contents = emitClientUtils({ grammar: 'synth', nodeMap, kindEntries: collectKindEntries(nodeMap, generatedIdTables) });
+		const { nodeMap } = withGeneratedIdTables(makeMinimalNodeMap);
+		const contents = emitClientUtils({ grammar: 'synth', nodeMap });
 
 		expect(contents).toContain("import { bindRuntime } from '@sittir/common/utils';");
 		expect(contents).toContain('export const triviaFacts = Object.freeze({');
@@ -22,8 +21,8 @@ describe('utils runtime binding emission', () => {
 	});
 
 	it('emits no grammar-free helper body and no type re-export', () => {
-		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeMinimalNodeMap);
-		const contents = emitClientUtils({ grammar: 'synth', nodeMap, kindEntries: collectKindEntries(nodeMap, generatedIdTables) });
+		const { nodeMap } = withGeneratedIdTables(makeMinimalNodeMap);
+		const contents = emitClientUtils({ grammar: 'synth', nodeMap });
 
 		expect(contents).not.toMatch(
 			/export function (bundle|hoist|hoistRoutes|rejectBareText|rejectKeywordText|admitAliasContent|coerceMixedEnumStorage|coerceKindEnumStorage|isNodeOfKind|hasKindOf|isTreeNode)\b/

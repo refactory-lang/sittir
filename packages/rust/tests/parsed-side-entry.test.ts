@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { rebuilt } from '@sittir/common/utils';
+import { rebuilt, snapshotOf } from '@sittir/common/utils';
+import { structureOf } from '../../../examples/helpers.ts';
 import { constructions } from './constructions.mts';
 
 type Sided = { readonly $trivia: { trailing(...items: unknown[]): readonly unknown[] } };
@@ -31,6 +32,7 @@ describe.each(constructions)('a parsed comment in a side is read by reference (%
 		const parsed = (rs.parse('fn f() {\n    /* c */ ;\n    x();\n}\n').statements()[0] as unknown as Item).body();
 		const result = rebuilt(parsed, undefined, () => b.block({ statements: [...parsed.statements()] as never }));
 		expect(rendered(result)).toBe('{\n    /* c */ ;\n    x();\n}');
-		expect(JSON.stringify(result)).toBe(JSON.stringify(parsed));
+		const commentText = (comment: object) => rendered(comment);
+		expect(structureOf(snapshotOf(result), commentText)).toEqual(structureOf(snapshotOf(parsed), commentText));
 	});
 });

@@ -3,6 +3,7 @@ import type { ir } from '../src/ir.ts';
 import type { Blankline, BlockComment, Dedent, DoubleBlankline, Indent, LineComment, Newline, RustTypeMap, Space, Tab, Tight } from '../src/types.ts';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
+import { snapshotOf } from '@sittir/common/utils';
 
 const rs = await createEngine(rust);
 
@@ -68,7 +69,7 @@ describe('loose trivia strings build ir.comment', () => {
 		const spelled = rs.build.identifier('a').$trivia.leading('// hi');
 		const interior = rs.build.identifier('a').$trivia.leading(' hi');
 		expect(spelled.$trivia.leading()).toMatchObject([{ $type: rs.kinds.LineComment }]);
-		expect(JSON.stringify(spelled.$trivia.leading())).toBe(JSON.stringify(interior.$trivia.leading()));
+		expect(spelled.$trivia.leading().map((entry) => snapshotOf(entry as object))).toEqual(interior.$trivia.leading().map((entry) => snapshotOf(entry as object)));
 		expect(spelled.$render()).toBe('// hi\na');
 	});
 

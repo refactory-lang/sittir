@@ -57,7 +57,7 @@ function triviaHook(config: EmitEngineConfig): string {
 function factoryImports(config: EmitEngineConfig): string {
 	const names = (module: 'raw' | 'coerce'): string[] => [
 		...new Set([
-			...(module === 'coerce' ? ['buildByKind', ...(config.commentCoercer !== undefined ? [config.commentCoercer] : [])] : []),
+			...(module === 'coerce' && config.commentCoercer !== undefined ? [config.commentCoercer] : []),
 			...(config.spelledTrivia ?? []).filter((form) => form.module === module).map((form) => form.builder)
 		])
 	];
@@ -139,7 +139,7 @@ import { isMember, membersOf, type is } from './is.js';
 ${config.portable === true ? "import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarNodeTypeName(grammar)}, ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
-import { jsonFacts, querySlots, structure, triviaFacts } from './utils.js';
+import { querySlots, structure, triviaFacts } from './utils.js';
 ${factoryImports(config)}import { RENDER_MODULE_HASH } from './hash.js';
 import { createRenderEngine, type ${rootTypeName}Root } from './render-engine.js';
 import { wrapNode, hydrate, type ${rootTreeTypeName} } from './wrap.js';
@@ -165,8 +165,6 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	build: ir,
 	trivia: ${triviaHook(config)},
 	querySlots,
-	json: jsonFacts,
-	buildByKind,
 	structure,
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),

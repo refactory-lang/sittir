@@ -79,7 +79,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 	});
 
 	it('prints the table into the language utils by kind id', () => {
-		const utils = emitClientUtils({ grammar: 'python', nodeMap, kindEntries, structure: new Map([[7, { kind: 'probe', nonEmpty: [['_items', 'probe.items']] }]]) });
+		const utils = emitClientUtils({ grammar: 'python', nodeMap, structure: new Map([[7, { kind: 'probe', nonEmpty: [['_items', 'probe.items']] }]]) });
 		expect(utils).toContain('export const structure: StructureTable = Object.freeze({\n    7: {"kind":"probe","nonEmpty":[["_items","probe.items"]]}\n});');
 	});
 });

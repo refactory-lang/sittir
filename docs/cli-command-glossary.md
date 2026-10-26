@@ -68,6 +68,7 @@ Per-grammar raw pass/total counts for all four validators
 
 - `--isolate` — Run each grammar in a child process; attributes SIGSEGV to the last attempted kind (default: `false`)
 - `--node-storage <storage>` — How the engine reads a parsed tree: as object nodes (object), or as record views (arena) (default: `object`)
+- `--construction <construction>` — How builders construct nodes: as objects (objects), or as records (records, with --node-storage arena) (default: `objects`)
 - `--_isolate-worker` — Internal: run as an isolation worker for a single grammar (default: `false`)
 
 **Example**
@@ -210,6 +211,7 @@ Measure native workflows or object/arena validation buckets
 - `--limit <n>` — Use only the first n corpus entries (smoke runs)
 - `--native-depth <depth>` — Native hydration depth: a positive integer or all (default: `all`)
 - `--validation` — Profile deep read, factory and IR render/parse validators with object and arena storage
+- `--construction <construction>` — How the arena arm's builders construct nodes in validation profiles: as objects (objects), or as records (records) (default: `objects`)
 - `--idle-gate <path>` — Run a shell idle gate before each worker, passing the current directory
 - `--output <path>` — Write the complete JSON report to this file
 
@@ -584,21 +586,6 @@ List groups, unaliased, and phantom kinds
 
 ```sh
 pnpm exec tsx packages/cli/src/cli.ts tool list-kinds [options]
-```
-
-### `tool node-json-census`
-
-Census what node JSON and the reviver rest on: unwrapped text leaves, kinds the coercer cannot build, slot value shapes, comment kinds
-
-**Options**
-
-- `-g, --grammar <name>` — Grammar to operate on — choices: `python` | `regex` | `rust` | `scm` | `typescript`
-- `--all-grammars` — Run every stable grammar
-
-**Example**
-
-```sh
-pnpm exec tsx packages/cli/src/cli.ts tool node-json-census [options]
 ```
 
 ### `tool output-gate`

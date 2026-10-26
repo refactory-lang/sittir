@@ -30,7 +30,6 @@ const EXPECTED = [
 	'inspect-refs',
 	'inspect-type',
 	'list-kinds',
-	'node-json-census',
 	'output-gate',
 	'override-census',
 	'phantom-kinds',

@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
-import { treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
+import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
@@ -203,7 +203,7 @@ describe('a built arena rendered natively', () => {
 			});
 			expect(unitRow).toBeDefined();
 			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comment]);
-			expect(JSON.stringify(block)).toContain('" c "');
+			expect(JSON.stringify(snapshotOf(block))).toContain('" c "');
 		});
 
 		it("refuses as a record's owner another grammar's engine, whatever its prototype", () => {

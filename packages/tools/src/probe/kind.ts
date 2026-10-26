@@ -619,7 +619,7 @@ export async function probe(
 		probeRange,
 		cst,
 		sexp,
-		untypedNode: stripBigInts(untypedNode),
+		untypedNode: plainCopy(untypedNode),
 		rendered,
 		reparsedCst,
 		astDiff,
@@ -820,7 +820,7 @@ async function readProbeLanes(
 		if (coordinate === undefined) throw new Error('probe-kind: no read node at the target span');
 	}
 	const read = (depth?: number): unknown => (coordinate === undefined ? handle.read!(0, depth) : readUntyped(handle, coordinate, depth));
-	const shallow = stripBigInts(read());
+	const shallow = plainCopy(read());
 	const deepUntypedNode = detachedHoldingTree(read(Infinity));
 	const deepTyped = readNode(handle, coordinate);
 	const deep = resolveNativeTraceUntypedNode(deepTyped, deepUntypedNode, accessorOf, onAccessorThrow);
@@ -836,10 +836,10 @@ async function buildTraceLane(
 	readMode: 'shallow' | 'deep',
 	deepUntypedNode?: unknown
 ): Promise<ProbeTraceLane> {
-	const cleanedRawUntypedNode = stripBigInts(rawUntypedNode);
-	const cleanedTyped = typed === undefined ? undefined : stripBigInts(typed);
-	const cleanedUntypedNode = stripBigInts(untypedNode);
-	const cleanedDeepUntypedNode = deepUntypedNode === undefined ? undefined : stripBigInts(deepUntypedNode);
+	const cleanedRawUntypedNode = plainCopy(rawUntypedNode);
+	const cleanedTyped = typed === undefined ? undefined : plainCopy(typed);
+	const cleanedUntypedNode = plainCopy(untypedNode);
+	const cleanedDeepUntypedNode = deepUntypedNode === undefined ? undefined : plainCopy(deepUntypedNode);
 	if (engine === 'js') {
 		try {
 			const rendered = await renderUntypedNode(grammar, cleanedUntypedNode);
@@ -959,7 +959,7 @@ async function renderUntypedNode(grammar: string, untypedNode: unknown): Promise
 /** @internal — the node data the engine renders for `untypedNode`: the
  *  same projection `SittirEngine.render` applies, exposed for the trace. */
 function nativeRenderPayload(untypedNode: unknown): Record<string, unknown> {
-	return toNodeData(stripBigInts(untypedNode) as AnyUntypedNode, PLAIN_KINDS) as unknown as Record<string, unknown>;
+	return toNodeData(plainCopy(untypedNode) as AnyUntypedNode, PLAIN_KINDS) as unknown as Record<string, unknown>;
 }
 
 /** @internal — render via the native napi engine.
@@ -969,7 +969,7 @@ function nativeRenderPayload(untypedNode: unknown): Record<string, unknown> {
  *  on this path. */
 async function renderUntypedNodeNative(grammar: string, untypedNode: unknown): Promise<string> {
 	const engine = await loadNativeEngine(grammar);
-	return engine.render(stripBigInts(untypedNode) as AnyUntypedNode).toString();
+	return engine.render(plainCopy(untypedNode) as AnyUntypedNode).toString();
 }
 
 /** @internal — load `readNode` from an explicit `src/wrap.ts`
@@ -1089,11 +1089,21 @@ function computeEngineCompare(ts: ProbeReport, native: ProbeReport): ProbeEngine
 	return { renderedEqual, renderedLenDelta, astShapeEqual, summary };
 }
 
-function stripBigInts(v: unknown): unknown {
-	// UntypedNode carries `$nodeId` as number (or bigint on some platforms);
-	// JSON.stringify chokes on bigint. Cast to Number for dump purposes.
-	// The JSON copy holds no tree, and it is still rendered: pass the tree on.
-	return holdingTreeOf(v, JSON.parse(JSON.stringify(v, (_k, val) => (typeof val === 'bigint' ? Number(val) : val))));
+function plainCopy(value: unknown): unknown {
+	return holdingTreeOf(value, plainData(value));
+}
+
+function plainData(value: unknown): unknown {
+	if (typeof value === 'bigint') return Number(value);
+	if (typeof value === 'function' || typeof value === 'symbol') return undefined;
+	if (Array.isArray(value)) return value.map((entry) => plainData(entry) ?? null);
+	if (value === null || typeof value !== 'object') return value;
+	const out: Record<string, unknown> = {};
+	for (const [key, member] of Object.entries(value)) {
+		const plain = plainData(member);
+		if (plain !== undefined) out[key] = plain;
+	}
+	return out;
 }
 
 async function readStdin(): Promise<string> {

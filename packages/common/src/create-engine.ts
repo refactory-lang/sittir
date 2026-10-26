@@ -30,7 +30,8 @@ import { BuiltArena, type BuiltViews } from './built-arena.ts';
 import type { TreeHandle } from './read.ts';
 import { ParseErrors } from './parse-errors.ts';
 import { queryFacet, type QueryHooks } from './query.ts';
-import { reviveNode } from './node-json.ts';
+import { refuseReviver } from './json-refusal.ts';
+import { snapshotOf } from './snapshot.ts';
 import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
 import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
@@ -242,7 +243,8 @@ function assembleEngine<API extends LanguageAPI>(
 			typeof target === 'number' ? String(target) : (hooks.trivia.kindName(target.$type) ?? String(target.$type));
 		const before = performance.now();
 		const text = rendered.toString();
-		recordFfi(language.name, kind, JSON.stringify(target).length, performance.now() - before, text.length);
+		const payload = typeof target === 'number' ? String(target) : JSON.stringify(snapshotOf(target));
+		recordFfi(language.name, kind, payload.length, performance.now() - before, text.length);
 		return text;
 	};
 	const readAndBind = (source: string, parseOptions?: ParseOptions) => {
@@ -275,10 +277,7 @@ function assembleEngine<API extends LanguageAPI>(
 		isParsedNode: (value): value is API['node'] => isParsedNode(value) && inLanguage(value),
 		isFactoryNode: (value): value is API['node'] => isFactoryNode(value) && inLanguage(value),
 		isErrorNode: (value): value is ErrorNode => isErrorNode(value) && inLanguage(value),
-		reviver: (key, value) =>
-			key !== ''
-				? value
-				: inEngine(handle, () => reviveNode(value, { facts: hooks.json, structure: hooks.structure, build: hooks.buildByKind, settle: handle.settle })),
+		reviver: refuseReviver,
 		isEmptyNode: ((node: AnyUntypedNode): boolean => {
 			const kind = hooks.trivia.kindName(node.$type);
 			return (

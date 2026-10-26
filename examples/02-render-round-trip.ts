@@ -1,4 +1,5 @@
 import rust from '@sittir/rust';
+import { sameStructure } from './helpers.ts';
 
 const rs = await rust.createEngine();
 
@@ -28,7 +29,7 @@ export function renderUntouched(source: string) {
 
 /**
  * Read → render → re-read. What must hold is that the rendered text
- * re-parses to the same tree, whichever levels came back verbatim and
+ * re-parses to the same tree (`sameStructure`), whichever levels came back verbatim and
  * whichever were rebuilt from templates.
  */
 export function roundTrip(source: string) {
@@ -37,6 +38,6 @@ export function roundTrip(source: string) {
 	const second = rs.parse(rendered);
 	return {
 		rendered,
-		reparsesEqual: JSON.stringify(first) === JSON.stringify(second),
+		reparsesEqual: sameStructure(first, second),
 	};
 }

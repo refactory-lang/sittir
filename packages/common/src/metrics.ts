@@ -39,7 +39,7 @@ export interface PerKindMetrics {
 	readonly outputBytes: number;
 	/** Heap delta (heapUsed after − before) summed across calls, bytes. */
 	readonly heapDeltaBytes: number;
-	/** FFI payload bytes (JSON.stringify size) — native backend only. */
+	/** FFI payload bytes, estimated by the JSON size of each rendered node's snapshot — native backend only. */
 	readonly napiCopyBytes?: number;
 }
 

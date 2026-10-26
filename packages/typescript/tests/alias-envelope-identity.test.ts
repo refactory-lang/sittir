@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { useRecordConstruction } from '@sittir/common/engine';
 import { writeUnitSides } from '@sittir/common/utils';
+import { structureOf } from '../../../examples/helpers.ts';
 import arena from '../src/arena.ts';
 import typescript from '../src/index.ts';
 
@@ -59,7 +60,7 @@ describe("a trivia write on a content that shares its envelope's parser node", (
 		expect(comments(envelope.$trivia[side]())).toHaveLength(1);
 		expect(content.$trivia[side]()).toEqual([]);
 		expect(out.split('// c').length - 1).toBe(1);
-		expect(JSON.stringify(root).match(/"(?:leading|trailing)Comments":\[\{/g)).toHaveLength(1);
+		expect(JSON.stringify(structureOf(root.$snapshot!())).match(/"(?:leading|trailing)":\[\{/g)).toHaveLength(1);
 	});
 });
 

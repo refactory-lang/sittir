@@ -104,15 +104,11 @@ export interface NodeMethods {
 	 */
 	toString(): string;
 	/**
-	 * The node's structure as JSON, which `JSON.stringify` writes: its kind name as `$type`, a leaf's text as
-	 * `$text`, each slot under its accessor's name, and its comments as `leadingComments`, `trailingComments`
-	 * and `innerComments`. An absent slot, an absent keyword and an empty comment side are left out; an empty
-	 * list is `[]`. Layout, provenance and the tree a parsed node reads are not written, so the engine's
-	 * `reviver` builds the JSON back into a node that renders with the engine's formatting.
+	 * A node has no JSON form: `JSON.stringify` of a node, or of a value holding one, refuses.
 	 *
-	 * @returns The node's JSON.
+	 * @throws Always, naming `toJSON`.
 	 */
-	toJSON(): NodeJSON;
+	toJSON(): never;
 }
 
 /**
@@ -121,46 +117,6 @@ export interface NodeMethods {
  */
 export interface HoldsTrivia<Trivia = any> {
 	$trivia: TriviaSetter<this, Trivia>;
-}
-
-/**
- * A node as JSON (`NodeMethods.toJSON`): its kind name, a leaf's text, its slots by accessor name, and the
- * comments on each side of it.
- */
-export interface NodeJSON {
-	readonly $type: string;
-	readonly $text?: string;
-	readonly leadingComments?: readonly NodeJSON[];
-	readonly trailingComments?: readonly NodeJSON[];
-	readonly innerComments?: readonly NodeJSON[];
-	readonly [slot: string]: NodeJSONValue | undefined;
-}
-
-/**
- * What a slot holds in a node's JSON: a node (a kind id is written as a node of that kind), a list, whose
- * empty element is `null`, a keyword's presence as `true`, a string, or `null` for an optional slot that
- * chose none, as a builder takes it.
- */
-export type NodeJSONValue = NodeJSON | readonly (NodeJSON | null)[] | true | string | null;
-
-/** Engine plumbing, not for callers: what a language's nodes are written to JSON and revived by. */
-export interface NodeJSONFacts {
-	/** Each kind's name, by kind id. */
-	readonly names: ReadonlyMap<number, string>;
-	/** The kind id of the model kind a name names; an alias's display id never answers. Throws for a name no kind has. */
-	kindId(name: string): number;
-	/** Each kind's slots, by kind id. */
-	readonly slots: QuerySlots;
-	/** The trivia kinds that spell layout; every other trivia entry is a comment. */
-	readonly layout: ReadonlySet<number>;
-	/** The kinds whose nodes hold their text. */
-	readonly leaves: ReadonlySet<number>;
-	/** The alias envelopes built from their content's text, which their builder checks by the envelope's own rule rather than the content kind's: each envelope's kind id to the kind id of the content it holds. */
-	readonly textEnvelopes: ReadonlyMap<number, number>;
-	/** The kinds a slot holds as a kind id. */
-	readonly units: ReadonlySet<number>;
-	/** The kind id an optional slot holds when it chose none. */
-	readonly blank: number;
 }
 
 export interface GrammarInnerTrivia<N, Trivia> {
@@ -270,13 +226,6 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly build: API['build'];
 	readonly trivia: TriviaFacts<API['kindId']>;
 	readonly querySlots: QuerySlots;
-	/** What the language's nodes are written to JSON by and revived by. */
-	readonly json: NodeJSONFacts;
-	/**
-	 * Builds a node of the kind named `kind`: from one input as a kind tag does (its text as `{ text }`, or its
-	 * config), or from the builder's own arguments (a config and its options, or a list's options and items).
-	 */
-	buildByKind(kind: string, ...input: unknown[]): unknown;
 	readonly queryFlags?: QueryFlags;
 	readonly querySlotFlags?: QuerySlotFlags;
 	readonly structure: StructureTable;
@@ -390,18 +339,12 @@ export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default
 	/** Whether `value` is a parsed ERROR node of this engine's language, read in a slot or as a trivia item. */
 	readonly isErrorNode: (value: unknown) => value is ErrorNode;
 	/**
-	 * A `JSON.parse` reviver that builds a node's JSON (`NodeMethods.toJSON`) back into this engine's nodes:
-	 * `JSON.parse(text, engine.reviver)`. It is bound to the engine, so it can be passed on its own. Every
-	 * object with a `$type` is built as a node of that kind, children first, its comments put back on their
-	 * sides; other values, and a document's fields around a node, are left as they are. A revived node is
-	 * a built node: it renders with the engine's formatting, not the source's.
+	 * A `JSON.parse` reviver. A node has no JSON form (`NodeMethods.toJSON`), so there is nothing to revive:
+	 * `JSON.parse(text, engine.reviver)` refuses.
 	 *
-	 * @throws When the JSON names a kind this language lacks, a slot its kind lacks, an ERROR node, a leaf
-	 * without its text or comments on a trivia kind (`HoldsTrivia`), naming where in the JSON
-	 * (`$.body.statements[2]: unknown kind 'foo'`); and, when the
-	 * engine verifies structure, when a node misses a slot its kind requires.
+	 * @throws Always, naming `reviver`.
 	 */
-	readonly reviver: (key: string, value: unknown) => unknown;
+	readonly reviver: (key: string, value: unknown) => never;
 	/**
 	 * Whether `node` is this engine's node of a kind with an inner gap and nothing in it holds
 	 * sides, so it takes `$trivia.inner`. A parsed node answers from its tree: no child is named,

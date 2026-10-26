@@ -38,6 +38,10 @@ public cutover evidence.
 - **Native reads JS-owned chunks per call.** Every grammar's addon borrows the
   chunks for one synchronous render, admits the records it reaches, and holds
   no span after the call (`BorrowedArena`, `admit`, `RecordGrammar::render_record`).
+- **No JSON.** A node has no JSON form. Every node's `toJSON` is one shared
+  function that refuses by name, so a node costs no closure for it, and
+  `engine.reviver` refuses the same way. No JSON writer, reviver or JSON facts
+  are generated.
 - **Preserve everything the object path has:**
   - parsed coordinate links;
   - bounded inline children, lists and list settings;
@@ -103,9 +107,9 @@ the last slice.
     arena and its engine alive while the side holds the record; the store keeps
     the other engine's store weakly.
   - Written sides go to the native store. So do a built record's unit sides,
-    from a JSON revival or a rebuild, which carries them realigned to where
-    their units moved; the store is the only copy, and the holder's table
-    keeps the arena of any record they hold.
+    from a rebuild, which carries them realigned to where their units moved;
+    the store is the only copy, and the holder's table keeps the arena of any
+    record they hold.
   - A parsed entry of a live tree crosses into any native table as its
     coordinate, and the table holds that tree, so the entry's own sides are
     read at render and it reads back as its parsed view. A parsed entry of
@@ -119,8 +123,8 @@ the last slice.
     text by its kind's maker, the one its builder calls. The records module
     hands the arena both, by kind.
   - A builder's input shape (its config keys, options and positional list) is
-    the structure row its emitter writes beside the builder. One reader
-    (`builderInputs`) serves the JSON reviver and the rows.
+    the structure row its emitter writes beside the builder. `builderInputs`
+    reads it for the rows.
   - `$with` shares unchanged children and copies bounded ones.
   - Disposal, growth and invalid buffers are covered.
 - [x] **Record views for every compound kind.** A kind that seats a group
