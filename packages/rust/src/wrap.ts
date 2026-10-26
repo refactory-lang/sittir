@@ -453,7 +453,7 @@ export function wrapAttribute(data: T.Attribute, tree: TreeHandle): T.Attribute.
 		$type: TSKindId.Attribute as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		input() {
@@ -1849,7 +1849,7 @@ export function wrapUseDeclaration(data: T.UseDeclaration, tree: TreeHandle): T.
 		},
 		argument() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -1888,7 +1888,13 @@ export function wrapScopedUseList(data: T.ScopedUseList, tree: TreeHandle): T.Sc
 		$type: TSKindId.ScopedUseList as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier | undefined
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| undefined
 			>(this, '_path', tree);
 		},
 		list() {
@@ -1970,7 +1976,7 @@ export function wrapUseAsClause(data: T.UseAsClause, tree: TreeHandle): T.UseAsC
 		$type: TSKindId.UseAsClause as const,
 		name() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_name', tree);
 		},
 		alias() {
@@ -2938,7 +2944,7 @@ export function wrapScopedIdentifier(data: T.ScopedIdentifier, tree: TreeHandle)
 		$type: TSKindId.ScopedIdentifier as const,
 		qualifier() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -2982,7 +2988,7 @@ export function wrapScopedTypeIdentifierInExpressionPosition(
 		$type: TSKindId.ScopedTypeIdentifierInExpressionPosition as const,
 		qualifier() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -3027,7 +3033,7 @@ export function wrapScopedTypeIdentifier(
 		$type: TSKindId.ScopedTypeIdentifier as const,
 		qualifier() {
 			return hydrateSlot<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -3950,8 +3956,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		match() {
 			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		body() {
+			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		trailingComma() {
 			return this._trailing_comma;
@@ -3963,8 +3969,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				),
 			match: (v: NonNullable<T.LastMatchArm['_match']>) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _match: v }, tree)),
-			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.LastMatchArm['_body']>) =>
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _body: v }, tree)),
 			trailingComma: (v: NonNullable<T.LastMatchArm['_trailing_comma']> | null) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree)),
 			pattern: (...args: unknown[]) =>
@@ -4673,19 +4679,19 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 		type() {
 			return hydrateSlot<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(this, '_type', tree);
 		},
-		patterns() {
-			return hydrateSlot<T.Patterns | undefined>(this, '_patterns', tree);
+		fields() {
+			return hydrateSlot<T.Patterns | undefined>(this, '_fields', tree);
 		},
 		$with: {
 			type: (v: NonNullable<T.TupleStructPattern['_type']>) =>
 				rebuilt(node, handle, () => wrapTupleStructPattern({ ...$edited(data), _type: v }, tree)),
-			patterns: (...args: unknown[]) =>
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.TupleStructPattern['_patterns']>) =>
-							wrapTupleStructPattern({ ...$edited(data), _patterns: v }, tree)
+						(v: NonNullable<T.TupleStructPattern['_fields']>) =>
+							wrapTupleStructPattern({ ...$edited(data), _fields: v }, tree)
 					)
 				)
 		},
@@ -5287,7 +5293,7 @@ export function wrapUseClauses(data: T.UseClauses, tree: TreeHandle): T.UseClaus
 		$type: TSKindId.UseClauses as const,
 		items() {
 			return hydrateSlots<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -5724,7 +5730,13 @@ export function wrapUseWildcardGroup(data: T.UseWildcardGroup, tree: TreeHandle)
 		$type: TSKindId.UseWildcardGroup as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier | undefined
+				| TSKindId.SelfModule
+				| T.Metavariable
+				| TSKindId.Super
+				| TSKindId.Crate
+				| T.Identifier
+				| T.ScopedIdentifier
+				| undefined
 			>(this, '_path', tree);
 		},
 		$with: {
@@ -6756,7 +6768,7 @@ export function wrapVisibilityModifierPubScopeInPath(
 		$type: TSKindId.VisibilityModifierPubScopeInPath as const,
 		path() {
 			return hydrateSlot<
-				TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+				TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 			>(this, '_path', tree);
 		},
 		$with: {
@@ -6786,7 +6798,7 @@ export function wrapVisibilityModifierPubScope(
 		...data,
 		$type: TSKindId.VisibilityModifierPubScope as const,
 		content() {
-			return hydrateSlot<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
+			return hydrateSlot<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>(
 				this,
 				'_content',
 				tree
@@ -7303,8 +7315,8 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 		match() {
 			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		body() {
+			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
@@ -7313,8 +7325,8 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 				),
 			match: (v: NonNullable<T.MatchArmWithComma['_match']>) =>
 				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _match: v }, tree)),
-			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.MatchArmWithComma['_body']>) =>
+				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _body: v }, tree)),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -7382,7 +7394,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 		match() {
 			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
-		value() {
+		body() {
 			return hydrateSlot<
 				| T.UnsafeBlock
 				| T.AsyncBlock
@@ -7395,7 +7407,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 				| T.LoopExpression
 				| T.ForExpression
 				| T.ConstBlock
-			>(this, '_value', tree);
+			>(this, '_body', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
@@ -7404,8 +7416,8 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 				),
 			match: (v: NonNullable<T.MatchArmBlockEnding['_match']>) =>
 				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _match: v }, tree)),
-			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.MatchArmBlockEnding['_body']>) =>
+				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _body: v }, tree)),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -8042,7 +8054,7 @@ export function wrapRangePatternPrefix(data: T.RangePatternPrefix, tree: TreeHan
 		right() {
 			return hydrateSlot<
 				| T.LiteralPattern
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -8084,7 +8096,7 @@ export function wrapRangePatternWithLeftWithRight(
 		right() {
 			return hydrateSlot<
 				| T.LiteralPattern
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -8123,7 +8135,7 @@ export function wrapRangePatternWithLeft(
 		left() {
 			return hydrateSlot<
 				| T.LiteralPattern
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate

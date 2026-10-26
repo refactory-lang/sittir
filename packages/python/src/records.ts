@@ -35,9 +35,9 @@ export const records = {
 	MatchStatementNode: { words: 12, subjects: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	CaseClauseNode: {
 		words: 17,
-		case_patterns: { word: 2, width: 5 },
+		pattern: { word: 2, width: 5 },
 		guard: { word: 7, width: 5 },
-		consequence: { word: 12, width: 5 }
+		body: { word: 12, width: 5 }
 	},
 	ForStatementNode: {
 		words: 23,
@@ -105,16 +105,15 @@ export const records = {
 	DecoratorNode: { words: 7, expression: { word: 2, width: 5 } },
 	BlockNode: { words: 4, statements: { word: 2, width: 2, run: 5 } },
 	ExpressionListNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
-	DottedNameNode: { words: 4, names: { word: 2, width: 2, run: 5 } },
+	DottedNameNode: { words: 12, qualifier: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
 	CasePatternNode: { words: 7, content: { word: 2, width: 5 } },
 	SimplePatternNode: { words: 7, content: { word: 2, width: 5 } },
 	CaseAsPatternNode: { words: 12, case_pattern: { word: 2, width: 5 }, identifier: { word: 7, width: 5 } },
 	UnionPatternNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	DictPatternNode: { words: 7, elements: { word: 2, width: 5 } },
 	KeyValuePatternNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	KeywordPatternNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	SplatPatternNode: { words: 12, operator: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	ClassPatternNode: { words: 12, name: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
+	KeywordPatternNode: { words: 12, name: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	ClassPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	ComplexPatternNode: {
 		words: 18,
 		sign: { word: 2, bit: 0 },
@@ -220,7 +219,6 @@ export const records = {
 	CommentNode: { words: 6, content: { word: 2, width: 4 } },
 	SimpleStatementsElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	SubjectsNode: { words: 4, subject: { word: 2, width: 2, run: 5 } },
-	CasePatternsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	WithClauseWithItemsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	TypesNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ArgumentListElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
@@ -231,6 +229,7 @@ export const records = {
 	SliceGroupNode: { words: 7, expression: { word: 2, width: 5 } },
 	FormatSpecifierTextNode: { words: 2 },
 	TuplePatternElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
+	CasePatternListNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	TupleElementsNode: { words: 4, item: { word: 2, width: 2, run: 5 } },
 	ExceptClauseExceptionAsNode: { words: 12, value: { word: 2, width: 5 }, alias: { word: 7, width: 5 } },
 	CaseTuplePatternNode: { words: 7, elements: { word: 2, width: 5 } },
@@ -288,6 +287,8 @@ export const records = {
 	SimplePatternNegativeNode: { words: 7, value: { word: 2, width: 5 } },
 	ExceptClauseExceptionListNode: { words: 4, value: { word: 2, width: 2, run: 5 } },
 	ExceptClauseExceptionNode: { words: 7, content: { word: 2, width: 5 } },
+	SplatPatternListNode: { words: 7, pattern: { word: 2, width: 5 } },
+	SplatPatternDictionaryNode: { words: 7, pattern: { word: 2, width: 5 } },
 	AssignmentEqNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	AssignmentTypeNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	AssignmentTypedNode: {

@@ -609,7 +609,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -2811,7 +2811,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -3537,7 +3537,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -3966,7 +3966,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -4261,7 +4261,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -4556,7 +4556,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -5525,7 +5525,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -6033,7 +6033,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -6941,7 +6941,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -7676,7 +7676,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -9329,10 +9329,10 @@
       }
     },
     "last_match_arm": {
-      "vocab": "clause.match.arm.last",
+      "vocab": "clause.case.match",
       "read": [
         {
-          "vocab": "clause.match.arm.last",
+          "vocab": "clause.case.match",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9352,35 +9352,63 @@
           ]
         },
         {
-          "name": "match",
+          "name": "body",
           "route": "slot",
-          "slot": "match",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "last_match_arm",
+              "slot": "body"
+            }
+          ]
+        },
+        {
+          "name": "pattern",
+          "route": "nested",
+          "via": [
+            {
+              "field": "match",
+              "kind": "match_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_pattern",
+          "slot": "pattern",
+          "multiple": false,
           "path": [
             {
               "owner": "last_match_arm",
               "slot": "match"
+            },
+            {
+              "owner": "match_pattern",
+              "slot": "pattern"
             }
           ]
         },
         {
-          "name": "value",
-          "route": "slot",
-          "slot": "value",
-          "path": [
+          "name": "guard",
+          "route": "nested",
+          "via": [
             {
-              "owner": "last_match_arm",
-              "slot": "value"
+              "field": "match",
+              "kind": "match_pattern",
+              "after": null,
+              "anchor": null
             }
-          ]
-        },
-        {
-          "name": "trailingComma",
-          "route": "slot",
-          "slot": "trailing_comma",
+          ],
+          "parent": "match_pattern",
+          "slot": "condition",
+          "multiple": false,
           "path": [
             {
               "owner": "last_match_arm",
-              "slot": "trailing_comma"
+              "slot": "match"
+            },
+            {
+              "owner": "match_pattern",
+              "slot": "condition"
             }
           ]
         }
@@ -10014,10 +10042,10 @@
       }
     },
     "match_arm": {
-      "vocab": "clause.match.arm",
+      "vocab": "clause.case.match",
       "read": [
         {
-          "vocab": "clause.match.arm",
+          "vocab": "clause.case.match",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10027,10 +10055,10 @@
       "members": []
     },
     "match_arm_block_ending": {
-      "vocab": "clause.match.arm",
+      "vocab": "clause.case.match",
       "read": [
         {
-          "vocab": "clause.match.arm",
+          "vocab": "clause.case.match",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10050,34 +10078,73 @@
           ]
         },
         {
-          "name": "match",
+          "name": "body",
           "route": "slot",
-          "slot": "match",
+          "slot": "body",
           "path": [
             {
               "owner": "match_arm_block_ending",
-              "slot": "match"
+              "slot": "body"
             }
           ]
         },
         {
-          "name": "value",
-          "route": "slot",
-          "slot": "value",
+          "name": "pattern",
+          "route": "nested",
+          "via": [
+            {
+              "field": "match",
+              "kind": "match_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_pattern",
+          "slot": "pattern",
+          "multiple": false,
           "path": [
             {
               "owner": "match_arm_block_ending",
-              "slot": "value"
+              "slot": "match"
+            },
+            {
+              "owner": "match_pattern",
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "guard",
+          "route": "nested",
+          "via": [
+            {
+              "field": "match",
+              "kind": "match_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_pattern",
+          "slot": "condition",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "match_arm_block_ending",
+              "slot": "match"
+            },
+            {
+              "owner": "match_pattern",
+              "slot": "condition"
             }
           ]
         }
       ]
     },
     "match_arm_with_comma": {
-      "vocab": "clause.match.arm",
+      "vocab": "clause.case.match",
       "read": [
         {
-          "vocab": "clause.match.arm",
+          "vocab": "clause.case.match",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -10097,24 +10164,63 @@
           ]
         },
         {
-          "name": "match",
+          "name": "body",
           "route": "slot",
-          "slot": "match",
+          "slot": "body",
           "path": [
             {
               "owner": "match_arm_with_comma",
-              "slot": "match"
+              "slot": "body"
             }
           ]
         },
         {
-          "name": "value",
-          "route": "slot",
-          "slot": "value",
+          "name": "pattern",
+          "route": "nested",
+          "via": [
+            {
+              "field": "match",
+              "kind": "match_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_pattern",
+          "slot": "pattern",
+          "multiple": false,
           "path": [
             {
               "owner": "match_arm_with_comma",
-              "slot": "value"
+              "slot": "match"
+            },
+            {
+              "owner": "match_pattern",
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "guard",
+          "route": "nested",
+          "via": [
+            {
+              "field": "match",
+              "kind": "match_pattern",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "match_pattern",
+          "slot": "condition",
+          "multiple": false,
+          "path": [
+            {
+              "owner": "match_arm_with_comma",
+              "slot": "match"
+            },
+            {
+              "owner": "match_pattern",
+              "slot": "condition"
             }
           ]
         }
@@ -10160,42 +10266,6 @@
             {
               "owner": "match_expression",
               "slot": "body"
-            }
-          ]
-        }
-      ]
-    },
-    "match_pattern": {
-      "vocab": "pattern.match",
-      "read": [
-        {
-          "vocab": "pattern.match",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "pattern",
-          "route": "slot",
-          "slot": "pattern",
-          "path": [
-            {
-              "owner": "match_pattern",
-              "slot": "pattern"
-            }
-          ]
-        },
-        {
-          "name": "condition",
-          "route": "slot",
-          "slot": "condition",
-          "path": [
-            {
-              "owner": "match_pattern",
-              "slot": "condition"
             }
           ]
         }
@@ -10400,7 +10470,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -11169,7 +11239,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -11565,7 +11635,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -13616,6 +13686,19 @@
       ],
       "members": []
     },
+    "self_module": {
+      "vocab": "identifier",
+      "read": [
+        {
+          "vocab": "identifier",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "self_parameter": {
       "vocab": "declaration.parameter.receiver",
       "read": [
@@ -13734,7 +13817,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 4
+                    "479": 4
                   }
                 }
               ],
@@ -13768,7 +13851,7 @@
                   235
                 ],
                 "slots": {
-                  "478": 0
+                  "479": 0
                 }
               }
             },
@@ -13777,7 +13860,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 }
               ],
@@ -13796,7 +13879,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 },
                 {
@@ -13820,7 +13903,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 },
                 {
@@ -13837,7 +13920,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -13861,7 +13944,7 @@
                   235
                 ],
                 "slots": {
-                  "478": 0
+                  "479": 0
                 }
               }
             },
@@ -13870,7 +13953,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 }
               ],
@@ -13889,7 +13972,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 },
                 {
@@ -13913,7 +13996,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 },
                 {
@@ -13954,7 +14037,7 @@
                   235
                 ],
                 "slots": {
-                  "478": 0
+                  "479": 0
                 }
               }
             },
@@ -13963,7 +14046,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 }
               ],
@@ -13982,7 +14065,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 },
                 {
@@ -14024,7 +14107,7 @@
                   235
                 ],
                 "slots": {
-                  "478": 0
+                  "479": 0
                 }
               }
             },
@@ -14033,7 +14116,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 }
               ],
@@ -14064,7 +14147,7 @@
                   235
                 ],
                 "slots": {
-                  "478": 0
+                  "479": 0
                 }
               }
             },
@@ -14073,7 +14156,7 @@
               "via": [
                 {
                   "slots": {
-                    "478": 0
+                    "479": 0
                   }
                 }
               ],
@@ -14503,7 +14586,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -15092,7 +15175,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -15521,7 +15604,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -15957,7 +16040,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -16851,7 +16934,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -17424,7 +17507,7 @@
       }
     },
     "tuple_struct_pattern": {
-      "vocab": "pattern.tuple.struct",
+      "vocab": "pattern.struct",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -17436,7 +17519,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.tuple.struct",
+          "vocab": "pattern.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17456,13 +17539,13 @@
           ]
         },
         {
-          "name": "patterns",
+          "name": "fields",
           "route": "slot",
-          "slot": "patterns",
+          "slot": "fields",
           "path": [
             {
               "owner": "tuple_struct_pattern",
-              "slot": "patterns"
+              "slot": "fields"
             }
           ]
         }
@@ -17771,7 +17854,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -18499,7 +18582,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -18980,7 +19063,7 @@
     "use_clauses": {
       "container": {
         "kinds": [
-          "self",
+          "self_module",
           "metavariable",
           "super",
           "crate",
@@ -19082,7 +19165,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -19569,7 +19652,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  125
+                  477
                 ],
                 "slots": {
                   "380": 0
@@ -19779,7 +19862,7 @@
     "visibility_modifier_pub_scope": {
       "container": {
         "kinds": [
-          "self",
+          "self_module",
           "super",
           "crate",
           "visibility_modifier_pub_scope_in_path"
@@ -19791,7 +19874,7 @@
     "visibility_modifier_pub_scope_in_path": {
       "container": {
         "kinds": [
-          "self",
+          "self_module",
           "metavariable",
           "super",
           "crate",
@@ -20000,26 +20083,26 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 8,
+        "kinds": 9,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 96,
-        "kinds": 157,
+        "paths": 95,
+        "kinds": 156,
         "refinements": 7
       },
       {
         "depth": 3,
-        "paths": 106,
+        "paths": 105,
         "kinds": 119,
-        "refinements": 80
+        "refinements": 79
       },
       {
         "depth": 4,
-        "paths": 89,
-        "kinds": 55,
-        "refinements": 63
+        "paths": 88,
+        "kinds": 54,
+        "refinements": 62
       },
       {
         "depth": 5,

@@ -1,5 +1,5 @@
 import type { GrammarContext } from './context.ts';
-import type { SubKindOf } from './utils.ts';
+import type { Flag, SubKindOf } from './utils.ts';
 import type * as V from './index.ts';
 export interface Expression<G extends GrammarContext<G>> {
 	readonly $kind: 'expression';
@@ -415,6 +415,7 @@ export namespace Expression {
 		// claimed by t
 		readonly $kind: 'expression.update';
 		readonly argument: G['slots']['expression.update']['argument'];
+		readonly prefix?: Flag;
 	}
 	export namespace Update {
 		export interface Decrement<G extends GrammarContext<G>> extends SubKindOf<V.Expression.Update<G>> {

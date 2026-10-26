@@ -77,7 +77,6 @@ export const unionPattern: Hoisted<typeof O.unionPattern> = hoistAs<typeof O.uni
 export const dictPattern: Hoisted<typeof O.dictPattern> = hoistAs<typeof O.dictPattern>(O.dictPattern);
 export const keyValuePattern: Hoisted<typeof O.keyValuePattern> = hoistAs<typeof O.keyValuePattern>(O.keyValuePattern);
 export const keywordPattern: Hoisted<typeof O.keywordPattern> = hoistAs<typeof O.keywordPattern>(O.keywordPattern);
-export const splatPattern: Hoisted<typeof O.splatPattern> = hoistAs<typeof O.splatPattern>(O.splatPattern);
 export const classPattern: Hoisted<typeof O.classPattern> = hoistAs<typeof O.classPattern>(O.classPattern);
 export const complexPattern: Hoisted<typeof O.complexPattern> = hoistAs<typeof O.complexPattern>(O.complexPattern);
 export const parametersElements: Hoisted<typeof O.parametersElements> = hoistAs<typeof O.parametersElements>(
@@ -167,7 +166,6 @@ export const simpleStatementsElements: Hoisted<typeof O.simpleStatementsElements
 	typeof O.simpleStatementsElements
 >(O.simpleStatementsElements);
 export const subjects: Hoisted<typeof O.subjects> = hoistAs<typeof O.subjects>(O.subjects);
-export const casePatterns: Hoisted<typeof O.casePatterns> = hoistAs<typeof O.casePatterns>(O.casePatterns);
 export const withClauseWithItems: Hoisted<typeof O.withClauseWithItems> = hoistAs<typeof O.withClauseWithItems>(
 	O.withClauseWithItems
 );
@@ -188,6 +186,7 @@ export const dictionaryElements: Hoisted<typeof O.dictionaryElements> = hoistAs<
 export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoistAs<typeof O.tuplePatternElements>(
 	O.tuplePatternElements
 );
+export const casePatternList: Hoisted<typeof O.casePatternList> = hoistAs<typeof O.casePatternList>(O.casePatternList);
 export const tupleElements: Hoisted<typeof O.tupleElements> = hoistAs<typeof O.tupleElements>(O.tupleElements);
 export const exceptClauseExceptionAs: Hoisted<typeof O.exceptClauseExceptionAs> = hoistAs<
 	typeof O.exceptClauseExceptionAs
@@ -217,6 +216,12 @@ export const floatLeadingPoint: Hoisted<typeof O.floatLeadingPoint> = hoistAs<ty
 	O.floatLeadingPoint
 );
 export const floatScientific: Hoisted<typeof O.floatScientific> = hoistAs<typeof O.floatScientific>(O.floatScientific);
+export const splatPatternList: Hoisted<typeof O.splatPatternList> = hoistAs<typeof O.splatPatternList>(
+	O.splatPatternList
+);
+export const splatPatternDictionary: Hoisted<typeof O.splatPatternDictionary> = hoistAs<
+	typeof O.splatPatternDictionary
+>(O.splatPatternDictionary);
 export const assignmentEq: Hoisted<typeof O.assignmentEq> = hoistAs<typeof O.assignmentEq>(O.assignmentEq);
 export const assignmentType: Hoisted<typeof O.assignmentType> = hoistAs<typeof O.assignmentType>(O.assignmentType);
 export const assignmentTyped: Hoisted<typeof O.assignmentTyped> = hoistAs<typeof O.assignmentTyped>(O.assignmentTyped);
@@ -256,6 +261,7 @@ export const compoundStatement: Hoisted<typeof O.compoundStatement> = hoistAs<ty
 export const matchBlock: Hoisted<typeof O.matchBlock> = hoistAs<typeof O.matchBlock>(O.matchBlock);
 export const withClause: Hoisted<typeof O.withClause> = hoistAs<typeof O.withClause>(O.withClause);
 export const suite: Hoisted<typeof O.suite> = hoistAs<typeof O.suite>(O.suite);
+export const splatPattern: Hoisted<typeof O.splatPattern> = hoistAs<typeof O.splatPattern>(O.splatPattern);
 export const parameter: Hoisted<typeof O.parameter> = hoistAs<typeof O.parameter>(O.parameter);
 export const pattern: Hoisted<typeof O.pattern> = hoistAs<typeof O.pattern>(O.pattern);
 export const assignment: Hoisted<typeof O.assignment> = hoistAs<typeof O.assignment>(O.assignment);

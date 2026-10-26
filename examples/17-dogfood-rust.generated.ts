@@ -103,7 +103,7 @@ export function rebuildSpliceGenerated() {
 										name: rs.build.identifier("end"),
 									})],
 								}),
-								value: rs.build.block.strict({
+								body: rs.build.block.strict({
 									trailingExpression: rs.build.macroInvocation.strict({
 										function: rs.build.identifier("write"),
 										arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
@@ -124,7 +124,7 @@ export function rebuildSpliceGenerated() {
 										name: rs.build.identifier("source_len"),
 									})],
 								}),
-								value: rs.build.macroInvocation.strict({
+								body: rs.build.macroInvocation.strict({
 									function: rs.build.identifier("write"),
 									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 										stringOpen: rs.build.stringOpen("\""),
@@ -144,7 +144,7 @@ export function rebuildSpliceGenerated() {
 										name: rs.build.identifier("end"),
 									})],
 								}),
-								value: rs.build.macroInvocation.strict({
+								body: rs.build.macroInvocation.strict({
 									function: rs.build.identifier("write"),
 									arguments: rs.build.delimTokenTreeParen.strict(rs.build.nonSpecialToken.strict(rs.build.identifier("f")), rs.build.nonSpecialToken.strict(rs.kinds.Comma), rs.build.nonSpecialToken.strict(rs.build.stringLiteral.strict({
 										stringOpen: rs.build.stringOpen("\""),

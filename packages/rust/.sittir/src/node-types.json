@@ -1136,7 +1136,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -4026,6 +4026,16 @@
           }
         ]
       },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
       "match": {
         "multiple": false,
         "required": true,
@@ -4043,16 +4053,6 @@
           {
             "type": ",",
             "named": false
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
           }
         ]
       }
@@ -4529,17 +4529,7 @@
           }
         ]
       },
-      "match": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "match_pattern",
-            "named": true
-          }
-        ]
-      },
-      "value": {
+      "body": {
         "multiple": false,
         "required": true,
         "types": [
@@ -4588,6 +4578,16 @@
             "named": true
           }
         ]
+      },
+      "match": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "match_pattern",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -4609,22 +4609,22 @@
           }
         ]
       },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
       "match": {
         "multiple": false,
         "required": true,
         "types": [
           {
             "type": "match_pattern",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_expression",
             "named": true
           }
         ]
@@ -5305,7 +5305,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5472,7 +5472,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5512,7 +5512,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5571,7 +5571,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -5908,7 +5908,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7063,7 +7063,7 @@
     "type": "tuple_struct_pattern",
     "named": true,
     "fields": {
-      "patterns": {
+      "fields": {
         "multiple": false,
         "required": false,
         "types": [
@@ -7539,7 +7539,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7615,7 +7615,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7667,7 +7667,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7757,7 +7757,7 @@
             "named": true
           },
           {
-            "type": "self",
+            "type": "self_module",
             "named": true
           },
           {
@@ -7841,7 +7841,7 @@
           "named": true
         },
         {
-          "type": "self",
+          "type": "self_module",
           "named": true
         },
         {
@@ -7891,7 +7891,7 @@
           "named": true
         },
         {
-          "type": "self",
+          "type": "self_module",
           "named": true
         },
         {
@@ -8578,6 +8578,10 @@
   },
   {
     "type": "self",
+    "named": true
+  },
+  {
+    "type": "self_module",
     "named": true
   },
   {

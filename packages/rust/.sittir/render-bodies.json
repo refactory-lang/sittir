@@ -3972,7 +3972,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "body"
 		},
 		{
 			"kind": "if",
@@ -4648,7 +4648,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "body"
 		},
 		{
 			"kind": "seam",
@@ -4682,7 +4682,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "body"
 		},
 		{
 			"kind": "seam",
@@ -7647,11 +7647,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "patterns",
+					"test": "fields",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "patterns"
+							"name": "fields"
 						}
 					]
 				}

@@ -37,6 +37,12 @@ export interface PortableIds {
 	'clause.bounds.higher_ranked': TSKindId.HigherRankedTraitBound;
 	'clause.bounds.removed': TSKindId.RemovedTraitBound;
 	'clause.bounds.use': TSKindId.UseBounds;
+	'clause.case': TSKindId.LastMatchArm | TSKindId.MatchArm | TSKindId.MatchArmBlockEnding | TSKindId.MatchArmWithComma;
+	'clause.case.match':
+		| TSKindId.LastMatchArm
+		| TSKindId.MatchArm
+		| TSKindId.MatchArmBlockEnding
+		| TSKindId.MatchArmWithComma;
 	'clause.else': TSKindId.ElseClause;
 	'clause.import': TSKindId.ScopedUseList | TSKindId.UseAsClause | TSKindId.UseList | TSKindId.UseWildcard;
 	'clause.import.alias': TSKindId.UseAsClause;
@@ -48,13 +54,6 @@ export interface PortableIds {
 	'clause.lifetimes': TSKindId.ForLifetimes;
 	'clause.macro': TSKindId.MacroRule;
 	'clause.macro.rule': TSKindId.MacroRule;
-	'clause.match': TSKindId.LastMatchArm | TSKindId.MatchArm | TSKindId.MatchArmBlockEnding | TSKindId.MatchArmWithComma;
-	'clause.match.arm':
-		| TSKindId.LastMatchArm
-		| TSKindId.MatchArm
-		| TSKindId.MatchArmBlockEnding
-		| TSKindId.MatchArmWithComma;
-	'clause.match.arm.last': TSKindId.LastMatchArm;
 	'clause.where': TSKindId.WhereClause | TSKindId.WherePredicate;
 	'clause.where.predicate': TSKindId.WherePredicate;
 	comment:
@@ -269,31 +268,14 @@ export interface PortableIds {
 	'declaration.parameter.receiver': TSKindId.Parameter | TSKindId.ReceiverParameterDeclaration | TSKindId.SelfParameter;
 	'declaration.parameter.variadic': TSKindId.VariadicParameter;
 	'declaration.struct':
-		| TSKindId.EnumVariant
 		| TSKindId.StructItem
 		| TSKindId.StructItemBrace
 		| TSKindId.StructItemTuple
 		| TSKindId.StructItemUnit;
-	'declaration.struct.private':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
-	'declaration.struct.public':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
-	'declaration.struct.public.internal':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
-	'declaration.struct.public.restricted':
-		| TSKindId.EnumVariant
-		| TSKindId.StructItemBrace
-		| TSKindId.StructItemTuple
-		| TSKindId.StructItemUnit;
+	'declaration.struct.private': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public.internal': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
+	'declaration.struct.public.restricted': TSKindId.StructItemBrace | TSKindId.StructItemTuple | TSKindId.StructItemUnit;
 	'declaration.struct.tuple': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.private': TSKindId.StructItemTuple;
 	'declaration.struct.tuple.public': TSKindId.StructItemTuple;
@@ -542,7 +524,7 @@ export interface PortableIds {
 	'expression.collection.tuple': TSKindId.TupleExpression;
 	'expression.instantiation': TSKindId.GenericFunction;
 	'expression.lambda': TSKindId.ClosureExpression | TSKindId.ClosureExpressionBlock | TSKindId.ClosureExpressionExpr;
-	'expression.member': TSKindId.CallExpression | TSKindId.FieldExpression;
+	'expression.member': TSKindId.FieldExpression;
 	'expression.parenthesized': TSKindId.ParenthesizedExpression;
 	'expression.propagate': TSKindId.TryExpression;
 	'expression.range':
@@ -582,6 +564,7 @@ export interface PortableIds {
 		| TSKindId.ScopedTypeIdentifier
 		| TSKindId.ScopedTypeIdentifierInExpressionPosition
 		| TSKindId.Self
+		| TSKindId.SelfModule
 		| TSKindId.ShorthandFieldIdentifier
 		| TSKindId.Super
 		| TSKindId.TypeIdentifier;
@@ -680,7 +663,6 @@ export interface PortableIds {
 		| TSKindId.FieldPatternNamed
 		| TSKindId.FieldPatternShorthand
 		| TSKindId.GenericPattern
-		| TSKindId.MatchPattern
 		| TSKindId.MutPattern
 		| TSKindId.OrPattern
 		| TSKindId.OrPatternBinary
@@ -699,7 +681,6 @@ export interface PortableIds {
 	'pattern.as': TSKindId.CapturedPattern;
 	'pattern.generic': TSKindId.GenericPattern;
 	'pattern.list': TSKindId.SlicePattern;
-	'pattern.match': TSKindId.MatchPattern;
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
 	'pattern.range': TSKindId.RangePattern | TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
@@ -716,8 +697,7 @@ export interface PortableIds {
 		| TSKindId.TupleStructPattern;
 	'pattern.struct.field': TSKindId.FieldPattern | TSKindId.FieldPatternNamed | TSKindId.FieldPatternShorthand;
 	'pattern.struct.rest': TSKindId.RemainingFieldPattern;
-	'pattern.tuple': TSKindId.TuplePattern | TSKindId.TupleStructPattern;
-	'pattern.tuple.struct': TSKindId.TupleStructPattern;
+	'pattern.tuple': TSKindId.TuplePattern;
 	'pattern.wildcard': TSKindId.WildcardPattern;
 	statement:
 		| TSKindId.Block
@@ -859,12 +839,12 @@ export interface PortableKindsAt {
 	clause: {
 		readonly $path: 'clause';
 		readonly bounds: PortableKindsAt['clause.bounds'];
+		readonly case: PortableKindsAt['clause.case'];
 		readonly else: PortableKindsAt['clause.else'];
 		readonly import: PortableKindsAt['clause.import'];
 		readonly let: PortableKindsAt['clause.let'];
 		readonly lifetimes: PortableKindsAt['clause.lifetimes'];
 		readonly macro: PortableKindsAt['clause.macro'];
-		readonly match: PortableKindsAt['clause.match'];
 		readonly where: PortableKindsAt['clause.where'];
 	};
 	'clause.bounds': {
@@ -876,6 +856,8 @@ export interface PortableKindsAt {
 	'clause.bounds.higher_ranked': { readonly $path: 'clause.bounds.higher_ranked' };
 	'clause.bounds.removed': { readonly $path: 'clause.bounds.removed' };
 	'clause.bounds.use': { readonly $path: 'clause.bounds.use' };
+	'clause.case': { readonly $path: 'clause.case'; readonly match: PortableKindsAt['clause.case.match'] };
+	'clause.case.match': { readonly $path: 'clause.case.match' };
 	'clause.else': { readonly $path: 'clause.else' };
 	'clause.import': {
 		readonly $path: 'clause.import';
@@ -895,9 +877,6 @@ export interface PortableKindsAt {
 	'clause.lifetimes': { readonly $path: 'clause.lifetimes' };
 	'clause.macro': { readonly $path: 'clause.macro'; readonly rule: PortableKindsAt['clause.macro.rule'] };
 	'clause.macro.rule': { readonly $path: 'clause.macro.rule' };
-	'clause.match': { readonly $path: 'clause.match'; readonly arm: PortableKindsAt['clause.match.arm'] };
-	'clause.match.arm': { readonly $path: 'clause.match.arm'; readonly last: PortableKindsAt['clause.match.arm.last'] };
-	'clause.match.arm.last': { readonly $path: 'clause.match.arm.last' };
 	'clause.where': { readonly $path: 'clause.where'; readonly predicate: PortableKindsAt['clause.where.predicate'] };
 	'clause.where.predicate': { readonly $path: 'clause.where.predicate' };
 	comment: {
@@ -1506,7 +1485,6 @@ export interface PortableKindsAt {
 		readonly as: PortableKindsAt['pattern.as'];
 		readonly generic: PortableKindsAt['pattern.generic'];
 		readonly list: PortableKindsAt['pattern.list'];
-		readonly match: PortableKindsAt['pattern.match'];
 		readonly mutable: PortableKindsAt['pattern.mutable'];
 		readonly or: PortableKindsAt['pattern.or'];
 		readonly range: PortableKindsAt['pattern.range'];
@@ -1518,7 +1496,6 @@ export interface PortableKindsAt {
 	'pattern.as': { readonly $path: 'pattern.as' };
 	'pattern.generic': { readonly $path: 'pattern.generic' };
 	'pattern.list': { readonly $path: 'pattern.list' };
-	'pattern.match': { readonly $path: 'pattern.match' };
 	'pattern.mutable': { readonly $path: 'pattern.mutable' };
 	'pattern.or': { readonly $path: 'pattern.or' };
 	'pattern.range': {
@@ -1540,8 +1517,7 @@ export interface PortableKindsAt {
 	};
 	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
 	'pattern.struct.rest': { readonly $path: 'pattern.struct.rest' };
-	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly struct: PortableKindsAt['pattern.tuple.struct'] };
-	'pattern.tuple.struct': { readonly $path: 'pattern.tuple.struct' };
+	'pattern.tuple': { readonly $path: 'pattern.tuple' };
 	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
 		readonly $path: 'statement';
@@ -1673,12 +1649,12 @@ export interface PortableIsAt {
 	'attribute.inner': PortableGuard<PortableIds['attribute.inner'], RustNode, TSKindId> & {};
 	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
+		readonly case: PortableIsAt['clause.case'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly import: PortableIsAt['clause.import'];
 		readonly let: PortableIsAt['clause.let'];
 		readonly lifetimes: PortableIsAt['clause.lifetimes'];
 		readonly macro: PortableIsAt['clause.macro'];
-		readonly match: PortableIsAt['clause.match'];
 		readonly where: PortableIsAt['clause.where'];
 	};
 	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], RustNode, TSKindId> & {
@@ -1689,6 +1665,10 @@ export interface PortableIsAt {
 	'clause.bounds.higher_ranked': PortableGuard<PortableIds['clause.bounds.higher_ranked'], RustNode, TSKindId> & {};
 	'clause.bounds.removed': PortableGuard<PortableIds['clause.bounds.removed'], RustNode, TSKindId> & {};
 	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use'], RustNode, TSKindId> & {};
+	'clause.case': PortableGuard<PortableIds['clause.case'], RustNode, TSKindId> & {
+		readonly match: PortableIsAt['clause.case.match'];
+	};
+	'clause.case.match': PortableGuard<PortableIds['clause.case.match'], RustNode, TSKindId> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else'], RustNode, TSKindId> & {};
 	'clause.import': PortableGuard<PortableIds['clause.import'], RustNode, TSKindId> & {
 		readonly alias: PortableIsAt['clause.import.alias'];
@@ -1710,13 +1690,6 @@ export interface PortableIsAt {
 		readonly rule: PortableIsAt['clause.macro.rule'];
 	};
 	'clause.macro.rule': PortableGuard<PortableIds['clause.macro.rule'], RustNode, TSKindId> & {};
-	'clause.match': PortableGuard<PortableIds['clause.match'], RustNode, TSKindId> & {
-		readonly arm: PortableIsAt['clause.match.arm'];
-	};
-	'clause.match.arm': PortableGuard<PortableIds['clause.match.arm'], RustNode, TSKindId> & {
-		readonly last: PortableIsAt['clause.match.arm.last'];
-	};
-	'clause.match.arm.last': PortableGuard<PortableIds['clause.match.arm.last'], RustNode, TSKindId> & {};
 	'clause.where': PortableGuard<PortableIds['clause.where'], RustNode, TSKindId> & {
 		readonly predicate: PortableIsAt['clause.where.predicate'];
 	};
@@ -2583,7 +2556,6 @@ export interface PortableIsAt {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly generic: PortableIsAt['pattern.generic'];
 		readonly list: PortableIsAt['pattern.list'];
-		readonly match: PortableIsAt['pattern.match'];
 		readonly mutable: PortableIsAt['pattern.mutable'];
 		readonly or: PortableIsAt['pattern.or'];
 		readonly range: PortableIsAt['pattern.range'];
@@ -2595,7 +2567,6 @@ export interface PortableIsAt {
 	'pattern.as': PortableGuard<PortableIds['pattern.as'], RustNode, TSKindId> & {};
 	'pattern.generic': PortableGuard<PortableIds['pattern.generic'], RustNode, TSKindId> & {};
 	'pattern.list': PortableGuard<PortableIds['pattern.list'], RustNode, TSKindId> & {};
-	'pattern.match': PortableGuard<PortableIds['pattern.match'], RustNode, TSKindId> & {};
 	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable'], RustNode, TSKindId> & {};
 	'pattern.or': PortableGuard<PortableIds['pattern.or'], RustNode, TSKindId> & {};
 	'pattern.range': PortableGuard<PortableIds['pattern.range'], RustNode, TSKindId> & {
@@ -2614,10 +2585,7 @@ export interface PortableIsAt {
 	};
 	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], RustNode, TSKindId> & {};
 	'pattern.struct.rest': PortableGuard<PortableIds['pattern.struct.rest'], RustNode, TSKindId> & {};
-	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId> & {
-		readonly struct: PortableIsAt['pattern.tuple.struct'];
-	};
-	'pattern.tuple.struct': PortableGuard<PortableIds['pattern.tuple.struct'], RustNode, TSKindId> & {};
+	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId> & {};
 	'pattern.wildcard': PortableGuard<PortableIds['pattern.wildcard'], RustNode, TSKindId> & {};
 	statement: PortableGuard<PortableIds['statement'], RustNode, TSKindId> & {
 		readonly block: PortableIsAt['statement.block'];
@@ -2836,6 +2804,14 @@ const table: PortableTable = {
 		'clause.bounds.higher_ranked': { ids: [TSKindId.HigherRankedTraitBound], exact: true },
 		'clause.bounds.removed': { ids: [TSKindId.RemovedTraitBound], exact: true },
 		'clause.bounds.use': { ids: [TSKindId.UseBounds], exact: true },
+		'clause.case': {
+			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
+			exact: true
+		},
+		'clause.case.match': {
+			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
+			exact: true
+		},
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
 		'clause.import': {
 			ids: [TSKindId.ScopedUseList, TSKindId.UseAsClause, TSKindId.UseList, TSKindId.UseWildcard],
@@ -2850,15 +2826,6 @@ const table: PortableTable = {
 		'clause.lifetimes': { ids: [TSKindId.ForLifetimes], exact: true },
 		'clause.macro': { ids: [TSKindId.MacroRule], exact: true },
 		'clause.macro.rule': { ids: [TSKindId.MacroRule], exact: true },
-		'clause.match': {
-			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
-			exact: true
-		},
-		'clause.match.arm': {
-			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
-			exact: true
-		},
-		'clause.match.arm.last': { ids: [TSKindId.LastMatchArm], exact: true },
 		'clause.where': { ids: [TSKindId.WhereClause, TSKindId.WherePredicate], exact: true },
 		'clause.where.predicate': { ids: [TSKindId.WherePredicate], exact: true },
 		comment: {
@@ -3127,29 +3094,23 @@ const table: PortableTable = {
 		},
 		'declaration.parameter.variadic': { ids: [TSKindId.VariadicParameter], exact: true },
 		'declaration.struct': {
-			ids: [
-				TSKindId.EnumVariant,
-				TSKindId.StructItem,
-				TSKindId.StructItemBrace,
-				TSKindId.StructItemTuple,
-				TSKindId.StructItemUnit
-			],
-			exact: false
+			ids: [TSKindId.StructItem, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			exact: true
 		},
 		'declaration.struct.private': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.public': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.public.internal': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.public.restricted': {
-			ids: [TSKindId.EnumVariant, TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
+			ids: [TSKindId.StructItemBrace, TSKindId.StructItemTuple, TSKindId.StructItemUnit],
 			exact: false
 		},
 		'declaration.struct.tuple': { ids: [TSKindId.StructItemTuple], exact: true },
@@ -3442,7 +3403,7 @@ const table: PortableTable = {
 			ids: [TSKindId.ClosureExpression, TSKindId.ClosureExpressionBlock, TSKindId.ClosureExpressionExpr],
 			exact: true
 		},
-		'expression.member': { ids: [TSKindId.CallExpression, TSKindId.FieldExpression], exact: false },
+		'expression.member': { ids: [TSKindId.FieldExpression], exact: true },
 		'expression.parenthesized': { ids: [TSKindId.ParenthesizedExpression], exact: true },
 		'expression.propagate': { ids: [TSKindId.TryExpression], exact: true },
 		'expression.range': {
@@ -3495,6 +3456,7 @@ const table: PortableTable = {
 				TSKindId.ScopedTypeIdentifier,
 				TSKindId.ScopedTypeIdentifierInExpressionPosition,
 				TSKindId.Self,
+				TSKindId.SelfModule,
 				TSKindId.ShorthandFieldIdentifier,
 				TSKindId.Super,
 				TSKindId.TypeIdentifier
@@ -3634,7 +3596,6 @@ const table: PortableTable = {
 				TSKindId.FieldPatternNamed,
 				TSKindId.FieldPatternShorthand,
 				TSKindId.GenericPattern,
-				TSKindId.MatchPattern,
 				TSKindId.MutPattern,
 				TSKindId.OrPattern,
 				TSKindId.OrPatternBinary,
@@ -3656,7 +3617,6 @@ const table: PortableTable = {
 		'pattern.as': { ids: [TSKindId.CapturedPattern], exact: false },
 		'pattern.generic': { ids: [TSKindId.GenericPattern], exact: false },
 		'pattern.list': { ids: [TSKindId.SlicePattern], exact: false },
-		'pattern.match': { ids: [TSKindId.MatchPattern], exact: true },
 		'pattern.mutable': { ids: [TSKindId.MutPattern], exact: false },
 		'pattern.or': { ids: [TSKindId.OrPattern, TSKindId.OrPatternBinary, TSKindId.OrPatternPrefix], exact: false },
 		'pattern.range': {
@@ -3683,8 +3643,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'pattern.struct.rest': { ids: [TSKindId.RemainingFieldPattern], exact: false },
-		'pattern.tuple': { ids: [TSKindId.TuplePattern, TSKindId.TupleStructPattern], exact: false },
-		'pattern.tuple.struct': { ids: [TSKindId.TupleStructPattern], exact: false },
+		'pattern.tuple': { ids: [TSKindId.TuplePattern], exact: false },
 		'pattern.wildcard': { ids: [TSKindId.WildcardPattern], exact: false },
 		statement: {
 			ids: [
@@ -3867,7 +3826,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '432': 1 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4160,7 +4119,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '205': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4240,7 +4199,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '198': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4308,7 +4267,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [203], slots: { '200': 2 } } }
 				]
@@ -4360,7 +4319,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					},
 					{ up: 0, via: [], plan: { op: 'is', types: [201], slots: { '200': 2 } } }
 				]
@@ -4412,7 +4371,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '200': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4534,7 +4493,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '204': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4616,7 +4575,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '202': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4699,7 +4658,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '208': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4767,7 +4726,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '209': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -4889,7 +4848,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.ItemKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Label]: [{ path: 'identifier.label', within: [], test: [] }],
-		[TSKindId.LastMatchArm]: [{ path: 'clause.match.arm.last', within: [], test: [] }],
+		[TSKindId.LastMatchArm]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.LetCondition]: [{ path: 'clause.let', within: [], test: [] }],
 		[TSKindId.LetDeclaration]: [{ path: 'declaration.variable', within: [], test: [] }],
 		[TSKindId.Lifetime]: [{ path: 'identifier.lifetime', within: [], test: [] }],
@@ -4921,11 +4880,10 @@ const table: PortableTable = {
 			{ path: 'expression.call.macro', within: [], test: [] }
 		],
 		[TSKindId.MacroRule]: [{ path: 'clause.macro.rule', within: [], test: [] }],
-		[TSKindId.MatchArm]: [{ path: 'clause.match.arm', within: [], test: [] }],
-		[TSKindId.MatchArmBlockEnding]: [{ path: 'clause.match.arm', within: [], test: [] }],
-		[TSKindId.MatchArmWithComma]: [{ path: 'clause.match.arm', within: [], test: [] }],
+		[TSKindId.MatchArm]: [{ path: 'clause.case.match', within: [], test: [] }],
+		[TSKindId.MatchArmBlockEnding]: [{ path: 'clause.case.match', within: [], test: [] }],
+		[TSKindId.MatchArmWithComma]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.MatchExpression]: [{ path: 'statement.match', within: [], test: [] }],
-		[TSKindId.MatchPattern]: [{ path: 'pattern.match', within: [], test: [] }],
 		[TSKindId.MetaKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Metavariable]: [{ path: 'identifier.metavariable', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
@@ -4966,7 +4924,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '476': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5035,7 +4993,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '384': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5103,7 +5061,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '385': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5306,6 +5264,7 @@ const table: PortableTable = {
 		[TSKindId.ScopedTypeIdentifierInExpressionPosition]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.ScopedUseList]: [{ path: 'clause.import.list.scoped', within: [], test: [] }],
 		[TSKindId.Self]: [{ path: 'identifier.receiver', within: [], test: [] }],
+		[TSKindId.SelfModule]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.SelfParameter]: [{ path: 'declaration.parameter.receiver', within: [], test: [] }],
 		[TSKindId.ShorthandFieldIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.ShorthandFieldInitializer]: [{ path: 'element.struct.field', within: [], test: [] }],
@@ -5316,7 +5275,7 @@ const table: PortableTable = {
 				test: [
 					{
 						up: 0,
-						via: [{ slots: { '478': 4 } }],
+						via: [{ slots: { '479': 4 } }],
 						plan: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } }
 					}
 				]
@@ -5325,17 +5284,17 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.private',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
-					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '479': 0 } } },
+					{ up: 0, via: [{ slots: { '479': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }],
+						via: [{ slots: { '479': 0 } }, { slots: { '235': 0 } }],
 						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						via: [{ slots: { '479': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5343,16 +5302,16 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
-					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '479': 0 } } },
+					{ up: 0, via: [{ slots: { '479': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }],
+						via: [{ slots: { '479': 0 } }, { slots: { '235': 0 } }],
 						plan: { op: 'is', types: [380], slots: { '381': 0 } }
 					},
 					{
 						up: 0,
-						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						via: [{ slots: { '479': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
 						plan: { op: 'is', types: [127], slots: { '380': 0 } }
 					}
 				]
@@ -5361,11 +5320,11 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public.restricted',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
-					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '479': 0 } } },
+					{ up: 0, via: [{ slots: { '479': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } },
 					{
 						up: 0,
-						via: [{ slots: { '478': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
+						via: [{ slots: { '479': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
 						plan: { op: 'is', types: [126, 379], slots: { '380': 0 } }
 					}
 				]
@@ -5374,16 +5333,16 @@ const table: PortableTable = {
 				path: 'declaration.method.signature.public',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
-					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '479': 0 } } },
+					{ up: 0, via: [{ slots: { '479': 0 } }], plan: { op: 'is', types: [381], slots: { '235': 0 } } }
 				]
 			},
 			{
 				path: 'declaration.method.signature.public.internal',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '478': 0 } } },
-					{ up: 0, via: [{ slots: { '478': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
+					{ up: 0, via: [], plan: { op: 'is', types: [235], slots: { '479': 0 } } },
+					{ up: 0, via: [{ slots: { '479': 0 } }], plan: { op: 'is', types: [473], slots: { '235': 0 } } }
 				]
 			},
 			{ path: 'declaration.method.signature', within: [], test: [] }
@@ -5408,7 +5367,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '206': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5493,7 +5452,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '423': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5561,7 +5520,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '424': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5630,7 +5589,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '425': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5716,7 +5675,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '214': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5784,7 +5743,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.TupleStructPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'pattern.tuple.struct', within: [], test: [] }
+			{ path: 'pattern.struct', within: [], test: [] }
 		],
 		[TSKindId.TupleType]: [{ path: 'type.tuple', within: [], test: [] }],
 		[TSKindId.TyKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
@@ -5807,7 +5766,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '207': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5914,7 +5873,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '197': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -5987,7 +5946,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '224': 0 } }, { slots: { '235': 0 } }, { slots: { '381': 0 } }],
-						plan: { op: 'is', types: [125], slots: { '380': 0 } }
+						plan: { op: 'is', types: [477], slots: { '380': 0 } }
 					}
 				]
 			},
@@ -6054,7 +6013,7 @@ const table: PortableTable = {
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [380], slots: { '381': 0 } } },
-					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [125], slots: { '380': 0 } } }
+					{ up: 0, via: [{ slots: { '381': 0 } }], plan: { op: 'is', types: [477], slots: { '380': 0 } } }
 				]
 			},
 			{
@@ -6115,6 +6074,7 @@ const table: PortableTable = {
 		[TSKindId.Newline]: '\n',
 		[TSKindId.Blankline]: '\n\n',
 		[TSKindId.DoubleBlankline]: '\n\n\n',
+		[TSKindId.SelfModule]: 'self',
 		[TSKindId.CrateVisibilityModifier]: 'crate',
 		[TSKindId.Semi]: ';',
 		[TSKindId.EqGt]: '=>',
@@ -6309,7 +6269,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ReferenceType]: { exclusive: { op: 'is', types: [58], slots: { '252': 1 } } },
 	[TSKindId.SelfParameter]: { mutable: { op: 'is', types: [58], slots: { '231': 2 } } },
 	[TSKindId.SignatureMethodDeclaration]: {
-		static: { op: 'child', slots: { '478': 4 }, of: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } } }
+		static: { op: 'child', slots: { '479': 4 }, of: { op: 'not', of: { op: 'is', types: [439], slots: { '230': 0 } } } }
 	},
 	[TSKindId.StaticItem]: {
 		mutable: { op: 'present', slots: { '206': 2 } },
@@ -6805,7 +6765,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	295: {
-		value: {
+		body: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7148,7 +7108,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	397: {
-		value: {
+		body: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7158,7 +7118,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [372], kinds: [] }
 		}
 	},
-	398: { value: { move: { types: [], kinds: [310, 311] } } },
+	398: { body: { move: { types: [], kinds: [310, 311] } } },
 	415: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
 	419: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
 	420: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
@@ -7207,7 +7167,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			const: { types: [], kinds: [476] },
 			default: { types: [], kinds: [476] },
 			mutable: { types: [], kinds: [206, 223] },
-			static: { types: [], kinds: [476, 478] },
+			static: { types: [], kinds: [476, 479] },
 			unsafe: { types: [], kinds: [214, 377, 378, 395, 396, 476] }
 		}
 	},
@@ -7239,7 +7199,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [389], kinds: [] }
 		}
 	},
-	478: {
+	479: {
 		returnType: {
 			exclusive: { types: [], kinds: [252] },
 			unsafe: { types: [], kinds: [242] },
@@ -7552,9 +7512,7 @@ declare module './types.js' {
 		};
 	}
 	interface LastMatchArm {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
-		};
+		readonly __slotFlags__?: { readonly body: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable' };
 	}
 	interface MatchPattern {
 		readonly __slotFlags__?: {
@@ -7707,12 +7665,10 @@ declare module './types.js' {
 		};
 	}
 	interface MatchArmWithComma {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
-		};
+		readonly __slotFlags__?: { readonly body: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable' };
 	}
 	interface MatchArmBlockEnding {
-		readonly __slotFlags__?: { readonly value: 'move' };
+		readonly __slotFlags__?: { readonly body: 'move' };
 	}
 	interface FieldPatternNamed {
 		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };

@@ -7,15 +7,15 @@ const verifying = await createEngine(python, { verifyStructure: 'runtime' });
 afterAll(() => py.dispose());
 
 describe('nonempty loose rest arguments', () => {
-	it('requires a dotted-name component for rest and array calls', () => {
-		expect(() => Reflect.apply(verifying.build.dottedName, undefined, [])).toThrow(/at least one/);
-		expect(() => Reflect.apply(verifying.build.dottedName, undefined, [[]])).toThrow(/at least one/);
+	it('requires a global name for rest and array calls', () => {
+		expect(() => Reflect.apply(verifying.build.globalStatement, undefined, [])).toThrow(/at least one/);
+		expect(() => Reflect.apply(verifying.build.globalStatement, undefined, [[]])).toThrow(/at least one/);
 	});
 
 	it('accepts scalar and readonly array input with the same result', () => {
 		const names = ['pkg', 'member'] as const;
-		expect(py.build.dottedName(...names).$render()).toBe('pkg.member');
-		expect(py.build.dottedName(names).$render()).toBe('pkg.member');
+		expect(py.build.globalStatement(...names).$render()).toBe('global pkg, member');
+		expect(py.build.globalStatement(names).$render()).toBe('global pkg, member');
 		expect(names).toEqual(['pkg', 'member']);
 	});
 

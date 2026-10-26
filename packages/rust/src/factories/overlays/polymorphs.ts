@@ -419,11 +419,11 @@ const visibilityModifierPubScope$self =
 		_s<ReturnType<PF>>(parent)(value as never, options as never);
 const visibilityModifierPubScope$self$strict = visibilityModifierPubScope$self(
 	F.buildVisibilityModifierPubScope,
-	TSKindId.Self
+	TSKindId.SelfModule
 );
 const visibilityModifierPubScope$self$coerce = visibilityModifierPubScope$self(
 	C.coerceToVisibilityModifierPubScope,
-	TSKindId.Self
+	TSKindId.SelfModule
 );
 const visibilityModifierPubScope$super =
 	<PF extends (value: never) => unknown>(parent: PF, value: ArgsOf<PF>[0]) =>
@@ -1116,15 +1116,15 @@ export const lastMatchArm = Object.freeze({
 	coerce: typeof lastMatchArm$seatedCoerce;
 };
 
-const tupleStructPattern$patterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
+const tupleStructPattern$fields = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
 	parent: PF,
 	child: CF
 ) => {
 	return (config: unknown, options?: unknown): ReturnType<PF> => {
 		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['patterns'];
+		const seat = _o(config)['fields'];
 		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), patterns: _c(child)(...seat) }, options);
+		return _fwd<ReturnType<PF>>(parent, { ..._o(config), fields: _c(child)(...seat) }, options);
 	};
 };
 function tupleStructPattern$seated<A extends T.TupleStructPattern.BuildArgs>(
@@ -1133,7 +1133,7 @@ function tupleStructPattern$seated<A extends T.TupleStructPattern.BuildArgs>(
 function tupleStructPattern$seated(
 	...args: T.TupleStructPattern.BuildArgs
 ): ReturnType<typeof F.buildTupleStructPattern> {
-	return tupleStructPattern$patterns(F.buildTupleStructPattern, F.buildPatterns)(...args);
+	return tupleStructPattern$fields(F.buildTupleStructPattern, F.buildPatterns)(...args);
 }
 function tupleStructPattern$seatedCoerce<const A extends T.TupleStructPattern.LooseArgs>(
 	...args: A & RefuseUndeclared<A, T.TupleStructPattern.LooseArgs>
@@ -1141,7 +1141,7 @@ function tupleStructPattern$seatedCoerce<const A extends T.TupleStructPattern.Lo
 function tupleStructPattern$seatedCoerce(
 	...args: T.TupleStructPattern.LooseArgs
 ): ReturnType<typeof C.coerceToTupleStructPattern> {
-	return tupleStructPattern$patterns(C.coerceToTupleStructPattern, C.coerceToPatterns)(...args);
+	return tupleStructPattern$fields(C.coerceToTupleStructPattern, C.coerceToPatterns)(...args);
 }
 export const tupleStructPattern = Object.freeze({
 	...B.tupleStructPattern,

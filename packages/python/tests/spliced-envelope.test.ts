@@ -12,7 +12,9 @@ function firstCasePattern(pattern: string) {
 	if (!py.is.matchStatement(statement)) throw new Error('expected a match statement');
 	const body = statement.body();
 	if (!py.is.matchBlockBlock(body)) throw new Error('expected a match block');
-	return body.alternatives()[0]!.casePatterns().items()[0]!;
+	const first = body.alternatives()[0]!.pattern();
+	if (!py.is.casePattern(first)) throw new Error('expected one case pattern');
+	return first;
 }
 
 describe('a slot that splices a hidden rule admits that rule\'s envelope and stores its content', () => {
@@ -58,14 +60,17 @@ describe('a slot that splices a hidden rule admits that rule\'s envelope and sto
 	});
 
 	it('admits the envelope at a mapping key and a keyword argument value, strict and loose', () => {
-		const y = () => py.build.casePattern.strict(py.build.simplePattern.strict(py.build.dottedName.strict(py.build.identifier('y'))));
+		const y = () =>
+			py.build.casePattern.strict(
+				py.build.simplePattern.strict(py.build.dottedName.strict({ name: py.build.identifier('y') }))
+			);
 		for (const pair of [py.build.keyValuePattern.strict({ key: negativeOne(), value: y() }), py.build.keyValuePattern({ key: negativeOne(), value: y() })]) {
 			expect(pair.$render()).toBe('-1: y');
 			expect(py.is.simplePatternNegative(pair.key())).toBe(true);
 		}
 		const k = () => py.build.identifier('k');
-		for (const keyword of [py.build.keywordPattern.strict({ name: k(), value: negativeOne() }), py.build.keywordPattern({ name: k(), value: negativeOne() })]) {
-			expect(py.is.simplePatternNegative(keyword.value())).toBe(true);
+		for (const keyword of [py.build.keywordPattern.strict({ name: k(), pattern: negativeOne() }), py.build.keywordPattern({ name: k(), pattern: negativeOne() })]) {
+			expect(py.is.simplePatternNegative(keyword.pattern())).toBe(true);
 		}
 	});
 

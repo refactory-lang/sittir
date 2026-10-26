@@ -1,5 +1,5 @@
 import { collectPolymorphWires, seatedRowsOf, type PolymorphWires } from './overlays/polymorphs.ts';
-import { findOwnKindEntry, modelKindOfEntry } from '../dsl/symbol-table.ts';
+import { findOwnKindEntry, modelKindOfEntry, treeNameOf } from '../dsl/symbol-table.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
 import type { SlotBearingCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
@@ -620,7 +620,7 @@ function emitKindIdEnumAndLookups(lines: string[], entries: KindEnumEntry[], nod
 	);
 	lines.push('export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([');
 	for (const entry of entries) {
-		const displayName = entry.symbolName ?? entry.kind;
+		const displayName = treeNameOf(entry);
 		lines.push(`  [${entry.id}, ${JSON.stringify(displayName)}],`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id) {
 			lines.push(`  [${entry.parseId}, ${JSON.stringify(entry.parseName ?? displayName)}],`);

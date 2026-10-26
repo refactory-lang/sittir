@@ -266,10 +266,6 @@
         "named": true
       },
       {
-        "type": "dictionary_splat_pattern",
-        "named": true
-      },
-      {
         "type": "identifier",
         "named": true
       },
@@ -278,11 +274,15 @@
         "named": true
       },
       {
-        "type": "list_splat_pattern",
+        "type": "map_rest_pattern",
         "named": true
       },
       {
         "type": "positional_separator",
+        "named": true
+      },
+      {
+        "type": "rest_pattern",
         "named": true
       },
       {
@@ -316,7 +316,7 @@
         "named": true
       },
       {
-        "type": "list_splat_pattern",
+        "type": "rest_pattern",
         "named": true
       },
       {
@@ -394,15 +394,15 @@
         "named": true
       },
       {
-        "type": "list_splat_pattern",
-        "named": true
-      },
-      {
         "type": "none",
         "named": true
       },
       {
         "type": "parenthesized_expression",
+        "named": true
+      },
+      {
+        "type": "rest_pattern",
         "named": true
       },
       {
@@ -431,6 +431,20 @@
       },
       {
         "type": "unary_operator",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "splat_pattern",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "map_rest_pattern",
+        "named": true
+      },
+      {
+        "type": "rest_pattern",
         "named": true
       }
     ]
@@ -468,7 +482,7 @@
         "required": true,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -617,11 +631,11 @@
         "required": true,
         "types": [
           {
-            "type": "pattern",
+            "type": "bare_tuple_pattern",
             "named": true
           },
           {
-            "type": "pattern_list",
+            "type": "pattern",
             "named": true
           }
         ]
@@ -639,15 +653,15 @@
             "named": true
           },
           {
+            "type": "bare_tuple_pattern",
+            "named": true
+          },
+          {
             "type": "expression",
             "named": true
           },
           {
             "type": "expression_list",
-            "named": true
-          },
-          {
-            "type": "pattern_list",
             "named": true
           },
           {
@@ -667,11 +681,11 @@
         "required": true,
         "types": [
           {
-            "type": "pattern",
+            "type": "bare_tuple_pattern",
             "named": true
           },
           {
-            "type": "pattern_list",
+            "type": "pattern",
             "named": true
           }
         ]
@@ -697,11 +711,11 @@
         "required": true,
         "types": [
           {
-            "type": "pattern",
+            "type": "bare_tuple_pattern",
             "named": true
           },
           {
-            "type": "pattern_list",
+            "type": "pattern",
             "named": true
           }
         ]
@@ -729,15 +743,15 @@
             "named": true
           },
           {
+            "type": "bare_tuple_pattern",
+            "named": true
+          },
+          {
             "type": "expression",
             "named": true
           },
           {
             "type": "expression_list",
-            "named": true
-          },
-          {
-            "type": "pattern_list",
             "named": true
           },
           {
@@ -783,11 +797,11 @@
         "required": true,
         "types": [
           {
-            "type": "pattern",
+            "type": "bare_tuple_pattern",
             "named": true
           },
           {
-            "type": "pattern_list",
+            "type": "pattern",
             "named": true
           }
         ]
@@ -863,15 +877,15 @@
             "named": true
           },
           {
+            "type": "bare_tuple_pattern",
+            "named": true
+          },
+          {
             "type": "expression",
             "named": true
           },
           {
             "type": "expression_list",
-            "named": true
-          },
-          {
-            "type": "pattern_list",
             "named": true
           },
           {
@@ -892,6 +906,26 @@
         "types": [
           {
             "type": "primary_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "bare_tuple_pattern",
+    "named": true,
+    "fields": {
+      "item": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "case_pattern",
+            "named": true
+          },
+          {
+            "type": "pattern",
             "named": true
           }
         ]
@@ -1132,17 +1166,7 @@
     "type": "case_clause",
     "named": true,
     "fields": {
-      "case_patterns": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "case_patterns",
-            "named": true
-          }
-        ]
-      },
-      "consequence": {
+      "body": {
         "multiple": false,
         "required": true,
         "types": [
@@ -1166,6 +1190,20 @@
         "types": [
           {
             "type": "if_clause",
+            "named": true
+          }
+        ]
+      },
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bare_tuple_pattern",
+            "named": true
+          },
+          {
+            "type": "case_pattern",
             "named": true
           }
         ]
@@ -1209,22 +1247,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "case_patterns",
-    "named": true,
-    "fields": {
-      "item": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "case_pattern",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -1317,7 +1339,7 @@
     "type": "class_pattern",
     "named": true,
     "fields": {
-      "arguments": {
+      "fields": {
         "multiple": false,
         "required": false,
         "types": [
@@ -1327,12 +1349,12 @@
           }
         ]
       },
-      "name": {
+      "type": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -1947,46 +1969,6 @@
     }
   },
   {
-    "type": "dictionary_splat_pattern",
-    "named": true,
-    "fields": {
-      "pattern": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "attribute",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "subscript",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "dotted_name",
-    "named": true,
-    "fields": {
-      "names": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "elif_clause",
     "named": true,
     "fields": {
@@ -2285,11 +2267,11 @@
         "required": true,
         "types": [
           {
-            "type": "pattern",
+            "type": "bare_tuple_pattern",
             "named": true
           },
           {
-            "type": "pattern_list",
+            "type": "pattern",
             "named": true
           }
         ]
@@ -2367,11 +2349,11 @@
         "required": true,
         "types": [
           {
-            "type": "pattern",
+            "type": "bare_tuple_pattern",
             "named": true
           },
           {
-            "type": "pattern_list",
+            "type": "pattern",
             "named": true
           }
         ]
@@ -2411,15 +2393,15 @@
         "required": true,
         "types": [
           {
+            "type": "bare_tuple_pattern",
+            "named": true
+          },
+          {
             "type": "expression",
             "named": true
           },
           {
             "type": "expression_list",
-            "named": true
-          },
-          {
-            "type": "pattern_list",
             "named": true
           },
           {
@@ -2704,7 +2686,7 @@
         "required": true,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -2746,7 +2728,7 @@
             "named": true
           },
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -2792,15 +2774,15 @@
         "required": true,
         "types": [
           {
+            "type": "bare_tuple_pattern",
+            "named": true
+          },
+          {
             "type": "expression",
             "named": true
           },
           {
             "type": "expression_list",
-            "named": true
-          },
-          {
-            "type": "pattern_list",
             "named": true
           },
           {
@@ -2869,10 +2851,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -2886,6 +2864,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -2966,7 +2948,7 @@
           }
         ]
       },
-      "value": {
+      "pattern": {
         "multiple": false,
         "required": true,
         "types": [
@@ -2995,10 +2977,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -3012,6 +2990,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -3179,13 +3161,17 @@
     }
   },
   {
-    "type": "list_splat_pattern",
+    "type": "map_rest_pattern",
     "named": true,
     "fields": {
       "pattern": {
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "_",
+            "named": false
+          },
           {
             "type": "attribute",
             "named": true
@@ -3271,32 +3257,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "member_type",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "qualifier": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "type",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
@@ -3429,7 +3389,7 @@
             "named": true
           },
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -3597,22 +3557,6 @@
     "fields": {}
   },
   {
-    "type": "pattern_list",
-    "named": true,
-    "fields": {
-      "item": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "pattern",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "patterns",
     "named": true,
     "fields": {
@@ -3726,6 +3670,40 @@
     }
   },
   {
+    "type": "qualified_identifier",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "qualifier": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ".",
+            "named": false
+          },
+          {
+            "type": "qualified_identifier",
+            "named": true
+          },
+          {
+            "type": "type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "raise_statement",
     "named": true,
     "fields": {
@@ -3764,7 +3742,7 @@
         "required": false,
         "types": [
           {
-            "type": "dotted_name",
+            "type": "qualified_identifier",
             "named": true
           }
         ]
@@ -3775,6 +3753,34 @@
         "types": [
           {
             "type": "import_prefix",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "rest_pattern",
+    "named": true,
+    "fields": {
+      "pattern": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_",
+            "named": false
+          },
+          {
+            "type": "attribute",
+            "named": true
+          },
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "subscript",
             "named": true
           }
         ]
@@ -3875,10 +3881,6 @@
           "named": true
         },
         {
-          "type": "dotted_name",
-          "named": true
-        },
-        {
           "type": "false",
           "named": true
         },
@@ -3892,6 +3894,10 @@
         },
         {
           "type": "none",
+          "named": true
+        },
+        {
+          "type": "qualified_identifier",
           "named": true
         },
         {
@@ -4092,40 +4098,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "splat_pattern",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_",
-            "named": false
-          },
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "operator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "**",
-            "named": false
-          }
-        ]
-      }
     }
   },
   {
@@ -4518,7 +4490,7 @@
           "named": true
         },
         {
-          "type": "member_type",
+          "type": "qualified_identifier",
           "named": true
         },
         {
@@ -4619,15 +4591,15 @@
         "required": true,
         "types": [
           {
-            "type": "dictionary_splat_pattern",
-            "named": true
-          },
-          {
             "type": "identifier",
             "named": true
           },
           {
-            "type": "list_splat_pattern",
+            "type": "map_rest_pattern",
+            "named": true
+          },
+          {
+            "type": "rest_pattern",
             "named": true
           }
         ]
@@ -4727,10 +4699,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -4744,6 +4712,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {
@@ -4801,10 +4773,6 @@
             "named": true
           },
           {
-            "type": "dotted_name",
-            "named": true
-          },
-          {
             "type": "false",
             "named": true
           },
@@ -4818,6 +4786,10 @@
           },
           {
             "type": "none",
+            "named": true
+          },
+          {
+            "type": "qualified_identifier",
             "named": true
           },
           {

@@ -26,7 +26,7 @@ describe('a match arm whose pattern has a guard', () => {
 		const built = b.matchArmWithComma({
 			pattern: arm.match().pattern(),
 			condition: arm.match().condition(),
-			value: arm.value()
+			body: arm.body()
 		});
 		expect(rs.is.matchPattern(built.match())).toBe(true);
 		expect(built.$render()).toBe('a if a > 0 => 1,');
@@ -34,7 +34,7 @@ describe('a match arm whose pattern has a guard', () => {
 
 	it('builds and renders the guard from the whole match', () => {
 		const { arm } = firstArm();
-		expect(b.matchArmWithComma({ match: arm.match(), value: arm.value() }).$render()).toBe('a if a > 0 => 1,');
+		expect(b.matchArmWithComma({ match: arm.match(), body: arm.body() }).$render()).toBe('a if a > 0 => 1,');
 	});
 
 	it('round-trips the guard through JSON', () => {

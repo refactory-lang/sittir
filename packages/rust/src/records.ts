@@ -260,7 +260,7 @@ export const records = {
 		words: 19,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 },
+		body: { word: 9, width: 5 },
 		trailing_comma: { word: 14, width: 5 }
 	},
 	MatchPatternNode: { words: 12, pattern: { word: 2, width: 5 }, condition: { word: 7, width: 5 } },
@@ -299,7 +299,7 @@ export const records = {
 	GenericPatternNode: { words: 12, name: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	TuplePatternNode: { words: 7, elements: { word: 2, width: 5 } },
 	SlicePatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	TupleStructPatternNode: { words: 12, type_: { word: 2, width: 5 }, patterns: { word: 7, width: 5 } },
+	TupleStructPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	StructPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	MutPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
 	RefPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
@@ -438,13 +438,13 @@ export const records = {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 }
+		body: { word: 9, width: 5 }
 	},
 	MatchArmBlockEndingNode: {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 }
+		body: { word: 9, width: 5 }
 	},
 	LineCommentExtraSlashesNode: { words: 2 },
 	LineCommentDocOuterNode: { words: 7, doc: { word: 2, width: 5 } },

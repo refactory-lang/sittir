@@ -202,15 +202,6 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	return derived;
 }
 
-/**
- * Whether the parent's slots admit the child, compared by stamped kind id:
- * every model kind resolves to its id, and a tree node carries the same id as
- * the model kind it is the display of. Kinds the corpus never shows are
- * hidden wrappers, whose own slots are walked through; a child is admitted
- * directly or through a supertype of any model kind sharing its id. A kind
- * with no stamped id (a hidden supertype) is compared by its model name, which
- * is never a tree display name.
- */
 function admitsKind(input: DeriveHostsInput, ids: IdIndex, parent: TSNode, child: TSNode): boolean {
 	const parentNames = ids.namesOf(nodeIdOf(parent)).filter((name) => input.admits.has(name));
 	if (parentNames.length === 0) return true;
@@ -235,8 +226,8 @@ function admitsKind(input: DeriveHostsInput, ids: IdIndex, parent: TSNode, child
 	};
 	walk(parentNames);
 	const seen = new Set<string>();
-	const queue = [...ids.namesOf(nodeIdOf(child)), child.type];
-	const reached = new Set<number>([nodeIdOf(child)]);
+	const queue = [...ids.namesOf(nodeIdOf(child)), ...ids.namesOf(child.grammarId), child.type];
+	const reached = new Set<number>([nodeIdOf(child), child.grammarId]);
 	while (queue.length > 0) {
 		const name = queue.shift()!;
 		if (seen.has(name)) continue;

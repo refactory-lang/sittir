@@ -45,17 +45,17 @@ export function flattenedListSeatReadsItsAccessors(block: T.MatchBlock.Parsed): 
 }
 
 export function wholeGroupBySlotOrFlattenedKeysCompile(): void {
-	const value = engine.build.identifier('v');
+	const body = engine.build.identifier('v');
 	const whole = engine.build.matchPattern({ pattern: engine.build.identifier('p') });
-	engine.build.lastMatchArm({ match: whole, value });
-	engine.build.lastMatchArm({ pattern: engine.build.identifier('p'), condition: engine.build.identifier('c'), value });
+	engine.build.lastMatchArm({ match: whole, body });
+	engine.build.lastMatchArm({ pattern: engine.build.identifier('p'), condition: engine.build.identifier('c'), body });
 }
 
 export function flattenedKeyBesideTheWholeGroupIsAnError(): void {
-	const value = engine.build.identifier('v');
+	const body = engine.build.identifier('v');
 	const whole = engine.build.matchPattern({ pattern: engine.build.identifier('p') });
 	// @ts-expect-error a group seated by its slot takes none of its keys beside it
-	engine.build.lastMatchArm({ match: whole, condition: engine.build.identifier('c'), value });
+	engine.build.lastMatchArm({ match: whole, condition: engine.build.identifier('c'), body });
 }
 
 export function aRequiredSeatHasOneShape(arm: T.LastMatchArm.Bound): void {

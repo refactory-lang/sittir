@@ -292,11 +292,14 @@ export default grammar(enrich(base), wire({
 		use_bounds: {
 			2: field('bounds')
 		},
-		last_match_arm: {
-			'0': field('attributes'),
-			'1': flatten(),
-			'4/0': field('trailing_comma')
-		},
+		last_match_arm: [
+			{
+				'0': field('attributes'),
+				'1': flatten(),
+				'4/0': field('trailing_comma')
+			},
+			{ '1': field('match') }
+		],
 
 		match_block: {
 			'1/0/0': field('arms'),
@@ -362,7 +365,9 @@ export default grammar(enrich(base), wire({
 		},
 
 		visibility_modifier: [
-			{ '1/1/0/1/3/0': field('in') },
+			// `pub(self)` is `pub(in self)`: its `self` is a path root, the
+			// current module, as at `_path`.
+			{ '1/1/0/1/3/0': field('in'), '1/1/0/1/0': alias('self_module') },
 			{ '1/1/0/1/3': variant('in_path') },
 			{ '1/1/0': variant('scope') },
 			{ '0': variant('crate'), '1': variant('pub') },
@@ -512,6 +517,7 @@ export default grammar(enrich(base), wire({
 
 		match_arm: [
 			{ 0: field('attributes'), 1: flatten() },
+			{ 1: field('match') },
 			{ '3/0': variant('with_comma'), '3/1': variant('block_ending') }
 		],
 
@@ -565,7 +571,11 @@ export default grammar(enrich(base), wire({
 		// `wildcard_pattern` kind (alias() mints the `_wildcard_pattern` leaf)
 		// gives it a real node, so every `_pattern` list position round-trips
 		// without render-side heuristics.
-		_pattern: { '-1': alias('wildcard_pattern') }
+		_pattern: { '-1': alias('wildcard_pattern') },
+
+		// `self` at a path's root names the current module; everywhere else
+		// it is the receiver. The alias gives the module reading its own kind.
+		_path: { '0': alias('self_module') }
 	},
 	expectDiagnostics: {
 		'unclassifiable-shape': ['_let_chain'],

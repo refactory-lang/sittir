@@ -19,13 +19,14 @@ export enum Flags {
 	Optional = 1 << 16,
 	OptionalChain = 1 << 17,
 	Override = 1 << 18,
-	PrivateName = 1 << 19,
-	Raw = 1 << 20,
-	Readonly = 1 << 21,
-	Static = 1 << 22,
-	TypeOnly = 1 << 23,
-	Unique = 1 << 24,
-	Unsafe = 1 << 25,
-	Unsigned = 1 << 26,
-	Writable = 1 << 27
+	Prefix = 1 << 19,
+	PrivateName = 1 << 20,
+	Raw = 1 << 21,
+	Readonly = 1 << 22,
+	Static = 1 << 23,
+	TypeOnly = 1 << 24,
+	Unique = 1 << 25,
+	Unsafe = 1 << 26,
+	Unsigned = 1 << 27,
+	Writable = 1 << 28
 }

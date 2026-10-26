@@ -8,51 +8,10 @@ export namespace Pattern {
 		readonly name: G['identifier'];
 		readonly pattern: G['slots']['pattern.as']['pattern'];
 	}
-	export interface Case<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
+	export interface Map<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by p
-		readonly $kind: 'pattern.case';
-		readonly content?: G['slots']['pattern.case']['content'];
-	}
-	export namespace Case {
-		export interface Class<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.class';
-			readonly arguments?: V.Pattern.Case<G>[];
-			readonly name: V.Identifier.Dotted<G>;
-		}
-		export interface Dictionary<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.dictionary';
-			readonly elements?: G['slots']['pattern.case.dictionary']['elements'][];
-		}
-		export interface Keyword<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.keyword';
-			readonly name: G['identifier'];
-			readonly value: G['slots']['pattern.case.keyword']['value'];
-		}
-		export interface List<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.list';
-			readonly elements?: V.Pattern.Case<G>[];
-		}
-		export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.splat';
-			readonly name: G['identifier'];
-			readonly operator: G['slots']['pattern.case.splat']['operator'];
-		}
-		export interface Tuple<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.tuple';
-			readonly elements?: V.Pattern.Case<G>[];
-		}
-	}
-	export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
-		readonly $kind: 'pattern.match';
-		readonly condition?: G['slots']['pattern.match']['condition'];
-		readonly pattern: G['slots']['pattern.match']['pattern'];
+		readonly $kind: 'pattern.map';
+		readonly elements?: G['slots']['pattern.map']['elements'][];
 	}
 	export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by pr

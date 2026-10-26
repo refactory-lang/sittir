@@ -9,8 +9,12 @@ export function rebuildPython4spaceLoose() {
 		contents: [py.build.stringContent("Simple user management module.")],
 		stringEnd: "\"\"\"",
 	}))), py.build.simpleStatements(py.build.importFromStatement({
-		moduleName: py.build.dottedName("typing"),
-		content: py.build.importList(py.build.dottedName("Optional")),
+		moduleName: py.build.dottedName({
+			name: "typing",
+		}),
+		content: py.build.importList(py.build.dottedName({
+			name: "Optional",
+		})),
 	})), py.build.classDefinition({
 		name: "User",
 		body: py.build.suiteBlockClassDeclaration(py.build.constructorDeclaration({

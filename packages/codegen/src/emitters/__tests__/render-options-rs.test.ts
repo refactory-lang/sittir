@@ -329,7 +329,15 @@ describe('an address shared by an alias-site family', () => {
 		seat: { kind: 'class_definition', display: 'class_definition' }
 	};
 
-	function aliasFamily(declared: boolean, extra: Partial<SitePreference> = {}) {
+	const delimited: Partial<SitePreference> = {
+		address: 'statements_delimiter',
+		label: 'delimiter',
+		arms: [{ value: 'Delimiter.Trailing' }],
+		defaultArm: 'Delimiter.None',
+		source: 'delimiter'
+	};
+
+	function aliasFamily(declared: boolean, extra: Partial<SitePreference> | ((kind: string) => Partial<SitePreference>) = {}) {
 		const sites: SitePreference[] = ['first_block', 'second_block'].map((kind) => ({
 			kind,
 			slot: 'statements',
@@ -338,7 +346,7 @@ describe('an address shared by an alias-site family', () => {
 			arms: SPACING,
 			defaultArm: 'newline',
 			source: 'spacing',
-			...extra
+			...(typeof extra === 'function' ? extra(kind) : extra)
 		}));
 		const { nodeMap, generatedIdTables } = displayFamilyNodeMap(
 			[...sites, ...SPACING.map((arm) => ({ kind: arm.kind }))],
@@ -372,6 +380,24 @@ describe('an address shared by an alias-site family', () => {
 
 	it('is still refused for sites that seat one kind when no display union names their holders', () => {
 		const { plan, addresses, kindEntries } = aliasFamily(false, seated);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
+	});
+
+	it("is accepted for delimiter sites of members of one display union, and lists each member's site", () => {
+		const { plan, addresses, kindEntries } = aliasFamily(true, delimited);
+		const leaf = renderOptionsRs(plan, addresses, kindEntries)
+			.split('\n')
+			.find((line) => line.includes('AddressNode::Delimiter { key: "delimiter"'));
+		expect(leaf?.match(/SiteRef \{ site: (\w+)/g)).toEqual(['SiteRef { site: DELIM_FIRST_BLOCK_STATEMENTS', 'SiteRef { site: DELIM_SECOND_BLOCK_STATEMENTS']);
+	});
+
+	it('is still refused for delimiter sites when no display union names them', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(false, delimited);
+		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
+	});
+
+	it('is still refused for delimiter sites of one display union with different defaults', () => {
+		const { plan, addresses, kindEntries } = aliasFamily(true, (kind) => (kind === 'first_block' ? delimited : { ...delimited, defaultArm: 'Delimiter.Trailing' }));
 		expect(() => renderOptionsRs(plan, addresses, kindEntries)).toThrow(/which is 2 sites/);
 	});
 });

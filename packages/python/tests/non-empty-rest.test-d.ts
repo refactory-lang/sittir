@@ -9,9 +9,9 @@
 import { ir } from '../src/ir.ts';
 
 export function nonEmptySlotTakesAtLeastOneChild(): void {
-	void ir.dottedName.strict(ir.identifier('a'));
+	void ir.globalStatement.strict(ir.identifier('a'));
 	// @ts-expect-error zero children are refused
-	ir.dottedName.strict();
+	ir.globalStatement.strict();
 	// @ts-expect-error the setter of a non-empty slot takes at least one child too
-	ir.dottedName.strict(ir.identifier('a')).$with.names();
+	ir.globalStatement.strict(ir.identifier('a')).$with.names();
 }

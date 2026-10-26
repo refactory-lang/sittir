@@ -66,6 +66,8 @@
 (finally_clause) @clause.finally
 (finally_clause block: (_) @body)
 (case_clause) @clause.case.match
+(case_clause guard: (if_clause condition: _ @guard))
+(case_clause consequence: _ @body)
 (with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
 (with_item value: (as_pattern expression: (_) @value))
@@ -182,20 +184,25 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
+(case_pattern_list) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (list_splat_pattern target: (_) @pattern)
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (dictionary_splat_pattern target: (_) @pattern)
-(case_pattern) @pattern.case
 (union_pattern) @pattern.or
-(dict_pattern) @pattern.case.dictionary
-(keyword_pattern) @pattern.case.keyword
-(splat_pattern) @pattern.case.splat
-(class_pattern) @pattern.case.class
-(complex_pattern) @pattern.case.complex
-(case_tuple_pattern) @pattern.case.tuple
-(case_list_pattern) @pattern.case.list
+(dict_pattern) @pattern.map
+(splat_pattern_list) @pattern.rest
+(splat_pattern_list name: (_) @pattern)
+(splat_pattern_dictionary) @pattern.rest.map
+(splat_pattern_dictionary name: (_) @pattern)
+(class_pattern name: (_) @type arguments: (_)? @fields) @pattern.struct
+(keyword_pattern value: (_) @pattern) @pattern.struct.field
+(complex_pattern) @pattern.complex
+(complex_pattern operator: "+") @pattern.complex.add
+(complex_pattern operator: "-") @pattern.complex.subtract
+(case_tuple_pattern) @pattern.tuple
+(case_list_pattern) @pattern.list
 (case_as_pattern) @pattern.as
 (case_as_pattern (case_pattern) @pattern)
 (case_as_pattern (identifier) @name)
@@ -245,7 +252,7 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(dotted_name) @identifier.dotted
+(dotted_name) @identifier.qualified
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)

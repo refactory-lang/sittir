@@ -22,21 +22,26 @@ export interface KindMembers {
 		| TSKindId.MatchStatement;
 	[TSKindId.MatchBlock]: TSKindId.MatchBlockBlock | TSKindId.MatchBlockEmpty;
 	[TSKindId.WithClause]: TSKindId.WithClauseBare | TSKindId.WithClauseParen;
+	[TSKindId.SplatPattern]:
+		| TSKindId.ListSplatPattern
+		| TSKindId.DictionarySplatPattern
+		| TSKindId.SplatPatternList
+		| TSKindId.SplatPatternDictionary;
 	[TSKindId.Parameter]:
+		| TSKindId.ListSplatPattern
+		| TSKindId.DictionarySplatPattern
 		| TSKindId.Identifier
 		| TSKindId.TypedParameter
 		| TSKindId.DefaultParameter
 		| TSKindId.TypedDefaultParameter
-		| TSKindId.ListSplatPattern
 		| TSKindId.TuplePattern
 		| TSKindId.KeywordSeparator
-		| TSKindId.PositionalSeparator
-		| TSKindId.DictionarySplatPattern;
+		| TSKindId.PositionalSeparator;
 	[TSKindId.Pattern]:
+		| TSKindId.ListSplatPattern
 		| TSKindId.Identifier
 		| TSKindId.Subscript
 		| TSKindId.Attribute
-		| TSKindId.ListSplatPattern
 		| TSKindId.TuplePattern
 		| TSKindId.ListPattern;
 	[TSKindId.Expression]:
@@ -44,6 +49,7 @@ export interface KindMembers {
 		| TSKindId.ComparisonOperator
 		| TSKindId.NotOperator
 		| TSKindId.BooleanOperator
+		| TSKindId.ListSplatPattern
 		| TSKindId.Await
 		| TSKindId.BinaryOperator
 		| TSKindId.Identifier
@@ -75,11 +81,11 @@ export interface KindMembers {
 		| TSKindId.ParenthesizedExpression
 		| TSKindId.GeneratorExpression
 		| TSKindId.Ellipsis
-		| TSKindId.ListSplatPattern
 		| TSKindId.ConditionalExpression
 		| TSKindId.NamedExpression
 		| TSKindId.AsPattern;
 	[TSKindId.PrimaryExpression]:
+		| TSKindId.ListSplatPattern
 		| TSKindId.Await
 		| TSKindId.BinaryOperator
 		| TSKindId.Identifier
@@ -110,8 +116,7 @@ export interface KindMembers {
 		| TSKindId.Tuple
 		| TSKindId.ParenthesizedExpression
 		| TSKindId.GeneratorExpression
-		| TSKindId.Ellipsis
-		| TSKindId.ListSplatPattern;
+		| TSKindId.Ellipsis;
 	[TSKindId.Assignment]: TSKindId.AssignmentEq | TSKindId.AssignmentType | TSKindId.AssignmentTyped;
 	[TSKindId.EscapeSequence]:
 		| TSKindId.EscapeSequenceUnicodeFixed
@@ -340,7 +345,6 @@ export interface IsGuards {
 		readonly simplePattern: {
 			<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
 			classPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
-			splatPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
 			unionPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
 			caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
 			caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.CasePattern };
@@ -361,7 +365,6 @@ export interface IsGuards {
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SimplePattern };
 		classPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
-		splatPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
 		unionPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
 		caseListPattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
 		caseTuplePattern<T extends { readonly $type: number }>(v: T): v is T & { readonly $type: TSKindId.SimplePattern };
@@ -391,9 +394,6 @@ export interface IsGuards {
 	keywordPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.KeywordPattern };
-	splatPattern<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatPattern };
 	classPattern<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClassPattern };
@@ -572,9 +572,6 @@ export interface IsGuards {
 	subjects<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Subjects };
-	casePatterns<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePatterns };
 	withClauseWithItems<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseWithItems };
@@ -602,6 +599,9 @@ export interface IsGuards {
 	tuplePatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePatternElements };
+	casePatternList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePatternList };
 	tupleElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleElements };
@@ -685,6 +685,12 @@ export interface IsGuards {
 	exceptClauseException<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ExceptClauseException };
+	splatPatternList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatPatternList };
+	splatPatternDictionary<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatPatternDictionary };
 	assignmentEq<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.AssignmentEq };
@@ -927,6 +933,15 @@ export interface IsGuards {
 		empty<T extends { readonly $type: number } | number>(
 			v: T
 		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SuiteEmpty };
+	};
+	readonly splatPattern: {
+		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.SplatPattern]>;
+		list<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatPatternList };
+		dictionary<T extends { readonly $type: number } | number>(
+			v: T
+		): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.SplatPatternDictionary };
 	};
 	readonly parameter: {
 		<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, KindMembers[TSKindId.Parameter]>;
@@ -1204,20 +1219,21 @@ const _supertype_simpleStatement_ids = new Set<number>([
 	134, 131, 135, 139, 141, 142, 145, 146, 147, 148, 149, 150, 170, 171, 172, 173
 ]);
 const _supertype_compoundStatement_ids = new Set<number>([151, 157, 158, 159, 162, 165, 174, 178, 154]);
-const _supertype_matchBlock_ids = new Set<number>([293, 294]);
-const _supertype_withClause_ids = new Set<number>([291, 292]);
-const _supertype_suite_ids = new Set<number>([295, 296, 297]);
-const _supertype_parameter_ids = new Set<number>([1, 225, 199, 200, 201, 197, 259, 258, 202]);
-const _supertype_pattern_ids = new Set<number>([1, 222, 221, 201, 197, 198]);
+const _supertype_matchBlock_ids = new Set<number>([295, 296]);
+const _supertype_withClause_ids = new Set<number>([293, 294]);
+const _supertype_suite_ids = new Set<number>([297, 298, 299]);
+const _supertype_splatPattern_ids = new Set<number>([201, 202, 287, 288]);
+const _supertype_parameter_ids = new Set<number>([201, 202, 1, 225, 199, 200, 197, 259, 258]);
+const _supertype_pattern_ids = new Set<number>([201, 1, 222, 221, 197, 198]);
 const _supertype_expression_ids = new Set<number>([
-	214, 213, 207, 208, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224, 233,
-	238, 236, 239, 234, 240, 235, 242, 241, 64, 201, 246, 143, 203
+	214, 213, 207, 208, 201, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
+	233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 246, 143, 203
 ]);
 const _supertype_primaryExpression_ids = new Set<number>([
-	257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224, 233, 238, 236, 239, 234,
-	240, 235, 242, 241, 64, 201
+	201, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224, 233, 238, 236, 239,
+	234, 240, 235, 242, 241, 63
 ]);
-const _supertype_assignment_ids = new Set<number>([287, 288, 289]);
+const _supertype_assignment_ids = new Set<number>([289, 290, 291]);
 const _supertype_escapeSequence_ids = new Set<number>([99, 100, 101, 102, 103, 104, 105]);
 const _supertype_integer_ids = new Set<number>([90, 91, 92, 93, 94, 95]);
 const _supertype_float_ids = new Set<number>([96, 97, 98]);
@@ -1225,17 +1241,18 @@ const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	343, 151, 157, 158, 159, 162, 300, 174, 304, 154
+	345, 151, 157, 158, 159, 162, 302, 174, 306, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 343, 151, 157, 158, 159, 162, 300, 174, 304, 154
+	130, 345, 151, 157, 158, 159, 162, 302, 174, 306, 154
 ]);
-const _supertype_suiteClassDefinition_ids = new Set<number>([295, 303, 297]);
+const _supertype_suiteClassDefinition_ids = new Set<number>([297, 305, 299]);
 
 const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.Statement, _supertype_statement_ids],
 	[TSKindId.MatchBlock, _supertype_matchBlock_ids],
 	[TSKindId.WithClause, _supertype_withClause_ids],
+	[TSKindId.SplatPattern, _supertype_splatPattern_ids],
 	[TSKindId.Parameter, _supertype_parameter_ids],
 	[TSKindId.Pattern, _supertype_pattern_ids],
 	[TSKindId.Expression, _supertype_expression_ids],
@@ -1332,6 +1349,8 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_SuiteInline_guard = _g(TSKindId.SuiteInline);
 	const _kind_SuiteBlock_guard = _g(TSKindId.SuiteBlock);
 	const _kind_SuiteEmpty_guard = _g(TSKindId.SuiteEmpty);
+	const _kind_SplatPatternList_guard = _g(TSKindId.SplatPatternList);
+	const _kind_SplatPatternDictionary_guard = _g(TSKindId.SplatPatternDictionary);
 	const _kind_Identifier_guard = _g(TSKindId.Identifier);
 	const _kind_TypedParameter_guard = _g(TSKindId.TypedParameter);
 	const _kind_DefaultParameter_guard = _g(TSKindId.DefaultParameter);
@@ -1422,7 +1441,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_KeywordPattern_guard = _g(TSKindId.KeywordPattern);
 	const _kind_ClassPattern_guard = _g(TSKindId.ClassPattern);
 	const _kind_SimplePattern_guard = _g(TSKindId.SimplePattern);
-	const _kind_SplatPattern_guard = _g(TSKindId.SplatPattern);
 	const _kind_UnionPattern_guard = _g(TSKindId.UnionPattern);
 	const _kind_CaseListPattern_guard = _g(TSKindId.CaseListPattern);
 	const _kind_CaseTuplePattern_guard = _g(TSKindId.CaseTuplePattern);
@@ -1453,7 +1471,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Comment_guard = _g(TSKindId.Comment);
 	const _kind_SimpleStatementsElements_guard = _g(TSKindId.SimpleStatementsElements);
 	const _kind_Subjects_guard = _g(TSKindId.Subjects);
-	const _kind_CasePatterns_guard = _g(TSKindId.CasePatterns);
 	const _kind_WithClauseWithItems_guard = _g(TSKindId.WithClauseWithItems);
 	const _kind_Types_guard = _g(TSKindId.Types);
 	const _kind_ArgumentListElements_guard = _g(TSKindId.ArgumentListElements);
@@ -1463,6 +1480,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_DictionaryElements_guard = _g(TSKindId.DictionaryElements);
 	const _kind_SliceGroup_guard = _g(TSKindId.SliceGroup);
 	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
+	const _kind_CasePatternList_guard = _g(TSKindId.CasePatternList);
 	const _kind_TupleElements_guard = _g(TSKindId.TupleElements);
 	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
@@ -1536,7 +1554,6 @@ export function guardsWith(test: KindTest): IsGuards {
 			'content',
 			_vg(_g(TSKindId.SimplePattern), {
 				classPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ClassPattern_guard),
-				splatPattern: _at(_kind_SimplePattern_guard, 'content', _kind_SplatPattern_guard),
 				unionPattern: _at(_kind_SimplePattern_guard, 'content', _kind_UnionPattern_guard),
 				caseListPattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseListPattern_guard),
 				caseTuplePattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseTuplePattern_guard),
@@ -1555,7 +1572,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	});
 	const _form_SimplePattern_guard = _vg(_g(TSKindId.SimplePattern), {
 		classPattern: _at(_kind_SimplePattern_guard, 'content', _kind_ClassPattern_guard),
-		splatPattern: _at(_kind_SimplePattern_guard, 'content', _kind_SplatPattern_guard),
 		unionPattern: _at(_kind_SimplePattern_guard, 'content', _kind_UnionPattern_guard),
 		caseListPattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseListPattern_guard),
 		caseTuplePattern: _at(_kind_SimplePattern_guard, 'content', _kind_CaseTuplePattern_guard),
@@ -1628,6 +1644,10 @@ export function guardsWith(test: KindTest): IsGuards {
 		inline: _kind_SuiteInline_guard,
 		block: _kind_SuiteBlock_guard,
 		empty: _kind_SuiteEmpty_guard
+	});
+	const _supertype_splatPattern_guard = _vg(_mg(190), {
+		list: _kind_SplatPatternList_guard,
+		dictionary: _kind_SplatPatternDictionary_guard
 	});
 	const _supertype_parameter_guard = _vg(_mg(195), {
 		identifier: _kind_Identifier_guard,
@@ -1774,7 +1794,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		dictPattern: _kind_DictPattern_guard,
 		keyValuePattern: _kind_KeyValuePattern_guard,
 		keywordPattern: _kind_KeywordPattern_guard,
-		splatPattern: _kind_SplatPattern_guard,
 		classPattern: _kind_ClassPattern_guard,
 		complexPattern: _kind_ComplexPattern_guard,
 		parametersElements: _kind_ParametersElements_guard,
@@ -1831,7 +1850,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		comment: _kind_Comment_guard,
 		simpleStatementsElements: _kind_SimpleStatementsElements_guard,
 		subjects: _kind_Subjects_guard,
-		casePatterns: _kind_CasePatterns_guard,
 		withClauseWithItems: _kind_WithClauseWithItems_guard,
 		types: _kind_Types_guard,
 		argumentListElements: _kind_ArgumentListElements_guard,
@@ -1841,6 +1859,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		dictionaryElements: _kind_DictionaryElements_guard,
 		sliceGroup: _kind_SliceGroup_guard,
 		tuplePatternElements: _kind_TuplePatternElements_guard,
+		casePatternList: _kind_CasePatternList_guard,
 		tupleElements: _kind_TupleElements_guard,
 		exceptClauseExceptionAs: _kind_ExceptClauseExceptionAs_guard,
 		caseTuplePattern: _kind_CaseTuplePattern_guard,
@@ -1867,6 +1886,8 @@ export function guardsWith(test: KindTest): IsGuards {
 		simplePatternNegative: _kind_SimplePatternNegative_guard,
 		exceptClauseExceptionList: _kind_ExceptClauseExceptionList_guard,
 		exceptClauseException: _kind_ExceptClauseException_guard,
+		splatPatternList: _kind_SplatPatternList_guard,
+		splatPatternDictionary: _kind_SplatPatternDictionary_guard,
 		assignmentEq: _kind_AssignmentEq_guard,
 		assignmentType: _kind_AssignmentType_guard,
 		assignmentTyped: _kind_AssignmentTyped_guard,
@@ -1895,6 +1916,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		matchBlock: _supertype_matchBlock_guard,
 		withClause: _supertype_withClause_guard,
 		suite: _supertype_suite_guard,
+		splatPattern: _supertype_splatPattern_guard,
 		parameter: _supertype_parameter_guard,
 		pattern: _supertype_pattern_guard,
 		expression: _supertype_expression_guard,

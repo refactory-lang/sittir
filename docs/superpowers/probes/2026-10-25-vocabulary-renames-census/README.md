@@ -12,11 +12,11 @@ The census for the renames stage: the synonyms probe's ruled renames (`../2026-1
    - Of the 73 ruled renames, 46 have landed.
    - 27 old paths are still in the vocabulary, but one of them, `pattern.as`, has already landed. NO8 removes the old meaning of `pattern.as`: python's with-item `as_pattern`, which is now a container that the with item captures through. The path itself is now the merged kind that python's case-as pattern and rust's captured pattern claim.
    - 24 of the 26 have claims. `clause.match` and `type.named` are unclaimed.
-2. **By ruling:** NO7 has 4 renames, NO9 10, ID1 4, ID2 5, ID4 1 and ID8 2. Three target kinds do not exist yet and are added: `identifier.qualified`, `pattern.map` and `pattern.complex`.
+2. **By ruling:** NO7 has 4 renames, NO9 10, ID1 4, ID2 5, ID4 1 and ID8 2. Five target kinds do not exist yet and are added: `identifier.qualified`, `pattern.map`, `pattern.complex` and its refinements `.add` and `.subtract`.
 3. **One question is left for the user:** rust's match arm's low-level field (§3). The rulings and the bindings spec settle everything else, including the portable shape of the match case.
-4. **Four rulings need grammar-binding edits that do not exist yet** (§4). Each changes a parse tree: three in python, one in rust.
+4. **Five grammar edits are needed that do not exist yet** (§4). Each changes a parse tree: four in python, one in rust.
 5. **Low-level slot renames follow from the merged members** (§5). A capture of a claimed node's own field renames that field in the parser, as 2b's do.
-6. **Validation.** The path renames and the slot renames are expected to move no row, as 2b's 65 field renames moved none. The four new edits change parse trees, so the stage measures their rows and parser deltas when it writes them.
+6. **Validation.** The path renames and the slot renames are expected to move no row, as 2b's 65 field renames moved none. The five new edits change parse trees, so the stage measures their rows and parser deltas when it writes them.
 
 ## 1. The renames
 
@@ -38,15 +38,15 @@ Python's `clause.case.match` already exists, with `casePatterns`, `consequence` 
 | old path | becomes | claims | members |
 | --- | --- | --- | --- |
 | `pattern.case` | removed: `case_pattern` becomes a container | p:190 | `content` goes |
-| `pattern.case.list` | `pattern.list` | p:198 | `elements` |
-| `pattern.case.tuple` | `pattern.tuple` | p:197 | `elements` |
+| `pattern.case.list` | `pattern.list` | p:198 | `elements`. The kind keeps its name, `case_list_pattern`: its merge with `list_pattern` can't fold, since that name is a base rule |
+| `pattern.case.tuple` | `pattern.tuple` | p:197 | `elements`. The kind keeps its name, `case_tuple_pattern`: its merge with `tuple_pattern` can't fold, since that name is a base rule |
 | `pattern.case.or` | `pattern.or` | p:191 | `patterns` → `left` and `right`, the list nested as pairs (§4) |
-| `pattern.case.splat` | `pattern.rest` | p:194 | `name` → `pattern`. `operator` goes: `**` is the `pattern.rest.map` refinement |
+| `pattern.case.splat` | `pattern.rest`, and `pattern.rest.map` for `**` | p:194 | `splat_pattern` splits by its operator (§4), and the `operator` field goes. On each arm `name` → `pattern`. `*x` merges with `list_splat_pattern` into `rest_pattern`, and `**x` with `dictionary_splat_pattern` into `map_rest_pattern` |
 | `pattern.case.dictionary` | `pattern.map` (to add) | p:192 | `elements` |
 | `pattern.case.class` | `pattern.struct` | p:195 | `name` → `type`, `arguments` → `fields` |
 | `pattern.case.keyword` | `pattern.struct.field` | p:193 | `name`; `value` → `pattern` |
-| `pattern.case.complex` | `pattern.complex` (to add) | p:196 | `real`, `imaginary`, `operator`, `sign`, unchanged by the ruling |
-| `pattern.tuple.struct` (r) | `pattern.struct` | r:318 | `type`; `patterns` → `fields`, a bare pattern for each positional sub-pattern |
+| `pattern.case.complex` | `pattern.complex` (to add) | p:196 | `real`, `imaginary`, `sign`. `operator` goes: `+` and `-` are the refinements `pattern.complex.add` and `.subtract` (bindings spec §3.3) |
+| `pattern.tuple.struct` (r) | `pattern.struct` | r:318 | `type`; `patterns` → `fields`, a bare pattern for each positional sub-pattern. The kind keeps its name, `tuple_struct_pattern`: its merge with `struct_pattern` can't fold, since that name is a base rule |
 
 **ID1, the role kinds.** Each becomes `identifier`. None has members. A private name's fact is the `privateName` flag on its holder.
 
@@ -133,6 +133,7 @@ Under NO7, no member captures the arm's own field, so nothing derives `match`. T
 The rulings fix these shapes, but nothing in `codegen/src/bindings` or the DSL makes them yet. Each changes a parse tree, so the stage measures each one's STATE and `parser.c` deltas, and the rows it moves, when it is written.
 
 - **NO9:** python's `union_pattern` holds a flat `patterns` list; it is nested as pairs, `left` and `right`, as rust's or-pattern is.
+- **NO9:** python's `splat_pattern` splits by its operator into two arms, `*` and `**`, as the negative number pattern was split. Each arm then merges with python's rest pattern outside a case, which already tells them apart: `list_splat_pattern` and `dictionary_splat_pattern`.
 - **ID2:** python's `dotted_name` holds a flat `names` list; it is nested as pairs, `qualifier` and `name`.
 - **NO7:** python's case reads its patterns as one pattern, or as one tuple pattern without parentheses when there are several. This is a split of `case_patterns`.
 - **ID4:** rust's `self` at the path sites is aliased into a kind that claims `identifier`. Like the `crate` alias, it needs no clones.
@@ -151,7 +152,7 @@ A capture of the claimed node's own field onto a member name renames the field i
 - **python:**
   - `case_clause`: `consequence` → `body`; `case_patterns` → `pattern` with the split (§4);
   - `keyword_pattern`: `value` → `pattern`;
-  - `splat_pattern`: `name` → `pattern`. Its `operator` field stays a parser field with no member;
+  - `splat_pattern`: split into two arms (§4), and its `operator` field goes. On each arm `name` → `pattern`;
   - `class_pattern`: `name` → `type`, `arguments` → `fields`;
   - `member_type`: `base_type` → `qualifier`;
   - `union_pattern` and `dotted_name` take their pair fields from §4's edits.

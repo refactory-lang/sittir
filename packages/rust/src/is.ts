@@ -1585,6 +1585,7 @@ export interface IsGuards {
 	errorSentinel<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorSentinel };
+	selfModule<T extends { readonly $type: number } | number>(v: T): v is NarrowTo<T, TSKindId.SelfModule>;
 	crateVisibilityModifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is NarrowTo<T, TSKindId.CrateVisibilityModifier>;
@@ -1606,7 +1607,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	263, 479, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
+	263, 480, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
 	66, 67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
@@ -1641,7 +1642,7 @@ const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_declarationStatementTraitItem_ids = new Set<number>([
-	476, 478, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
+	476, 479, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatementImplItemBody_ids = new Set<number>([
@@ -1864,6 +1865,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ExternModifier_guard = _g(TSKindId.ExternModifier);
 	const _kind_CrateVisibilityModifier_guard = _mg(TSKindId.CrateVisibilityModifier);
 	const _kind_VisibilityModifier_guard = _g(TSKindId.VisibilityModifier);
+	const _kind_SelfModule_guard = _mg(TSKindId.SelfModule);
 	const _kind_VisibilityModifierPubScope_guard = _g(TSKindId.VisibilityModifierPubScope);
 	const _kind_VisibilityModifierPubScopeInPath_guard = _g(TSKindId.VisibilityModifierPubScopeInPath);
 	const _kind_VisibilityModifierPub_guard = _g(TSKindId.VisibilityModifierPub);
@@ -2048,7 +2050,7 @@ export function guardsWith(test: KindTest): IsGuards {
 					_kind_VisibilityModifierPub_guard,
 					'visibilityModifierPubScope',
 					_vg(_g(TSKindId.VisibilityModifierPubScope), {
-						self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Self_guard),
+						self: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_SelfModule_guard),
 						super: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Super_guard),
 						crate: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_Crate_guard),
 						inPath: _at(_kind_VisibilityModifierPubScope_guard, 'content', _kind_VisibilityModifierPubScopeInPath_guard)
@@ -2487,6 +2489,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		blockCommentContent: _kind_BlockCommentContent_guard,
 		stringClose: _kind_StringClose_guard,
 		errorSentinel: _kind_ErrorSentinel_guard,
+		selfModule: _kind_SelfModule_guard,
 		crateVisibilityModifier: _kind_CrateVisibilityModifier_guard
 	}) as unknown as IsGuards;
 }

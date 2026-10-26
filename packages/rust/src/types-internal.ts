@@ -48,6 +48,7 @@ import type {
 	Self,
 	Super,
 	Crate,
+	SelfModule,
 	TokenTreePattern,
 	TokenTree,
 	Expression,
@@ -71,7 +72,7 @@ export type TokenPattern =
 export type Tokens = TokenTree | TokenRepetition | Metavariable | NonSpecialToken;
 
 export type UseClause =
-	| Self
+	| SelfModule
 	| Metavariable
 	| Super
 	| Crate
@@ -142,7 +143,7 @@ export type NonDelimToken = NonSpecialToken | Dollar;
 
 export type Condition = Expression | LetCondition | LetChain;
 
-export type Path = Self | Metavariable | Super | Crate | Identifier | ScopedIdentifier;
+export type Path = SelfModule | Metavariable | Super | Crate | Identifier | ScopedIdentifier;
 
 export namespace TokenPattern {
 	export type Kind = '_token_pattern';

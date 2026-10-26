@@ -302,7 +302,7 @@
 (unary_expression operator: "typeof") @expression.unary.typeof
 (unary_expression operator: "void") @expression.unary.void
 (unary_expression operator: "delete") @expression.unary.delete
-(update_expression_prefix) @expression.update
+(update_expression_prefix) @expression.update.prefix
 (update_expression_postfix) @expression.update
 (update_expression_prefix operator: "++") @expression.update.increment
 (update_expression_postfix operator: "++") @expression.update.increment

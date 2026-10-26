@@ -478,9 +478,10 @@ export enum TSKindId {
 	CrateVisibilityModifier = 473,
 	FieldIdentifier = 474,
 	MethodDeclaration = 476,
-	ShorthandFieldIdentifier = 477,
-	SignatureMethodDeclaration = 478,
-	TypeIdentifier = 479,
+	SelfModule = 477,
+	ShorthandFieldIdentifier = 478,
+	SignatureMethodDeclaration = 479,
+	TypeIdentifier = 480,
 	Error = 65535
 }
 Object.freeze(TSKindId);

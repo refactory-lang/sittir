@@ -101,7 +101,7 @@ export const decoratedDefinition = bundle(F.buildDecoratedDefinition, C.coerceTo
 export const decorator = bundle(F.buildDecorator, C.coerceToDecorator, { key: 'decorator', max: 1 });
 export const block = bundle(F.buildBlock, C.coerceToBlock);
 export const expressionList = bundle(F.buildExpressionList, C.coerceToExpressionList);
-export const dottedName = bundle(F.buildDottedName, C.coerceToDottedName);
+export const dottedName = bundle(F.buildDottedName, C.coerceToDottedName, { key: 'dottedName', max: 1 });
 export const casePattern = bundle(F.buildCasePattern, C.coerceToCasePattern, { key: 'casePattern', max: 1 });
 export const simplePattern = bundle(F.buildSimplePattern, C.coerceToSimplePattern, { key: 'simplePattern', max: 1 });
 export const caseAsPattern = bundle(F.buildCaseAsPattern, C.coerceToCaseAsPattern, { key: 'caseAsPattern', max: 1 });
@@ -115,7 +115,6 @@ export const keywordPattern = bundle(F.buildKeywordPattern, C.coerceToKeywordPat
 	key: 'keywordPattern',
 	max: 1
 });
-export const splatPattern = bundle(F.buildSplatPattern, C.coerceToSplatPattern, { key: 'splatPattern', max: 1 });
 export const classPattern = bundle(F.buildClassPattern, C.coerceToClassPattern, { key: 'classPattern', max: 1 });
 export const complexPattern = bundle(F.buildComplexPattern, C.coerceToComplexPattern, {
 	key: 'complexPattern',
@@ -228,7 +227,6 @@ export const formatSpecifier = bundle(F.buildFormatSpecifier, C.coerceToFormatSp
 export const await_ = bundle(F.buildAwait, C.coerceToAwait, { key: 'await_', max: 1 });
 export const simpleStatementsElements = bundle(F.buildSimpleStatementsElements, C.coerceToSimpleStatementsElements);
 export const subjects = bundle(F.buildSubjects, C.coerceToSubjects);
-export const casePatterns = bundle(F.buildCasePatterns, C.coerceToCasePatterns);
 export const withClauseWithItems = bundle(F.buildWithClauseWithItems, C.coerceToWithClauseWithItems);
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const argumentListElements = bundle(F.buildArgumentListElements, C.coerceToArgumentListElements);
@@ -237,6 +235,7 @@ export const dictPatternElements = bundle(F.buildDictPatternElements, C.coerceTo
 export const subscripts = bundle(F.buildSubscripts, C.coerceToSubscripts);
 export const dictionaryElements = bundle(F.buildDictionaryElements, C.coerceToDictionaryElements);
 export const tuplePatternElements = bundle(F.buildTuplePatternElements, C.coerceToTuplePatternElements);
+export const casePatternList = bundle(F.buildCasePatternList, C.coerceToCasePatternList);
 export const tupleElements = bundle(F.buildTupleElements, C.coerceToTupleElements);
 export const exceptClauseExceptionAs = bundle(F.buildExceptClauseExceptionAs, C.coerceToExceptClauseExceptionAs, {
 	key: 'exceptClauseExceptionAs',
@@ -263,6 +262,14 @@ export const floatLeadingPoint = bundle(F.buildFloatLeadingPoint, C.coerceToFloa
 export const floatScientific = bundle(F.buildFloatScientific, C.coerceToFloatScientific, {
 	key: 'floatScientific',
 	max: 2
+});
+export const splatPatternList = bundle(F.buildSplatPatternList, C.coerceToSplatPatternList, {
+	key: 'splatPatternList',
+	max: 1
+});
+export const splatPatternDictionary = bundle(F.buildSplatPatternDictionary, C.coerceToSplatPatternDictionary, {
+	key: 'splatPatternDictionary',
+	max: 1
 });
 export const assignmentEq = bundle(F.buildAssignmentEq, C.coerceToAssignmentEq, { key: 'assignmentEq', max: 1 });
 export const assignmentType = bundle(F.buildAssignmentType, C.coerceToAssignmentType, {
