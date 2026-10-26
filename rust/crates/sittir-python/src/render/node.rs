@@ -252,8 +252,6 @@ pub enum AnyNode {
     SimpleStatementsElements(SimpleStatementsElementsNode),
     #[kind(kind::SUBJECTS)]
     Subjects(SubjectsNode),
-    #[kind(kind::CASE_PATTERNS)]
-    CasePatterns(CasePatternsNode),
     #[kind(kind::WITH_CLAUSE_WITH_ITEMS)]
     WithClauseWithItems(WithClauseWithItemsNode),
     #[kind(kind::TYPES)]
@@ -274,6 +272,8 @@ pub enum AnyNode {
     FormatSpecifierText(FormatSpecifierTextNode),
     #[kind(kind::_TUPLE_PATTERN_ELEMENTS)]
     TuplePatternElements(TuplePatternElementsNode),
+    #[kind(kind::CASE_PATTERN_LIST)]
+    CasePatternList(CasePatternListNode),
     #[kind(kind::_TUPLE_ELEMENTS)]
     TupleElements(TupleElementsNode),
     #[kind(kind::EXCEPT_CLAUSE_EXCEPTION_AS)]
@@ -737,7 +737,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Comment(t) => t.prepare(ctx),
             AnyNode::SimpleStatementsElements(t) => t.prepare(ctx),
             AnyNode::Subjects(t) => t.prepare(ctx),
-            AnyNode::CasePatterns(t) => t.prepare(ctx),
             AnyNode::WithClauseWithItems(t) => t.prepare(ctx),
             AnyNode::Types(t) => t.prepare(ctx),
             AnyNode::ArgumentListElements(t) => t.prepare(ctx),
@@ -748,6 +747,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::SliceGroup(t) => t.prepare(ctx),
             AnyNode::FormatSpecifierText(t) => t.prepare(ctx),
             AnyNode::TuplePatternElements(t) => t.prepare(ctx),
+            AnyNode::CasePatternList(t) => t.prepare(ctx),
             AnyNode::TupleElements(t) => t.prepare(ctx),
             AnyNode::ExceptClauseExceptionAs(t) => t.prepare(ctx),
             AnyNode::CaseTuplePattern(t) => t.prepare(ctx),
@@ -1033,7 +1033,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Comment(t) => t.gap_edges(),
             AnyNode::SimpleStatementsElements(t) => t.gap_edges(),
             AnyNode::Subjects(t) => t.gap_edges(),
-            AnyNode::CasePatterns(t) => t.gap_edges(),
             AnyNode::WithClauseWithItems(t) => t.gap_edges(),
             AnyNode::Types(t) => t.gap_edges(),
             AnyNode::ArgumentListElements(t) => t.gap_edges(),
@@ -1044,6 +1043,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::SliceGroup(t) => t.gap_edges(),
             AnyNode::FormatSpecifierText(t) => t.gap_edges(),
             AnyNode::TuplePatternElements(t) => t.gap_edges(),
+            AnyNode::CasePatternList(t) => t.gap_edges(),
             AnyNode::TupleElements(t) => t.gap_edges(),
             AnyNode::ExceptClauseExceptionAs(t) => t.gap_edges(),
             AnyNode::CaseTuplePattern(t) => t.gap_edges(),
@@ -1329,7 +1329,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Comment(t) => t.snapshot_edge(),
             AnyNode::SimpleStatementsElements(t) => t.snapshot_edge(),
             AnyNode::Subjects(t) => t.snapshot_edge(),
-            AnyNode::CasePatterns(t) => t.snapshot_edge(),
             AnyNode::WithClauseWithItems(t) => t.snapshot_edge(),
             AnyNode::Types(t) => t.snapshot_edge(),
             AnyNode::ArgumentListElements(t) => t.snapshot_edge(),
@@ -1340,6 +1339,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::SliceGroup(t) => t.snapshot_edge(),
             AnyNode::FormatSpecifierText(t) => t.snapshot_edge(),
             AnyNode::TuplePatternElements(t) => t.snapshot_edge(),
+            AnyNode::CasePatternList(t) => t.snapshot_edge(),
             AnyNode::TupleElements(t) => t.snapshot_edge(),
             AnyNode::ExceptClauseExceptionAs(t) => t.snapshot_edge(),
             AnyNode::CaseTuplePattern(t) => t.snapshot_edge(),
@@ -1625,7 +1625,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Comment(t) => t.source_coordinate(),
             AnyNode::SimpleStatementsElements(t) => t.source_coordinate(),
             AnyNode::Subjects(t) => t.source_coordinate(),
-            AnyNode::CasePatterns(t) => t.source_coordinate(),
             AnyNode::WithClauseWithItems(t) => t.source_coordinate(),
             AnyNode::Types(t) => t.source_coordinate(),
             AnyNode::ArgumentListElements(t) => t.source_coordinate(),
@@ -1636,6 +1635,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::SliceGroup(t) => t.source_coordinate(),
             AnyNode::FormatSpecifierText(t) => t.source_coordinate(),
             AnyNode::TuplePatternElements(t) => t.source_coordinate(),
+            AnyNode::CasePatternList(t) => t.source_coordinate(),
             AnyNode::TupleElements(t) => t.source_coordinate(),
             AnyNode::ExceptClauseExceptionAs(t) => t.source_coordinate(),
             AnyNode::CaseTuplePattern(t) => t.source_coordinate(),
@@ -1921,7 +1921,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Comment(t) => t.source_separator(ctx),
             AnyNode::SimpleStatementsElements(t) => t.source_separator(ctx),
             AnyNode::Subjects(t) => t.source_separator(ctx),
-            AnyNode::CasePatterns(t) => t.source_separator(ctx),
             AnyNode::WithClauseWithItems(t) => t.source_separator(ctx),
             AnyNode::Types(t) => t.source_separator(ctx),
             AnyNode::ArgumentListElements(t) => t.source_separator(ctx),
@@ -1932,6 +1931,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::SliceGroup(t) => t.source_separator(ctx),
             AnyNode::FormatSpecifierText(t) => t.source_separator(ctx),
             AnyNode::TuplePatternElements(t) => t.source_separator(ctx),
+            AnyNode::CasePatternList(t) => t.source_separator(ctx),
             AnyNode::TupleElements(t) => t.source_separator(ctx),
             AnyNode::ExceptClauseExceptionAs(t) => t.source_separator(ctx),
             AnyNode::CaseTuplePattern(t) => t.source_separator(ctx),
@@ -5433,39 +5433,39 @@ impl ::sittir_core::render::Render for IfStatementAlternativeNodeSlot {
 pub enum CaseClausePatternNodeSlot {
     #[kind(kind::CASE_PATTERN)]
     CasePattern(CasePatternNode),
-    #[kind(kind::CASE_PATTERNS, kind::PATTERN_LIST)]
-    CasePatterns(CasePatternsNode),
+    #[kind(kind::CASE_PATTERN_LIST, kind::PATTERN_LIST)]
+    CasePatternList(CasePatternListNode),
 }
 
 impl ::sittir_core::prepare::Prepare for CaseClausePatternNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
             CaseClausePatternNodeSlot::CasePattern(t) => t.prepare(ctx),
-            CaseClausePatternNodeSlot::CasePatterns(t) => t.prepare(ctx),
+            CaseClausePatternNodeSlot::CasePatternList(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
             CaseClausePatternNodeSlot::CasePattern(t) => t.gap_edges(),
-            CaseClausePatternNodeSlot::CasePatterns(t) => t.gap_edges(),
+            CaseClausePatternNodeSlot::CasePatternList(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
             CaseClausePatternNodeSlot::CasePattern(t) => t.snapshot_edge(),
-            CaseClausePatternNodeSlot::CasePatterns(t) => t.snapshot_edge(),
+            CaseClausePatternNodeSlot::CasePatternList(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
             CaseClausePatternNodeSlot::CasePattern(t) => t.source_coordinate(),
-            CaseClausePatternNodeSlot::CasePatterns(t) => t.source_coordinate(),
+            CaseClausePatternNodeSlot::CasePatternList(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
             CaseClausePatternNodeSlot::CasePattern(t) => t.source_separator(ctx),
-            CaseClausePatternNodeSlot::CasePatterns(t) => t.source_separator(ctx),
+            CaseClausePatternNodeSlot::CasePatternList(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5477,7 +5477,7 @@ impl ::sittir_core::view::KindOf for CaseClausePatternNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::CasePattern(inner) => inner.kind_in(kinds),
-            Self::CasePatterns(inner) => inner.kind_in(kinds),
+            Self::CasePatternList(inner) => inner.kind_in(kinds),
         }
     }
 }
@@ -5486,7 +5486,7 @@ impl ::sittir_core::render::Render for CaseClausePatternNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             CaseClausePatternNodeSlot::CasePattern(inner) => inner.render(w),
-            CaseClausePatternNodeSlot::CasePatterns(inner) => inner.render(w),
+            CaseClausePatternNodeSlot::CasePatternList(inner) => inner.render(w),
         }
     }
 }
@@ -18824,69 +18824,6 @@ impl ::sittir_core::prepare::Prepare for SubjectsNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CASE_PATTERNS, item = item, words = 4)]
-pub struct CasePatternsNode {
-    #[wire(key = "$_layout")]
-    pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_item")]
-    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
-    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternNode>>,
-    #[wire(key = "_delimiter")]
-    #[flank(trailing = 0)]
-    pub delimiter: Option<::sittir_core::types::Delimiter>,
-    #[wire(key = "_item_separator_space_before")]
-    pub item_separator_space_before: Option<KindId>,
-    #[wire(key = "_item_separator_space_after")]
-    pub item_separator_space_after: Option<KindId>,
-}
-
-impl ::sittir_core::view::KindOf for CasePatternsNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(262)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::options::Edged for CasePatternsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(262) }
-    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
-    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
-}
-
-impl ::sittir_core::render::Render for CasePatternsNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(262)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_patterns(self, w))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for CasePatternsNode {
-    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
-        self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
-        self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_CASE_PATTERNS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(262), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_CASE_PATTERNS_ITEM), ctx));
-        self.item.prepare(ctx)?;
-        Ok(())
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        Some(self.layout.edges_mut())
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(kind = kind::WITH_CLAUSE_WITH_ITEMS, item = item, words = 4)]
 pub struct WithClauseWithItemsNode {
     #[wire(key = "$_layout")]
@@ -18905,19 +18842,19 @@ pub struct WithClauseWithItemsNode {
 
 impl ::sittir_core::view::KindOf for WithClauseWithItemsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(263)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(262)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for WithClauseWithItemsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(263) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(262) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for WithClauseWithItemsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(263)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_with_items(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(262)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_with_clause_with_items(self, w))
     }
 }
 
@@ -18927,7 +18864,7 @@ impl ::sittir_core::prepare::Prepare for WithClauseWithItemsNode {
         ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_WITH_CLAUSE_WITH_ITEMS_ITEM_SEPARATOR_SPACE_AFTER).arm);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(263), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(262), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_WITH_CLAUSE_WITH_ITEMS_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -18967,19 +18904,19 @@ pub struct TypesNode {
 
 impl ::sittir_core::view::KindOf for TypesNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(264)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(263)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypesNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(264) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(263) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypesNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(264)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_types(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(263)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_types(self, w))
     }
 }
 
@@ -18990,7 +18927,7 @@ impl ::sittir_core::prepare::Prepare for TypesNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_TYPES_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TYPES_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(264), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TYPES_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(263), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TYPES_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -19030,19 +18967,19 @@ pub struct ArgumentListElementsNode {
 
 impl ::sittir_core::view::KindOf for ArgumentListElementsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(264)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ArgumentListElementsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(265) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(264) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ArgumentListElementsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(265)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_argument_list_elements(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(264)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_argument_list_elements(self, w))
     }
 }
 
@@ -19053,7 +18990,7 @@ impl ::sittir_core::prepare::Prepare for ArgumentListElementsNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_ARGUMENT_LIST_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_ARGUMENT_LIST_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(265), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_ARGUMENT_LIST_ELEMENTS_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(264), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_ARGUMENT_LIST_ELEMENTS_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -19093,19 +19030,19 @@ pub struct ListPatternCasePatternsNode {
 
 impl ::sittir_core::view::KindOf for ListPatternCasePatternsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(266)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(265)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ListPatternCasePatternsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(266) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(265) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ListPatternCasePatternsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(266)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_pattern_case_patterns(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(265)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_list_pattern_case_patterns(self, w))
     }
 }
 
@@ -19116,7 +19053,7 @@ impl ::sittir_core::prepare::Prepare for ListPatternCasePatternsNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_LIST_PATTERN_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_LIST_PATTERN_CASE_PATTERNS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(266), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(265), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_LIST_PATTERN_CASE_PATTERNS_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -19156,19 +19093,19 @@ pub struct DictPatternElementsNode {
 
 impl ::sittir_core::view::KindOf for DictPatternElementsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(267)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(266)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictPatternElementsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(266) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictPatternElementsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(267)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dict_pattern_elements(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(266)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dict_pattern_elements(self, w))
     }
 }
 
@@ -19179,7 +19116,7 @@ impl ::sittir_core::prepare::Prepare for DictPatternElementsNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_DICT_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_DICT_PATTERN_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(267), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_DICT_PATTERN_ELEMENTS_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(266), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_DICT_PATTERN_ELEMENTS_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -19219,19 +19156,19 @@ pub struct SubscriptsNode {
 
 impl ::sittir_core::view::KindOf for SubscriptsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(268)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(267)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SubscriptsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(268) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(267) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SubscriptsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_subscripts(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(267)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_subscripts(self, w))
     }
 }
 
@@ -19242,7 +19179,7 @@ impl ::sittir_core::prepare::Prepare for SubscriptsNode {
         self.subscript_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_BEFORE).arm);
         self.subscript_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_SUBSCRIPTS_SUBSCRIPT_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.subscript.iter_mut().map(Some), options::SEATS_SUBSCRIPTS_SUBSCRIPT, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(268), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_SUBSCRIPT), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(267), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_SUBSCRIPTS_SUBSCRIPT), ctx));
         self.subscript.prepare(ctx)?;
         Ok(())
     }
@@ -19282,19 +19219,19 @@ pub struct DictionaryElementsNode {
 
 impl ::sittir_core::view::KindOf for DictionaryElementsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(269)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(268)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for DictionaryElementsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(269) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(268) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for DictionaryElementsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(269)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary_elements(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(268)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_dictionary_elements(self, w))
     }
 }
 
@@ -19305,7 +19242,7 @@ impl ::sittir_core::prepare::Prepare for DictionaryElementsNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_DICTIONARY_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_DICTIONARY_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(269), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_DICTIONARY_ELEMENTS_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(268), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_DICTIONARY_ELEMENTS_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -19338,19 +19275,19 @@ pub struct SliceGroupNode {
 
 impl ::sittir_core::view::KindOf for SliceGroupNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(269)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for SliceGroupNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(270) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(269) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for SliceGroupNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_group(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(269)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_slice_group(self, w))
     }
 }
 
@@ -19446,19 +19383,19 @@ pub struct TuplePatternElementsNode {
 
 impl ::sittir_core::view::KindOf for TuplePatternElementsNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(270)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TuplePatternElementsNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(271) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(270) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TuplePatternElementsNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(270)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_tuple_pattern_elements(self, w))
     }
 }
 
@@ -19469,7 +19406,70 @@ impl ::sittir_core::prepare::Prepare for TuplePatternElementsNode {
         self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_BEFORE).arm);
         self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_TUPLE_PATTERN_ELEMENTS_ITEM_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_TUPLE_PATTERN_ELEMENTS_ITEM, ctx);
-        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(271), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx));
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(270), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_TUPLE_PATTERN_ELEMENTS_ITEM), ctx));
+        self.item.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::CASE_PATTERN_LIST, item = item, words = 4)]
+pub struct CasePatternListNode {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "_item")]
+    #[slot(field = field::ITEM, separator = kind::COMMA, word = 2, width = 2, run = 5)]
+    pub item: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<CasePatternNode>>,
+    #[wire(key = "_delimiter")]
+    #[flank(trailing = 0)]
+    pub delimiter: Option<::sittir_core::types::Delimiter>,
+    #[wire(key = "_item_separator_space_before")]
+    pub item_separator_space_before: Option<KindId>,
+    #[wire(key = "_item_separator_space_after")]
+    pub item_separator_space_after: Option<KindId>,
+}
+
+impl ::sittir_core::view::KindOf for CasePatternListNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(271)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for CasePatternListNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(271) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for CasePatternListNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(271)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_case_pattern_list(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for CasePatternListNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        ::sittir_core::prepare::fill_slot_gaps(self.item.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_item"));
+        self.item_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE).arm);
+        self.item_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER).arm);
+        ::sittir_core::prepare::fill_seated_gaps(self.item.iter_mut().map(Some), options::SEATS_CASE_PATTERN_LIST_ITEM, ctx);
+        self.delimiter.get_or_insert(::sittir_core::prepare::source_trailing_delimiter(self.layout.as_deref(), ::sittir_core::types::KindId(271), &[::sittir_core::types::KindId(6)], ctx.options.delimiter_at(options::DELIM_CASE_PATTERN_LIST_ITEM), ctx));
         self.item.prepare(ctx)?;
         Ok(())
     }
@@ -22698,19 +22698,19 @@ pub struct AsPatternTargetNode {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(342)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(343)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(342) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(343) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(342)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(343)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
@@ -26467,7 +26467,7 @@ impl ::sittir_core::prepare::SeatTarget for CaseClausePatternNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::CasePattern(t) => t.seat_target(table, ctx),
-            Self::CasePatterns { .. } => None,
+            Self::CasePatternList { .. } => None,
         }
     }
 }
@@ -27072,7 +27072,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
             Self::ConstructorDeclaration(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinitionClassDeclaration(t) => t.seat_target(table, ctx),
-            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Underscore { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
+            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::CasePatternList { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Underscore { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -28731,24 +28731,6 @@ fn render_subjects(node: &SubjectsNode, w: &mut dyn ::sittir_core::render::Rende
     Ok(())
 }
 
-fn render_case_patterns(node: &CasePatternsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let item = ListView {
-        items: &node.item,
-        template: "{}",
-        token: ",",
-        separators: None,
-        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
-        leading: false,
-        trailing: node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
-        head: None,
-        tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
-    };
-    item.render(w)?;
-    Ok(())
-}
-
 fn render_with_clause_with_items(node: &WithClauseWithItemsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
         items: &node.item,
@@ -28877,11 +28859,11 @@ fn render_dictionary_elements(node: &DictionaryElementsNode, w: &mut dyn ::sitti
 
 fn render_slice_group(node: &SliceGroupNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let expression = View::new(&node.expression, "{}");
-    w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::Before, node.layout.edges().before);
     w.text(":")?;
     w.site_at(options::SITE_SLICE_GROUP_COLON_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_expression", ::sittir_core::types::ItemIndex(0), w, |w| expression.render(w))?;
-    w.edge(::sittir_core::types::KindId(270), ::sittir_core::options::Side::After, node.layout.edges().after);
+    w.edge(::sittir_core::types::KindId(269), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -28891,6 +28873,24 @@ fn render_format_specifier_text(t: &FormatSpecifierTextNode, w: &mut dyn ::sitti
 }
 
 fn render_tuple_pattern_elements(node: &TuplePatternElementsNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let item = ListView {
+        items: &node.item,
+        template: "{}",
+        token: ",",
+        separators: None,
+        before: node.item_separator_space_before.unwrap_or(KindId::BLANK),
+        after: node.item_separator_space_after.unwrap_or(KindId::BLANK),
+        leading: false,
+        trailing: node.item.len() == 1 || node.delimiter.is_some_and(|d| d.has(::sittir_core::types::Delimiter::TRAILING)),
+        head: None,
+        tail: None,
+        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_item"),
+    };
+    item.render(w)?;
+    Ok(())
+}
+
+fn render_case_pattern_list(node: &CasePatternListNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let item = ListView {
         items: &node.item,
         template: "{}",
@@ -30379,7 +30379,6 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Comment(inner) => inner.kind_in(kinds),
             Self::SimpleStatementsElements(inner) => inner.kind_in(kinds),
             Self::Subjects(inner) => inner.kind_in(kinds),
-            Self::CasePatterns(inner) => inner.kind_in(kinds),
             Self::WithClauseWithItems(inner) => inner.kind_in(kinds),
             Self::Types(inner) => inner.kind_in(kinds),
             Self::ArgumentListElements(inner) => inner.kind_in(kinds),
@@ -30390,6 +30389,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::SliceGroup(inner) => inner.kind_in(kinds),
             Self::FormatSpecifierText(inner) => inner.kind_in(kinds),
             Self::TuplePatternElements(inner) => inner.kind_in(kinds),
+            Self::CasePatternList(inner) => inner.kind_in(kinds),
             Self::TupleElements(inner) => inner.kind_in(kinds),
             Self::ExceptClauseExceptionAs(inner) => inner.kind_in(kinds),
             Self::CaseTuplePattern(inner) => inner.kind_in(kinds),
@@ -30678,7 +30678,6 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::Comment(t) => t.render(w),
             AnyNode::SimpleStatementsElements(t) => t.render(w),
             AnyNode::Subjects(t) => t.render(w),
-            AnyNode::CasePatterns(t) => t.render(w),
             AnyNode::WithClauseWithItems(t) => t.render(w),
             AnyNode::Types(t) => t.render(w),
             AnyNode::ArgumentListElements(t) => t.render(w),
@@ -30689,6 +30688,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::SliceGroup(t) => t.render(w),
             AnyNode::FormatSpecifierText(t) => t.render(w),
             AnyNode::TuplePatternElements(t) => t.render(w),
+            AnyNode::CasePatternList(t) => t.render(w),
             AnyNode::TupleElements(t) => t.render(w),
             AnyNode::ExceptClauseExceptionAs(t) => t.render(w),
             AnyNode::CaseTuplePattern(t) => t.render(w),
@@ -30898,8 +30898,8 @@ const _: () = assert!(::core::mem::size_of::<CallNode>() <= 256, "CallNode is ov
 const _: () = assert!(::core::mem::size_of::<CaseAsPatternNode>() <= 256, "CaseAsPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<CaseClauseNode>() > 256, "CaseClauseNode is within the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it over");
 const _: () = assert!(::core::mem::size_of::<CaseListPatternNode>() <= 256, "CaseListPatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<CasePatternListNode>() <= 256, "CasePatternListNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<CasePatternNode>() <= 256, "CasePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
-const _: () = assert!(::core::mem::size_of::<CasePatternsNode>() <= 256, "CasePatternsNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<CaseTuplePatternNode>() <= 256, "CaseTuplePatternNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ChevronNode>() <= 256, "ChevronNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ClassDefinitionNode>() <= 256, "ClassDefinitionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -31063,4 +31063,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, CaseClausePatternNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, SplatPatternListPatternNodeSlot, SplatPatternDictionaryPatternNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, CasePatternListNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, SplatPatternListNode, SplatPatternDictionaryNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, UnderscoreNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);

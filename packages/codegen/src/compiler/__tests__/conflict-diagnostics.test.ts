@@ -32,7 +32,7 @@ describe('python conflict records', () => {
 
 	it('records one informational conflict-resolution per derived resolution, with its step and conflict', () => {
 		const resolutions = conflictRecords(python).filter((record) => record.code === 'conflict-resolution');
-		expect(resolutions).toHaveLength(12);
+		expect(resolutions).toHaveLength(11);
 		for (const record of resolutions) {
 			expect(record).toMatchObject({ severity: 'info', canProceed: true });
 			expect(Object.keys(record.details ?? {}).sort()).toEqual(['conflict', 'resolution', 'sourceChains', 'step']);

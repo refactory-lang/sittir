@@ -376,7 +376,6 @@ export default grammar(enrich(base), wire({
 			1: ($) => field('name', $.identifier)
 		},
 		union_pattern: { 0: field('left'), 1: ($) => seq('|', field('right', $._simple_pattern)) },
-		case_clause: { 1: ($) => field('pattern', choice(prec(1, prec.dynamic(1, $.case_pattern)), $.case_patterns)) },
 		if_clause: { 1: field('condition') },
 		await: { 1: field('expression') },
 
@@ -416,6 +415,26 @@ export default grammar(enrich(base), wire({
 			'semantic-gap',
 			[{ text: '(x) = y\n', form: ['(', { symbol: 'pattern' }, ')'], kind: 'tuple_pattern', meaning: 'Binds the entire value, rather than unpacking a one-element tuple (#550).' }],
 			($, original) => edit(original, { 1: field('elements', optional(alias($._tuple_pattern_elements, $.tuple_pattern_elements))) })
+		),
+		case_pattern_list: vocabulary(($) => tupleElements(field('item', $.case_pattern))),
+		case_clause: reauthored(
+			'semantic-gap',
+			[
+				{
+					text: 'match x:\n    case a,:\n        pass\n',
+					form: ['case', { symbol: 'case_pattern' }, ',', ':', { symbol: '_suite' }],
+					kind: 'case_clause',
+					meaning: 'Matches a one-element sequence, rather than capturing the whole value as the case without the comma does.'
+				}
+			],
+			($) =>
+				seq(
+					'case',
+					field('pattern', choice($.case_pattern, $.case_pattern_list)),
+					optional(field('guard', $.if_clause)),
+					':',
+					field('consequence', $._suite)
+				)
 		),
 		// See docs/python-grammar-sittir-glossary.md::tuple
 		_tuple_elements: vocabulary(($) => tupleElements(field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat)))),

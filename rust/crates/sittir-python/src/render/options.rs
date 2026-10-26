@@ -113,16 +113,16 @@ pub const SITE_AWAIT_AWAIT_KEYWORD_AFTER: SiteId = SiteId(103);
 pub const SITE_AWAIT_AWAIT_BEFORE: SiteId = SiteId(104);
 pub const SITE_AWAIT_AWAIT_AFTER: SiteId = SiteId(105);
 pub const SITE_PATTERN_LIST_ITEM_ATTRIBUTE_AFTER: SiteId = SiteId(106);
-pub const SITE_CASE_PATTERNS_ITEM_CASE_AS_PATTERN_AFTER: SiteId = SiteId(107);
-pub const SITE_CASE_PATTERNS_ITEM_KEYWORD_PATTERN_AFTER: SiteId = SiteId(108);
+pub const SITE_CASE_PATTERN_LIST_ITEM_CASE_AS_PATTERN_AFTER: SiteId = SiteId(107);
+pub const SITE_CASE_PATTERN_LIST_ITEM_KEYWORD_PATTERN_AFTER: SiteId = SiteId(108);
 pub const SITE_PATTERN_LIST_ITEM_LIST_PATTERN_AFTER: SiteId = SiteId(109);
 pub const SITE_PATTERN_LIST_ITEM_LIST_SPLAT_PATTERN_AFTER: SiteId = SiteId(110);
 pub const SITE_PATTERN_LIST_ITEM_SUBSCRIPT_AFTER: SiteId = SiteId(111);
 pub const SITE_PATTERN_LIST_ITEM_TUPLE_PATTERN_AFTER: SiteId = SiteId(112);
 pub const SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(113);
-pub const SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(114);
+pub const SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE: SiteId = SiteId(114);
 pub const SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(115);
-pub const SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(116);
+pub const SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER: SiteId = SiteId(116);
 pub const SITE_BINARY_OPERATOR_OPERATOR_BEFORE: SiteId = SiteId(117);
 pub const SITE_BINARY_OPERATOR_OPERATOR_AFTER: SiteId = SiteId(118);
 pub const SITE_BINARY_OPERATOR_BINARY_OPERATOR_BEFORE: SiteId = SiteId(119);
@@ -1098,7 +1098,7 @@ pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_BEFORE: SiteId = SiteId(1088)
 pub const SITE_YIELD_FROM_CLAUSE_YIELD_FROM_CLAUSE_AFTER: SiteId = SiteId(1089);
 pub const DELIM_ARGUMENT_LIST_ELEMENTS_ITEM: FlankId = FlankId(0);
 pub const DELIM_PATTERN_LIST_ITEM: FlankId = FlankId(1);
-pub const DELIM_CASE_PATTERNS_ITEM: FlankId = FlankId(2);
+pub const DELIM_CASE_PATTERN_LIST_ITEM: FlankId = FlankId(2);
 pub const DELIM_COLLECTION_ELEMENTS_ITEM: FlankId = FlankId(3);
 pub const DELIM_DICT_PATTERN_ELEMENTS_ITEM: FlankId = FlankId(4);
 pub const DELIM_DICTIONARY_ELEMENTS_ITEM: FlankId = FlankId(5);
@@ -2350,7 +2350,7 @@ pub static EDGE_ROWS: &[Option<EdgeRow>] = &[
     Some(EdgeRow(55)), Some(EdgeRow(56)), Some(EdgeRow(57)), None, None, Some(EdgeRow(58)), Some(EdgeRow(59)), Some(EdgeRow(60)), None, Some(EdgeRow(61)), None, None, Some(EdgeRow(62)), Some(EdgeRow(63)), Some(EdgeRow(64)), Some(EdgeRow(65)),
     Some(EdgeRow(66)), Some(EdgeRow(67)), None, Some(EdgeRow(68)), Some(EdgeRow(69)), Some(EdgeRow(70)), Some(EdgeRow(71)), Some(EdgeRow(72)), Some(EdgeRow(73)), Some(EdgeRow(74)), Some(EdgeRow(75)), Some(EdgeRow(76)), Some(EdgeRow(77)), Some(EdgeRow(78)), Some(EdgeRow(79)), Some(EdgeRow(80)),
     Some(EdgeRow(81)), Some(EdgeRow(82)), Some(EdgeRow(83)), None, Some(EdgeRow(84)), Some(EdgeRow(85)), Some(EdgeRow(86)), Some(EdgeRow(87)), Some(EdgeRow(88)), None, Some(EdgeRow(89)), None, None, None, Some(EdgeRow(90)), None,
-    None, Some(EdgeRow(91)), None, None, None, None, None, None, None, None, None, None, None, None, Some(EdgeRow(92)), None,
+    None, Some(EdgeRow(91)), None, None, None, None, None, None, None, None, None, None, None, Some(EdgeRow(92)), None, None,
     None, Some(EdgeRow(93)), Some(EdgeRow(94)), Some(EdgeRow(95)), None, None, Some(EdgeRow(96)), Some(EdgeRow(97)), None, Some(EdgeRow(98)), None, None, Some(EdgeRow(99)), None, None, Some(EdgeRow(100)),
     Some(EdgeRow(101)), Some(EdgeRow(102)), Some(EdgeRow(103)), Some(EdgeRow(104)), None, None, Some(EdgeRow(105)), Some(EdgeRow(106)), None, Some(EdgeRow(107)), Some(EdgeRow(108)), None, Some(EdgeRow(109)), Some(EdgeRow(110)), Some(EdgeRow(111)), None,
     Some(EdgeRow(112)), Some(EdgeRow(113)), Some(EdgeRow(114)),
@@ -2368,7 +2368,7 @@ pub static KIND_FLAGS: &[KindFlags] = &[
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0),
     KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(4), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(0), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
-    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
+    KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1), KindFlags(1),
 ];
 
 /// Per kind id, the layout kinds its leaf pattern takes before it (low byte) and after it (high byte); 0 where the kind has no stamp.
@@ -3604,7 +3604,7 @@ pub static SEATS_PATTERN_LIST_ITEM: &[Option<SiteId>] = &[
 ];
 
 /// Per kind id, the site a seated element's after gap reads.
-pub static SEATS_CASE_PATTERNS_ITEM: &[Option<SiteId>] = &[
+pub static SEATS_CASE_PATTERN_LIST_ITEM: &[Option<SiteId>] = &[
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
     None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None,
@@ -4562,11 +4562,11 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_ATTRIBUTE_AFTER, path: "(bare_tuple_pattern)/item:/(attribute)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "caseAsPattern", path: "(bare_tuple_pattern)/item:/(case_as_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERNS_ITEM_CASE_AS_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(case_as_pattern)/after" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_CASE_AS_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(case_as_pattern)/after" }] },
             ] },
-            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PATTERN_LIST_ITEM, path: "(bare_tuple_pattern)/item:/delimiter" }, ::sittir_core::options::SiteRef { site: DELIM_CASE_PATTERNS_ITEM, path: "(bare_tuple_pattern)/item:/delimiter" }] },
+            ::sittir_core::options::AddressNode::Delimiter { key: "delimiter", sites: &[::sittir_core::options::SiteRef { site: DELIM_PATTERN_LIST_ITEM, path: "(bare_tuple_pattern)/item:/delimiter" }, ::sittir_core::options::SiteRef { site: DELIM_CASE_PATTERN_LIST_ITEM, path: "(bare_tuple_pattern)/item:/delimiter" }] },
             ::sittir_core::options::AddressNode::Branch { key: "keywordPattern", path: "(bare_tuple_pattern)/item:/(keyword_pattern)", children: &[
-                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERNS_ITEM_KEYWORD_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(keyword_pattern)/after" }] },
+                ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_KEYWORD_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(keyword_pattern)/after" }] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "listPattern", path: "(bare_tuple_pattern)/item:/(list_pattern)", children: &[
                 ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_LIST_PATTERN_AFTER, path: "(bare_tuple_pattern)/item:/(list_pattern)/after" }] },
@@ -4576,8 +4576,8 @@ pub static ADDRESSES: &[::sittir_core::options::AddressNode] = &[
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "separator", path: "(bare_tuple_pattern)/item:/separator", children: &[
                 ::sittir_core::options::AddressNode::Branch { key: "comma", path: "(bare_tuple_pattern)/item:/separator/\",\"", children: &[
-                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/item:/separator/\",\"/after" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/item:/separator/\",\"/after" }] },
-                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/item:/separator/\",\"/before" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERNS_ITEM_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/item:/separator/\",\"/before" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "after", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/item:/separator/\",\"/after" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_AFTER, path: "(bare_tuple_pattern)/item:/separator/\",\"/after" }] },
+                    ::sittir_core::options::AddressNode::Spacing { key: "before", sites: &[::sittir_core::options::SiteRef { site: SITE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/item:/separator/\",\"/before" }, ::sittir_core::options::SiteRef { site: SITE_CASE_PATTERN_LIST_ITEM_SEPARATOR_SPACE_BEFORE, path: "(bare_tuple_pattern)/item:/separator/\",\"/before" }] },
                 ] },
             ] },
             ::sittir_core::options::AddressNode::Branch { key: "subscript", path: "(bare_tuple_pattern)/item:/(subscript)", children: &[

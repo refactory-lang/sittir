@@ -591,7 +591,7 @@
 			"name": "content"
 		}
 	],
-	"case_patterns": [
+	"case_pattern_list": [
 		{
 			"kind": "slot",
 			"name": "item"

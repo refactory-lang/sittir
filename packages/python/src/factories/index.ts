@@ -166,7 +166,6 @@ export const simpleStatementsElements: Hoisted<typeof O.simpleStatementsElements
 	typeof O.simpleStatementsElements
 >(O.simpleStatementsElements);
 export const subjects: Hoisted<typeof O.subjects> = hoistAs<typeof O.subjects>(O.subjects);
-export const casePatterns: Hoisted<typeof O.casePatterns> = hoistAs<typeof O.casePatterns>(O.casePatterns);
 export const withClauseWithItems: Hoisted<typeof O.withClauseWithItems> = hoistAs<typeof O.withClauseWithItems>(
 	O.withClauseWithItems
 );
@@ -187,6 +186,7 @@ export const dictionaryElements: Hoisted<typeof O.dictionaryElements> = hoistAs<
 export const tuplePatternElements: Hoisted<typeof O.tuplePatternElements> = hoistAs<typeof O.tuplePatternElements>(
 	O.tuplePatternElements
 );
+export const casePatternList: Hoisted<typeof O.casePatternList> = hoistAs<typeof O.casePatternList>(O.casePatternList);
 export const tupleElements: Hoisted<typeof O.tupleElements> = hoistAs<typeof O.tupleElements>(O.tupleElements);
 export const exceptClauseExceptionAs: Hoisted<typeof O.exceptClauseExceptionAs> = hoistAs<
 	typeof O.exceptClauseExceptionAs

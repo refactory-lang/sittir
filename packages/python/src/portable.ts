@@ -319,7 +319,7 @@ export interface PortableIds {
 		| TSKindId.PatternList
 		| TSKindId.CaseAsPattern
 		| TSKindId.CaseListPattern
-		| TSKindId.CasePatterns
+		| TSKindId.CasePatternList
 		| TSKindId.CaseTuplePattern
 		| TSKindId.ClassPattern
 		| TSKindId.ComplexPattern
@@ -347,8 +347,8 @@ export interface PortableIds {
 	'pattern.rest.map': TSKindId.DictionarySplatPattern | TSKindId.SplatPatternDictionary;
 	'pattern.struct': TSKindId.ClassPattern | TSKindId.KeywordPattern;
 	'pattern.struct.field': TSKindId.KeywordPattern;
-	'pattern.tuple': TSKindId.PatternList | TSKindId.CasePatterns | TSKindId.CaseTuplePattern | TSKindId.TuplePattern;
-	'pattern.tuple.bare': TSKindId.PatternList | TSKindId.CasePatterns;
+	'pattern.tuple': TSKindId.PatternList | TSKindId.CasePatternList | TSKindId.CaseTuplePattern | TSKindId.TuplePattern;
+	'pattern.tuple.bare': TSKindId.PatternList | TSKindId.CasePatternList;
 	statement:
 		| TSKindId.AssertStatement
 		| TSKindId.Block
@@ -2075,7 +2075,7 @@ const table: PortableTable = {
 				TSKindId.PatternList,
 				TSKindId.CaseAsPattern,
 				TSKindId.CaseListPattern,
-				TSKindId.CasePatterns,
+				TSKindId.CasePatternList,
 				TSKindId.CaseTuplePattern,
 				TSKindId.ClassPattern,
 				TSKindId.ComplexPattern,
@@ -2111,10 +2111,10 @@ const table: PortableTable = {
 		'pattern.struct': { ids: [TSKindId.ClassPattern, TSKindId.KeywordPattern], exact: true },
 		'pattern.struct.field': { ids: [TSKindId.KeywordPattern], exact: true },
 		'pattern.tuple': {
-			ids: [TSKindId.PatternList, TSKindId.CasePatterns, TSKindId.CaseTuplePattern, TSKindId.TuplePattern],
+			ids: [TSKindId.PatternList, TSKindId.CasePatternList, TSKindId.CaseTuplePattern, TSKindId.TuplePattern],
 			exact: true
 		},
-		'pattern.tuple.bare': { ids: [TSKindId.PatternList, TSKindId.CasePatterns], exact: true },
+		'pattern.tuple.bare': { ids: [TSKindId.PatternList, TSKindId.CasePatternList], exact: true },
 		statement: {
 			ids: [
 				TSKindId.AssertStatement,
@@ -2387,7 +2387,7 @@ const table: PortableTable = {
 		[TSKindId.CaseAsPattern]: [{ path: 'pattern.as', within: [], test: [] }],
 		[TSKindId.CaseClause]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.CaseListPattern]: [{ path: 'pattern.list', within: [], test: [] }],
-		[TSKindId.CasePatterns]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
+		[TSKindId.CasePatternList]: [{ path: 'pattern.tuple.bare', within: [], test: [] }],
 		[TSKindId.CaseTuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
 		[TSKindId.Chevron]: [{ path: 'clause.print.chevron', within: [], test: [] }],
 		[TSKindId.ClassDefinition]: [{ path: 'declaration.class', within: [], test: [] }],
@@ -2635,12 +2635,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '344': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '345': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '344': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '345': 1 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -2916,7 +2916,7 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '344': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '345': 0 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '162': 0 } } }
 } satisfies QueryFlags);
 
@@ -2927,8 +2927,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	282: { contents: { async: { types: [], kinds: [244] } } },
-	304: { statements: { async: { types: [], kinds: [157, 162, 302, 344] } } },
-	306: { definition: { async: { types: [], kinds: [302, 344] } } }
+	304: { statements: { async: { types: [], kinds: [157, 162, 302, 345] } } },
+	306: { definition: { async: { types: [], kinds: [302, 345] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

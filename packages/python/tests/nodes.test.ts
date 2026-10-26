@@ -4888,48 +4888,6 @@ describe('subjects', () => {
 	});
 });
 
-describe('case_patterns', () => {
-	it('factory produces correct type', () => {
-		const node = ir.casePatterns(
-			...[
-				stampBuilt({
-					$type: TSKindId.CasePattern,
-					$text: 'test',
-					$named: true,
-					_content: stampBuilt({
-						$type: TSKindId.KeywordPattern,
-						$text: 'test',
-						$named: true,
-						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
-					}) as any
-				}) as any
-			]
-		);
-		expect(node.$type).toBe(TSKindId.CasePatterns);
-		expectBuiltNode(node);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.casePatterns(
-			...[
-				stampBuilt({
-					$type: TSKindId.CasePattern,
-					$text: 'test',
-					$named: true,
-					_content: stampBuilt({
-						$type: TSKindId.KeywordPattern,
-						$text: 'test',
-						$named: true,
-						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
-					}) as any
-				}) as any
-			]
-		);
-		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
 describe('with_clause_with_items', () => {
 	it('factory produces correct type', () => {
 		const node = ir.withClauseWithItems(
@@ -5166,6 +5124,48 @@ describe('tuple_pattern_elements', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.tuplePatternElements(
 			...[stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+		);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+});
+
+describe('case_pattern_list', () => {
+	it('factory produces correct type', () => {
+		const node = ir.casePatternList(
+			...[
+				stampBuilt({
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({
+						$type: TSKindId.KeywordPattern,
+						$text: 'test',
+						$named: true,
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					}) as any
+				}) as any
+			]
+		);
+		expect(node.$type).toBe(TSKindId.CasePatternList);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.casePatternList(
+			...[
+				stampBuilt({
+					$type: TSKindId.CasePattern,
+					$text: 'test',
+					$named: true,
+					_content: stampBuilt({
+						$type: TSKindId.KeywordPattern,
+						$text: 'test',
+						$named: true,
+						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					}) as any
+				}) as any
+			]
 		);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});

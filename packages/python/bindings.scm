@@ -184,7 +184,7 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
-(case_patterns) @pattern.tuple.bare
+(case_pattern_list) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (list_splat_pattern target: (_) @pattern)

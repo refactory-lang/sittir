@@ -961,7 +961,7 @@ export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound
 		_guard,
 		_body,
 		$with: {
-			pattern: (value: Admit<T.CasePattern | T.CasePatterns>) =>
+			pattern: (value: Admit<T.CasePattern | T.CasePatternList>) =>
 				rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value })),
 			guard: (value?: Admit<T.IfClause>) => rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value })),
 			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildCaseClause({ ...config, body: value }))
@@ -4859,68 +4859,6 @@ function _buildSubjects(
 	return stampBuilt(node) as unknown as T.Subjects.Bound;
 }
 
-export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.CasePattern>>;
-	return _buildCasePatterns(elements, options);
-}
-function _buildCasePatterns(
-	elements: NonEmptyArray<Admit<T.CasePattern>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.CasePatterns.Bound {
-	currentHandle()?.admit(TSKindId.CasePatterns, elements);
-	const _item = elements;
-	const _delimiter = options.delimiter;
-	const listedStored = storedElements(_item);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.CasePatterns as const,
-		$named: true as const,
-		_item,
-		_delimiter,
-		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () => buildCasePatterns(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
-		},
-		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedStored.length,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? undefined,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedStored.length);
-	return stampBuilt(node) as unknown as T.CasePatterns.Bound;
-}
-
 export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildWithClauseWithItems>;
@@ -5478,6 +5416,68 @@ function _buildTuplePatternElements(
 	};
 	defineListIndices(node, listedStored.length);
 	return stampBuilt(node) as unknown as T.TuplePatternElements.Bound;
+}
+
+export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildCasePatternList>;
+export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildCasePatternList>;
+export function buildCasePatternList(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.CasePattern>>;
+	return _buildCasePatternList(elements, options);
+}
+function _buildCasePatternList(
+	elements: NonEmptyArray<Admit<T.CasePattern>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.CasePatternList.Bound {
+	currentHandle()?.admit(TSKindId.CasePatternList, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const listedStored = storedElements(_item);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.CasePatternList as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => hydrateStoredSlots(node, '_item'),
+		length: listedStored.length,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedStored.length);
+	return stampBuilt(node) as unknown as T.CasePatternList.Bound;
 }
 
 export function buildTupleElements<
@@ -8241,7 +8241,6 @@ export type FluentKindMap = {
 	keyword_separator: T.KeywordSeparator;
 	simple_statements_elements: T.SimpleStatementsElements.Bound;
 	subjects: T.Subjects.Bound;
-	case_patterns: T.CasePatterns.Bound;
 	with_clause_with_items: T.WithClauseWithItems.Bound;
 	types: T.Types.Bound;
 	argument_list_elements: T.ArgumentListElements.Bound;
@@ -8252,6 +8251,7 @@ export type FluentKindMap = {
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
+	case_pattern_list: T.CasePatternList.Bound;
 	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
@@ -8446,7 +8446,6 @@ export const _factoryMap = {
 	keyword_separator: buildKeywordSeparator,
 	simple_statements_elements: buildSimpleStatementsElements,
 	subjects: buildSubjects,
-	case_patterns: buildCasePatterns,
 	with_clause_with_items: buildWithClauseWithItems,
 	types: buildTypes,
 	argument_list_elements: buildArgumentListElements,
@@ -8457,6 +8456,7 @@ export const _factoryMap = {
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
 	tuple_pattern_elements: buildTuplePatternElements,
+	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,

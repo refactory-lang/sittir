@@ -106,7 +106,7 @@ describe('the reparsed node is found by grammar id', () => {
 
 	it("python: a case clause's tuple pattern and an assignment's target list sharing the bare tuple pattern display each reparse where they parse", async () => {
 		await expectStorageHosts('python', 'bare_tuple_pattern', [
-			['match x:\n    case a, b:\n        pass\n', 'case_patterns'],
+			['match x:\n    case a, b:\n        pass\n', 'case_pattern_list'],
 			['a, b = c', 'pattern_list']
 		]);
 	}, 120_000);

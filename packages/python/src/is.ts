@@ -572,9 +572,6 @@ export interface IsGuards {
 	subjects<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.Subjects };
-	casePatterns<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePatterns };
 	withClauseWithItems<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.WithClauseWithItems };
@@ -602,6 +599,9 @@ export interface IsGuards {
 	tuplePatternElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TuplePatternElements };
+	casePatternList<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.CasePatternList };
 	tupleElements<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.TupleElements };
@@ -1241,10 +1241,10 @@ const _supertype_lineContinuation_ids = new Set<number>([106, 107]);
 const _supertype_integerDecimal_ids = new Set<number>([93, 94, 95]);
 const _supertype_layout_ids = new Set<number>([123, 124, 125, 116, 126, 127]);
 const _supertype_compoundStatementClassDefinition_ids = new Set<number>([
-	344, 151, 157, 158, 159, 162, 302, 174, 306, 154
+	345, 151, 157, 158, 159, 162, 302, 174, 306, 154
 ]);
 const _supertype_statementClassDefinition_ids = new Set<number>([
-	130, 344, 151, 157, 158, 159, 162, 302, 174, 306, 154
+	130, 345, 151, 157, 158, 159, 162, 302, 174, 306, 154
 ]);
 const _supertype_suiteClassDefinition_ids = new Set<number>([297, 305, 299]);
 
@@ -1471,7 +1471,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_Comment_guard = _g(TSKindId.Comment);
 	const _kind_SimpleStatementsElements_guard = _g(TSKindId.SimpleStatementsElements);
 	const _kind_Subjects_guard = _g(TSKindId.Subjects);
-	const _kind_CasePatterns_guard = _g(TSKindId.CasePatterns);
 	const _kind_WithClauseWithItems_guard = _g(TSKindId.WithClauseWithItems);
 	const _kind_Types_guard = _g(TSKindId.Types);
 	const _kind_ArgumentListElements_guard = _g(TSKindId.ArgumentListElements);
@@ -1481,6 +1480,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_DictionaryElements_guard = _g(TSKindId.DictionaryElements);
 	const _kind_SliceGroup_guard = _g(TSKindId.SliceGroup);
 	const _kind_TuplePatternElements_guard = _g(TSKindId.TuplePatternElements);
+	const _kind_CasePatternList_guard = _g(TSKindId.CasePatternList);
 	const _kind_TupleElements_guard = _g(TSKindId.TupleElements);
 	const _kind_PrintArguments_guard = _g(TSKindId.PrintArguments);
 	const _kind_ComprehensionClauses_guard = _g(TSKindId.ComprehensionClauses);
@@ -1850,7 +1850,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		comment: _kind_Comment_guard,
 		simpleStatementsElements: _kind_SimpleStatementsElements_guard,
 		subjects: _kind_Subjects_guard,
-		casePatterns: _kind_CasePatterns_guard,
 		withClauseWithItems: _kind_WithClauseWithItems_guard,
 		types: _kind_Types_guard,
 		argumentListElements: _kind_ArgumentListElements_guard,
@@ -1860,6 +1859,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		dictionaryElements: _kind_DictionaryElements_guard,
 		sliceGroup: _kind_SliceGroup_guard,
 		tuplePatternElements: _kind_TuplePatternElements_guard,
+		casePatternList: _kind_CasePatternList_guard,
 		tupleElements: _kind_TupleElements_guard,
 		exceptClauseExceptionAs: _kind_ExceptClauseExceptionAs_guard,
 		caseTuplePattern: _kind_CaseTuplePattern_guard,

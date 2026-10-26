@@ -227,7 +227,6 @@ export const formatSpecifier = bundle(F.buildFormatSpecifier, C.coerceToFormatSp
 export const await_ = bundle(F.buildAwait, C.coerceToAwait, { key: 'await_', max: 1 });
 export const simpleStatementsElements = bundle(F.buildSimpleStatementsElements, C.coerceToSimpleStatementsElements);
 export const subjects = bundle(F.buildSubjects, C.coerceToSubjects);
-export const casePatterns = bundle(F.buildCasePatterns, C.coerceToCasePatterns);
 export const withClauseWithItems = bundle(F.buildWithClauseWithItems, C.coerceToWithClauseWithItems);
 export const types = bundle(F.buildTypes, C.coerceToTypes);
 export const argumentListElements = bundle(F.buildArgumentListElements, C.coerceToArgumentListElements);
@@ -236,6 +235,7 @@ export const dictPatternElements = bundle(F.buildDictPatternElements, C.coerceTo
 export const subscripts = bundle(F.buildSubscripts, C.coerceToSubscripts);
 export const dictionaryElements = bundle(F.buildDictionaryElements, C.coerceToDictionaryElements);
 export const tuplePatternElements = bundle(F.buildTuplePatternElements, C.coerceToTuplePatternElements);
+export const casePatternList = bundle(F.buildCasePatternList, C.coerceToCasePatternList);
 export const tupleElements = bundle(F.buildTupleElements, C.coerceToTupleElements);
 export const exceptClauseExceptionAs = bundle(F.buildExceptClauseExceptionAs, C.coerceToExceptClauseExceptionAs, {
 	key: 'exceptClauseExceptionAs',

@@ -1521,7 +1521,7 @@
         "list": false
       }
     },
-    "case_patterns": {
+    "case_pattern_list": {
       "vocab": "pattern.tuple.bare",
       "read": [
         {
@@ -5316,7 +5316,7 @@
                 "op": "eq",
                 "text": "__init__",
                 "slots": {
-                  "344": 1
+                  "345": 1
                 }
               }
             }
@@ -5335,7 +5335,7 @@
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
                 "slots": {
-                  "344": 1
+                  "345": 1
                 }
               }
             }

@@ -190,7 +190,6 @@ export const ir: {
 	readonly await: typeof F.await_;
 	readonly simpleStatementsElements: typeof F.simpleStatementsElements;
 	readonly subjects: typeof F.subjects;
-	readonly casePatterns: typeof F.casePatterns;
 	readonly withClauseWithItems: typeof F.withClauseWithItems;
 	readonly types: typeof F.types;
 	readonly argumentListElements: typeof F.argumentListElements;
@@ -199,6 +198,7 @@ export const ir: {
 	readonly subscripts: typeof F.subscripts;
 	readonly dictionaryElements: typeof F.dictionaryElements;
 	readonly tuplePatternElements: typeof F.tuplePatternElements;
+	readonly casePatternList: typeof F.casePatternList;
 	readonly tupleElements: typeof F.tupleElements;
 	readonly exceptClauseExceptionAs: typeof F.exceptClauseExceptionAs;
 	readonly caseTuplePattern: typeof F.caseTuplePattern;
@@ -391,7 +391,6 @@ export const ir: {
 	await: F.await_,
 	simpleStatementsElements: F.simpleStatementsElements,
 	subjects: F.subjects,
-	casePatterns: F.casePatterns,
 	withClauseWithItems: F.withClauseWithItems,
 	types: F.types,
 	argumentListElements: F.argumentListElements,
@@ -400,6 +399,7 @@ export const ir: {
 	subscripts: F.subscripts,
 	dictionaryElements: F.dictionaryElements,
 	tuplePatternElements: F.tuplePatternElements,
+	casePatternList: F.casePatternList,
 	tupleElements: F.tupleElements,
 	exceptClauseExceptionAs: F.exceptClauseExceptionAs,
 	caseTuplePattern: F.caseTuplePattern,
