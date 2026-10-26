@@ -2,6 +2,7 @@ import type { AnyUntypedNode, ByteSpan, NodeLayout, NodeTrivia, NodeCoordinate, 
 import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { assertHoldsTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
+import { copyDown, copyEntries, type Below } from './copy-down.ts';
 import { stampSource } from './source-stamp.ts';
 import { Source } from './source.ts';
 
@@ -42,10 +43,18 @@ export function mapUnitSides(units: readonly unknown[], each: (entry: unknown) =
 }
 
 function entryData(value: unknown): unknown {
-	if (Array.isArray(value)) return value.map(entryData);
+	return copyDown(value, entryDataStep);
+}
+
+function entryDataStep(value: unknown, below: Below<unknown>): unknown {
+	if (Array.isArray(value)) return copyEntries(value, below, (entry) => entry);
 	if (!isRecord(value) || isCoordinate(value)) return value;
 	const out: Record<string, unknown> = {};
-	for (const key of Object.keys(value)) out[key] = key === '$text' ? nodeText(value) : isStorageKey(key) ? entryData(value[key]) : value[key];
+	for (const key of Object.keys(value)) {
+		if (key === '$text') out.$text = nodeText(value);
+		else if (isStorageKey(key)) below.at(out, key, value[key]);
+		else out[key] = value[key];
+	}
 	return out;
 }
 
@@ -118,17 +127,27 @@ export function isRebuilt(node: object): boolean {
 }
 
 function forEachParsedObject(value: unknown, visit: (node: Record<string, unknown>) => void): void {
-	if (Array.isArray(value)) {
-		for (const entry of value) forEachParsedObject(entry, visit);
-		return;
+	forEachRecordBelow(value, (node) => {
+		if (typeof node.$type === 'number') visit(node);
+	});
+}
+
+function forEachRecordBelow(root: unknown, visit: (node: Record<string, unknown>) => void): void {
+	const pending: unknown[] = [root];
+	const below: unknown[] = [];
+	while (pending.length > 0) {
+		const value = pending.pop();
+		if (Array.isArray(value)) {
+			for (let index = value.length - 1; index >= 0; index -= 1) pending.push(value[index]);
+			continue;
+		}
+		if (!isRecord(value)) continue;
+		visit(value);
+		for (const key in value) if (isStorageKey(key)) below.push(value[key]);
+		const trivia = triviaOf(value);
+		if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => below.push(entries));
+		while (below.length > 0) pending.push(below.pop());
 	}
-	if (!isRecord(value)) return;
-	if (typeof value.$type === 'number') visit(value);
-	for (const key in value) {
-		if (isStorageKey(key)) forEachParsedObject(value[key], visit);
-	}
-	const trivia = triviaOf(value);
-	if (trivia != null) forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => forEachParsedObject(entries, visit));
 }
 
 /** The handle a read node or a coordinate names itself by: its tree and its descendant index. */
@@ -602,10 +621,15 @@ function isPresent(value: unknown): boolean {
  * (`KindView.isWrapper`) that holds exactly one present node, that node.
  */
 function evidenceOf(entry: Record<string, unknown>, view: KindView): Record<string, unknown> {
-	if (placeOf(entry) !== undefined || typeof entry.$type !== 'number' || !view.isWrapper(entry.$type)) return entry;
-	const held = Object.keys(entry).flatMap((key) => (isSlotKey(key) && isPresent(entry[key]) ? [entry[key]] : []));
-	const [only] = held;
-	return held.length === 1 && isRecord(only) ? evidenceOf(only, view) : entry;
+	let node = entry;
+	while (placeOf(node) === undefined && typeof node.$type === 'number' && view.isWrapper(node.$type)) {
+		const held: unknown[] = [];
+		for (const key of Object.keys(node)) if (isSlotKey(key) && isPresent(node[key])) held.push(node[key]);
+		const [only] = held;
+		if (held.length !== 1 || !isRecord(only)) break;
+		node = only;
+	}
+	return node;
 }
 
 /** A row and a byte column, as tree-sitter counts them. */
@@ -655,12 +679,24 @@ function assertTriviaHoldsTree(entries: readonly unknown[]): void {
 	for (const entry of entries) if (isRecord(entry) && treeHandleOf(entry) !== undefined) assertHoldsTree(entry);
 }
 
-function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>, sided = true): unknown {
+interface NodeValueVisit {
+	readonly value: unknown;
+	readonly changed: ChangedEdges;
+	readonly bearer: Record<string, unknown> | undefined;
+	readonly sided: boolean;
+}
+
+function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold: boolean, bearer?: Record<string, unknown>): unknown {
+	return copyDown<NodeValueVisit>({ value, changed, bearer, sided: true }, (visit, below) => nodeValueStep(visit, view, fold, below));
+}
+
+function nodeValueStep({ value, changed, bearer, sided }: NodeValueVisit, view: KindView, fold: boolean, below: Below<NodeValueVisit>): unknown {
 	if (Array.isArray(value)) {
-		return value.map((entry, index) => {
-			if (!isRecord(entry)) return toNodeValue(entry, view, NO_EDGES, fold);
-			return toNodeValue(entry, view, changedEdges(value, index, view), fold, evidenceOf(entry, view));
-		});
+		return copyEntries(value, below, (entry, index) =>
+			isRecord(entry)
+				? { value: entry, changed: changedEdges(value, index, view), bearer: evidenceOf(entry, view), sided: true }
+				: { value: entry, changed: NO_EDGES, bearer: undefined, sided: true }
+		);
 	}
 	if (!isRecord(value)) return value;
 	const bears = bearer === undefined || bearer === value;
@@ -668,8 +704,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	const at = coordinateOf(value);
 	if (at !== undefined && (isCoordinate(value) || (fold && treeOf(value) !== undefined))) {
 		if (fold) assertHoldsTree(value);
-		const out = fold ? coordinateCrossing(at, edges) : plainCoordinate(at);
-		return out;
+		return fold ? coordinateCrossing(at, edges) : plainCoordinate(at);
 	}
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
@@ -680,8 +715,14 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 		}
 		const raw = value[key];
 		if (typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? toNodeValue(raw, view, bears ? NO_EDGES : changed, fold, bears ? undefined : bearer, fold || !isAliasContent(value, raw)) : raw;
+		if (isStorageKey(key)) below.at(out, key, { value: raw, changed: bears ? NO_EDGES : changed, bearer: bears ? undefined : bearer, sided: fold || !isAliasContent(value, raw) });
+		else out[key] = raw;
 	}
+	below.then(() => layOutNodeValue(out, value, edges, fold, sided));
+	return out;
+}
+
+function layOutNodeValue(out: Record<string, unknown>, value: Record<string, unknown>, edges: ChangedEdges, fold: boolean, sided: boolean): void {
 	const given = (value as { readonly $_layout?: NodeDataLayout }).$_layout;
 	const slots = fold ? given?.slots : slotsOf(value);
 	if (slots !== undefined && slots.length > 0) setLayout(out, 'slots', slots);
@@ -701,9 +742,7 @@ function toNodeValue(value: unknown, view: KindView, changed: ChangedEdges, fold
 	}
 	const layout = out.$_layout as NodeDataLayout | undefined;
 	if ((edges.leading || edges.trailing) && (layout?.trivia !== undefined || layout?.sides !== undefined)) setLayout(out, 'changed', edges);
-	// A storage-bearing node rebuilds from its slots.
 	if (holdsSlots(out)) delete out.$text;
-	return out;
 }
 
 /**
@@ -721,14 +760,7 @@ export function detachCoordinate(data: object): void {
 
 /** Remove the tree token from everything under `value`, through slots and trivia: node data holds no tree. */
 function dropTreeTokens(value: unknown): void {
-	if (Array.isArray(value)) {
-		for (const entry of value) dropTreeTokens(entry);
-		return;
-	}
-	if (!isRecord(value)) return;
-	releaseTreeOn(value);
-	for (const key in value) if (isStorageKey(key)) dropTreeTokens(value[key]);
-	dropTriviaTreeTokens(value);
+	forEachRecordBelow(value, releaseTreeOn);
 }
 
 function dropTriviaTreeTokens(node: Record<string, unknown>): void {
@@ -748,9 +780,11 @@ function dropTriviaTreeTokens(node: Record<string, unknown>): void {
  */
 export function detachCoordinates<T>(root: T): T {
 	const seen = new WeakSet<object>();
-	const recurse = (value: unknown): void => {
-		if (!isRecord(value) || typeof value.$type !== 'number') return;
-		if (seen.has(value)) return;
+	const pending: unknown[] = [root];
+	const below: unknown[] = [];
+	while (pending.length > 0) {
+		const value = pending.pop();
+		if (!isRecord(value) || typeof value.$type !== 'number' || seen.has(value)) continue;
 		seen.add(value);
 		if (holdsSlots(value)) detachCoordinate(value);
 		releaseTreeOn(value);
@@ -758,10 +792,10 @@ export function detachCoordinates<T>(root: T): T {
 		for (const key of Object.keys(value)) {
 			if (!isStorageKey(key)) continue;
 			const child = value[key];
-			if (Array.isArray(child)) for (const entry of child) recurse(entry);
-			else recurse(child);
+			if (Array.isArray(child)) for (const entry of child) below.push(entry);
+			else below.push(child);
 		}
-	};
-	recurse(root);
+		while (below.length > 0) pending.push(below.pop());
+	}
 	return root;
 }

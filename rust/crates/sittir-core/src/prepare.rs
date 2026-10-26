@@ -432,43 +432,7 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
     /// source renders it (`SourceTable::renders_as_source`) is its
     /// coordinate: it prepares as one, the seams its holder gave it seated.
     fn prepare(&mut self, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
-        if let SlotValue::Node(node) = self {
-            if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
-                let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
-                *self = SlotValue::Coord(NodeCoordinate { edges: seated, ..at });
-            }
-        }
-        match self {
-            SlotValue::Coord(coord) => {
-                coord.resolve(ctx.sources)?;
-                if let Some(mut node) = read_edited::<T>(coord, ctx)? {
-                    if let (Some(seated), Some(edges)) = (coord.edges, node.gap_edges()) {
-                        if seated.before.is_some() {
-                            edges.before = seated.before.map(EdgeArm::from);
-                        }
-                        if seated.after.is_some() {
-                            edges.after = seated.after.map(EdgeArm::from);
-                        }
-                    }
-                    node.prepare(ctx)?;
-                    *self = SlotValue::Node(node);
-                    return Ok(());
-                }
-                let seated = coord.edges;
-                coord.edges = [coord.kind, ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
-                if let Some(seated) = seated {
-                    let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
-                    if seated.before.is_some() {
-                        edges.before = seated.before;
-                    }
-                    if seated.after.is_some() {
-                        edges.after = seated.after;
-                    }
-                }
-                Ok(())
-            }
-            SlotValue::Node(t) => t.prepare(ctx),
-        }
+        crate::stack::grown(|| prepare_slot(self, ctx))
     }
 
     fn snapshot_edge(&self) -> Option<SnapshotEdge> {
@@ -486,6 +450,47 @@ impl<T: Prepare, const ADJACENT: bool> Prepare for SlotValue<T, ADJACENT> {
             SlotValue::Coord(coord) if coord.writes.as_ref().is_some_and(|writes| writes.changed.leading) => None,
             SlotValue::Coord(coord) => ctx.sources.separator_before(coord),
         }
+    }
+}
+
+/// A slot's prepare (`Prepare for SlotValue`), run where the stack has room.
+fn prepare_slot<T: Prepare, const ADJACENT: bool>(slot: &mut SlotValue<T, ADJACENT>, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+    if let SlotValue::Node(node) = slot {
+        if let Some(at) = node.source_coordinate().filter(|at| ctx.sources.renders_as_source(at)).cloned() {
+            let seated = node.gap_edges().and_then(|edges| seated_edges(*edges));
+            *slot = SlotValue::Coord(NodeCoordinate { edges: seated, ..at });
+        }
+    }
+    match slot {
+        SlotValue::Coord(coord) => {
+            coord.resolve(ctx.sources)?;
+            if let Some(mut node) = read_edited::<T>(coord, ctx)? {
+                if let (Some(seated), Some(edges)) = (coord.edges, node.gap_edges()) {
+                    if seated.before.is_some() {
+                        edges.before = seated.before.map(EdgeArm::from);
+                    }
+                    if seated.after.is_some() {
+                        edges.after = seated.after.map(EdgeArm::from);
+                    }
+                }
+                node.prepare(ctx)?;
+                *slot = SlotValue::Node(node);
+                return Ok(());
+            }
+            let seated = coord.edges;
+            coord.edges = [coord.kind, ctx.sources.kind_of(coord)].into_iter().flatten().find_map(|kind| ctx.options.edge_arms(kind));
+            if let Some(seated) = seated {
+                let edges = coord.edges.get_or_insert(crate::slot::CoordinateEdges { before: None, after: None });
+                if seated.before.is_some() {
+                    edges.before = seated.before;
+                }
+                if seated.after.is_some() {
+                    edges.after = seated.after;
+                }
+            }
+            Ok(())
+        }
+        SlotValue::Node(t) => t.prepare(ctx),
     }
 }
 

@@ -293,12 +293,12 @@ impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std:
 
 #[cfg(feature = "napi-bindings")]
 pub trait TriviaItem:
-    Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue
+    Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::deferred::Fill
 {
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue> TriviaItem
+impl<T: Render + TriviaSeam + crate::prepare::Prepare + Clone + PartialEq + std::fmt::Debug + 'static + ::napi::bindgen_prelude::FromNapiValue + crate::deferred::Fill> TriviaItem
     for T
 {
 }
@@ -320,6 +320,11 @@ macro_rules! refuse_napi_codec {
             impl $crate::__napi::bindgen_prelude::ToNapiValue for $trivia {
                 unsafe fn to_napi_value(_: $crate::__napi::sys::napi_env, _: Self) -> $crate::__napi::Result<$crate::__napi::sys::napi_value> {
                     Err($crate::__napi::Error::from_reason(concat!(stringify!($trivia), " does not cross the boundary")))
+                }
+            }
+            impl $crate::deferred::Fill for $trivia {
+                fn fill(&mut self, _: &mut $crate::deferred::Filled) -> $crate::__napi::Result<()> {
+                    Ok(())
                 }
             }
         }
@@ -527,7 +532,7 @@ pub fn render_inner<T: Render + TriviaSeam>(trivia: Option<&NodeTrivia<T>>, w: &
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia + crate::deferred::Fill + 'static> ::napi::bindgen_prelude::FromNapiValue
     for TriviaEntry<T>
 {
     /// A trivia entry is a slot value: a node, a coordinate, bare text, a
@@ -543,7 +548,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::nap
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia> ::napi::bindgen_prelude::FromNapiValue
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia + crate::deferred::Fill + 'static> ::napi::bindgen_prelude::FromNapiValue
     for NodeTrivia<T>
 {
     unsafe fn from_napi_value(

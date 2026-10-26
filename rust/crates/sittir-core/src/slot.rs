@@ -175,6 +175,18 @@ pub enum SlotValue<T, const ADJACENT: bool = false> {
 }
 
 impl<T, const ADJACENT: bool> SlotValue<T, ADJACENT> {
+    /// The node this slot holds, taken out of it, or the coordinate it holds.
+    pub fn into_node(self) -> Result<T, NodeCoordinate> {
+        let slot = std::mem::ManuallyDrop::new(self);
+        // SAFETY: `slot` is never dropped, so the one field read here is moved out exactly once.
+        unsafe {
+            match &*slot {
+                Self::Node(t) => Ok(std::ptr::read(t)),
+                Self::Coord(coord) => Err(std::ptr::read(coord)),
+            }
+        }
+    }
+
     /// The node this slot holds, or `None` when it holds a coordinate.
     pub fn node(&self) -> Option<&T> {
         match self {
@@ -227,7 +239,19 @@ impl<T: crate::render::Render, const ADJACENT: bool> crate::render::Render
     fn render(&self, w: &mut dyn crate::render::RenderSink) -> crate::render::RenderResult {
         match self {
             Self::Coord(coord) => write_coordinate(coord, ADJACENT, w),
-            Self::Node(t) => t.render(w),
+            Self::Node(t) => crate::stack::grown(|| t.render(w)),
+        }
+    }
+}
+
+/// A node's subtree drops on a new segment when the stack runs low, so a
+/// deep tree drops as deep as it reads (`stack::grown`).
+impl<T, const ADJACENT: bool> Drop for SlotValue<T, ADJACENT> {
+    fn drop(&mut self) {
+        if matches!(self, Self::Node(_)) && crate::stack::low() {
+            let vacant = NodeCoordinate::new(crate::types::TreeId(0), crate::types::NodeIndex::ROOT, crate::types::NodeIndex::ROOT, Span { start: 0, end: 0 });
+            let node = std::mem::replace(self, Self::Coord(vacant));
+            crate::stack::grown(move || drop(node));
         }
     }
 }
@@ -327,29 +351,69 @@ unsafe fn raw_typeof(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_val
 }
 
 #[cfg(feature = "napi-bindings")]
-impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const ADJACENT: bool>
+impl<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia + crate::deferred::Fill + 'static, const ADJACENT: bool>
     ::napi::bindgen_prelude::FromNapiValue for SlotValue<T, ADJACENT>
 {
-    /// Dispatch on the wire shape: an object carrying `$treeHandle` is a
-    /// coordinate (its `$span` is required), anything else is the slot's own
-    /// node type, which decides for itself what it accepts. There is no
-    /// attempt-then-fallback.
+    /// `decode_slot_value`, deferred where the stack runs low
+    /// (`deferred::decode_slot`).
     unsafe fn from_napi_value(
         env: ::napi::sys::napi_env,
         napi_val: ::napi::sys::napi_value,
     ) -> ::napi::Result<Self> {
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        let value_type = unsafe { node_value_type(env, napi_val)? };
-        if value_type == ::napi::ValueType::Object {
-            // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-            if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
-                return Ok(Self::Coord(coord));
-            }
+        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`, on the thread's own stack.
+        unsafe { crate::deferred::decode_slot(env, napi_val, decode_slot_value::<T, ADJACENT>, decode_later::<T, ADJACENT>, Self::Coord) }
+    }
+}
+
+/// Dispatch on the wire shape: an object carrying `$treeHandle` is a
+/// coordinate (its `$span` is required), anything else is the slot's own
+/// node type, which decides for itself what it accepts. There is no
+/// attempt-then-fallback.
+///
+/// # Safety
+/// `napi_val` must be live in `env`.
+#[cfg(feature = "napi-bindings")]
+unsafe fn decode_slot_value<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia, const ADJACENT: bool>(
+    env: ::napi::sys::napi_env,
+    napi_val: ::napi::sys::napi_value,
+) -> ::napi::Result<SlotValue<T, ADJACENT>> {
+    // SAFETY: this fn requires `napi_val` to be live in `env`.
+    let value_type = unsafe { node_value_type(env, napi_val)? };
+    if value_type == ::napi::ValueType::Object {
+        // SAFETY: this fn requires `napi_val` to be live in `env`.
+        if let Some(coord) = unsafe { coordinate_from_napi(env, napi_val)? } {
+            return Ok(SlotValue::Coord(coord));
         }
-        // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
-        Ok(Self::Node(unsafe {
-            T::from_napi_value(env, napi_val)?
-        }))
+    }
+    // SAFETY: this fn requires `napi_val` to be live in `env`.
+    Ok(SlotValue::Node(unsafe { T::from_napi_value(env, napi_val)? }))
+}
+
+/// `decode_slot_value` for a slot a decode deferred.
+///
+/// # Safety
+/// `napi_val` must be live in `env`.
+#[cfg(feature = "napi-bindings")]
+unsafe fn decode_later<T: ::napi::bindgen_prelude::FromNapiValue + crate::trivia::HasTrivia + 'static, const ADJACENT: bool>(
+    env: ::napi::sys::napi_env,
+    napi_val: ::napi::sys::napi_value,
+) -> ::napi::Result<Box<dyn std::any::Any>> {
+    // SAFETY: this fn requires `napi_val` to be live in `env`.
+    Ok(Box::new(unsafe { decode_slot_value::<T, ADJACENT>(env, napi_val)? }))
+}
+
+/// A deferred slot takes its decoded value, then its node fills its own
+/// slots, on a new segment when the stack runs low.
+#[cfg(feature = "napi-bindings")]
+impl<T: crate::deferred::Fill + 'static, const ADJACENT: bool> crate::deferred::Fill for SlotValue<T, ADJACENT> {
+    fn fill(&mut self, filled: &mut crate::deferred::Filled) -> ::napi::Result<()> {
+        if let Some(at) = self.coord().and_then(crate::deferred::deferred_at) {
+            *self = filled.take::<Self>(at)?;
+        }
+        match self {
+            Self::Node(node) => crate::stack::grown(|| node.fill(filled)),
+            Self::Coord(_) => Ok(()),
+        }
     }
 }
 
@@ -360,11 +424,11 @@ impl<T: ::napi::bindgen_prelude::ToNapiValue, const ADJACENT: bool> ::napi::bind
     /// A node writes itself; a coordinate writes the object the decoder
     /// reads back as one.
     unsafe fn to_napi_value(env: ::napi::sys::napi_env, val: Self) -> ::napi::Result<::napi::sys::napi_value> {
-        match val {
+        match val.into_node() {
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Node(node) => unsafe { T::to_napi_value(env, node) },
+            Ok(node) => unsafe { T::to_napi_value(env, node) },
             // SAFETY: napi calls `to_napi_value` with a live `env`, and every value encoded here is created in it.
-            Self::Coord(coord) => unsafe { coordinate_to_napi(env, &coord) },
+            Err(coord) => unsafe { coordinate_to_napi(env, &coord) },
         }
     }
 }

@@ -11,6 +11,8 @@
 
 pub mod baseline;
 pub mod boundary;
+#[cfg(feature = "napi-bindings")]
+pub mod deferred;
 pub mod classify;
 pub mod engine;
 pub mod error_read;
@@ -32,6 +34,7 @@ pub mod record;
 pub mod render;
 pub mod slot;
 pub mod spacing;
+pub mod stack;
 pub mod trivia;
 pub mod types;
 pub mod verbatim;

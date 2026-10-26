@@ -883,7 +883,7 @@ pub fn read_value<T: ReadNode, const A: bool>(
     depth: Depth,
 ) -> Result<SlotValue<T, A>, ReadError> {
     match depth.below() {
-        Some(below) => Ok(SlotValue::Node(T::read(cursor, ctx, below)?)),
+        Some(below) => Ok(SlotValue::Node(crate::stack::grown(|| T::read(cursor, ctx, below))?)),
         None if ctx.reads_leaf_inline(depth) && cursor.node().named_child_count() == 0 => Ok(SlotValue::Node(T::read(cursor, ctx, Depth::ONE)?)),
         None => Ok(SlotValue::Coord(ctx.coordinate(&cursor.node(), index_of(cursor)))),
     }

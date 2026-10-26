@@ -105,8 +105,30 @@ fn field_reads(owner: &str, fields: &[&WireField<'_>]) -> syn::Result<Vec<TokenS
         .collect()
 }
 
+/// Whether a field's type can hold a slot a decode deferred
+/// (`::sittir_core::deferred::Fill`): a slot or a layout, alone or in a list.
+fn holds_slot(ty: &Type) -> bool {
+    let spelled = quote!(#ty).to_string();
+    spelled.contains("SlotValue") || spelled.contains("NodeLayout")
+}
+
+/// `Fill` for a struct: each field that can hold a slot fills its own.
+fn struct_fill(ident: &Ident, fields: &[WireField<'_>]) -> TokenStream {
+    let filled = fields.iter().filter(|field| holds_slot(field.ty)).map(|field| field.ident);
+    quote! {
+        impl ::sittir_core::deferred::Fill for #ident {
+            fn fill(&mut self, filled: &mut ::sittir_core::deferred::Filled) -> ::sittir_core::__napi::Result<()> {
+                #(::sittir_core::deferred::Fill::fill(&mut self.#filled, filled)?;)*
+                ::core::result::Result::Ok(())
+            }
+        }
+    }
+}
+
 /// `{ $type, …fields }` in declaration order, defined in one call: an optional
-/// field only when present.
+/// field only when present. The struct's fields are their own fn, so an
+/// encode deferred where the stack runs low (`deferred::encode_struct`)
+/// defines the same fields on the object it returned.
 fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenStream> {
     let napi = napi();
     let names = fields.iter().map(|field| field.ident);
@@ -121,16 +143,23 @@ fn struct_encode(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     }
     let kind = (!fields.iter().any(|field| is_kind_key(field.key)))
         .then(|| quote!(::core::option::Option::Some((c"$type", #napi::bindgen_prelude::ToNapiValue::to_napi_value(env, __KIND.0)?)),));
+    let count = entries.len() + usize::from(kind.is_some());
     Ok(quote! {
-        impl #napi::bindgen_prelude::ToNapiValue for #ident {
-            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+        impl #ident {
+            #[doc(hidden)]
+            unsafe fn __wire_fields(env: #napi::sys::napi_env, val: Self) -> #napi::Result<::sittir_core::deferred::Fields<#count>> {
                 let Self { #(#names),* } = val;
                 unsafe {
-                    ::sittir_core::boundary::object_with_present(env, &[
+                    ::core::result::Result::Ok([
                         #kind
                         #(#entries)*
                     ])
                 }
+            }
+        }
+        impl #napi::bindgen_prelude::ToNapiValue for #ident {
+            unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
+                unsafe { ::sittir_core::deferred::encode_struct(env, val, Self::__wire_fields) }
             }
         }
     })
@@ -141,6 +170,7 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
     let napi = napi();
     let reads = field_reads(&ident.to_string(), &fields.iter().collect::<Vec<_>>())?;
     let encode = struct_encode(ident, fields)?;
+    let fill = struct_fill(ident, fields);
     let boxed = boxed(ident);
     Ok(gated(&quote! {
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
@@ -150,6 +180,7 @@ pub fn structure(ident: &Ident, fields: &[WireField<'_>]) -> syn::Result<TokenSt
             }
         }
         #encode
+        #fill
         #boxed
     }))
 }
@@ -210,8 +241,10 @@ pub fn text_leaf(ident: &Ident, fields: &[WireField<'_>], fixed: Option<&LitStr>
         }
     };
     let encode = struct_encode(ident, fields)?;
+    let fill = struct_fill(ident, fields);
     let boxed = boxed(ident);
     Ok(gated(&quote! {
+        #fill
         impl #napi::bindgen_prelude::FromNapiValue for #ident {
             unsafe fn from_napi_value(env: #napi::sys::napi_env, napi_val: #napi::sys::napi_value) -> #napi::Result<Self> {
                 match unsafe { ::sittir_core::slot::node_value_type(env, napi_val)? } {
@@ -249,7 +282,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     let decoded = |name: &Ident, ty: &Type| {
         quote!(#ident::#name(unsafe { <#ty as #napi::bindgen_prelude::FromNapiValue>::from_napi_value(env, napi_val)? }))
     };
-    let (mut by_index, mut by_decodes, mut encodes) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut by_index, mut by_decodes, mut encodes, mut fills) = (Vec::new(), Vec::new(), Vec::new(), Vec::new());
     let (mut blank, mut error_arm, mut string_arm, mut text_arm) = (quote!(), quote!(), quote!(), quote!());
     for variant in variants {
         let name = variant.name;
@@ -287,6 +320,11 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 }
             };
         }
+        fills.push(match variant.payload {
+            Some(_) => quote!(Self::#name(payload) => ::sittir_core::deferred::Fill::fill(payload, filled),),
+            None if variant.edged => quote!(Self::#name(_) => ::core::result::Result::Ok(()),),
+            None => quote!(Self::#name => ::core::result::Result::Ok(()),),
+        });
         encodes.push(match (variant.payload, variant.blank, &variant.first) {
             (Some(ty), _, _) => quote!(Self::#name(payload) => unsafe { <#ty as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, payload) },),
             (None, true, _) => quote!(Self::#name => unsafe { <::sittir_core::types::KindId as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, ::sittir_core::types::KindId::BLANK) },),
@@ -338,6 +376,13 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 }
             }
         }
+        impl ::sittir_core::deferred::Fill for #ident {
+            fn fill(&mut self, filled: &mut ::sittir_core::deferred::Filled) -> #napi::Result<()> {
+                match self {
+                    #(#fills)*
+                }
+            }
+        }
         #boxed
     }))
 }
@@ -357,6 +402,11 @@ pub fn members(ident: &Ident) -> TokenStream {
         impl #napi::bindgen_prelude::ToNapiValue for #ident {
             unsafe fn to_napi_value(env: #napi::sys::napi_env, val: Self) -> #napi::Result<#napi::sys::napi_value> {
                 unsafe { <__Kind as #napi::bindgen_prelude::ToNapiValue>::to_napi_value(env, __id(&val)) }
+            }
+        }
+        impl ::sittir_core::deferred::Fill for #ident {
+            fn fill(&mut self, _: &mut ::sittir_core::deferred::Filled) -> #napi::Result<()> {
+                ::core::result::Result::Ok(())
             }
         }
         #boxed

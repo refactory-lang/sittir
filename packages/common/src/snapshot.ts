@@ -4,6 +4,7 @@ import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, no
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
 import { readCoordinate } from './side-entries.ts';
+import { copyDown, copyEntries, type Below } from './copy-down.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -31,12 +32,22 @@ export function snapshotOf(value: object): Snapshot {
 	return snapshotIn(value, undefined, undefined) as Snapshot;
 }
 
+interface SnapshotVisit {
+	readonly value: unknown;
+	readonly holderByte: number | undefined;
+	readonly holderTree: SnapshotTree | undefined;
+}
+
 function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: SnapshotTree | undefined): unknown {
-	if (Array.isArray(value)) return value.map((entry) => snapshotIn(entry, holderByte, holderTree));
+	return copyDown<SnapshotVisit>({ value, holderByte, holderTree }, snapshotStep);
+}
+
+function snapshotStep({ value, holderByte, holderTree }: SnapshotVisit, below: Below<SnapshotVisit>): unknown {
+	if (Array.isArray(value)) return copyEntries(value, below, (entry) => ({ value: entry, holderByte, holderTree }));
 	if (!isRecord(value)) return value;
 	const at = coordinateOf(value);
 	const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
-	if (at === undefined || tree === undefined) return copyOf(value);
+	if (at === undefined || tree === undefined) return copyOf(value, below);
 	const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
 	return detached(read, { tree, own: treeTokenOf(value) });
 }
@@ -72,7 +83,7 @@ function detached(read: unknown, from: Detaching): unknown {
 	return read;
 }
 
-function copyOf(value: Record<string, unknown>): Record<string, unknown> {
+function copyOf(value: Record<string, unknown>, below: Below<SnapshotVisit>): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	for (const key of Object.keys(value)) {
 		const raw = value[key];
@@ -81,7 +92,8 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 			continue;
 		}
 		if (!isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
-		out[key] = isStorageKey(key) ? snapshotIn(raw, undefined, undefined) : raw;
+		if (isStorageKey(key)) below.at(out, key, { value: raw, holderByte: undefined, holderTree: undefined });
+		else out[key] = raw;
 	}
 	const each = (entry: unknown) => snapshotIn(entry, undefined, undefined);
 	const sides = sidesOf(value);

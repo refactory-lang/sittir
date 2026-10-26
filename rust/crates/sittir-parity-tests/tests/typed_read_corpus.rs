@@ -1,5 +1,4 @@
 use sittir_core::read::{read_at, Depth, ReadCtx, ReadError, ReadRoot};
-use sittir_core::SlotValue;
 use sittir_rust::render::kind_ids;
 use sittir_rust::render::node::{ArgumentsNode, FunctionItemNode, ParametersElementsNodeSlot, ParametersNode, SourceFileNode, StatementNode};
 use sittir_rust::render::{AnyNode, RenderRoot};
@@ -20,8 +19,8 @@ fn probe_input(name: &str) -> String {
 
 fn root(tree: &tree_sitter::Tree, source: &str, depth: Depth) -> SourceFileNode {
     let ctx = ReadCtx::new(source, sittir_core::types::TreeId(1), <sittir_rust::render::AnyNode as sittir_core::read::ReadNode>::shows);
-    match RenderRoot::read_root(&mut tree.walk(), &ctx, depth).unwrap() {
-        SlotValue::Node(AnyNode::SourceFile(file)) => file,
+    match RenderRoot::read_root(&mut tree.walk(), &ctx, depth).unwrap().into_node() {
+        Ok(AnyNode::SourceFile(file)) => file,
         other => panic!("not a source file: {other:?}"),
     }
 }
