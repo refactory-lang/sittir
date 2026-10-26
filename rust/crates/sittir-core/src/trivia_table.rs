@@ -294,19 +294,31 @@ impl Nodes {
     }
 
     /// The node beside a gap that takes its side, below `owner` on `node`'s
-    /// chain of parents: the holder child at the gap's edge (`at_edge`), or,
-    /// when that child is a list node and `kinds` passes through lists, the
-    /// holder below it at the same edge that is not a unit kind.
-    fn side_holder(&self, owner: u32, node: u32, kinds: Option<SurfaceKinds>, at_edge: impl Fn(u32) -> bool) -> Option<u32> {
+    /// chain of parents: the holder child at the gap's edge (`at_edge`), on
+    /// its `side`, or, when `kinds` passes through lists, the item each list
+    /// from it passes that side to (`edge_item`).
+    fn side_holder(&self, owner: u32, node: u32, kinds: Option<SurfaceKinds>, side: TriviaSide, at_edge: impl Fn(u32) -> bool) -> Option<u32> {
         let mut child = self.holder_below(owner, node).filter(|&child| at_edge(child))?;
-        let Some(kinds) = kinds else { return Some(child) };
-        while kinds.lists.contains(&self.kind[child as usize]) {
-            match self.holder_below(child, node).filter(|&inner| at_edge(inner) && !kinds.units.contains(&self.kind[inner as usize])) {
-                Some(inner) => child = inner,
-                None => break,
+        if let Some(kinds) = kinds {
+            while let Some(inner) = self.edge_item(child, side, kinds) {
+                child = inner;
             }
         }
         Some(child)
+    }
+
+    /// The item a list node passes the extras and `ERROR`s of its `side` to:
+    /// its first (leading) or last (trailing) holder child, when that child
+    /// lies at the list's edge and is not a unit kind; `None` for any other
+    /// node.
+    fn edge_item(&self, list: u32, side: TriviaSide, kinds: SurfaceKinds) -> Option<u32> {
+        if !kinds.lists.contains(&self.kind[list as usize]) {
+            return None;
+        }
+        let mut items = self.holders(list);
+        let item = if side == TriviaSide::Leading { items.next() } else { items.next_back() }?;
+        let at_edge = if side == TriviaSide::Leading { self.start[item as usize] == self.start[list as usize] } else { self.end[item as usize] == self.end[list as usize] };
+        (at_edge && !kinds.units.contains(&self.kind[item as usize])).then_some(item)
     }
 
     /// Where the excess `owner`'s runs change is restored: the trailing side
@@ -396,6 +408,7 @@ pub struct LayoutRun {
 #[derive(Debug, Default)]
 pub struct TriviaTable {
     sides: BTreeMap<(NodeIndex, TriviaSide), Vec<Assigned>>,
+    edge_items: BTreeMap<(NodeIndex, TriviaSide), NodeIndex>,
     unowned: Vec<NodeIndex>,
     runs: Vec<LayoutRun>,
 }
@@ -411,6 +424,13 @@ impl TriviaTable {
         let lines = crate::points::LineTable::new(source);
         let row = |byte: u32| lines.point(byte).map_or(0, |point| point.row);
         let mut table = TriviaTable::default();
+        for list in (0..crate::types::narrow(nodes.kind.len())).filter(|&at| nodes.holder[at as usize]) {
+            for side in [TriviaSide::Leading, TriviaSide::Trailing] {
+                if let Some(item) = nodes.edge_item(list, side, kinds) {
+                    table.edge_items.insert((global(list), side), global(item));
+                }
+            }
+        }
         let mut structure = Structure::new(tree, source, base, kinds.depth, &tokens, unit);
         let mut excess = Excess::default();
         let owner_of = |left: Option<&Token>, right: Option<&Token>| match (left, right) {
@@ -422,8 +442,8 @@ impl TriviaTable {
             if !nodes.holds[owner as usize] {
                 return Place::Side(global(owner), TriviaSide::Inner);
             }
-            let before = left.and_then(|left| nodes.side_holder(owner, local(left.node), through, |child| nodes.end[child as usize] == left.end));
-            let after = right.and_then(|right| nodes.side_holder(owner, local(right.node), through, |child| nodes.start[child as usize] == right.start));
+            let before = left.and_then(|left| nodes.side_holder(owner, local(left.node), through, TriviaSide::Trailing, |child| nodes.end[child as usize] == left.end));
+            let after = right.and_then(|right| nodes.side_holder(owner, local(right.node), through, TriviaSide::Leading, |child| nodes.start[child as usize] == right.start));
             match (before, after) {
                 (None, None) => match through {
                     Some(kinds) => {
@@ -519,6 +539,14 @@ impl TriviaTable {
                 }
             }
         }
+    }
+
+    /// The item the list node at `index` passes the extras and `ERROR`s of
+    /// its `side` to, so a coordinate of the list frames with that item's
+    /// side too; `None` for a node that is no list or passes none.
+    #[must_use]
+    pub fn edge_item(&self, index: NodeIndex, side: TriviaSide) -> Option<NodeIndex> {
+        self.edge_items.get(&(index, side)).copied()
     }
 
     /// The entries the assignment gives `side` of the node at `index`, in source order.

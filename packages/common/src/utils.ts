@@ -1,4 +1,4 @@
-import type { AnyUntypedNode, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
+import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries } from './trivia.ts';
 import { asTextNode, carryRead, carryPlace, carryUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf } from './node-data.ts';
 import { Source } from './source.ts';
@@ -11,6 +11,7 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { entrySnapshotOf } from './snapshot.ts';
+import { holdSideEntries, readCoordinateOf, refuseForeignEntry } from './side-entries.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { nodeJSON } from './node-json.ts';
@@ -117,10 +118,13 @@ function triviaWriter(target: object, handle: EngineHandle | undefined) {
 		return hydratedEntries(entries, tree);
 	};
 	const write = (side: TriviaSideName, items: readonly unknown[]): AnyUntypedNode => {
-		const entries = scoped(() => items.map((item) => triviaEntryOf(item, facts)));
+		const entries = scoped(() => items.map((item) => triviaEntryOf(item, handle.current)));
 		const at = tableAt(node);
 		if (at === undefined) setTriviaData(node, { ...triviaOf(node), [side]: entries });
-		else at.tree.writeTriviaSide(at.index, side, entries.map((entry) => (typeof entry === 'number' ? entry : toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS))));
+		else {
+			at.tree.writeTriviaSide(at.index, side, entries.map(sideEntryWire));
+			holdSideEntries(at.tree, `${at.index}:${side}`, entries);
+		}
 		return node;
 	};
 	const inner = (items: readonly unknown[]): AnyUntypedNode | readonly TriviaEntry[] => {
@@ -202,12 +206,17 @@ export function triviaInner(
 	return triviaWriter(node, handle).inner(items);
 }
 
-/** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
-function triviaEntryOf(item: unknown, facts: TriviaFacts): TriviaEntry {
+function sideEntryWire(entry: TriviaEntry): unknown {
+	return typeof entry === 'number' ? entry : (readCoordinateOf(entry) ?? toNodeData(entrySnapshotOf(entry) as AnyUntypedNode, PLAIN_KINDS));
+}
+
+function triviaEntryOf(item: unknown, holder: EngineIdentity): TriviaEntry {
+	const facts: TriviaFacts = holder.trivia;
 	if (typeof item === 'string') return textEntryOf(item, facts);
 	if (typeof item !== 'number' && !isNode(item)) {
 		throw new Error(`trivia: an entry is a node, a whitespace kind or a comment's text, not ${JSON.stringify(item)}`);
 	}
+	if (typeof item !== 'number') refuseForeignEntry(item, holder);
 	if (isErrorNode(item)) return item;
 	const type = typeof item === 'number' ? item : item.$type;
 	const kind = facts.kindName(type);

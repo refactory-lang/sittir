@@ -1,8 +1,9 @@
 import type { Snapshot } from '@sittir/types';
-import { decodeIndex, type TreeHandle } from './read.ts';
+import { decodeIndex, isCoordinate, type TreeHandle } from './read.ts';
 import { coordinateOf, isDataKey, isStorageKey, mapSideEntries, mapUnitSides, nodeText, separatorOf, sidesOf, slotsOf, unitSidesOf, withinSides } from './node-data.ts';
-import { treeOf } from './tree-token.ts';
+import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { TriviaSides } from './trivia.ts';
+import { readCoordinate } from './side-entries.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -44,33 +45,40 @@ function snapshotIn(value: unknown, holderByte: number | undefined, holderTree: 
 		const tree = at === undefined ? undefined : snapshotTreeOf(value, holderTree);
 		if (at === undefined || tree === undefined) return copyOf(value, within, nesting);
 		const read = tree.snapshot(decodeIndex(at.$treeHandle), holderByte);
-		assertSidesWithinBound(read, nesting);
-		return read;
+		return detached(read, { tree, own: treeTokenOf(value), within }, nesting);
 	});
 }
 
-function assertSidesWithinBound(read: unknown, nesting: number): void {
+interface Detaching {
+	readonly tree: SnapshotTree;
+	readonly own: TreeToken | undefined;
+	readonly within: Set<object>;
+}
+
+function detached(read: unknown, from: Detaching, nesting: number): unknown {
 	const work: [unknown, number][] = [[read, nesting]];
-	const visit = (entry: unknown, inside: number) => {
+	const visit = (entry: unknown, inside: number): unknown => {
+		if (isCoordinate(entry)) return snapshotIn(readCoordinate(from.tree, entry, from.own), undefined, undefined, from.within, inside);
 		work.push([entry, inside]);
 		return entry;
 	};
 	for (let next = work.pop(); next !== undefined; next = work.pop()) {
 		const [value, holder] = next;
 		if (Array.isArray(value)) {
-			for (const entry of value) work.push([entry, holder]);
+			value.forEach((entry, index) => (value[index] = visit(entry, holder)));
 			continue;
 		}
 		if (!isRecord(value)) continue;
 		for (const key of Object.keys(value)) {
 			const held = value[key];
-			if (key !== '$_layout') work.push([held, holder]);
+			if (key !== '$_layout') value[key] = visit(held, holder);
 			else if (isRecord(held)) {
-				if (isRecord(held.trivia)) mapSideEntries(held.trivia as TriviaSides<unknown>, holder, visit);
-				if (Array.isArray(held.units)) mapUnitSides(held.units, holder, visit);
+				if (isRecord(held.trivia)) held.trivia = mapSideEntries(held.trivia as TriviaSides<unknown>, holder, visit);
+				if (Array.isArray(held.units)) held.units = mapUnitSides(held.units, holder, visit);
 			}
 		}
 	}
+	return read;
 }
 
 function copyOf(value: Record<string, unknown>, within: Set<object>, nesting: number): Record<string, unknown> {

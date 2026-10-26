@@ -367,6 +367,27 @@ pub trait FramedTrivia: Framing + std::fmt::Debug {
     fn same_as(&self, other: &dyn FramedTrivia) -> bool;
 }
 
+/// The sides a coordinate's bytes render between: its node's own, when it
+/// holds any, and then those of each item inside its bytes that holds trivia
+/// at its edges for it, outermost first.
+#[derive(Debug, Default)]
+pub struct Frames {
+    pub own: Option<Box<dyn FramedTrivia>>,
+    pub items: Vec<Box<dyn FramedTrivia>>,
+}
+
+impl Frames {
+    /// Every frame, outermost first.
+    #[must_use]
+    pub fn into_vec(self) -> Vec<Box<dyn FramedTrivia>> {
+        self.own.into_iter().chain(self.items).collect()
+    }
+
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Box<dyn FramedTrivia>> {
+        self.own.iter_mut().chain(self.items.iter_mut())
+    }
+}
+
 impl<T: TriviaItem> FramedTrivia for NodeTrivia<T> {
     fn prepare(&mut self, ctx: &crate::prepare::RenderContext<'_>) -> Result<(), crate::render::CoordinateError> {
         crate::prepare::Prepare::prepare(self, ctx)
@@ -453,11 +474,11 @@ impl<T: TriviaSeam> RunItem for TriviaEntry<T> {
 /// (`spliced`): an entry, or the coordinate of a parsed node whose own sides
 /// the run holds as its neighbours, each with the nesting of the side it was
 /// spliced from, which it renders at. A coordinate is a trivia entry's, which
-/// no position holds adjacent, and it writes its bytes between its edges, as
-/// a coordinate with no sides does.
+/// no position holds adjacent, and it writes its bytes between its items'
+/// frames (`Frames::items`), as a coordinate with no sides of its own does.
 enum Spliced<T> {
     Entry(TriviaEntry<T>, usize),
-    Bare(crate::slot::NodeCoordinate, usize),
+    Bare(crate::slot::NodeCoordinate, Vec<Box<dyn FramedTrivia>>, usize),
 }
 
 impl<T: TriviaSeam> RunItem for Spliced<T> {
@@ -480,7 +501,7 @@ impl<T: Render> Render for Spliced<T> {
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match self {
             Spliced::Entry(entry, nesting) => at_nesting(*nesting, w, |w| entry.render(w)),
-            Spliced::Bare(coord, nesting) => at_nesting(*nesting, w, |w| coord.write_between_edges(w, false)),
+            Spliced::Bare(coord, frames, nesting) => at_nesting(*nesting, w, |w| crate::slot::write_framed(frames, Some(coord), coord, false, w)),
         }
     }
 }
@@ -601,13 +622,14 @@ fn splice_one<T: TriviaSeam>(mut entry: TriviaEntry<T>, nesting: usize, w: &dyn 
             let outer = value.sides_mut().map_or((None, None), |sides| (sides.leading.take(), sides.trailing.take()));
             (outer, Spliced::Entry(entry, nesting))
         }
-        SlotValue::Coord(coord) => match w.sides(coord)? {
-            None => ((None, None), Spliced::Bare(coord.clone(), nesting)),
-            Some(frame) => match frame.as_any().downcast_ref::<NodeTrivia<T>>() {
-                Some(sides) => ((sides.leading.clone(), sides.trailing.clone()), Spliced::Bare(coord.clone(), nesting)),
-                None => ((None, None), Spliced::Entry(entry, nesting)),
-            },
-        },
+        SlotValue::Coord(coord) => {
+            let frames = w.frames(coord)?;
+            match frames.own.as_deref().map(|own| own.as_any().downcast_ref::<NodeTrivia<T>>()) {
+                None => ((None, None), Spliced::Bare(coord.clone(), frames.items, nesting)),
+                Some(Some(sides)) => ((sides.leading.clone(), sides.trailing.clone()), Spliced::Bare(coord.clone(), frames.items, nesting)),
+                Some(None) => ((None, None), Spliced::Entry(entry, nesting)),
+            }
+        }
     })
 }
 
