@@ -31,9 +31,9 @@ The grammar-generated packed, immutable AST is Sittir's **canonical constructed-
 
 **Two origins, one representation:** a generated native reader projects Tree-sitter nodes directly into typed binary records, without a JavaScript AST intermediate. This is a projection and copy of selected facts, **not** a zero-copy view of Tree-sitter's internal tree memory. Parsed source and Tree-sitter remain authoritative for untouched source-backed subtrees, with lazy record materialization and coordinate folding. Builders write immutable records directly, without first creating an object graph to serialize at render. Both feed the same native renderer. A record can be materialized later, but is published once.
 
-**Storage contract:** codegen derives kind-specific record layouts and emits identical Rust/TypeScript layout metadata. Store booleans, presence bits, fixed literals, enum/choice discriminants and suitable numeric scalars inline; use the narrowest correct width (for example `u16` for kind IDs only when the grammar's ID range fits). Optional scalar fields use presence bits or tagged inline storage. A parsed record embeds a child whose slot admits only non-recursive, fixed-size kinds: the parent's cell holds the child's record, at a width the layout pass stamps like any other, so the child takes no allocation of its own, and its tree's index names it at that place. A built record holds every compound child and every leaf by its address: builders run bottom-up, so a child's record is finished before any holder is written, and that one record is what every holder shares and what keys the child's sides. A built leaf's cell holds its text and the address of its header-only record. A unit, a keyword or punctuation kind with one fixed text (the model's `unit` stamp), is never a record and has no address, whether parsed or built: its holder's cell names its kind, and its text is its kind's (§ Units). Recursive child references are fixed-size arena addresses; they do not themselves require an independent allocation. Lists are offset/length references into arena runs; strings are offset/length references into UTF-8 storage. Record headers, alignment, addressing, optional tags, capacity slack and list-run storage count toward actual footprint. The current generic five-word cell is a **prototype encoding**, not a mandated per-field physical layout. Prefer immutable, kind-specific packed layouts unless measurements or correctness require a uniform cell. Persistent records live in heap-backed arena chunks, **not on the call stack**; temporary Rust values may use stack space. Arena allocation is amortized by chunks, not necessarily allocation-free.
+**Storage contract:** codegen derives kind-specific record layouts and emits identical Rust/TypeScript layout metadata. Store booleans, presence bits, fixed literals, enum/choice discriminants and suitable numeric scalars inline; use the narrowest correct width (for example `u16` for kind IDs only when the grammar's ID range fits). Optional scalar fields use presence bits or tagged inline storage. A parsed record embeds a child whose slot admits only non-recursive, fixed-size kinds: the parent's cell holds the child's record, at a width the layout pass stamps like any other, so the child takes no allocation of its own, and its tree's index names it at that place. A built record holds every compound child by its address: builders run bottom-up, so a child's record is finished before any holder is written, and that one record is what every holder shares and what keys the child's sides. A built leaf is never a record and has no address: its holder's cell holds its kind and its text (§ Leaves). A unit, a keyword or punctuation kind with one fixed text (the model's `unit` stamp), is never a record and has no address, whether parsed or built: its holder's cell names its kind, and its text is its kind's (§ Units). Recursive child references are fixed-size arena addresses; they do not themselves require an independent allocation. Lists are offset/length references into arena runs; strings are offset/length references into UTF-8 storage. Record headers, alignment, addressing, optional tags, capacity slack and list-run storage count toward actual footprint. The current generic five-word cell is a **prototype encoding**, not a mandated per-field physical layout. Prefer immutable, kind-specific packed layouts unless measurements or correctness require a uniform cell. Persistent records live in heap-backed arena chunks, **not on the call stack**; temporary Rust values may use stack space. Arena allocation is amortized by chunks, not necessarily allocation-free.
 
-**Immutability and sharing:** records and their cells are immutable once written. A `$with`/replacement produces a new built record and shares every unchanged child by its address: a built record holds each compound child, leaf, list and link into another arena by address, so an edit copies only the path to the change. No mutable cell is required solely to support updates. A slot holds a tree coordinate, a string reference, a record address, a parsed record's embedded child or a unit's kind. A parsed node's record is written on its first read, of any kind, and is its storage from then on. Writing it leaves the parent's cell as it was: a parent's coordinate stays a coordinate, and a read reaches the child's record through its tree's index from row to record. The arena and that index only append. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Trivia is a layout overlay, not node contents: a parsed tree's assigned sides stay in its tree table, and every written side, parsed or built, is in one native store outside the records, so writing a side never changes a record (§ Trivia). Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
+**Immutability and sharing:** records and their cells are immutable once written. A `$with`/replacement produces a new built record and shares every unchanged child: a built record holds each compound child, list and link into another arena by address, and each leaf and unit in its cell, so an edit copies only the path to the change. No mutable cell is required solely to support updates. A slot holds a tree coordinate, a leaf's kind and text, a captured string, a record address, a parsed record's embedded child or a unit's kind. A parsed node's record is written on its first read, of any kind, and is its storage from then on. Writing it leaves the parent's cell as it was: a parent's coordinate stays a coordinate, and a read reaches the child's record through its tree's index from row to record. The arena and that index only append. Native arena ownership, reference lifetimes and any cross-arena references must remain valid as snapshots, trees and wrappers are retained or disposed. Trivia is a layout overlay, not node contents: a parsed tree's assigned sides stay in its tree table, and every written side, parsed or built, is in one native store outside the records, so writing a side never changes a record (§ Trivia). Explicitly distinguish mutable *ownership/registry metadata* from immutable *node contents*.
 
 **Boundary and wrappers:** a parsed tree's source bytes and strings stay native: JavaScript gets a node's text through a native call that returns that span's characters, never the source, so native code's view of the source as UTF-8 holds by construction. Buffers are the built nodes' arena: builders write their immutable records into buffers JavaScript owns, and native code reads them per call, borrowed, never holding them as immutable across calls, so it reads their words as untrusted input (Verification 10). A parsed tree's records are written by the native reader into its native arena, and a chunk crosses as a copy JavaScript owns, so no JavaScript write reaches native memory. None of these implies concurrent `SharedArrayBuffer` semantics. JavaScript wrapper allocation and method representation are separate from the packed AST. Prototype-based accessors can be benchmarked independently against both object and record storage; they are **not** a prerequisite for adopting records, nor automatically authorized by this decision. Avoid conflating V8 `heapUsed` with total resident/native/external memory.
 
@@ -392,6 +392,40 @@ model's `unit` stamp (`pass`, `this`, `;`). No unit has storage of its own (ruli
   between them. Two units of one kind that trade places among themselves, or of which one is
   removed, keep their sides by position, not by the unit the caller meant.
 
+### Leaves
+
+A leaf is a named node with no children, such as an identifier or a number. A parsed leaf has no
+storage of its own: its holder's cell names its kind, its byte span and its row. A built leaf has
+none either (ruling 14).
+
+- **A built leaf is its cell.** Its holder's cell holds its kind, its text as a string reference,
+  and the edges the holder changed beside it, which are facts of the site, as a child cell's are. It
+  is never a record and has no address, so a leaf with no sides takes no storage beyond its cell.
+- **The holder keeps the leaf object.** A holder keeps each leaf object its builder was given, and a
+  read of that slot returns it, as it does for every child a builder is given (ruling 11). A slot
+  given a leaf's text has no object: a read makes a leaf for that site on first access, and the
+  holder keeps it.
+- **Sides by site.** A leaf's sides are on its object, as object construction holds them, and the
+  written-sides store holds them at each site the leaf is placed at, keyed as a unit's are: its
+  holder, its slot's word and its item (§ Trivia). Placing a leaf records the site on its object,
+  in a field the leaf's literal declares so that placing changes no object's shape, and writes the
+  sides the object holds to that site; a leaf that holds none writes nothing. A side written on a
+  leaf after it is placed is written to every site recorded on it. One leaf at two sites renders its
+  sides at both, and a leaf placed nowhere keeps them on its object alone.
+- **A rebuild places its leaves again.** A `$with` writes a new holder, and each leaf it holds is
+  placed there as any leaf is: the new site is recorded on the leaf and its sides are written there.
+- **A lone leaf** renders as its root from its kind, its text and the sides its object holds, which
+  go with the render call, since a root has no site.
+- **A parsed leaf a built record holds** keeps a record of its own in the built arena. The record
+  names the parsed leaf (its tree, its row and its byte span) and keeps the edges its one holder
+  changed, and the holder's cell names it, in a form beside the record-free built leaf's. Its sides
+  are its row's, written or assigned, and a read gives its parsed view. The alternative, a link like
+  a compound child's to a record its tree writes on the first link, is taken only if the copies
+  measure as a cost.
+- **Admission.** A built leaf's cell is admitted by what it holds: a text reference inside the
+  string chunks and a kind its slot admits. A leaf object a builder is given is admitted by its
+  builder's stamp, as every built node is.
+
 ### Render
 
 - **A parsed node crosses as its coordinate, with no walk.** It references its record (ruling 4) and
@@ -419,13 +453,13 @@ travel with it.
 - **A parsed unit's assigned sides** are keyed by its row, as any parsed node's are: the row is the
   tree's node at the unit's site, which its holder's cell names, so reading them needs no record.
 - **Written sides are one native store,** keyed by place: a parsed node by its tree and row, a
-  built record by its address, and a unit by its site. A unit in a parsed holder is placed by its
-  tree and the row its holder's cell names; a unit in a built holder by the holder's address, its
-  slot's word and its item. A read takes a place's written side, else the side its tree assigned. A write replaces one
+  built record by its address, and a unit or a built leaf by its site. A unit in a parsed holder is
+  placed by its tree and the row its holder's cell names; a unit or a built leaf in a built holder by
+  the holder's address, its slot's word and its item. A read takes a place's written side, else the side its tree assigned. A write replaces one
   place's side and marks it edited, and a tree's edited ranges are a query over its row places. The
   store is outside every record: writing a side never changes a record or a record that shares it,
-  so trivia is a layout overlay and not part of the immutable node. A built node's sides travel
-  with it when it is placed. The store lands with the record step (ruling 6.3), when built nodes
+  so trivia is a layout overlay and not part of the immutable node. A built record's sides travel
+  with it when it is placed, and a built leaf's are written to each site it is placed at (§ Leaves). The store lands with the record step (ruling 6.3), when built nodes
   get arena storage. Until then a built node keeps its trivia on the node, and `$trivia` reads the
   same on parsed and built nodes.
 - **A parsed node's record holds no trivia:** its tree's table does. Prepare resolves no trivia
@@ -576,6 +610,10 @@ members in the builder's literal — changed all three, and the maintainer ruled
 17. **Units hold no storage.** Building a node appends no record for a unit it holds, and reading a
     unit from a parsed record or a built one gives its kind id. A parsed unit's sides render beside it
     after its holder is rebuilt and placed.
+18. **Built leaves hold no storage.** Building a node appends no record for a built leaf it holds,
+    and a read of the slot gives the leaf object its builder was given. A side written on a built
+    leaf before it is placed, or after, renders beside it at every site that holds it, and a lone
+    leaf renders its own sides. A parsed leaf a built record holds renders its row's sides.
 
 ## Feasibility probe
 
@@ -630,7 +668,7 @@ include them and the probe's do not (§ The wire).
 ## Rulings (2026-10-04)
 
 Made by the maintainer on the ten choices this draft left open (1–10) and on the one those rulings
-raised (11), with two made since (12, 13).
+raised (11), with three made since (12–14).
 
 1. **The unread child's coordinate is the tree and the row** (§ Laziness).
 2. **`depth: number` replaces `ParseOptions.deep`.** The default is 1, so reads stay one level and
@@ -673,10 +711,14 @@ raised (11), with two made since (12, 13).
 12. **Units are inline** (the maintainer, 2026-10-26). A unit has no record or address of its own,
     parsed or built: its holder's cell names its kind, it reads as its kind id with one decode on
     both origins, and its sides are keyed by its site (§ Units, § Trivia).
-13. **A built record holds its children by address** (the maintainer, 2026-10-26). A built record
-    embeds no compound child and no leaf: each is its own record, held by its address, which every
+13. **A built record holds its compound children by address** (the maintainer, 2026-10-26). A built
+    record embeds no compound child: each is its own record, held by its address, which every
     holder shares and which keys its sides. Only a parsed record embeds a bounded child (the
     storage contract; immutability and sharing).
+14. **A built leaf is its cell** (the maintainer, 2026-10-26). A built leaf has no record or
+    address: its holder's cell holds its kind, its text and the edges the holder changed beside it.
+    The holder keeps the leaf object, which records each site it is placed at, and the leaf's sides
+    are written to the store at each of them, keyed as a unit's are (§ Leaves, § Trivia).
 
 ## Appendix A. Attributed declarations
 
