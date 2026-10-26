@@ -230,6 +230,9 @@ pub struct SpacingWriter<'a, W: std::fmt::Write + ?Sized> {
     /// The nesting of the side whose entry is being written
     /// (`RenderSink::side_nesting`).
     side_nesting: usize,
+    /// The edge chain of the coordinate whose boundary is being placed
+    /// (`RenderSink::boundary`), kept to reuse its allocation.
+    edge_levels: Vec<crate::render::EdgeLevel>,
 }
 
 /// A trailing run rendered ahead of where it is written: its text, and the
@@ -321,6 +324,7 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
             open_before: 0,
             recorder: None,
             side_nesting: 0,
+            edge_levels: Vec::new(),
         }
     }
 
@@ -743,6 +747,41 @@ impl<'a, W: std::fmt::Write + ?Sized> SpacingWriter<'a, W> {
         self.site_mark(arm, strength, flank);
     }
 
+    /// Places what `outer`'s template writes on `side` between its edge and
+    /// `inner`, its child at that edge: the arm for `inner` in the row of
+    /// `outer`'s stamped kind, or of its grammar kind when the stamp's row
+    /// places nothing on that side (`ResolvedOptions::boundary_marks`).
+    fn boundary_marks(
+        &mut self,
+        options: &crate::options::ResolvedOptions,
+        outer: crate::render::EdgeLevel,
+        inner: crate::render::EdgeLevel,
+        side: crate::options::Side,
+    ) {
+        let Some(arms) = [outer.stamp, outer.grammar].into_iter().find_map(|kind| options.boundary_arms(kind, side)) else {
+            return;
+        };
+        for mark in crate::options::ResolvedOptions::boundary_marks(arms, inner.display, inner.field) {
+            match *mark {
+                crate::options::BoundaryMark::Site(site) if !self.moves_depth(options.site_arm(site).arm) => {
+                    crate::render::RenderSink::site_at(self, site);
+                }
+                crate::options::BoundaryMark::Flank(site) if !self.moves_depth(options.site_arm(site).arm) => {
+                    crate::render::RenderSink::flank_at(self, site);
+                }
+                crate::options::BoundaryMark::Seam(kinds) => crate::render::RenderSink::seam(self, kinds),
+                crate::options::BoundaryMark::Site(_) | crate::options::BoundaryMark::Flank(_) => {}
+            }
+        }
+    }
+
+    /// Whether `arm` is a depth move. A boundary places none: the depth move
+    /// it pairs with lies inside the coordinate's bytes, which keep their own
+    /// indentation.
+    fn moves_depth(&self, arm: crate::types::KindId) -> bool {
+        self.table.is_some_and(|table| arm == table.indent || arm == table.dedent)
+    }
+
     /// Writes a whitespace kind's arm: a depth move plus its line break for
     /// the depth arms, otherwise the arm's text as a seam of `strength`.
     fn site_mark(&mut self, kind: crate::types::KindId, strength: SeamStrength, flank: bool) {
@@ -1054,10 +1093,10 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
         let sources = self.sources;
         let mut first = true;
         if let Some(sources) = sources {
-            sources.for_each_kind_ending_with(coord, &mut |kind| {
+            sources.for_each_edge_level(coord, crate::options::Side::After, &mut |level| {
                 let kind = match (first, coord.kind) {
                     (true, Some(stamp)) => stamp,
-                    _ => kind,
+                    _ => level.grammar,
                 };
                 first = false;
                 crate::render::RenderSink::end_line_after(self, kind);
@@ -1068,6 +1107,28 @@ impl<W: std::fmt::Write + ?Sized> crate::render::RenderSink for SpacingWriter<'_
                 crate::render::RenderSink::end_line_after(self, stamp);
             }
         }
+    }
+
+    fn boundary(&mut self, coord: &crate::slot::NodeCoordinate, side: crate::options::Side) {
+        let (Some(sources), Some(options)) = (self.sources, self.options) else {
+            return;
+        };
+        let mut levels = std::mem::take(&mut self.edge_levels);
+        levels.clear();
+        sources.for_each_edge_level(coord, side, &mut |level| levels.push(level));
+        match side {
+            crate::options::Side::Before => {
+                for pair in levels.windows(2) {
+                    self.boundary_marks(options, pair[0], pair[1], side);
+                }
+            }
+            crate::options::Side::After => {
+                for pair in levels.windows(2).rev() {
+                    self.boundary_marks(options, pair[0], pair[1], side);
+                }
+            }
+        }
+        self.edge_levels = levels;
     }
 
     fn slice(&mut self, coord: &crate::slot::NodeCoordinate) -> crate::render::RenderResult {

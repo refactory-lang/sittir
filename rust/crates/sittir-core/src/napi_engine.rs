@@ -395,6 +395,16 @@ macro_rules! napi_engine {
                 with_live_node(tree_id, $crate::types::NodeIndex::ROOT, |parsed, _| Ok(parsed.layout_work()))
             }
 
+            /// The bytes the node at `index` of the live tree `treeId` renders
+            /// between as its source (`ParsedTree::framed_span_at`): `{ start,
+            /// end }`. A diagnostic. Refuses as `read` does.
+            #[::napi_derive::napi(ts_return_type = "{ start: number; end: number }")]
+            pub fn framed_span(&self, tree_id: $crate::types::TreeId, index: $crate::types::NodeIndex) -> ::napi::Result<$crate::types::Span> {
+                with_live_node(tree_id, index, |parsed, index| {
+                    parsed.framed_span_at(index).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id} has no node {index}")))
+                })
+            }
+
             /// One batch of a pre-order walk of the named descendants under
             /// the node `from` names (JSON, see `query::Address`), filtered to
             /// `kinds` when given and to the `where` plan (JSON, see

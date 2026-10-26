@@ -20,6 +20,7 @@ import { pathOf } from '../compiler/model/site-addresses.ts';
 import { comparePreferencePaths, formatPreferencePath, type PreferenceSegment } from '../dsl/primitives/preference-path.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { rustStringLiteral } from './render-body.ts';
+import type { BoundaryArm, BoundaryMark, KindBoundary } from './boundary-arms.ts';
 import { childIndexOf, optionKey, type AddressLeafEntry, type AddressTables, type ChildIndex } from './options.ts';
 import { lineBreakTerminatedKinds, lineTerminatedKinds } from '../compiler/model/trivia.ts';
 import { PREFERRED_NEWLINE, indentChars, indentUnitOf, newlineArms } from '../compiler/model/layout-kinds.ts';
@@ -693,11 +694,39 @@ function denseCells(name: string, type: string, entries: ReadonlyMap<number, str
 	return L;
 }
 
-export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTables, kindEntries: readonly IdEntry[]): string {
+function boundaryArmsRs(arms: readonly BoundaryArm[]): string {
+	return `&[${arms
+		.map(
+			(arm) =>
+				`::sittir_core::options::BoundaryArm { next: KindId(${arm.next}), field: ${arm.field === undefined ? 'None' : `Some(FieldId(${arm.field}))`}, marks: &[${arm.marks.map(boundaryMarkRs).join(', ')}] }`
+		)
+		.join(', ')}]`;
+}
+
+function boundaryMarkRs(mark: BoundaryMark): string {
+	switch (mark.at) {
+		case 'site':
+			return `::sittir_core::options::BoundaryMark::Site(${idLiteral('SiteId', mark.site)})`;
+		case 'flank':
+			return `::sittir_core::options::BoundaryMark::Flank(${idLiteral('SiteId', mark.site)})`;
+		case 'seam':
+			return `::sittir_core::options::BoundaryMark::Seam(${mark.kinds})`;
+	}
+}
+
+export function renderOptionsRs(
+	plan: RenderOptionsPlan,
+	addresses: AddressTables,
+	kindEntries: readonly IdEntry[],
+	boundaries: readonly KindBoundary[] = []
+): string {
 	const L: string[] = [];
 	const siteIndex = siteIndexOf(plan);
 	L.push('// @generated — render options: site table and resolver. Do not hand-edit.', '');
-	const fieldIds = plan.seatWrappers.some((row) => row.field !== undefined) ? 'FieldId, ' : '';
+	const fieldQualified =
+		plan.seatWrappers.some((row) => row.field !== undefined) ||
+		boundaries.some((row) => [...row.before, ...row.after].some((arm) => arm.field !== undefined));
+	const fieldIds = fieldQualified ? 'FieldId, ' : '';
 	L.push('use ::sittir_core::options::{KindFlags, ResolvedOptions, SeatPath};', `use ::sittir_core::types::{Delimiter, EdgeRow, ${fieldIds}FlankId, KindId, SiteId};`, '');
 	L.push(`pub const SPACING_SITE_COUNT: usize = ${plan.spacingSites.length};`);
 	L.push(`pub const DELIMITER_SITE_COUNT: usize = ${plan.delimiterSites.length};`, '');
@@ -710,14 +739,18 @@ export function renderOptionsRs(plan: RenderOptionsPlan, addresses: AddressTable
 		L.push(`    (${q(s.display)}, ${q(s.address)}, ${q(s.label)}, &[${kindIdList(s.allowedIds)}]),`);
 	}
 	L.push('];', '');
-	const edgeRows = edgeSitesOf(plan);
-	L.push('/// The before and after site of every kind that owns edge seams, in kind id order.');
+	const sited = new Map(edgeSitesOf(plan).map((row) => [row.kind, row]));
+	const bounded = new Map(boundaries.map((row) => [row.kind, row]));
+	const edgeRows = [...new Set([...sited.keys(), ...bounded.keys()])]
+		.sort((a, b) => a - b)
+		.map((kind) => ({ ...(sited.get(kind) ?? { kind, beforeArms: [], afterArms: [] }), bounds: bounded.get(kind) }));
+	L.push('/// The edge seams and boundary arms of every kind that owns either, in kind id order.');
 	L.push('pub static EDGE_SITES: &[::sittir_core::options::EdgeSite] = &[');
 	const armSites = (arms: readonly EdgeArmRow[]): string =>
 		`&[${arms.map((a) => `::sittir_core::options::ArmSite { arm: KindId(${a.arm}), site: ${idLiteral('SiteId', a.site)} }`).join(', ')}]`;
 	for (const e of edgeRows) {
 		L.push(
-			`    ::sittir_core::options::EdgeSite { before: ${idOrNone('SiteId', e.before)}, after: ${idOrNone('SiteId', e.after)}, before_arms: ${armSites(e.beforeArms)}, after_arms: ${armSites(e.afterArms)} },`
+			`    ::sittir_core::options::EdgeSite { before: ${idOrNone('SiteId', e.before)}, after: ${idOrNone('SiteId', e.after)}, before_arms: ${armSites(e.beforeArms)}, after_arms: ${armSites(e.afterArms)}, before_bounds: ${boundaryArmsRs(e.bounds?.before ?? [])}, after_bounds: ${boundaryArmsRs(e.bounds?.after ?? [])} },`
 		);
 	}
 	L.push('];', '');
