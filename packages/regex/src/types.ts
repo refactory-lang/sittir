@@ -13,6 +13,7 @@ import type {
 	NodeOfNamespaces,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
 	TriviaSetter,
@@ -3329,7 +3330,7 @@ export interface RegexTypeMap extends GrammarTypeMap {
 	readonly trivia: Layout;
 }
 
-export type NodeMethodsOf = NodeMethods<RegexTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods & HoldsTrivia<RegexTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, RegexTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, RegexTypeMap['trivia']>;
 

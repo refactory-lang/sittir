@@ -8574,10 +8574,6 @@ export function buildCommentLine(input: string, affix: boolean = true): T.Commen
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.CommentLine.Bound;
@@ -8609,10 +8605,6 @@ export function buildCommentBlock(input: string, affix: boolean = true): T.Comme
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	checkDelimited(handle, node, _delimited_buildCommentBlock, [_content]);
@@ -11932,10 +11924,6 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$engine: handle && (() => handle.current)
 	};
 	return stampBuilt(node) as unknown as T.HtmlComment.Bound;

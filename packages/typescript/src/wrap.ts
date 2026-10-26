@@ -6003,10 +6003,6 @@ export function wrapCommentLine(data: T.CommentLine, tree: TreeHandle): T.Commen
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -6029,10 +6025,6 @@ export function wrapCommentBlock(data: T.CommentBlock, tree: TreeHandle): T.Comm
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -8936,6 +8928,21 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	return node;
 }
 
+function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$text: () => data.$text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node;
+}
+
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
 	[TSKindId.Program]: (d, t) => wrapProgram(d as unknown as T.Program, t),
 	[TSKindId.HashBangLine]: (d, t) => wrapHashBangLine(d as unknown as T.HashBangLine, t),
@@ -9239,7 +9246,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.RegexFlags]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.Identifier]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.NumberDecimal]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.HtmlComment]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.HtmlComment]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.JsxText]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.TemplateChars]: (d, t) => wrapLeaf(d, t)
 };

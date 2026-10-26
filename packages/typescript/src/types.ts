@@ -17,6 +17,7 @@ import type {
 	WithoutGroup,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
 	TriviaSetter,
@@ -23713,11 +23714,11 @@ export namespace ExportStatementEqualsExport {
 }
 export namespace CommentLine {
 	export type Config = ConfigFor<TSKindId.CommentLine>;
-	export interface Bound extends BoundOf<T.CommentLine, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.CommentLine, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.CommentLine['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CommentLine, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.CommentLine, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.CommentLine['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -23737,11 +23738,11 @@ export namespace CommentLine {
 }
 export namespace CommentBlock {
 	export type Config = ConfigFor<TSKindId.CommentBlock>;
-	export interface Bound extends BoundOf<T.CommentBlock, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.CommentBlock, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.CommentBlock['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.CommentBlock, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.CommentBlock, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.CommentBlock['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -26147,12 +26148,12 @@ export namespace NumberDecimal {
 }
 export namespace HtmlComment {
 	export type Config = HtmlCommentNs['Config'];
-	export interface Bound extends NodeMethodsOf, HoldsSource {
+	export interface Bound extends NodeMethods, HoldsSource {
 		readonly $type: TSKindId.HtmlComment;
 		readonly $named: true;
 		$text(): string;
 	}
-	export interface Parsed extends NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: TSKindId.HtmlComment;
 		readonly $named: true;
 		$text(): string;
@@ -26284,7 +26285,7 @@ export interface TypescriptTypeMap extends GrammarTypeMap {
 	readonly trivia: Comment | HtmlComment | Layout;
 }
 
-export type NodeMethodsOf = NodeMethods<TypescriptTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods & HoldsTrivia<TypescriptTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, TypescriptTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, TypescriptTypeMap['trivia']>;
 

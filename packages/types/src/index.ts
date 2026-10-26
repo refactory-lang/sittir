@@ -4,7 +4,7 @@
  */
 
 import type { KeysOfUnion } from 'type-fest';
-import type { NodeMethods } from './engine-api.ts';
+import type { HoldsTrivia, NodeMethods } from './engine-api.ts';
 export type {
 	Cond,
 	KindMembership,
@@ -1126,7 +1126,7 @@ export interface NodeNs<
 	Scalars = {},
 	Strings = {},
 	NsMap = {},
-	Bound = T & NodeMethods & HoldsSource,
+	Bound = T & NodeMethods & HoldsTrivia & HoldsSource,
 	Bare extends string = never,
 	Kind extends number = never,
 	Parsed = Bound,
@@ -1279,6 +1279,7 @@ export type {
 	EngineOptions,
 	FileChange,
 	GrammarInnerTrivia,
+	HoldsTrivia,
 	NodeMethods,
 	NodeJSON,
 	NodeJSONFacts,

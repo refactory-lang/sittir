@@ -3,7 +3,7 @@ import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { hostTemplateFor } from '@sittir/common';
 import type { ReparseHostsConfig } from '../dsl/wire/reparse-hosts.ts';
 import { REPARSE_HOST_PRIORITY } from '../dsl/wire/reparse-hosts.ts';
-import { groupSeatParts, innerPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
+import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, triviaInnerImports, type SetterEntry, type StoredAccessor } from './node-members.ts';
 import { findOwnKindEntry, reservedWordset, reservedWordsAdmittedIn } from '../dsl/symbol-table.ts';
 import { GLOBAL_WORDSET } from '../dsl/rule-metadata.ts';
 import type { AuthoredCompound } from '../compiler/model/node-map.ts';
@@ -1914,7 +1914,7 @@ function emitFieldCarryingFactory(
 			setters: seatedSetters(setters, plan),
 			accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 			extra: [...(view?.members ?? []), ...groups.members],
-			inner: innerPositionsOf(typeKind, nodeMap)
+			trivia: triviaPositionsOf(typeKind, nodeMap)
 		})
 	);
 	lines.push('  };');
@@ -2127,7 +2127,7 @@ function emitRefineFormFactory(
 		...nodeMemberLines({
 			setters: formSetters,
 			accessors: allSlots.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
-			inner: innerPositionsOf(node.kind, nodeMap)
+			trivia: triviaPositionsOf(node.kind, nodeMap)
 		})
 	);
 	lines.push('  };');
@@ -2751,7 +2751,7 @@ function emitSeparatedListFactory(
 				setters: seatedSetters(setters, plan),
 				accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 				extra: view.members,
-				inner: innerPositionsOf(node.kind, nodeMap)
+				trivia: triviaPositionsOf(node.kind, nodeMap)
 			})
 		);
 		lines.push('  };');
@@ -2806,7 +2806,7 @@ function emitTextFactory(
 		'  const node = {',
 		`    $type: ${typeExpr},`,
 		'    $named: true as const,',
-		...nodeMemberLines({ accessors: [], text: textExpr, inner: nodeMap === undefined ? { inner: false } : innerPositionsOf(node.kind, nodeMap) }),
+		...nodeMemberLines({ accessors: [], text: textExpr, trivia: nodeMap === undefined ? { inner: false } : triviaPositionsOf(node.kind, nodeMap) }),
 		'  };',
 		`  return stampBuilt(node) as unknown as T.${node.typeName}.Bound;`,
 		'}'

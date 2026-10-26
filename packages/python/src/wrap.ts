@@ -3856,10 +3856,6 @@ export function wrapComment(data: T.Comment, tree: TreeHandle): T.Comment.Parsed
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
 		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
 		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
 		$engine: handle && (() => handle.current)
@@ -5963,6 +5959,21 @@ function wrapLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
 	return node;
 }
 
+function wrapInteriorLeaf(data: _UntypedNode, _tree: TreeHandle): unknown {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$text: () => data.$text,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node;
+}
+
 const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unknown> = {
 	[TSKindId.Module]: (d, t) => wrapModule(d as unknown as T.Module, t),
 	[TSKindId.SimpleStatements]: (d, t) => wrapSimpleStatements(d as unknown as T.SimpleStatements, t),
@@ -6154,7 +6165,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.IntegerDecimalLong]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalImaginary]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.IntegerDecimalPlain]: (d, t) => wrapLeaf(d, t),
-	[TSKindId.LineContinuationNewline]: (d, t) => wrapLeaf(d, t),
+	[TSKindId.LineContinuationNewline]: (d, t) => wrapInteriorLeaf(d, t),
 	[TSKindId.StringStart]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.StringFragment]: (d, t) => wrapLeaf(d, t),
 	[TSKindId.EscapeInterpolation]: (d, t) => wrapLeaf(d, t),

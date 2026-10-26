@@ -1,10 +1,7 @@
-import { createRequire } from 'node:module';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RENDER_MODULE_HASH } from '../src/hash.ts';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
-
-const { SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL } = createRequire(import.meta.url)('../native/index.cjs') as { readonly SIDE_NESTING_BOUND: number; readonly SIDE_NESTING_REFUSAL: string };
 
 const rs = await createEngine(rust);
 
@@ -32,7 +29,7 @@ describe('engine render boundary', () => {
 			getActiveBackend: () => ({
 				name: 'native',
 				hashMatch: true,
-				native: { SittirEngine, SIDE_NESTING_BOUND, SIDE_NESTING_REFUSAL }
+				native: { SittirEngine }
 			})
 		}));
 	}

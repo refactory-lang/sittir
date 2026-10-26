@@ -222,19 +222,6 @@ export declare function liveTreeCount(): number
 export type NodeIndex =
   number
 
-/**
- * The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
- * the JavaScript projection of a side's entries enforces as the
- * render does.
- */
-export const SIDE_NESTING_BOUND: number
-
-/**
- * The refusal of a side nested past `SIDE_NESTING_BOUND`
- * (`trivia::SIDE_NESTING_REFUSAL`).
- */
-export const SIDE_NESTING_REFUSAL: string
-
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId =
   number

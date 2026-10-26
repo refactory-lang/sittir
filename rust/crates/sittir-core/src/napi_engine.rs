@@ -124,17 +124,6 @@ macro_rules! napi_engine {
             LIVE_TREES.with(|trees| trees.borrow().len() as u32)
         }
 
-        /// The deepest a side may nest (`trivia::SIDE_NESTING_BOUND`), which
-        /// the JavaScript projection of a side's entries enforces as the
-        /// render does.
-        #[::napi_derive::napi]
-        pub const SIDE_NESTING_BOUND: u32 = $crate::trivia::SIDE_NESTING_BOUND as u32;
-
-        /// The refusal of a side nested past `SIDE_NESTING_BOUND`
-        /// (`trivia::SIDE_NESTING_REFUSAL`).
-        #[::napi_derive::napi]
-        pub const SIDE_NESTING_REFUSAL: &str = $crate::trivia::SIDE_NESTING_REFUSAL;
-
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,

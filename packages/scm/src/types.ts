@@ -14,6 +14,7 @@ import type {
 	OmitEach,
 	GrammarTypeMap,
 	NodeMethods,
+	HoldsTrivia,
 	HoldsTree,
 	HoldsSource,
 	TriviaSetter,
@@ -1981,11 +1982,11 @@ export namespace Parameters {
 }
 export namespace Comment {
 	export type Config = ConfigFor<TSKindId.Comment>;
-	export interface Bound extends BoundOf<T.Comment, BoundByKindId>, NodeMethodsOf, HoldsSource {
+	export interface Bound extends BoundOf<T.Comment, BoundByKindId>, NodeMethods, HoldsSource {
 		readonly $type: T.Comment['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
 	}
-	export interface Parsed extends ParsedOf<T.Comment, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+	export interface Parsed extends ParsedOf<T.Comment, ParsedByKindId>, NodeMethods, HoldsSource, HoldsTree {
 		readonly $type: T.Comment['$type'];
 		readonly $with: WithNode<this, BoundByKindId>;
 		readonly $query: () => QueryFacet<
@@ -2625,7 +2626,7 @@ export interface ScmTypeMap extends GrammarTypeMap {
 	readonly trivia: Comment | Layout;
 }
 
-export type NodeMethodsOf = NodeMethods<ScmTypeMap['trivia']>;
+export type NodeMethodsOf = NodeMethods & HoldsTrivia<ScmTypeMap['trivia']>;
 export type TriviaSetterOf<Self> = TriviaSetter<Self, ScmTypeMap['trivia']>;
 export type InnerTrivia<N> = GrammarInnerTrivia<N, ScmTypeMap['trivia']>;
 
