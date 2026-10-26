@@ -131,7 +131,9 @@ declare module './clause.ts' {
 		}
 		namespace Case {
 			interface Default<G extends GrammarContext<G>> extends multiwayBranch.Clause.Case.Default<G> {}
-			interface Match<G extends GrammarContext<G>> extends matchExpressions.Clause.Case.Match<G> {}
+			interface Match<G extends GrammarContext<G>> extends matchExpressions.Clause.Case.Match<G> {
+				readonly attributes?: gate.In<G, features.Attributes, attributes.Clause.Case.Match<G>['attributes']>;
+			}
 			interface Switch<G extends GrammarContext<G>> extends multiwayBranch.Clause.Case.Switch<G> {}
 			type Any<G extends GrammarContext<G>> =
 				| V.Clause.Case<G>
@@ -235,19 +237,6 @@ declare module './clause.ts' {
 			type Any<G extends GrammarContext<G>> = V.Clause.Macro<G> | V.Clause.Macro.Rule<G>;
 		}
 		interface MappedType<G extends GrammarContext<G>> extends typeAnnotations.Clause.MappedType<G> {}
-		interface Match<G extends GrammarContext<G>> extends matchExpressions.Clause.Match<G> {}
-		namespace Match {
-			interface Arm<G extends GrammarContext<G>> extends matchExpressions.Clause.Match.Arm<G> {
-				readonly attributes?: gate.In<G, features.Attributes, attributes.Clause.Match.Arm<G>['attributes']>;
-			}
-			namespace Arm {
-				interface Last<G extends GrammarContext<G>> extends matchExpressions.Clause.Match.Arm.Last<G> {
-					readonly attributes?: gate.In<G, features.Attributes, attributes.Clause.Match.Arm.Last<G>['attributes']>;
-				}
-				type Any<G extends GrammarContext<G>> = V.Clause.Match.Arm<G> | V.Clause.Match.Arm.Last<G>;
-			}
-			type Any<G extends GrammarContext<G>> = V.Clause.Match<G> | V.Clause.Match.Arm<G> | V.Clause.Match.Arm.Last<G>;
-		}
 		interface Print<G extends GrammarContext<G>> extends printStatements.Clause.Print<G> {}
 		namespace Print {
 			interface Chevron<G extends GrammarContext<G>> extends printStatements.Clause.Print.Chevron<G> {}
@@ -307,9 +296,6 @@ declare module './clause.ts' {
 			| V.Clause.Macro<G>
 			| V.Clause.Macro.Rule<G>
 			| V.Clause.MappedType<G>
-			| V.Clause.Match<G>
-			| V.Clause.Match.Arm<G>
-			| V.Clause.Match.Arm.Last<G>
 			| V.Clause.Print<G>
 			| V.Clause.Print.Chevron<G>
 			| V.Clause.Resource<G>
@@ -2533,7 +2519,6 @@ declare module './pattern.ts' {
 		interface Generic<G extends GrammarContext<G>> extends parametricPolymorphism.Pattern.Generic<G> {}
 		interface List<G extends GrammarContext<G>> extends destructuring.Pattern.List<G> {}
 		interface Map<G extends GrammarContext<G>> extends matchExpressions.Pattern.Map<G> {}
-		interface Match<G extends GrammarContext<G>> extends matchExpressions.Pattern.Match<G> {}
 		interface Object<G extends GrammarContext<G>> extends destructuring.Pattern.Object<G> {}
 		namespace Object {
 			interface Assignment<G extends GrammarContext<G>> extends destructuring.Pattern.Object.Assignment<G> {}
@@ -2590,7 +2575,6 @@ declare module './pattern.ts' {
 			| V.Pattern.Generic<G>
 			| V.Pattern.List<G>
 			| V.Pattern.Map<G>
-			| V.Pattern.Match<G>
 			| V.Pattern.Mutable<G>
 			| V.Pattern.Object<G>
 			| V.Pattern.Object.Assignment<G>

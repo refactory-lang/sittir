@@ -15131,7 +15131,7 @@ impl ::sittir_core::render::Render for RangeExpressionBinaryOperatorNodeSlot {
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
-pub enum MatchArmBlockEndingValueNodeSlot {
+pub enum MatchArmBlockEndingBodyNodeSlot {
     #[kind(kind::UNSAFE_BLOCK)]
     UnsafeBlock(UnsafeBlockNode),
     #[kind(kind::ASYNC_BLOCK)]
@@ -15156,80 +15156,80 @@ pub enum MatchArmBlockEndingValueNodeSlot {
     ConstBlock(ConstBlockNode),
 }
 
-impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingValueNodeSlot {
+impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingBodyNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::AsyncBlock(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::GenBlock(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::TryBlock(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::Block(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::IfExpression(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::MatchExpression(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::WhileExpression(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::LoopExpression(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::ForExpression(t) => t.prepare(ctx),
-            MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::UnsafeBlock(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::AsyncBlock(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::GenBlock(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::TryBlock(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::Block(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::IfExpression(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::MatchExpression(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::WhileExpression(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::LoopExpression(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::ForExpression(t) => t.prepare(ctx),
+            MatchArmBlockEndingBodyNodeSlot::ConstBlock(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::AsyncBlock(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::GenBlock(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::TryBlock(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::Block(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::IfExpression(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::MatchExpression(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::WhileExpression(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::LoopExpression(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::ForExpression(t) => t.gap_edges(),
-            MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::UnsafeBlock(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::AsyncBlock(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::GenBlock(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::TryBlock(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::Block(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::IfExpression(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::MatchExpression(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::WhileExpression(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::LoopExpression(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::ForExpression(t) => t.gap_edges(),
+            MatchArmBlockEndingBodyNodeSlot::ConstBlock(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::AsyncBlock(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::GenBlock(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::TryBlock(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::Block(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::IfExpression(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::MatchExpression(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::WhileExpression(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::LoopExpression(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::ForExpression(t) => t.snapshot_edge(),
-            MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::UnsafeBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::AsyncBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::GenBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::TryBlock(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::Block(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::IfExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::MatchExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::WhileExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::LoopExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::ForExpression(t) => t.snapshot_edge(),
+            MatchArmBlockEndingBodyNodeSlot::ConstBlock(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::AsyncBlock(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::GenBlock(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::TryBlock(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::Block(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::IfExpression(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::MatchExpression(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::WhileExpression(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::LoopExpression(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::ForExpression(t) => t.source_coordinate(),
-            MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::UnsafeBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::AsyncBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::GenBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::TryBlock(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::Block(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::IfExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::MatchExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::WhileExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::LoopExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::ForExpression(t) => t.source_coordinate(),
+            MatchArmBlockEndingBodyNodeSlot::ConstBlock(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::AsyncBlock(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::GenBlock(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::TryBlock(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::Block(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::IfExpression(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::MatchExpression(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::WhileExpression(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::LoopExpression(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::ForExpression(t) => t.source_separator(ctx),
-            MatchArmBlockEndingValueNodeSlot::ConstBlock(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::UnsafeBlock(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::AsyncBlock(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::GenBlock(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::TryBlock(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::Block(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::IfExpression(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::MatchExpression(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::WhileExpression(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::LoopExpression(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::ForExpression(t) => t.source_separator(ctx),
+            MatchArmBlockEndingBodyNodeSlot::ConstBlock(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -15237,7 +15237,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingValueNodeSlot {
     }
 }
 
-impl ::sittir_core::view::KindOf for MatchArmBlockEndingValueNodeSlot {
+impl ::sittir_core::view::KindOf for MatchArmBlockEndingBodyNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::UnsafeBlock(inner) => inner.kind_in(kinds),
@@ -15255,20 +15255,20 @@ impl ::sittir_core::view::KindOf for MatchArmBlockEndingValueNodeSlot {
     }
 }
 
-impl ::sittir_core::render::Render for MatchArmBlockEndingValueNodeSlot {
+impl ::sittir_core::render::Render for MatchArmBlockEndingBodyNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            MatchArmBlockEndingValueNodeSlot::UnsafeBlock(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::AsyncBlock(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::GenBlock(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::TryBlock(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::Block(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::IfExpression(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::MatchExpression(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::WhileExpression(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::LoopExpression(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::ForExpression(inner) => inner.render(w),
-            MatchArmBlockEndingValueNodeSlot::ConstBlock(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::UnsafeBlock(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::AsyncBlock(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::GenBlock(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::TryBlock(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::Block(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::IfExpression(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::MatchExpression(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::WhileExpression(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::LoopExpression(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::ForExpression(inner) => inner.render(w),
+            MatchArmBlockEndingBodyNodeSlot::ConstBlock(inner) => inner.render(w),
         }
     }
 }
@@ -22196,9 +22196,9 @@ pub struct LastMatchArmNode {
     #[wire(key = "_match")]
     #[slot(field = field::MATCH, word = 4, width = 5)]
     pub match_: ::sittir_core::SlotValue<Box<MatchPatternNode>>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 9, width = 5)]
-    pub value: ::sittir_core::SlotValue<Box<ExpressionNode>>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY, word = 9, width = 5)]
+    pub body: ::sittir_core::SlotValue<Box<ExpressionNode>>,
     #[wire(key = "_trailing_comma")]
     #[slot(field = field::TRAILING_COMMA, word = 14, width = 5)]
     pub trailing_comma: Option<::sittir_core::SlotValue<LastMatchArmTrailingCommaNodeSlot>>,
@@ -22234,7 +22234,7 @@ impl ::sittir_core::prepare::Prepare for LastMatchArmNode {
         if self.trailing_comma.is_none() { self.trailing_comma = LastMatchArmTrailingCommaNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_LAST_MATCH_ARM_TRAILING_COMMA).arm).map(::sittir_core::SlotValue::Node); }
         self.attributes.prepare(ctx)?;
         self.match_.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         self.trailing_comma.prepare(ctx)?;
         Ok(())
     }
@@ -28728,9 +28728,9 @@ pub struct MatchArmWithCommaNode {
     #[wire(key = "_match")]
     #[slot(field = field::MATCH, word = 4, width = 5)]
     pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 9, width = 5)]
-    pub value: ::sittir_core::SlotValue<ExpressionNode>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY, word = 9, width = 5)]
+    pub body: ::sittir_core::SlotValue<ExpressionNode>,
     #[wire(key = "_attributes_separator_space")]
     pub attributes_separator_space: Option<KindId>,
 }
@@ -28762,7 +28762,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmWithCommaNode {
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_WITH_COMMA_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.match_.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -28793,9 +28793,9 @@ pub struct MatchArmBlockEndingNode {
     #[wire(key = "_match")]
     #[slot(field = field::MATCH, word = 4, width = 5)]
     pub match_: ::sittir_core::SlotValue<MatchPatternNode>,
-    #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 9, width = 5)]
-    pub value: ::sittir_core::SlotValue<MatchArmBlockEndingValueNodeSlot>,
+    #[wire(key = "_body")]
+    #[slot(field = field::BODY, word = 9, width = 5)]
+    pub body: ::sittir_core::SlotValue<MatchArmBlockEndingBodyNodeSlot>,
     #[wire(key = "_attributes_separator_space")]
     pub attributes_separator_space: Option<KindId>,
 }
@@ -28827,7 +28827,7 @@ impl ::sittir_core::prepare::Prepare for MatchArmBlockEndingNode {
         ::sittir_core::prepare::fill_seated_gaps(self.attributes.iter_mut().map(Some), options::SEATS_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES, ctx);
         self.attributes.prepare(ctx)?;
         self.match_.prepare(ctx)?;
-        self.value.prepare(ctx)?;
+        self.body.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -38187,7 +38187,7 @@ impl ::sittir_core::prepare::SeatTarget for VisibilityModifierPubScopeContentNod
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for MatchArmBlockEndingValueNodeSlot {
+impl ::sittir_core::prepare::SeatTarget for MatchArmBlockEndingBodyNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::UnsafeBlock(t) => t.seat_target(table, ctx),
@@ -39940,16 +39940,16 @@ fn render_last_match_arm(node: &LastMatchArmNode, w: &mut dyn ::sittir_core::ren
         tail: Some(options::SITE_LAST_MATCH_ARM_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
+    let body = &node.body;
     let match_ = &node.match_;
     let trailing_comma = View::new(&node.trailing_comma, "{}");
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_BEFORE);
     w.text("=>")?;
     w.site_at(options::SITE_LAST_MATCH_ARM_EQ_GT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_trailing_comma", ::sittir_core::types::ItemIndex(0), w, |w| trailing_comma.render(w))?;
     w.edge(::sittir_core::types::KindId(295), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -41458,15 +41458,15 @@ fn render_match_arm_with_comma(node: &MatchArmWithCommaNode, w: &mut dyn ::sitti
         tail: Some(options::SITE_MATCH_ARM_WITH_COMMA_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
+    let body = &node.body;
     let match_ = &node.match_;
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(397), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_EQ_GT_BEFORE);
     w.text("=>")?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_EQ_GT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_WITH_COMMA_COMMA_BEFORE);
     w.text(",")?;
     w.edge(::sittir_core::types::KindId(397), ::sittir_core::options::Side::After, node.layout.edges().after);
@@ -41487,15 +41487,15 @@ fn render_match_arm_block_ending(node: &MatchArmBlockEndingNode, w: &mut dyn ::s
         tail: Some(options::SITE_MATCH_ARM_BLOCK_ENDING_ATTRIBUTES_END),
         units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_attributes"),
     };
+    let body = &node.body;
     let match_ = &node.match_;
-    let value = &node.value;
     w.edge(::sittir_core::types::KindId(398), ::sittir_core::options::Side::Before, node.layout.edges().before);
     attributes.render(w)?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_match", ::sittir_core::types::ItemIndex(0), w, |w| match_.render(w))?;
     w.site_at(options::SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_BEFORE);
     w.text("=>")?;
     w.site_at(options::SITE_MATCH_ARM_BLOCK_ENDING_EQ_GT_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_body", ::sittir_core::types::ItemIndex(0), w, |w| body.render(w))?;
     w.edge(::sittir_core::types::KindId(398), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
@@ -44387,4 +44387,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingValueNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);

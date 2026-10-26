@@ -100,7 +100,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly bodies: G['declaration'] | G['statement'];
 		};
 		readonly 'clause.case.match': {
-			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly body:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Declaration.TypeAlias<G>
+				| V.Type.Primitive<G>;
+			readonly guard: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Any<G> | G['statement'];
 		};
 		readonly 'clause.case.switch': {
 			readonly bodies: G['declaration'] | G['statement'];
@@ -220,21 +227,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'clause.mapped_type': {
 			readonly alias: G['identifier'] | G['type'];
 			readonly type: G['identifier'] | G['type'];
-		};
-		readonly 'clause.match.arm': {
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement']
-				| V.Type.Primitive<G>;
-		};
-		readonly 'clause.match.arm.last': {
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
 		};
 		readonly 'clause.print': {
 			readonly expression:
@@ -1325,15 +1317,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		};
 		readonly 'pattern.map': {
 			readonly elements: unknown | V.Pattern.Rest<G>;
-		};
-		readonly 'pattern.match': {
-			readonly condition:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| V.Clause.Let.Any<G>
-				| G['statement'];
-			readonly pattern: unknown;
 		};
 		readonly 'pattern.mutable': {
 			readonly pattern: unknown;

@@ -7220,16 +7220,16 @@ export interface LastMatchArm {
 	readonly $type: TSKindId.LastMatchArm;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _match: MatchPattern;
-	readonly _value: Expression;
+	readonly _body: Expression;
 	readonly _trailing_comma?: number;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
 		readonly _match: 'match';
-		readonly _value: 'value';
+		readonly _body: 'body';
 		readonly _trailing_comma: 'trailingComma';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly body:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 		readonly trailing_comma?: KindEnum<',', TSKindId.Comma>;
@@ -7237,7 +7237,7 @@ export interface LastMatchArm {
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
 		readonly match: SlotHint<T.MatchPattern>;
-		readonly value: SlotHint<NonNullable<T.LastMatchArm.Config>['value']>;
+		readonly body: SlotHint<NonNullable<T.LastMatchArm.Config>['body']>;
 		readonly trailingComma: SlotHint<NonNullable<T.LastMatchArm.Options>['trailingComma'], true>;
 		readonly $flat: FlatHint<
 			'match',
@@ -7249,7 +7249,7 @@ export interface LastMatchArm {
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
 	readonly match: () => MatchPattern;
-	readonly value: () => Expression;
+	readonly body: () => Expression;
 	readonly trailingComma: () => number | undefined;
 }
 
@@ -9572,21 +9572,21 @@ export interface MatchArmWithComma {
 	readonly $type: TSKindId.MatchArmWithComma;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _match: MatchPattern;
-	readonly _value: Expression;
+	readonly _body: Expression;
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
 		readonly _match: 'match';
-		readonly _value: 'value';
+		readonly _body: 'body';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly body:
 			| KindEnum<'true' | 'false' | 'self', TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.Self>
 			| Expression;
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
 		readonly match: SlotHint<T.MatchPattern>;
-		readonly value: SlotHint<NonNullable<T.MatchArmWithComma.Config>['value']>;
+		readonly body: SlotHint<NonNullable<T.MatchArmWithComma.Config>['body']>;
 		readonly $flat: FlatHint<
 			'match',
 			T.MatchPattern,
@@ -9597,14 +9597,14 @@ export interface MatchArmWithComma {
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
 	readonly match: () => MatchPattern;
-	readonly value: () => Expression;
+	readonly body: () => Expression;
 }
 
 export interface MatchArmBlockEnding {
 	readonly $type: TSKindId.MatchArmBlockEnding;
 	readonly _attributes: readonly (AttributeItem | InnerAttributeItem)[];
 	readonly _match: MatchPattern;
-	readonly _value:
+	readonly _body:
 		| UnsafeBlock
 		| AsyncBlock
 		| GenBlock
@@ -9619,12 +9619,12 @@ export interface MatchArmBlockEnding {
 	readonly __slotNames__?: {
 		readonly _attributes: 'attributes';
 		readonly _match: 'match';
-		readonly _value: 'value';
+		readonly _body: 'body';
 	};
 	readonly __slotHints__?: {
 		readonly attributes: SlotHint<(T.AttributeItem | T.InnerAttributeItem)[], true, true>;
 		readonly match: SlotHint<T.MatchPattern>;
-		readonly value: SlotHint<
+		readonly body: SlotHint<
 			| T.UnsafeBlock
 			| T.AsyncBlock
 			| T.GenBlock
@@ -9647,7 +9647,7 @@ export interface MatchArmBlockEnding {
 	};
 	readonly attributes: () => readonly (AttributeItem | InnerAttributeItem)[];
 	readonly match: () => MatchPattern;
-	readonly value: () =>
+	readonly body: () =>
 		| UnsafeBlock
 		| AsyncBlock
 		| GenBlock

@@ -205,8 +205,13 @@
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
-(match_arm pattern: _ @match) @clause.match.arm
-(last_match_arm pattern: _ @match) @clause.match.arm.last
+(match_arm value: _ @body) @clause.case.match
+(match_arm_with_comma match: (match_pattern pattern: _ @pattern condition: _? @guard))
+(match_arm_block_ending match: (match_pattern pattern: _ @pattern condition: _? @guard))
+(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case.match
+((match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
+((last_match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
+((last_match_arm trailing_comma: _ @dropped) (#set! reason "the last arm's optional comma is a position, not a fact"))
 (use_as_clause) @clause.import.alias
 (use_as_clause path: (_) @name)
 (use_list) @clause.import.list
@@ -314,7 +319,6 @@
 (scoped_identifier path: (_) @qualifier)
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
-(match_pattern) @pattern.match
 (tuple_pattern) @pattern.tuple
 (struct_pattern) @pattern.struct
 (tuple_struct_pattern (patterns)? @fields) @pattern.struct

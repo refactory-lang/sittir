@@ -376,6 +376,7 @@ export default grammar(enrich(base), wire({
 			1: ($) => field('name', $.identifier)
 		},
 		union_pattern: { 0: field('left'), 1: ($) => seq('|', field('right', $._simple_pattern)) },
+		case_clause: { 1: ($) => field('pattern', choice(prec(1, prec.dynamic(1, $.case_pattern)), $.case_patterns)) },
 		if_clause: { 1: field('condition') },
 		await: { 1: field('expression') },
 

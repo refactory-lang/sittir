@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "d63bee482fd76d46a400b8b827421224485b338025babae3505d4f316cf37b26";
+export const hash = "8af3039d1a5bdd067ba58cf8de460f10743958fb60bba1a382248f38690c8214";
 
 export const renames = {
 	source_file: "file",
@@ -43,8 +43,7 @@ export const renames = {
 	continue_expression: "continue_statement",
 	where_predicate: "predicate_where_clause",
 	let_condition: "let_clause",
-	match_arm: "arm_match_clause",
-	last_match_arm: "last_arm_match_clause",
+	match_arm: "match_case_clause",
 	use_as_clause: "alias_import_clause",
 	use_list: "list_import_clause",
 	scoped_use_list: "scoped_list_import_clause",
@@ -139,11 +138,11 @@ export default grammar(
 			impl_item_negative_clause: { "1/0/1": alias("qualified_identifier") },
 			impl_item_positive_clause: { "0/0/1": alias("qualified_identifier") },
 			inner_attribute_item: { "3": field("content") },
-			last_match_arm: { "1": field("match") },
+			last_match_arm: { "3": field("body") },
 			let_declaration: { "2": field("name") },
 			macro_invocation: [{ "0": field("function") }, { "0/0/0": alias("qualified_identifier") }],
-			match_arm_block_ending: { "1": field("match") },
-			match_arm_with_comma: { "1": field("match") },
+			match_arm_block_ending: { "3": field("body") },
+			match_arm_with_comma: { "3/0": field("body") },
 			match_expression: { "1": field("subject") },
 			pointer_type_mut: { "1": field("writable") },
 			reference_expression_bare: { "1": field("argument") },

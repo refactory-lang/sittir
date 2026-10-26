@@ -2298,7 +2298,7 @@ describe('last_match_arm', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.LastMatchArm);
 		expectBuiltNode(node);
@@ -2311,7 +2311,7 @@ describe('last_match_arm', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4269,7 +4269,7 @@ describe('match_arm_with_comma', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchArmWithComma);
 		expectBuiltNode(node);
@@ -4282,7 +4282,7 @@ describe('match_arm_with_comma', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4298,7 +4298,7 @@ describe('match_arm_block_ending', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({
+			body: stampBuilt({
 				$type: TSKindId.UnsafeBlock,
 				$text: 'test',
 				$named: true,
@@ -4316,7 +4316,7 @@ describe('match_arm_block_ending', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({
+			body: stampBuilt({
 				$type: TSKindId.UnsafeBlock,
 				$text: 'test',
 				$named: true,

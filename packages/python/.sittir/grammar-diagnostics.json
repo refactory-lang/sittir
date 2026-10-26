@@ -96,6 +96,47 @@
     "code": "conflict-resolution",
     "severity": "info",
     "grammar": "python",
+    "message": "conflict between case_clause, case_patterns on 'if' resolved by AddConflict (default)",
+    "canProceed": true,
+    "details": {
+      "resolution": {
+        "kind": "AddConflict",
+        "symbols": [
+          "case_clause",
+          "case_patterns"
+        ]
+      },
+      "step": "default",
+      "sourceChains": [
+        [
+          "case_clause"
+        ],
+        [
+          "case_patterns"
+        ]
+      ],
+      "conflict": {
+        "symbolSequence": [
+          "'match'",
+          "subjects",
+          "':'",
+          "_indent",
+          "'case'",
+          "case_pattern"
+        ],
+        "lookahead": "'if'",
+        "interpretations": [
+          "case_patterns",
+          "case_clause"
+        ]
+      }
+    }
+  },
+  {
+    "scope": "grammar",
+    "code": "conflict-resolution",
+    "severity": "info",
+    "grammar": "python",
     "message": "conflict between except_clause_exception_as, except_clause_exception_list on ':' resolved by AddConflict (default)",
     "canProceed": true,
     "details": {

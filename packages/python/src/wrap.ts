@@ -720,29 +720,22 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 	const node = {
 		...data,
 		$type: TSKindId.CaseClause as const,
-		casePatterns() {
-			return hydrateSlot<T.CasePatterns>(this, '_case_patterns', tree);
+		pattern() {
+			return hydrateSlot<T.CasePattern | T.CasePatterns>(this, '_pattern', tree);
 		},
 		guard() {
 			return hydrateSlot<T.IfClause | undefined>(this, '_guard', tree);
 		},
-		consequence() {
-			return hydrateSlot<T.Suite>(this, '_consequence', tree);
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
 		$with: {
-			casePatterns: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CasePatterns as const, optional: false, make: RAW.buildCasePatterns },
-						(v: NonNullable<T.CaseClause['_case_patterns']>) =>
-							wrapCaseClause({ ...$edited(data), _case_patterns: v }, tree)
-					)
-				),
+			pattern: (v: NonNullable<T.CaseClause['_pattern']>) =>
+				rebuilt(node, handle, () => wrapCaseClause({ ...$edited(data), _pattern: v }, tree)),
 			guard: (v: NonNullable<T.CaseClause['_guard']>) =>
 				rebuilt(node, handle, () => wrapCaseClause({ ...$edited(data), _guard: v }, tree)),
-			consequence: (v: NonNullable<T.CaseClause['_consequence']>) =>
-				rebuilt(node, handle, () => wrapCaseClause({ ...$edited(data), _consequence: v }, tree))
+			body: (v: NonNullable<T.CaseClause['_body']>) =>
+				rebuilt(node, handle, () => wrapCaseClause({ ...$edited(data), _body: v }, tree))
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),

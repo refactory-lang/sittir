@@ -11,8 +11,8 @@ describe('the trailing comma after the last match arm is an optional-field spell
 	});
 
 	it('the render option chooses the comma and defaults to none', () => {
-		expect(rs.build.lastMatchArm({ pattern: '_', value: 'b' }).$render()).toBe('_ => b');
-		expect(rs.build.lastMatchArm({ pattern: '_', value: 'b' }, { trailingComma: rs.kinds.Comma }).$render()).toBe('_ => b,');
-		expect(rs.build.lastMatchArm({ pattern: '_', value: 'b' }, { trailingComma: null }).$render()).toBe('_ => b');
+		expect(rs.build.lastMatchArm({ pattern: '_', body: 'b' }).$render()).toBe('_ => b');
+		expect(rs.build.lastMatchArm({ pattern: '_', body: 'b' }, { trailingComma: rs.kinds.Comma }).$render()).toBe('_ => b,');
+		expect(rs.build.lastMatchArm({ pattern: '_', body: 'b' }, { trailingComma: null }).$render()).toBe('_ => b');
 	});
 });

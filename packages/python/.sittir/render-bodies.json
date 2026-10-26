@@ -508,7 +508,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "case_patterns"
+			"name": "pattern"
 		},
 		{
 			"kind": "if",
@@ -538,7 +538,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "consequence"
+			"name": "body"
 		},
 		{
 			"kind": "seam",

@@ -260,7 +260,7 @@ export const records = {
 		words: 19,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 },
+		body: { word: 9, width: 5 },
 		trailing_comma: { word: 14, width: 5 }
 	},
 	MatchPatternNode: { words: 12, pattern: { word: 2, width: 5 }, condition: { word: 7, width: 5 } },
@@ -438,13 +438,13 @@ export const records = {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 }
+		body: { word: 9, width: 5 }
 	},
 	MatchArmBlockEndingNode: {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 }
+		body: { word: 9, width: 5 }
 	},
 	LineCommentExtraSlashesNode: { words: 2 },
 	LineCommentDocOuterNode: { words: 7, doc: { word: 2, width: 5 } },

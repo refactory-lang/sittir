@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "972045507e06b46cd2ace0cd309ad22d88f8fd7966edbe0223fb009f95c16b0b";
+export const hash = "832edd2931cbfc5070bc473d540f6c6a33b723a58fd5601e3848d2ce65959eb9";
 
 export const renames = {
 	module: "file",
@@ -66,7 +66,6 @@ export const renames = {
 	ellipsis: "ellipsis_literal",
 	format_specifier: "format_interpolation_expression",
 	type_conversion: "conversion_interpolation_expression",
-	pattern_list: "bare_tuple_pattern",
 	union_pattern: "or_pattern",
 	dict_pattern: "map_pattern",
 	class_pattern: "struct_pattern",
@@ -98,14 +97,17 @@ export default grammar(
 		generated: true,
 		edits: {
 			_expression_within_for_in_clause: { "-1": alias("lambda_expression") },
+			_f_expression: { "-2": alias("bare_tuple_pattern") },
 			_import_list: { "0/0/0": alias("qualified_identifier"), "1/0/1/0/0": alias("qualified_identifier") },
+			_left_hand_side: { "-1": alias("bare_tuple_pattern") },
+			_right_hand_side: { "-2": alias("bare_tuple_pattern") },
 			_simple_pattern: { "-2": alias("qualified_identifier") },
 			aliased_import: { "0/0": alias("qualified_identifier") },
 			assignment_eq: { "0": field("name"), "1/1": field("value") },
 			assignment_type: { "0": field("name") },
 			assignment_typed: { "0": field("name"), "1/3": field("value") },
 			attribute: { "2": field("property") },
-			case_clause: { "1": field("case_patterns") },
+			case_clause: [{ "4": field("body") }, { "1/0/1": alias("bare_tuple_pattern") }],
 			class_definition: [{ "3": field("bases") }, { "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)), "body:/(suite_block as suite_block_class_declaration)/(block as block_class_declaration)/(decorated_definition as decorated_definition_class_declaration)/definition:/(function_definition)": ($, member) => choice(alias(member, $.method_declaration), alias(edit(copy("function_definition"), { "name:": alias("__init__", $.identifier) }), $.constructor_declaration)) }],
 			class_pattern: [{ "0": field("type"), "2": field("fields") }, { "0/0": alias("qualified_identifier") }],
 			conditional_expression: { "0": field("consequence") },

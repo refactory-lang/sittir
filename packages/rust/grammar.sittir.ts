@@ -292,11 +292,14 @@ export default grammar(enrich(base), wire({
 		use_bounds: {
 			2: field('bounds')
 		},
-		last_match_arm: {
-			'0': field('attributes'),
-			'1': flatten(),
-			'4/0': field('trailing_comma')
-		},
+		last_match_arm: [
+			{
+				'0': field('attributes'),
+				'1': flatten(),
+				'4/0': field('trailing_comma')
+			},
+			{ '1': field('match') }
+		],
 
 		match_block: {
 			'1/0/0': field('arms'),
@@ -512,6 +515,7 @@ export default grammar(enrich(base), wire({
 
 		match_arm: [
 			{ 0: field('attributes'), 1: flatten() },
+			{ 1: field('match') },
 			{ '3/0': variant('with_comma'), '3/1': variant('block_ending') }
 		],
 

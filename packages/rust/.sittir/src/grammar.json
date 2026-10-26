@@ -6614,10 +6614,13 @@
         },
         {
           "type": "FIELD",
-          "name": "value",
+          "name": "body",
           "content": {
             "type": "SYMBOL",
             "name": "_expression"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -13453,10 +13456,13 @@
             "members": [
               {
                 "type": "FIELD",
-                "name": "value",
+                "name": "body",
                 "content": {
                   "type": "SYMBOL",
                   "name": "_expression"
+                },
+                "metadata": {
+                  "fieldSource": "override"
                 }
               },
               {
@@ -13523,7 +13529,7 @@
           },
           {
             "type": "FIELD",
-            "name": "value",
+            "name": "body",
             "content": {
               "type": "PREC",
               "value": 1,
@@ -13531,6 +13537,9 @@
                 "type": "SYMBOL",
                 "name": "_expression_ending_with_block"
               }
+            },
+            "metadata": {
+              "fieldSource": "override"
             },
             "annotations": {
               "variantOf": "match_arm"

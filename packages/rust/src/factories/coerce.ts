@@ -6708,7 +6708,7 @@ export function resolveLastMatchArm_match(value: T.LastMatchArm.LooseConfig['mat
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
-export function resolveLastMatchArm_value(value: T.LastMatchArm.LooseConfig['value']): Admit<T.LastMatchArm['_value']> {
+export function resolveLastMatchArm_body(value: T.LastMatchArm.LooseConfig['body']): Admit<T.LastMatchArm['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
@@ -6730,7 +6730,7 @@ export function coerceToLastMatchArm(
 		{
 			attributes: resolveLastMatchArm_attributes(input.attributes),
 			match: resolveLastMatchArm_match(input.match),
-			value: resolveLastMatchArm_value(input.value)
+			body: resolveLastMatchArm_body(input.body)
 		},
 		options
 	);
@@ -10335,9 +10335,9 @@ export function resolveMatchArmWithComma_match(
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
-export function resolveMatchArmWithComma_value(
-	value: T.MatchArmWithComma.LooseConfig['value']
-): Admit<T.MatchArmWithComma['_value']> {
+export function resolveMatchArmWithComma_body(
+	value: T.MatchArmWithComma.LooseConfig['body']
+): Admit<T.MatchArmWithComma['_body']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Expression>(value, _K12, _K13)),
 		[]
@@ -10356,7 +10356,7 @@ export function coerceToMatchArmWithComma(
 	return F.buildMatchArmWithComma({
 		attributes: resolveMatchArmWithComma_attributes(input.attributes),
 		match: resolveMatchArmWithComma_match(input.match),
-		value: resolveMatchArmWithComma_value(input.value)
+		body: resolveMatchArmWithComma_body(input.body)
 	});
 }
 
@@ -10372,9 +10372,9 @@ export function resolveMatchArmBlockEnding_match(
 	return _resolveOneBranch<T.MatchPattern>(value, 'match_pattern');
 }
 
-export function resolveMatchArmBlockEnding_value(
-	value: T.MatchArmBlockEnding.LooseConfig['value']
-): Admit<T.MatchArmBlockEnding['_value']> {
+export function resolveMatchArmBlockEnding_body(
+	value: T.MatchArmBlockEnding.LooseConfig['body']
+): Admit<T.MatchArmBlockEnding['_body']> {
 	return _resolveOne<
 		| T.UnsafeBlock
 		| T.AsyncBlock
@@ -10402,7 +10402,7 @@ export function coerceToMatchArmBlockEnding(
 	return F.buildMatchArmBlockEnding({
 		attributes: resolveMatchArmBlockEnding_attributes(input.attributes),
 		match: resolveMatchArmBlockEnding_match(input.match),
-		value: resolveMatchArmBlockEnding_value(input.value)
+		body: resolveMatchArmBlockEnding_body(input.body)
 	});
 }
 

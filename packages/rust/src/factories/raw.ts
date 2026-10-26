@@ -5124,9 +5124,9 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 export function buildLastMatchArm<
 	AttributesSlot extends T.LastMatchArm.Config['attributes'],
 	MatchSlot extends T.LastMatchArm.Config['match'],
-	ValueSlot extends T.LastMatchArm.Config['value']
+	BodySlot extends T.LastMatchArm.Config['body']
 >(
-	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>,
+	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; body: BodySlot }>,
 	options?: T.LastMatchArm.Options
 ): T.LastMatchArm.Bound;
 export function buildLastMatchArm(
@@ -5136,7 +5136,7 @@ export function buildLastMatchArm(
 	currentHandle()?.admit(TSKindId.LastMatchArm, [config]);
 	const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
-	const _value = kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value);
+	const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
 		[[',', TSKindId.Comma] as const]
@@ -5148,7 +5148,7 @@ export function buildLastMatchArm(
 		$named: true as const,
 		_attributes,
 		_match,
-		_value,
+		_body,
 		_trailing_comma,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
@@ -5157,8 +5157,8 @@ export function buildLastMatchArm(
 				),
 			match: (value: Admit<T.MatchPattern>) =>
 				rebuilt(node, handle, () => buildLastMatchArm({ ...config, match: value }, options)),
-			value: (value: Admit<NonNullable<T.LastMatchArm.Config>['value']>) =>
-				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value }, options)),
+			body: (value: Admit<NonNullable<T.LastMatchArm.Config>['body']>) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, body: value }, options)),
 			trailingComma: (spelling: TSKindId.Comma | null) =>
 				rebuilt(node, handle, () => buildLastMatchArm(config, { ...options, trailingComma: spelling })),
 			pattern: (...args: unknown[]) =>
@@ -5200,7 +5200,7 @@ export function buildLastMatchArm(
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		trailingComma: () => _trailing_comma,
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
@@ -9912,15 +9912,15 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 export function buildMatchArmWithComma<
 	AttributesSlot extends T.MatchArmWithComma.Config['attributes'],
 	MatchSlot extends T.MatchArmWithComma.Config['match'],
-	ValueSlot extends T.MatchArmWithComma.Config['value']
+	BodySlot extends T.MatchArmWithComma.Config['body']
 >(
-	config: RefusingConfig<T.MatchArmWithComma.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>
+	config: RefusingConfig<T.MatchArmWithComma.Config, { attributes: AttributesSlot; match: MatchSlot; body: BodySlot }>
 ): T.MatchArmWithComma.Bound;
 export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmWithComma, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
-	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
+	const _body = kindIdStorage<NonNullable<T.MatchArmWithComma['_body']>>(config.body);
 	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	const node = {
@@ -9928,14 +9928,14 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		$named: true as const,
 		_attributes,
 		_match,
-		_value,
+		_body,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
 			match: (value: Admit<T.MatchPattern>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, match: value })),
-			value: (value: Admit<NonNullable<T.MatchArmWithComma.Config>['value']>) =>
-				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, value: value })),
+			body: (value: Admit<NonNullable<T.MatchArmWithComma.Config>['body']>) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, body: value })),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -9975,7 +9975,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
@@ -9993,18 +9993,15 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 export function buildMatchArmBlockEnding<
 	AttributesSlot extends T.MatchArmBlockEnding.Config['attributes'],
 	MatchSlot extends T.MatchArmBlockEnding.Config['match'],
-	ValueSlot extends T.MatchArmBlockEnding.Config['value']
+	BodySlot extends T.MatchArmBlockEnding.Config['body']
 >(
-	config: RefusingConfig<
-		T.MatchArmBlockEnding.Config,
-		{ attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }
-	>
+	config: RefusingConfig<T.MatchArmBlockEnding.Config, { attributes: AttributesSlot; match: MatchSlot; body: BodySlot }>
 ): T.MatchArmBlockEnding.Bound;
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmBlockEnding, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
-	const _value = config.value;
+	const _body = config.body;
 	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	const node = {
@@ -10012,7 +10009,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		$named: true as const,
 		_attributes,
 		_match,
-		_value,
+		_body,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
@@ -10020,7 +10017,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 				),
 			match: (value: Admit<T.MatchPattern>) =>
 				rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, match: value })),
-			value: (
+			body: (
 				value: Admit<
 					| T.UnsafeBlock
 					| T.AsyncBlock
@@ -10034,7 +10031,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 					| T.ForExpression
 					| T.ConstBlock
 				>
-			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, value: value })),
+			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, body: value })),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -10074,7 +10071,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),

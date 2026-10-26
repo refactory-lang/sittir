@@ -957,26 +957,19 @@ describe('match_statement', () => {
 describe('case_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.caseClause({
-			casePatterns: stampBuilt({
-				$type: TSKindId.CasePatterns,
+			pattern: stampBuilt({
+				$type: TSKindId.CasePattern,
 				$text: 'test',
 				$named: true,
-				_item: [
-					stampBuilt({
-						$type: TSKindId.CasePattern,
-						$text: 'test',
-						$named: true,
-						_content: stampBuilt({
-							$type: TSKindId.KeywordPattern,
-							$text: 'test',
-							$named: true,
-							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
-						}) as any
-					}) as any
-				]
+				_content: stampBuilt({
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+				}) as any
 			}) as any,
-			consequence: stampBuilt({
+			body: stampBuilt({
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,
@@ -993,26 +986,19 @@ describe('case_clause', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.caseClause({
-			casePatterns: stampBuilt({
-				$type: TSKindId.CasePatterns,
+			pattern: stampBuilt({
+				$type: TSKindId.CasePattern,
 				$text: 'test',
 				$named: true,
-				_item: [
-					stampBuilt({
-						$type: TSKindId.CasePattern,
-						$text: 'test',
-						$named: true,
-						_content: stampBuilt({
-							$type: TSKindId.KeywordPattern,
-							$text: 'test',
-							$named: true,
-							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
-						}) as any
-					}) as any
-				]
+				_content: stampBuilt({
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+				}) as any
 			}) as any,
-			consequence: stampBuilt({
+			body: stampBuilt({
 				$type: TSKindId.SuiteInline,
 				$text: 'test',
 				$named: true,

@@ -12,7 +12,9 @@ function firstCasePattern(pattern: string) {
 	if (!py.is.matchStatement(statement)) throw new Error('expected a match statement');
 	const body = statement.body();
 	if (!py.is.matchBlockBlock(body)) throw new Error('expected a match block');
-	return body.alternatives()[0]!.casePatterns().items()[0]!;
+	const first = body.alternatives()[0]!.pattern();
+	if (!py.is.casePattern(first)) throw new Error('expected one case pattern');
+	return first;
 }
 
 describe('a slot that splices a hidden rule admits that rule\'s envelope and stores its content', () => {

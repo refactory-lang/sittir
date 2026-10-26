@@ -144,9 +144,9 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', 1, undefined, '_body']
 	],
 	156: [
-		['casePatterns', 0, undefined, '_case_patterns'],
+		['pattern', 0, undefined, '_pattern'],
 		['guard', 1, undefined, '_guard'],
-		['consequence', 2, undefined, '_consequence']
+		['body', 2, undefined, '_body']
 	],
 	157: [
 		['async', 0, 'async', '_async'],
@@ -746,15 +746,15 @@ export const structure: StructureTable = Object.freeze({
 	156: {
 		kind: 'case_clause',
 		required: [
-			['_case_patterns', 'casePatterns'],
-			['_consequence', 'consequence']
+			['_pattern', 'pattern'],
+			['_body', 'body']
 		],
 		nodeOnly: [
-			['_case_patterns', 'CaseClause.casePatterns', 'a built CasePatterns', [262]],
+			['_pattern', 'CaseClause.pattern', 'a built CasePattern / CasePatterns', [183, 262]],
 			['_guard', 'CaseClause.guard', 'a built IfClause', [245]],
-			['_consequence', 'CaseClause.consequence', 'a built Suite']
+			['_body', 'CaseClause.body', 'a built Suite']
 		],
-		config: ['casePatterns', 'guard', 'consequence']
+		config: ['pattern', 'guard', 'body']
 	},
 	157: {
 		kind: 'for_statement',

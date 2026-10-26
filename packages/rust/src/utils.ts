@@ -437,7 +437,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	295: [
 		['attributes', 0, undefined, '_attributes'],
 		['match', 1, undefined, '_match'],
-		['value', 2, undefined, '_value'],
+		['body', 2, undefined, '_body'],
 		['trailingComma', 3, undefined, '_trailing_comma']
 	],
 	296: [
@@ -637,12 +637,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	397: [
 		['attributes', 0, undefined, '_attributes'],
 		['match', 1, undefined, '_match'],
-		['value', 2, undefined, '_value']
+		['body', 2, undefined, '_body']
 	],
 	398: [
 		['attributes', 0, undefined, '_attributes'],
 		['match', 1, undefined, '_match'],
-		['value', 2, undefined, '_value']
+		['body', 2, undefined, '_body']
 	],
 	400: [['doc', 0, undefined, '_doc']],
 	401: [['doc', 0, undefined, '_doc']],
@@ -1791,15 +1791,15 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'last_match_arm',
 		required: [
 			['_match', 'match'],
-			['_value', 'value']
+			['_body', 'body']
 		],
 		nodeOnly: [
 			['_attributes', 'LastMatchArm.attributes', 'a built AttributeItem / InnerAttributeItem', [190, 191]],
 			['_match', 'LastMatchArm.match', 'a built MatchPattern', [296]],
-			['_value', 'LastMatchArm.value', 'a built Expression', [258]]
+			['_body', 'LastMatchArm.body', 'a built Expression', [258]]
 		],
 		kindIds: [['_trailing_comma', 'LastMatchArm.trailingComma', [0, 130]]],
-		config: ['attributes', 'match', 'value', 'trailingComma'],
+		config: ['attributes', 'match', 'body', 'trailingComma'],
 		lists: [['attributes', false, 'key']]
 	},
 	296: {
@@ -2441,33 +2441,33 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'match_arm_with_comma',
 		required: [
 			['_match', 'match'],
-			['_value', 'value']
+			['_body', 'body']
 		],
 		nodeOnly: [
 			['_attributes', 'MatchArmWithComma.attributes', 'a built AttributeItem / InnerAttributeItem', [190, 191]],
 			['_match', 'MatchArmWithComma.match', 'a built MatchPattern', [296]],
-			['_value', 'MatchArmWithComma.value', 'a built Expression', [258]]
+			['_body', 'MatchArmWithComma.body', 'a built Expression', [258]]
 		],
-		config: ['attributes', 'match', 'value'],
+		config: ['attributes', 'match', 'body'],
 		lists: [['attributes', false, 'key']]
 	},
 	398: {
 		kind: 'match_arm_block_ending',
 		required: [
 			['_match', 'match'],
-			['_value', 'value']
+			['_body', 'body']
 		],
 		nodeOnly: [
 			['_attributes', 'MatchArmBlockEnding.attributes', 'a built AttributeItem / InnerAttributeItem', [190, 191]],
 			['_match', 'MatchArmBlockEnding.match', 'a built MatchPattern', [296]],
 			[
-				'_value',
-				'MatchArmBlockEnding.value',
+				'_body',
+				'MatchArmBlockEnding.body',
 				'a built UnsafeBlock / AsyncBlock / GenBlock / TryBlock / Block / IfExpression / MatchExpression / WhileExpression / LoopExpression / ForExpression / ConstBlock',
 				[287, 292, 297, 298, 299, 300, 309, 310, 311, 312, 313]
 			]
 		],
-		config: ['attributes', 'match', 'value'],
+		config: ['attributes', 'match', 'body'],
 		lists: [['attributes', false, 'key']]
 	},
 	400: {

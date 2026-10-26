@@ -66,6 +66,8 @@
 (finally_clause) @clause.finally
 (finally_clause block: (_) @body)
 (case_clause) @clause.case.match
+(case_clause guard: (if_clause condition: _ @guard))
+(case_clause consequence: _ @body)
 (with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
 (with_item value: (as_pattern expression: (_) @value))
@@ -182,6 +184,7 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
 (pattern_list) @pattern.tuple.bare
+(case_patterns) @pattern.tuple.bare
 (list_pattern (patterns)? @elements) @pattern.list
 (list_splat_pattern) @pattern.splat
 (list_splat_pattern target: (_) @pattern)

@@ -3950,8 +3950,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 		match() {
 			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		body() {
+			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		trailingComma() {
 			return this._trailing_comma;
@@ -3963,8 +3963,8 @@ export function wrapLastMatchArm(data: T.LastMatchArm, tree: TreeHandle): T.Last
 				),
 			match: (v: NonNullable<T.LastMatchArm['_match']>) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _match: v }, tree)),
-			value: (v: NonNullable<T.LastMatchArm['_value']>) =>
-				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.LastMatchArm['_body']>) =>
+				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _body: v }, tree)),
 			trailingComma: (v: NonNullable<T.LastMatchArm['_trailing_comma']> | null) =>
 				rebuilt(node, handle, () => wrapLastMatchArm({ ...$edited(data), _trailing_comma: v === null ? 0 : v }, tree)),
 			pattern: (...args: unknown[]) =>
@@ -7311,8 +7311,8 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 		match() {
 			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
-		value() {
-			return hydrateSlot<T.Expression>(this, '_value', tree);
+		body() {
+			return hydrateSlot<T.Expression>(this, '_body', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.MatchArmWithComma['_attributes']>[number][]) =>
@@ -7321,8 +7321,8 @@ export function wrapMatchArmWithComma(data: T.MatchArmWithComma, tree: TreeHandl
 				),
 			match: (v: NonNullable<T.MatchArmWithComma['_match']>) =>
 				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _match: v }, tree)),
-			value: (v: NonNullable<T.MatchArmWithComma['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.MatchArmWithComma['_body']>) =>
+				rebuilt(node, handle, () => wrapMatchArmWithComma({ ...$edited(data), _body: v }, tree)),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -7390,7 +7390,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 		match() {
 			return hydrateSlot<T.MatchPattern>(this, '_match', tree);
 		},
-		value() {
+		body() {
 			return hydrateSlot<
 				| T.UnsafeBlock
 				| T.AsyncBlock
@@ -7403,7 +7403,7 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 				| T.LoopExpression
 				| T.ForExpression
 				| T.ConstBlock
-			>(this, '_value', tree);
+			>(this, '_body', tree);
 		},
 		$with: {
 			attributes: (...v: NonNullable<T.MatchArmBlockEnding['_attributes']>[number][]) =>
@@ -7412,8 +7412,8 @@ export function wrapMatchArmBlockEnding(data: T.MatchArmBlockEnding, tree: TreeH
 				),
 			match: (v: NonNullable<T.MatchArmBlockEnding['_match']>) =>
 				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _match: v }, tree)),
-			value: (v: NonNullable<T.MatchArmBlockEnding['_value']>) =>
-				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _value: v }, tree)),
+			body: (v: NonNullable<T.MatchArmBlockEnding['_body']>) =>
+				rebuilt(node, handle, () => wrapMatchArmBlockEnding({ ...$edited(data), _body: v }, tree)),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(

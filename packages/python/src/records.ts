@@ -35,9 +35,9 @@ export const records = {
 	MatchStatementNode: { words: 12, subjects: { word: 2, width: 5 }, body: { word: 7, width: 5 } },
 	CaseClauseNode: {
 		words: 17,
-		case_patterns: { word: 2, width: 5 },
+		pattern: { word: 2, width: 5 },
 		guard: { word: 7, width: 5 },
-		consequence: { word: 12, width: 5 }
+		body: { word: 12, width: 5 }
 	},
 	ForStatementNode: {
 		words: 23,

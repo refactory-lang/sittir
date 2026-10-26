@@ -787,6 +787,19 @@
         "list": false
       }
     },
+    "bare_tuple_pattern": {
+      "vocab": "pattern.tuple.bare",
+      "read": [
+        {
+          "vocab": "pattern.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "binary_operator": {
       "vocab": "expression.binary",
       "read": [
@@ -1417,35 +1430,49 @@
       ],
       "members": [
         {
-          "name": "casePatterns",
+          "name": "pattern",
           "route": "slot",
-          "slot": "case_patterns",
+          "slot": "pattern",
           "path": [
             {
               "owner": "case_clause",
-              "slot": "case_patterns"
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "case_clause",
+              "slot": "body"
             }
           ]
         },
         {
           "name": "guard",
-          "route": "slot",
-          "slot": "guard",
+          "route": "nested",
+          "via": [
+            {
+              "field": "guard",
+              "kind": "if_clause",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "if_clause",
+          "slot": "condition",
+          "multiple": false,
           "path": [
             {
               "owner": "case_clause",
               "slot": "guard"
-            }
-          ]
-        },
-        {
-          "name": "consequence",
-          "route": "slot",
-          "slot": "consequence",
-          "path": [
+            },
             {
-              "owner": "case_clause",
-              "slot": "consequence"
+              "owner": "if_clause",
+              "slot": "condition"
             }
           ]
         }
@@ -1495,6 +1522,24 @@
       }
     },
     "case_patterns": {
+      "vocab": "pattern.tuple.bare",
+      "read": [
+        {
+          "vocab": "pattern.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
       "container": {
         "kinds": [
           "case_pattern"
@@ -7655,7 +7700,7 @@
       {
         "depth": 3,
         "paths": 65,
-        "kinds": 60,
+        "kinds": 62,
         "refinements": 42
       },
       {

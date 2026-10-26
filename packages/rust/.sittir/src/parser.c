@@ -4928,8 +4928,8 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type_parameters, 1},
     {field_where_clause, 4},
   [629] =
+    {field_body, 2},
     {field_match, 0},
-    {field_value, 2},
   [631] =
     {field_condition, 2},
     {field_pattern, 0},
@@ -5224,13 +5224,13 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_name, 1},
     {field_value, 3},
   [868] =
+    {field_body, 2},
     {field_match, 0},
     {field_trailing_comma, 3},
-    {field_value, 2},
   [871] =
     {field_attributes, 0},
+    {field_body, 3},
     {field_match, 1},
-    {field_value, 3},
   [874] =
     {field_body, 6},
     {field_bounds, 4},
@@ -5455,9 +5455,9 @@ static const TSFieldMapEntry ts_field_map_entries[] = {
     {field_type, 3},
   [1059] =
     {field_attributes, 0},
+    {field_body, 3},
     {field_match, 1},
     {field_trailing_comma, 4},
-    {field_value, 3},
   [1063] =
     {field_operator, 3},
   [1064] =

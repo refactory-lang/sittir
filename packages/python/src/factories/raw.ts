@@ -942,43 +942,33 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 }
 
 export function buildCaseClause<
-	CasePatternsSlot extends T.CaseClause.Config['casePatterns'],
+	PatternSlot extends T.CaseClause.Config['pattern'],
 	GuardSlot extends T.CaseClause.Config['guard'],
-	ConsequenceSlot extends T.CaseClause.Config['consequence']
+	BodySlot extends T.CaseClause.Config['body']
 >(
-	config: RefusingConfig<
-		T.CaseClause.Config,
-		{ casePatterns: CasePatternsSlot; guard: GuardSlot; consequence: ConsequenceSlot }
-	>
+	config: RefusingConfig<T.CaseClause.Config, { pattern: PatternSlot; guard: GuardSlot; body: BodySlot }>
 ): T.CaseClause.Bound;
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound {
 	currentHandle()?.admit(TSKindId.CaseClause, [config]);
-	const _case_patterns = config.casePatterns;
+	const _pattern = config.pattern;
 	const _guard = config.guard;
-	const _consequence = config.consequence;
+	const _body = config.body;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.CaseClause as const,
 		$named: true as const,
-		_case_patterns,
+		_pattern,
 		_guard,
-		_consequence,
+		_body,
 		$with: {
-			casePatterns: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CasePatterns as const, optional: false, make: buildCasePatterns },
-						(value: Admit<T.CasePatterns>) => buildCaseClause({ ...config, casePatterns: value })
-					)
-				),
+			pattern: (value: Admit<T.CasePattern | T.CasePatterns>) =>
+				rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value })),
 			guard: (value?: Admit<T.IfClause>) => rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value })),
-			consequence: (value: Admit<T.Suite>) =>
-				rebuilt(node, handle, () => buildCaseClause({ ...config, consequence: value }))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildCaseClause({ ...config, body: value }))
 		},
-		casePatterns: () => hydrateStoredSlot(node, '_case_patterns'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		guard: () => hydrateStoredSlot(node, '_guard'),
-		consequence: () => hydrateStoredSlot(node, '_consequence'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

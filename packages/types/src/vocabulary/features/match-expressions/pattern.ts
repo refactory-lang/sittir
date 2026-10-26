@@ -13,12 +13,6 @@ export namespace Pattern {
 		readonly $kind: 'pattern.map';
 		readonly elements?: G['slots']['pattern.map']['elements'][];
 	}
-	export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
-		readonly $kind: 'pattern.match';
-		readonly condition?: G['slots']['pattern.match']['condition'];
-		readonly pattern: G['slots']['pattern.match']['pattern'];
-	}
 	export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
 		// claimed by pr
 		readonly $kind: 'pattern.or';

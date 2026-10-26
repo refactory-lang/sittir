@@ -1066,13 +1066,32 @@
         },
         {
           "type": "FIELD",
-          "name": "case_patterns",
+          "name": "pattern",
           "content": {
-            "type": "SYMBOL",
-            "name": "case_patterns",
-            "metadata": {
-              "symbolSource": "group-lift"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PREC_DYNAMIC",
+                  "value": 1,
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "case_pattern"
+                  }
+                }
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "case_patterns"
+                },
+                "named": true,
+                "value": "bare_tuple_pattern"
+              }
+            ]
           },
           "metadata": {
             "fieldSource": "override"
@@ -1100,10 +1119,13 @@
         },
         {
           "type": "FIELD",
-          "name": "consequence",
+          "name": "body",
           "content": {
             "type": "SYMBOL",
             "name": "_suite"
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         }
       ]
@@ -4442,12 +4464,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "pattern_list",
-          "annotations": {
-            "variant": "pattern_list",
-            "variantOf": "_left_hand_side"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pattern_list",
+            "annotations": {
+              "variant": "pattern_list",
+              "variantOf": "_left_hand_side"
+            }
+          },
+          "named": true,
+          "value": "bare_tuple_pattern"
         }
       ]
     },
@@ -4552,12 +4579,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "pattern_list",
-          "annotations": {
-            "variant": "pattern_list",
-            "variantOf": "_right_hand_side"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pattern_list",
+            "annotations": {
+              "variant": "pattern_list",
+              "variantOf": "_right_hand_side"
+            }
+          },
+          "named": true,
+          "value": "bare_tuple_pattern"
         },
         {
           "type": "SYMBOL",
@@ -5904,12 +5936,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "pattern_list",
-          "annotations": {
-            "variant": "pattern_list",
-            "variantOf": "_f_expression"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "pattern_list",
+            "annotations": {
+              "variant": "pattern_list",
+              "variantOf": "_f_expression"
+            }
+          },
+          "named": true,
+          "value": "bare_tuple_pattern"
         },
         {
           "type": "SYMBOL",
@@ -9672,6 +9709,10 @@
     [
       "as_pattern",
       "except_clause_exception_as"
+    ],
+    [
+      "case_clause",
+      "case_patterns"
     ],
     [
       "except_clause_exception_as",

@@ -525,37 +525,6 @@ export const matchStatement = Object.freeze({
 	coerce: typeof matchStatement$seatedCoerce;
 };
 
-const caseClause$casePatterns = <PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(
-	parent: PF,
-	child: CF
-) => {
-	return (config: unknown, options?: unknown): ReturnType<PF> => {
-		if (config === undefined) return _fwd<ReturnType<PF>>(parent, config, options);
-		const seat = _o(config)['casePatterns'];
-		if (!Array.isArray(seat)) return _fwd<ReturnType<PF>>(parent, config, options);
-		return _fwd<ReturnType<PF>>(parent, { ..._o(config), casePatterns: _c(child)(...seat) }, options);
-	};
-};
-function caseClause$seated<A extends T.CaseClause.BuildArgs>(
-	...args: A & RefuseUndeclared<A>
-): ReturnType<typeof F.buildCaseClause>;
-function caseClause$seated(...args: T.CaseClause.BuildArgs): ReturnType<typeof F.buildCaseClause> {
-	return caseClause$casePatterns(F.buildCaseClause, F.buildCasePatterns)(...args);
-}
-function caseClause$seatedCoerce<const A extends T.CaseClause.LooseArgs>(
-	...args: A & RefuseUndeclared<A, T.CaseClause.LooseArgs>
-): ReturnType<typeof C.coerceToCaseClause>;
-function caseClause$seatedCoerce(...args: T.CaseClause.LooseArgs): ReturnType<typeof C.coerceToCaseClause> {
-	return caseClause$casePatterns(C.coerceToCaseClause, C.coerceToCasePatterns)(...args);
-}
-export const caseClause = Object.freeze({
-	...B.caseClause,
-	...bundle(caseClause$seated, caseClause$seatedCoerce, { key: 'caseClause', max: 1 })
-}) as unknown as Omit<typeof B.caseClause, 'strict' | 'coerce'> & {
-	strict: typeof caseClause$seated;
-	coerce: typeof caseClause$seatedCoerce;
-};
-
 const exceptClauseException$as =
 	<PF extends (value: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>
 	(...args: ArgsOf<CF>): ReturnType<PF> =>

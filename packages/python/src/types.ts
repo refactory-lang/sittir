@@ -741,7 +741,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[215, 'lambda_expression'],
 	[216, 'assignment'],
 	[217, 'augmented_assignment'],
-	[218, 'pattern_list'],
+	[218, 'bare_tuple_pattern'],
 	[219, '_right_hand_side'],
 	[220, 'yield'],
 	[221, 'attribute'],
@@ -785,7 +785,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[259, 'keyword_separator'],
 	[260, 'simple_statements_elements'],
 	[261, 'subjects'],
-	[262, 'case_patterns'],
+	[262, 'bare_tuple_pattern'],
 	[263, 'with_clause_with_items'],
 	[264, 'types'],
 	[265, 'argument_list_elements'],
@@ -1757,6 +1757,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.IsNot;
 		case 'lambda_expression':
 			return TSKindId.Lambda;
+		case 'bare_tuple_pattern':
+			return TSKindId.PatternList;
 		default:
 			throw new TypeError(`unknown kind name ${kindName}`);
 	}
@@ -2398,29 +2400,25 @@ export interface MatchStatement {
 
 export interface CaseClause {
 	readonly $type: TSKindId.CaseClause;
-	readonly _case_patterns: CasePatterns;
+	readonly _pattern: CasePattern | CasePatterns;
 	readonly _guard?: IfClause;
-	readonly _consequence: Suite;
+	readonly _body: Suite;
 	readonly __slotNames__?: {
-		readonly _case_patterns: 'casePatterns';
+		readonly _pattern: 'pattern';
 		readonly _guard: 'guard';
-		readonly _consequence: 'consequence';
+		readonly _body: 'body';
 	};
 	readonly __looseHints__?: {
-		readonly case_patterns: readonly CasePattern[];
 		readonly guard?: readonly Expression[];
 	};
 	readonly __slotHints__?: {
-		readonly casePatterns: SlotHint<T.CasePatterns>;
+		readonly pattern: SlotHint<T.CasePattern | T.CasePatterns>;
 		readonly guard: SlotHint<T.IfClause, true>;
-		readonly consequence: SlotHint<T.Suite>;
-		readonly $listSlots: {
-			readonly casePatterns: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
-		};
+		readonly body: SlotHint<T.Suite>;
 	};
-	readonly casePatterns: () => CasePatterns;
+	readonly pattern: () => CasePattern | CasePatterns;
 	readonly guard: () => IfClause | undefined;
-	readonly consequence: () => Suite;
+	readonly body: () => Suite;
 }
 
 export interface ForStatement {
@@ -6081,7 +6079,7 @@ export interface OptionsHintMap {
 	comparisonOperator: ComparisonOperator.Hints;
 	lambdaExpression: Lambda.Hints | LambdaWithinForInClause.Hints;
 	augmentedAssignment: AugmentedAssignment.Hints;
-	patternList: PatternList.Hints;
+	bareTuplePattern: PatternList.Hints | CasePatterns.Hints;
 	yield: Yield.Hints;
 	attribute: Attribute.Hints;
 	subscript: Subscript.Hints;
@@ -6114,7 +6112,6 @@ export interface OptionsHintMap {
 	await: Await.Hints;
 	simpleStatementsElements: SimpleStatementsElements.Hints;
 	subjects: Subjects.Hints;
-	casePatterns: CasePatterns.Hints;
 	withClauseWithItems: WithClauseWithItems.Hints;
 	types: Types.Hints;
 	argumentListElements: ArgumentListElements.Hints;
@@ -7058,7 +7055,29 @@ export namespace PatternList {
 		readonly __optionsHint__?: {
 			readonly item?: {
 				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly caseAsPattern?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly keywordPattern?: { readonly after?: WhitespaceKindId };
+				readonly listPattern?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
+				readonly separator?: {
+					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
+				};
+				readonly subscript?: { readonly after?: WhitespaceKindId };
+				readonly tuplePattern?: { readonly after?: WhitespaceKindId };
+			};
+		};
+	}
+}
+
+export namespace CasePatterns {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly item?: {
+				readonly attribute?: { readonly after?: WhitespaceKindId };
+				readonly caseAsPattern?: { readonly after?: WhitespaceKindId };
+				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
+				readonly keywordPattern?: { readonly after?: WhitespaceKindId };
 				readonly listPattern?: { readonly after?: WhitespaceKindId };
 				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
@@ -7550,21 +7569,6 @@ export namespace Subjects {
 				readonly true?: { readonly after?: WhitespaceKindId };
 				readonly tuple?: { readonly after?: WhitespaceKindId };
 				readonly unaryOperator?: { readonly after?: WhitespaceKindId };
-			};
-		};
-	}
-}
-
-export namespace CasePatterns {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly item?: {
-				readonly caseAsPattern?: { readonly after?: WhitespaceKindId };
-				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly keywordPattern?: { readonly after?: WhitespaceKindId };
-				readonly separator?: {
-					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
-				};
 			};
 		};
 	}
@@ -12190,16 +12194,8 @@ export namespace CaseClause {
 	}
 	export type Loose = LooseFor<TSKindId.CaseClause>;
 	export type LooseConfig = LooseConfigFor<TSKindId.CaseClause>;
-	export type BuildArgs = [
-		config:
-			| ConfigOf<T.CaseClause>
-			| (OmitEach<NonNullable<ConfigOf<T.CaseClause>>, 'casePatterns'> & { casePatterns: T.CasePatterns.BuildArgs })
-	];
-	export type LooseArgs = [
-		config:
-			| T.CaseClause.Loose
-			| (OmitEach<NonNullable<T.CaseClause.Loose>, 'casePatterns'> & { casePatterns: T.CasePatterns.LooseArgs })
-	];
+	export type BuildArgs = [config: ConfigOf<T.CaseClause>];
+	export type LooseArgs = [config: T.CaseClause.Loose];
 	export type Kind = TSKindId.CaseClause;
 }
 export namespace ForStatement {

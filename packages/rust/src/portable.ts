@@ -37,6 +37,12 @@ export interface PortableIds {
 	'clause.bounds.higher_ranked': TSKindId.HigherRankedTraitBound;
 	'clause.bounds.removed': TSKindId.RemovedTraitBound;
 	'clause.bounds.use': TSKindId.UseBounds;
+	'clause.case': TSKindId.LastMatchArm | TSKindId.MatchArm | TSKindId.MatchArmBlockEnding | TSKindId.MatchArmWithComma;
+	'clause.case.match':
+		| TSKindId.LastMatchArm
+		| TSKindId.MatchArm
+		| TSKindId.MatchArmBlockEnding
+		| TSKindId.MatchArmWithComma;
 	'clause.else': TSKindId.ElseClause;
 	'clause.import': TSKindId.ScopedUseList | TSKindId.UseAsClause | TSKindId.UseList | TSKindId.UseWildcard;
 	'clause.import.alias': TSKindId.UseAsClause;
@@ -48,13 +54,6 @@ export interface PortableIds {
 	'clause.lifetimes': TSKindId.ForLifetimes;
 	'clause.macro': TSKindId.MacroRule;
 	'clause.macro.rule': TSKindId.MacroRule;
-	'clause.match': TSKindId.LastMatchArm | TSKindId.MatchArm | TSKindId.MatchArmBlockEnding | TSKindId.MatchArmWithComma;
-	'clause.match.arm':
-		| TSKindId.LastMatchArm
-		| TSKindId.MatchArm
-		| TSKindId.MatchArmBlockEnding
-		| TSKindId.MatchArmWithComma;
-	'clause.match.arm.last': TSKindId.LastMatchArm;
 	'clause.where': TSKindId.WhereClause | TSKindId.WherePredicate;
 	'clause.where.predicate': TSKindId.WherePredicate;
 	comment:
@@ -663,7 +662,6 @@ export interface PortableIds {
 		| TSKindId.FieldPatternNamed
 		| TSKindId.FieldPatternShorthand
 		| TSKindId.GenericPattern
-		| TSKindId.MatchPattern
 		| TSKindId.MutPattern
 		| TSKindId.OrPattern
 		| TSKindId.OrPatternBinary
@@ -682,7 +680,6 @@ export interface PortableIds {
 	'pattern.as': TSKindId.CapturedPattern;
 	'pattern.generic': TSKindId.GenericPattern;
 	'pattern.list': TSKindId.SlicePattern;
-	'pattern.match': TSKindId.MatchPattern;
 	'pattern.mutable': TSKindId.MutPattern;
 	'pattern.or': TSKindId.OrPattern | TSKindId.OrPatternBinary | TSKindId.OrPatternPrefix;
 	'pattern.range': TSKindId.RangePattern | TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
@@ -841,12 +838,12 @@ export interface PortableKindsAt {
 	clause: {
 		readonly $path: 'clause';
 		readonly bounds: PortableKindsAt['clause.bounds'];
+		readonly case: PortableKindsAt['clause.case'];
 		readonly else: PortableKindsAt['clause.else'];
 		readonly import: PortableKindsAt['clause.import'];
 		readonly let: PortableKindsAt['clause.let'];
 		readonly lifetimes: PortableKindsAt['clause.lifetimes'];
 		readonly macro: PortableKindsAt['clause.macro'];
-		readonly match: PortableKindsAt['clause.match'];
 		readonly where: PortableKindsAt['clause.where'];
 	};
 	'clause.bounds': {
@@ -858,6 +855,8 @@ export interface PortableKindsAt {
 	'clause.bounds.higher_ranked': { readonly $path: 'clause.bounds.higher_ranked' };
 	'clause.bounds.removed': { readonly $path: 'clause.bounds.removed' };
 	'clause.bounds.use': { readonly $path: 'clause.bounds.use' };
+	'clause.case': { readonly $path: 'clause.case'; readonly match: PortableKindsAt['clause.case.match'] };
+	'clause.case.match': { readonly $path: 'clause.case.match' };
 	'clause.else': { readonly $path: 'clause.else' };
 	'clause.import': {
 		readonly $path: 'clause.import';
@@ -877,9 +876,6 @@ export interface PortableKindsAt {
 	'clause.lifetimes': { readonly $path: 'clause.lifetimes' };
 	'clause.macro': { readonly $path: 'clause.macro'; readonly rule: PortableKindsAt['clause.macro.rule'] };
 	'clause.macro.rule': { readonly $path: 'clause.macro.rule' };
-	'clause.match': { readonly $path: 'clause.match'; readonly arm: PortableKindsAt['clause.match.arm'] };
-	'clause.match.arm': { readonly $path: 'clause.match.arm'; readonly last: PortableKindsAt['clause.match.arm.last'] };
-	'clause.match.arm.last': { readonly $path: 'clause.match.arm.last' };
 	'clause.where': { readonly $path: 'clause.where'; readonly predicate: PortableKindsAt['clause.where.predicate'] };
 	'clause.where.predicate': { readonly $path: 'clause.where.predicate' };
 	comment: {
@@ -1488,7 +1484,6 @@ export interface PortableKindsAt {
 		readonly as: PortableKindsAt['pattern.as'];
 		readonly generic: PortableKindsAt['pattern.generic'];
 		readonly list: PortableKindsAt['pattern.list'];
-		readonly match: PortableKindsAt['pattern.match'];
 		readonly mutable: PortableKindsAt['pattern.mutable'];
 		readonly or: PortableKindsAt['pattern.or'];
 		readonly range: PortableKindsAt['pattern.range'];
@@ -1500,7 +1495,6 @@ export interface PortableKindsAt {
 	'pattern.as': { readonly $path: 'pattern.as' };
 	'pattern.generic': { readonly $path: 'pattern.generic' };
 	'pattern.list': { readonly $path: 'pattern.list' };
-	'pattern.match': { readonly $path: 'pattern.match' };
 	'pattern.mutable': { readonly $path: 'pattern.mutable' };
 	'pattern.or': { readonly $path: 'pattern.or' };
 	'pattern.range': {
@@ -1654,12 +1648,12 @@ export interface PortableIsAt {
 	'attribute.inner': PortableGuard<PortableIds['attribute.inner'], RustNode, TSKindId> & {};
 	clause: PortableGuard<PortableIds['clause'], RustNode, TSKindId> & {
 		readonly bounds: PortableIsAt['clause.bounds'];
+		readonly case: PortableIsAt['clause.case'];
 		readonly else: PortableIsAt['clause.else'];
 		readonly import: PortableIsAt['clause.import'];
 		readonly let: PortableIsAt['clause.let'];
 		readonly lifetimes: PortableIsAt['clause.lifetimes'];
 		readonly macro: PortableIsAt['clause.macro'];
-		readonly match: PortableIsAt['clause.match'];
 		readonly where: PortableIsAt['clause.where'];
 	};
 	'clause.bounds': PortableGuard<PortableIds['clause.bounds'], RustNode, TSKindId> & {
@@ -1670,6 +1664,10 @@ export interface PortableIsAt {
 	'clause.bounds.higher_ranked': PortableGuard<PortableIds['clause.bounds.higher_ranked'], RustNode, TSKindId> & {};
 	'clause.bounds.removed': PortableGuard<PortableIds['clause.bounds.removed'], RustNode, TSKindId> & {};
 	'clause.bounds.use': PortableGuard<PortableIds['clause.bounds.use'], RustNode, TSKindId> & {};
+	'clause.case': PortableGuard<PortableIds['clause.case'], RustNode, TSKindId> & {
+		readonly match: PortableIsAt['clause.case.match'];
+	};
+	'clause.case.match': PortableGuard<PortableIds['clause.case.match'], RustNode, TSKindId> & {};
 	'clause.else': PortableGuard<PortableIds['clause.else'], RustNode, TSKindId> & {};
 	'clause.import': PortableGuard<PortableIds['clause.import'], RustNode, TSKindId> & {
 		readonly alias: PortableIsAt['clause.import.alias'];
@@ -1691,13 +1689,6 @@ export interface PortableIsAt {
 		readonly rule: PortableIsAt['clause.macro.rule'];
 	};
 	'clause.macro.rule': PortableGuard<PortableIds['clause.macro.rule'], RustNode, TSKindId> & {};
-	'clause.match': PortableGuard<PortableIds['clause.match'], RustNode, TSKindId> & {
-		readonly arm: PortableIsAt['clause.match.arm'];
-	};
-	'clause.match.arm': PortableGuard<PortableIds['clause.match.arm'], RustNode, TSKindId> & {
-		readonly last: PortableIsAt['clause.match.arm.last'];
-	};
-	'clause.match.arm.last': PortableGuard<PortableIds['clause.match.arm.last'], RustNode, TSKindId> & {};
 	'clause.where': PortableGuard<PortableIds['clause.where'], RustNode, TSKindId> & {
 		readonly predicate: PortableIsAt['clause.where.predicate'];
 	};
@@ -2564,7 +2555,6 @@ export interface PortableIsAt {
 		readonly as: PortableIsAt['pattern.as'];
 		readonly generic: PortableIsAt['pattern.generic'];
 		readonly list: PortableIsAt['pattern.list'];
-		readonly match: PortableIsAt['pattern.match'];
 		readonly mutable: PortableIsAt['pattern.mutable'];
 		readonly or: PortableIsAt['pattern.or'];
 		readonly range: PortableIsAt['pattern.range'];
@@ -2576,7 +2566,6 @@ export interface PortableIsAt {
 	'pattern.as': PortableGuard<PortableIds['pattern.as'], RustNode, TSKindId> & {};
 	'pattern.generic': PortableGuard<PortableIds['pattern.generic'], RustNode, TSKindId> & {};
 	'pattern.list': PortableGuard<PortableIds['pattern.list'], RustNode, TSKindId> & {};
-	'pattern.match': PortableGuard<PortableIds['pattern.match'], RustNode, TSKindId> & {};
 	'pattern.mutable': PortableGuard<PortableIds['pattern.mutable'], RustNode, TSKindId> & {};
 	'pattern.or': PortableGuard<PortableIds['pattern.or'], RustNode, TSKindId> & {};
 	'pattern.range': PortableGuard<PortableIds['pattern.range'], RustNode, TSKindId> & {
@@ -2814,6 +2803,14 @@ const table: PortableTable = {
 		'clause.bounds.higher_ranked': { ids: [TSKindId.HigherRankedTraitBound], exact: true },
 		'clause.bounds.removed': { ids: [TSKindId.RemovedTraitBound], exact: true },
 		'clause.bounds.use': { ids: [TSKindId.UseBounds], exact: true },
+		'clause.case': {
+			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
+			exact: true
+		},
+		'clause.case.match': {
+			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
+			exact: true
+		},
 		'clause.else': { ids: [TSKindId.ElseClause], exact: true },
 		'clause.import': {
 			ids: [TSKindId.ScopedUseList, TSKindId.UseAsClause, TSKindId.UseList, TSKindId.UseWildcard],
@@ -2828,15 +2825,6 @@ const table: PortableTable = {
 		'clause.lifetimes': { ids: [TSKindId.ForLifetimes], exact: true },
 		'clause.macro': { ids: [TSKindId.MacroRule], exact: true },
 		'clause.macro.rule': { ids: [TSKindId.MacroRule], exact: true },
-		'clause.match': {
-			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
-			exact: true
-		},
-		'clause.match.arm': {
-			ids: [TSKindId.LastMatchArm, TSKindId.MatchArm, TSKindId.MatchArmBlockEnding, TSKindId.MatchArmWithComma],
-			exact: true
-		},
-		'clause.match.arm.last': { ids: [TSKindId.LastMatchArm], exact: true },
 		'clause.where': { ids: [TSKindId.WhereClause, TSKindId.WherePredicate], exact: true },
 		'clause.where.predicate': { ids: [TSKindId.WherePredicate], exact: true },
 		comment: {
@@ -3606,7 +3594,6 @@ const table: PortableTable = {
 				TSKindId.FieldPatternNamed,
 				TSKindId.FieldPatternShorthand,
 				TSKindId.GenericPattern,
-				TSKindId.MatchPattern,
 				TSKindId.MutPattern,
 				TSKindId.OrPattern,
 				TSKindId.OrPatternBinary,
@@ -3628,7 +3615,6 @@ const table: PortableTable = {
 		'pattern.as': { ids: [TSKindId.CapturedPattern], exact: false },
 		'pattern.generic': { ids: [TSKindId.GenericPattern], exact: false },
 		'pattern.list': { ids: [TSKindId.SlicePattern], exact: false },
-		'pattern.match': { ids: [TSKindId.MatchPattern], exact: true },
 		'pattern.mutable': { ids: [TSKindId.MutPattern], exact: false },
 		'pattern.or': { ids: [TSKindId.OrPattern, TSKindId.OrPatternBinary, TSKindId.OrPatternPrefix], exact: false },
 		'pattern.range': {
@@ -4860,7 +4846,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.ItemKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Label]: [{ path: 'identifier.label', within: [], test: [] }],
-		[TSKindId.LastMatchArm]: [{ path: 'clause.match.arm.last', within: [], test: [] }],
+		[TSKindId.LastMatchArm]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.LetCondition]: [{ path: 'clause.let', within: [], test: [] }],
 		[TSKindId.LetDeclaration]: [{ path: 'declaration.variable', within: [], test: [] }],
 		[TSKindId.Lifetime]: [{ path: 'identifier.lifetime', within: [], test: [] }],
@@ -4892,11 +4878,10 @@ const table: PortableTable = {
 			{ path: 'expression.call.macro', within: [], test: [] }
 		],
 		[TSKindId.MacroRule]: [{ path: 'clause.macro.rule', within: [], test: [] }],
-		[TSKindId.MatchArm]: [{ path: 'clause.match.arm', within: [], test: [] }],
-		[TSKindId.MatchArmBlockEnding]: [{ path: 'clause.match.arm', within: [], test: [] }],
-		[TSKindId.MatchArmWithComma]: [{ path: 'clause.match.arm', within: [], test: [] }],
+		[TSKindId.MatchArm]: [{ path: 'clause.case.match', within: [], test: [] }],
+		[TSKindId.MatchArmBlockEnding]: [{ path: 'clause.case.match', within: [], test: [] }],
+		[TSKindId.MatchArmWithComma]: [{ path: 'clause.case.match', within: [], test: [] }],
 		[TSKindId.MatchExpression]: [{ path: 'statement.match', within: [], test: [] }],
-		[TSKindId.MatchPattern]: [{ path: 'pattern.match', within: [], test: [] }],
 		[TSKindId.MetaKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],
 		[TSKindId.Metavariable]: [{ path: 'identifier.metavariable', within: [], test: [] }],
 		[TSKindId.MethodDeclaration]: [
@@ -6776,7 +6761,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	295: {
-		value: {
+		body: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7119,7 +7104,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 		}
 	},
 	397: {
-		value: {
+		body: {
 			async: { types: [], kinds: [369, 370] },
 			byte: { types: [], kinds: [145, 147, 148, 149, 150] },
 			exclusive: { types: [373], kinds: [] },
@@ -7129,7 +7114,7 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 			writable: { types: [372], kinds: [] }
 		}
 	},
-	398: { value: { move: { types: [], kinds: [310, 311] } } },
+	398: { body: { move: { types: [], kinds: [310, 311] } } },
 	415: { pattern: { byte: { types: [], kinds: [145, 147, 148, 149, 150] }, exclusive: { types: [], kinds: [326] } } },
 	419: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
 	420: { right: { byte: { types: [], kinds: [145, 147, 148, 149, 150] } } },
@@ -7523,9 +7508,7 @@ declare module './types.js' {
 		};
 	}
 	interface LastMatchArm {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
-		};
+		readonly __slotFlags__?: { readonly body: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable' };
 	}
 	interface MatchPattern {
 		readonly __slotFlags__?: {
@@ -7678,12 +7661,10 @@ declare module './types.js' {
 		};
 	}
 	interface MatchArmWithComma {
-		readonly __slotFlags__?: {
-			readonly value: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable';
-		};
+		readonly __slotFlags__?: { readonly body: 'async' | 'byte' | 'exclusive' | 'move' | 'raw' | 'static' | 'writable' };
 	}
 	interface MatchArmBlockEnding {
-		readonly __slotFlags__?: { readonly value: 'move' };
+		readonly __slotFlags__?: { readonly body: 'move' };
 	}
 	interface FieldPatternNamed {
 		readonly __slotFlags__?: { readonly pattern: 'byte' | 'exclusive' };

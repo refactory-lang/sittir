@@ -1,7 +1,8 @@
 {
-	"grammarHash": "a01ed59973fe735c02595165f2646c925d69d7c92454fa7b2d482b6519ed3ca7",
+	"grammarHash": "5a163d20ab1181589e5258b5c210e42393e0862de92f0b2311acc53834c45c32",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["as_pattern","except_clause_exception_as"]},"step":"default","sourceChains":[["as_pattern"],["except_clause_exception_as","except_clause_exception","except_clause"]],"conflict":{"symbolSequence":["'try'","':'","suite_inline","'except'","expression","'as'","expression"],"lookahead":"':'","interpretations":["as_pattern","except_clause_exception_as"]}},
+		{"resolution":{"kind":"AddConflict","symbols":["case_clause","case_patterns"]},"step":"default","sourceChains":[["case_clause"],["case_patterns"]],"conflict":{"symbolSequence":["'match'","subjects","':'","_indent","'case'","case_pattern"],"lookahead":"'if'","interpretations":["case_patterns","case_clause"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["except_clause_exception_as","except_clause_exception_list"]},"step":"default","sourceChains":[["except_clause_exception_as","except_clause_exception","except_clause"],["except_clause_exception_list","except_clause_exception","except_clause"]],"conflict":{"symbolSequence":["'try'","':'","suite_inline","'except'","expression"],"lookahead":"':'","interpretations":["except_clause_exception_as","except_clause_exception_list"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["expression_statement","expression_statement_tuple"]},"step":"default","sourceChains":[["expression_statement"],["expression_statement_tuple","expression_statement"]],"conflict":{"symbolSequence":["expression"],"lookahead":"';'","interpretations":["expression_statement","expression_statement_tuple"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["list_pattern","list"]},"step":"upstream-declared","sourceChains":[["list_pattern"],["list"]],"conflict":{"symbolSequence":["'['","']'"],"lookahead":"','","interpretations":["list_pattern","list"]}},
@@ -14,7 +15,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["with_item","_tuple_elements"]},"step":"default","sourceChains":[["with_item"],["_tuple_elements"]],"conflict":{"symbolSequence":["'with'","'('","expression"],"lookahead":"','","interpretations":["with_item","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements"]}}
 	],
 	"bound": {
-		"grammarHash": "3e47a747344066f7c10c1c6be67b63990320450266a92d8d8b2b1f1f7b2340c7",
+		"grammarHash": "715b87e865a6b0313d3e018c42d9d387408d1b4578718973cb05dde54e295d1b",
 		"resolutions": []
 	}
 }
