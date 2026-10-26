@@ -1301,7 +1301,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly content: unknown;
 		};
 		readonly 'pattern.as': {
-			readonly pattern: unknown | V.Pattern.Case<G>;
+			readonly pattern: unknown | G['pattern'];
 		};
 		readonly 'pattern.assignment': {
 			readonly left:
@@ -1315,31 +1315,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'pattern.case': {
-			readonly content:
-				| unknown
-				| V.Identifier.Dotted<G>
-				| G['literal']
-				| string
-				| V.Pattern.Case.Any<G>;
-		};
-		readonly 'pattern.case.complex': {
-			readonly operator: string;
-		};
-		readonly 'pattern.case.dictionary': {
-			readonly elements: unknown | V.Pattern.Case.Splat<G>;
-		};
-		readonly 'pattern.case.keyword': {
-			readonly value:
-				| unknown
-				| V.Identifier.Dotted<G>
-				| G['literal']
-				| string
-				| V.Pattern.Case.Any<G>;
-		};
-		readonly 'pattern.case.splat': {
-			readonly operator: string;
-		};
 		readonly 'pattern.list': {
 			readonly elements:
 				| unknown
@@ -1347,6 +1322,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| V.Literal.Null.Undefined<G>
 				| G['pattern'];
+		};
+		readonly 'pattern.map': {
+			readonly elements: unknown | V.Pattern.Rest<G>;
 		};
 		readonly 'pattern.match': {
 			readonly condition:
@@ -1418,6 +1396,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| string;
 		};
+		readonly 'pattern.struct': {
+			readonly fields: G['pattern'];
+		};
 		readonly 'pattern.struct.field': {
 			readonly pattern:
 				| G['expression']
@@ -1433,10 +1414,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern']
 				| V.Type.Primitive<G>;
-		};
-		readonly 'pattern.tuple.struct': {
-			readonly patterns: unknown;
-			readonly type: G['identifier'] | V.Type.Generic.Turbofish<G>;
 		};
 		readonly 'statement.assert': {
 			readonly expressions:

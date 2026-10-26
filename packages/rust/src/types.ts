@@ -7662,23 +7662,23 @@ export interface SlicePattern {
 export interface TupleStructPattern {
 	readonly $type: TSKindId.TupleStructPattern;
 	readonly _type: Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-	readonly _patterns?: Patterns;
+	readonly _fields?: Patterns;
 	readonly __slotNames__?: {
 		readonly _type: 'type';
-		readonly _patterns: 'patterns';
+		readonly _fields: 'fields';
 	};
 	readonly __looseHints__?: {
-		readonly patterns?: readonly Pattern[];
+		readonly fields?: readonly Pattern[];
 	};
 	readonly __slotHints__?: {
 		readonly type: SlotHint<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>;
-		readonly patterns: SlotHint<T.Patterns, true>;
+		readonly fields: SlotHint<T.Patterns, true>;
 		readonly $listSlots: {
-			readonly patterns: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly fields: ListSlotHint<T.Pattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
 	readonly type: () => Identifier | ScopedIdentifier | GenericTypeWithTurbofish;
-	readonly patterns: () => Patterns | undefined;
+	readonly fields: () => Patterns | undefined;
 }
 
 export interface StructPattern {
@@ -22457,12 +22457,12 @@ export namespace TupleStructPattern {
 	export type BuildArgs = [
 		config:
 			| ConfigOf<T.TupleStructPattern>
-			| (OmitEach<NonNullable<ConfigOf<T.TupleStructPattern>>, 'patterns'> & { patterns: T.Patterns.BuildArgs })
+			| (OmitEach<NonNullable<ConfigOf<T.TupleStructPattern>>, 'fields'> & { fields: T.Patterns.BuildArgs })
 	];
 	export type LooseArgs = [
 		config:
 			| T.TupleStructPattern.Loose
-			| (OmitEach<NonNullable<T.TupleStructPattern.Loose>, 'patterns'> & { patterns: T.Patterns.LooseArgs })
+			| (OmitEach<NonNullable<T.TupleStructPattern.Loose>, 'fields'> & { fields: T.Patterns.LooseArgs })
 	];
 	export type Kind = TSKindId.TupleStructPattern;
 }

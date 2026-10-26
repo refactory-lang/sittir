@@ -152,7 +152,8 @@ export default grammar(enrich(base), wire({
 		default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		keyword_pattern: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
-		splat_pattern: { 'operator:/after': preference('tight') },
+		splat_pattern_list: { '"*"/after': preference('tight') },
+		splat_pattern_dictionary: { '"**"/after': preference('tight') },
 		list_splat: { '"*"/after': preference('tight') },
 		list_splat_pattern: { '"*"/after': preference('tight') },
 		dictionary_splat: { '"**"/after': preference('tight') },
@@ -344,7 +345,8 @@ export default grammar(enrich(base), wire({
 		},
 
 		splat_pattern: {
-			'0': field('operator'),
+			'0/0': variant('list'),
+			'0/1': variant('dictionary'),
 			1: field('name')
 		},
 

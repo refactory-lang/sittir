@@ -7063,7 +7063,7 @@
     "type": "tuple_struct_pattern",
     "named": true,
     "fields": {
-      "patterns": {
+      "fields": {
         "multiple": false,
         "required": false,
         "types": [

@@ -7647,11 +7647,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "patterns",
+					"test": "fields",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "patterns"
+							"name": "fields"
 						}
 					]
 				}

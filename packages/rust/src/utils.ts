@@ -499,7 +499,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	317: [['elements', 0, undefined, '_elements']],
 	318: [
 		['type', 0, undefined, '_type'],
-		['patterns', 1, undefined, '_patterns']
+		['fields', 1, undefined, '_fields']
 	],
 	319: [
 		['type', 0, undefined, '_type'],
@@ -1953,9 +1953,9 @@ export const structure: StructureTable = Object.freeze({
 		required: [['_type', 'type']],
 		nodeOnly: [
 			['_type', 'TupleStructPattern.type', 'buildIdentifier(…)', [1, 247, 263]],
-			['_patterns', 'TupleStructPattern.patterns', 'a built Patterns', [358]]
+			['_fields', 'TupleStructPattern.fields', 'a built Patterns', [358]]
 		],
-		config: ['type', 'patterns']
+		config: ['type', 'fields']
 	},
 	319: {
 		kind: 'struct_pattern',

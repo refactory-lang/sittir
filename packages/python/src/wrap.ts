@@ -1937,7 +1937,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
-		value() {
+		pattern() {
 			return hydrateSlot<
 				| T.ClassPattern
 				| T.SplatPattern
@@ -1956,20 +1956,20 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 				| T.ComplexPattern
 				| T.DottedName
 				| TSKindId.WildcardPattern
-			>(this, '_value', tree);
+			>(this, '_pattern', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.KeywordPattern['_name']>) =>
 				rebuilt(node, handle, () => wrapKeywordPattern({ ...$edited(data), _name: v }, tree)),
-			value: (v: NonNullable<T.KeywordPattern['_value']> | Admit<T.SimplePattern>) =>
+			pattern: (v: NonNullable<T.KeywordPattern['_pattern']> | Admit<T.SimplePattern>) =>
 				rebuilt(node, handle, () =>
 					wrapKeywordPattern(
 						{
 							...$edited(data),
-							_value: admitSplicedEnvelope(
+							_pattern: admitSplicedEnvelope(
 								v,
 								[TSKindId.SimplePattern, 'content', 'simple_pattern'],
-								'KeywordPattern.value'
+								'KeywordPattern.pattern'
 							)
 						},
 						tree
@@ -1990,58 +1990,26 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 	return node as unknown as T.KeywordPattern.Parsed;
 }
 
-export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle): T.SplatPattern.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.SplatPattern as const,
-		operator() {
-			return this._operator;
-		},
-		name() {
-			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_name', tree);
-		},
-		$with: {
-			operator: (v: NonNullable<T.SplatPattern['_operator']>) =>
-				rebuilt(node, handle, () => wrapSplatPattern({ ...$edited(data), _operator: v }, tree)),
-			name: (v: NonNullable<T.SplatPattern['_name']>) =>
-				rebuilt(node, handle, () => wrapSplatPattern({ ...$edited(data), _name: v }, tree))
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.SplatPattern.Parsed;
-}
-
 export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.ClassPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.ClassPattern as const,
-		name() {
-			return hydrateSlot<T.DottedName>(this, '_name', tree);
+		type() {
+			return hydrateSlot<T.DottedName>(this, '_type', tree);
 		},
-		arguments() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_arguments', tree);
+		fields() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_fields', tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.ClassPattern['_name']>) =>
-				rebuilt(node, handle, () => wrapClassPattern({ ...$edited(data), _name: v }, tree)),
-			arguments: (...args: unknown[]) =>
+			type: (v: NonNullable<T.ClassPattern['_type']>) =>
+				rebuilt(node, handle, () => wrapClassPattern({ ...$edited(data), _type: v }, tree)),
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.ClassPattern['_arguments']>) =>
-							wrapClassPattern({ ...$edited(data), _arguments: v }, tree)
+						(v: NonNullable<T.ClassPattern['_fields']>) => wrapClassPattern({ ...$edited(data), _fields: v }, tree)
 					)
 				)
 		},
@@ -5179,6 +5147,61 @@ export function wrapExceptClauseException(
 	return node as unknown as T.ExceptClauseException.Parsed;
 }
 
+export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle): T.SplatPatternList.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SplatPatternList as const,
+		pattern() {
+			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_pattern', tree);
+		},
+		$with: {
+			pattern: (v: NonNullable<T.SplatPatternList['_pattern']>) =>
+				rebuilt(node, handle, () => wrapSplatPatternList({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SplatPatternList.Parsed;
+}
+
+export function wrapSplatPatternDictionary(
+	data: T.SplatPatternDictionary,
+	tree: TreeHandle
+): T.SplatPatternDictionary.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SplatPatternDictionary as const,
+		pattern() {
+			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_pattern', tree);
+		},
+		$with: {
+			pattern: (v: NonNullable<T.SplatPatternDictionary['_pattern']>) =>
+				rebuilt(node, handle, () => wrapSplatPatternDictionary({ ...$edited(data), _pattern: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SplatPatternDictionary.Parsed;
+}
+
 export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.AssignmentEq.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -6018,7 +6041,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.DictPattern]: (d, t) => wrapDictPattern(d as unknown as T.DictPattern, t),
 	[TSKindId.KeyValuePattern]: (d, t) => wrapKeyValuePattern(d as unknown as T.KeyValuePattern, t),
 	[TSKindId.KeywordPattern]: (d, t) => wrapKeywordPattern(d as unknown as T.KeywordPattern, t),
-	[TSKindId.SplatPattern]: (d, t) => wrapSplatPattern(d as unknown as T.SplatPattern, t),
 	[TSKindId.ClassPattern]: (d, t) => wrapClassPattern(d as unknown as T.ClassPattern, t),
 	[TSKindId.ComplexPattern]: (d, t) => wrapComplexPattern(d as unknown as T.ComplexPattern, t),
 	[TSKindId.ParametersElements]: (d, t) => wrapParametersElements(d as unknown as T.ParametersElements, t),
@@ -6122,6 +6144,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 	[TSKindId.ExceptClauseExceptionList]: (d, t) =>
 		wrapExceptClauseExceptionList(d as unknown as T.ExceptClauseExceptionList, t),
 	[TSKindId.ExceptClauseException]: (d, t) => wrapExceptClauseException(d as unknown as T.ExceptClauseException, t),
+	[TSKindId.SplatPatternList]: (d, t) => wrapSplatPatternList(d as unknown as T.SplatPatternList, t),
+	[TSKindId.SplatPatternDictionary]: (d, t) => wrapSplatPatternDictionary(d as unknown as T.SplatPatternDictionary, t),
 	[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
 	[TSKindId.AssignmentType]: (d, t) => wrapAssignmentType(d as unknown as T.AssignmentType, t),
 	[TSKindId.AssignmentTyped]: (d, t) => wrapAssignmentTyped(d as unknown as T.AssignmentTyped, t),

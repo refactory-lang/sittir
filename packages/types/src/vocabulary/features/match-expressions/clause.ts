@@ -6,7 +6,7 @@ export namespace Clause {
 		export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Case<G>> {
 			// claimed by p
 			readonly $kind: 'clause.case.match';
-			readonly casePatterns: V.Pattern.Case<G>[];
+			readonly casePatterns: G['pattern'][];
 			readonly consequence: G['slots']['clause.case.match']['consequence'];
 			readonly guard?: V.Clause.Comprehension.If<G>;
 		}

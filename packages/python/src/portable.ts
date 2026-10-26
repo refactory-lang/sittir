@@ -319,7 +319,6 @@ export interface PortableIds {
 	pattern:
 		| TSKindId.CaseAsPattern
 		| TSKindId.CaseListPattern
-		| TSKindId.CasePattern
 		| TSKindId.CaseTuplePattern
 		| TSKindId.ClassPattern
 		| TSKindId.ComplexPattern
@@ -329,31 +328,26 @@ export interface PortableIds {
 		| TSKindId.ListPattern
 		| TSKindId.ListSplatPattern
 		| TSKindId.PatternList
-		| TSKindId.SplatPattern
+		| TSKindId.SplatPatternDictionary
+		| TSKindId.SplatPatternList
 		| TSKindId.TuplePattern
 		| TSKindId.UnionPattern;
 	'pattern.as': TSKindId.CaseAsPattern;
-	'pattern.case':
-		| TSKindId.CaseListPattern
-		| TSKindId.CasePattern
-		| TSKindId.CaseTuplePattern
-		| TSKindId.ClassPattern
-		| TSKindId.ComplexPattern
-		| TSKindId.DictPattern
-		| TSKindId.KeywordPattern
-		| TSKindId.SplatPattern;
-	'pattern.case.class': TSKindId.ClassPattern;
-	'pattern.case.complex': TSKindId.ComplexPattern;
-	'pattern.case.dictionary': TSKindId.DictPattern;
-	'pattern.case.keyword': TSKindId.KeywordPattern;
-	'pattern.case.list': TSKindId.CaseListPattern;
-	'pattern.case.splat': TSKindId.SplatPattern;
-	'pattern.case.tuple': TSKindId.CaseTuplePattern;
-	'pattern.list': TSKindId.ListPattern;
+	'pattern.complex': TSKindId.ComplexPattern;
+	'pattern.complex.add': TSKindId.ComplexPattern;
+	'pattern.complex.subtract': TSKindId.ComplexPattern;
+	'pattern.list': TSKindId.CaseListPattern | TSKindId.ListPattern;
+	'pattern.map': TSKindId.DictPattern;
 	'pattern.or': TSKindId.UnionPattern;
-	'pattern.rest': TSKindId.DictionarySplatPattern | TSKindId.ListSplatPattern;
-	'pattern.rest.map': TSKindId.DictionarySplatPattern;
-	'pattern.tuple': TSKindId.PatternList | TSKindId.TuplePattern;
+	'pattern.rest':
+		| TSKindId.DictionarySplatPattern
+		| TSKindId.ListSplatPattern
+		| TSKindId.SplatPatternDictionary
+		| TSKindId.SplatPatternList;
+	'pattern.rest.map': TSKindId.DictionarySplatPattern | TSKindId.SplatPatternDictionary;
+	'pattern.struct': TSKindId.ClassPattern | TSKindId.KeywordPattern;
+	'pattern.struct.field': TSKindId.KeywordPattern;
+	'pattern.tuple': TSKindId.CaseTuplePattern | TSKindId.PatternList | TSKindId.TuplePattern;
 	'pattern.tuple.bare': TSKindId.PatternList;
 	statement:
 		| TSKindId.AssertStatement
@@ -834,34 +828,29 @@ export interface PortableKindsAt {
 	pattern: {
 		readonly $path: 'pattern';
 		readonly as: PortableKindsAt['pattern.as'];
-		readonly case: PortableKindsAt['pattern.case'];
+		readonly complex: PortableKindsAt['pattern.complex'];
 		readonly list: PortableKindsAt['pattern.list'];
+		readonly map: PortableKindsAt['pattern.map'];
 		readonly or: PortableKindsAt['pattern.or'];
 		readonly rest: PortableKindsAt['pattern.rest'];
+		readonly struct: PortableKindsAt['pattern.struct'];
 		readonly tuple: PortableKindsAt['pattern.tuple'];
 	};
 	'pattern.as': { readonly $path: 'pattern.as' };
-	'pattern.case': {
-		readonly $path: 'pattern.case';
-		readonly class: PortableKindsAt['pattern.case.class'];
-		readonly complex: PortableKindsAt['pattern.case.complex'];
-		readonly dictionary: PortableKindsAt['pattern.case.dictionary'];
-		readonly keyword: PortableKindsAt['pattern.case.keyword'];
-		readonly list: PortableKindsAt['pattern.case.list'];
-		readonly splat: PortableKindsAt['pattern.case.splat'];
-		readonly tuple: PortableKindsAt['pattern.case.tuple'];
+	'pattern.complex': {
+		readonly $path: 'pattern.complex';
+		readonly add: PortableKindsAt['pattern.complex.add'];
+		readonly subtract: PortableKindsAt['pattern.complex.subtract'];
 	};
-	'pattern.case.class': { readonly $path: 'pattern.case.class' };
-	'pattern.case.complex': { readonly $path: 'pattern.case.complex' };
-	'pattern.case.dictionary': { readonly $path: 'pattern.case.dictionary' };
-	'pattern.case.keyword': { readonly $path: 'pattern.case.keyword' };
-	'pattern.case.list': { readonly $path: 'pattern.case.list' };
-	'pattern.case.splat': { readonly $path: 'pattern.case.splat' };
-	'pattern.case.tuple': { readonly $path: 'pattern.case.tuple' };
+	'pattern.complex.add': { readonly $path: 'pattern.complex.add' };
+	'pattern.complex.subtract': { readonly $path: 'pattern.complex.subtract' };
 	'pattern.list': { readonly $path: 'pattern.list' };
+	'pattern.map': { readonly $path: 'pattern.map' };
 	'pattern.or': { readonly $path: 'pattern.or' };
 	'pattern.rest': { readonly $path: 'pattern.rest'; readonly map: PortableKindsAt['pattern.rest.map'] };
 	'pattern.rest.map': { readonly $path: 'pattern.rest.map' };
+	'pattern.struct': { readonly $path: 'pattern.struct'; readonly field: PortableKindsAt['pattern.struct.field'] };
+	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
 	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly bare: PortableKindsAt['pattern.tuple.bare'] };
 	'pattern.tuple.bare': { readonly $path: 'pattern.tuple.bare' };
 	statement: {
@@ -1579,35 +1568,32 @@ export interface PortableIsAt {
 	'literal.string.text': PortableGuard<PortableIds['literal.string.text'], PythonNode, TSKindId> & {};
 	pattern: PortableGuard<PortableIds['pattern'], PythonNode, TSKindId> & {
 		readonly as: PortableIsAt['pattern.as'];
-		readonly case: PortableIsAt['pattern.case'];
+		readonly complex: PortableIsAt['pattern.complex'];
 		readonly list: PortableIsAt['pattern.list'];
+		readonly map: PortableIsAt['pattern.map'];
 		readonly or: PortableIsAt['pattern.or'];
 		readonly rest: PortableIsAt['pattern.rest'];
+		readonly struct: PortableIsAt['pattern.struct'];
 		readonly tuple: PortableIsAt['pattern.tuple'];
 	};
 	'pattern.as': PortableGuard<PortableIds['pattern.as'], PythonNode, TSKindId> & {};
-	'pattern.case': PortableGuard<PortableIds['pattern.case'], PythonNode, TSKindId> & {
-		readonly class: PortableIsAt['pattern.case.class'];
-		readonly complex: PortableIsAt['pattern.case.complex'];
-		readonly dictionary: PortableIsAt['pattern.case.dictionary'];
-		readonly keyword: PortableIsAt['pattern.case.keyword'];
-		readonly list: PortableIsAt['pattern.case.list'];
-		readonly splat: PortableIsAt['pattern.case.splat'];
-		readonly tuple: PortableIsAt['pattern.case.tuple'];
+	'pattern.complex': PortableGuard<PortableIds['pattern.complex'], PythonNode, TSKindId> & {
+		readonly add: PortableIsAt['pattern.complex.add'];
+		readonly subtract: PortableIsAt['pattern.complex.subtract'];
 	};
-	'pattern.case.class': PortableGuard<PortableIds['pattern.case.class'], PythonNode, TSKindId> & {};
-	'pattern.case.complex': PortableGuard<PortableIds['pattern.case.complex'], PythonNode, TSKindId> & {};
-	'pattern.case.dictionary': PortableGuard<PortableIds['pattern.case.dictionary'], PythonNode, TSKindId> & {};
-	'pattern.case.keyword': PortableGuard<PortableIds['pattern.case.keyword'], PythonNode, TSKindId> & {};
-	'pattern.case.list': PortableGuard<PortableIds['pattern.case.list'], PythonNode, TSKindId> & {};
-	'pattern.case.splat': PortableGuard<PortableIds['pattern.case.splat'], PythonNode, TSKindId> & {};
-	'pattern.case.tuple': PortableGuard<PortableIds['pattern.case.tuple'], PythonNode, TSKindId> & {};
+	'pattern.complex.add': PortableGuard<PortableIds['pattern.complex.add'], PythonNode, TSKindId> & {};
+	'pattern.complex.subtract': PortableGuard<PortableIds['pattern.complex.subtract'], PythonNode, TSKindId> & {};
 	'pattern.list': PortableGuard<PortableIds['pattern.list'], PythonNode, TSKindId> & {};
+	'pattern.map': PortableGuard<PortableIds['pattern.map'], PythonNode, TSKindId> & {};
 	'pattern.or': PortableGuard<PortableIds['pattern.or'], PythonNode, TSKindId> & {};
 	'pattern.rest': PortableGuard<PortableIds['pattern.rest'], PythonNode, TSKindId> & {
 		readonly map: PortableIsAt['pattern.rest.map'];
 	};
 	'pattern.rest.map': PortableGuard<PortableIds['pattern.rest.map'], PythonNode, TSKindId> & {};
+	'pattern.struct': PortableGuard<PortableIds['pattern.struct'], PythonNode, TSKindId> & {
+		readonly field: PortableIsAt['pattern.struct.field'];
+	};
+	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], PythonNode, TSKindId> & {};
 	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], PythonNode, TSKindId> & {
 		readonly bare: PortableIsAt['pattern.tuple.bare'];
 	};
@@ -2096,7 +2082,6 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.CaseAsPattern,
 				TSKindId.CaseListPattern,
-				TSKindId.CasePattern,
 				TSKindId.CaseTuplePattern,
 				TSKindId.ClassPattern,
 				TSKindId.ComplexPattern,
@@ -2106,38 +2091,33 @@ const table: PortableTable = {
 				TSKindId.ListPattern,
 				TSKindId.ListSplatPattern,
 				TSKindId.PatternList,
-				TSKindId.SplatPattern,
+				TSKindId.SplatPatternDictionary,
+				TSKindId.SplatPatternList,
 				TSKindId.TuplePattern,
 				TSKindId.UnionPattern
 			],
 			exact: true
 		},
 		'pattern.as': { ids: [TSKindId.CaseAsPattern], exact: true },
-		'pattern.case': {
+		'pattern.complex': { ids: [TSKindId.ComplexPattern], exact: true },
+		'pattern.complex.add': { ids: [TSKindId.ComplexPattern], exact: false },
+		'pattern.complex.subtract': { ids: [TSKindId.ComplexPattern], exact: false },
+		'pattern.list': { ids: [TSKindId.CaseListPattern, TSKindId.ListPattern], exact: true },
+		'pattern.map': { ids: [TSKindId.DictPattern], exact: true },
+		'pattern.or': { ids: [TSKindId.UnionPattern], exact: true },
+		'pattern.rest': {
 			ids: [
-				TSKindId.CaseListPattern,
-				TSKindId.CasePattern,
-				TSKindId.CaseTuplePattern,
-				TSKindId.ClassPattern,
-				TSKindId.ComplexPattern,
-				TSKindId.DictPattern,
-				TSKindId.KeywordPattern,
-				TSKindId.SplatPattern
+				TSKindId.DictionarySplatPattern,
+				TSKindId.ListSplatPattern,
+				TSKindId.SplatPatternDictionary,
+				TSKindId.SplatPatternList
 			],
 			exact: true
 		},
-		'pattern.case.class': { ids: [TSKindId.ClassPattern], exact: true },
-		'pattern.case.complex': { ids: [TSKindId.ComplexPattern], exact: true },
-		'pattern.case.dictionary': { ids: [TSKindId.DictPattern], exact: true },
-		'pattern.case.keyword': { ids: [TSKindId.KeywordPattern], exact: true },
-		'pattern.case.list': { ids: [TSKindId.CaseListPattern], exact: true },
-		'pattern.case.splat': { ids: [TSKindId.SplatPattern], exact: true },
-		'pattern.case.tuple': { ids: [TSKindId.CaseTuplePattern], exact: true },
-		'pattern.list': { ids: [TSKindId.ListPattern], exact: true },
-		'pattern.or': { ids: [TSKindId.UnionPattern], exact: true },
-		'pattern.rest': { ids: [TSKindId.DictionarySplatPattern, TSKindId.ListSplatPattern], exact: true },
-		'pattern.rest.map': { ids: [TSKindId.DictionarySplatPattern], exact: true },
-		'pattern.tuple': { ids: [TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
+		'pattern.rest.map': { ids: [TSKindId.DictionarySplatPattern, TSKindId.SplatPatternDictionary], exact: true },
+		'pattern.struct': { ids: [TSKindId.ClassPattern, TSKindId.KeywordPattern], exact: true },
+		'pattern.struct.field': { ids: [TSKindId.KeywordPattern], exact: true },
+		'pattern.tuple': { ids: [TSKindId.CaseTuplePattern, TSKindId.PatternList, TSKindId.TuplePattern], exact: true },
 		'pattern.tuple.bare': { ids: [TSKindId.PatternList], exact: true },
 		statement: {
 			ids: [
@@ -2217,8 +2197,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '287': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '287': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '289': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '289': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -2228,8 +2208,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '288': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '288': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '290': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '290': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -2239,8 +2219,8 @@ const table: PortableTable = {
 				path: 'declaration.constant',
 				within: [],
 				test: [
-					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '289': 0 } } },
-					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '289': 0 } } }
+					{ up: 0, via: [], plan: { op: 'match', pattern: '^[A-Z][A-Z_0-9]*$', slots: { '291': 0 } } },
+					{ up: 0, via: [], plan: { op: 'is', types: [1], slots: { '291': 0 } } }
 				]
 			},
 			{ path: 'declaration.variable', within: [], test: [] }
@@ -2409,68 +2389,67 @@ const table: PortableTable = {
 		],
 		[TSKindId.CaseAsPattern]: [{ path: 'pattern.as', within: [], test: [] }],
 		[TSKindId.CaseClause]: [{ path: 'clause.case.match', within: [], test: [] }],
-		[TSKindId.CaseListPattern]: [{ path: 'pattern.case.list', within: [], test: [] }],
-		[TSKindId.CasePattern]: [{ path: 'pattern.case', within: [], test: [] }],
-		[TSKindId.CaseTuplePattern]: [{ path: 'pattern.case.tuple', within: [], test: [] }],
+		[TSKindId.CaseListPattern]: [{ path: 'pattern.list', within: [], test: [] }],
+		[TSKindId.CaseTuplePattern]: [{ path: 'pattern.tuple', within: [], test: [] }],
 		[TSKindId.Chevron]: [{ path: 'clause.print.chevron', within: [], test: [] }],
 		[TSKindId.ClassDefinition]: [{ path: 'declaration.class', within: [], test: [] }],
-		[TSKindId.ClassPattern]: [{ path: 'pattern.case.class', within: [], test: [] }],
+		[TSKindId.ClassPattern]: [{ path: 'pattern.struct', within: [], test: [] }],
 		[TSKindId.Comment]: [{ path: 'comment.line', within: [], test: [] }],
 		[TSKindId.ComparisonOperator]: [
 			{
 				path: 'expression.binary.comparison.equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '==', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '!=', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.not_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.less_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<=', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.comparison.greater_equal',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '>=', slots: { '300': 0 } } }
 				]
 			},
 			{
 				path: 'expression.binary.membership.in',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'in', slots: { '300': 0 } } }
 				]
 			},
 			{
@@ -2480,7 +2459,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'not in', slots: { '298': 0 } }
+						plan: { op: 'eq', text: 'not in', slots: { '300': 0 } }
 					}
 				]
 			},
@@ -2488,7 +2467,7 @@ const table: PortableTable = {
 				path: 'expression.binary.identity.is',
 				within: [],
 				test: [
-					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '298': 0 } } }
+					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: 'is', slots: { '300': 0 } } }
 				]
 			},
 			{
@@ -2498,7 +2477,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'eq', text: 'is not', slots: { '298': 0 } }
+						plan: { op: 'eq', text: 'is not', slots: { '300': 0 } }
 					}
 				]
 			},
@@ -2509,7 +2488,7 @@ const table: PortableTable = {
 					{
 						up: 0,
 						via: [{ slots: { '213': 1 }, anchor: 'only' }],
-						plan: { op: 'not', of: { op: 'is', types: [298], self: true } }
+						plan: { op: 'not', of: { op: 'is', types: [300], self: true } }
 					}
 				]
 			},
@@ -2519,61 +2498,73 @@ const table: PortableTable = {
 			{
 				path: 'element.comparator.comparison.equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '==', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.not_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.less_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<=', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.comparison.greater_equal',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '>=', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'in', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.membership.not_in',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'not in', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is', slots: { '300': 0 } } }]
 			},
 			{
 				path: 'element.comparator.identity.is_not',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '298': 0 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: 'is not', slots: { '300': 0 } } }]
 			},
 			{ path: 'element.comparator', within: [], test: [] }
 		],
-		[TSKindId.ComplexPattern]: [{ path: 'pattern.case.complex', within: [], test: [] }],
+		[TSKindId.ComplexPattern]: [
+			{
+				path: 'pattern.complex.add',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '+', slots: { '192': 2 } } }]
+			},
+			{
+				path: 'pattern.complex.subtract',
+				within: [],
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '-', slots: { '192': 2 } } }]
+			},
+			{ path: 'pattern.complex', within: [], test: [] }
+		],
 		[TSKindId.ComprehensionClauses]: [{ path: 'clause.comprehension', within: [], test: [] }],
 		[TSKindId.ConcatenatedString]: [{ path: 'literal.string.concatenated', within: [], test: [] }],
 		[TSKindId.ConditionalExpression]: [{ path: 'expression.conditional', within: [], test: [] }],
@@ -2583,7 +2574,7 @@ const table: PortableTable = {
 		[TSKindId.Decorator]: [{ path: 'attribute.decorator', within: [], test: [] }],
 		[TSKindId.DefaultParameter]: [{ path: 'declaration.parameter.default', within: [], test: [] }],
 		[TSKindId.DeleteStatement]: [{ path: 'statement.delete', within: [], test: [] }],
-		[TSKindId.DictPattern]: [{ path: 'pattern.case.dictionary', within: [], test: [] }],
+		[TSKindId.DictPattern]: [{ path: 'pattern.map', within: [], test: [] }],
 		[TSKindId.Dictionary]: [{ path: 'expression.collection.map', within: [], test: [] }],
 		[TSKindId.DictionaryComprehension]: [{ path: 'expression.comprehension.map', within: [], test: [] }],
 		[TSKindId.DictionarySplat]: [{ path: 'element.spread.map', within: [], test: [] }],
@@ -2632,7 +2623,7 @@ const table: PortableTable = {
 		[TSKindId.IntegerOctal]: [{ path: 'literal.number.integer.octal', within: [], test: [] }],
 		[TSKindId.Interpolation]: [{ path: 'expression.interpolation', within: [], test: [] }],
 		[TSKindId.KeywordArgument]: [{ path: 'argument.named', within: [], test: [] }],
-		[TSKindId.KeywordPattern]: [{ path: 'pattern.case.keyword', within: [], test: [] }],
+		[TSKindId.KeywordPattern]: [{ path: 'pattern.struct.field', within: [], test: [] }],
 		[TSKindId.Lambda]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.LambdaWithinForInClause]: [{ path: 'expression.lambda', within: [], test: [] }],
 		[TSKindId.List]: [{ path: 'expression.collection.list', within: [], test: [] }],
@@ -2646,12 +2637,12 @@ const table: PortableTable = {
 			{
 				path: 'declaration.constructor',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '343': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'eq', text: '__init__', slots: { '345': 1 } } }]
 			},
 			{
 				path: 'declaration.method.special',
 				within: [],
-				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '343': 1 } } }]
+				test: [{ up: 0, via: [], plan: { op: 'match', pattern: '^__(?<stem>.*)__$', slots: { '345': 1 } } }]
 			},
 			{ path: 'declaration.method', within: [], test: [] }
 		],
@@ -2675,7 +2666,8 @@ const table: PortableTable = {
 		[TSKindId.SetComprehension]: [{ path: 'expression.comprehension.set', within: [], test: [] }],
 		[TSKindId.SimplePatternNegative]: [{ path: 'literal.number.negative', within: [], test: [] }],
 		[TSKindId.Slice]: [{ path: 'expression.slice', within: [], test: [] }],
-		[TSKindId.SplatPattern]: [{ path: 'pattern.case.splat', within: [], test: [] }],
+		[TSKindId.SplatPatternDictionary]: [{ path: 'pattern.rest.map', within: [], test: [] }],
+		[TSKindId.SplatPatternList]: [{ path: 'pattern.rest', within: [], test: [] }],
 		[TSKindId.SplatType]: [
 			{
 				path: 'type.rest.map',
@@ -2872,7 +2864,6 @@ const table: PortableTable = {
 		[TSKindId.Pipe]: '|',
 		[TSKindId.Lbrace]: '{',
 		[TSKindId.Rbrace]: '}',
-		[TSKindId.Underscore]: '_',
 		[TSKindId.Dash]: '-',
 		[TSKindId.Plus]: '+',
 		[TSKindId.NotKeyword]: 'not',
@@ -2904,6 +2895,7 @@ const table: PortableTable = {
 		[TSKindId.Bslash]: '\\',
 		[TSKindId.AwaitKeyword]: 'await',
 		[TSKindId.PrintKeyword]: 'print',
+		[TSKindId.Underscore]: '_',
 		[TSKindId.Lt]: '<',
 		[TSKindId.LtEq]: '<=',
 		[TSKindId.EqEq]: '==',
@@ -2921,13 +2913,13 @@ const table: PortableTable = {
 export const rows: PortableRows = Object.freeze({ table, querySlots });
 
 export const queryFlags: QueryFlags = Object.freeze({
-	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '300': 0 } } },
+	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '302': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
 	[TSKindId.ForInClause]: { async: { op: 'present', slots: { '244': 0 } } },
 	[TSKindId.ForStatement]: { async: { op: 'present', slots: { '157': 0 } } },
 	[TSKindId.FunctionDefinition]: { async: { op: 'present', slots: { '165': 0 } } },
 	[TSKindId.Interpolation]: { debug: { op: 'present', slots: { '250': 1 } } },
-	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '343': 0 } } },
+	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '345': 0 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '162': 0 } } }
 } satisfies QueryFlags);
 
@@ -2938,8 +2930,8 @@ export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	180: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
 	248: { contents: { debug: { types: [], kinds: [250] } } },
 	282: { contents: { async: { types: [], kinds: [244] } } },
-	302: { statements: { async: { types: [], kinds: [157, 162, 300, 343] } } },
-	304: { definition: { async: { types: [], kinds: [300, 343] } } }
+	304: { statements: { async: { types: [], kinds: [157, 162, 302, 345] } } },
+	306: { definition: { async: { types: [], kinds: [302, 345] } } }
 } satisfies QuerySlotFlags);
 
 declare module './types.js' {

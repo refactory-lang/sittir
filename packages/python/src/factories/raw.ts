@@ -2380,37 +2380,37 @@ export function buildKeyValuePattern(
 
 export function buildKeywordPattern<
 	NameSlot extends T.KeywordPattern.Config['name'],
-	ValueSlot extends T.KeywordPattern.Config['value']
+	PatternSlot extends T.KeywordPattern.Config['pattern']
 >(
 	config: RefusingConfig<
-		WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>,
-		{ name: NameSlot; value: ValueSlot }
+		WidenSlots<T.KeywordPattern.Config, { pattern: Admit<T.SimplePattern> }>,
+		{ name: NameSlot; pattern: PatternSlot }
 	>
 ): T.KeywordPattern.Bound;
 export function buildKeywordPattern(
-	config: WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>
+	config: WidenSlots<T.KeywordPattern.Config, { pattern: Admit<T.SimplePattern> }>
 ): T.KeywordPattern.Bound {
 	currentHandle()?.admit(TSKindId.KeywordPattern, [config]);
 	const _name = config.name;
-	const _value = admitSplicedEnvelope(
-		kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value),
+	const _pattern = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.KeywordPattern['_pattern']>>(config.pattern),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
-		'KeywordPattern.value'
+		'KeywordPattern.pattern'
 	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.KeywordPattern as const,
 		$named: true as const,
 		_name,
-		_value,
+		_pattern,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordPattern({ ...config, name: value })),
-			value: (value: Admit<NonNullable<T.KeywordPattern.Config>['value']>) =>
-				rebuilt(node, handle, () => buildKeywordPattern({ ...config, value: value }))
+			pattern: (value: Admit<NonNullable<T.KeywordPattern.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildKeywordPattern({ ...config, pattern: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2423,71 +2423,33 @@ export function buildKeywordPattern(
 	return stampBuilt(node) as unknown as T.KeywordPattern.Bound;
 }
 
-export function buildSplatPattern<NameSlot extends T.SplatPattern.Config['name']>(
-	config: RefusingConfig<T.SplatPattern.Config, { name: NameSlot }>
-): T.SplatPattern.Bound;
-export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Bound {
-	currentHandle()?.admit(TSKindId.SplatPattern, [config]);
-	const _operator = kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator);
-	const _name = rejectKeywordText(
-		kindIdStorage<NonNullable<T.SplatPattern['_name']>>(config.name),
-		'SplatPattern.name',
-		TSKindId.Identifier,
-		['_']
-	);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.SplatPattern as const,
-		$named: true as const,
-		_operator,
-		_name,
-		$with: {
-			operator: (value: Admit<NonNullable<T.SplatPattern.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildSplatPattern({ ...config, operator: value })),
-			name: (value: Admit<NonNullable<T.SplatPattern.Config>['name']>) =>
-				rebuilt(node, handle, () => buildSplatPattern({ ...config, name: value }))
-		},
-		operator: () => _operator,
-		name: () => hydrateStoredSlot(node, '_name'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.SplatPattern.Bound;
-}
-
 export function buildClassPattern<
-	NameSlot extends T.ClassPattern.Config['name'],
-	ArgumentsSlot extends T.ClassPattern.Config['arguments']
->(config: RefusingConfig<T.ClassPattern.Config, { name: NameSlot; arguments: ArgumentsSlot }>): T.ClassPattern.Bound;
+	TypeSlot extends T.ClassPattern.Config['type'],
+	FieldsSlot extends T.ClassPattern.Config['fields']
+>(config: RefusingConfig<T.ClassPattern.Config, { type: TypeSlot; fields: FieldsSlot }>): T.ClassPattern.Bound;
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
 	currentHandle()?.admit(TSKindId.ClassPattern, [config]);
-	const _name = config.name;
-	const _arguments = config.arguments;
+	const _type = config.type;
+	const _fields = config.fields;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassPattern as const,
 		$named: true as const,
-		_name,
-		_arguments,
+		_type,
+		_fields,
 		$with: {
-			name: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, name: value })),
-			arguments: (...args: unknown[]) =>
+			type: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, type: value })),
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-						(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, arguments: value })
+						(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, fields: value })
 					)
 				)
 		},
-		name: () => hydrateStoredSlot(node, '_name'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		fields: () => hydrateStoredSlot(node, '_fields'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),
@@ -2949,8 +2911,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224,
-				233, 238, 236, 239, 234, 240, 235, 242, 241, 64, 201, 246, 143, 203
+				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
+				233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -6981,6 +6943,72 @@ export function buildExceptClauseException(
 	return stampBuilt(node) as unknown as T.ExceptClauseException.Bound;
 }
 
+export function buildSplatPatternList<V extends Admit<T.Identifier | TSKindId.Underscore>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatPatternList.Bound;
+export function buildSplatPatternList(value: Admit<T.Identifier | TSKindId.Underscore>): T.SplatPatternList.Bound {
+	const _pattern = rejectKeywordText(
+		kindIdStorage<NonNullable<T.SplatPatternList['_pattern']>>(value),
+		'SplatPatternList.pattern',
+		TSKindId.Identifier,
+		['_']
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SplatPatternList as const,
+		$named: true as const,
+		_pattern,
+		$with: {
+			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+				rebuilt(node, handle, () => buildSplatPatternList(value))
+		},
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.SplatPatternList.Bound;
+}
+
+export function buildSplatPatternDictionary<V extends Admit<T.Identifier | TSKindId.Underscore>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatPatternDictionary.Bound;
+export function buildSplatPatternDictionary(
+	value: Admit<T.Identifier | TSKindId.Underscore>
+): T.SplatPatternDictionary.Bound {
+	const _pattern = rejectKeywordText(
+		kindIdStorage<NonNullable<T.SplatPatternDictionary['_pattern']>>(value),
+		'SplatPatternDictionary.pattern',
+		TSKindId.Identifier,
+		['_']
+	);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.SplatPatternDictionary as const,
+		$named: true as const,
+		_pattern,
+		$with: {
+			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+				rebuilt(node, handle, () => buildSplatPatternDictionary(value))
+		},
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.SplatPatternDictionary.Bound;
+}
+
 export function buildAssignmentEq<
 	NameSlot extends T.AssignmentEq.Config['name'],
 	ValueSlot extends T.AssignmentEq.Config['value']
@@ -8153,7 +8181,6 @@ export type FluentKindMap = {
 	dict_pattern: T.DictPattern.Bound;
 	key_value_pattern: T.KeyValuePattern.Bound;
 	keyword_pattern: T.KeywordPattern.Bound;
-	splat_pattern: T.SplatPattern.Bound;
 	class_pattern: T.ClassPattern.Bound;
 	complex_pattern: T.ComplexPattern.Bound;
 	parameters_elements: T.ParametersElements.Bound;
@@ -8262,6 +8289,8 @@ export type FluentKindMap = {
 	simple_pattern_negative: T.SimplePatternNegative.Bound;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Bound;
 	except_clause_exception: T.ExceptClauseException.Bound;
+	splat_pattern_list: T.SplatPatternList.Bound;
+	splat_pattern_dictionary: T.SplatPatternDictionary.Bound;
 	assignment_eq: T.AssignmentEq.Bound;
 	assignment_type: T.AssignmentType.Bound;
 	assignment_typed: T.AssignmentTyped.Bound;
@@ -8357,7 +8386,6 @@ export const _factoryMap = {
 	dict_pattern: buildDictPattern,
 	key_value_pattern: buildKeyValuePattern,
 	keyword_pattern: buildKeywordPattern,
-	splat_pattern: buildSplatPattern,
 	class_pattern: buildClassPattern,
 	complex_pattern: buildComplexPattern,
 	parameters_elements: buildParametersElements,
@@ -8466,6 +8494,8 @@ export const _factoryMap = {
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
+	splat_pattern_list: buildSplatPatternList,
+	splat_pattern_dictionary: buildSplatPatternDictionary,
 	assignment_eq: buildAssignmentEq,
 	assignment_type: buildAssignmentType,
 	assignment_typed: buildAssignmentTyped,

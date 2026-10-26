@@ -112,9 +112,8 @@ export const records = {
 	UnionPatternNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
 	DictPatternNode: { words: 7, elements: { word: 2, width: 5 } },
 	KeyValuePatternNode: { words: 12, key: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	KeywordPatternNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
-	SplatPatternNode: { words: 12, operator: { word: 2, width: 5 }, name: { word: 7, width: 5 } },
-	ClassPatternNode: { words: 12, name: { word: 2, width: 5 }, arguments: { word: 7, width: 5 } },
+	KeywordPatternNode: { words: 12, name: { word: 2, width: 5 }, pattern: { word: 7, width: 5 } },
+	ClassPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	ComplexPatternNode: {
 		words: 18,
 		sign: { word: 2, bit: 0 },
@@ -288,6 +287,8 @@ export const records = {
 	SimplePatternNegativeNode: { words: 7, value: { word: 2, width: 5 } },
 	ExceptClauseExceptionListNode: { words: 4, value: { word: 2, width: 2, run: 5 } },
 	ExceptClauseExceptionNode: { words: 7, content: { word: 2, width: 5 } },
+	SplatPatternListNode: { words: 7, pattern: { word: 2, width: 5 } },
+	SplatPatternDictionaryNode: { words: 7, pattern: { word: 2, width: 5 } },
 	AssignmentEqNode: { words: 12, name: { word: 2, width: 5 }, value: { word: 7, width: 5 } },
 	AssignmentTypeNode: { words: 12, name: { word: 2, width: 5 }, type_: { word: 7, width: 5 } },
 	AssignmentTypedNode: {

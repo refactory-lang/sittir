@@ -124,7 +124,6 @@ export type LeafStringMap = {
 	[TSKindId.Pipe]: '|';
 	[TSKindId.Lbrace]: '{';
 	[TSKindId.Rbrace]: '}';
-	[TSKindId.Underscore]: '_';
 	[TSKindId.Dash]: '-';
 	[TSKindId.Plus]: '+';
 	[TSKindId.NotKeyword]: 'not';
@@ -156,6 +155,7 @@ export type LeafStringMap = {
 	[TSKindId.Bslash]: '\\';
 	[TSKindId.AwaitKeyword]: 'await';
 	[TSKindId.PrintKeyword]: 'print';
+	[TSKindId.Underscore]: '_';
 	[TSKindId.Lt]: '<';
 	[TSKindId.LtEq]: '<=';
 	[TSKindId.EqEq]: '==';
@@ -217,48 +217,48 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[45, 'pipe'],
 	[46, 'lbrace'],
 	[47, 'rbrace'],
-	[48, 'underscore'],
-	[49, 'plus'],
-	[50, 'dash'],
-	[51, 'not_keyword'],
-	[52, 'and_keyword'],
-	[53, 'or_keyword'],
-	[54, 'slash'],
-	[55, 'percent'],
-	[56, 'slash_slash'],
-	[57, 'amp'],
-	[58, 'caret'],
-	[59, 'lt_lt'],
-	[60, 'tilde'],
-	[61, 'is_keyword'],
-	[62, 'lambda_keyword'],
-	[63, 'yield_keyword'],
-	[64, 'ellipsis'],
-	[65, 'bslash'],
-	[66, 'type_conversion'],
-	[67, 'print_keyword'],
-	[68, 'async_keyword'],
-	[69, 'await_keyword'],
-	[70, 'true'],
-	[71, 'false'],
-	[72, 'none'],
-	[73, 'comment'],
-	[74, 'semi'],
-	[75, 'dash_gt'],
-	[76, 'plus_eq'],
-	[77, 'dash_eq'],
-	[78, 'star_eq'],
-	[79, 'slash_eq'],
-	[80, 'at_eq'],
-	[81, 'slash_slash_eq'],
-	[82, 'percent_eq'],
-	[83, 'star_star_eq'],
-	[84, 'gt_gt_eq'],
-	[85, 'lt_lt_eq'],
-	[86, 'amp_eq'],
-	[87, 'caret_eq'],
-	[88, 'pipe_eq'],
-	[89, 'format_specifier_text'],
+	[48, 'plus'],
+	[49, 'dash'],
+	[50, 'not_keyword'],
+	[51, 'and_keyword'],
+	[52, 'or_keyword'],
+	[53, 'slash'],
+	[54, 'percent'],
+	[55, 'slash_slash'],
+	[56, 'amp'],
+	[57, 'caret'],
+	[58, 'lt_lt'],
+	[59, 'tilde'],
+	[60, 'is_keyword'],
+	[61, 'lambda_keyword'],
+	[62, 'yield_keyword'],
+	[63, 'ellipsis'],
+	[64, 'bslash'],
+	[65, 'type_conversion'],
+	[66, 'print_keyword'],
+	[67, 'async_keyword'],
+	[68, 'await_keyword'],
+	[69, 'true'],
+	[70, 'false'],
+	[71, 'none'],
+	[72, 'comment'],
+	[73, 'semi'],
+	[74, 'dash_gt'],
+	[75, 'plus_eq'],
+	[76, 'dash_eq'],
+	[77, 'star_eq'],
+	[78, 'slash_eq'],
+	[79, 'at_eq'],
+	[80, 'slash_slash_eq'],
+	[81, 'percent_eq'],
+	[82, 'star_star_eq'],
+	[83, 'gt_gt_eq'],
+	[84, 'lt_lt_eq'],
+	[85, 'amp_eq'],
+	[86, 'caret_eq'],
+	[87, 'pipe_eq'],
+	[88, 'format_specifier_text'],
+	[89, 'underscore'],
 	[90, 'integer_hex'],
 	[91, 'integer_octal'],
 	[92, 'integer_binary'],
@@ -300,7 +300,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[346, '_simple_statements'],
+	[348, '_simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -355,7 +355,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'dotted_name'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[345, '_simple_pattern'],
+	[347, '_simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -458,64 +458,66 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[284, 'simple_pattern_negative'],
 	[285, 'except_clause_exception_list'],
 	[286, 'except_clause_exception'],
-	[287, 'assignment_eq'],
-	[288, 'assignment_type'],
-	[289, 'assignment_typed'],
-	[290, 'expression_statement_tuple'],
-	[291, 'with_clause_bare'],
-	[292, 'with_clause_paren'],
-	[293, 'match_block_block'],
-	[294, 'match_block_empty'],
-	[295, 'suite_inline'],
-	[296, 'suite_block'],
-	[297, 'suite_empty'],
-	[298, 'comparison_operator_comparator'],
-	[299, 'yield_from_clause'],
-	[300, 'constructor_declaration'],
-	[301, '_statement_class_definition'],
-	[302, 'block_class_declaration'],
-	[303, 'suite_block_class_declaration'],
-	[304, 'decorated_definition_class_declaration'],
-	[305, 'module_repeat1'],
-	[306, 'import_prefix_repeat1'],
-	[307, '_import_list_repeat1'],
-	[308, 'assert_statement_repeat1'],
-	[309, 'if_statement_repeat1'],
-	[310, 'try_statement_repeat1'],
-	[311, 'global_statement_repeat1'],
-	[312, 'decorated_definition_repeat1'],
-	[313, 'expression_list_repeat1'],
-	[314, 'dotted_name_repeat1'],
-	[315, '_parameters_repeat1'],
-	[316, '_patterns_repeat1'],
-	[317, 'comparison_operator_repeat1'],
-	[318, '_collection_elements_repeat1'],
-	[319, 'for_in_clause_repeat1'],
-	[320, 'concatenated_string_repeat1'],
-	[321, 'string_repeat1'],
-	[322, 'string_content_repeat1'],
-	[323, 'format_specifier_repeat1'],
-	[324, 'simple_statements_elements_repeat1'],
-	[325, 'subjects_repeat1'],
-	[326, 'case_patterns_repeat1'],
-	[327, 'with_clause_with_items_repeat1'],
-	[328, '_exec_statement_optional1_repeat1'],
-	[329, 'types_repeat1'],
-	[330, 'argument_list_elements_repeat1'],
-	[331, 'dict_pattern_elements_repeat1'],
-	[332, 'subscripts_repeat1'],
-	[333, 'dictionary_elements_repeat1'],
-	[334, '_tuple_pattern_elements_repeat1'],
-	[335, '_tuple_elements_repeat1'],
-	[336, 'comprehension_clauses_repeat1'],
-	[337, 'except_clause_exception_list_repeat1'],
-	[338, 'with_clause_bare_repeat1'],
-	[339, 'match_block_block_repeat1'],
-	[340, '_block_class_definition_repeat1'],
-	[341, 'as_pattern_target'],
-	[342, 'format_expression'],
-	[343, 'method_declaration'],
-	[344, 'names'],
+	[287, 'splat_pattern_list'],
+	[288, 'splat_pattern_dictionary'],
+	[289, 'assignment_eq'],
+	[290, 'assignment_type'],
+	[291, 'assignment_typed'],
+	[292, 'expression_statement_tuple'],
+	[293, 'with_clause_bare'],
+	[294, 'with_clause_paren'],
+	[295, 'match_block_block'],
+	[296, 'match_block_empty'],
+	[297, 'suite_inline'],
+	[298, 'suite_block'],
+	[299, 'suite_empty'],
+	[300, 'comparison_operator_comparator'],
+	[301, 'yield_from_clause'],
+	[302, 'constructor_declaration'],
+	[303, '_statement_class_definition'],
+	[304, 'block_class_declaration'],
+	[305, 'suite_block_class_declaration'],
+	[306, 'decorated_definition_class_declaration'],
+	[307, 'module_repeat1'],
+	[308, 'import_prefix_repeat1'],
+	[309, '_import_list_repeat1'],
+	[310, 'assert_statement_repeat1'],
+	[311, 'if_statement_repeat1'],
+	[312, 'try_statement_repeat1'],
+	[313, 'global_statement_repeat1'],
+	[314, 'decorated_definition_repeat1'],
+	[315, 'expression_list_repeat1'],
+	[316, 'dotted_name_repeat1'],
+	[317, '_parameters_repeat1'],
+	[318, '_patterns_repeat1'],
+	[319, 'comparison_operator_repeat1'],
+	[320, '_collection_elements_repeat1'],
+	[321, 'for_in_clause_repeat1'],
+	[322, 'concatenated_string_repeat1'],
+	[323, 'string_repeat1'],
+	[324, 'string_content_repeat1'],
+	[325, 'format_specifier_repeat1'],
+	[326, 'simple_statements_elements_repeat1'],
+	[327, 'subjects_repeat1'],
+	[328, 'case_patterns_repeat1'],
+	[329, 'with_clause_with_items_repeat1'],
+	[330, '_exec_statement_optional1_repeat1'],
+	[331, 'types_repeat1'],
+	[332, 'argument_list_elements_repeat1'],
+	[333, 'dict_pattern_elements_repeat1'],
+	[334, 'subscripts_repeat1'],
+	[335, 'dictionary_elements_repeat1'],
+	[336, '_tuple_pattern_elements_repeat1'],
+	[337, '_tuple_elements_repeat1'],
+	[338, 'comprehension_clauses_repeat1'],
+	[339, 'except_clause_exception_list_repeat1'],
+	[340, 'with_clause_bare_repeat1'],
+	[341, 'match_block_block_repeat1'],
+	[342, '_block_class_definition_repeat1'],
+	[343, 'as_pattern_target'],
+	[344, 'format_expression'],
+	[345, 'method_declaration'],
+	[346, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -568,48 +570,48 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[45, '|'],
 	[46, '{'],
 	[47, '}'],
-	[48, '_'],
-	[49, '+'],
-	[50, '-'],
-	[51, 'not'],
-	[52, 'and'],
-	[53, 'or'],
-	[54, '/'],
-	[55, '%'],
-	[56, '//'],
-	[57, '&'],
-	[58, '^'],
-	[59, '<<'],
-	[60, '~'],
-	[61, 'is'],
-	[62, 'lambda'],
-	[63, 'yield'],
-	[64, 'ellipsis'],
-	[65, '\\'],
-	[66, 'type_conversion'],
-	[67, 'print'],
-	[68, 'async'],
-	[69, 'await'],
-	[70, 'true'],
-	[71, 'false'],
-	[72, 'none'],
-	[73, 'comment'],
-	[74, ';'],
-	[75, '->'],
-	[76, '+='],
-	[77, '-='],
-	[78, '*='],
-	[79, '/='],
-	[80, '@='],
-	[81, '//='],
-	[82, '%='],
-	[83, '**='],
-	[84, '>>='],
-	[85, '<<='],
-	[86, '&='],
-	[87, '^='],
-	[88, '|='],
-	[89, 'format_specifier_text'],
+	[48, '+'],
+	[49, '-'],
+	[50, 'not'],
+	[51, 'and'],
+	[52, 'or'],
+	[53, '/'],
+	[54, '%'],
+	[55, '//'],
+	[56, '&'],
+	[57, '^'],
+	[58, '<<'],
+	[59, '~'],
+	[60, 'is'],
+	[61, 'lambda'],
+	[62, 'yield'],
+	[63, 'ellipsis'],
+	[64, '\\'],
+	[65, 'type_conversion'],
+	[66, 'print'],
+	[67, 'async'],
+	[68, 'await'],
+	[69, 'true'],
+	[70, 'false'],
+	[71, 'none'],
+	[72, 'comment'],
+	[73, ';'],
+	[74, '->'],
+	[75, '+='],
+	[76, '-='],
+	[77, '*='],
+	[78, '/='],
+	[79, '@='],
+	[80, '//='],
+	[81, '%='],
+	[82, '**='],
+	[83, '>>='],
+	[84, '<<='],
+	[85, '&='],
+	[86, '^='],
+	[87, '|='],
+	[88, 'format_specifier_text'],
+	[89, '_'],
 	[90, 'integer_hex'],
 	[91, 'integer_octal'],
 	[92, 'integer_binary'],
@@ -651,7 +653,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[128, 'module'],
 	[129, '_statement'],
 	[130, '_simple_statements'],
-	[346, 'simple_statements'],
+	[348, 'simple_statements'],
 	[131, 'import_statement'],
 	[132, 'import_prefix'],
 	[133, 'relative_import'],
@@ -706,7 +708,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[182, 'dotted_name'],
 	[183, 'case_pattern'],
 	[184, '_simple_pattern'],
-	[345, 'simple_pattern'],
+	[347, 'simple_pattern'],
 	[185, 'case_as_pattern'],
 	[186, 'union_pattern'],
 	[187, 'dict_pattern'],
@@ -723,8 +725,8 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[198, 'list_pattern'],
 	[199, 'default_parameter'],
 	[200, 'typed_default_parameter'],
-	[201, 'list_splat_pattern'],
-	[202, 'dictionary_splat_pattern'],
+	[201, 'rest_pattern'],
+	[202, 'map_rest_pattern'],
 	[203, 'as_pattern'],
 	[204, '_expression_within_for_in_clause'],
 	[205, 'expression'],
@@ -809,64 +811,66 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[284, 'simple_pattern_negative'],
 	[285, 'except_clause_exception_list'],
 	[286, 'except_clause_exception'],
-	[287, 'assignment_eq'],
-	[288, 'assignment_type'],
-	[289, 'assignment_typed'],
-	[290, 'expression_statement_tuple'],
-	[291, 'with_clause_bare'],
-	[292, 'with_clause_paren'],
-	[293, 'match_block_block'],
-	[294, 'match_block_empty'],
-	[295, 'suite_inline'],
-	[296, 'suite_block'],
-	[297, 'suite_empty'],
-	[298, 'comparison_operator_comparator'],
-	[299, 'yield_from_clause'],
-	[300, 'constructor_declaration'],
-	[301, '_statement_class_definition'],
-	[302, 'block_class_declaration'],
-	[303, 'suite_block_class_declaration'],
-	[304, 'decorated_definition_class_declaration'],
-	[305, 'module_repeat1'],
-	[306, 'import_prefix_repeat1'],
-	[307, '_import_list_repeat1'],
-	[308, 'assert_statement_repeat1'],
-	[309, 'if_statement_repeat1'],
-	[310, 'try_statement_repeat1'],
-	[311, 'global_statement_repeat1'],
-	[312, 'decorated_definition_repeat1'],
-	[313, 'expression_list_repeat1'],
-	[314, 'dotted_name_repeat1'],
-	[315, '_parameters_repeat1'],
-	[316, '_patterns_repeat1'],
-	[317, 'comparison_operator_repeat1'],
-	[318, '_collection_elements_repeat1'],
-	[319, 'for_in_clause_repeat1'],
-	[320, 'concatenated_string_repeat1'],
-	[321, 'string_repeat1'],
-	[322, 'string_content_repeat1'],
-	[323, 'format_specifier_repeat1'],
-	[324, 'simple_statements_elements_repeat1'],
-	[325, 'subjects_repeat1'],
-	[326, 'case_patterns_repeat1'],
-	[327, 'with_clause_with_items_repeat1'],
-	[328, '_exec_statement_optional1_repeat1'],
-	[329, 'types_repeat1'],
-	[330, 'argument_list_elements_repeat1'],
-	[331, 'dict_pattern_elements_repeat1'],
-	[332, 'subscripts_repeat1'],
-	[333, 'dictionary_elements_repeat1'],
-	[334, '_tuple_pattern_elements_repeat1'],
-	[335, '_tuple_elements_repeat1'],
-	[336, 'comprehension_clauses_repeat1'],
-	[337, 'except_clause_exception_list_repeat1'],
-	[338, 'with_clause_bare_repeat1'],
-	[339, 'match_block_block_repeat1'],
-	[340, '_block_class_definition_repeat1'],
-	[341, 'as_pattern_target'],
-	[342, 'format_expression'],
-	[343, 'method_declaration'],
-	[344, 'names'],
+	[287, 'rest_pattern'],
+	[288, 'map_rest_pattern'],
+	[289, 'assignment_eq'],
+	[290, 'assignment_type'],
+	[291, 'assignment_typed'],
+	[292, 'expression_statement_tuple'],
+	[293, 'with_clause_bare'],
+	[294, 'with_clause_paren'],
+	[295, 'match_block_block'],
+	[296, 'match_block_empty'],
+	[297, 'suite_inline'],
+	[298, 'suite_block'],
+	[299, 'suite_empty'],
+	[300, 'comparison_operator_comparator'],
+	[301, 'yield_from_clause'],
+	[302, 'constructor_declaration'],
+	[303, '_statement_class_definition'],
+	[304, 'block_class_declaration'],
+	[305, 'suite_block_class_declaration'],
+	[306, 'decorated_definition_class_declaration'],
+	[307, 'module_repeat1'],
+	[308, 'import_prefix_repeat1'],
+	[309, '_import_list_repeat1'],
+	[310, 'assert_statement_repeat1'],
+	[311, 'if_statement_repeat1'],
+	[312, 'try_statement_repeat1'],
+	[313, 'global_statement_repeat1'],
+	[314, 'decorated_definition_repeat1'],
+	[315, 'expression_list_repeat1'],
+	[316, 'dotted_name_repeat1'],
+	[317, '_parameters_repeat1'],
+	[318, '_patterns_repeat1'],
+	[319, 'comparison_operator_repeat1'],
+	[320, '_collection_elements_repeat1'],
+	[321, 'for_in_clause_repeat1'],
+	[322, 'concatenated_string_repeat1'],
+	[323, 'string_repeat1'],
+	[324, 'string_content_repeat1'],
+	[325, 'format_specifier_repeat1'],
+	[326, 'simple_statements_elements_repeat1'],
+	[327, 'subjects_repeat1'],
+	[328, 'case_patterns_repeat1'],
+	[329, 'with_clause_with_items_repeat1'],
+	[330, '_exec_statement_optional1_repeat1'],
+	[331, 'types_repeat1'],
+	[332, 'argument_list_elements_repeat1'],
+	[333, 'dict_pattern_elements_repeat1'],
+	[334, 'subscripts_repeat1'],
+	[335, 'dictionary_elements_repeat1'],
+	[336, '_tuple_pattern_elements_repeat1'],
+	[337, '_tuple_elements_repeat1'],
+	[338, 'comprehension_clauses_repeat1'],
+	[339, 'except_clause_exception_list_repeat1'],
+	[340, 'with_clause_bare_repeat1'],
+	[341, 'match_block_block_repeat1'],
+	[342, '_block_class_definition_repeat1'],
+	[343, 'as_pattern_target'],
+	[344, 'format_expression'],
+	[345, 'method_declaration'],
+	[346, 'names'],
 	[65535, 'ERROR']
 ]);
 
@@ -969,8 +973,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lbrace;
 		case 'rbrace':
 			return TSKindId.Rbrace;
-		case 'underscore':
-			return TSKindId.Underscore;
 		case 'plus':
 			return TSKindId.Plus;
 		case 'dash':
@@ -1053,6 +1055,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.PipeEq;
 		case 'format_specifier_text':
 			return TSKindId.FormatSpecifierText;
+		case 'underscore':
+			return TSKindId.Underscore;
 		case 'integer_hex':
 			return TSKindId.IntegerHex;
 		case 'integer_octal':
@@ -1447,6 +1451,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.ExceptClauseExceptionList;
 		case 'except_clause_exception':
 			return TSKindId.ExceptClauseException;
+		case 'splat_pattern_list':
+			return TSKindId.SplatPatternList;
+		case 'splat_pattern_dictionary':
+			return TSKindId.SplatPatternDictionary;
 		case 'assignment_eq':
 			return TSKindId.AssignmentEq;
 		case 'assignment_type':
@@ -1653,8 +1661,6 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.Lbrace;
 		case '}':
 			return TSKindId.Rbrace;
-		case '_':
-			return TSKindId.Underscore;
 		case '+':
 			return TSKindId.Plus;
 		case '-':
@@ -1717,6 +1723,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.CaretEq;
 		case '|=':
 			return TSKindId.PipeEq;
+		case '_':
+			return TSKindId.Underscore;
 		case '<':
 			return TSKindId.Lt;
 		case '<=':
@@ -1741,6 +1749,10 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId.SimpleStatements;
 		case 'simple_pattern':
 			return TSKindId.SimplePattern;
+		case 'rest_pattern':
+			return TSKindId.ListSplatPattern;
+		case 'map_rest_pattern':
+			return TSKindId.DictionarySplatPattern;
 		case 'not in':
 			return TSKindId.NotIn;
 		case 'is not':
@@ -1832,6 +1844,11 @@ export enum SuiteKind {
 	SuiteInline = 'suite_inline',
 	SuiteBlock = 'suite_block',
 	SuiteEmpty = 'suite_empty'
+}
+
+export enum SplatPatternKind {
+	SplatPatternList = 'splat_pattern_list',
+	SplatPatternDictionary = 'splat_pattern_dictionary'
 }
 
 export enum ParameterKind {
@@ -3276,7 +3293,7 @@ export interface KeyValuePattern {
 export interface KeywordPattern {
 	readonly $type: TSKindId.KeywordPattern;
 	readonly _name: Identifier;
-	readonly _value:
+	readonly _pattern:
 		| ClassPattern
 		| SplatPattern
 		| UnionPattern
@@ -3296,10 +3313,10 @@ export interface KeywordPattern {
 		| TSKindId.WildcardPattern;
 	readonly __slotNames__?: {
 		readonly _name: 'name';
-		readonly _value: 'value';
+		readonly _pattern: 'pattern';
 	};
 	readonly __inputHints__?: {
-		readonly value:
+		readonly pattern:
 			| KindEnum<
 					'True' | 'False' | 'None' | '_',
 					TSKindId.True | TSKindId.False | TSKindId.None | TSKindId.WildcardPattern | TSKindId.Underscore
@@ -3320,10 +3337,10 @@ export interface KeywordPattern {
 	};
 	readonly __slotHints__?: {
 		readonly name: SlotHint<T.Identifier>;
-		readonly value: SlotHint<NonNullable<T.KeywordPattern.Config>['value']>;
+		readonly pattern: SlotHint<NonNullable<T.KeywordPattern.Config>['pattern']>;
 	};
 	readonly name: () => Identifier;
-	readonly value: () =>
+	readonly pattern: () =>
 		| ClassPattern
 		| SplatPattern
 		| UnionPattern
@@ -3343,47 +3360,27 @@ export interface KeywordPattern {
 		| TSKindId.WildcardPattern;
 }
 
-export interface SplatPattern {
-	readonly $type: TSKindId.SplatPattern;
-	readonly _operator: number;
-	readonly _name: Identifier | TSKindId.Underscore;
-	readonly __slotNames__?: {
-		readonly _operator: 'operator';
-		readonly _name: 'name';
-	};
-	readonly __inputHints__?: {
-		readonly operator: KindEnum<'*' | '**', TSKindId.Star | TSKindId.StarStar>;
-		readonly name: KindEnum<'_', TSKindId.Underscore> | Identifier;
-	};
-	readonly __slotHints__?: {
-		readonly operator: SlotHint<NonNullable<T.SplatPattern.Config>['operator']>;
-		readonly name: SlotHint<NonNullable<T.SplatPattern.Config>['name']>;
-	};
-	readonly operator: () => number;
-	readonly name: () => Identifier | TSKindId.Underscore;
-}
-
 export interface ClassPattern {
 	readonly $type: TSKindId.ClassPattern;
-	readonly _name: DottedName;
-	readonly _arguments?: ListPatternCasePatterns;
+	readonly _type: DottedName;
+	readonly _fields?: ListPatternCasePatterns;
 	readonly __slotNames__?: {
-		readonly _name: 'name';
-		readonly _arguments: 'arguments';
+		readonly _type: 'type';
+		readonly _fields: 'fields';
 	};
 	readonly __looseHints__?: {
-		readonly name: readonly Identifier[];
-		readonly arguments?: readonly CasePattern[];
+		readonly type: readonly Identifier[];
+		readonly fields?: readonly CasePattern[];
 	};
 	readonly __slotHints__?: {
-		readonly name: SlotHint<T.DottedName>;
-		readonly arguments: SlotHint<T.ListPatternCasePatterns, true>;
+		readonly type: SlotHint<T.DottedName>;
+		readonly fields: SlotHint<T.ListPatternCasePatterns, true>;
 		readonly $listSlots: {
-			readonly arguments: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
+			readonly fields: ListSlotHint<T.CasePattern, { delimiter?: Delimiter.None | Delimiter.Trailing }>;
 		};
 	};
-	readonly name: () => DottedName;
-	readonly arguments: () => ListPatternCasePatterns | undefined;
+	readonly type: () => DottedName;
+	readonly fields: () => ListPatternCasePatterns | undefined;
 }
 
 export interface ComplexPattern {
@@ -5227,6 +5224,36 @@ export interface ExceptClauseException {
 	readonly content: () => ExceptClauseExceptionAs | ExceptClauseExceptionList;
 }
 
+export interface SplatPatternList {
+	readonly $type: TSKindId.SplatPatternList;
+	readonly _pattern: Identifier | TSKindId.Underscore;
+	readonly __slotNames__?: {
+		readonly _pattern: 'pattern';
+	};
+	readonly __inputHints__?: {
+		readonly pattern: KindEnum<'_', TSKindId.Underscore> | Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<NonNullable<T.Identifier | TSKindId.Underscore>>;
+	};
+	readonly pattern: () => Identifier | TSKindId.Underscore;
+}
+
+export interface SplatPatternDictionary {
+	readonly $type: TSKindId.SplatPatternDictionary;
+	readonly _pattern: Identifier | TSKindId.Underscore;
+	readonly __slotNames__?: {
+		readonly _pattern: 'pattern';
+	};
+	readonly __inputHints__?: {
+		readonly pattern: KindEnum<'_', TSKindId.Underscore> | Identifier;
+	};
+	readonly __slotHints__?: {
+		readonly pattern: SlotHint<NonNullable<T.Identifier | TSKindId.Underscore>>;
+	};
+	readonly pattern: () => Identifier | TSKindId.Underscore;
+}
+
 export interface AssignmentEq {
 	readonly $type: TSKindId.AssignmentEq;
 	readonly _name: Pattern | PatternList;
@@ -5762,6 +5789,8 @@ export type WithClause = WithClauseBare | WithClauseParen;
 
 export type Suite = SuiteInline | SuiteBlock | SuiteEmpty;
 
+export type SplatPattern = SplatPatternList | SplatPatternDictionary;
+
 export type Parameter =
 	| Identifier
 	| TypedParameter
@@ -5895,6 +5924,12 @@ export namespace Suite {
 	export type Kind = '_suite';
 	export type Bound = SupertypeSurface<Suite, BoundByKindId>;
 	export type Parsed = SupertypeSurface<Suite, ParsedByKindId>;
+}
+
+export namespace SplatPattern {
+	export type Kind = 'splat_pattern';
+	export type Bound = SupertypeSurface<SplatPattern, BoundByKindId>;
+	export type Parsed = SupertypeSurface<SplatPattern, ParsedByKindId>;
 }
 
 export namespace Parameter {
@@ -6033,7 +6068,6 @@ export interface OptionsHintMap {
 	dictPattern: DictPattern.Hints;
 	keyValuePattern: KeyValuePattern.Hints;
 	keywordPattern: KeywordPattern.Hints;
-	splatPattern: SplatPattern.Hints;
 	classPattern: ClassPattern.Hints;
 	complexPattern: ComplexPattern.Hints;
 	parametersElements: ParametersElements.Hints;
@@ -6042,8 +6076,8 @@ export interface OptionsHintMap {
 	listPattern: ListPattern.Hints;
 	defaultParameter: DefaultParameter.Hints;
 	typedDefaultParameter: TypedDefaultParameter.Hints;
-	listSplatPattern: ListSplatPattern.Hints;
-	dictionarySplatPattern: DictionarySplatPattern.Hints;
+	restPattern: ListSplatPattern.Hints | SplatPatternList.Hints;
+	mapRestPattern: DictionarySplatPattern.Hints | SplatPatternDictionary.Hints;
 	asPattern: AsPattern.Hints;
 	notOperator: NotOperator.Hints;
 	booleanOperator: BooleanOperator.Hints;
@@ -6251,11 +6285,11 @@ export namespace AssertStatement {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6544,11 +6578,11 @@ export namespace ExecStatement {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6687,11 +6721,11 @@ export namespace ExpressionList {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6770,19 +6804,6 @@ export namespace KeywordPattern {
 	}
 }
 
-export namespace SplatPattern {
-	export interface Hints {
-		readonly __optionsHint__?: {
-			readonly after?: WhitespaceKindId;
-			readonly before?: WhitespaceKindId;
-			readonly operator?: { readonly after?: WhitespaceKindId };
-			readonly star?: { readonly before?: WhitespaceKindId };
-			readonly starStar?: { readonly before?: WhitespaceKindId };
-			readonly underscore?: { readonly before?: WhitespaceKindId };
-		};
-	}
-}
-
 export namespace ClassPattern {
 	export interface Hints {
 		readonly __optionsHint__?: {
@@ -6811,10 +6832,10 @@ export namespace ParametersElements {
 			readonly item?: {
 				readonly defaultParameter?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
-				readonly dictionarySplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly keywordSeparator?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly mapRestPattern?: { readonly after?: WhitespaceKindId };
 				readonly positionalSeparator?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6833,7 +6854,7 @@ export namespace Patterns {
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly listPattern?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -6893,6 +6914,18 @@ export namespace ListSplatPattern {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly star?: { readonly after?: WhitespaceKindId };
+			readonly underscore?: { readonly before?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace SplatPatternList {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly star?: { readonly after?: WhitespaceKindId };
+			readonly underscore?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -6903,6 +6936,18 @@ export namespace DictionarySplatPattern {
 			readonly after?: WhitespaceKindId;
 			readonly before?: WhitespaceKindId;
 			readonly starStar?: { readonly after?: WhitespaceKindId };
+			readonly underscore?: { readonly before?: WhitespaceKindId };
+		};
+	}
+}
+
+export namespace SplatPatternDictionary {
+	export interface Hints {
+		readonly __optionsHint__?: {
+			readonly after?: WhitespaceKindId;
+			readonly before?: WhitespaceKindId;
+			readonly starStar?: { readonly after?: WhitespaceKindId };
+			readonly underscore?: { readonly before?: WhitespaceKindId };
 		};
 	}
 }
@@ -7012,7 +7057,7 @@ export namespace PatternList {
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly listPattern?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7270,12 +7315,12 @@ export namespace CollectionElements {
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7319,11 +7364,11 @@ export namespace ForInClause {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7447,7 +7492,6 @@ export namespace SimpleStatementsElements {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly nonlocalStatement?: { readonly after?: WhitespaceKindId };
@@ -7457,6 +7501,7 @@ export namespace SimpleStatementsElements {
 				readonly printStatementChevron?: { readonly after?: WhitespaceKindId };
 				readonly printStatementPlain?: { readonly after?: WhitespaceKindId };
 				readonly raiseStatement?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly returnStatement?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly semi?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
@@ -7497,11 +7542,11 @@ export namespace Subjects {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7569,12 +7614,12 @@ export namespace Types {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly memberType?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7617,12 +7662,12 @@ export namespace ArgumentListElements {
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7659,10 +7704,11 @@ export namespace DictPatternElements {
 			readonly item?: {
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly keyValuePattern?: { readonly after?: WhitespaceKindId };
+				readonly mapRestPattern?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
-				readonly splatPattern?: { readonly after?: WhitespaceKindId };
 			};
 		};
 	}
@@ -7690,11 +7736,11 @@ export namespace Subscripts {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7743,7 +7789,7 @@ export namespace TuplePatternElements {
 				readonly attribute?: { readonly after?: WhitespaceKindId };
 				readonly delimiter?: Delimiter.None | Delimiter.Trailing;
 				readonly listPattern?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7777,12 +7823,12 @@ export namespace TupleElements {
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
 				readonly listSplat?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedListSplat?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7853,11 +7899,11 @@ export namespace PrintArguments {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7895,11 +7941,11 @@ export namespace PrintChevronArguments {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -7990,11 +8036,11 @@ export namespace ExceptClauseExceptionList {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -8063,11 +8109,11 @@ export namespace ExpressionStatementTuple {
 				readonly lambdaExpression?: { readonly after?: WhitespaceKindId };
 				readonly list?: { readonly after?: WhitespaceKindId };
 				readonly listComprehension?: { readonly after?: WhitespaceKindId };
-				readonly listSplatPattern?: { readonly after?: WhitespaceKindId };
 				readonly namedExpression?: { readonly after?: WhitespaceKindId };
 				readonly none?: { readonly after?: WhitespaceKindId };
 				readonly notOperator?: { readonly after?: WhitespaceKindId };
 				readonly parenthesizedExpression?: { readonly after?: WhitespaceKindId };
+				readonly restPattern?: { readonly after?: WhitespaceKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
@@ -8973,20 +9019,6 @@ export interface KeywordPatternNs extends NodeNs<
 > {
 	readonly BuildArgs: KeywordPattern.BuildArgs;
 	readonly LooseArgs: KeywordPattern.LooseArgs;
-}
-export interface SplatPatternNs extends NodeNs<
-	SplatPattern,
-	LeafScalarMap,
-	LeafStringMap,
-	NamespaceMap,
-	SplatPattern.Bound,
-	never,
-	TSKindId.SplatPattern,
-	SplatPattern.Parsed,
-	never
-> {
-	readonly BuildArgs: SplatPattern.BuildArgs;
-	readonly LooseArgs: SplatPattern.LooseArgs;
 }
 export interface ClassPatternNs extends NodeNs<
 	ClassPattern,
@@ -10276,6 +10308,34 @@ export interface ExceptClauseExceptionNs extends NodeNs<
 	readonly BuildArgs: ExceptClauseException.BuildArgs;
 	readonly LooseArgs: ExceptClauseException.LooseArgs;
 }
+export interface SplatPatternListNs extends NodeNs<
+	SplatPatternList,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SplatPatternList.Bound,
+	'pattern',
+	TSKindId.SplatPatternList,
+	SplatPatternList.Parsed,
+	never
+> {
+	readonly BuildArgs: SplatPatternList.BuildArgs;
+	readonly LooseArgs: SplatPatternList.LooseArgs;
+}
+export interface SplatPatternDictionaryNs extends NodeNs<
+	SplatPatternDictionary,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	SplatPatternDictionary.Bound,
+	'pattern',
+	TSKindId.SplatPatternDictionary,
+	SplatPatternDictionary.Parsed,
+	never
+> {
+	readonly BuildArgs: SplatPatternDictionary.BuildArgs;
+	readonly LooseArgs: SplatPatternDictionary.LooseArgs;
+}
 export interface AssignmentEqNs extends NodeNs<
 	AssignmentEq,
 	LeafScalarMap,
@@ -10711,7 +10771,6 @@ export interface NamespaceMap {
 	[TSKindId.DictPattern]: DictPatternNs;
 	[TSKindId.KeyValuePattern]: KeyValuePatternNs;
 	[TSKindId.KeywordPattern]: KeywordPatternNs;
-	[TSKindId.SplatPattern]: SplatPatternNs;
 	[TSKindId.ClassPattern]: ClassPatternNs;
 	[TSKindId.ComplexPattern]: ComplexPatternNs;
 	[TSKindId.ParametersElements]: ParametersElementsNs;
@@ -10804,6 +10863,8 @@ export interface NamespaceMap {
 	[TSKindId.SimplePatternNegative]: SimplePatternNegativeNs;
 	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionListNs;
 	[TSKindId.ExceptClauseException]: ExceptClauseExceptionNs;
+	[TSKindId.SplatPatternList]: SplatPatternListNs;
+	[TSKindId.SplatPatternDictionary]: SplatPatternDictionaryNs;
 	[TSKindId.AssignmentEq]: AssignmentEqNs;
 	[TSKindId.AssignmentType]: AssignmentTypeNs;
 	[TSKindId.AssignmentTyped]: AssignmentTypedNs;
@@ -10915,7 +10976,6 @@ export interface BoundByKindId {
 	[TSKindId.DictPattern]: DictPattern.Bound;
 	[TSKindId.KeyValuePattern]: KeyValuePattern.Bound;
 	[TSKindId.KeywordPattern]: KeywordPattern.Bound;
-	[TSKindId.SplatPattern]: SplatPattern.Bound;
 	[TSKindId.ClassPattern]: ClassPattern.Bound;
 	[TSKindId.ComplexPattern]: ComplexPattern.Bound;
 	[TSKindId.ParametersElements]: ParametersElements.Bound;
@@ -11008,6 +11068,8 @@ export interface BoundByKindId {
 	[TSKindId.SimplePatternNegative]: SimplePatternNegative.Bound;
 	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionList.Bound;
 	[TSKindId.ExceptClauseException]: ExceptClauseException.Bound;
+	[TSKindId.SplatPatternList]: SplatPatternList.Bound;
+	[TSKindId.SplatPatternDictionary]: SplatPatternDictionary.Bound;
 	[TSKindId.AssignmentEq]: AssignmentEq.Bound;
 	[TSKindId.AssignmentType]: AssignmentType.Bound;
 	[TSKindId.AssignmentTyped]: AssignmentTyped.Bound;
@@ -11098,7 +11160,6 @@ export interface ParsedByKindId {
 	[TSKindId.DictPattern]: DictPattern.Parsed;
 	[TSKindId.KeyValuePattern]: KeyValuePattern.Parsed;
 	[TSKindId.KeywordPattern]: KeywordPattern.Parsed;
-	[TSKindId.SplatPattern]: SplatPattern.Parsed;
 	[TSKindId.ClassPattern]: ClassPattern.Parsed;
 	[TSKindId.ComplexPattern]: ComplexPattern.Parsed;
 	[TSKindId.ParametersElements]: ParametersElements.Parsed;
@@ -11191,6 +11252,8 @@ export interface ParsedByKindId {
 	[TSKindId.SimplePatternNegative]: SimplePatternNegative.Parsed;
 	[TSKindId.ExceptClauseExceptionList]: ExceptClauseExceptionList.Parsed;
 	[TSKindId.ExceptClauseException]: ExceptClauseException.Parsed;
+	[TSKindId.SplatPatternList]: SplatPatternList.Parsed;
+	[TSKindId.SplatPatternDictionary]: SplatPatternDictionary.Parsed;
 	[TSKindId.AssignmentEq]: AssignmentEq.Parsed;
 	[TSKindId.AssignmentType]: AssignmentType.Parsed;
 	[TSKindId.AssignmentTyped]: AssignmentTyped.Parsed;
@@ -11293,7 +11356,6 @@ export type FixedTextKindId =
 	| TSKindId.Pipe
 	| TSKindId.Lbrace
 	| TSKindId.Rbrace
-	| TSKindId.Underscore
 	| TSKindId.Dash
 	| TSKindId.Plus
 	| TSKindId.NotKeyword
@@ -11325,6 +11387,7 @@ export type FixedTextKindId =
 	| TSKindId.Bslash
 	| TSKindId.AwaitKeyword
 	| TSKindId.PrintKeyword
+	| TSKindId.Underscore
 	| TSKindId.Lt
 	| TSKindId.LtEq
 	| TSKindId.EqEq
@@ -11392,7 +11455,6 @@ export interface TypeKeyOf {
 	[TSKindId.DictPattern]: 'dictPattern';
 	[TSKindId.KeyValuePattern]: 'keyValuePattern';
 	[TSKindId.KeywordPattern]: 'keywordPattern';
-	[TSKindId.SplatPattern]: 'splatPattern';
 	[TSKindId.ClassPattern]: 'classPattern';
 	[TSKindId.ComplexPattern]: 'complexPattern';
 	[TSKindId.ParametersElements]: 'parametersElements';
@@ -11485,6 +11547,8 @@ export interface TypeKeyOf {
 	[TSKindId.SimplePatternNegative]: 'simplePatternNegative';
 	[TSKindId.ExceptClauseExceptionList]: 'exceptClauseExceptionList';
 	[TSKindId.ExceptClauseException]: 'exceptClauseException';
+	[TSKindId.SplatPatternList]: 'splatPatternList';
+	[TSKindId.SplatPatternDictionary]: 'splatPatternDictionary';
 	[TSKindId.AssignmentEq]: 'assignmentEq';
 	[TSKindId.AssignmentType]: 'assignmentType';
 	[TSKindId.AssignmentTyped]: 'assignmentTyped';
@@ -13018,7 +13082,7 @@ export namespace KeyValuePattern {
 	export type Kind = TSKindId.KeyValuePattern;
 }
 export namespace KeywordPattern {
-	export type Config = WidenSlots<ConfigFor<TSKindId.KeywordPattern>, { value: Admit<T.SimplePattern> }>;
+	export type Config = WidenSlots<ConfigFor<TSKindId.KeywordPattern>, { pattern: Admit<T.SimplePattern> }>;
 	export interface Bound extends BoundOf<T.KeywordPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.KeywordPattern['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -13037,35 +13101,11 @@ export namespace KeywordPattern {
 	}
 	export type Loose =
 		| LooseFor<TSKindId.KeywordPattern>
-		| WidenSlots<LooseConfigFor<TSKindId.KeywordPattern>, { value: Admit<T.SimplePattern> }>;
-	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.KeywordPattern>, { value: Admit<T.SimplePattern> }>;
-	export type BuildArgs = [config: WidenSlots<ConfigOf<T.KeywordPattern>, { value: Admit<T.SimplePattern> }>];
+		| WidenSlots<LooseConfigFor<TSKindId.KeywordPattern>, { pattern: Admit<T.SimplePattern> }>;
+	export type LooseConfig = WidenSlots<LooseConfigFor<TSKindId.KeywordPattern>, { pattern: Admit<T.SimplePattern> }>;
+	export type BuildArgs = [config: WidenSlots<ConfigOf<T.KeywordPattern>, { pattern: Admit<T.SimplePattern> }>];
 	export type LooseArgs = [config: T.KeywordPattern.Loose];
 	export type Kind = TSKindId.KeywordPattern;
-}
-export namespace SplatPattern {
-	export type Config = ConfigFor<TSKindId.SplatPattern>;
-	export interface Bound extends BoundOf<T.SplatPattern, BoundByKindId>, NodeMethodsOf, HoldsSource {
-		readonly $type: T.SplatPattern['$type'];
-		readonly $with: BoundWithNode<this, BoundByKindId>;
-	}
-	export interface Parsed extends ParsedOf<T.SplatPattern, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
-		readonly $type: T.SplatPattern['$type'];
-		readonly $with: WithNode<this, BoundByKindId>;
-		readonly $query: () => QueryFacet<
-			this,
-			ParsedByKindId,
-			PortableQueryIds<PortableReads>,
-			KindMembers,
-			FixedTextKindId
-		>;
-		readonly $snapshot: () => Snapshot<T.SplatPattern['$type']>;
-	}
-	export type Loose = LooseFor<TSKindId.SplatPattern>;
-	export type LooseConfig = LooseConfigFor<TSKindId.SplatPattern>;
-	export type BuildArgs = [config: ConfigOf<T.SplatPattern>];
-	export type LooseArgs = [config: T.SplatPattern.Loose];
-	export type Kind = TSKindId.SplatPattern;
 }
 export namespace ClassPattern {
 	export type Config = ConfigFor<TSKindId.ClassPattern>;
@@ -13090,14 +13130,12 @@ export namespace ClassPattern {
 	export type BuildArgs = [
 		config:
 			| ConfigOf<T.ClassPattern>
-			| (OmitEach<NonNullable<ConfigOf<T.ClassPattern>>, 'arguments'> & {
-					arguments: T.ListPatternCasePatterns.BuildArgs;
-			  })
+			| (OmitEach<NonNullable<ConfigOf<T.ClassPattern>>, 'fields'> & { fields: T.ListPatternCasePatterns.BuildArgs })
 	];
 	export type LooseArgs = [
 		config:
 			| T.ClassPattern.Loose
-			| (OmitEach<NonNullable<T.ClassPattern.Loose>, 'arguments'> & { arguments: T.ListPatternCasePatterns.LooseArgs })
+			| (OmitEach<NonNullable<T.ClassPattern.Loose>, 'fields'> & { fields: T.ListPatternCasePatterns.LooseArgs })
 	];
 	export type Kind = TSKindId.ClassPattern;
 }
@@ -16113,6 +16151,55 @@ export namespace ExceptClauseException {
 	export type BuildArgs = [value: Admit<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>];
 	export type LooseArgs = [value: T.ExceptClauseException.Loose];
 	export type Kind = TSKindId.ExceptClauseException;
+}
+export namespace SplatPatternList {
+	export type Config = ConfigFor<TSKindId.SplatPatternList>;
+	export interface Bound extends BoundOf<T.SplatPatternList, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.SplatPatternList['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.SplatPatternList, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.SplatPatternList['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.SplatPatternList['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.SplatPatternList>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SplatPatternList>;
+	export type BuildArgs = [value: Admit<T.Identifier | TSKindId.Underscore>];
+	export type LooseArgs = [value: T.SplatPatternList.Loose];
+	export type Kind = TSKindId.SplatPatternList;
+}
+export namespace SplatPatternDictionary {
+	export type Config = ConfigFor<TSKindId.SplatPatternDictionary>;
+	export interface Bound extends BoundOf<T.SplatPatternDictionary, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.SplatPatternDictionary['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed
+		extends ParsedOf<T.SplatPatternDictionary, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.SplatPatternDictionary['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.SplatPatternDictionary['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.SplatPatternDictionary>;
+	export type LooseConfig = LooseConfigFor<TSKindId.SplatPatternDictionary>;
+	export type BuildArgs = [value: Admit<T.Identifier | TSKindId.Underscore>];
+	export type LooseArgs = [value: T.SplatPatternDictionary.Loose];
+	export type Kind = TSKindId.SplatPatternDictionary;
 }
 export namespace AssignmentEq {
 	export type Config = ConfigFor<TSKindId.AssignmentEq>;

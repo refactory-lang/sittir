@@ -17424,7 +17424,7 @@
       }
     },
     "tuple_struct_pattern": {
-      "vocab": "pattern.tuple.struct",
+      "vocab": "pattern.struct",
       "read": [
         {
           "vocab": "declaration.parameter",
@@ -17436,7 +17436,7 @@
           "test": []
         },
         {
-          "vocab": "pattern.tuple.struct",
+          "vocab": "pattern.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -17456,13 +17456,13 @@
           ]
         },
         {
-          "name": "patterns",
+          "name": "fields",
           "route": "slot",
-          "slot": "patterns",
+          "slot": "fields",
           "path": [
             {
               "owner": "tuple_struct_pattern",
-              "slot": "patterns"
+              "slot": "fields"
             }
           ]
         }
@@ -20011,9 +20011,9 @@
       },
       {
         "depth": 3,
-        "paths": 106,
-        "kinds": 119,
-        "refinements": 80
+        "paths": 105,
+        "kinds": 118,
+        "refinements": 79
       },
       {
         "depth": 4,

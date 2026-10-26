@@ -7752,7 +7752,7 @@
           "members": [
             {
               "type": "FIELD",
-              "name": "patterns",
+              "name": "fields",
               "content": {
                 "type": "SYMBOL",
                 "name": "patterns",

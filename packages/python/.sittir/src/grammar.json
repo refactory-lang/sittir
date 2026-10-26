@@ -2553,7 +2553,7 @@
         },
         {
           "type": "FIELD",
-          "name": "value",
+          "name": "pattern",
           "content": {
             "type": "SYMBOL",
             "name": "_simple_pattern"
@@ -2565,60 +2565,42 @@
       ]
     },
     "splat_pattern": {
-      "type": "PREC",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "operator",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "*"
-                },
-                {
-                  "type": "STRING",
-                  "value": "**"
-                }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "splat_pattern_list",
+            "annotations": {
+              "variant": "list",
+              "variantOf": "splat_pattern"
             }
           },
-          {
-            "type": "FIELD",
-            "name": "name",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "identifier"
-                },
-                {
-                  "type": "STRING",
-                  "value": "_"
-                }
-              ]
-            },
-            "metadata": {
-              "fieldSource": "override"
+          "named": true,
+          "value": "rest_pattern"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "splat_pattern_dictionary",
+            "annotations": {
+              "variant": "dictionary",
+              "variantOf": "splat_pattern"
             }
-          }
-        ]
-      }
+          },
+          "named": true,
+          "value": "map_rest_pattern"
+        }
+      ]
     },
     "class_pattern": {
       "type": "SEQ",
       "members": [
         {
           "type": "FIELD",
-          "name": "name",
+          "name": "type",
           "content": {
             "type": "SYMBOL",
             "name": "dotted_name"
@@ -2633,7 +2615,7 @@
         },
         {
           "type": "FIELD",
-          "name": "arguments",
+          "name": "fields",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -2885,12 +2867,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "list_splat_pattern",
-          "annotations": {
-            "variant": "list_splat",
-            "variantOf": "parameter"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "list_splat_pattern",
+            "annotations": {
+              "variant": "list_splat",
+              "variantOf": "parameter"
+            }
+          },
+          "named": true,
+          "value": "rest_pattern"
         },
         {
           "type": "SYMBOL",
@@ -2917,12 +2904,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "dictionary_splat_pattern",
-          "annotations": {
-            "variant": "dictionary_splat",
-            "variantOf": "parameter"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "dictionary_splat_pattern",
+            "annotations": {
+              "variant": "dictionary_splat",
+              "variantOf": "parameter"
+            }
+          },
+          "named": true,
+          "value": "map_rest_pattern"
         }
       ]
     },
@@ -2962,12 +2954,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "list_splat_pattern",
-          "annotations": {
-            "variant": "list_splat",
-            "variantOf": "pattern"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "list_splat_pattern",
+            "annotations": {
+              "variant": "list_splat",
+              "variantOf": "pattern"
+            }
+          },
+          "named": true,
+          "value": "rest_pattern"
         },
         {
           "type": "SYMBOL",
@@ -3563,12 +3560,17 @@
           "type": "PREC_DYNAMIC",
           "value": -1,
           "content": {
-            "type": "SYMBOL",
-            "name": "list_splat_pattern",
-            "annotations": {
-              "variant": "list_splat",
-              "variantOf": "primary_expression"
-            }
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "list_splat_pattern",
+              "annotations": {
+                "variant": "list_splat",
+                "variantOf": "primary_expression"
+              }
+            },
+            "named": true,
+            "value": "rest_pattern"
           }
         }
       ]
@@ -4756,12 +4758,22 @@
                   "name": "identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "list_splat_pattern"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "list_splat_pattern"
+                  },
+                  "named": true,
+                  "value": "rest_pattern"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "dictionary_splat_pattern"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "dictionary_splat_pattern"
+                  },
+                  "named": true,
+                  "value": "map_rest_pattern"
                 }
               ]
             },
@@ -8632,6 +8644,84 @@
       "type": "STRING",
       "value": "="
     },
+    "splat_pattern_list": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "*",
+            "annotations": {
+              "variantOf": "splat_pattern"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "pattern",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "STRING",
+                  "value": "_"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          }
+        ],
+        "annotations": {
+          "hoisted": true
+        }
+      }
+    },
+    "splat_pattern_dictionary": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "**",
+            "annotations": {
+              "variantOf": "splat_pattern"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "pattern",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                },
+                {
+                  "type": "STRING",
+                  "value": "_"
+                }
+              ]
+            },
+            "metadata": {
+              "fieldSource": "override"
+            }
+          }
+        ],
+        "annotations": {
+          "hoisted": true
+        }
+      }
+    },
     "assignment_eq": {
       "type": "SEQ",
       "members": [
@@ -9678,6 +9768,7 @@
     "line_continuation",
     "_layout",
     "_statement",
+    "splat_pattern",
     "assignment",
     "with_clause",
     "_match_block",

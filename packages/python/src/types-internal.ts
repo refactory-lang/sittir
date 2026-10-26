@@ -194,6 +194,8 @@ export interface SubBuilderRowKind {
 	'simpleStatement.raise': TSKindId.RaiseStatement;
 	'simpleStatement.return': TSKindId.ReturnStatement;
 	'simpleStatement.typeAlias': TSKindId.TypeAliasStatement;
+	'splatPattern.dictionary': TSKindId.SplatPatternDictionary;
+	'splatPattern.list': TSKindId.SplatPatternList;
 	'suite.block': TSKindId.SuiteBlock;
 	'suite.empty': TSKindId.SuiteEmpty;
 	'suite.inline': TSKindId.SuiteInline;

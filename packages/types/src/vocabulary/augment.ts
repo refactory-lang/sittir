@@ -2522,27 +2522,18 @@ declare module './pattern.ts' {
 	namespace Pattern {
 		interface As<G extends GrammarContext<G>> extends matchExpressions.Pattern.As<G> {}
 		interface Assignment<G extends GrammarContext<G>> extends destructuring.Pattern.Assignment<G> {}
-		interface Case<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case<G> {}
-		namespace Case {
-			interface Class<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Class<G> {}
-			interface Complex<G extends GrammarContext<G>> extends complexNumbers.Pattern.Case.Complex<G> {}
-			interface Dictionary<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Dictionary<G> {}
-			interface Keyword<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Keyword<G> {}
-			interface List<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.List<G> {}
-			interface Splat<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Splat<G> {}
-			interface Tuple<G extends GrammarContext<G>> extends matchExpressions.Pattern.Case.Tuple<G> {}
+		interface Complex<G extends GrammarContext<G>> extends complexNumbers.Pattern.Complex<G> {}
+		namespace Complex {
+			interface Add<G extends GrammarContext<G>> extends complexNumbers.Pattern.Complex.Add<G> {}
+			interface Subtract<G extends GrammarContext<G>> extends complexNumbers.Pattern.Complex.Subtract<G> {}
 			type Any<G extends GrammarContext<G>> =
-				| V.Pattern.Case<G>
-				| V.Pattern.Case.Class<G>
-				| V.Pattern.Case.Complex<G>
-				| V.Pattern.Case.Dictionary<G>
-				| V.Pattern.Case.Keyword<G>
-				| V.Pattern.Case.List<G>
-				| V.Pattern.Case.Splat<G>
-				| V.Pattern.Case.Tuple<G>;
+				| V.Pattern.Complex<G>
+				| V.Pattern.Complex.Add<G>
+				| V.Pattern.Complex.Subtract<G>;
 		}
 		interface Generic<G extends GrammarContext<G>> extends parametricPolymorphism.Pattern.Generic<G> {}
 		interface List<G extends GrammarContext<G>> extends destructuring.Pattern.List<G> {}
+		interface Map<G extends GrammarContext<G>> extends matchExpressions.Pattern.Map<G> {}
 		interface Match<G extends GrammarContext<G>> extends matchExpressions.Pattern.Match<G> {}
 		interface Object<G extends GrammarContext<G>> extends destructuring.Pattern.Object<G> {}
 		namespace Object {
@@ -2587,24 +2578,19 @@ declare module './pattern.ts' {
 		interface Tuple<G extends GrammarContext<G>> extends destructuring.Pattern.Tuple<G> {}
 		namespace Tuple {
 			interface Bare<G extends GrammarContext<G>> extends destructuring.Pattern.Tuple.Bare<G> {}
-			interface Struct<G extends GrammarContext<G>> extends structs.Pattern.Tuple.Struct<G> {}
-			type Any<G extends GrammarContext<G>> = V.Pattern.Tuple<G> | V.Pattern.Tuple.Bare<G> | V.Pattern.Tuple.Struct<G>;
+			type Any<G extends GrammarContext<G>> = V.Pattern.Tuple<G> | V.Pattern.Tuple.Bare<G>;
 		}
 		interface Wildcard<G extends GrammarContext<G>> extends destructuring.Pattern.Wildcard<G> {}
 		type Any<G extends GrammarContext<G>> =
 			| V.Pattern<G>
 			| V.Pattern.As<G>
 			| V.Pattern.Assignment<G>
-			| V.Pattern.Case<G>
-			| V.Pattern.Case.Class<G>
-			| V.Pattern.Case.Complex<G>
-			| V.Pattern.Case.Dictionary<G>
-			| V.Pattern.Case.Keyword<G>
-			| V.Pattern.Case.List<G>
-			| V.Pattern.Case.Splat<G>
-			| V.Pattern.Case.Tuple<G>
+			| V.Pattern.Complex<G>
+			| V.Pattern.Complex.Add<G>
+			| V.Pattern.Complex.Subtract<G>
 			| V.Pattern.Generic<G>
 			| V.Pattern.List<G>
+			| V.Pattern.Map<G>
 			| V.Pattern.Match<G>
 			| V.Pattern.Mutable<G>
 			| V.Pattern.Object<G>
@@ -2623,7 +2609,6 @@ declare module './pattern.ts' {
 			| V.Pattern.Struct.Rest<G>
 			| V.Pattern.Tuple<G>
 			| V.Pattern.Tuple.Bare<G>
-			| V.Pattern.Tuple.Struct<G>
 			| V.Pattern.Wildcard<G>;
 	}
 }

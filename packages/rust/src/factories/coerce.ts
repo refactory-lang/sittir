@@ -7284,9 +7284,9 @@ export function resolveTupleStructPattern_type(
 	return _resolveOne<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(value, _K16, _K51);
 }
 
-export function resolveTupleStructPattern_patterns(
-	value: T.TupleStructPattern.LooseConfig['patterns']
-): Admit<T.TupleStructPattern['_patterns']> {
+export function resolveTupleStructPattern_fields(
+	value: T.TupleStructPattern.LooseConfig['fields']
+): Admit<T.TupleStructPattern['_fields']> {
 	return _resolveOneBranch<T.Patterns>(value, 'patterns', undefined, true);
 }
 
@@ -7301,7 +7301,7 @@ export function coerceToTupleStructPattern(
 	currentHandle()?.admit(TSKindId.TupleStructPattern, [input]);
 	return F.buildTupleStructPattern({
 		type: resolveTupleStructPattern_type(input.type),
-		patterns: resolveTupleStructPattern_patterns(input.patterns)
+		fields: resolveTupleStructPattern_fields(input.fields)
 	});
 }
 

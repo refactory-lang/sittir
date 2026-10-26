@@ -97,6 +97,19 @@ describe('portable is: python', async () => {
 		expect(at('literal.string.bytes')(b)).toBe(true);
 	});
 
+	it('reads a mapping pattern as pattern.map and a `**` rest as the map rest, never as a mapping pattern', () => {
+		const SOURCE = 'match v:\n    case {"k": v, **rest}:\n        pass\n    case [*xs, *_]:\n        pass\n';
+		const mapping = find(SOURCE, 'dict_pattern');
+		const mapRest = find(SOURCE, 'splat_pattern_dictionary');
+		const rest = find(SOURCE, 'splat_pattern_list');
+		expect(at('pattern.map')(mapping)).toBe(true);
+		expect(at('pattern.map')(mapRest)).toBe(false);
+		expect(at('pattern.rest.map')(mapRest)).toBe(true);
+		expect(at('pattern.rest')(mapRest)).toBe(true);
+		expect(at('pattern.rest')(rest)).toBe(true);
+		expect(at('pattern.rest.map')(rest)).toBe(false);
+	});
+
 	it('reads an except clause as the one catch kind, and its finally as finally', () => {
 		const SOURCE = 'try:\n    pass\nexcept E as e:\n    pass\nfinally:\n    pass\n';
 		const handler = find(SOURCE, 'except_clause');

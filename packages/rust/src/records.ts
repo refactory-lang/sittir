@@ -299,7 +299,7 @@ export const records = {
 	GenericPatternNode: { words: 12, name: { word: 2, width: 5 }, type_arguments: { word: 7, width: 5 } },
 	TuplePatternNode: { words: 7, elements: { word: 2, width: 5 } },
 	SlicePatternNode: { words: 7, elements: { word: 2, width: 5 } },
-	TupleStructPatternNode: { words: 12, type_: { word: 2, width: 5 }, patterns: { word: 7, width: 5 } },
+	TupleStructPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	StructPatternNode: { words: 12, type_: { word: 2, width: 5 }, fields: { word: 7, width: 5 } },
 	MutPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
 	RefPatternNode: { words: 7, pattern: { word: 2, width: 5 } },

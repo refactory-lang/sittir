@@ -4673,19 +4673,19 @@ export function wrapTupleStructPattern(data: T.TupleStructPattern, tree: TreeHan
 		type() {
 			return hydrateSlot<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>(this, '_type', tree);
 		},
-		patterns() {
-			return hydrateSlot<T.Patterns | undefined>(this, '_patterns', tree);
+		fields() {
+			return hydrateSlot<T.Patterns | undefined>(this, '_fields', tree);
 		},
 		$with: {
 			type: (v: NonNullable<T.TupleStructPattern['_type']>) =>
 				rebuilt(node, handle, () => wrapTupleStructPattern({ ...$edited(data), _type: v }, tree)),
-			patterns: (...args: unknown[]) =>
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: RAW.buildPatterns },
-						(v: NonNullable<T.TupleStructPattern['_patterns']>) =>
-							wrapTupleStructPattern({ ...$edited(data), _patterns: v }, tree)
+						(v: NonNullable<T.TupleStructPattern['_fields']>) =>
+							wrapTupleStructPattern({ ...$edited(data), _fields: v }, tree)
 					)
 				)
 		},

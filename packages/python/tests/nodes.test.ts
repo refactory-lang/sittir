@@ -971,7 +971,7 @@ describe('case_clause', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -1007,7 +1007,7 @@ describe('case_clause', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -1802,7 +1802,7 @@ describe('case_pattern', () => {
 				$text: 'test',
 				$named: true,
 				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-				_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+				_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 			}) as any
 		);
 		expect(node.$type).toBe(TSKindId.CasePattern);
@@ -1815,7 +1815,7 @@ describe('case_pattern', () => {
 				$text: 'test',
 				$named: true,
 				_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-				_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+				_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 			}) as any
 		);
 		const rendered = node.$render!();
@@ -1837,7 +1837,7 @@ describe('case_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			identifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
@@ -1849,7 +1849,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern builds the parent', () => {
 		const node = ir.casePattern.keywordPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+			pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -1864,23 +1864,30 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.classPattern builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.classPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: {
-				name: stampBuilt({
-					$type: TSKindId.DottedName,
-					$text: 'test',
-					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
-				}) as any
-			}
+			type: stampBuilt({
+				$type: TSKindId.DottedName,
+				$text: 'test',
+				$named: true,
+				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('keywordPattern.splatPattern builds the parent', () => {
-		const node = ir.casePattern.keywordPattern.splatPattern({
+	it('keywordPattern.list builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.list({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: { operator: '*', name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any }
+			pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('keywordPattern.dictionary builds the parent', () => {
+		const node = ir.casePattern.keywordPattern.dictionary({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -1899,7 +1906,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.caseListPattern builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.caseListPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({
+			pattern: stampBuilt({
 				$type: TSKindId.ListPatternCasePatterns,
 				$text: 'test',
 				$named: true,
@@ -1913,7 +1920,7 @@ describe('case_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -1926,7 +1933,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.caseTuplePattern builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.caseTuplePattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({
+			pattern: stampBuilt({
 				$type: TSKindId.ListPatternCasePatterns,
 				$text: 'test',
 				$named: true,
@@ -1940,7 +1947,7 @@ describe('case_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -1953,7 +1960,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.dictPattern builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.dictPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({
+			pattern: stampBuilt({
 				$type: TSKindId.DictPatternElements,
 				$text: 'test',
 				$named: true,
@@ -1972,7 +1979,7 @@ describe('case_pattern sub-factories', () => {
 								$text: 'test',
 								$named: true,
 								_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-								_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+								_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 							}) as any
 						}) as any
 					}) as any
@@ -1996,7 +2003,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.concatenatedString builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.concatenatedString({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: [
+			pattern: [
 				stampBuilt({
 					$type: TSKindId.String,
 					$text: 'test',
@@ -2038,7 +2045,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.hex builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.hex({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: 'a'
+			pattern: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2047,7 +2054,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.octal builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.octal({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: '1'
+			pattern: '1'
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2056,7 +2063,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.binary builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.binary({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: '1'
+			pattern: '1'
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2093,7 +2100,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.negative builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.negative({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any
+			pattern: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2113,7 +2120,7 @@ describe('case_pattern sub-factories', () => {
 	it('keywordPattern.dottedName builds the parent', () => {
 		const node = ir.casePattern.keywordPattern.dottedName({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			pattern: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 		});
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.KeywordPattern);
@@ -2129,7 +2136,7 @@ describe('case_pattern sub-factories', () => {
 	});
 	it('simplePattern.classPattern builds the parent', () => {
 		const node = ir.casePattern.simplePattern.classPattern({
-			name: stampBuilt({
+			type: stampBuilt({
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
@@ -2140,11 +2147,18 @@ describe('case_pattern sub-factories', () => {
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('simplePattern.splatPattern builds the parent', () => {
-		const node = ir.casePattern.simplePattern.splatPattern({
-			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
+	it('simplePattern.list builds the parent', () => {
+		const node = ir.casePattern.simplePattern.list(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.CasePattern);
+		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('simplePattern.dictionary builds the parent', () => {
+		const node = ir.casePattern.simplePattern.dictionary(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
 		expect(node.$type).toBe(TSKindId.CasePattern);
 		expect((node as any).content()?.$type).toBe(TSKindId.SimplePattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -2174,7 +2188,7 @@ describe('case_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -2200,7 +2214,7 @@ describe('case_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -2231,7 +2245,7 @@ describe('case_pattern sub-factories', () => {
 								$text: 'test',
 								$named: true,
 								_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-								_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+								_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 							}) as any
 						}) as any
 					}) as any
@@ -2366,7 +2380,7 @@ describe('case_as_pattern', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			identifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
@@ -2385,7 +2399,7 @@ describe('case_as_pattern', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			identifier: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
@@ -2439,7 +2453,7 @@ describe('key_value_pattern', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any
 		});
@@ -2458,7 +2472,7 @@ describe('key_value_pattern', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any
 		});
@@ -2479,10 +2493,10 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
-			name: stampBuilt({
+			type: stampBuilt({
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
@@ -2493,8 +2507,8 @@ describe('key_value_pattern sub-factories', () => {
 		expect((node as any).key()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('splatPattern builds the parent', () => {
-		const node = ir.keyValuePattern.splatPattern({
+	it('list builds the parent', () => {
+		const node = ir.keyValuePattern.list({
 			value: stampBuilt({
 				$type: TSKindId.CasePattern,
 				$text: 'test',
@@ -2504,11 +2518,30 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
-			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			key: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.KeyValuePattern);
+		expect((node as any).key()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dictionary builds the parent', () => {
+		const node = ir.keyValuePattern.dictionary({
+			value: stampBuilt({
+				$type: TSKindId.CasePattern,
+				$text: 'test',
+				$named: true,
+				_content: stampBuilt({
+					$type: TSKindId.KeywordPattern,
+					$text: 'test',
+					$named: true,
+					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+				}) as any
+			}) as any,
+			key: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeyValuePattern);
 		expect((node as any).key()).toBeDefined();
@@ -2525,7 +2558,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			left: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any,
@@ -2546,7 +2579,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: stampBuilt({
@@ -2563,7 +2596,7 @@ describe('key_value_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -2584,7 +2617,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: stampBuilt({
@@ -2601,7 +2634,7 @@ describe('key_value_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
@@ -2622,7 +2655,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: stampBuilt({
@@ -2644,7 +2677,7 @@ describe('key_value_pattern sub-factories', () => {
 								$text: 'test',
 								$named: true,
 								_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-								_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+								_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 							}) as any
 						}) as any
 					}) as any
@@ -2666,7 +2699,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			stringStart: stampBuilt({ $type: TSKindId.StringStart, $text: '"', $named: true }) as any,
@@ -2687,7 +2720,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: [
@@ -2716,7 +2749,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any
 		});
@@ -2736,7 +2769,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any
 		});
@@ -2756,7 +2789,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any
 		});
@@ -2776,7 +2809,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: 'a'
@@ -2796,7 +2829,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: '1'
@@ -2816,7 +2849,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: '1'
@@ -2836,7 +2869,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			integer: '1'
@@ -2856,7 +2889,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			fraction: '1'
@@ -2876,7 +2909,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			integer: '1',
@@ -2897,7 +2930,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any
@@ -2917,7 +2950,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			real: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any,
@@ -2939,7 +2972,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any,
 			key: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
@@ -2959,7 +2992,7 @@ describe('key_value_pattern sub-factories', () => {
 					$text: 'test',
 					$named: true,
 					_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-					_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+					_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 				}) as any
 			}) as any
 		});
@@ -2974,7 +3007,7 @@ describe('keyword_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.keywordPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+			pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
 		expectBuiltNode(node);
@@ -2982,7 +3015,7 @@ describe('keyword_pattern', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.keywordPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+			pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -2993,26 +3026,33 @@ describe('keyword_pattern sub-factories', () => {
 	it('classPattern builds the parent', () => {
 		const node = ir.keywordPattern.classPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: {
-				name: stampBuilt({
-					$type: TSKindId.DottedName,
-					$text: 'test',
-					$named: true,
-					_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
-				}) as any
-			}
+			type: stampBuilt({
+				$type: TSKindId.DottedName,
+				$text: 'test',
+				$named: true,
+				_names: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
-	it('splatPattern builds the parent', () => {
-		const node = ir.keywordPattern.splatPattern({
+	it('list builds the parent', () => {
+		const node = ir.keywordPattern.list({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: { operator: '*', name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any }
+			pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
+		expect(node.$render!().length).toBeGreaterThan(0);
+	});
+	it('dictionary builds the parent', () => {
+		const node = ir.keywordPattern.dictionary({
+			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
+			pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		});
+		expect(node.$type).toBe(TSKindId.KeywordPattern);
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('unionPattern builds the parent', () => {
@@ -3022,13 +3062,13 @@ describe('keyword_pattern sub-factories', () => {
 			right: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('caseListPattern builds the parent', () => {
 		const node = ir.keywordPattern.caseListPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({
+			pattern: stampBuilt({
 				$type: TSKindId.ListPatternCasePatterns,
 				$text: 'test',
 				$named: true,
@@ -3042,20 +3082,20 @@ describe('keyword_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('caseTuplePattern builds the parent', () => {
 		const node = ir.keywordPattern.caseTuplePattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({
+			pattern: stampBuilt({
 				$type: TSKindId.ListPatternCasePatterns,
 				$text: 'test',
 				$named: true,
@@ -3069,20 +3109,20 @@ describe('keyword_pattern sub-factories', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				]
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('dictPattern builds the parent', () => {
 		const node = ir.keywordPattern.dictPattern({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({
+			pattern: stampBuilt({
 				$type: TSKindId.DictPatternElements,
 				$text: 'test',
 				$named: true,
@@ -3101,7 +3141,7 @@ describe('keyword_pattern sub-factories', () => {
 								$text: 'test',
 								$named: true,
 								_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-								_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+								_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 							}) as any
 						}) as any
 					}) as any
@@ -3109,7 +3149,7 @@ describe('keyword_pattern sub-factories', () => {
 			}) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('string builds the parent', () => {
@@ -3119,13 +3159,13 @@ describe('keyword_pattern sub-factories', () => {
 			stringEnd: stampBuilt({ $type: TSKindId.StringEnd, $text: '"', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('concatenatedString builds the parent', () => {
 		const node = ir.keywordPattern.concatenatedString({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: [
+			pattern: [
 				stampBuilt({
 					$type: TSKindId.String,
 					$text: 'test',
@@ -3137,7 +3177,7 @@ describe('keyword_pattern sub-factories', () => {
 			]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('true builds the parent', () => {
@@ -3145,7 +3185,7 @@ describe('keyword_pattern sub-factories', () => {
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		const seated = (node as any).value();
+		const seated = (node as any).pattern();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.True);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -3154,7 +3194,7 @@ describe('keyword_pattern sub-factories', () => {
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		const seated = (node as any).value();
+		const seated = (node as any).pattern();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.False);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
@@ -3163,35 +3203,35 @@ describe('keyword_pattern sub-factories', () => {
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		const seated = (node as any).value();
+		const seated = (node as any).pattern();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.None);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('hex builds the parent', () => {
 		const node = ir.keywordPattern.hex({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: 'a'
+			pattern: 'a'
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('octal builds the parent', () => {
 		const node = ir.keywordPattern.octal({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: '1'
+			pattern: '1'
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('binary builds the parent', () => {
 		const node = ir.keywordPattern.binary({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: '1'
+			pattern: '1'
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('point builds the parent', () => {
@@ -3200,7 +3240,7 @@ describe('keyword_pattern sub-factories', () => {
 			integer: '1'
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('leadingPoint builds the parent', () => {
@@ -3209,7 +3249,7 @@ describe('keyword_pattern sub-factories', () => {
 			fraction: '1'
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('scientific builds the parent', () => {
@@ -3219,16 +3259,16 @@ describe('keyword_pattern sub-factories', () => {
 			exponent: '1'
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('negative builds the parent', () => {
 		const node = ir.keywordPattern.negative({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any
+			pattern: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('complexPattern builds the parent', () => {
@@ -3239,16 +3279,16 @@ describe('keyword_pattern sub-factories', () => {
 			imaginary: stampBuilt({ $type: TSKindId.IntegerDecimalLong, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('dottedName builds the parent', () => {
 		const node = ir.keywordPattern.dottedName({
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-			value: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
+			pattern: [stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any]
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		expect((node as any).value()).toBeDefined();
+		expect((node as any).pattern()).toBeDefined();
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('wildcardPattern builds the parent', () => {
@@ -3256,35 +3296,16 @@ describe('keyword_pattern sub-factories', () => {
 			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.KeywordPattern);
-		const seated = (node as any).value();
+		const seated = (node as any).pattern();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.WildcardPattern);
 		expect(node.$render!().length).toBeGreaterThan(0);
-	});
-});
-
-describe('splat_pattern', () => {
-	it('factory produces correct type', () => {
-		const node = ir.splatPattern({
-			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
-		expect(node.$type).toBe(TSKindId.SplatPattern);
-		expectBuiltNode(node);
-	});
-	it('render produces non-empty string', () => {
-		const node = ir.splatPattern({
-			operator: '*',
-			name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
-		});
-		const rendered = node.$render!();
-		expect(rendered.length).toBeGreaterThan(0);
 	});
 });
 
 describe('class_pattern', () => {
 	it('factory produces correct type', () => {
 		const node = ir.classPattern({
-			name: stampBuilt({
+			type: stampBuilt({
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
@@ -3296,7 +3317,7 @@ describe('class_pattern', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.classPattern({
-			name: stampBuilt({
+			type: stampBuilt({
 				$type: TSKindId.DottedName,
 				$text: 'test',
 				$named: true,
@@ -4891,7 +4912,7 @@ describe('case_patterns', () => {
 						$text: 'test',
 						$named: true,
 						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-						_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 					}) as any
 				}) as any
 			]
@@ -4911,7 +4932,7 @@ describe('case_patterns', () => {
 						$text: 'test',
 						$named: true,
 						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-						_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 					}) as any
 				}) as any
 			]
@@ -5009,7 +5030,7 @@ describe('list_pattern_case_patterns', () => {
 						$text: 'test',
 						$named: true,
 						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-						_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 					}) as any
 				}) as any
 			]
@@ -5029,7 +5050,7 @@ describe('list_pattern_case_patterns', () => {
 						$text: 'test',
 						$named: true,
 						_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-						_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+						_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 					}) as any
 				}) as any
 			]
@@ -5056,7 +5077,7 @@ describe('dict_pattern_elements', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				}) as any
@@ -5082,7 +5103,7 @@ describe('dict_pattern_elements', () => {
 							$text: 'test',
 							$named: true,
 							_name: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any,
-							_value: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
+							_pattern: stampBuilt({ $type: TSKindId.True, $text: 'True', $named: true }) as any
 						}) as any
 					}) as any
 				}) as any
@@ -5534,6 +5555,38 @@ describe('escape_sequence_named', () => {
 		const node = ir.escapeSequenceNamed('N{a}');
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('splat_pattern_list', () => {
+	it('factory produces correct type', () => {
+		const node = ir.splatPatternList(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		expect(node.$type).toBe(TSKindId.SplatPatternList);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.splatPatternList(stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+	});
+});
+
+describe('splat_pattern_dictionary', () => {
+	it('factory produces correct type', () => {
+		const node = ir.splatPatternDictionary(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		expect(node.$type).toBe(TSKindId.SplatPatternDictionary);
+		expectBuiltNode(node);
+	});
+	it('render produces non-empty string', () => {
+		const node = ir.splatPatternDictionary(
+			stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+		);
+		const rendered = node.$render!();
+		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
 	});
 });
 

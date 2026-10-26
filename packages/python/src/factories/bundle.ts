@@ -115,7 +115,6 @@ export const keywordPattern = bundle(F.buildKeywordPattern, C.coerceToKeywordPat
 	key: 'keywordPattern',
 	max: 1
 });
-export const splatPattern = bundle(F.buildSplatPattern, C.coerceToSplatPattern, { key: 'splatPattern', max: 1 });
 export const classPattern = bundle(F.buildClassPattern, C.coerceToClassPattern, { key: 'classPattern', max: 1 });
 export const complexPattern = bundle(F.buildComplexPattern, C.coerceToComplexPattern, {
 	key: 'complexPattern',
@@ -263,6 +262,14 @@ export const floatLeadingPoint = bundle(F.buildFloatLeadingPoint, C.coerceToFloa
 export const floatScientific = bundle(F.buildFloatScientific, C.coerceToFloatScientific, {
 	key: 'floatScientific',
 	max: 2
+});
+export const splatPatternList = bundle(F.buildSplatPatternList, C.coerceToSplatPatternList, {
+	key: 'splatPatternList',
+	max: 1
+});
+export const splatPatternDictionary = bundle(F.buildSplatPatternDictionary, C.coerceToSplatPatternDictionary, {
+	key: 'splatPatternDictionary',
+	max: 1
 });
 export const assignmentEq = bundle(F.buildAssignmentEq, C.coerceToAssignmentEq, { key: 'assignmentEq', max: 1 });
 export const assignmentType = bundle(F.buildAssignmentType, C.coerceToAssignmentType, {

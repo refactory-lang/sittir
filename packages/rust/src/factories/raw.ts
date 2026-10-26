@@ -6038,34 +6038,34 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 
 export function buildTupleStructPattern<
 	TypeSlot extends T.TupleStructPattern.Config['type'],
-	PatternsSlot extends T.TupleStructPattern.Config['patterns']
+	FieldsSlot extends T.TupleStructPattern.Config['fields']
 >(
-	config: RefusingConfig<T.TupleStructPattern.Config, { type: TypeSlot; patterns: PatternsSlot }>
+	config: RefusingConfig<T.TupleStructPattern.Config, { type: TypeSlot; fields: FieldsSlot }>
 ): T.TupleStructPattern.Bound;
 export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.TupleStructPattern.Bound {
 	currentHandle()?.admit(TSKindId.TupleStructPattern, [config]);
 	const _type = config.type;
-	const _patterns = config.patterns;
+	const _fields = config.fields;
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.TupleStructPattern as const,
 		$named: true as const,
 		_type,
-		_patterns,
+		_fields,
 		$with: {
 			type: (value: Admit<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>) =>
 				rebuilt(node, handle, () => buildTupleStructPattern({ ...config, type: value })),
-			patterns: (...args: unknown[]) =>
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
-						(value?: Admit<T.Patterns>) => buildTupleStructPattern({ ...config, patterns: value })
+						(value?: Admit<T.Patterns>) => buildTupleStructPattern({ ...config, fields: value })
 					)
 				)
 		},
 		type: () => hydrateStoredSlot(node, '_type'),
-		patterns: () => hydrateStoredSlot(node, '_patterns'),
+		fields: () => hydrateStoredSlot(node, '_fields'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: () => nodeJSON(node, jsonFacts),

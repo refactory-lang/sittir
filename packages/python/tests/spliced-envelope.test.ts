@@ -64,8 +64,8 @@ describe('a slot that splices a hidden rule admits that rule\'s envelope and sto
 			expect(py.is.simplePatternNegative(pair.key())).toBe(true);
 		}
 		const k = () => py.build.identifier('k');
-		for (const keyword of [py.build.keywordPattern.strict({ name: k(), value: negativeOne() }), py.build.keywordPattern({ name: k(), value: negativeOne() })]) {
-			expect(py.is.simplePatternNegative(keyword.value())).toBe(true);
+		for (const keyword of [py.build.keywordPattern.strict({ name: k(), pattern: negativeOne() }), py.build.keywordPattern({ name: k(), pattern: negativeOne() })]) {
+			expect(py.is.simplePatternNegative(keyword.pattern())).toBe(true);
 		}
 	});
 

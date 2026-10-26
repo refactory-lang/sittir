@@ -695,11 +695,11 @@ export interface PortableIds {
 		| TSKindId.FieldPatternNamed
 		| TSKindId.FieldPatternShorthand
 		| TSKindId.RemainingFieldPattern
-		| TSKindId.StructPattern;
+		| TSKindId.StructPattern
+		| TSKindId.TupleStructPattern;
 	'pattern.struct.field': TSKindId.FieldPattern | TSKindId.FieldPatternNamed | TSKindId.FieldPatternShorthand;
 	'pattern.struct.rest': TSKindId.RemainingFieldPattern;
-	'pattern.tuple': TSKindId.TuplePattern | TSKindId.TupleStructPattern;
-	'pattern.tuple.struct': TSKindId.TupleStructPattern;
+	'pattern.tuple': TSKindId.TuplePattern;
 	'pattern.wildcard': TSKindId.WildcardPattern;
 	statement:
 		| TSKindId.Block
@@ -1522,8 +1522,7 @@ export interface PortableKindsAt {
 	};
 	'pattern.struct.field': { readonly $path: 'pattern.struct.field' };
 	'pattern.struct.rest': { readonly $path: 'pattern.struct.rest' };
-	'pattern.tuple': { readonly $path: 'pattern.tuple'; readonly struct: PortableKindsAt['pattern.tuple.struct'] };
-	'pattern.tuple.struct': { readonly $path: 'pattern.tuple.struct' };
+	'pattern.tuple': { readonly $path: 'pattern.tuple' };
 	'pattern.wildcard': { readonly $path: 'pattern.wildcard' };
 	statement: {
 		readonly $path: 'statement';
@@ -2596,10 +2595,7 @@ export interface PortableIsAt {
 	};
 	'pattern.struct.field': PortableGuard<PortableIds['pattern.struct.field'], RustNode, TSKindId> & {};
 	'pattern.struct.rest': PortableGuard<PortableIds['pattern.struct.rest'], RustNode, TSKindId> & {};
-	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId> & {
-		readonly struct: PortableIsAt['pattern.tuple.struct'];
-	};
-	'pattern.tuple.struct': PortableGuard<PortableIds['pattern.tuple.struct'], RustNode, TSKindId> & {};
+	'pattern.tuple': PortableGuard<PortableIds['pattern.tuple'], RustNode, TSKindId> & {};
 	'pattern.wildcard': PortableGuard<PortableIds['pattern.wildcard'], RustNode, TSKindId> & {};
 	statement: PortableGuard<PortableIds['statement'], RustNode, TSKindId> & {
 		readonly block: PortableIsAt['statement.block'];
@@ -3649,7 +3645,8 @@ const table: PortableTable = {
 				TSKindId.FieldPatternNamed,
 				TSKindId.FieldPatternShorthand,
 				TSKindId.RemainingFieldPattern,
-				TSKindId.StructPattern
+				TSKindId.StructPattern,
+				TSKindId.TupleStructPattern
 			],
 			exact: false
 		},
@@ -3658,8 +3655,7 @@ const table: PortableTable = {
 			exact: true
 		},
 		'pattern.struct.rest': { ids: [TSKindId.RemainingFieldPattern], exact: false },
-		'pattern.tuple': { ids: [TSKindId.TuplePattern, TSKindId.TupleStructPattern], exact: false },
-		'pattern.tuple.struct': { ids: [TSKindId.TupleStructPattern], exact: false },
+		'pattern.tuple': { ids: [TSKindId.TuplePattern], exact: false },
 		'pattern.wildcard': { ids: [TSKindId.WildcardPattern], exact: false },
 		statement: {
 			ids: [
@@ -5759,7 +5755,7 @@ const table: PortableTable = {
 		],
 		[TSKindId.TupleStructPattern]: [
 			{ path: 'declaration.parameter', within: [TSKindId.ClosureParameters], test: [] },
-			{ path: 'pattern.tuple.struct', within: [], test: [] }
+			{ path: 'pattern.struct', within: [], test: [] }
 		],
 		[TSKindId.TupleType]: [{ path: 'type.tuple', within: [], test: [] }],
 		[TSKindId.TyKeyword]: [{ path: 'element.macro.fragment', within: [], test: [] }],

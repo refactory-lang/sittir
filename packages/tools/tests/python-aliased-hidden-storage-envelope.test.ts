@@ -58,7 +58,7 @@ describe('a case pattern over aliased hidden storage', () => {
 	it('builds the same envelope the reader reads', () => {
 		const built = py.build.casePattern.strict(
 			py.build.simplePattern.strict(
-				py.build.classPattern.strict({ name: py.build.dottedName.strict(py.build.identifier('a'), py.build.identifier('test')) })
+				py.build.classPattern.strict({ type: py.build.dottedName.strict(py.build.identifier('a'), py.build.identifier('test')) })
 			)
 		);
 		expect(py.render(built).toString()).toBe('a.test()');

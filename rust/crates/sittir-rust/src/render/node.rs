@@ -23376,9 +23376,9 @@ pub struct TupleStructPatternNode {
     #[wire(key = "_type")]
     #[slot(field = field::TYPE, word = 2, width = 5)]
     pub type_: ::sittir_core::SlotValue<Box<TupleStructPatternTypeNodeSlot>>,
-    #[wire(key = "_patterns")]
-    #[slot(field = field::PATTERNS, word = 7, width = 5)]
-    pub patterns: Option<::sittir_core::SlotValue<PatternsNode>>,
+    #[wire(key = "_fields")]
+    #[slot(field = field::FIELDS, word = 7, width = 5)]
+    pub fields: Option<::sittir_core::SlotValue<PatternsNode>>,
 }
 
 impl ::sittir_core::view::KindOf for TupleStructPatternNode {
@@ -23404,7 +23404,7 @@ impl ::sittir_core::prepare::Prepare for TupleStructPatternNode {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
         self.type_.prepare(ctx)?;
-        self.patterns.prepare(ctx)?;
+        self.fields.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -40268,14 +40268,14 @@ fn render_slice_pattern(node: &SlicePatternNode, w: &mut dyn ::sittir_core::rend
 }
 
 fn render_tuple_struct_pattern(node: &TupleStructPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let patterns = View::new(&node.patterns, "{}");
+    let fields = View::new(&node.fields, "{}");
     let type_ = &node.type_;
     w.edge(::sittir_core::types::KindId(318), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_type", ::sittir_core::types::ItemIndex(0), w, |w| type_.render(w))?;
     w.site_at(options::SITE_TUPLE_STRUCT_PATTERN_LPAREN_BEFORE);
     w.text("(")?;
     w.site_at(options::SITE_TUPLE_STRUCT_PATTERN_LPAREN_AFTER);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_patterns", ::sittir_core::types::ItemIndex(0), w, |w| patterns.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_fields", ::sittir_core::types::ItemIndex(0), w, |w| fields.render(w))?;
     w.site_at(options::SITE_TUPLE_STRUCT_PATTERN_RPAREN_BEFORE);
     w.text(")")?;
     w.edge(::sittir_core::types::KindId(318), ::sittir_core::options::Side::After, node.layout.edges().after);

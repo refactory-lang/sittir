@@ -59,6 +59,8 @@ export const withClause: typeof F.withClause = F.withClause;
 
 export const suite: typeof F.suite = F.suite;
 
+export const splatPattern: typeof F.splatPattern = F.splatPattern;
+
 export const parameter: typeof F.parameter = F.parameter;
 
 export const pattern: typeof F.pattern = F.pattern;
@@ -133,7 +135,6 @@ export const ir: {
 	readonly dictPattern: typeof F.dictPattern;
 	readonly keyValuePattern: typeof F.keyValuePattern;
 	readonly keywordPattern: typeof F.keywordPattern;
-	readonly splatPattern: typeof F.splatPattern;
 	readonly classPattern: typeof F.classPattern;
 	readonly complexPattern: typeof F.complexPattern;
 	readonly parametersElements: typeof F.parametersElements;
@@ -213,6 +214,8 @@ export const ir: {
 	readonly floatPoint: typeof F.floatPoint;
 	readonly floatLeadingPoint: typeof F.floatLeadingPoint;
 	readonly floatScientific: typeof F.floatScientific;
+	readonly splatPatternList: typeof F.splatPatternList;
+	readonly splatPatternDictionary: typeof F.splatPatternDictionary;
 	readonly assignmentEq: typeof F.assignmentEq;
 	readonly assignmentType: typeof F.assignmentType;
 	readonly assignmentTyped: typeof F.assignmentTyped;
@@ -236,6 +239,7 @@ export const ir: {
 	readonly matchBlock: typeof F.matchBlock;
 	readonly withClause: typeof F.withClause;
 	readonly suite: typeof F.suite;
+	readonly splatPattern: typeof F.splatPattern;
 	readonly parameter: typeof F.parameter;
 	readonly pattern: typeof F.pattern;
 	readonly assignment: typeof F.assignment;
@@ -332,7 +336,6 @@ export const ir: {
 	dictPattern: F.dictPattern,
 	keyValuePattern: F.keyValuePattern,
 	keywordPattern: F.keywordPattern,
-	splatPattern: F.splatPattern,
 	classPattern: F.classPattern,
 	complexPattern: F.complexPattern,
 	parametersElements: F.parametersElements,
@@ -412,6 +415,8 @@ export const ir: {
 	floatPoint: F.floatPoint,
 	floatLeadingPoint: F.floatLeadingPoint,
 	floatScientific: F.floatScientific,
+	splatPatternList: F.splatPatternList,
+	splatPatternDictionary: F.splatPatternDictionary,
 	assignmentEq: F.assignmentEq,
 	assignmentType: F.assignmentType,
 	assignmentTyped: F.assignmentTyped,
@@ -435,6 +440,7 @@ export const ir: {
 	matchBlock: F.matchBlock,
 	withClause: F.withClause,
 	suite: F.suite,
+	splatPattern: F.splatPattern,
 	parameter: F.parameter,
 	pattern: F.pattern,
 	assignment: F.assignment,

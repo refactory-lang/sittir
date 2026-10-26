@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "e799d30e9ac531e7786a191e208f3fdbf49c77af194910e35852c9afebff21ca";
+export const hash = "90637fa01e974b35d3fa04f161ccac45b0aba61bddf67d7f040526096755c4a4";
 
 export const renames = {
 	source_file: "file",
@@ -83,7 +83,6 @@ export const renames = {
 	try_block: "try_block_expression",
 	gen_block: "generator_block_expression",
 	generic_function: "instantiation_expression",
-	tuple_struct_pattern: "struct_tuple_pattern",
 	field_pattern: "field_struct_pattern",
 	remaining_field_pattern: "rest_struct_pattern",
 	slice_pattern: "list_pattern",
@@ -165,7 +164,7 @@ export default grammar(
 			struct_pattern: { "0/0/1": alias("qualified_identifier") },
 			try_expression: { "0": field("argument") },
 			tuple_expression: { "2": field("elements") },
-			tuple_struct_pattern: [{ "2/0": field("patterns") }, { "0/0/1": alias("qualified_identifier") }],
+			tuple_struct_pattern: [{ "2/0": field("fields") }, { "0/0/1": alias("qualified_identifier") }],
 			tuple_type: { "1": field("types") },
 			type_cast_expression: { "0": field("expression") },
 			type_item: { "6": field("value") },

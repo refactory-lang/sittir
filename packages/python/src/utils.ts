@@ -26,10 +26,10 @@ export const triviaFacts = Object.freeze({
 	innerKinds: INNER_SITES,
 	rebuildWrappers: new Set<number>([
 		90, 91, 92, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270,
-		281, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 303, 341
+		281, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 305, 343
 	]),
 	listKinds: new Set<number>([
-		136, 181, 193, 194, 218, 243, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 271, 272, 276, 277, 290, 291, 344
+		136, 181, 193, 194, 218, 243, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 271, 272, 276, 277, 292, 293, 346
 	]),
 	layout: new Set<number>([106, 107, 116, 117, 118, 123, 124, 125, 126, 127]),
 	innerRegions: new Map<number, readonly string[]>([
@@ -44,9 +44,9 @@ export const triviaFacts = Object.freeze({
 		[236, ['_elements']],
 		[274, ['_elements']],
 		[275, ['_elements']],
-		[293, ['_alternative']]
+		[295, ['_alternative']]
 	]),
-	namedUnits: new Set<number>([64, 70, 71, 72, 107, 115, 116, 117, 118, 138, 148, 149, 150, 253, 258, 259, 280]),
+	namedUnits: new Set<number>([63, 69, 70, 71, 107, 115, 116, 117, 118, 138, 148, 149, 150, 253, 258, 259, 280]),
 	whitespace: Object.freeze({
 		run: /^(?:(?:(?:[\s\f\uFEFF\u2060\u200B]|\r?\n))+)$/u,
 		kindIdByText: Object.freeze({ '': 123, ' ': 124, '\t': 125, '\n': 116, '\n\n': 126, '\n\n\n': 127 })
@@ -54,7 +54,7 @@ export const triviaFacts = Object.freeze({
 } satisfies TriviaFacts<TSKindId>);
 
 export const querySlots: QuerySlots = Object.freeze({
-	73: [['content', 0, undefined, '_content']],
+	72: [['content', 0, undefined, '_content']],
 	90: [
 		['prefix', 0, undefined, '_prefix'],
 		['content', 1, undefined, '_content']
@@ -234,15 +234,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	189: [
 		['name', 0, undefined, '_name'],
-		['value', 1, undefined, '_value']
-	],
-	190: [
-		['operator', 0, undefined, '_operator'],
-		['name', 1, undefined, '_name']
+		['pattern', 1, undefined, '_pattern']
 	],
 	191: [
-		['name', 0, undefined, '_name'],
-		['arguments', 1, undefined, '_arguments']
+		['type', 0, undefined, '_type'],
+		['fields', 1, undefined, '_fields']
 	],
 	192: [
 		['sign', 0, '-', '_sign'],
@@ -433,53 +429,55 @@ export const querySlots: QuerySlots = Object.freeze({
 	284: [['value', 0, undefined, '_value']],
 	285: [['values', 0, undefined, '_value']],
 	286: [['content', 0, undefined, '_content']],
-	287: [
+	287: [['pattern', 0, undefined, '_pattern']],
+	288: [['pattern', 0, undefined, '_pattern']],
+	289: [
 		['name', 0, undefined, '_name'],
 		['value', 1, undefined, '_value']
 	],
-	288: [
+	290: [
 		['name', 0, undefined, '_name'],
 		['type', 1, undefined, '_type']
 	],
-	289: [
+	291: [
 		['name', 0, undefined, '_name'],
 		['type', 1, undefined, '_type'],
 		['value', 2, undefined, '_value']
 	],
-	290: [['items', 0, undefined, '_item']],
-	291: [['items', 0, undefined, '_items']],
-	292: [['items', 0, undefined, '_items']],
-	293: [['alternatives', 0, undefined, '_alternative']],
-	294: [['newline', 0, undefined, '_newline']],
-	295: [['elements', 0, undefined, '_elements']],
-	296: [['block', 0, undefined, '_block']],
-	297: [['newline', 0, undefined, '_newline']],
-	298: [
+	292: [['items', 0, undefined, '_item']],
+	293: [['items', 0, undefined, '_items']],
+	294: [['items', 0, undefined, '_items']],
+	295: [['alternatives', 0, undefined, '_alternative']],
+	296: [['newline', 0, undefined, '_newline']],
+	297: [['elements', 0, undefined, '_elements']],
+	298: [['block', 0, undefined, '_block']],
+	299: [['newline', 0, undefined, '_newline']],
+	300: [
 		['operators', 0, undefined, '_operators'],
 		['primaryExpression', 1, undefined, '_primary_expression']
 	],
-	299: [['expression', 0, undefined, '_expression']],
-	300: [
+	301: [['expression', 0, undefined, '_expression']],
+	302: [
 		['async', 0, 'async', '_async'],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['parameters', 2, undefined, '_parameters'],
 		['returnType', 3, undefined, '_return_type'],
 		['body', 4, undefined, '_body']
 	],
-	302: [['statements', 0, undefined, '_statements']],
-	303: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
-	304: [
+	304: [['statements', 0, undefined, '_statements']],
+	305: [['blockClassDeclaration', 0, undefined, '_block_class_declaration']],
+	306: [
 		['decorators', 0, undefined, '_decorator'],
 		['definition', 1, undefined, '_definition']
 	],
-	341: [['content', 0, undefined, '_content']],
-	342: [
+	343: [['content', 0, undefined, '_content']],
+	344: [
 		['expression', 0, undefined, '_expression'],
 		['debug', 1, '=', '_debug'],
 		['typeConversion', 2, undefined, '_type_conversion'],
 		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
-	343: [
+	345: [
 		['async', 0, 'async', '_async'],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
@@ -487,7 +485,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['returnType', 4, undefined, '_return_type'],
 		['body', 5, undefined, '_body']
 	],
-	344: [['names', 0, undefined, '_name']]
+	346: [['names', 0, undefined, '_name']]
 });
 
 export const jsonFacts: NodeJSONFacts = Object.freeze({
@@ -497,14 +495,14 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 	layout: triviaFacts.layout,
 	spread: new Set<number>([
 		128, 136, 141, 170, 171, 180, 181, 182, 193, 194, 218, 243, 247, 249, 254, 260, 261, 262, 263, 264, 265, 266, 267,
-		268, 269, 271, 272, 276, 277, 282, 285, 290, 291, 293, 302, 344
+		268, 269, 271, 272, 276, 277, 282, 285, 292, 293, 295, 304, 346
 	]),
-	leaves: new Set<number>([1, 66, 89, 93, 94, 95, 106, 119, 120, 121, 122, 132]),
+	leaves: new Set<number>([1, 65, 88, 93, 94, 95, 106, 119, 120, 121, 122, 132]),
 	textEnvelopes: new Map<number, number>([]),
 	units: new Set<number>([
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33,
 		34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
-		63, 64, 65, 67, 68, 69, 70, 71, 72, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 107, 108, 109, 110, 111,
+		63, 64, 66, 67, 68, 69, 70, 71, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 89, 107, 108, 109, 110, 111,
 		112, 113, 114, 115, 116, 117, 118, 123, 124, 125, 126, 127, 138, 148, 149, 150, 211, 212, 253, 258, 259, 280
 	]),
 	blank: 0,
@@ -520,7 +518,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 });
 
 export const structure: StructureTable = Object.freeze({
-	73: { kind: 'comment', required: [['_content', 'content']] },
+	72: { kind: 'comment', required: [['_content', 'content']] },
 	90: {
 		kind: 'integer_hex',
 		required: [['_content', 'content']],
@@ -586,7 +584,7 @@ export const structure: StructureTable = Object.freeze({
 	131: {
 		kind: 'import_statement',
 		required: [['_names', 'names']],
-		nodeOnly: [['_names', 'ImportStatement.names', 'a built Names', [344]]]
+		nodeOnly: [['_names', 'ImportStatement.names', 'a built Names', [346]]]
 	},
 	133: {
 		kind: 'relative_import',
@@ -660,7 +658,7 @@ export const structure: StructureTable = Object.freeze({
 				'_content',
 				'ExpressionStatement.content',
 				'a built Expression / ExpressionStatementTuple / Assignment / AugmentedAssignment / Yield',
-				[205, 216, 217, 220, 290]
+				[205, 216, 217, 220, 292]
 			]
 		]
 	},
@@ -1031,36 +1029,26 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'keyword_pattern',
 		required: [
 			['_name', 'name'],
-			['_value', 'value']
+			['_pattern', 'pattern']
 		],
 		nodeOnly: [
 			['_name', 'KeywordPattern.name', 'buildIdentifier(…)', [1]],
 			[
-				'_value',
-				'KeywordPattern.value',
+				'_pattern',
+				'KeywordPattern.pattern',
 				'a built ClassPattern / SplatPattern / UnionPattern / CaseListPattern / CaseTuplePattern / DictPattern / String / ConcatenatedString / Integer / Float / SimplePatternNegative / ComplexPattern / DottedName'
 			]
 		],
-		config: ['name', 'value']
-	},
-	190: {
-		kind: 'splat_pattern',
-		required: [
-			['_operator', 'operator'],
-			['_name', 'name']
-		],
-		nodeOnly: [['_name', 'SplatPattern.name', 'buildIdentifier(…)']],
-		kindIds: [['_operator', 'SplatPattern.operator', [8, 35]]],
-		config: ['operator', 'name']
+		config: ['name', 'pattern']
 	},
 	191: {
 		kind: 'class_pattern',
-		required: [['_name', 'name']],
+		required: [['_type', 'type']],
 		nodeOnly: [
-			['_name', 'ClassPattern.name', 'a built DottedName', [182]],
-			['_arguments', 'ClassPattern.arguments', 'a built ListPatternCasePatterns', [266]]
+			['_type', 'ClassPattern.type', 'a built DottedName', [182]],
+			['_fields', 'ClassPattern.fields', 'a built ListPatternCasePatterns', [266]]
 		],
-		config: ['name', 'arguments']
+		config: ['type', 'fields']
 	},
 	192: {
 		kind: 'complex_pattern',
@@ -1074,7 +1062,7 @@ export const structure: StructureTable = Object.freeze({
 			['_imaginary', 'ComplexPattern.imaginary', 'a built Integer / Float', [255, 256]]
 		],
 		booleans: [['_sign', 'ComplexPattern.sign']],
-		kindIds: [['_operator', 'ComplexPattern.operator', [49, 50]]],
+		kindIds: [['_operator', 'ComplexPattern.operator', [48, 49]]],
 		config: ['sign', 'real', 'operator', 'imaginary']
 	},
 	193: {
@@ -1138,7 +1126,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		nodeOnly: [
 			['_expression', 'AsPattern.expression', 'a built Expression', [205]],
-			['_alias', 'AsPattern.alias', 'a built AsPatternTarget', [341]]
+			['_alias', 'AsPattern.alias', 'a built AsPatternTarget', [343]]
 		],
 		config: ['expression', 'alias']
 	},
@@ -1158,7 +1146,7 @@ export const structure: StructureTable = Object.freeze({
 			['_left', 'BooleanOperator.left', 'a built Expression', [205]],
 			['_right', 'BooleanOperator.right', 'a built Expression', [205]]
 		],
-		kindIds: [['_operator', 'BooleanOperator.operator', [52, 53]]],
+		kindIds: [['_operator', 'BooleanOperator.operator', [51, 52]]],
 		config: ['left', 'operator', 'right']
 	},
 	209: {
@@ -1172,7 +1160,7 @@ export const structure: StructureTable = Object.freeze({
 			['_left', 'BinaryOperator.left', 'a built PrimaryExpression', [206]],
 			['_right', 'BinaryOperator.right', 'a built PrimaryExpression', [206]]
 		],
-		kindIds: [['_operator', 'BinaryOperator.operator', [8, 9, 35, 44, 45, 49, 50, 54, 55, 56, 57, 58, 59]]],
+		kindIds: [['_operator', 'BinaryOperator.operator', [8, 9, 35, 44, 45, 48, 49, 53, 54, 55, 56, 57, 58]]],
 		config: ['left', 'operator', 'right']
 	},
 	210: {
@@ -1182,7 +1170,7 @@ export const structure: StructureTable = Object.freeze({
 			['_argument', 'argument']
 		],
 		nodeOnly: [['_argument', 'UnaryOperator.argument', 'a built PrimaryExpression', [206]]],
-		kindIds: [['_operator', 'UnaryOperator.operator', [49, 50, 60]]],
+		kindIds: [['_operator', 'UnaryOperator.operator', [48, 49, 59]]],
 		config: ['operator', 'argument']
 	},
 	213: {
@@ -1191,7 +1179,7 @@ export const structure: StructureTable = Object.freeze({
 		nonEmpty: [['_comparators', 'comparison_operator.comparators']],
 		nodeOnly: [
 			['_left', 'ComparisonOperator.left', 'a built PrimaryExpression', [206]],
-			['_comparators', 'ComparisonOperator.comparators', 'a built ComparisonOperatorComparator', [298]]
+			['_comparators', 'ComparisonOperator.comparators', 'a built ComparisonOperatorComparator', [300]]
 		],
 		config: ['left', 'comparators'],
 		lists: [['comparators', false, 'key']]
@@ -1230,7 +1218,7 @@ export const structure: StructureTable = Object.freeze({
 				[181, 205, 216, 217, 218, 220]
 			]
 		],
-		kindIds: [['_operator', 'AugmentedAssignment.operator', [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88]]],
+		kindIds: [['_operator', 'AugmentedAssignment.operator', [75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87]]],
 		config: ['left', 'operator', 'right']
 	},
 	218: {
@@ -1241,7 +1229,7 @@ export const structure: StructureTable = Object.freeze({
 	},
 	220: {
 		kind: 'yield',
-		nodeOnly: [['_content', 'Yield.content', 'a built YieldFromClause / Expression / ExpressionList', [181, 205, 299]]]
+		nodeOnly: [['_content', 'Yield.content', 'a built YieldFromClause / Expression / ExpressionList', [181, 205, 301]]]
 	},
 	221: {
 		kind: 'attribute',
@@ -1536,7 +1524,7 @@ export const structure: StructureTable = Object.freeze({
 				'a built Expression / ExpressionList / PatternList / Yield',
 				[181, 205, 218, 220]
 			],
-			['_type_conversion', 'Interpolation.typeConversion', 'buildTypeConversion(…)', [66]],
+			['_type_conversion', 'Interpolation.typeConversion', 'buildTypeConversion(…)', [65]],
 			['_format_specifier', 'Interpolation.formatSpecifier', 'a built FormatSpecifier', [254]]
 		],
 		booleans: [['_debug', 'Interpolation.debug']],
@@ -1544,7 +1532,7 @@ export const structure: StructureTable = Object.freeze({
 	},
 	254: {
 		kind: 'format_specifier',
-		nodeOnly: [['_elements', 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)', [89, 342]]],
+		nodeOnly: [['_elements', 'FormatSpecifier.elements', 'buildFormatSpecifierText(…)', [88, 344]]],
 		lists: [['elements', false, 0]]
 	},
 	257: {
@@ -1717,6 +1705,16 @@ export const structure: StructureTable = Object.freeze({
 		]
 	},
 	287: {
+		kind: 'splat_pattern_list',
+		required: [['_pattern', 'pattern']],
+		nodeOnly: [['_pattern', 'SplatPatternList.pattern', 'buildIdentifier(…)']]
+	},
+	288: {
+		kind: 'splat_pattern_dictionary',
+		required: [['_pattern', 'pattern']],
+		nodeOnly: [['_pattern', 'SplatPatternDictionary.pattern', 'buildIdentifier(…)']]
+	},
+	289: {
 		kind: 'assignment_eq',
 		required: [
 			['_name', 'name'],
@@ -1733,7 +1731,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['name', 'value']
 	},
-	288: {
+	290: {
 		kind: 'assignment_type',
 		required: [
 			['_name', 'name'],
@@ -1745,7 +1743,7 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['name', 'type']
 	},
-	289: {
+	291: {
 		kind: 'assignment_typed',
 		required: [
 			['_name', 'name'],
@@ -1764,49 +1762,49 @@ export const structure: StructureTable = Object.freeze({
 		],
 		config: ['name', 'type', 'value']
 	},
-	290: {
+	292: {
 		kind: 'expression_statement_tuple',
 		nonEmpty: [['_item', 'expression_statement_tuple.elements']],
 		nodeOnly: [['_item', 'ExpressionStatementTuple.items', 'a built Expression', [205]]],
 		lists: [['items', false, 0]]
 	},
-	291: {
+	293: {
 		kind: 'with_clause_bare',
 		nonEmpty: [['_items', 'with_clause_bare.elements']],
 		nodeOnly: [['_items', 'WithClauseBare.items', 'a built WithItem', [164]]],
 		lists: [['items', false, 0]]
 	},
-	292: {
+	294: {
 		kind: 'with_clause_paren',
 		required: [['_items', 'items']],
 		nodeOnly: [['_items', 'WithClauseParen.items', 'a built WithClauseWithItems', [263]]]
 	},
-	293: {
+	295: {
 		kind: 'match_block_block',
 		nodeOnly: [['_alternative', 'MatchBlockBlock.alternatives', 'a built CaseClause', [156]]],
 		lists: [['alternatives', false, 0]]
 	},
-	294: {
+	296: {
 		kind: 'match_block_empty',
 		required: [['_newline', 'newline']],
 		kindIds: [['_newline', 'MatchBlockEmpty.newline', [116]]]
 	},
-	295: {
+	297: {
 		kind: 'suite_inline',
 		required: [['_elements', 'elements']],
 		nodeOnly: [['_elements', 'SuiteInline.elements', 'a built SimpleStatementsElements', [260]]]
 	},
-	296: {
+	298: {
 		kind: 'suite_block',
 		required: [['_block', 'block']],
 		nodeOnly: [['_block', 'SuiteBlock.block', 'a built Block', [180]]]
 	},
-	297: {
+	299: {
 		kind: 'suite_empty',
 		required: [['_newline', 'newline']],
 		kindIds: [['_newline', 'SuiteEmpty.newline', [116]]]
 	},
-	298: {
+	300: {
 		kind: 'comparison_operator_comparator',
 		required: [
 			['_operators', 'operators'],
@@ -1816,16 +1814,16 @@ export const structure: StructureTable = Object.freeze({
 			['_primary_expression', 'ComparisonOperatorComparator.primaryExpression', 'a built PrimaryExpression', [206]]
 		],
 		kindIds: [
-			['_operators', 'ComparisonOperatorComparator.operators', [25, 61, 108, 109, 110, 111, 112, 113, 114, 211, 212]]
+			['_operators', 'ComparisonOperatorComparator.operators', [25, 60, 108, 109, 110, 111, 112, 113, 114, 211, 212]]
 		],
 		config: ['operators', 'primaryExpression']
 	},
-	299: {
+	301: {
 		kind: 'yield_from_clause',
 		required: [['_expression', 'expression']],
 		nodeOnly: [['_expression', 'YieldFromClause.expression', 'a built Expression', [205]]]
 	},
-	300: {
+	302: {
 		kind: 'constructor_declaration',
 		required: [
 			['_parameters', 'parameters'],
@@ -1840,12 +1838,12 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [['_async', 'ConstructorDeclaration.async']],
 		config: ['async', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
-	302: {
+	304: {
 		kind: 'block_class_declaration',
-		nodeOnly: [['_statements', 'BlockClassDeclaration.statements', 'a built StatementClassDefinition', [301]]],
+		nodeOnly: [['_statements', 'BlockClassDeclaration.statements', 'a built StatementClassDefinition', [303]]],
 		lists: [['statements', false, 0]]
 	},
-	303: {
+	305: {
 		kind: 'suite_block_class_declaration',
 		required: [['_block_class_declaration', 'blockClassDeclaration']],
 		nodeOnly: [
@@ -1853,11 +1851,11 @@ export const structure: StructureTable = Object.freeze({
 				'_block_class_declaration',
 				'SuiteBlockClassDeclaration.blockClassDeclaration',
 				'a built BlockClassDeclaration',
-				[302]
+				[304]
 			]
 		]
 	},
-	304: {
+	306: {
 		kind: 'decorated_definition_class_declaration',
 		required: [['_definition', 'definition']],
 		nonEmpty: [['_decorator', 'decorated_definition_class_declaration.decorators']],
@@ -1867,18 +1865,18 @@ export const structure: StructureTable = Object.freeze({
 				'_definition',
 				'DecoratedDefinitionClassDeclaration.definition',
 				'a built ClassDefinition / MethodDeclaration / ConstructorDeclaration',
-				[174, 300, 343]
+				[174, 302, 345]
 			]
 		],
 		config: ['decorators', 'definition'],
 		lists: [['decorators', false, 'key']]
 	},
-	341: {
+	343: {
 		kind: 'as_pattern_target',
 		required: [['_content', 'content']],
 		nodeOnly: [['_content', 'AsPatternTarget.content', 'a built Expression', [205]]]
 	},
-	342: {
+	344: {
 		kind: 'format_expression',
 		required: [['_expression', 'expression']],
 		nodeOnly: [
@@ -1888,13 +1886,13 @@ export const structure: StructureTable = Object.freeze({
 				'a built Expression / ExpressionList / PatternList / Yield',
 				[181, 205, 218, 220]
 			],
-			['_type_conversion', 'FormatExpression.typeConversion', 'buildTypeConversion(…)', [66]],
+			['_type_conversion', 'FormatExpression.typeConversion', 'buildTypeConversion(…)', [65]],
 			['_format_specifier', 'FormatExpression.formatSpecifier', 'a built FormatSpecifier', [254]]
 		],
 		booleans: [['_debug', 'FormatExpression.debug']],
 		config: ['expression', 'debug', 'typeConversion', 'formatSpecifier']
 	},
-	343: {
+	345: {
 		kind: 'method_declaration',
 		required: [
 			['_name', 'name'],
@@ -1911,7 +1909,7 @@ export const structure: StructureTable = Object.freeze({
 		booleans: [['_async', 'MethodDeclaration.async']],
 		config: ['async', 'name', 'typeParameters', 'parameters', 'returnType', 'body']
 	},
-	344: {
+	346: {
 		kind: 'names',
 		nonEmpty: [['_name', 'names.elements']],
 		nodeOnly: [['_name', 'Names.names', 'a built DottedName / AliasedImport', [137, 182]]],

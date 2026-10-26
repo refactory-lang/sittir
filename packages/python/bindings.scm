@@ -187,15 +187,19 @@
 (list_splat_pattern target: (_) @pattern)
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (dictionary_splat_pattern target: (_) @pattern)
-(case_pattern) @pattern.case
 (union_pattern) @pattern.or
-(dict_pattern) @pattern.case.dictionary
-(keyword_pattern) @pattern.case.keyword
-(splat_pattern) @pattern.case.splat
-(class_pattern) @pattern.case.class
-(complex_pattern) @pattern.case.complex
-(case_tuple_pattern) @pattern.case.tuple
-(case_list_pattern) @pattern.case.list
+(dict_pattern) @pattern.map
+(splat_pattern_list) @pattern.rest
+(splat_pattern_list name: (_) @pattern)
+(splat_pattern_dictionary) @pattern.rest.map
+(splat_pattern_dictionary name: (_) @pattern)
+(class_pattern name: (_) @type arguments: (_)? @fields) @pattern.struct
+(keyword_pattern value: (_) @pattern) @pattern.struct.field
+(complex_pattern) @pattern.complex
+(complex_pattern operator: "+") @pattern.complex.add
+(complex_pattern operator: "-") @pattern.complex.subtract
+(case_tuple_pattern) @pattern.tuple
+(case_list_pattern) @pattern.list
 (case_as_pattern) @pattern.as
 (case_as_pattern (case_pattern) @pattern)
 (case_as_pattern (identifier) @name)

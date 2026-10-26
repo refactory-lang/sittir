@@ -316,8 +316,8 @@
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (match_pattern) @pattern.match
 (tuple_pattern) @pattern.tuple
-(tuple_struct_pattern) @pattern.tuple.struct
 (struct_pattern) @pattern.struct
+(tuple_struct_pattern (patterns)? @fields) @pattern.struct
 (field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest
 (slice_pattern (patterns)? @elements) @pattern.slice
