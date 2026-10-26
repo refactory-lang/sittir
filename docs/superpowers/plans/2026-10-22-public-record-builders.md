@@ -35,9 +35,11 @@ public cutover evidence.
   records reader over its JS-owned chunks, so accessors have one derivation.
   Only the members that differ are built-specific: `$with`, a rebuild that
   shares unchanged children; `$trivia`; and `$render`.
-- **Native reads JS-owned chunks per call.** Every grammar's addon borrows the
-  chunks for one synchronous render, admits the records it reaches, and holds
-  no span after the call (`BorrowedArena`, `admit`, `RecordGrammar::render_record`).
+- **Native reads JS-owned chunks per call.** Every grammar's addon borrows, for
+  one synchronous render, the chunks it reads, each on its first read. It admits
+  the records it reaches and holds no span after the call (`VisitedChunks`,
+  `admit`, `RecordGrammar::render_record`). A chunk it cannot borrow is refused
+  by name when the render reads it.
 - **No JSON.** A node has no JSON form. Every node's `toJSON` is one shared
   function that refuses by name, so a node costs no closure for it, and
   `engine.reviver` refuses the same way. No JSON writer, reviver or JSON facts

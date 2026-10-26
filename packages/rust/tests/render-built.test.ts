@@ -7,6 +7,7 @@ import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
+import { TSKindId } from '../src/kinds.ts';
 
 function addon() {
 	const status = getActiveBackend();
@@ -23,7 +24,7 @@ function arenaEngine() {
 	return {
 		hold: (words: readonly Uint32Array[], bytes: readonly Uint8Array[] = [], writtenWords = written(words)) =>
 			holdBuiltArena.call(native, words, bytes, writtenWords, written(bytes)),
-		renderBuilt: (address: number) => renderBuilt.call(native, native, address, null, false, false),
+		renderBuilt: (address: number, text: { readonly at: number; readonly len: number } | null = null) => renderBuilt.call(native, native, address, text, false, false),
 		dispose: () => native.dispose(),
 		builtTriviaSide: builtTriviaSide.bind(native),
 		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native)
@@ -41,7 +42,7 @@ const recordEngine = async () => {
 };
 
 describe('a built arena rendered natively', () => {
-	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer', () => {
+	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer, each when the render first reads it', () => {
 		const native = arenaEngine();
 		native.hold([new Uint32Array(new SharedArrayBuffer(16))]);
 		expect(() => native.renderBuilt(1)).toThrow(/a built arena chunk must be a Uint32Array over an ordinary ArrayBuffer/);
@@ -49,10 +50,16 @@ describe('a built arena rendered natively', () => {
 		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
 		native.hold([[0, 1] as never]);
 		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
-		native.hold([words(1, 0)], [new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(() => native.renderBuilt(1)).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
+		native.hold([words(TSKindId.Identifier, 0)], [new Uint8Array(new SharedArrayBuffer(8))]);
+		expect(() => native.renderBuilt(1, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
 		native.hold([words(1, 0)], [], [3] as never);
 		expect(() => native.renderBuilt(1)).toThrow(/written table/);
+	});
+
+	it('borrows no chunk the render does not read', () => {
+		const native = arenaEngine();
+		native.hold([words(TSKindId.Identifier, 0), new Uint32Array(new SharedArrayBuffer(16))], [new TextEncoder().encode('x'), new Uint8Array(new SharedArrayBuffer(8))]);
+		expect(native.renderBuilt(1, { at: 0, len: 1 })).toBe('x');
 	});
 
 	it('refuses words that are no record it admits', () => {
