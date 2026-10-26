@@ -4601,7 +4601,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "object",
+            "name": "qualifier",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -4610,10 +4610,18 @@
                   "name": "identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "nested_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "nested_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 }
               ]
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           },
           {
@@ -4622,7 +4630,7 @@
           },
           {
             "type": "FIELD",
-            "name": "property",
+            "name": "name",
             "content": {
               "type": "ALIAS",
               "content": {
@@ -4631,6 +4639,9 @@
               },
               "named": true,
               "value": "property_identifier"
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           }
         ]
@@ -4679,12 +4690,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "nested_identifier",
-          "annotations": {
-            "variant": "nested_identifier",
-            "variantOf": "_jsx_element_name"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "nested_identifier",
+            "annotations": {
+              "variant": "nested_identifier",
+              "variantOf": "_jsx_element_name"
+            }
+          },
+          "named": true,
+          "value": "qualified_identifier"
         },
         {
           "type": "SYMBOL",
@@ -10117,8 +10133,13 @@
                   "name": "identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "nested_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "nested_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 }
               ]
             }
@@ -10175,8 +10196,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "nested_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "nested_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               }
             ]
           },
@@ -10205,7 +10231,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "module",
+            "name": "qualifier",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -10214,10 +10240,18 @@
                   "name": "identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "nested_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "nested_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 }
               ]
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           },
           {
@@ -10321,8 +10355,13 @@
                     "name": "_type_identifier"
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "nested_type_identifier"
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "nested_type_identifier"
+                    },
+                    "named": true,
+                    "value": "qualified_identifier"
                   },
                   {
                     "type": "SYMBOL",
@@ -10351,8 +10390,13 @@
                           "name": "_type_identifier"
                         },
                         {
-                          "type": "SYMBOL",
-                          "name": "nested_type_identifier"
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "SYMBOL",
+                            "name": "nested_type_identifier"
+                          },
+                          "named": true,
+                          "value": "qualified_identifier"
                         },
                         {
                           "type": "SYMBOL",
@@ -11264,12 +11308,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "nested_type_identifier",
-          "annotations": {
-            "variant": "nested_identifier",
-            "variantOf": "primary_type"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "nested_type_identifier",
+            "annotations": {
+              "variant": "nested_identifier",
+              "variantOf": "primary_type"
+            }
+          },
+          "named": true,
+          "value": "qualified_identifier"
         },
         {
           "type": "SYMBOL",
@@ -11594,8 +11643,13 @@
                   "name": "_type_identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "nested_type_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "nested_type_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 }
               ]
             }

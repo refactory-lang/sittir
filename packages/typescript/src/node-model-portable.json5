@@ -9783,10 +9783,17 @@
       }
     },
     "nested_identifier": {
-      "vocab": "identifier.nested",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "identifier.nested",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9795,34 +9802,41 @@
       ],
       "members": [
         {
-          "name": "object",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "object",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "nested_identifier",
-              "slot": "object"
+              "slot": "qualifier"
             }
           ]
         },
         {
-          "name": "property",
+          "name": "name",
           "route": "slot",
-          "slot": "property",
+          "slot": "name",
           "path": [
             {
               "owner": "nested_identifier",
-              "slot": "property"
+              "slot": "name"
             }
           ]
         }
       ]
     },
     "nested_type_identifier": {
-      "vocab": "type.path",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "type.path",
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -9831,13 +9845,13 @@
       ],
       "members": [
         {
-          "name": "module",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "module",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "nested_type_identifier",
-              "slot": "module"
+              "slot": "qualifier"
             }
           ]
         },
@@ -11194,10 +11208,10 @@
       "members": []
     },
     "private_property_identifier": {
-      "vocab": "identifier.property",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -11232,10 +11246,10 @@
       ]
     },
     "property_identifier": {
-      "vocab": "identifier.property",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12015,6 +12029,26 @@
         },
         {
           "vocab": "modifier.visibility",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
+    "qualified_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12848,10 +12882,10 @@
       ]
     },
     "shorthand_property_identifier": {
-      "vocab": "identifier.property.shorthand",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property.shorthand",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -12868,10 +12902,10 @@
       }
     },
     "shorthand_property_identifier_pattern": {
-      "vocab": "identifier.property.shorthand",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.property.shorthand",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -13730,10 +13764,10 @@
       ]
     },
     "type_identifier": {
-      "vocab": "identifier.type",
+      "vocab": "identifier",
       "read": [
         {
-          "vocab": "identifier.type",
+          "vocab": "identifier",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -14686,20 +14720,20 @@
       {
         "depth": 1,
         "paths": 13,
-        "kinds": 2,
+        "kinds": 7,
         "refinements": 0
       },
       {
         "depth": 2,
-        "paths": 112,
-        "kinds": 148,
-        "refinements": 6
+        "paths": 109,
+        "kinds": 146,
+        "refinements": 4
       },
       {
         "depth": 3,
-        "paths": 109,
-        "kinds": 95,
-        "refinements": 83
+        "paths": 108,
+        "kinds": 93,
+        "refinements": 82
       },
       {
         "depth": 4,

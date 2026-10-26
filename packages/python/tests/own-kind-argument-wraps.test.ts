@@ -23,11 +23,6 @@ describe('an argument of the builder\'s own kind', () => {
 		expect(py.build.list(py.build.list(x)).$render()).toBe('[[x]]');
 	});
 
-	it('is one element of a spread kind', () => {
-		const inner = py.build.unionPattern(py.build.dottedName(x), py.build.dottedName(y));
-		expect(py.build.unionPattern(inner).patterns().length).toBe(1);
-	});
-
 	it('is still the elements of a list that cannot hold itself', () => {
 		expect(py.build.argumentList(py.build.argumentList(x)).$render()).toBe('(x)');
 	});

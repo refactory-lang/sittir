@@ -96,7 +96,7 @@ export namespace Type {
 	export interface Infer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.infer';
-		readonly name: V.Identifier.Type<G>;
+		readonly name: V.Identifier<G>;
 		readonly type?: G['slots']['type.infer']['type'];
 	}
 	export interface Intersection<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
@@ -116,15 +116,6 @@ export namespace Type {
 		readonly indexType: G['slots']['type.lookup']['indexType'];
 		readonly type: G['slots']['type.lookup']['type'];
 	}
-	export interface Named<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
-		readonly $kind: 'type.named';
-	}
-	export namespace Named {
-		export interface Prelude<G extends GrammarContext<G>> extends SubKindOf<V.Type.Named<G>> {
-			// claimed by r
-			readonly $kind: 'type.named.prelude';
-		}
-	}
 	export interface Object<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by t
 		readonly $kind: 'type.object';
@@ -141,25 +132,6 @@ export namespace Type {
 		// claimed by t
 		readonly $kind: 'type.parenthesized';
 		readonly type: G['slots']['type.parenthesized']['type'];
-	}
-	export interface Path<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
-		// claimed by prt
-		readonly $kind: 'type.path';
-		readonly baseType?: G['type'];
-		// p only
-		readonly module?: G['identifier'];
-		// t only
-		readonly name: G['identifier'];
-		readonly path?: G['slots']['type.path']['path'];
-		// r only
-	}
-	export namespace Path {
-		export interface Expression<G extends GrammarContext<G>> extends SubKindOf<V.Type.Path<G>> {
-			// claimed by r
-			readonly $kind: 'type.path.expression';
-			readonly name: V.Identifier.Type<G>;
-			readonly path?: G['slots']['type.path.expression']['path'];
-		}
 	}
 	export interface Pointer<G extends GrammarContext<G>> extends SubKindOf<V.Type<G>> {
 		// claimed by r

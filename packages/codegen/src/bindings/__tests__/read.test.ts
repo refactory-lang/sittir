@@ -287,11 +287,11 @@ describe('readBindings', () => {
 			[
 				'["def" "class"] @keyword.declaration',
 				'(crate) @keyword.import',
-				'(crate) @identifier.crate',
+				'(crate) @identifier',
 				'(lexical_declaration kind: _ @keyword) @declaration.variable'
 			].join('\n')
 		);
-		expect(claims.map((c) => c.vocab)).toEqual(['identifier.crate', 'declaration.variable']);
+		expect(claims.map((c) => c.vocab)).toEqual(['identifier', 'declaration.variable']);
 		expect(members).toEqual([
 			{ route: 'rename', owner: 'lexical_declaration', name: 'keyword', field: 'kind', kind: null, after: null, anchor: null, claims: [1] }
 		]);

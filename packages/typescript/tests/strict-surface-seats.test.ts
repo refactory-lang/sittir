@@ -56,8 +56,8 @@ describe('a reserved word is checked at the slot it is placed in', () => {
 	});
 
 	it('refuses it in a slot under the global wordset', () => {
-		expect(() => ts.build.nestedIdentifier.strict({ object: word('a'), property: word('for') })).toThrow(
-			"NestedIdentifier.property: 'for' is a reserved word"
+		expect(() => ts.build.nestedIdentifier.strict({ qualifier: word('a'), name: word('for') })).toThrow(
+			"NestedIdentifier.name: 'for' is a reserved word"
 		);
 		expect(() => ts.build.variableDeclaratorPlain.strict({ name: word('for') })).toThrow("'for' is a reserved word");
 		expect(() => ts.build.throwStatement.strict(word('for'))).toThrow("ThrowStatement.expression: 'for' is a reserved word");

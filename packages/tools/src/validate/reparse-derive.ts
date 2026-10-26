@@ -105,10 +105,23 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 	for (const name of modelNames) {
 		for (const id of input.kindIdsOf(name)) byId.set(id, [...(byId.get(id) ?? []), name]);
 	}
-	const namesOf = (node: TSNode): readonly string[] =>
-		[...new Set([node.type, ...(byId.get(node.grammarId) ?? []), ...(byId.get(nodeIdOf(node)) ?? [])])].filter(
-			(name) => !isParserHiddenName(name)
-		);
+	const storagesOfDisplay = new Map<string, Set<string>>();
+	for (const { tree } of input.corpus) {
+		for (const node of namedNodes(tree.rootNode)) {
+			for (const storage of byId.get(node.grammarId) ?? []) {
+				if (storage === node.type || isParserHiddenName(storage)) continue;
+				const storages = storagesOfDisplay.get(node.type) ?? new Set<string>();
+				storages.add(storage);
+				storagesOfDisplay.set(node.type, storages);
+			}
+		}
+	}
+	const namesOf = (node: TSNode): readonly string[] => {
+		const own = byId.get(node.grammarId) ?? [];
+		const siblings = storagesOfDisplay.get(node.type);
+		const shown = (byId.get(nodeIdOf(node)) ?? []).filter((name) => own.includes(name) || siblings?.has(name) !== true);
+		return [...new Set([node.type, ...own, ...shown])].filter((name) => !isParserHiddenName(name));
+	};
 	const occurrences = new Map<string, Occurrence[]>();
 	input.corpus.forEach(({ tree }, entry) => {
 		for (const node of namedNodes(tree.rootNode)) {
@@ -119,6 +132,7 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 			}
 		}
 	});
+	const sharedStorages = new Set([...storagesOfDisplay.values()].filter((storages) => storages.size > 1).flatMap((storages) => [...storages]));
 	const ids: IdIndex = {
 		visible: new Set([...occurrences.values()].flatMap((list) => list.map((o) => nodeIdOf(o.node)))),
 		namesOf: (id) => byId.get(id) ?? []
@@ -146,7 +160,9 @@ export function deriveReparseHosts(input: DeriveHostsInput): Record<string, stri
 			return reparsed !== null && input.same(node, reparsed);
 		});
 
-	const pending = [...occurrences.keys()].filter((kind) => hostOf(kind) === undefined).sort();
+	const pending = [...occurrences.keys()]
+		.filter((kind) => hostOf(kind) === undefined || (sharedStorages.has(kind) && table().hosts[kind] === undefined))
+		.sort();
 	for (let progressed = true; progressed && pending.length > 0; ) {
 		progressed = false;
 		const hostable = new Set([...occurrences.keys()].filter((kind) => hostOf(kind) !== undefined));

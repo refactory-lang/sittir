@@ -8,8 +8,8 @@ export function rebuildSpliceGenerated() {
 	return rs.build.sourceFile.strict({
 		statements: [rs.build.useDeclaration.strict({
 			argument: rs.build.scopedIdentifier.strict({
-				path: rs.build.scopedIdentifier.strict({
-					path: rs.kinds.Crate,
+				qualifier: rs.build.scopedIdentifier.strict({
+					qualifier: rs.kinds.Crate,
 					name: rs.build.identifier("types"),
 				}),
 				name: rs.build.identifier("Edit"),
@@ -50,8 +50,8 @@ export function rebuildSpliceGenerated() {
 			}).$trivia.leading(rs.build.lineComment.docOuter.strict(rs.build.docComment(" `start_pos` or `end_pos` isn't a UTF-8 char boundary.\n")))),
 		}), rs.build.implItemBody.positiveClause.strict({
 			traitClause: rs.build.scopedTypeIdentifier.strict({
-				path: rs.build.scopedIdentifier.strict({
-					path: rs.build.identifier("std"),
+				qualifier: rs.build.scopedIdentifier.strict({
+					qualifier: rs.build.identifier("std"),
 					name: rs.build.identifier("fmt"),
 				}),
 				name: rs.build.identifier("Display"),
@@ -69,8 +69,8 @@ export function rebuildSpliceGenerated() {
 							exclusive: true,
 							type: rs.build.genericType.strict({
 								type: rs.build.scopedTypeIdentifier.strict({
-									path: rs.build.scopedIdentifier.strict({
-										path: rs.build.identifier("std"),
+									qualifier: rs.build.scopedIdentifier.strict({
+										qualifier: rs.build.identifier("std"),
 										name: rs.build.identifier("fmt"),
 									}),
 									name: rs.build.identifier("Formatter"),
@@ -81,8 +81,8 @@ export function rebuildSpliceGenerated() {
 					}))],
 				})),
 				returnType: rs.build.scopedTypeIdentifier.strict({
-					path: rs.build.scopedIdentifier.strict({
-						path: rs.build.identifier("std"),
+					qualifier: rs.build.scopedIdentifier.strict({
+						qualifier: rs.build.identifier("std"),
 						name: rs.build.identifier("fmt"),
 					}),
 					name: rs.build.identifier("Result"),
@@ -94,7 +94,7 @@ export function rebuildSpliceGenerated() {
 							arms: [rs.build.matchArmBlockEnding.strict({
 								pattern: rs.build.structPattern.strict({
 									type: rs.build.scopedTypeIdentifier.strict({
-										path: rs.build.identifier("SpliceError"),
+										qualifier: rs.build.identifier("SpliceError"),
 										name: rs.build.identifier("InvalidRange"),
 									}),
 									fields: [rs.build.fieldPatternShorthand.strict({
@@ -115,7 +115,7 @@ export function rebuildSpliceGenerated() {
 							}), rs.build.matchArmWithComma.strict({
 								pattern: rs.build.structPattern.strict({
 									type: rs.build.scopedTypeIdentifier.strict({
-										path: rs.build.identifier("SpliceError"),
+										qualifier: rs.build.identifier("SpliceError"),
 										name: rs.build.identifier("OutOfBounds"),
 									}),
 									fields: [rs.build.fieldPatternShorthand.strict({
@@ -135,7 +135,7 @@ export function rebuildSpliceGenerated() {
 							lastArm: rs.build.lastMatchArm.strict({
 								pattern: rs.build.structPattern.strict({
 									type: rs.build.scopedTypeIdentifier.strict({
-										path: rs.build.identifier("SpliceError"),
+										qualifier: rs.build.identifier("SpliceError"),
 										name: rs.build.identifier("NonCharBoundary"),
 									}),
 									fields: [rs.build.fieldPatternShorthand.strict({
@@ -160,8 +160,8 @@ export function rebuildSpliceGenerated() {
 			})),
 		}), rs.build.implItemBody.positiveClause.strict({
 			traitClause: rs.build.scopedTypeIdentifier.strict({
-				path: rs.build.scopedIdentifier.strict({
-					path: rs.build.identifier("std"),
+				qualifier: rs.build.scopedIdentifier.strict({
+					qualifier: rs.build.identifier("std"),
 					name: rs.build.identifier("error"),
 				}),
 				name: rs.build.identifier("Error"),
@@ -219,7 +219,7 @@ export function rebuildSpliceGenerated() {
 									function: rs.build.identifier("Err"),
 									arguments: rs.build.arguments.strict(rs.build.structExpression.strict({
 										name: rs.build.scopedTypeIdentifierInExpressionPosition.strict({
-											path: rs.build.identifier("SpliceError"),
+											qualifier: rs.build.identifier("SpliceError"),
 											name: rs.build.identifier("InvalidRange"),
 										}),
 										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
@@ -255,7 +255,7 @@ export function rebuildSpliceGenerated() {
 									function: rs.build.identifier("Err"),
 									arguments: rs.build.arguments.strict(rs.build.structExpression.strict({
 										name: rs.build.scopedTypeIdentifierInExpressionPosition.strict({
-											path: rs.build.identifier("SpliceError"),
+											qualifier: rs.build.identifier("SpliceError"),
 											name: rs.build.identifier("OutOfBounds"),
 										}),
 										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
@@ -311,7 +311,7 @@ export function rebuildSpliceGenerated() {
 									function: rs.build.identifier("Err"),
 									arguments: rs.build.arguments.strict(rs.build.structExpression.strict({
 										name: rs.build.scopedTypeIdentifierInExpressionPosition.strict({
-											path: rs.build.identifier("SpliceError"),
+											qualifier: rs.build.identifier("SpliceError"),
 											name: rs.build.identifier("NonCharBoundary"),
 										}),
 										body: rs.build.fieldInitializerList.strict({ delimiter: Delimiter.Trailing }, rs.build.fieldInitializer.strict({
@@ -381,7 +381,7 @@ export function rebuildSpliceGenerated() {
 					name: rs.build.identifier("buf"),
 					value: rs.build.callExpression.strict({
 						function: rs.build.scopedIdentifier.strict({
-							path: rs.build.identifier("String"),
+							qualifier: rs.build.identifier("String"),
 							name: rs.build.identifier("from"),
 						}),
 						arguments: rs.build.arguments.strict(rs.build.identifier("source")),

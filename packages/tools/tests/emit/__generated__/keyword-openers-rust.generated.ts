@@ -180,7 +180,7 @@ export function rebuildKeywordOpenersRustGenerated() {
 			body: rs.build.block.strict({}),
 		}), rs.build.structItemUnit.strict({
 			visibilityModifier: rs.build.visibilityModifier.pub.scope.inPath.strict(rs.build.scopedIdentifier.strict({
-				path: rs.kinds.Crate,
+				qualifier: rs.kinds.Crate,
 				name: rs.build.identifier("x"),
 			})),
 			name: rs.build.identifier("S"),

@@ -437,13 +437,15 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(type_identifier) @identifier.type
-(property_identifier) @identifier.property
-(private_property_identifier) @identifier.property
-(shorthand_property_identifier) @identifier.property.shorthand
-(shorthand_property_identifier_pattern) @identifier.property.shorthand
-(nested_identifier) @identifier.nested
-(nested_type_identifier) @type.path
+(type_identifier) @identifier
+(property_identifier) @identifier
+(private_property_identifier) @identifier
+(shorthand_property_identifier) @identifier
+(shorthand_property_identifier_pattern) @identifier
+(nested_identifier) @identifier.qualified
+(nested_identifier object: (_) @qualifier property: (_) @name)
+(nested_type_identifier) @identifier.qualified
+(nested_type_identifier module: (_) @qualifier)
 (statement_identifier) @identifier.label
 (this) @identifier.this
 (super) @identifier.super

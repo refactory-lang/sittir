@@ -3498,22 +3498,23 @@
 			"text": ","
 		},
 		{
-			"kind": "seam",
-			"field": "comma_after"
-		},
-		{
 			"kind": "if",
 			"arms": [
 				{
 					"test": "elements",
 					"body": [
 						{
+							"kind": "seam",
+							"field": "comma_after"
+						},
+						{
 							"kind": "slot",
 							"name": "elements"
 						}
 					]
 				}
-			]
+			],
+			"padded": true
 		},
 		{
 			"kind": "seam",
@@ -6078,41 +6079,11 @@
 	"nested_identifier": [
 		{
 			"kind": "seam",
-			"field": "nested_identifier_before"
+			"field": "qualified_identifier_before"
 		},
 		{
 			"kind": "slot",
-			"name": "object"
-		},
-		{
-			"kind": "seam",
-			"field": "dot_before"
-		},
-		{
-			"kind": "text",
-			"text": "."
-		},
-		{
-			"kind": "seam",
-			"field": "dot_after"
-		},
-		{
-			"kind": "slot",
-			"name": "property"
-		},
-		{
-			"kind": "seam",
-			"field": "nested_identifier_after"
-		}
-	],
-	"nested_type_identifier": [
-		{
-			"kind": "seam",
-			"field": "nested_type_identifier_before"
-		},
-		{
-			"kind": "slot",
-			"name": "module"
+			"name": "qualifier"
 		},
 		{
 			"kind": "seam",
@@ -6132,7 +6103,37 @@
 		},
 		{
 			"kind": "seam",
-			"field": "nested_type_identifier_after"
+			"field": "qualified_identifier_after"
+		}
+	],
+	"nested_type_identifier": [
+		{
+			"kind": "seam",
+			"field": "qualified_identifier_before"
+		},
+		{
+			"kind": "slot",
+			"name": "qualifier"
+		},
+		{
+			"kind": "seam",
+			"field": "dot_before"
+		},
+		{
+			"kind": "text",
+			"text": "."
+		},
+		{
+			"kind": "seam",
+			"field": "dot_after"
+		},
+		{
+			"kind": "slot",
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "qualified_identifier_after"
 		}
 	],
 	"new_expression": [

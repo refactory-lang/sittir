@@ -476,6 +476,7 @@ export interface PortableIds {
 	identifier:
 		| TSKindId.Identifier
 		| TSKindId.NestedIdentifier
+		| TSKindId.NestedTypeIdentifier
 		| TSKindId.PrivatePropertyIdentifier
 		| TSKindId.PropertyIdentifier
 		| TSKindId.ShorthandPropertyIdentifier
@@ -485,16 +486,9 @@ export interface PortableIds {
 		| TSKindId.This
 		| TSKindId.TypeIdentifier;
 	'identifier.label': TSKindId.StatementIdentifier;
-	'identifier.nested': TSKindId.NestedIdentifier;
-	'identifier.property':
-		| TSKindId.PrivatePropertyIdentifier
-		| TSKindId.PropertyIdentifier
-		| TSKindId.ShorthandPropertyIdentifier
-		| TSKindId.ShorthandPropertyIdentifierPattern;
-	'identifier.property.shorthand': TSKindId.ShorthandPropertyIdentifier | TSKindId.ShorthandPropertyIdentifierPattern;
+	'identifier.qualified': TSKindId.NestedIdentifier | TSKindId.NestedTypeIdentifier;
 	'identifier.receiver': TSKindId.This;
 	'identifier.super': TSKindId.Super;
-	'identifier.type': TSKindId.TypeIdentifier;
 	literal:
 		| TSKindId.TemplateChars
 		| TSKindId.EscapeSequence
@@ -679,7 +673,6 @@ export interface PortableIds {
 		| TSKindId.IntersectionType
 		| TSKindId.LiteralType
 		| TSKindId.LookupType
-		| TSKindId.NestedTypeIdentifier
 		| TSKindId.NeverKeyword
 		| TSKindId.NumberKeyword
 		| TSKindId.ObjectKeyword
@@ -713,7 +706,6 @@ export interface PortableIds {
 	'type.object': TSKindId.ObjectKeyword | TSKindId.ObjectType;
 	'type.optional': TSKindId.OptionalType;
 	'type.parenthesized': TSKindId.ParenthesizedType;
-	'type.path': TSKindId.NestedTypeIdentifier;
 	'type.predicate': TSKindId.Asserts | TSKindId.TypePredicate;
 	'type.predicate.asserts': TSKindId.Asserts;
 	'type.primitive':
@@ -1293,22 +1285,14 @@ export interface PortableKindsAt {
 	identifier: {
 		readonly $path: 'identifier';
 		readonly label: PortableKindsAt['identifier.label'];
-		readonly nested: PortableKindsAt['identifier.nested'];
-		readonly property: PortableKindsAt['identifier.property'];
+		readonly qualified: PortableKindsAt['identifier.qualified'];
 		readonly receiver: PortableKindsAt['identifier.receiver'];
 		readonly super: PortableKindsAt['identifier.super'];
-		readonly type: PortableKindsAt['identifier.type'];
 	};
 	'identifier.label': { readonly $path: 'identifier.label' };
-	'identifier.nested': { readonly $path: 'identifier.nested' };
-	'identifier.property': {
-		readonly $path: 'identifier.property';
-		readonly shorthand: PortableKindsAt['identifier.property.shorthand'];
-	};
-	'identifier.property.shorthand': { readonly $path: 'identifier.property.shorthand' };
+	'identifier.qualified': { readonly $path: 'identifier.qualified' };
 	'identifier.receiver': { readonly $path: 'identifier.receiver' };
 	'identifier.super': { readonly $path: 'identifier.super' };
-	'identifier.type': { readonly $path: 'identifier.type' };
 	literal: {
 		readonly $path: 'literal';
 		readonly boolean: PortableKindsAt['literal.boolean'];
@@ -1476,7 +1460,6 @@ export interface PortableKindsAt {
 		readonly object: PortableKindsAt['type.object'];
 		readonly optional: PortableKindsAt['type.optional'];
 		readonly parenthesized: PortableKindsAt['type.parenthesized'];
-		readonly path: PortableKindsAt['type.path'];
 		readonly predicate: PortableKindsAt['type.predicate'];
 		readonly primitive: PortableKindsAt['type.primitive'];
 		readonly query: PortableKindsAt['type.query'];
@@ -1504,7 +1487,6 @@ export interface PortableKindsAt {
 	'type.object': { readonly $path: 'type.object' };
 	'type.optional': { readonly $path: 'type.optional' };
 	'type.parenthesized': { readonly $path: 'type.parenthesized' };
-	'type.path': { readonly $path: 'type.path' };
 	'type.predicate': { readonly $path: 'type.predicate'; readonly asserts: PortableKindsAt['type.predicate.asserts'] };
 	'type.predicate.asserts': { readonly $path: 'type.predicate.asserts' };
 	'type.primitive': {
@@ -2453,25 +2435,14 @@ export interface PortableIsAt {
 	file: PortableGuard<PortableIds['file'], TypescriptNode, TSKindId> & {};
 	identifier: PortableGuard<PortableIds['identifier'], TypescriptNode, TSKindId> & {
 		readonly label: PortableIsAt['identifier.label'];
-		readonly nested: PortableIsAt['identifier.nested'];
-		readonly property: PortableIsAt['identifier.property'];
+		readonly qualified: PortableIsAt['identifier.qualified'];
 		readonly receiver: PortableIsAt['identifier.receiver'];
 		readonly super: PortableIsAt['identifier.super'];
-		readonly type: PortableIsAt['identifier.type'];
 	};
 	'identifier.label': PortableGuard<PortableIds['identifier.label'], TypescriptNode, TSKindId> & {};
-	'identifier.nested': PortableGuard<PortableIds['identifier.nested'], TypescriptNode, TSKindId> & {};
-	'identifier.property': PortableGuard<PortableIds['identifier.property'], TypescriptNode, TSKindId> & {
-		readonly shorthand: PortableIsAt['identifier.property.shorthand'];
-	};
-	'identifier.property.shorthand': PortableGuard<
-		PortableIds['identifier.property.shorthand'],
-		TypescriptNode,
-		TSKindId
-	> & {};
+	'identifier.qualified': PortableGuard<PortableIds['identifier.qualified'], TypescriptNode, TSKindId> & {};
 	'identifier.receiver': PortableGuard<PortableIds['identifier.receiver'], TypescriptNode, TSKindId> & {};
 	'identifier.super': PortableGuard<PortableIds['identifier.super'], TypescriptNode, TSKindId> & {};
-	'identifier.type': PortableGuard<PortableIds['identifier.type'], TypescriptNode, TSKindId> & {};
 	literal: PortableGuard<PortableIds['literal'], TypescriptNode, TSKindId> & {
 		readonly boolean: PortableIsAt['literal.boolean'];
 		readonly null: PortableIsAt['literal.null'];
@@ -2669,7 +2640,6 @@ export interface PortableIsAt {
 		readonly object: PortableIsAt['type.object'];
 		readonly optional: PortableIsAt['type.optional'];
 		readonly parenthesized: PortableIsAt['type.parenthesized'];
-		readonly path: PortableIsAt['type.path'];
 		readonly predicate: PortableIsAt['type.predicate'];
 		readonly primitive: PortableIsAt['type.primitive'];
 		readonly query: PortableIsAt['type.query'];
@@ -2696,7 +2666,6 @@ export interface PortableIsAt {
 	'type.object': PortableGuard<PortableIds['type.object'], TypescriptNode, TSKindId> & {};
 	'type.optional': PortableGuard<PortableIds['type.optional'], TypescriptNode, TSKindId> & {};
 	'type.parenthesized': PortableGuard<PortableIds['type.parenthesized'], TypescriptNode, TSKindId> & {};
-	'type.path': PortableGuard<PortableIds['type.path'], TypescriptNode, TSKindId> & {};
 	'type.predicate': PortableGuard<PortableIds['type.predicate'], TypescriptNode, TSKindId> & {
 		readonly asserts: PortableIsAt['type.predicate.asserts'];
 	};
@@ -3399,6 +3368,7 @@ const table: PortableTable = {
 			ids: [
 				TSKindId.Identifier,
 				TSKindId.NestedIdentifier,
+				TSKindId.NestedTypeIdentifier,
 				TSKindId.PrivatePropertyIdentifier,
 				TSKindId.PropertyIdentifier,
 				TSKindId.ShorthandPropertyIdentifier,
@@ -3411,23 +3381,9 @@ const table: PortableTable = {
 			exact: true
 		},
 		'identifier.label': { ids: [TSKindId.StatementIdentifier], exact: true },
-		'identifier.nested': { ids: [TSKindId.NestedIdentifier], exact: true },
-		'identifier.property': {
-			ids: [
-				TSKindId.PrivatePropertyIdentifier,
-				TSKindId.PropertyIdentifier,
-				TSKindId.ShorthandPropertyIdentifier,
-				TSKindId.ShorthandPropertyIdentifierPattern
-			],
-			exact: true
-		},
-		'identifier.property.shorthand': {
-			ids: [TSKindId.ShorthandPropertyIdentifier, TSKindId.ShorthandPropertyIdentifierPattern],
-			exact: true
-		},
+		'identifier.qualified': { ids: [TSKindId.NestedIdentifier, TSKindId.NestedTypeIdentifier], exact: true },
 		'identifier.receiver': { ids: [TSKindId.This], exact: true },
 		'identifier.super': { ids: [TSKindId.Super], exact: true },
-		'identifier.type': { ids: [TSKindId.TypeIdentifier], exact: true },
 		literal: {
 			ids: [
 				TSKindId.TemplateChars,
@@ -3657,7 +3613,6 @@ const table: PortableTable = {
 				TSKindId.IntersectionType,
 				TSKindId.LiteralType,
 				TSKindId.LookupType,
-				TSKindId.NestedTypeIdentifier,
 				TSKindId.NeverKeyword,
 				TSKindId.NumberKeyword,
 				TSKindId.ObjectKeyword,
@@ -3694,7 +3649,6 @@ const table: PortableTable = {
 		'type.object': { ids: [TSKindId.ObjectKeyword, TSKindId.ObjectType], exact: true },
 		'type.optional': { ids: [TSKindId.OptionalType], exact: true },
 		'type.parenthesized': { ids: [TSKindId.ParenthesizedType], exact: true },
-		'type.path': { ids: [TSKindId.NestedTypeIdentifier], exact: true },
 		'type.predicate': { ids: [TSKindId.Asserts, TSKindId.TypePredicate], exact: true },
 		'type.predicate.asserts': { ids: [TSKindId.Asserts], exact: true },
 		'type.primitive': {
@@ -4386,8 +4340,8 @@ const table: PortableTable = {
 		[TSKindId.Module]: [{ path: 'declaration.module.external', within: [], test: [] }],
 		[TSKindId.NamespaceExport]: [{ path: 'clause.export.namespace', within: [], test: [] }],
 		[TSKindId.NamespaceImport]: [{ path: 'clause.import.namespace', within: [], test: [] }],
-		[TSKindId.NestedIdentifier]: [{ path: 'identifier.nested', within: [], test: [] }],
-		[TSKindId.NestedTypeIdentifier]: [{ path: 'type.path', within: [], test: [] }],
+		[TSKindId.NestedIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
+		[TSKindId.NestedTypeIdentifier]: [{ path: 'identifier.qualified', within: [], test: [] }],
 		[TSKindId.NeverKeyword]: [
 			{ path: 'type.primitive.never', within: [], test: [] },
 			{ path: 'type.primitive', within: [], test: [] }
@@ -4492,9 +4446,9 @@ const table: PortableTable = {
 			{ path: 'modifier.visibility.private', within: [], test: [] },
 			{ path: 'modifier.visibility', within: [], test: [] }
 		],
-		[TSKindId.PrivatePropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
+		[TSKindId.PrivatePropertyIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.Program]: [{ path: 'file', within: [], test: [] }],
-		[TSKindId.PropertyIdentifier]: [{ path: 'identifier.property', within: [], test: [] }],
+		[TSKindId.PropertyIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.PropertySignature]: [
 			{
 				path: 'declaration.field.signature.private',
@@ -4685,8 +4639,8 @@ const table: PortableTable = {
 			},
 			{ path: 'declaration.parameter', within: [], test: [] }
 		],
-		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
-		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'identifier.property.shorthand', within: [], test: [] }],
+		[TSKindId.ShorthandPropertyIdentifier]: [{ path: 'identifier', within: [], test: [] }],
+		[TSKindId.ShorthandPropertyIdentifierPattern]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.SpreadElement]: [{ path: 'element.spread', within: [], test: [] }],
 		[TSKindId.StatementBlock]: [{ path: 'statement.block', within: [], test: [] }],
 		[TSKindId.StatementIdentifier]: [{ path: 'identifier.label', within: [], test: [] }],
@@ -4720,7 +4674,7 @@ const table: PortableTable = {
 		[TSKindId.TupleType]: [{ path: 'type.tuple', within: [], test: [] }],
 		[TSKindId.TypeAliasDeclaration]: [{ path: 'declaration.type_alias', within: [], test: [] }],
 		[TSKindId.TypeAssertion]: [{ path: 'expression.cast.assertion.angle_bracket', within: [], test: [] }],
-		[TSKindId.TypeIdentifier]: [{ path: 'identifier.type', within: [], test: [] }],
+		[TSKindId.TypeIdentifier]: [{ path: 'identifier', within: [], test: [] }],
 		[TSKindId.TypeParameter]: [{ path: 'declaration.type_parameter', within: [], test: [] }],
 		[TSKindId.TypePredicate]: [{ path: 'type.predicate', within: [], test: [] }],
 		[TSKindId.TypeQuery]: [{ path: 'type.query', within: [], test: [] }],

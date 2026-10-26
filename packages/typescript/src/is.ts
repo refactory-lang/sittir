@@ -204,6 +204,7 @@ export interface KindMembers {
 		| TSKindId.AbstractMethodSignatureSetter;
 	[TSKindId.Type]:
 		| TSKindId.TypeIdentifier
+		| TSKindId.NestedIdentifier
 		| TSKindId.ThisType
 		| TSKindId.ParenthesizedType
 		| TSKindId.AnyKeyword
@@ -239,6 +240,7 @@ export interface KindMembers {
 		| TSKindId.TypeQueryCallExpressionInTypeAnnotation;
 	[TSKindId.PrimaryType]:
 		| TSKindId.TypeIdentifier
+		| TSKindId.NestedIdentifier
 		| TSKindId.ThisType
 		| TSKindId.ParenthesizedType
 		| TSKindId.AnyKeyword
@@ -1610,12 +1612,12 @@ const _supertype_publicFieldDefinition_ids = new Set<number>([461, 462]);
 const _supertype_methodSignature_ids = new Set<number>([455, 456, 457]);
 const _supertype_abstractMethodSignature_ids = new Set<number>([458, 459, 460]);
 const _supertype_type_ids = new Set<number>([
-	504, 503, 365, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 318, 350, 368, 377, 378, 364, 357, 358, 363, 361, 359, 349,
-	347, 381, 380, 382, 379, 344, 348, 334, 335
+	504, 243, 503, 365, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 318, 350, 368, 377, 378, 364, 357, 358, 363, 361, 359,
+	349, 347, 381, 380, 382, 379, 344, 348, 334, 335
 ]);
 const _supertype_primaryType_ids = new Set<number>([
-	504, 503, 365, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 318, 350, 368, 377, 378, 364, 357, 358, 363, 361, 359, 349,
-	347, 381, 380
+	504, 243, 503, 365, 40, 41, 42, 43, 44, 144, 78, 145, 146, 46, 318, 350, 368, 377, 378, 364, 357, 358, 363, 361, 359,
+	349, 347, 381, 380
 ]);
 const _supertype_indexSignature_ids = new Set<number>([411, 412]);
 const _supertype_classBodyMember_ids = new Set<number>([408, 409, 289, 410, 407]);

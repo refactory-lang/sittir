@@ -529,7 +529,7 @@ function emitSubFactoryTests(
 			const required = registeredSlots(child).filter(isRequired);
 			return required.map((f) => `.$with.${f.propertyName}(${strictOptionDummy(f, nodeMap, kindEntries)})`).join('');
 		})();
-		if (child.modelType === 'keyword' || child.modelType === 'punctuation') {
+		if (child.unit) {
 			cases.push(`    expect(${callTarget}).toBe(${testTypeDiscriminant(child.kind, kindEntries, nodeMap)});`);
 		} else {
 			cases.push(`    const node = ${callTarget}(${args})${aliasRegisteredChain};`);

@@ -233,7 +233,7 @@ type BaseLayerConfig<B> = Omit<B extends GrammarJson ? LayerConfig<B> : LayerCon
 
 export function layerOptions<B = any, const P = unknown, const O = unknown>(
 	config: BaseLayerConfig<NoInfer<B>> & {
-		readonly edits?: P & BaseEditsCheck<NoInfer<B>, P> & Readonly<Record<string, TransformPatchMap | readonly TransformPatchMap[]>>;
+		readonly edits?: P & NoInfer<BaseEditsCheck<B, P>> & Readonly<Record<string, TransformPatchMap | readonly TransformPatchMap[]>>;
 		readonly options?: O & BaseOptionsCheck<NoInfer<B>, O> & OptionsConfig;
 	}
 ): LayerOptions<B> {

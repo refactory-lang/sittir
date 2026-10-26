@@ -7,7 +7,7 @@ export namespace Declaration {
 		readonly $kind: 'declaration.type_alias';
 		readonly left?: G['type'];
 		// p only
-		readonly name?: V.Identifier.Type<G>;
+		readonly name?: V.Identifier<G>;
 		// rt only
 		readonly right?: G['type'];
 		// p only

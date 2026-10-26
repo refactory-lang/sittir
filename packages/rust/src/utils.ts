@@ -354,15 +354,15 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arguments', 1, undefined, '_arguments']
 	],
 	263: [
-		['path', 0, undefined, '_path'],
+		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
 	264: [
-		['path', 0, undefined, '_path'],
+		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
 	265: [
-		['path', 0, undefined, '_path'],
+		['qualifier', 0, undefined, '_qualifier'],
 		['name', 1, undefined, '_name']
 	],
 	267: [
@@ -1553,28 +1553,28 @@ export const structure: StructureTable = Object.freeze({
 		kind: 'scoped_identifier',
 		required: [['_name', 'name']],
 		nodeOnly: [
-			['_path', 'ScopedIdentifier.path', 'buildIdentifier(…)'],
+			['_qualifier', 'ScopedIdentifier.qualifier', 'buildIdentifier(…)'],
 			['_name', 'ScopedIdentifier.name', 'buildIdentifier(…)']
 		],
-		config: ['path', 'name']
+		config: ['qualifier', 'name']
 	},
 	264: {
 		kind: 'scoped_type_identifier_in_expression_position',
 		required: [['_name', 'name']],
 		nodeOnly: [
-			['_path', 'ScopedTypeIdentifierInExpressionPosition.path', 'buildIdentifier(…)'],
+			['_qualifier', 'ScopedTypeIdentifierInExpressionPosition.qualifier', 'buildIdentifier(…)'],
 			['_name', 'ScopedTypeIdentifierInExpressionPosition.name', 'a built TypeIdentifier', [479]]
 		],
-		config: ['path', 'name']
+		config: ['qualifier', 'name']
 	},
 	265: {
 		kind: 'scoped_type_identifier',
 		required: [['_name', 'name']],
 		nodeOnly: [
-			['_path', 'ScopedTypeIdentifier.path', 'buildIdentifier(…)'],
+			['_qualifier', 'ScopedTypeIdentifier.qualifier', 'buildIdentifier(…)'],
 			['_name', 'ScopedTypeIdentifier.name', 'a built TypeIdentifier', [479]]
 		],
-		config: ['path', 'name']
+		config: ['qualifier', 'name']
 	},
 	267: {
 		kind: 'unary_expression',

@@ -36,11 +36,6 @@ export namespace Pattern {
 			readonly $kind: 'pattern.case.list';
 			readonly elements?: V.Pattern.Case<G>[];
 		}
-		export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
-			// claimed by p
-			readonly $kind: 'pattern.case.or';
-			readonly patterns: G['slots']['pattern.case.or']['patterns'][];
-		}
 		export interface Splat<G extends GrammarContext<G>> extends SubKindOf<V.Pattern.Case<G>> {
 			// claimed by p
 			readonly $kind: 'pattern.case.splat';
@@ -60,7 +55,7 @@ export namespace Pattern {
 		readonly pattern: G['slots']['pattern.match']['pattern'];
 	}
 	export interface Or<G extends GrammarContext<G>> extends SubKindOf<V.Pattern<G>> {
-		// claimed by r
+		// claimed by pr
 		readonly $kind: 'pattern.or';
 		readonly left?: G['slots']['pattern.or']['left'];
 		readonly right: G['slots']['pattern.or']['right'];

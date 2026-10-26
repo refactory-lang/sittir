@@ -5,7 +5,7 @@ export namespace Element {
 	export interface TypeBinding<G extends GrammarContext<G>> extends SubKindOf<V.Element<G>> {
 		// claimed by r
 		readonly $kind: 'element.type_binding';
-		readonly name: V.Identifier.Type<G>;
+		readonly name: V.Identifier<G>;
 		readonly type: G['slots']['element.type_binding']['type'];
 		readonly typeArguments?: V.Element.TypeArgument<G>[];
 	}

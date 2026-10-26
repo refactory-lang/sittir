@@ -340,7 +340,7 @@ describe('canonicalFacts', () => {
 			templates: [{ vocabs: ['declaration.parameter.this'], target: 'parameter', template: '', holes: [] }],
 			unclaimed: []
 		};
-		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, shownAs: [] };
+		const parameter: ModelNode = { kind: 'parameter', modelType: 'branch', unit: false, slots: [], subtypes: [], elementKinds: [], enumMembers: [], text: null, pattern: null, variantOf: null, splitFrom: null, aliasStorage: null, shownAs: [] };
 		const model = new Map([['parameter', parameter]]);
 		const canonical = canonicalFacts(facts, vocabulary, model);
 		expect(canonical.claims.map((c) => c.vocab)).toEqual(['declaration.parameter.receiver', 'declaration.parameter.mutable']);

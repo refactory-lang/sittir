@@ -35,7 +35,7 @@ import type { RawNodeEntry, PolymorphVariantMap } from '../codegen-surface.ts';
 
 const { loadRawEntries } = await load('nodeTypesLoader');
 import { bodyToLegacyRule, loadRenderBodies, renderBodiesPath } from './render-bodies.ts';
-import { isLeafModelType, parseNodeModel, type ValidatorSkip } from './common.ts';
+import { isLeafKind, parseNodeModel, type ValidatorSkip } from './common.ts';
 import { KindCases, type CasesByKind } from './kind-cases.ts';
 
 /**
@@ -132,7 +132,7 @@ export function validateTemplateCoverage(grammar: string): TemplateCoverageResul
 		const hasChildren = entry.children !== undefined;
 		if (!hasFields && !hasChildren) continue;
 		// A kind the model holds as a leaf renders its text, whatever structure node-types gives it.
-		if (isLeafModelType(nodeModelFacts.modelTypes[entry.type])) continue;
+		if (isLeafKind(nodeModelFacts, entry.type)) continue;
 
 		// Canonical-hidden architecture (Option Y): tree-sitter
 		// node-types.json reports the visible alias-target name (`x`),
@@ -858,6 +858,7 @@ interface NodeModelFacts {
 	readonly polymorphVariants: PolymorphVariantMap;
 	readonly fieldAliasMap: Record<string, Record<string, string>>;
 	readonly modelTypes: Record<string, string>;
+	readonly unitKinds: ReadonlySet<string>;
 	/** Visible kind → the model's slot names for it. */
 	readonly modelFieldsByKind: Map<string, Set<string>>;
 }
@@ -868,6 +869,7 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 	polymorphVariants: {},
 	fieldAliasMap: {},
 	modelTypes: {},
+	unitKinds: new Set(),
 	modelFieldsByKind: new Map()
 };
 
@@ -885,9 +887,9 @@ const EMPTY_NODE_MODEL_FACTS: NodeModelFacts = {
 function loadNodeModelFacts(grammar: string): NodeModelFacts {
 	const path = join(packagesDir, grammar, 'src', 'node-model.json5');
 	if (!existsSync(path)) return EMPTY_NODE_MODEL_FACTS;
-	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, slotNames } = parseNodeModel(readFileSync(path, 'utf8'));
+	const { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, unitKinds, slotNames } = parseNodeModel(readFileSync(path, 'utf8'));
 	const modelFieldsByKind = new Map(Object.entries(slotNames).map(([kind, names]) => [kind.replace(/^_+/, ''), new Set(names)]));
-	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, modelFieldsByKind };
+	return { factorySlots, displayUnions, polymorphVariants, fieldAliasMap, modelTypes, unitKinds, modelFieldsByKind };
 }
 
 interface UnionSlotRoutedDiagnostic {

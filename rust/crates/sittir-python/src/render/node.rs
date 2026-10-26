@@ -418,8 +418,7 @@ pub enum AnyNode {
     #[node(edged)]
     KeywordSeparator(::sittir_core::options::Edges),
     #[kind(kind::_WILDCARD_PATTERN)]
-    #[node(edged)]
-    WildcardPattern(::sittir_core::options::Edges),
+    WildcardPattern,
     #[kind(kind::LINE_CONTINUATION_NUL)]
     LineContinuationNul,
     #[kind(kind::_INDENT)]
@@ -524,6 +523,8 @@ pub enum AnyNode {
     Rbrack,
     #[kind(kind::AT)]
     At,
+    #[kind(kind::PIPE)]
+    Pipe,
     #[kind(kind::LBRACE)]
     Lbrace,
     #[kind(kind::RBRACE)]
@@ -546,8 +547,6 @@ pub enum AnyNode {
     Percent,
     #[kind(kind::SLASH_SLASH)]
     SlashSlash,
-    #[kind(kind::PIPE)]
-    Pipe,
     #[kind(kind::AMP)]
     Amp,
     #[kind(kind::CARET)]
@@ -814,7 +813,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::None(_) => Ok(()),
             AnyNode::PositionalSeparator(_) => Ok(()),
             AnyNode::KeywordSeparator(_) => Ok(()),
-            AnyNode::WildcardPattern(_) => Ok(()),
+            AnyNode::WildcardPattern => Ok(()),
             AnyNode::LineContinuationNul => Ok(()),
             AnyNode::Indent => Ok(()),
             AnyNode::Dedent => Ok(()),
@@ -867,6 +866,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Lbrack => Ok(()),
             AnyNode::Rbrack => Ok(()),
             AnyNode::At => Ok(()),
+            AnyNode::Pipe => Ok(()),
             AnyNode::Lbrace => Ok(()),
             AnyNode::Rbrace => Ok(()),
             AnyNode::Underscore => Ok(()),
@@ -878,7 +878,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Slash => Ok(()),
             AnyNode::Percent => Ok(()),
             AnyNode::SlashSlash => Ok(()),
-            AnyNode::Pipe => Ok(()),
             AnyNode::Amp => Ok(()),
             AnyNode::Caret => Ok(()),
             AnyNode::LtLt => Ok(()),
@@ -1109,7 +1108,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::None(edges) => Some(edges),
             AnyNode::PositionalSeparator(edges) => Some(edges),
             AnyNode::KeywordSeparator(edges) => Some(edges),
-            AnyNode::WildcardPattern(edges) => Some(edges),
+            AnyNode::WildcardPattern => None,
             AnyNode::LineContinuationNul => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
@@ -1162,6 +1161,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Lbrack => None,
             AnyNode::Rbrack => None,
             AnyNode::At => None,
+            AnyNode::Pipe => None,
             AnyNode::Lbrace => None,
             AnyNode::Rbrace => None,
             AnyNode::Underscore => None,
@@ -1173,7 +1173,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Slash => None,
             AnyNode::Percent => None,
             AnyNode::SlashSlash => None,
-            AnyNode::Pipe => None,
             AnyNode::Amp => None,
             AnyNode::Caret => None,
             AnyNode::LtLt => None,
@@ -1404,7 +1403,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::None(_) => None,
             AnyNode::PositionalSeparator(_) => None,
             AnyNode::KeywordSeparator(_) => None,
-            AnyNode::WildcardPattern(_) => None,
+            AnyNode::WildcardPattern => None,
             AnyNode::LineContinuationNul => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
@@ -1457,6 +1456,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Lbrack => None,
             AnyNode::Rbrack => None,
             AnyNode::At => None,
+            AnyNode::Pipe => None,
             AnyNode::Lbrace => None,
             AnyNode::Rbrace => None,
             AnyNode::Underscore => None,
@@ -1468,7 +1468,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Slash => None,
             AnyNode::Percent => None,
             AnyNode::SlashSlash => None,
-            AnyNode::Pipe => None,
             AnyNode::Amp => None,
             AnyNode::Caret => None,
             AnyNode::LtLt => None,
@@ -1699,7 +1698,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::None(_) => None,
             AnyNode::PositionalSeparator(_) => None,
             AnyNode::KeywordSeparator(_) => None,
-            AnyNode::WildcardPattern(_) => None,
+            AnyNode::WildcardPattern => None,
             AnyNode::LineContinuationNul => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
@@ -1752,6 +1751,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Lbrack => None,
             AnyNode::Rbrack => None,
             AnyNode::At => None,
+            AnyNode::Pipe => None,
             AnyNode::Lbrace => None,
             AnyNode::Rbrace => None,
             AnyNode::Underscore => None,
@@ -1763,7 +1763,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Slash => None,
             AnyNode::Percent => None,
             AnyNode::SlashSlash => None,
-            AnyNode::Pipe => None,
             AnyNode::Amp => None,
             AnyNode::Caret => None,
             AnyNode::LtLt => None,
@@ -1994,7 +1993,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::None(_) => None,
             AnyNode::PositionalSeparator(_) => None,
             AnyNode::KeywordSeparator(_) => None,
-            AnyNode::WildcardPattern(_) => None,
+            AnyNode::WildcardPattern => None,
             AnyNode::LineContinuationNul => None,
             AnyNode::Indent => None,
             AnyNode::Dedent => None,
@@ -2047,6 +2046,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Lbrack => None,
             AnyNode::Rbrack => None,
             AnyNode::At => None,
+            AnyNode::Pipe => None,
             AnyNode::Lbrace => None,
             AnyNode::Rbrace => None,
             AnyNode::Underscore => None,
@@ -2058,7 +2058,6 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::Slash => None,
             AnyNode::Percent => None,
             AnyNode::SlashSlash => None,
-            AnyNode::Pipe => None,
             AnyNode::Amp => None,
             AnyNode::Caret => None,
             AnyNode::LtLt => None,
@@ -5828,6 +5827,24 @@ pub enum SimplePatternContentNodeSlot {
     String(StringNode),
     #[kind(kind::CONCATENATED_STRING)]
     ConcatenatedString(ConcatenatedStringNode),
+    #[kind(kind::INTEGER_HEX)]
+    IntegerHex(IntegerHexNode),
+    #[kind(kind::INTEGER_OCTAL)]
+    IntegerOctal(IntegerOctalNode),
+    #[kind(kind::INTEGER_BINARY)]
+    IntegerBinary(IntegerBinaryNode),
+    #[kind(kind::INTEGER_DECIMAL_LONG)]
+    IntegerDecimalLong(IntegerDecimalLongNode),
+    #[kind(kind::INTEGER_DECIMAL_IMAGINARY)]
+    IntegerDecimalImaginary(IntegerDecimalImaginaryNode),
+    #[kind(kind::INTEGER_DECIMAL_PLAIN)]
+    IntegerDecimalPlain(IntegerDecimalPlainNode),
+    #[kind(kind::FLOAT_POINT)]
+    FloatPoint(FloatPointNode),
+    #[kind(kind::FLOAT_LEADING_POINT)]
+    FloatLeadingPoint(FloatLeadingPointNode),
+    #[kind(kind::FLOAT_SCIENTIFIC)]
+    FloatScientific(FloatScientificNode),
     #[kind(kind::SIMPLE_PATTERN_NEGATIVE)]
     SimplePatternNegative(SimplePatternNegativeNode),
     #[kind(kind::COMPLEX_PATTERN)]
@@ -5844,8 +5861,9 @@ pub enum SimplePatternContentNodeSlot {
     #[node(edged)]
     None(::sittir_core::options::Edges),
     #[kind(kind::_WILDCARD_PATTERN, kind::UNDERSCORE)]
-    #[node(edged)]
-    WildcardPattern(::sittir_core::options::Edges),
+    WildcardPattern,
+    #[node(verbatim)]
+    Verbatim(VerbatimNode),
 }
 
 impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
@@ -5859,13 +5877,23 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::DictPattern(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::String(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::ConcatenatedString(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::IntegerHex(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::IntegerOctal(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::IntegerBinary(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::IntegerDecimalLong(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::IntegerDecimalImaginary(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::IntegerDecimalPlain(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::FloatPoint(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::FloatLeadingPoint(t) => t.prepare(ctx),
+            SimplePatternContentNodeSlot::FloatScientific(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::SimplePatternNegative(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::ComplexPattern(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::DottedName(t) => t.prepare(ctx),
             SimplePatternContentNodeSlot::True(_) => Ok(()),
             SimplePatternContentNodeSlot::False(_) => Ok(()),
             SimplePatternContentNodeSlot::None(_) => Ok(()),
-            SimplePatternContentNodeSlot::WildcardPattern(_) => Ok(()),
+            SimplePatternContentNodeSlot::WildcardPattern => Ok(()),
+            SimplePatternContentNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -5878,13 +5906,23 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::DictPattern(t) => t.gap_edges(),
             SimplePatternContentNodeSlot::String(t) => t.gap_edges(),
             SimplePatternContentNodeSlot::ConcatenatedString(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::IntegerHex(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::IntegerOctal(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::IntegerBinary(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::IntegerDecimalLong(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::IntegerDecimalImaginary(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::IntegerDecimalPlain(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::FloatPoint(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::FloatLeadingPoint(t) => t.gap_edges(),
+            SimplePatternContentNodeSlot::FloatScientific(t) => t.gap_edges(),
             SimplePatternContentNodeSlot::SimplePatternNegative(t) => t.gap_edges(),
             SimplePatternContentNodeSlot::ComplexPattern(t) => t.gap_edges(),
             SimplePatternContentNodeSlot::DottedName(t) => t.gap_edges(),
             SimplePatternContentNodeSlot::True(edges) => Some(edges),
             SimplePatternContentNodeSlot::False(edges) => Some(edges),
             SimplePatternContentNodeSlot::None(edges) => Some(edges),
-            SimplePatternContentNodeSlot::WildcardPattern(edges) => Some(edges),
+            SimplePatternContentNodeSlot::WildcardPattern => None,
+            SimplePatternContentNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
@@ -5897,13 +5935,23 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::DictPattern(t) => t.snapshot_edge(),
             SimplePatternContentNodeSlot::String(t) => t.snapshot_edge(),
             SimplePatternContentNodeSlot::ConcatenatedString(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::IntegerHex(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::IntegerOctal(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::IntegerBinary(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::IntegerDecimalLong(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::IntegerDecimalImaginary(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::IntegerDecimalPlain(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::FloatPoint(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::FloatLeadingPoint(t) => t.snapshot_edge(),
+            SimplePatternContentNodeSlot::FloatScientific(t) => t.snapshot_edge(),
             SimplePatternContentNodeSlot::SimplePatternNegative(t) => t.snapshot_edge(),
             SimplePatternContentNodeSlot::ComplexPattern(t) => t.snapshot_edge(),
             SimplePatternContentNodeSlot::DottedName(t) => t.snapshot_edge(),
             SimplePatternContentNodeSlot::True(_) => None,
             SimplePatternContentNodeSlot::False(_) => None,
             SimplePatternContentNodeSlot::None(_) => None,
-            SimplePatternContentNodeSlot::WildcardPattern(_) => None,
+            SimplePatternContentNodeSlot::WildcardPattern => None,
+            SimplePatternContentNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
@@ -5916,13 +5964,23 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::DictPattern(t) => t.source_coordinate(),
             SimplePatternContentNodeSlot::String(t) => t.source_coordinate(),
             SimplePatternContentNodeSlot::ConcatenatedString(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::IntegerHex(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::IntegerOctal(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::IntegerBinary(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::IntegerDecimalLong(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::IntegerDecimalImaginary(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::IntegerDecimalPlain(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::FloatPoint(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::FloatLeadingPoint(t) => t.source_coordinate(),
+            SimplePatternContentNodeSlot::FloatScientific(t) => t.source_coordinate(),
             SimplePatternContentNodeSlot::SimplePatternNegative(t) => t.source_coordinate(),
             SimplePatternContentNodeSlot::ComplexPattern(t) => t.source_coordinate(),
             SimplePatternContentNodeSlot::DottedName(t) => t.source_coordinate(),
             SimplePatternContentNodeSlot::True(_) => None,
             SimplePatternContentNodeSlot::False(_) => None,
             SimplePatternContentNodeSlot::None(_) => None,
-            SimplePatternContentNodeSlot::WildcardPattern(_) => None,
+            SimplePatternContentNodeSlot::WildcardPattern => None,
+            SimplePatternContentNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
@@ -5935,13 +5993,23 @@ impl ::sittir_core::prepare::Prepare for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::DictPattern(t) => t.source_separator(ctx),
             SimplePatternContentNodeSlot::String(t) => t.source_separator(ctx),
             SimplePatternContentNodeSlot::ConcatenatedString(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::IntegerHex(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::IntegerOctal(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::IntegerBinary(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::IntegerDecimalLong(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::IntegerDecimalImaginary(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::IntegerDecimalPlain(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::FloatPoint(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::FloatLeadingPoint(t) => t.source_separator(ctx),
+            SimplePatternContentNodeSlot::FloatScientific(t) => t.source_separator(ctx),
             SimplePatternContentNodeSlot::SimplePatternNegative(t) => t.source_separator(ctx),
             SimplePatternContentNodeSlot::ComplexPattern(t) => t.source_separator(ctx),
             SimplePatternContentNodeSlot::DottedName(t) => t.source_separator(ctx),
             SimplePatternContentNodeSlot::True(_) => None,
             SimplePatternContentNodeSlot::False(_) => None,
             SimplePatternContentNodeSlot::None(_) => None,
-            SimplePatternContentNodeSlot::WildcardPattern(_) => None,
+            SimplePatternContentNodeSlot::WildcardPattern => None,
+            SimplePatternContentNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -5960,13 +6028,23 @@ impl ::sittir_core::view::KindOf for SimplePatternContentNodeSlot {
             Self::DictPattern(inner) => inner.kind_in(kinds),
             Self::String(inner) => inner.kind_in(kinds),
             Self::ConcatenatedString(inner) => inner.kind_in(kinds),
+            Self::IntegerHex(inner) => inner.kind_in(kinds),
+            Self::IntegerOctal(inner) => inner.kind_in(kinds),
+            Self::IntegerBinary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalLong(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalImaginary(inner) => inner.kind_in(kinds),
+            Self::IntegerDecimalPlain(inner) => inner.kind_in(kinds),
+            Self::FloatPoint(inner) => inner.kind_in(kinds),
+            Self::FloatLeadingPoint(inner) => inner.kind_in(kinds),
+            Self::FloatScientific(inner) => inner.kind_in(kinds),
             Self::SimplePatternNegative(inner) => inner.kind_in(kinds),
             Self::ComplexPattern(inner) => inner.kind_in(kinds),
             Self::DottedName(inner) => inner.kind_in(kinds),
             Self::True(_) => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
             Self::False(_) => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern(_) => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::Verbatim(_) => [::sittir_core::types::KindId(93), ::sittir_core::types::KindId(94), ::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -5982,13 +6060,23 @@ impl ::sittir_core::render::Render for SimplePatternContentNodeSlot {
             SimplePatternContentNodeSlot::DictPattern(inner) => inner.render(w),
             SimplePatternContentNodeSlot::String(inner) => inner.render(w),
             SimplePatternContentNodeSlot::ConcatenatedString(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::IntegerHex(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::IntegerOctal(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::IntegerBinary(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::IntegerDecimalLong(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::IntegerDecimalImaginary(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::IntegerDecimalPlain(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::FloatPoint(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::FloatLeadingPoint(inner) => inner.render(w),
+            SimplePatternContentNodeSlot::FloatScientific(inner) => inner.render(w),
             SimplePatternContentNodeSlot::SimplePatternNegative(inner) => inner.render(w),
             SimplePatternContentNodeSlot::ComplexPattern(inner) => inner.as_ref().render(w),
             SimplePatternContentNodeSlot::DottedName(inner) => inner.render(w),
             SimplePatternContentNodeSlot::True(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(70), edges, w, render_true),
             SimplePatternContentNodeSlot::False(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(71), edges, w, render_false),
             SimplePatternContentNodeSlot::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
-            SimplePatternContentNodeSlot::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(280), edges, w, render_wildcard_pattern),
+            SimplePatternContentNodeSlot::WildcardPattern => render_wildcard_pattern(w),
+            SimplePatternContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -14771,17 +14859,16 @@ impl ::sittir_core::prepare::Prepare for CaseAsPatternNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNION_PATTERN, words = 4)]
+#[node(kind = kind::UNION_PATTERN, layout = [kind::PIPE], words = 12)]
 pub struct UnionPatternNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_patterns")]
-    #[slot(field = field::PATTERNS, separator = kind::PIPE, word = 2, width = 2, run = 5)]
-    pub patterns: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<SimplePatternContentNodeSlot>>,
-    #[wire(key = "_patterns_separator_space_before")]
-    pub patterns_separator_space_before: Option<KindId>,
-    #[wire(key = "_patterns_separator_space_after")]
-    pub patterns_separator_space_after: Option<KindId>,
+    #[wire(key = "_left")]
+    #[slot(field = field::LEFT, word = 2, width = 5)]
+    pub left: ::sittir_core::SlotValue<Box<SimplePatternContentNodeSlot>>,
+    #[wire(key = "_right")]
+    #[slot(field = field::RIGHT, word = 7, width = 5)]
+    pub right: ::sittir_core::SlotValue<Box<SimplePatternContentNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for UnionPatternNode {
@@ -14805,11 +14892,9 @@ impl ::sittir_core::render::Render for UnionPatternNode {
 impl ::sittir_core::prepare::Prepare for UnionPatternNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
-        ::sittir_core::prepare::fill_slot_gaps(self.patterns.iter_mut().map(Some), ::sittir_core::layout::Layout::slot(&self.layout, "_patterns"));
-        self.patterns_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_BEFORE).arm);
-        self.patterns_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_UNION_PATTERN_PATTERNS_SEPARATOR_SPACE_AFTER).arm);
-        ::sittir_core::prepare::fill_seated_gaps(self.patterns.iter_mut().map(Some), options::SEATS_UNION_PATTERN_PATTERNS, ctx);
-        self.patterns.prepare(ctx)?;
+        ::sittir_core::prepare::prepare_edges(self, ctx);
+        self.left.prepare(ctx)?;
+        self.right.prepare(ctx)?;
         Ok(())
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
@@ -16880,9 +16965,9 @@ impl ::sittir_core::prepare::Prepare for ConstrainedTypeNode {
 pub struct MemberTypeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_base_type")]
-    #[slot(field = field::BASE_TYPE, word = 2, width = 5)]
-    pub base_type: ::sittir_core::SlotValue<Box<TypeNode>>,
+    #[wire(key = "_qualifier")]
+    #[slot(field = field::QUALIFIER, word = 2, width = 5)]
+    pub qualifier: ::sittir_core::SlotValue<Box<TypeNode>>,
     #[wire(key = "_name")]
     #[slot(field = field::NAME, word = 7, width = 5)]
     pub name: ::sittir_core::SlotValue<IdentifierNode>,
@@ -16910,7 +16995,7 @@ impl ::sittir_core::prepare::Prepare for MemberTypeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.base_type.prepare(ctx)?;
+        self.qualifier.prepare(ctx)?;
         self.name.prepare(ctx)?;
         Ok(())
     }
@@ -19812,8 +19897,7 @@ impl ::sittir_core::prepare::Prepare for PrintStatementPlainNode {
 #[node(choice, stamp = stamp)]
 pub enum WildcardPatternNode {
     #[kind(kind::_WILDCARD_PATTERN)]
-    #[node(edged)]
-    WildcardPattern(::sittir_core::options::Edges),
+    WildcardPattern,
 }
 
 impl ::sittir_core::view::KindOf for WildcardPatternNode {
@@ -19824,29 +19908,7 @@ impl ::sittir_core::view::KindOf for WildcardPatternNode {
 
 impl ::sittir_core::prepare::Prepare for WildcardPatternNode {
     fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        match self {
-            WildcardPatternNode::WildcardPattern(_) => Ok(()),
-        }
-    }
-    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
-        match self {
-            WildcardPatternNode::WildcardPattern(edges) => Some(edges),
-        }
-    }
-    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
-        match self {
-            WildcardPatternNode::WildcardPattern(_) => None,
-        }
-    }
-    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
-        match self {
-            WildcardPatternNode::WildcardPattern(_) => None,
-        }
-    }
-    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
-        match self {
-            WildcardPatternNode::WildcardPattern(_) => None,
-        }
+        Ok(())
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
         Some(::sittir_core::read::read_coordinate(tree, ctx, index))
@@ -19855,9 +19917,7 @@ impl ::sittir_core::prepare::Prepare for WildcardPatternNode {
 
 impl ::sittir_core::render::Render for WildcardPatternNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        match self {
-            Self::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(280), edges, w, render_wildcard_pattern),
-        }
+        render_wildcard_pattern(w)
     }
 }
 
@@ -20925,15 +20985,12 @@ impl ::sittir_core::render::Render for LineContinuationNulNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::SIMPLE_PATTERN_NEGATIVE, words = 8)]
+#[node(kind = kind::SIMPLE_PATTERN_NEGATIVE, layout = [kind::DASH], words = 7)]
 pub struct SimplePatternNegativeNode {
     #[wire(key = "$_layout")]
     pub layout: Option<Box<NodeLayout>>,
-    #[wire(key = "_sign")]
-    #[slot(field = field::SIGN, presence = kind::DASH, word = 2, bit = 0)]
-    pub sign: bool,
     #[wire(key = "_value")]
-    #[slot(field = field::VALUE, word = 3, width = 5)]
+    #[slot(field = field::VALUE, word = 2, width = 5)]
     pub value: ::sittir_core::SlotValue<ComplexPatternRealNodeSlot>,
 }
 
@@ -20959,7 +21016,6 @@ impl ::sittir_core::prepare::Prepare for SimplePatternNegativeNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
-        self.sign.prepare(ctx)?;
         self.value.prepare(ctx)?;
         Ok(())
     }
@@ -22484,19 +22540,19 @@ pub struct AsPatternTargetNode {
 
 impl ::sittir_core::view::KindOf for AsPatternTargetNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(342)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(341)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for AsPatternTargetNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(342) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(341) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for AsPatternTargetNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(342)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(341)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_as_pattern_target(self, w))
     }
 }
 
@@ -23729,6 +23785,34 @@ impl ::sittir_core::render::Render for AtNode {
 
 #[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
+pub enum PipeNode {
+    #[kind(kind::PIPE)]
+    Pipe,
+}
+
+impl ::sittir_core::view::KindOf for PipeNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for PipeNode {
+    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        Ok(())
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+impl ::sittir_core::render::Render for PipeNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        render_pipe(w)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
+#[node(choice, stamp = stamp)]
 pub enum LbraceNode {
     #[kind(kind::LBRACE)]
     Lbrace,
@@ -24032,34 +24116,6 @@ impl ::sittir_core::prepare::Prepare for SlashSlashNode {
 impl ::sittir_core::render::Render for SlashSlashNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         render_slash_slash(w)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, ::sittir_core::Node)]
-#[node(choice, stamp = stamp)]
-pub enum PipeNode {
-    #[kind(kind::PIPE)]
-    Pipe,
-}
-
-impl ::sittir_core::view::KindOf for PipeNode {
-    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
-    }
-}
-
-impl ::sittir_core::prepare::Prepare for PipeNode {
-    fn prepare(&mut self, _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
-        Ok(())
-    }
-    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
-        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
-    }
-}
-
-impl ::sittir_core::render::Render for PipeNode {
-    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        render_pipe(w)
     }
 }
 
@@ -25390,15 +25446,6 @@ impl ::sittir_core::prepare::SeatTarget for CaseAsPatternNode {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for DictPatternNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(187)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for KeyValuePatternNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(188)) {
@@ -25420,24 +25467,6 @@ impl ::sittir_core::prepare::SeatTarget for KeywordPatternNode {
 impl ::sittir_core::prepare::SeatTarget for SplatPatternNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(190)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for ClassPatternNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(191)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for ComplexPatternNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(192)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -25903,24 +25932,6 @@ impl ::sittir_core::prepare::SeatTarget for KeywordSeparatorNode {
     }
 }
 
-impl ::sittir_core::prepare::SeatTarget for CaseTuplePatternNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(274)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for CaseListPatternNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(275)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
 impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(278)) {
@@ -25933,23 +25944,6 @@ impl ::sittir_core::prepare::SeatTarget for PrintStatementChevronNode {
 impl ::sittir_core::prepare::SeatTarget for PrintStatementPlainNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(279)) {
-            return Some((self.layout.edges_mut(), site));
-        }
-        None
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for WildcardPatternNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        match self {
-            Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(280)).map(|site| (edges, site)),
-        }
-    }
-}
-
-impl ::sittir_core::prepare::SeatTarget for SimplePatternNegativeNode {
-    fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
-        if let Some(site) = ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(284)) {
             return Some((self.layout.edges_mut(), site));
         }
         None
@@ -26337,20 +26331,13 @@ impl ::sittir_core::prepare::SeatTarget for CasePatternContentNodeSlot {
 impl ::sittir_core::prepare::SeatTarget for SimplePatternContentNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::ClassPattern(t) => t.seat_target(table, ctx),
             Self::SplatPattern(t) => t.seat_target(table, ctx),
-            Self::CaseListPattern(t) => t.seat_target(table, ctx),
-            Self::CaseTuplePattern(t) => t.seat_target(table, ctx),
-            Self::DictPattern(t) => t.seat_target(table, ctx),
             Self::String(t) => t.seat_target(table, ctx),
             Self::ConcatenatedString(t) => t.seat_target(table, ctx),
-            Self::SimplePatternNegative(t) => t.seat_target(table, ctx),
-            Self::ComplexPattern(t) => t.seat_target(table, ctx),
             Self::True(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(70)).map(|site| (edges, site)),
             Self::False(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(71)).map(|site| (edges, site)),
             Self::None(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(72)).map(|site| (edges, site)),
-            Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(280)).map(|site| (edges, site)),
-            Self::UnionPattern { .. } | Self::DottedName { .. } => None,
+            Self::ClassPattern { .. } | Self::UnionPattern { .. } | Self::CaseListPattern { .. } | Self::CaseTuplePattern { .. } | Self::DictPattern { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::SimplePatternNegative { .. } | Self::ComplexPattern { .. } | Self::DottedName { .. } | Self::WildcardPattern { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -26825,12 +26812,9 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::Decorator(t) => t.seat_target(table, ctx),
             Self::CasePattern(t) => t.seat_target(table, ctx),
             Self::CaseAsPattern(t) => t.seat_target(table, ctx),
-            Self::DictPattern(t) => t.seat_target(table, ctx),
             Self::KeyValuePattern(t) => t.seat_target(table, ctx),
             Self::KeywordPattern(t) => t.seat_target(table, ctx),
             Self::SplatPattern(t) => t.seat_target(table, ctx),
-            Self::ClassPattern(t) => t.seat_target(table, ctx),
-            Self::ComplexPattern(t) => t.seat_target(table, ctx),
             Self::TuplePattern(t) => t.seat_target(table, ctx),
             Self::ListPattern(t) => t.seat_target(table, ctx),
             Self::DefaultParameter(t) => t.seat_target(table, ctx),
@@ -26881,19 +26865,15 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::Await(t) => t.seat_target(table, ctx),
             Self::PositionalSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(258)).map(|site| (edges, site)),
             Self::KeywordSeparator(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(259)).map(|site| (edges, site)),
-            Self::CaseTuplePattern(t) => t.seat_target(table, ctx),
-            Self::CaseListPattern(t) => t.seat_target(table, ctx),
             Self::PrintStatementChevron(t) => t.seat_target(table, ctx),
             Self::PrintStatementPlain(t) => t.seat_target(table, ctx),
-            Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(280)).map(|site| (edges, site)),
-            Self::SimplePatternNegative(t) => t.seat_target(table, ctx),
             Self::AssignmentEq(t) => t.seat_target(table, ctx),
             Self::AssignmentType(t) => t.seat_target(table, ctx),
             Self::AssignmentTyped(t) => t.seat_target(table, ctx),
             Self::ComparisonOperatorComparator(t) => t.seat_target(table, ctx),
             Self::ConstructorDeclaration(t) => t.seat_target(table, ctx),
             Self::DecoratedDefinitionClassDeclaration(t) => t.seat_target(table, ctx),
-            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::DottedName { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Underscore { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Pipe { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
+            Self::Module { .. } | Self::ImportPrefix { .. } | Self::RelativeImport { .. } | Self::ImportList { .. } | Self::Chevron { .. } | Self::NamedExpressionLhs { .. } | Self::FinallyClause { .. } | Self::WithItem { .. } | Self::Parameters { .. } | Self::LambdaParameters { .. } | Self::TypeParameter { .. } | Self::ArgumentList { .. } | Self::Block { .. } | Self::ExpressionList { .. } | Self::DottedName { .. } | Self::SimplePattern { .. } | Self::UnionPattern { .. } | Self::DictPattern { .. } | Self::ClassPattern { .. } | Self::ComplexPattern { .. } | Self::ParametersElements { .. } | Self::Patterns { .. } | Self::PatternList { .. } | Self::CollectionElements { .. } | Self::StringContent { .. } | Self::Interpolation { .. } | Self::FormatSpecifier { .. } | Self::TypeConversion { .. } | Self::Identifier { .. } | Self::Comment { .. } | Self::SimpleStatementsElements { .. } | Self::Subjects { .. } | Self::CasePatterns { .. } | Self::WithClauseWithItems { .. } | Self::Types { .. } | Self::ArgumentListElements { .. } | Self::ListPatternCasePatterns { .. } | Self::DictPatternElements { .. } | Self::Subscripts { .. } | Self::DictionaryElements { .. } | Self::SliceGroup { .. } | Self::FormatSpecifierText { .. } | Self::TuplePatternElements { .. } | Self::TupleElements { .. } | Self::ExceptClauseExceptionAs { .. } | Self::CaseTuplePattern { .. } | Self::CaseListPattern { .. } | Self::PrintArguments { .. } | Self::PrintChevronArguments { .. } | Self::ParenthesizedImportList { .. } | Self::ComprehensionClauses { .. } | Self::IntegerHex { .. } | Self::IntegerOctal { .. } | Self::IntegerBinary { .. } | Self::IntegerDecimalLong { .. } | Self::IntegerDecimalImaginary { .. } | Self::IntegerDecimalPlain { .. } | Self::FloatPoint { .. } | Self::FloatLeadingPoint { .. } | Self::FloatScientific { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeWide { .. } | Self::EscapeSequenceHex { .. } | Self::EscapeSequenceOctal { .. } | Self::EscapeSequenceLineBreak { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceNamed { .. } | Self::LineContinuationNewline { .. } | Self::SimplePatternNegative { .. } | Self::ExceptClauseExceptionList { .. } | Self::ExceptClauseException { .. } | Self::ExpressionStatementTuple { .. } | Self::WithClauseBare { .. } | Self::WithClauseParen { .. } | Self::MatchBlockBlock { .. } | Self::MatchBlockEmpty { .. } | Self::SuiteInline { .. } | Self::SuiteBlock { .. } | Self::SuiteEmpty { .. } | Self::YieldFromClause { .. } | Self::StringStart { .. } | Self::StringFragment { .. } | Self::EscapeInterpolation { .. } | Self::StringEnd { .. } | Self::BlockClassDeclaration { .. } | Self::SuiteBlockClassDeclaration { .. } | Self::Names { .. } | Self::AsPatternTarget { .. } | Self::FormatExpression { .. } | Self::MethodDeclaration { .. } | Self::WildcardImport { .. } | Self::NotEscapeSequence { .. } | Self::WildcardPattern { .. } | Self::LineContinuationNul { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::ImportKeyword { .. } | Self::Dot { .. } | Self::FromKeyword { .. } | Self::FutureUKeyword { .. } | Self::AsKeyword { .. } | Self::Star { .. } | Self::GtGt { .. } | Self::AssertKeyword { .. } | Self::ColonEq { .. } | Self::ReturnKeyword { .. } | Self::DelKeyword { .. } | Self::RaiseKeyword { .. } | Self::PassKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::IfKeyword { .. } | Self::Colon { .. } | Self::ElifKeyword { .. } | Self::ElseKeyword { .. } | Self::MatchKeyword { .. } | Self::CaseKeyword { .. } | Self::AsyncKeyword { .. } | Self::ForKeyword { .. } | Self::InKeyword { .. } | Self::WhileKeyword { .. } | Self::TryKeyword { .. } | Self::ExceptKeyword { .. } | Self::FinallyKeyword { .. } | Self::WithKeyword { .. } | Self::DefKeyword { .. } | Self::DashGt { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::StarStar { .. } | Self::GlobalKeyword { .. } | Self::NonlocalKeyword { .. } | Self::ExecKeyword { .. } | Self::TypeKeyword { .. } | Self::Eq { .. } | Self::ClassKeyword { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::At { .. } | Self::Pipe { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::Underscore { .. } | Self::Dash { .. } | Self::Plus { .. } | Self::NotKeyword { .. } | Self::AndKeyword { .. } | Self::OrKeyword { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::SlashSlash { .. } | Self::Amp { .. } | Self::Caret { .. } | Self::LtLt { .. } | Self::Tilde { .. } | Self::LambdaKeyword { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::AtEq { .. } | Self::SlashSlashEq { .. } | Self::PercentEq { .. } | Self::StarStarEq { .. } | Self::GtGtEq { .. } | Self::LtLtEq { .. } | Self::AmpEq { .. } | Self::CaretEq { .. } | Self::PipeEq { .. } | Self::YieldKeyword { .. } | Self::Comma { .. } | Self::Bslash { .. } | Self::AwaitKeyword { .. } | Self::PrintKeyword { .. } | Self::Lt { .. } | Self::LtEq { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::GtEq { .. } | Self::Gt { .. } | Self::LtGt { .. } | Self::NotIn { .. } | Self::IsKeyword { .. } | Self::IsNot { .. } | Self::InitUKeyword { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -27675,20 +27655,15 @@ fn render_case_as_pattern(node: &CaseAsPatternNode, w: &mut dyn ::sittir_core::r
 }
 
 fn render_union_pattern(node: &UnionPatternNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let patterns = ListView {
-        items: &node.patterns,
-        template: "{}",
-        token: "|",
-        separators: None,
-        before: node.patterns_separator_space_before.unwrap_or(KindId::BLANK),
-        after: node.patterns_separator_space_after.unwrap_or(KindId::BLANK),
-        leading: false,
-        trailing: false,
-        head: None,
-        tail: None,
-        units: ::sittir_core::layout::list_units(node.layout.as_deref(), "_patterns"),
-    };
-    patterns.render(w)?;
+    let left = &node.left;
+    let right = &node.right;
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::Before, node.layout.edges().before);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_left", ::sittir_core::types::ItemIndex(0), w, |w| left.render(w))?;
+    w.site_at(options::SITE_UNION_PATTERN_PIPE_BEFORE);
+    w.text("|")?;
+    w.site_at(options::SITE_UNION_PATTERN_PIPE_AFTER);
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_right", ::sittir_core::types::ItemIndex(0), w, |w| right.render(w))?;
+    w.edge(::sittir_core::types::KindId(186), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
 }
 
@@ -28165,10 +28140,10 @@ fn render_constrained_type(node: &ConstrainedTypeNode, w: &mut dyn ::sittir_core
 }
 
 fn render_member_type(node: &MemberTypeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let base_type = &node.base_type;
     let name = &node.name;
+    let qualifier = &node.qualifier;
     w.edge(::sittir_core::types::KindId(231), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_base_type", ::sittir_core::types::ItemIndex(0), w, |w| base_type.render(w))?;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_qualifier", ::sittir_core::types::ItemIndex(0), w, |w| qualifier.render(w))?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_BEFORE);
     w.text(".")?;
     w.site_at(options::SITE_MEMBER_TYPE_DOT_AFTER);
@@ -29088,13 +29063,10 @@ fn render_line_continuation_newline(t: &LineContinuationNewlineNode, w: &mut dyn
 }
 
 fn render_simple_pattern_negative(node: &SimplePatternNegativeNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    let sign = View::new(&node.sign, "-");
     let value = &node.value;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::Before, node.layout.edges().before);
-    if sign.is_present() {
-        sign.render(w)?;
-        w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_SIGN_AFTER);
-    }
+    w.text("-")?;
+    w.site_at(options::SITE_SIMPLE_PATTERN_NEGATIVE_DASH_AFTER);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_value", ::sittir_core::types::ItemIndex(0), w, |w| value.render(w))?;
     w.edge(::sittir_core::types::KindId(284), ::sittir_core::options::Side::After, node.layout.edges().after);
     Ok(())
@@ -29668,6 +29640,10 @@ fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::re
     NodeLayout::render(None, Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
 }
 
+fn render_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
+}
+
 fn render_lbrace(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("{"))
 }
@@ -29710,10 +29686,6 @@ fn render_percent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_cor
 
 fn render_slash_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     NodeLayout::render(None, Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("//"))
-}
-
-fn render_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
 }
 
 fn render_amp(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -30280,7 +30252,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::None(_) => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
             Self::PositionalSeparator(_) => [::sittir_core::types::KindId(258)].iter().any(|k| kinds.contains(k)),
             Self::KeywordSeparator(_) => [::sittir_core::types::KindId(259)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern(_) => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
+            Self::WildcardPattern => [::sittir_core::types::KindId(280)].iter().any(|k| kinds.contains(k)),
             Self::LineContinuationNul => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
             Self::Indent => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
             Self::Dedent => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
@@ -30333,6 +30305,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Lbrack => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
             Self::Rbrack => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
             Self::At => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
             Self::Lbrace => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::Rbrace => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
@@ -30344,7 +30317,6 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Slash => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
             Self::Percent => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
             Self::SlashSlash => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
             Self::Amp => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
             Self::Caret => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
             Self::LtLt => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
@@ -30578,7 +30550,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::None(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(72), edges, w, render_none),
             AnyNode::PositionalSeparator(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(258), edges, w, render_positional_separator),
             AnyNode::KeywordSeparator(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(259), edges, w, render_keyword_separator),
-            AnyNode::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(280), edges, w, render_wildcard_pattern),
+            AnyNode::WildcardPattern => render_wildcard_pattern(w),
             AnyNode::LineContinuationNul => render_line_continuation_nul(w),
             AnyNode::Indent => render_indent(w),
             AnyNode::Dedent => render_dedent(w),
@@ -30631,6 +30603,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::Lbrack => render_lbrack(w),
             AnyNode::Rbrack => render_rbrack(w),
             AnyNode::At => render_at(w),
+            AnyNode::Pipe => render_pipe(w),
             AnyNode::Lbrace => render_lbrace(w),
             AnyNode::Rbrace => render_rbrace(w),
             AnyNode::Underscore => render_underscore(w),
@@ -30642,7 +30615,6 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::Slash => render_slash(w),
             AnyNode::Percent => render_percent(w),
             AnyNode::SlashSlash => render_slash_slash(w),
-            AnyNode::Pipe => render_pipe(w),
             AnyNode::Amp => render_amp(w),
             AnyNode::Caret => render_caret(w),
             AnyNode::LtLt => render_lt_lt(w),
@@ -30883,4 +30855,4 @@ const _: () = assert!(::core::mem::size_of::<WithStatementNode>() <= 256, "WithS
 const _: () = assert!(::core::mem::size_of::<YieldFromClauseNode>() <= 256, "YieldFromClauseNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldNode>() <= 256, "YieldNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, SplatPatternOperatorNodeSlot, SplatPatternNameNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, SplatPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, LbraceNode, RbraceNode, UnderscoreNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, PipeNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, SimpleStatementNode, CompoundStatementNode, MatchBlockNode, WithClauseNode, SuiteNode, ParameterNode, PatternNode, ExpressionNode, PrimaryExpressionNode, IntegerNode, FloatNode, IntegerDecimalNode, CompoundStatementClassDefinitionNode, StatementClassDefinitionNode, SuiteClassDefinitionNode, FutureImportStatementContentNodeSlot, ImportFromStatementModuleNameNodeSlot, ImportFromStatementContentNodeSlot, ImportListNameNodeSlot, PrintStatementContentNodeSlot, ExpressionStatementContentNodeSlot, ReturnStatementExpressionsNodeSlot, IfStatementAlternativeNodeSlot, ForStatementLeftNodeSlot, ExecStatementCodeNodeSlot, ParenthesizedListSplatContentNodeSlot, DecoratedDefinitionDefinitionNodeSlot, CasePatternContentNodeSlot, SimplePatternContentNodeSlot, SplatPatternOperatorNodeSlot, SplatPatternNameNodeSlot, ComplexPatternRealNodeSlot, ComplexPatternOperatorNodeSlot, DefaultParameterNameNodeSlot, ListSplatPatternPatternNodeSlot, BooleanOperatorOperatorNodeSlot, BinaryOperatorOperatorNodeSlot, UnaryOperatorOperatorNodeSlot, LambdaWithinForInClauseBodyNodeSlot, AugmentedAssignmentOperatorNodeSlot, AugmentedAssignmentRightNodeSlot, YieldContentNodeSlot, CallArgumentsNodeSlot, TypedParameterNameNodeSlot, TypeContentNodeSlot, SplatTypeOperatorNodeSlot, ParenthesizedExpressionExpressionNodeSlot, CollectionElementsItemNodeSlot, ForInClauseTrailingCommaNodeSlot, StringContentNodeSlot, StringContentElementsNodeSlot, InterpolationExpressionNodeSlot, FormatSpecifierElementsNodeSlot, ArgumentListElementsItemNodeSlot, DictPatternElementsItemNodeSlot, SubscriptsSubscriptNodeSlot, DictionaryElementsItemNodeSlot, PrintStatementChevronPrintChevronArgumentsNodeSlot, ComprehensionClausesContentNodeSlot, ExceptClauseExceptionContentNodeSlot, ComparisonOperatorComparatorOperatorsNodeSlot, DecoratedDefinitionClassDeclarationDefinitionNodeSlot, ModuleNode, SimpleStatementsNode, ImportStatementNode, ImportPrefixNode, RelativeImportNode, FutureImportStatementNode, ImportFromStatementNode, ImportListNode, AliasedImportNode, WildcardImportNode, PrintStatementNode, ChevronNode, AssertStatementNode, ExpressionStatementNode, NamedExpressionNode, NamedExpressionLhsNode, ReturnStatementNode, DeleteStatementNode, RaiseStatementNode, PassStatementNode, BreakStatementNode, ContinueStatementNode, IfStatementNode, ElifClauseNode, ElseClauseNode, MatchStatementNode, CaseClauseNode, ForStatementNode, WhileStatementNode, TryStatementNode, ExceptClauseNode, FinallyClauseNode, WithStatementNode, WithItemNode, FunctionDefinitionNode, ParametersNode, LambdaParametersNode, ListSplatNode, DictionarySplatNode, GlobalStatementNode, NonlocalStatementNode, ExecStatementNode, TypeAliasStatementNode, ClassDefinitionNode, TypeParameterNode, ParenthesizedListSplatNode, ArgumentListNode, DecoratedDefinitionNode, DecoratorNode, BlockNode, ExpressionListNode, DottedNameNode, CasePatternNode, SimplePatternNode, CaseAsPatternNode, UnionPatternNode, DictPatternNode, KeyValuePatternNode, KeywordPatternNode, SplatPatternNode, ClassPatternNode, ComplexPatternNode, ParametersElementsNode, PatternsNode, TuplePatternNode, ListPatternNode, DefaultParameterNode, TypedDefaultParameterNode, ListSplatPatternNode, DictionarySplatPatternNode, AsPatternNode, NotOperatorNode, BooleanOperatorNode, BinaryOperatorNode, UnaryOperatorNode, ComparisonOperatorNode, LambdaNode, LambdaWithinForInClauseNode, AugmentedAssignmentNode, PatternListNode, YieldNode, AttributeNode, SubscriptNode, SliceNode, EllipsisNode, CallNode, TypedParameterNode, TypeNode, SplatTypeNode, GenericTypeNode, UnionTypeNode, ConstrainedTypeNode, MemberTypeNode, KeywordArgumentNode, ListNode, SetNode, TupleNode, DictionaryNode, PairNode, ListComprehensionNode, DictionaryComprehensionNode, SetComprehensionNode, GeneratorExpressionNode, ParenthesizedExpressionNode, CollectionElementsNode, ForInClauseNode, IfClauseNode, ConditionalExpressionNode, ConcatenatedStringNode, StringNode, StringContentNode, InterpolationNode, NotEscapeSequenceNode, FormatSpecifierNode, TypeConversionNode, IdentifierNode, TrueNode, FalseNode, NoneNode, AwaitNode, CommentNode, PositionalSeparatorNode, KeywordSeparatorNode, SimpleStatementsElementsNode, SubjectsNode, CasePatternsNode, WithClauseWithItemsNode, TypesNode, ArgumentListElementsNode, ListPatternCasePatternsNode, DictPatternElementsNode, SubscriptsNode, DictionaryElementsNode, SliceGroupNode, FormatSpecifierTextNode, TuplePatternElementsNode, TupleElementsNode, ExceptClauseExceptionAsNode, CaseTuplePatternNode, CaseListPatternNode, PrintArgumentsNode, PrintChevronArgumentsNode, PrintStatementChevronNode, PrintStatementPlainNode, WildcardPatternNode, ParenthesizedImportListNode, ComprehensionClausesNode, IntegerHexNode, IntegerOctalNode, IntegerBinaryNode, IntegerDecimalLongNode, IntegerDecimalImaginaryNode, IntegerDecimalPlainNode, FloatPointNode, FloatLeadingPointNode, FloatScientificNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeWideNode, EscapeSequenceHexNode, EscapeSequenceOctalNode, EscapeSequenceLineBreakNode, EscapeSequenceSimpleNode, EscapeSequenceNamedNode, LineContinuationNewlineNode, LineContinuationNulNode, SimplePatternNegativeNode, ExceptClauseExceptionListNode, ExceptClauseExceptionNode, AssignmentEqNode, AssignmentTypeNode, AssignmentTypedNode, ExpressionStatementTupleNode, WithClauseBareNode, WithClauseParenNode, MatchBlockBlockNode, MatchBlockEmptyNode, SuiteInlineNode, SuiteBlockNode, SuiteEmptyNode, ComparisonOperatorComparatorNode, YieldFromClauseNode, StringStartNode, StringFragmentNode, EscapeInterpolationNode, StringEndNode, IndentNode, DedentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, ConstructorDeclarationNode, BlockClassDeclarationNode, SuiteBlockClassDeclarationNode, DecoratedDefinitionClassDeclarationNode, AsPatternTargetNode, ImportKeywordNode, DotNode, FromKeywordNode, FutureUKeywordNode, AsKeywordNode, StarNode, GtGtNode, AssertKeywordNode, ColonEqNode, ReturnKeywordNode, DelKeywordNode, RaiseKeywordNode, PassKeywordNode, BreakKeywordNode, ContinueKeywordNode, IfKeywordNode, ColonNode, ElifKeywordNode, ElseKeywordNode, MatchKeywordNode, CaseKeywordNode, AsyncKeywordNode, ForKeywordNode, InKeywordNode, WhileKeywordNode, TryKeywordNode, ExceptKeywordNode, FinallyKeywordNode, WithKeywordNode, DefKeywordNode, DashGtNode, LparenNode, RparenNode, StarStarNode, GlobalKeywordNode, NonlocalKeywordNode, ExecKeywordNode, TypeKeywordNode, EqNode, ClassKeywordNode, LbrackNode, RbrackNode, AtNode, PipeNode, LbraceNode, RbraceNode, UnderscoreNode, DashNode, PlusNode, NotKeywordNode, AndKeywordNode, OrKeywordNode, SlashNode, PercentNode, SlashSlashNode, AmpNode, CaretNode, LtLtNode, TildeNode, LambdaKeywordNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, AtEqNode, SlashSlashEqNode, PercentEqNode, StarStarEqNode, GtGtEqNode, LtLtEqNode, AmpEqNode, CaretEqNode, PipeEqNode, YieldKeywordNode, CommaNode, BslashNode, AwaitKeywordNode, PrintKeywordNode, LtNode, LtEqNode, EqEqNode, BangEqNode, GtEqNode, GtNode, LtGtNode, NotInNode, IsKeywordNode, IsNotNode, InitUKeywordNode, TriviaNode);

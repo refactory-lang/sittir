@@ -94,6 +94,7 @@ const facts: ModelFacts = {
 	listElementKinds: { arguments: ['identifier'], elements: ['identifier'], args: ['attributed'] },
 	hoistedKinds: new Set(),
 	oneSurfaceKinds: new Set<string>(),
+	unitKinds: new Set(['comma']),
 	kindIdOfName: (kind) => ids[kind]
 };
 

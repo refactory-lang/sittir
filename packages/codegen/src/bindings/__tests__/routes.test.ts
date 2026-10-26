@@ -15,6 +15,7 @@ const slot = (name: string, kinds: readonly string[], extra: Partial<ModelSlot> 
 const node = (kind: string, slots: readonly ModelSlot[] = [], extra: Partial<ModelNode> = {}): ModelNode => ({
 	kind,
 	modelType: 'branch',
+	unit: false,
 	slots,
 	subtypes: [],
 	elementKinds: [],
@@ -64,7 +65,7 @@ const MODEL = [
 			{ kind: 'false_keyword', text: 'false' }
 		]
 	}),
-	node('true_keyword', [], { modelType: 'keyword', text: 'true' }),
+	node('true_keyword', [], { modelType: 'keyword', unit: true, text: 'true' }),
 	node('predefined', [], {
 		modelType: 'enum',
 		enumMembers: [
@@ -85,7 +86,7 @@ const MODEL = [
 	node('plain_text', [], { modelType: 'pattern' }),
 	node('plain_holder', [slot('text', ['_plain_text'])]),
 	node('shown_holder', [slot('text', ['_template_text'])]),
-	node('false_keyword', [], { modelType: 'keyword', text: 'false' }),
+	node('false_keyword', [], { modelType: 'keyword', unit: true, text: 'false' }),
 	node('_decl', [], { modelType: 'supertype', subtypes: ['decl_plain', '_decl_default'] }),
 	node('decl_plain', [slot('name', ['identifier'])], { variantOf: '_decl' }),
 	node('_decl_default', [], { modelType: 'supertype', subtypes: ['default_fn'], variantOf: '_decl' }),
@@ -95,10 +96,10 @@ const MODEL = [
 	node('clause_paren', [slot('wrapped', ['clause_items'])], { modelType: 'envelope', variantOf: '_clause' }),
 	node('clause_items', [slot('item', ['identifier'], { propertyName: 'items', multiple: true })], { modelType: 'list', elementKinds: ['identifier'] }),
 	node('range', [slot('start', ['expr']), slot('dots', ['_dots'])]),
-	node('_dots', [], { modelType: 'punctuation', text: '..' }),
+	node('_dots', [], { modelType: 'punctuation', unit: true, text: '..' }),
 	node('span', [slot('lo', ['expr']), slot('op', ['_dotdot', '_dotdoteq'])]),
-	node('_dotdot', [], { modelType: 'punctuation', text: '..' }),
-	node('_dotdoteq', [], { modelType: 'punctuation', text: '..=' }),
+	node('_dotdot', [], { modelType: 'punctuation', unit: true, text: '..' }),
+	node('_dotdoteq', [], { modelType: 'punctuation', unit: true, text: '..=' }),
 	node('private_name', [slot('content', [])]),
 	node('scoped_name', [slot('path', ['identifier']), slot('name', ['identifier'])]),
 	node('char_text', [slot('content', [])]),
@@ -129,13 +130,13 @@ const MODEL = [
 			{ kind: 'protected_kw', text: 'protected' }
 		]
 	}),
-	node('public_kw', [], { modelType: 'keyword', text: 'public' }),
-	node('private_kw', [], { modelType: 'keyword', text: 'private' }),
-	node('protected_kw', [], { modelType: 'keyword', text: 'protected' }),
+	node('public_kw', [], { modelType: 'keyword', unit: true, text: 'public' }),
+	node('private_kw', [], { modelType: 'keyword', unit: true, text: 'private' }),
+	node('protected_kw', [], { modelType: 'keyword', unit: true, text: 'protected' }),
 	node('decorator'),
 	node('fn_x', [slot('vis', ['vis_mod'], { required: false }), slot('name', ['identifier'])]),
 	node('vis_mod', [slot('content', ['crate_kw', 'vis_pub'])], { modelType: 'polymorph' }),
-	node('crate_kw', [], { modelType: 'keyword', text: 'crate' }),
+	node('crate_kw', [], { modelType: 'keyword', unit: true, text: 'crate' }),
 	node('vis_pub', [slot('scope', ['identifier'], { required: false })], { modelType: 'envelope' }),
 	node('fn_item', [slot('params', ['params_x'])]),
 	node('params_x', [slot('elements', ['params_elements'], { required: false })]),
@@ -143,7 +144,7 @@ const MODEL = [
 	node('attr_param', [slot('element', ['recv_self', 'param_x'])]),
 	node('recv_self'),
 	node('param_x', [slot('name', ['self_kw', 'identifier'])]),
-	node('self_kw', [], { modelType: 'keyword', text: 'self' })
+	node('self_kw', [], { modelType: 'keyword', unit: true, text: 'self' })
 ];
 
 const grammar = async (bindings: string): Promise<GrammarInput> => ({
@@ -495,7 +496,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const model = new Map(MODEL.map((n) => [n.kind, n]));
 		model.set('word', node('word', [], { modelType: 'pattern', pattern: '[a-z]+' }));
 		model.set('field_name', node('field_name', [slot('content', ['word'])], { modelType: 'alias' }));
-		const input = { ...(await grammar('(field_name) @identifier.field')), model };
+		const input = { ...(await grammar('(field_name) @identifier')), model };
 		expect(resolveRoutes(input).members.get('field_name')).toEqual([]);
 	});
 
@@ -754,7 +755,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it('refuses a capture on a slot that holds only text on a kind read as an identifier', async () => {
-		await expect(grammar('(private_name content: _ @content) @identifier.property').then(resolveRoutes)).rejects.toThrow(
+		await expect(grammar('(private_name content: _ @content) @identifier').then(resolveRoutes)).rejects.toThrow(
 			/private_name's capture @content.*content slot.*only text.*identifier/
 		);
 	});
@@ -781,7 +782,7 @@ describe("keptKinds over a supertype the slot holds", () => {
 	});
 
 	it('routes no member through a slot that holds only text on a kind read as an identifier, and keeps its node slots', async () => {
-		const routes = resolveRoutes(await grammar(['(private_name) @identifier.property', '(scoped_name) @identifier.scoped', '(char_text) @literal.character'].join('\n')));
+		const routes = resolveRoutes(await grammar(['(private_name) @identifier', '(scoped_name) @identifier.qualified', '(char_text) @literal.character'].join('\n')));
 		expect(routes.members.get('private_name')).toEqual([]);
 		expect(routes.members.get('scoped_name')?.map((r) => r.name)).toEqual(['path', 'name']);
 		expect(routes.members.get('char_text')?.map((r) => r.name)).toEqual(['content']);
@@ -1062,7 +1063,7 @@ describe('flag captures', () => {
 	const FLAGGED = [
 		node('method', [slot('accessor_kind', [], { required: false, terminals: ['get', 'set', '*'] }), slot('name', ['identifier'])]),
 		node('param', [slot('pattern', ['identifier']), slot('mutable_specifier', ['mutable_specifier'], { required: false })]),
-		node('mutable_specifier', [], { modelType: 'keyword', text: 'mut' }),
+		node('mutable_specifier', [], { modelType: 'keyword', unit: true, text: 'mut' }),
 		node('for_in', [slot('await', [], { required: false, terminals: ['await'] }), slot('body', ['block'])]),
 		node('static_item', [slot('ref', [], { required: false, terminals: ['ref', 'mut'] }), slot('name', ['identifier'])]),
 		node('fn_item', [slot('mods', ['mods'], { required: false }), slot('name', ['identifier'])]),
@@ -1325,7 +1326,7 @@ describe('flag captures', () => {
 				...FLAGGED_MODEL.values(),
 				node('holder', [slot('item', ['entry'])]),
 				node('entry', [slot('storage_class', ['storage_class'], { required: false }), slot('name', ['identifier'])]),
-				node('storage_class', [], { modelType: 'keyword', text: 'static' })
+				node('storage_class', [], { modelType: 'keyword', unit: true, text: 'static' })
 			].map((n) => [n.kind, n])
 		);
 		const scoped: Vocabulary = {

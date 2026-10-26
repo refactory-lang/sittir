@@ -23,6 +23,5 @@ export type StrictRowsThatTakeTheirOwnNode = Expect<
 		| 'set'
 		| 'tuple'
 		| 'tuplePattern'
-		| 'unionPattern'
 	>
 >;

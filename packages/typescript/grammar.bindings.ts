@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, copy, edit, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "48c11776a13d58b25090c44e8ff377cef9c5a20e578c58f625fc5ed4f9b53f57";
+export const hash = "c45880830113384a710a741933a65e5efabbb4077ea2318c4fbf0da8a4a19616";
 
 export const renames = {
 	program: "file",
@@ -109,8 +109,6 @@ export const renames = {
 	undefined: "undefined_null_literal",
 	regex_pattern: "pattern_regex_literal",
 	regex_flags: "flags_regex_literal",
-	private_property_identifier: "property_identifier",
-	nested_type_identifier: "path_type",
 	this: "receiver_identifier",
 	super: "super_identifier",
 	accessibility_modifier: "visibility_modifier",
@@ -125,6 +123,8 @@ export default grammar(
 		generated: true,
 		edits: {
 			_call_signature_get_accessor_signature: { "2": field("type") },
+			_jsx_element_name: { "-2": alias("qualified_identifier") },
+			_module: { "0/0/2": alias("qualified_identifier") },
 			_number: { "1": field("value") },
 			_parameter_name: { "4": field("name") },
 			abstract_class_declaration: { "1": field("abstract") },
@@ -138,9 +138,12 @@ export default grammar(
 			export_specifier: { "0/0": field("type_only") },
 			export_statement_default_from: { "1": field("type_only") },
 			export_statement_equals_export: { "2": field("value") },
+			extends_type_clause: { "1/0/0/1": alias("qualified_identifier"), "1/1/0/1/0/1": alias("qualified_identifier") },
 			for_in_statement: { "1/0": field("async") },
 			generator_function: { "2": field("generator") },
 			generator_function_declaration: { "2": field("generator") },
+			generic_type: { "0/0/1": alias("qualified_identifier") },
+			import_alias: { "3/0/1": alias("qualified_identifier") },
 			import_specifier_as: { "0/0": field("type_only") },
 			import_specifier_name: { "0/0": field("type_only") },
 			import_statement: { "1": field("type_only") },
@@ -148,9 +151,12 @@ export default grammar(
 			member_expression: { "1": field("optional_chain"), "1/0/1": field("optional_chain") },
 			method_definition_plain: { "5/0": field("generator") },
 			method_signature_plain: { "5/0": field("generator") },
+			nested_identifier: [{ "0": field("qualifier"), "2": field("name") }, { "0/0/1": alias("qualified_identifier") }],
+			nested_type_identifier: [{ "0": field("qualifier") }, { "0/0/1": alias("qualified_identifier") }],
 			new_expression: { "1": field("function") },
 			optional_parameter: { "1": field("optional") },
 			parenthesized_expression_typed: { "1/0": field("expression") },
+			primary_type: { "-17": alias("qualified_identifier") },
 			satisfies_expression: { "2": field("type") },
 			try_statement: { "2/0": field("handlers") },
 			tuple_type: { "1/0": field("tuple_type_members") },

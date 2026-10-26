@@ -16,9 +16,9 @@ describe('a parsed program renders the literal tokens the source wrote', () => {
 });
 
 describe('a delegating yield keeps its star when it is rendered without its source', () => {
-	it('builds `yield * g` and a plain yield without the star', () => {
+	it('builds `yield* g` and a plain yield without the star', () => {
 		const built = engine.build.yieldExpression;
-		expect(built.delegate({ expression: 'g' }).$render()).toBe('yield * g');
+		expect(built.delegate({ expression: 'g' }).$render()).toBe('yield* g');
 		expect(built({ expression: 'g' }).$render()).toBe('yield g');
 	});
 

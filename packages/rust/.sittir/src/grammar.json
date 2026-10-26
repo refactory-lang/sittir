@@ -2129,8 +2129,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_type_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -3281,12 +3286,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "scoped_type_identifier",
-          "annotations": {
-            "variant": "scoped_identifier",
-            "variantOf": "_type"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "scoped_type_identifier",
+            "annotations": {
+              "variant": "scoped_identifier",
+              "variantOf": "_type"
+            }
+          },
+          "named": true,
+          "value": "qualified_identifier"
         },
         {
           "type": "SYMBOL",
@@ -3669,8 +3679,13 @@
                   "name": "identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "scoped_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "scoped_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 },
                 {
                   "type": "SYMBOL",
@@ -3747,8 +3762,13 @@
                   "value": "identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "scoped_type_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "scoped_type_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 }
               ]
             }
@@ -3778,8 +3798,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               }
             ]
           }
@@ -4096,8 +4121,13 @@
                   "name": "_type_identifier"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "scoped_type_identifier"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "scoped_type_identifier"
+                  },
+                  "named": true,
+                  "value": "qualified_identifier"
                 },
                 {
                   "type": "SYMBOL",
@@ -4147,8 +4177,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_type_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -4481,12 +4516,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "scoped_identifier",
-          "annotations": {
-            "variant": "scoped_identifier",
-            "variantOf": "_expression_except_range"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "scoped_identifier",
+            "annotations": {
+              "variant": "scoped_identifier",
+              "variantOf": "_expression_except_range"
+            }
+          },
+          "named": true,
+          "value": "qualified_identifier"
         },
         {
           "type": "SYMBOL",
@@ -4738,8 +4778,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "scoped_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -4887,7 +4932,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "path",
+          "name": "qualifier",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -4912,6 +4957,9 @@
                 "type": "BLANK"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -4945,7 +4993,7 @@
         "members": [
           {
             "type": "FIELD",
-            "name": "path",
+            "name": "qualifier",
             "content": {
               "type": "CHOICE",
               "members": [
@@ -4966,6 +5014,9 @@
                   "type": "BLANK"
                 }
               ]
+            },
+            "metadata": {
+              "fieldSource": "override"
             }
           },
           {
@@ -4988,7 +5039,7 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "path",
+          "name": "qualifier",
           "content": {
             "type": "CHOICE",
             "members": [
@@ -5017,6 +5068,9 @@
                 "type": "BLANK"
               }
             ]
+          },
+          "metadata": {
+            "fieldSource": "override"
           }
         },
         {
@@ -5959,8 +6013,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier_in_expression_position"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_type_identifier_in_expression_position"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -7368,12 +7427,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "scoped_identifier",
-          "annotations": {
-            "variant": "scoped_identifier",
-            "variantOf": "_pattern"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "scoped_identifier",
+            "annotations": {
+              "variant": "scoped_identifier",
+              "variantOf": "_pattern"
+            }
+          },
+          "named": true,
+          "value": "qualified_identifier"
         },
         {
           "type": "SYMBOL",
@@ -7552,8 +7616,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               }
             ]
           },
@@ -7659,8 +7728,13 @@
                 "name": "identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -7715,8 +7789,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_type_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               }
             ]
           }
@@ -8715,12 +8794,17 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "scoped_identifier",
-          "annotations": {
-            "variant": "scoped_identifier",
-            "variantOf": "_path"
-          }
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "scoped_identifier",
+            "annotations": {
+              "variant": "scoped_identifier",
+              "variantOf": "_path"
+            }
+          },
+          "named": true,
+          "value": "qualified_identifier"
         },
         {
           "type": "ALIAS",
@@ -12345,8 +12429,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_type_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -12385,8 +12474,13 @@
                 "name": "_type_identifier"
               },
               {
-                "type": "SYMBOL",
-                "name": "scoped_type_identifier"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "scoped_type_identifier"
+                },
+                "named": true,
+                "value": "qualified_identifier"
               },
               {
                 "type": "SYMBOL",
@@ -12786,8 +12880,13 @@
               "name": "_type_identifier"
             },
             {
-              "type": "SYMBOL",
-              "name": "scoped_type_identifier"
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "scoped_type_identifier"
+              },
+              "named": true,
+              "value": "qualified_identifier"
             }
           ]
         },
