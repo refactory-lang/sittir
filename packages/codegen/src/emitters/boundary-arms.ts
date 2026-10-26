@@ -119,7 +119,7 @@ interface ModeledArm {
 	readonly unsupported?: string;
 }
 
-type RawArm = ModeledArm | { readonly next: undefined; readonly unknown: string };
+type RawArm = ModeledArm | { readonly next: undefined; readonly unknown: string; readonly marks: readonly BoundaryMark[] };
 
 type Rest = (path: Path, marks: readonly BoundaryMark[]) => void;
 type Emit = (arm: RawArm) => void;
@@ -260,7 +260,7 @@ class BoundaryWalk {
 		for (const member of this.inputs.members.get(kind) ?? []) {
 			const site = side === 'before' ? member.before : member.after;
 			const marks: readonly BoundaryMark[] = site === undefined ? [] : [{ at: 'site', site }];
-			emit(member.id === undefined ? { next: undefined, unknown: member.text } : modeled(member.id, marks, START));
+			emit(member.id === undefined ? { next: undefined, unknown: member.text, marks } : modeled(member.id, marks, START));
 		}
 		const template = this.inputs.templates.get(kind);
 		if (template !== undefined) {
@@ -387,12 +387,12 @@ class BoundaryWalk {
 		if (id !== undefined) emit(modeled(id, marks, path, fields));
 		if (id !== undefined && (element.hidden ?? facts?.hidden) !== true) return;
 		if (kind === undefined || (!this.inputs.templates.has(kind) && !this.inputs.members.has(kind))) {
-			if (id === undefined) emit({ next: undefined, unknown: kind ?? element.text ?? '' });
+			if (id === undefined) emit({ next: undefined, unknown: kind ?? element.text ?? '', marks });
 			return;
 		}
 		for (const inner of this.armsOf(kind, side)) {
 			if (inner.next === undefined) {
-				emit(inner);
+				emit({ ...inner, marks: joined(side, marks, inner.marks) });
 				continue;
 			}
 			const past = path.unsupported ?? inner.unsupported;
@@ -401,7 +401,7 @@ class BoundaryWalk {
 	}
 
 	private token(token: BoundaryToken, marks: readonly BoundaryMark[], path: Path, emit: Emit): void {
-		emit(token.id === undefined ? { next: undefined, unknown: token.text } : modeled(token.id, marks, path));
+		emit(token.id === undefined ? { next: undefined, unknown: token.text, marks } : modeled(token.id, marks, path));
 	}
 }
 
@@ -421,7 +421,7 @@ function fieldSplit(variants: readonly ModeledArm[]): ReadonlyMap<number, Modele
 function merged(kind: string, side: BoundarySide, raw: readonly RawArm[], dropped: DroppedBoundaryArm[]): BoundaryArm[] {
 	const unknown = [...new Set(raw.flatMap((each) => (each.next === undefined ? [each.unknown] : [])))].sort();
 	if (unknown.length > 0) {
-		if (raw.some((each) => each.next !== undefined && each.marks.length > 0)) dropped.push({ kind, side, drop: 'unknown', variants: unknown });
+		if (raw.some((each) => each.marks.length > 0)) dropped.push({ kind, side, drop: 'unknown', variants: unknown });
 		return [];
 	}
 	const byNext = new Map<number, ModeledArm[]>();

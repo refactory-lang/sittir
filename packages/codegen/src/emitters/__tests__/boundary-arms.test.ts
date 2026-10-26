@@ -74,4 +74,10 @@ describe('boundaryTableOf', () => {
 		expect(table.rows).toEqual([]);
 		expect(table.dropped).toEqual([{ kind: 'holder', side: 'before', drop: 'unknown', variants: ['zz'] }]);
 	});
+
+	it('drops a side whose only marks lead to a token no kind resolves', () => {
+		const table = boundaryTableOf(inputsOf([{ kind: 'seam', field: 'open' }, { kind: 'text', text: 'zz' }], {}));
+		expect(table.rows).toEqual([]);
+		expect(table.dropped).toEqual([{ kind: 'holder', side: 'before', drop: 'unknown', variants: ['zz'] }]);
+	});
 });
