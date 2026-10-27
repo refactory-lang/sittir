@@ -633,29 +633,6 @@ parse clean, so a recovery that swallows a neighbour fails.
 
 Whether the gate verifies every cause of a rule's declaration by witness, each one in `WITNESSED_CAUSES`: `'accepts-other-kind'`, `'semantic-gap'`, `'rejects-valid-syntax'`, `'accepts-invalid-syntax'` and `'ruled-narrowing'`. A declaration with no cause is never verified, though "every cause" would hold of it vacuously. `'semantic-gap'` additionally requires the witness kind to equal the unchanged upstream parser kind and a nonempty language meaning; semantic construction regressions provide evidence beyond the grammar-form check. `unverifiedRuleNames` reads it to tell a verified correction from debt, for a declaration and for the rules that reach a vocabulary helper.
 
-### `packages/codegen/src/__tests__/hand-rule-ratchet.test.ts::CEILINGS`
-
-The hand-written rule ratchet: per grammar, the most `rules:` entries that
-stand for something sittir cannot yet derive (`unverifiedRuleNames`). Every
-undeclared rule counts, and so does every `reauthored` rule with a cause that is
-asserted but not verified: `'ambiguity'`, which has no detector, and
-`'alias-shape'`, verified or on its grammar's floor. A `vocabulary` rule counts
-unless only witness-verified declarations reach it. Each counted rule is a shape
-the pipeline should one day produce from the upstream grammar by itself, at
-which point the entry is deleted and the ceiling drops. A ceiling rises only by
-the maintainer's decision for one named rule, recorded here with its reason; a
-change that merely needs room does not raise it.
-
-A rule reauthored under a witness-verified cause (`isWitnessVerified`) is not
-counted. It corrects an upstream rule that is wrong, the gate checks the grammar form and the upstream parser checks the accepted kind. A semantic-gap claim additionally needs construction regressions to establish its language meaning, and no derivation can retire it: it is not debt.
-Neither is a vocabulary helper that only such corrections reach: it spells part
-of the correction and goes with it. Python's `_tuple_elements` and
-`_tuple_pattern_elements` are reached only by the witness-verified `tuple` and
-`tuple_pattern`: each keeps the parentheses on the container and the commas on
-an independent list, because the container itself as the list would make the
-list kind a member of its own element union, which the widening types cannot
-express without a cycle.
-
 ### `packages/codegen/src/compiler/diagnostics/rule-causes.ts::authoredRuleNames`
 
 The rules a grammar authors in `rules:`, with a declared cause or without one. The diagnostic records and the dynamic-precedence check read the same set.
