@@ -1,5 +1,5 @@
 import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
-import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
+import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
@@ -17,7 +17,7 @@ import {
 import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './node-data.ts';
 import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
-export function positionWords(position: RecordPosition): Uint32Array {
+export function positionWords(position: RecordPosition): ChunkWords {
 	return recordsOf(position.$tree).words(position.$at, 2);
 }
 
@@ -47,17 +47,17 @@ function wordsAt(
 	records: RecordWords,
 	at: number,
 	length: number
-): { readonly words: Uint32Array; readonly start: number } {
+): { readonly words: ChunkWords; readonly start: number } {
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
-function holderWords(holder: RecordPosition, length: number): { readonly words: Uint32Array; readonly start: number; readonly records: RecordWords } {
+function holderWords(holder: RecordPosition, length: number): { readonly words: ChunkWords; readonly start: number; readonly records: RecordWords } {
 	const records = recordsOf(holder.$tree);
 	const own = (holder as Partial<RecordHandle>).$words;
 	return { words: own ?? records.words(holder.$at, length), start: wordOf(holder.$at, records.format), records };
 }
 
-function sideWordsAt(records: RecordWords, side: number): { readonly words: Uint32Array; readonly start: number } {
+function sideWordsAt(records: RecordWords, side: number): { readonly words: ChunkWords; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;
 	const { format } = records;
@@ -103,7 +103,7 @@ export function recordSeparator(holder: RecordPosition): number | undefined {
 	return recordListSetting(holder, decodeSideSeparatorKind);
 }
 
-function recordListSetting(holder: RecordPosition, decode: (words: Uint32Array, at: number, format: RecordWords['format']) => number | undefined): number | undefined {
+function recordListSetting(holder: RecordPosition, decode: (words: ChunkWords, at: number, format: RecordWords['format']) => number | undefined): number | undefined {
 	const records = recordsOf(holder.$tree);
 	const side = sideOf(records, holder.$at);
 	if (side === 0) return undefined;

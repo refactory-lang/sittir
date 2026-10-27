@@ -4,7 +4,7 @@ import { wrapRegistered, type Role } from './identity.ts';
 import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
-import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
+import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
@@ -17,8 +17,10 @@ export interface BuiltText {
 	readonly len: number;
 }
 
+export type WritableWords = Uint32Array;
+
 export interface BuiltWords {
-	readonly data: Uint32Array;
+	readonly data: WritableWords;
 	readonly base: number;
 	readonly words: number;
 }
@@ -37,11 +39,11 @@ export interface BuiltDraft extends BuiltWords {
 type Wrap = (data: object, tree: TreeHandle) => unknown;
 
 export interface BuiltChunks {
-	readonly words: readonly Uint32Array[];
+	readonly words: readonly WritableWords[];
 	readonly bytes: readonly Uint8Array[];
 }
 
-export interface BuiltChunk<A extends Uint32Array | Uint8Array> {
+export interface BuiltChunk<A extends WritableWords | Uint8Array> {
 	readonly chunk: number;
 	readonly data: A;
 }
@@ -50,7 +52,7 @@ export interface BuiltRecords {
 	readonly format: CellFormat;
 	readonly owner: object;
 	readonly kinds: KindView;
-	words(length: number): BuiltChunk<Uint32Array>;
+	words(length: number): BuiltChunk<WritableWords>;
 	bytes(length: number): BuiltChunk<Uint8Array>;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
@@ -76,7 +78,7 @@ function units(size: number, least: number): void {
 	if (!Number.isSafeInteger(size) || size < least) throw new Error(`a built arena cannot allocate ${size} units`);
 }
 
-class Chunks<A extends Uint32Array | Uint8Array> {
+class Chunks<A extends WritableWords | Uint8Array> {
 	readonly #make: (length: number) => BuiltChunk<A>;
 	readonly #first: number;
 	readonly #limit: number;
@@ -150,7 +152,7 @@ export class BuiltArena {
 	readonly #wrap: Wrap;
 	readonly #handle: TreeEngineHandle;
 	readonly #views: BuiltViews;
-	readonly #words: Chunks<Uint32Array>;
+	readonly #words: Chunks<WritableWords>;
 	#drafts = new Uint32Array(DRAFT_WORDS);
 	#drafted = 0;
 	readonly #bytes: Chunks<Uint8Array>;
@@ -227,7 +229,7 @@ export class BuiltArena {
 		const found = this.words(at, 1)[head]!;
 		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
 		const draft = this.draft(kind, words, at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
-		draft.data.set(this.words(at, words).subarray(head, head + words), draft.base);
+		draft.data.set(this.#chunk(at, words).subarray(head, head + words), draft.base);
 		return draft;
 	}
 
@@ -279,7 +281,11 @@ export class BuiltArena {
 	}
 
 	/** The chunk `at` lies in, `length` words from `at` of it written. */
-	words(at: number, length: number): Uint32Array {
+	words(at: number, length: number): ChunkWords {
+		return this.#chunk(at, length);
+	}
+
+	#chunk(at: number, length: number): WritableWords {
 		const chunk = chunkOf(at, this.format);
 		if (!this.#words.holds(chunk, wordOf(at, this.format), length)) {
 			throw new Error(`a built record read runs past its arena's words (address ${at}, ${length} words)`);
@@ -288,7 +294,7 @@ export class BuiltArena {
 	}
 
 	chunks(): BuiltChunks {
-		const cut = <A extends Uint32Array | Uint8Array>(table: Chunks<A>): A[] =>
+		const cut = <A extends WritableWords | Uint8Array>(table: Chunks<A>): A[] =>
 			table.chunks.map((chunk, n) => chunk.subarray(0, table.used[n]) as A);
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
 	}
@@ -394,7 +400,7 @@ export class BuiltArena {
 		const words = this.#widthOf(header[head]!);
 		const side = this.#sidesNaming(header[head + 1]!, [tree.id, index, end, span.start, span.end]);
 		const place = this.#place(words);
-		place.data.set(this.words(at, words).subarray(head, head + words), place.base);
+		place.data.set(this.#chunk(at, words).subarray(head, head + words), place.base);
 		place.data[place.base + 1] = side;
 		this.#copySites(at, place.at, []);
 		return this.#view(place.at);
@@ -416,7 +422,7 @@ export class BuiltArena {
 			length += field.words;
 			if (before) offset += field.words;
 		}
-		const words = Array.from(this.words(side, length).subarray(start, start + length));
+		const words = Array.from(this.#chunk(side, length).subarray(start, start + length));
 		words.splice(offset, (mask & sideSides.bit) === 0 ? 0 : sideSides.words, ...sides);
 		words[0] = mask | sideSides.bit;
 		return this.push(words);
@@ -552,7 +558,7 @@ export function builtRecordOf(value: object, arena: BuiltArena): number | undefi
 	return ref?.arena === arena ? ref.at : undefined;
 }
 
-function writeChild(words: Uint32Array | number[], at: number, format: CellFormat, kind: number, address: number, link: number, changed: number): void {
+function writeChild(words: WritableWords | number[], at: number, format: CellFormat, kind: number, address: number, link: number, changed: number): void {
 	words[at] = format.child;
 	words[at + 1] = kind;
 	words[at + 2] = address;
@@ -560,13 +566,13 @@ function writeChild(words: Uint32Array | number[], at: number, format: CellForma
 	words[at + 4] = changed;
 }
 
-function writeUnit(words: Uint32Array | number[], at: number, format: CellFormat, kind: number, row: number): void {
+function writeUnit(words: WritableWords | number[], at: number, format: CellFormat, kind: number, row: number): void {
 	words[at] = format.unit;
 	words[at + 1] = kind;
 	words[at + 2] = row;
 }
 
-function writeBuiltLeaf(words: Uint32Array | number[], at: number, format: CellFormat, kind: number, text: BuiltText, changed: number): void {
+function writeBuiltLeaf(words: WritableWords | number[], at: number, format: CellFormat, kind: number, text: BuiltText, changed: number): void {
 	words[at] = format.builtLeaf;
 	words[at + 1] = kind;
 	words[at + 2] = text.at;
@@ -574,7 +580,7 @@ function writeBuiltLeaf(words: Uint32Array | number[], at: number, format: CellF
 	words[at + 4] = changed;
 }
 
-function writeCopiedLeaf(words: Uint32Array | number[], at: number, format: CellFormat, kind: number, text: BuiltText, record: number): void {
+function writeCopiedLeaf(words: WritableWords | number[], at: number, format: CellFormat, kind: number, text: BuiltText, record: number): void {
 	words[at] = format.copiedLeaf;
 	words[at + 1] = kind;
 	words[at + 2] = text.at;
@@ -582,7 +588,7 @@ function writeCopiedLeaf(words: Uint32Array | number[], at: number, format: Cell
 	words[at + 4] = record;
 }
 
-function writeBuiltText(words: Uint32Array | number[], at: number, format: CellFormat, text: BuiltText): void {
+function writeBuiltText(words: WritableWords | number[], at: number, format: CellFormat, text: BuiltText): void {
 	words[at] = format.builtLeaf;
 	words[at + 1] = 0;
 	words[at + 2] = text.at;
@@ -595,7 +601,7 @@ function writeBuiltText(words: Uint32Array | number[], at: number, format: CellF
  *
  * @throws For a form only a parsed tree's reader writes.
  */
-export function encodeCell(words: Uint32Array | number[], at: number, format: CellFormat, cell: RecordCell): void {
+export function encodeCell(words: WritableWords | number[], at: number, format: CellFormat, cell: RecordCell): void {
 	switch (cell.form) {
 		case 'absent':
 			words[at] = format.absent;
@@ -629,7 +635,7 @@ export function storeCell(arena: BuiltArena, record: BuiltDraft, word: number, v
 	storeAt(arena, record.data, record.base + word, value, record, word, 0, NO_EDGES);
 }
 
-function storeAt(arena: BuiltArena, data: Uint32Array, at: number, value: unknown, record: BuiltDraft, word: number, item: number, changed: ChangedEdges): void {
+function storeAt(arena: BuiltArena, data: WritableWords, at: number, value: unknown, record: BuiltDraft, word: number, item: number, changed: ChangedEdges): void {
 	if (value === undefined || value === null) return;
 	if (typeof value === 'number') return writeUnit(data, at, arena.format, value, 0);
 	if (typeof value === 'string') return writeBuiltText(data, at, arena.format, arena.text(value));
@@ -643,7 +649,7 @@ function storeAt(arena: BuiltArena, data: Uint32Array, at: number, value: unknow
 }
 
 /** Sets the presence bits `mask` of the word at `at` of a fresh record. */
-export function storeFlag(data: Uint32Array, at: number, mask: number): void {
+export function storeFlag(data: WritableWords, at: number, mask: number): void {
 	data[at] = (data[at]! | mask) >>> 0;
 }
 
@@ -654,7 +660,7 @@ export function storeFlag(data: Uint32Array, at: number, mask: number): void {
  *
  * @throws For a node no read produced, or one read through an engine that does not read trees as records.
  */
-function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: object, changed: ChangedEdges): void {
+function storeParsed(arena: BuiltArena, data: WritableWords, at: number, value: object, changed: ChangedEdges): void {
 	const coordinate = isCoordinate(value) ? value : coordinateOf(value);
 	const token = treeTokenOf(value);
 	const tree = coordinate === undefined ? undefined : treeOf(value);

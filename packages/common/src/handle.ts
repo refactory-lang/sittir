@@ -1,6 +1,6 @@
 import type { NodeCoordinate } from '@sittir/types';
 import type { BuiltText } from './built-arena.ts';
-import type { TreeHandle } from './read.ts';
+import type { ChunkWords, TreeHandle } from './read.ts';
 
 export interface RecordPosition {
 	readonly $type: number;
@@ -10,7 +10,7 @@ export interface RecordPosition {
 }
 
 export interface RecordHandle extends RecordPosition {
-	readonly $words: Uint32Array;
+	readonly $words: ChunkWords;
 	$cache: Record<number, unknown> | undefined;
 	$owned: boolean;
 }

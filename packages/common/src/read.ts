@@ -47,11 +47,17 @@ export interface TreeHandle {
 	token?: TreeToken;
 }
 
+export interface ChunkWords {
+	readonly length: number;
+	readonly [index: number]: number;
+	subarray(begin?: number, end?: number): ChunkWords;
+}
+
 /** What any record view reads its records' words through. */
 export interface RecordWords {
 	readonly format: CellFormat;
 	/** The words of the chunk `address` lies in, holding at least `length` words from it. */
-	words(address: number, length: number): Uint32Array;
+	words(address: number, length: number): ChunkWords;
 }
 
 /** What a record view reads its tree's records through. */
@@ -66,8 +72,6 @@ export interface RecordReader extends RecordWords {
 	renderCandidate(index: number): string;
 	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
 	object(index: number, depth?: number): unknown;
-	/** The words of the chunk `address` lies in, holding at least `length` words from it: a copy JavaScript owns, fetched again when the words sought lie past the copy held. */
-	words(address: number, length: number): Uint32Array;
 	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */
 	coordinate(index: number): { readonly kind: number; readonly end: number };
 }

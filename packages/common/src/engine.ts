@@ -13,14 +13,14 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
+import { decodeTree, readObject, type ChunkWords, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { readEntries, readUnits, type BuiltRecords, type BuiltText } from './built-arena.ts';
+import { readEntries, readUnits, type BuiltRecords, type BuiltText, type WritableWords } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
@@ -198,9 +198,9 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** JSON pairs of coordinates and native record addresses for the hydrated typed subtree, including nested content but no node fields or words. */
 	recordCandidates?(treeId: number, index: number): string;
 	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
-	chunk?(treeId: number, n: number): Uint32Array;
+	chunk?(treeId: number, n: number): ChunkWords;
 	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, and its number. Present when the addon carries the record codec. */
-	builtWords?(length: number): { chunk: number; data: Uint32Array };
+	builtWords?(length: number): { chunk: number; data: WritableWords };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, and its number. Present when the addon carries the record codec. */
 	builtBytes?(length: number): { chunk: number; data: Uint8Array };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
@@ -397,7 +397,7 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 	if (readRecord === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
-	const chunks: Uint32Array[] = [];
+	const chunks: ChunkWords[] = [];
 	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
 	return {
 		format,
