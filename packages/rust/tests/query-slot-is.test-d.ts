@@ -20,9 +20,8 @@ export function slotFlags(): unknown[] {
 		[...params.where((c) => c.type.is('unsigned').and(c.mutable.eq(false)))],
 		[...lets.where((c) => c.value.is('move'))],
 		[...lists.where((c) => c.declarations.is('async'))],
+		[...lists.where((c) => c.declarations.is('static'))],
 		// @ts-expect-error a flag no kind the slot holds declares
-		[...params.where((c) => c.type.is('async'))],
-		// @ts-expect-error a flag a kind the slot holds declares only through its context
-		[...lists.where((c) => c.declarations.is('static'))]
+		[...params.where((c) => c.type.is('async'))]
 	];
 }

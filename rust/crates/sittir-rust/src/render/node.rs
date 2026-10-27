@@ -4685,7 +4685,7 @@ impl ::sittir_core::view::KindOf for ExpressionNode {
             Self::IntegerLiteral(inner) => inner.kind_in(kinds),
             Self::FloatLiteral(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::GenericFunction(inner) => inner.kind_in(kinds),
             Self::AwaitExpression(inner) => inner.kind_in(kinds),
@@ -6985,10 +6985,10 @@ impl ::sittir_core::view::KindOf for NonSpecialTokenContentNodeSlot {
             Self::PrimitiveType(inner) => inner.kind_in(kinds),
             Self::TokenTreePunctuation(inner) => inner.kind_in(kinds),
             Self::TokenKeywords(inner) => inner.kind_in(kinds),
-            Self::MutableSpecifier => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::MutableSpecifier => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -7016,9 +7016,9 @@ impl ::sittir_core::render::Render for NonSpecialTokenContentNodeSlot {
             NonSpecialTokenContentNodeSlot::TokenTreePunctuation(inner) => inner.render(w),
             NonSpecialTokenContentNodeSlot::TokenKeywords(inner) => inner.render(w),
             NonSpecialTokenContentNodeSlot::MutableSpecifier => render_mutable_specifier(w),
-            NonSpecialTokenContentNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            NonSpecialTokenContentNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            NonSpecialTokenContentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            NonSpecialTokenContentNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
+            NonSpecialTokenContentNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            NonSpecialTokenContentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             NonSpecialTokenContentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -7113,8 +7113,8 @@ impl ::sittir_core::view::KindOf for AttributePathNodeSlot {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -7127,8 +7127,8 @@ impl ::sittir_core::render::Render for AttributePathNodeSlot {
             AttributePathNodeSlot::Identifier(inner) => inner.render(w),
             AttributePathNodeSlot::ScopedIdentifier(inner) => inner.render(w),
             AttributePathNodeSlot::SelfModule => render_self_module(w),
-            AttributePathNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            AttributePathNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            AttributePathNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            AttributePathNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             AttributePathNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -7339,10 +7339,10 @@ impl ::sittir_core::view::KindOf for FunctionModifiersModifierNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::ExternModifier(inner) => inner.kind_in(kinds),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::DefaultKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
             Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -8058,8 +8058,8 @@ impl ::sittir_core::view::KindOf for UseDeclarationArgumentNodeSlot {
             Self::ScopedUseList(inner) => inner.kind_in(kinds),
             Self::UseWildcard(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -8076,8 +8076,8 @@ impl ::sittir_core::render::Render for UseDeclarationArgumentNodeSlot {
             UseDeclarationArgumentNodeSlot::ScopedUseList(inner) => inner.render(w),
             UseDeclarationArgumentNodeSlot::UseWildcard(inner) => inner.render(w),
             UseDeclarationArgumentNodeSlot::SelfModule => render_self_module(w),
-            UseDeclarationArgumentNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            UseDeclarationArgumentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            UseDeclarationArgumentNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            UseDeclarationArgumentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             UseDeclarationArgumentNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9326,8 +9326,8 @@ impl ::sittir_core::view::KindOf for ScopedIdentifierQualifierNodeSlot {
             Self::BracketedType(inner) => inner.kind_in(kinds),
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9342,8 +9342,8 @@ impl ::sittir_core::render::Render for ScopedIdentifierQualifierNodeSlot {
             ScopedIdentifierQualifierNodeSlot::BracketedType(inner) => inner.render(w),
             ScopedIdentifierQualifierNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedIdentifierQualifierNodeSlot::SelfModule => render_self_module(w),
-            ScopedIdentifierQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedIdentifierQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedIdentifierQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            ScopedIdentifierQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             ScopedIdentifierQualifierNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9406,7 +9406,7 @@ impl ::sittir_core::view::KindOf for ScopedIdentifierNameNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9416,7 +9416,7 @@ impl ::sittir_core::render::Render for ScopedIdentifierNameNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
             ScopedIdentifierNameNodeSlot::Identifier(inner) => inner.render(w),
-            ScopedIdentifierNameNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            ScopedIdentifierNameNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
             ScopedIdentifierNameNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9519,8 +9519,8 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionQua
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9534,8 +9534,8 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierInExpressionPositionQ
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::ScopedIdentifier(inner) => inner.render(w),
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::GenericTypeWithTurbofish(inner) => inner.render(w),
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::SelfModule => render_self_module(w),
-            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9654,8 +9654,8 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierQualifierNodeSlot {
             Self::BracketedType(inner) => inner.kind_in(kinds),
             Self::GenericType(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -9671,8 +9671,8 @@ impl ::sittir_core::render::Render for ScopedTypeIdentifierQualifierNodeSlot {
             ScopedTypeIdentifierQualifierNodeSlot::BracketedType(inner) => inner.render(w),
             ScopedTypeIdentifierQualifierNodeSlot::GenericType(inner) => inner.render(w),
             ScopedTypeIdentifierQualifierNodeSlot::SelfModule => render_self_module(w),
-            ScopedTypeIdentifierQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            ScopedTypeIdentifierQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            ScopedTypeIdentifierQualifierNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            ScopedTypeIdentifierQualifierNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             ScopedTypeIdentifierQualifierNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -9705,7 +9705,7 @@ impl ::sittir_core::prepare::Prepare for UnaryExpressionOperatorNodeSlot {
 impl ::sittir_core::view::KindOf for UnaryExpressionOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
             Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
         }
@@ -9809,24 +9809,24 @@ impl ::sittir_core::prepare::Prepare for BinaryExpressionOperatorNodeSlot {
 impl ::sittir_core::view::KindOf for BinaryExpressionOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::Lt => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::Gt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
             Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
             Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -9904,16 +9904,16 @@ impl ::sittir_core::prepare::Prepare for CompoundAssignmentExprOperatorNodeSlot 
 impl ::sittir_core::view::KindOf for CompoundAssignmentExprOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::DashEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::DashEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -10432,7 +10432,7 @@ impl ::sittir_core::view::KindOf for CallExpressionFunctionNodeSlot {
             Self::LoopExpression(inner) => inner.kind_in(kinds),
             Self::ForExpression(inner) => inner.kind_in(kinds),
             Self::ConstBlock(inner) => inner.kind_in(kinds),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
@@ -10497,7 +10497,7 @@ impl ::sittir_core::render::Render for CallExpressionFunctionNodeSlot {
             CallExpressionFunctionNodeSlot::LoopExpression(inner) => inner.render(w),
             CallExpressionFunctionNodeSlot::ForExpression(inner) => inner.render(w),
             CallExpressionFunctionNodeSlot::ConstBlock(inner) => inner.render(w),
-            CallExpressionFunctionNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            CallExpressionFunctionNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             CallExpressionFunctionNodeSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             CallExpressionFunctionNodeSlot::Verbatim(inner) => inner.render(w),
         }
@@ -11211,7 +11211,7 @@ impl ::sittir_core::view::KindOf for IfExpressionConditionNodeSlot {
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
             Self::LetCondition(inner) => inner.kind_in(kinds),
             Self::LetChain(inner) => inner.kind_in(kinds),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
@@ -11282,7 +11282,7 @@ impl ::sittir_core::render::Render for IfExpressionConditionNodeSlot {
             IfExpressionConditionNodeSlot::RangeExpressionBare(inner) => inner.render(w),
             IfExpressionConditionNodeSlot::LetCondition(inner) => inner.render(w),
             IfExpressionConditionNodeSlot::LetChain(inner) => inner.render(w),
-            IfExpressionConditionNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            IfExpressionConditionNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             IfExpressionConditionNodeSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             IfExpressionConditionNodeSlot::Verbatim(inner) => inner.render(w),
         }
@@ -11834,7 +11834,7 @@ impl ::sittir_core::view::KindOf for LetChainLeftNodeSlot {
             Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
@@ -11905,7 +11905,7 @@ impl ::sittir_core::render::Render for LetChainLeftNodeSlot {
             LetChainLeftNodeSlot::RangeExpressionPostfix(inner) => inner.render(w),
             LetChainLeftNodeSlot::RangeExpressionPrefix(inner) => inner.render(w),
             LetChainLeftNodeSlot::RangeExpressionBare(inner) => inner.render(w),
-            LetChainLeftNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            LetChainLeftNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             LetChainLeftNodeSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             LetChainLeftNodeSlot::Verbatim(inner) => inner.render(w),
         }
@@ -12449,7 +12449,7 @@ impl ::sittir_core::view::KindOf for LetChainRightNodeSlot {
             Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
@@ -12519,7 +12519,7 @@ impl ::sittir_core::render::Render for LetChainRightNodeSlot {
             LetChainRightNodeSlot::RangeExpressionPostfix(inner) => inner.render(w),
             LetChainRightNodeSlot::RangeExpressionPrefix(inner) => inner.render(w),
             LetChainRightNodeSlot::RangeExpressionBare(inner) => inner.render(w),
-            LetChainRightNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            LetChainRightNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             LetChainRightNodeSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             LetChainRightNodeSlot::Verbatim(inner) => inner.render(w),
         }
@@ -14468,7 +14468,7 @@ impl ::sittir_core::view::KindOf for ClosureExpressionExprBodyNodeSlot {
             Self::RangeExpressionPostfix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionPrefix(inner) => inner.kind_in(kinds),
             Self::RangeExpressionBare(inner) => inner.kind_in(kinds),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -14538,7 +14538,7 @@ impl ::sittir_core::render::Render for ClosureExpressionExprBodyNodeSlot {
             ClosureExpressionExprBodyNodeSlot::RangeExpressionPostfix(inner) => inner.render(w),
             ClosureExpressionExprBodyNodeSlot::RangeExpressionPrefix(inner) => inner.render(w),
             ClosureExpressionExprBodyNodeSlot::RangeExpressionBare(inner) => inner.render(w),
-            ClosureExpressionExprBodyNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            ClosureExpressionExprBodyNodeSlot::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
             ClosureExpressionExprBodyNodeSlot::UnitExpression(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(281), edges, w, render_unit_expression),
             ClosureExpressionExprBodyNodeSlot::Underscore => {
                 w.site_at(options::SITE_CLOSURE_EXPRESSION_EXPR_UNDERSCORE_BEFORE);
@@ -14752,8 +14752,8 @@ impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeContentNodeSlot {
         match self {
             Self::VisibilityModifierPubScopeInPath(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -14763,8 +14763,8 @@ impl ::sittir_core::render::Render for VisibilityModifierPubScopeContentNodeSlot
         match self {
             VisibilityModifierPubScopeContentNodeSlot::VisibilityModifierPubScopeInPath(inner) => inner.render(w),
             VisibilityModifierPubScopeContentNodeSlot::SelfModule => render_self_module(w),
-            VisibilityModifierPubScopeContentNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            VisibilityModifierPubScopeContentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            VisibilityModifierPubScopeContentNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            VisibilityModifierPubScopeContentNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
         }
     }
 }
@@ -14796,8 +14796,8 @@ impl ::sittir_core::prepare::Prepare for RangeExpressionBinaryOperatorNodeSlot {
 impl ::sittir_core::view::KindOf for RangeExpressionBinaryOperatorNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDotDot => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -15256,8 +15256,8 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlot {
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
     }
@@ -15285,8 +15285,8 @@ impl ::sittir_core::render::Render for RangePatternPrefixRightNodeSlot {
             RangePatternPrefixRightNodeSlot::Identifier(inner) => inner.render(w),
             RangePatternPrefixRightNodeSlot::ScopedIdentifier(inner) => inner.render(w),
             RangePatternPrefixRightNodeSlot::SelfModule => render_self_module(w),
-            RangePatternPrefixRightNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            RangePatternPrefixRightNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            RangePatternPrefixRightNodeSlot::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            RangePatternPrefixRightNodeSlot::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             RangePatternPrefixRightNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
@@ -15317,7 +15317,7 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -15370,9 +15370,9 @@ impl ::sittir_core::prepare::Prepare for RangePatternWithLeftWithRightContentNod
 impl ::sittir_core::view::KindOf for RangePatternWithLeftWithRightContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::DotDotDot => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -20278,7 +20278,7 @@ pub enum MutableSpecifierNode {
 
 impl ::sittir_core::view::KindOf for MutableSpecifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -23622,8 +23622,8 @@ impl ::sittir_core::prepare::Prepare for BooleanLiteralEnum {
 impl ::sittir_core::view::KindOf for BooleanLiteralEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::True => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
-            Self::False => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
+            Self::True => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
+            Self::False => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -23858,19 +23858,19 @@ pub struct ShebangNode {
 
 impl ::sittir_core::view::KindOf for ShebangNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShebangNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(124) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(123) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShebangNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shebang(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(123)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shebang(self, w))
     }
 }
 
@@ -23907,7 +23907,7 @@ pub enum Self_Node {
 
 impl ::sittir_core::view::KindOf for Self_Node {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -23945,7 +23945,7 @@ impl ::sittir_core::prepare::Prepare for Self_Node {
 impl ::sittir_core::render::Render for Self_Node {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            Self::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+            Self::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
         }
     }
 }
@@ -23960,7 +23960,7 @@ pub enum SuperNode {
 
 impl ::sittir_core::view::KindOf for SuperNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -23998,7 +23998,7 @@ impl ::sittir_core::prepare::Prepare for SuperNode {
 impl ::sittir_core::render::Render for SuperNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            Self::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
+            Self::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
         }
     }
 }
@@ -24013,7 +24013,7 @@ pub enum CrateNode {
 
 impl ::sittir_core::view::KindOf for CrateNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -24051,7 +24051,7 @@ impl ::sittir_core::prepare::Prepare for CrateNode {
 impl ::sittir_core::render::Render for CrateNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            Self::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            Self::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
         }
     }
 }
@@ -24068,19 +24068,19 @@ pub struct MetavariableNode {
 
 impl ::sittir_core::view::KindOf for MetavariableNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for MetavariableNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(128) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(127) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for MetavariableNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(128)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_metavariable(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(127)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_metavariable(self, w))
     }
 }
 
@@ -24158,23 +24158,23 @@ impl ::sittir_core::prepare::Prepare for PrimitiveTypeEnum {
 impl ::sittir_core::view::KindOf for PrimitiveTypeEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::U8 => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::I8 => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::U16 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::I16 => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::U32 => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::I32 => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::U64 => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::I64 => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::U128 => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::I128 => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::Isize => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::Usize => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F32 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::F64 => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::Bool => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::Str => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::Char => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::U8 => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::I8 => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::U16 => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+            Self::I16 => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::U32 => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
+            Self::I32 => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::U64 => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
+            Self::I64 => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::U128 => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::I128 => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::Isize => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::Usize => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::F32 => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::F64 => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::Bool => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::Str => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::Char => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -25611,45 +25611,45 @@ impl ::sittir_core::view::KindOf for TokenTreePunctuationEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::Plus => [::sittir_core::types::KindId(8)].iter().any(|k| kinds.contains(k)),
-            Self::Minus => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::Minus => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
             Self::Star => [::sittir_core::types::KindId(9)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
             Self::Bang => [::sittir_core::types::KindId(29)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::MinusEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
-            Self::Eq => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::At => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::MinusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::Eq => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::Gt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
+            Self::Lt => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::DotDotDot => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
             Self::Semi => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
             Self::Colon => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
-            Self::ColonColon => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
+            Self::ColonColon => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
             Self::ThinArrow => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
             Self::FatArrow => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
             Self::Hash => [::sittir_core::types::KindId(26)].iter().any(|k| kinds.contains(k)),
@@ -25784,35 +25784,35 @@ impl ::sittir_core::prepare::Prepare for TokenKeywordsEnum {
 impl ::sittir_core::view::KindOf for TokenKeywordsEnum {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::V27 => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::AsKw => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKw => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKw => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
-            Self::BreakKw => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::V27 => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::AsKw => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKw => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKw => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
+            Self::BreakKw => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
             Self::ConstKw => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKw => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKw => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
+            Self::ContinueKw => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::DefaultKw => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
             Self::EnumKw => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::FnKw => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
-            Self::ForKw => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Gen => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::IfKw => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
-            Self::ImplKw => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
-            Self::LetKw => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::LoopKw => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKw => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
+            Self::FnKw => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::ForKw => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
+            Self::Gen => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
+            Self::IfKw => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::ImplKw => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::LetKw => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::LoopKw => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKw => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
             Self::ModKw => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
             Self::PubKw => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKw => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKw => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
+            Self::ReturnKw => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::StaticKw => [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k)),
             Self::StructKw => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
-            Self::TraitKw => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKw => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
+            Self::TraitKw => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
+            Self::TypeKw => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
             Self::Union => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKw => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
-            Self::UseKw => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::WhereKw => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKw => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKw => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::UseKw => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
+            Self::WhereKw => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::WhileKw => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -32841,7 +32841,7 @@ pub enum EqNode {
 
 impl ::sittir_core::view::KindOf for EqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32897,7 +32897,7 @@ pub enum AsKeywordNode {
 
 impl ::sittir_core::view::KindOf for AsKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32953,7 +32953,7 @@ pub enum StaticKeywordNode {
 
 impl ::sittir_core::view::KindOf for StaticKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32981,7 +32981,7 @@ pub enum RefKeywordNode {
 
 impl ::sittir_core::view::KindOf for RefKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33009,7 +33009,7 @@ pub enum TypeKeywordNode {
 
 impl ::sittir_core::view::KindOf for TypeKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33037,7 +33037,7 @@ pub enum FnKeywordNode {
 
 impl ::sittir_core::view::KindOf for FnKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33093,7 +33093,7 @@ pub enum AsyncKeywordNode {
 
 impl ::sittir_core::view::KindOf for AsyncKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33121,7 +33121,7 @@ pub enum DefaultKeywordNode {
 
 impl ::sittir_core::view::KindOf for DefaultKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33149,7 +33149,7 @@ pub enum UnsafeKeywordNode {
 
 impl ::sittir_core::view::KindOf for UnsafeKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33177,7 +33177,7 @@ pub enum WhereKeywordNode {
 
 impl ::sittir_core::view::KindOf for WhereKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33205,7 +33205,7 @@ pub enum TraitKeywordNode {
 
 impl ::sittir_core::view::KindOf for TraitKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33233,7 +33233,7 @@ pub enum ForKeywordNode {
 
 impl ::sittir_core::view::KindOf for ForKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33261,7 +33261,7 @@ pub enum LtNode {
 
 impl ::sittir_core::view::KindOf for LtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33289,7 +33289,7 @@ pub enum GtNode {
 
 impl ::sittir_core::view::KindOf for GtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33317,7 +33317,7 @@ pub enum LetKeywordNode {
 
 impl ::sittir_core::view::KindOf for LetKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33345,7 +33345,7 @@ pub enum ElseKeywordNode {
 
 impl ::sittir_core::view::KindOf for ElseKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33373,7 +33373,7 @@ pub enum UseKeywordNode {
 
 impl ::sittir_core::view::KindOf for UseKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33401,7 +33401,7 @@ pub enum ColonColonNode {
 
 impl ::sittir_core::view::KindOf for ColonColonNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33429,7 +33429,7 @@ pub enum AmpNode {
 
 impl ::sittir_core::view::KindOf for AmpNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33457,7 +33457,7 @@ pub enum DotDotDotNode {
 
 impl ::sittir_core::view::KindOf for DotDotDotNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33485,7 +33485,7 @@ pub enum SquoteNode {
 
 impl ::sittir_core::view::KindOf for SquoteNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33513,7 +33513,7 @@ pub enum ImplKeywordNode {
 
 impl ::sittir_core::view::KindOf for ImplKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33541,7 +33541,7 @@ pub enum DynKeywordNode {
 
 impl ::sittir_core::view::KindOf for DynKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33569,7 +33569,7 @@ pub enum DashNode {
 
 impl ::sittir_core::view::KindOf for DashNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33597,7 +33597,7 @@ pub enum AmpAmpNode {
 
 impl ::sittir_core::view::KindOf for AmpAmpNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33625,7 +33625,7 @@ pub enum PipePipeNode {
 
 impl ::sittir_core::view::KindOf for PipePipeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33653,7 +33653,7 @@ pub enum PipeNode {
 
 impl ::sittir_core::view::KindOf for PipeNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33681,7 +33681,7 @@ pub enum CaretNode {
 
 impl ::sittir_core::view::KindOf for CaretNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33709,7 +33709,7 @@ pub enum EqEqNode {
 
 impl ::sittir_core::view::KindOf for EqEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33737,7 +33737,7 @@ pub enum BangEqNode {
 
 impl ::sittir_core::view::KindOf for BangEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33765,7 +33765,7 @@ pub enum LtEqNode {
 
 impl ::sittir_core::view::KindOf for LtEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33793,7 +33793,7 @@ pub enum GtEqNode {
 
 impl ::sittir_core::view::KindOf for GtEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33821,7 +33821,7 @@ pub enum LtLtNode {
 
 impl ::sittir_core::view::KindOf for LtLtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33849,7 +33849,7 @@ pub enum GtGtNode {
 
 impl ::sittir_core::view::KindOf for GtGtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33877,7 +33877,7 @@ pub enum SlashNode {
 
 impl ::sittir_core::view::KindOf for SlashNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33905,7 +33905,7 @@ pub enum PercentNode {
 
 impl ::sittir_core::view::KindOf for PercentNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33933,7 +33933,7 @@ pub enum PlusEqNode {
 
 impl ::sittir_core::view::KindOf for PlusEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33961,7 +33961,7 @@ pub enum DashEqNode {
 
 impl ::sittir_core::view::KindOf for DashEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -33989,7 +33989,7 @@ pub enum StarEqNode {
 
 impl ::sittir_core::view::KindOf for StarEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34017,7 +34017,7 @@ pub enum SlashEqNode {
 
 impl ::sittir_core::view::KindOf for SlashEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34045,7 +34045,7 @@ pub enum PercentEqNode {
 
 impl ::sittir_core::view::KindOf for PercentEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34073,7 +34073,7 @@ pub enum AmpEqNode {
 
 impl ::sittir_core::view::KindOf for AmpEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34101,7 +34101,7 @@ pub enum PipeEqNode {
 
 impl ::sittir_core::view::KindOf for PipeEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34129,7 +34129,7 @@ pub enum CaretEqNode {
 
 impl ::sittir_core::view::KindOf for CaretEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34157,7 +34157,7 @@ pub enum LtLtEqNode {
 
 impl ::sittir_core::view::KindOf for LtLtEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34185,7 +34185,7 @@ pub enum GtGtEqNode {
 
 impl ::sittir_core::view::KindOf for GtGtEqNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34213,7 +34213,7 @@ pub enum ReturnKeywordNode {
 
 impl ::sittir_core::view::KindOf for ReturnKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34241,7 +34241,7 @@ pub enum YieldKeywordNode {
 
 impl ::sittir_core::view::KindOf for YieldKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34269,7 +34269,7 @@ pub enum DotDotNode {
 
 impl ::sittir_core::view::KindOf for DotDotNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34297,7 +34297,7 @@ pub enum IfKeywordNode {
 
 impl ::sittir_core::view::KindOf for IfKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34325,7 +34325,7 @@ pub enum MatchKeywordNode {
 
 impl ::sittir_core::view::KindOf for MatchKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34381,7 +34381,7 @@ pub enum WhileKeywordNode {
 
 impl ::sittir_core::view::KindOf for WhileKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34409,7 +34409,7 @@ pub enum LoopKeywordNode {
 
 impl ::sittir_core::view::KindOf for LoopKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34437,7 +34437,7 @@ pub enum InKeywordNode {
 
 impl ::sittir_core::view::KindOf for InKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34465,7 +34465,7 @@ pub enum BreakKeywordNode {
 
 impl ::sittir_core::view::KindOf for BreakKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34493,7 +34493,7 @@ pub enum ContinueKeywordNode {
 
 impl ::sittir_core::view::KindOf for ContinueKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34521,7 +34521,7 @@ pub enum DotNode {
 
 impl ::sittir_core::view::KindOf for DotNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34549,7 +34549,7 @@ pub enum AwaitKeywordNode {
 
 impl ::sittir_core::view::KindOf for AwaitKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34605,7 +34605,7 @@ pub enum GenKeywordNode {
 
 impl ::sittir_core::view::KindOf for GenKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34633,7 +34633,7 @@ pub enum TryKeywordNode {
 
 impl ::sittir_core::view::KindOf for TryKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34661,7 +34661,7 @@ pub enum AtNode {
 
 impl ::sittir_core::view::KindOf for AtNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34689,7 +34689,7 @@ pub enum TrueKeywordNode {
 
 impl ::sittir_core::view::KindOf for TrueKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34717,7 +34717,7 @@ pub enum FalseKeywordNode {
 
 impl ::sittir_core::view::KindOf for FalseKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34745,7 +34745,7 @@ pub enum SlashSlashNode {
 
 impl ::sittir_core::view::KindOf for SlashSlashNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34773,7 +34773,7 @@ pub enum SlashStarNode {
 
 impl ::sittir_core::view::KindOf for SlashStarNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34801,7 +34801,7 @@ pub enum StarSlashNode {
 
 impl ::sittir_core::view::KindOf for StarSlashNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34829,7 +34829,7 @@ pub enum U8KeywordNode {
 
 impl ::sittir_core::view::KindOf for U8KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34857,7 +34857,7 @@ pub enum I8KeywordNode {
 
 impl ::sittir_core::view::KindOf for I8KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34885,7 +34885,7 @@ pub enum U16KeywordNode {
 
 impl ::sittir_core::view::KindOf for U16KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34913,7 +34913,7 @@ pub enum I16KeywordNode {
 
 impl ::sittir_core::view::KindOf for I16KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34941,7 +34941,7 @@ pub enum U32KeywordNode {
 
 impl ::sittir_core::view::KindOf for U32KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34969,7 +34969,7 @@ pub enum I32KeywordNode {
 
 impl ::sittir_core::view::KindOf for I32KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -34997,7 +34997,7 @@ pub enum U64KeywordNode {
 
 impl ::sittir_core::view::KindOf for U64KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35025,7 +35025,7 @@ pub enum I64KeywordNode {
 
 impl ::sittir_core::view::KindOf for I64KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35053,7 +35053,7 @@ pub enum U128KeywordNode {
 
 impl ::sittir_core::view::KindOf for U128KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35081,7 +35081,7 @@ pub enum I128KeywordNode {
 
 impl ::sittir_core::view::KindOf for I128KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35109,7 +35109,7 @@ pub enum IsizeKeywordNode {
 
 impl ::sittir_core::view::KindOf for IsizeKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35137,7 +35137,7 @@ pub enum UsizeKeywordNode {
 
 impl ::sittir_core::view::KindOf for UsizeKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35165,7 +35165,7 @@ pub enum F32KeywordNode {
 
 impl ::sittir_core::view::KindOf for F32KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35193,7 +35193,7 @@ pub enum F64KeywordNode {
 
 impl ::sittir_core::view::KindOf for F64KeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35221,7 +35221,7 @@ pub enum BoolKeywordNode {
 
 impl ::sittir_core::view::KindOf for BoolKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35249,7 +35249,7 @@ pub enum StrKeywordNode {
 
 impl ::sittir_core::view::KindOf for StrKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35277,7 +35277,7 @@ pub enum CharKeywordNode {
 
 impl ::sittir_core::view::KindOf for CharKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -35445,7 +35445,7 @@ pub enum RawKeywordNode {
 
 impl ::sittir_core::view::KindOf for RawKeywordNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -36321,7 +36321,7 @@ impl ::sittir_core::prepare::SeatTarget for RawStringLiteralNode {
 impl ::sittir_core::prepare::SeatTarget for Self_Node {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
         }
     }
 }
@@ -36329,7 +36329,7 @@ impl ::sittir_core::prepare::SeatTarget for Self_Node {
 impl ::sittir_core::prepare::SeatTarget for SuperNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
         }
     }
 }
@@ -36337,7 +36337,7 @@ impl ::sittir_core::prepare::SeatTarget for SuperNode {
 impl ::sittir_core::prepare::SeatTarget for CrateNode {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
         }
     }
 }
@@ -37016,7 +37016,7 @@ impl ::sittir_core::prepare::SeatTarget for ExpressionNode {
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericFunction(t) => t.seat_target(table, ctx),
             Self::AwaitExpression(t) => t.seat_target(table, ctx),
@@ -37267,9 +37267,9 @@ impl ::sittir_core::prepare::SeatTarget for NonSpecialTokenContentNodeSlot {
         match self {
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::BooleanLiteral { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::FloatLiteral { .. } | Self::Identifier { .. } | Self::PrimitiveType { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::MutableSpecifier { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37279,8 +37279,8 @@ impl ::sittir_core::prepare::SeatTarget for AttributePathNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Metavariable { .. } | Self::Identifier { .. } | Self::SelfModule { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37357,8 +37357,8 @@ impl ::sittir_core::prepare::SeatTarget for UseDeclarationArgumentNodeSlot {
             Self::UseList(t) => t.seat_target(table, ctx),
             Self::ScopedUseList(t) => t.seat_target(table, ctx),
             Self::UseWildcard(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Metavariable { .. } | Self::Identifier { .. } | Self::SelfModule { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37479,8 +37479,8 @@ impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierQualifierNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Metavariable { .. } | Self::Identifier { .. } | Self::BracketedType { .. } | Self::GenericTypeWithTurbofish { .. } | Self::SelfModule { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37489,7 +37489,7 @@ impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierQualifierNodeSlot {
 impl ::sittir_core::prepare::SeatTarget for ScopedIdentifierNameNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], _ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
             Self::Identifier { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37499,8 +37499,8 @@ impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierInExpressionPosi
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Metavariable { .. } | Self::Identifier { .. } | Self::GenericTypeWithTurbofish { .. } | Self::SelfModule { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37511,8 +37511,8 @@ impl ::sittir_core::prepare::SeatTarget for ScopedTypeIdentifierQualifierNodeSlo
         match self {
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericType(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::Metavariable { .. } | Self::Identifier { .. } | Self::GenericTypeWithTurbofish { .. } | Self::BracketedType { .. } | Self::SelfModule { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -37562,7 +37562,7 @@ impl ::sittir_core::prepare::SeatTarget for CallExpressionFunctionNodeSlot {
             Self::LoopExpression(t) => t.seat_target(table, ctx),
             Self::ForExpression(t) => t.seat_target(table, ctx),
             Self::ConstBlock(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::UnitExpression(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(281)).map(|site| (edges, site)),
             Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::BooleanLiteral { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::FloatLiteral { .. } | Self::Identifier { .. } | Self::Metavariable { .. } | Self::Verbatim { .. } => None,
         }
@@ -37587,7 +37587,7 @@ impl ::sittir_core::prepare::SeatTarget for IfExpressionConditionNodeSlot {
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericFunction(t) => t.seat_target(table, ctx),
             Self::AwaitExpression(t) => t.seat_target(table, ctx),
@@ -37643,7 +37643,7 @@ impl ::sittir_core::prepare::SeatTarget for LetChainLeftNodeSlot {
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericFunction(t) => t.seat_target(table, ctx),
             Self::AwaitExpression(t) => t.seat_target(table, ctx),
@@ -37698,7 +37698,7 @@ impl ::sittir_core::prepare::SeatTarget for LetChainRightNodeSlot {
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericFunction(t) => t.seat_target(table, ctx),
             Self::AwaitExpression(t) => t.seat_target(table, ctx),
@@ -37866,7 +37866,7 @@ impl ::sittir_core::prepare::SeatTarget for ClosureExpressionExprBodyNodeSlot {
             Self::YieldExpression(t) => t.seat_target(table, ctx),
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
             Self::GenericFunction(t) => t.seat_target(table, ctx),
             Self::AwaitExpression(t) => t.seat_target(table, ctx),
@@ -37916,8 +37916,8 @@ impl ::sittir_core::prepare::SeatTarget for VisibilityModifierPubScopeContentNod
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
             Self::VisibilityModifierPubScopeInPath(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::SelfModule { .. } => None,
         }
     }
@@ -37960,8 +37960,8 @@ impl ::sittir_core::prepare::SeatTarget for RangePatternPrefixRightNodeSlot {
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
             Self::NegativeLiteral(t) => t.seat_target(table, ctx),
             Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::BooleanLiteral { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::FloatLiteral { .. } | Self::Metavariable { .. } | Self::Identifier { .. } | Self::SelfModule { .. } | Self::Verbatim { .. } => None,
         }
     }
@@ -38112,9 +38112,9 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::NegativeLiteral(t) => t.seat_target(table, ctx),
             Self::StringLiteral(t) => t.seat_target(table, ctx),
             Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
-            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
-            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(127)).map(|site| (edges, site)),
+            Self::Self_(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(124)).map(|site| (edges, site)),
+            Self::Super(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(125)).map(|site| (edges, site)),
+            Self::Crate(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(126)).map(|site| (edges, site)),
             Self::ArrayExpressionSemi(t) => t.seat_target(table, ctx),
             Self::ArrayExpressionList(t) => t.seat_target(table, ctx),
             Self::AttributeInput(t) => t.seat_target(table, ctx),
@@ -38548,9 +38548,9 @@ fn render_static_item(node: &StaticItemNode, w: &mut dyn ::sittir_core::render::
     let visibility_modifier = View::new(&node.visibility_modifier, "{}");
     w.edge(::sittir_core::types::KindId(206), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_visibility_modifier", ::sittir_core::types::ItemIndex(0), w, |w| visibility_modifier.render(w))?;
-    w.site_at(options::SITE_STATIC_ITEM_STATIC_KEYWORD_BEFORE);
+    w.site_at(options::SITE_STATIC_ITEM_STATIC_BEFORE);
     w.text("static")?;
-    w.site_at(options::SITE_STATIC_ITEM_STATIC_KEYWORD_AFTER);
+    w.site_at(options::SITE_STATIC_ITEM_STATIC_AFTER);
     if by_reference.is_present() {
         w.site_at(options::SITE_STATIC_ITEM_BY_REFERENCE_BEFORE);
         by_reference.render(w)?;
@@ -42023,7 +42023,7 @@ fn render_never_type(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_
 }
 
 fn render_mutable_specifier(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("mut"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("mut"))
 }
 
 fn render_unit_expression(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42043,15 +42043,15 @@ fn render_outer_line_doc_comment_marker(w: &mut dyn ::sittir_core::render::Rende
 }
 
 fn render_self(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(125)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("self"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(124)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("self"))
 }
 
 fn render_super(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(126)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("super"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(125)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("super"))
 }
 
 fn render_crate(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(127)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("crate"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(126)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("crate"))
 }
 
 fn render__range_expression_bare(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42247,7 +42247,7 @@ fn render_enum_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitti
 }
 
 fn render_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("="))
 }
 
 fn render_extern_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42255,7 +42255,7 @@ fn render_extern_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 }
 
 fn render_as_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("as"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("as"))
 }
 
 fn render_const_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42263,19 +42263,19 @@ fn render_const_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitt
 }
 
 fn render_static_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("static"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(128)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("static"))
 }
 
 fn render_ref_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("ref"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(114)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("ref"))
 }
 
 fn render_type_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(37)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(36)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("type"))
 }
 
 fn render_fn_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("fn"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(38)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("fn"))
 }
 
 fn render_dash_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42283,183 +42283,183 @@ fn render_dash_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_cor
 }
 
 fn render_async_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(113)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(112)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("async"))
 }
 
 fn render_default_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("default"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("default"))
 }
 
 fn render_unsafe_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(112)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("unsafe"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(111)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("unsafe"))
 }
 
 fn render_where_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("where"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(39)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("where"))
 }
 
 fn render_trait_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("trait"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(40)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("trait"))
 }
 
 fn render_for_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("for"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(41)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("for"))
 }
 
 fn render_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(42)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<"))
 }
 
 fn render_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(43)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">"))
 }
 
 fn render_let_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("let"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(44)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("let"))
 }
 
 fn render_else_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("else"))
 }
 
 fn render_use_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("use"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(45)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("use"))
 }
 
 fn render_colon_colon(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(47)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("::"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(46)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("::"))
 }
 
 fn render_amp(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(54)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&"))
 }
 
 fn render_dot_dot_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("..."))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(48)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("..."))
 }
 
 fn render_squote(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(50)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("'"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(49)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("'"))
 }
 
 fn render_impl_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("impl"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(55)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("impl"))
 }
 
 fn render_dyn_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(57)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("dyn"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(56)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("dyn"))
 }
 
 fn render_dash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-"))
 }
 
 fn render_amp_amp(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&&"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(76)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&&"))
 }
 
 fn render_pipe_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("||"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(77)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("||"))
 }
 
 fn render_pipe(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(78)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|"))
 }
 
 fn render_caret(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(79)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^"))
 }
 
 fn render_eq_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("=="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(80)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("=="))
 }
 
 fn render_bang_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(81)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("!="))
 }
 
 fn render_lt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(82)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<="))
 }
 
 fn render_gt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(83)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">="))
 }
 
 fn render_lt_lt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(84)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<"))
 }
 
 fn render_gt_gt(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(86)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(85)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>"))
 }
 
 fn render_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(87)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(86)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/"))
 }
 
 fn render_percent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(88)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(87)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%"))
 }
 
 fn render_plus_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(88)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("+="))
 }
 
 fn render_dash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(89)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("-="))
 }
 
 fn render_star_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(90)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*="))
 }
 
 fn render_slash_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(91)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/="))
 }
 
 fn render_percent_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(92)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("%="))
 }
 
 fn render_amp_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(93)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("&="))
 }
 
 fn render_pipe_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(94)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("|="))
 }
 
 fn render_caret_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(95)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("^="))
 }
 
 fn render_lt_lt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(96)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("<<="))
 }
 
 fn render_gt_gt_eq(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>="))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(97)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(">>="))
 }
 
 fn render_return_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("return"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(98)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("return"))
 }
 
 fn render_yield_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("yield"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(99)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("yield"))
 }
 
 fn render_dot_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(".."))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(100)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text(".."))
 }
 
 fn render_if_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(102)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("if"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(101)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("if"))
 }
 
 fn render_match_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(103)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("match"))
 }
 
 fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42467,31 +42467,31 @@ fn render_comma(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core:
 }
 
 fn render_while_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("while"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(104)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("while"))
 }
 
 fn render_loop_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("loop"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(105)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("loop"))
 }
 
 fn render_in_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(107)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(106)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("in"))
 }
 
 fn render_break_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("break"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(107)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("break"))
 }
 
 fn render_continue_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("continue"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(108)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("continue"))
 }
 
 fn render_dot(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(109)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("."))
 }
 
 fn render_await_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(111)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(110)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("await"))
 }
 
 fn render_move_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42499,103 +42499,103 @@ fn render_move_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sitti
 }
 
 fn render_gen_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("gen"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(51)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("gen"))
 }
 
 fn render_try_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(114)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("try"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(113)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("try"))
 }
 
 fn render_at(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(115)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("@"))
 }
 
 fn render_true_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(117)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("true"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(116)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("true"))
 }
 
 fn render_false_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(118)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("false"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(117)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("false"))
 }
 
 fn render_slash_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(119)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("//"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(118)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("//"))
 }
 
 fn render_slash_star(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/*"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(121)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("/*"))
 }
 
 fn render_star_slash(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(123)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*/"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(122)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("*/"))
 }
 
 fn render_u8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u8"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(58)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u8"))
 }
 
 fn render_i8_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i8"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(59)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i8"))
 }
 
 fn render_u16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u16"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(60)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u16"))
 }
 
 fn render_i16_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i16"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(61)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i16"))
 }
 
 fn render_u32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u32"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(62)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u32"))
 }
 
 fn render_i32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i32"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(63)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i32"))
 }
 
 fn render_u64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u64"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(64)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u64"))
 }
 
 fn render_i64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i64"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(65)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i64"))
 }
 
 fn render_u128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u128"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(66)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("u128"))
 }
 
 fn render_i128_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i128"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(67)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("i128"))
 }
 
 fn render_isize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("isize"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(68)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("isize"))
 }
 
 fn render_usize_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("usize"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(69)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("usize"))
 }
 
 fn render_f32_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f32"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(70)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f32"))
 }
 
 fn render_f64_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f64"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(71)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("f64"))
 }
 
 fn render_bool_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("bool"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(72)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("bool"))
 }
 
 fn render_str_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("str"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(73)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("str"))
 }
 
 fn render_char_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(75)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("char"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(74)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("char"))
 }
 
 fn render_underscore(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42619,7 +42619,7 @@ fn render_struct_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sit
 }
 
 fn render_raw_keyword(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(53)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raw"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(52)), ::sittir_core::layout::TriviaRole::Token, w, |w| w.text("raw"))
 }
 
 fn render_macro_rules_bang(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -42781,7 +42781,7 @@ fn render_expression(t: &ExpressionNode, w: &mut dyn ::sittir_core::render::Rend
         ExpressionNode::IntegerLiteral(inner) => inner.render(w),
         ExpressionNode::FloatLiteral(inner) => inner.render(w),
         ExpressionNode::Identifier(inner) => inner.render(w),
-        ExpressionNode::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
+        ExpressionNode::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
         ExpressionNode::ScopedIdentifier(inner) => inner.render(w),
         ExpressionNode::GenericFunction(inner) => inner.render(w),
         ExpressionNode::AwaitExpression(inner) => inner.render(w),
@@ -43274,14 +43274,14 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::EmptyStatement(_) => [::sittir_core::types::KindId(178)].iter().any(|k| kinds.contains(k)),
             Self::UnitType(_) => [::sittir_core::types::KindId(244)].iter().any(|k| kinds.contains(k)),
             Self::NeverType(_) => [::sittir_core::types::KindId(254)].iter().any(|k| kinds.contains(k)),
-            Self::MutableSpecifier => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::MutableSpecifier => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
             Self::UnitExpression(_) => [::sittir_core::types::KindId(281)].iter().any(|k| kinds.contains(k)),
             Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
             Self::InnerLineDocCommentMarker => [::sittir_core::types::KindId(338)].iter().any(|k| kinds.contains(k)),
             Self::OuterLineDocCommentMarker => [::sittir_core::types::KindId(339)].iter().any(|k| kinds.contains(k)),
-            Self::Self_(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
-            Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
-            Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
+            Self::Self_(_) => [::sittir_core::types::KindId(124)].iter().any(|k| kinds.contains(k)),
+            Self::Super(_) => [::sittir_core::types::KindId(125)].iter().any(|k| kinds.contains(k)),
+            Self::Crate(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::_RangeExpressionBare => [::sittir_core::types::KindId(363)].iter().any(|k| kinds.contains(k)),
             Self::ImplItemUnsafeMarker => [::sittir_core::types::KindId(364)].iter().any(|k| kinds.contains(k)),
             Self::RangePatternWithLeftBare => [::sittir_core::types::KindId(421)].iter().any(|k| kinds.contains(k)),
@@ -43330,100 +43330,100 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::Rbrace => [::sittir_core::types::KindId(31)].iter().any(|k| kinds.contains(k)),
             Self::UnionKeyword => [::sittir_core::types::KindId(32)].iter().any(|k| kinds.contains(k)),
             Self::EnumKeyword => [::sittir_core::types::KindId(33)].iter().any(|k| kinds.contains(k)),
-            Self::Eq => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
+            Self::Eq => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
             Self::ExternKeyword => [::sittir_core::types::KindId(34)].iter().any(|k| kinds.contains(k)),
-            Self::AsKeyword => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::AsKeyword => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
             Self::ConstKeyword => [::sittir_core::types::KindId(35)].iter().any(|k| kinds.contains(k)),
-            Self::StaticKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
-            Self::RefKeyword => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
-            Self::TypeKeyword => [::sittir_core::types::KindId(37)].iter().any(|k| kinds.contains(k)),
-            Self::FnKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::StaticKeyword => [::sittir_core::types::KindId(128)].iter().any(|k| kinds.contains(k)),
+            Self::RefKeyword => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
+            Self::TypeKeyword => [::sittir_core::types::KindId(36)].iter().any(|k| kinds.contains(k)),
+            Self::FnKeyword => [::sittir_core::types::KindId(38)].iter().any(|k| kinds.contains(k)),
             Self::DashGt => [::sittir_core::types::KindId(131)].iter().any(|k| kinds.contains(k)),
-            Self::AsyncKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
-            Self::DefaultKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
-            Self::UnsafeKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
-            Self::WhereKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
-            Self::TraitKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
-            Self::ForKeyword => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
-            Self::Lt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
-            Self::Gt => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
-            Self::LetKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
-            Self::ElseKeyword => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
-            Self::UseKeyword => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
-            Self::ColonColon => [::sittir_core::types::KindId(47)].iter().any(|k| kinds.contains(k)),
-            Self::Amp => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
-            Self::DotDotDot => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
-            Self::Squote => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
-            Self::ImplKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
-            Self::DynKeyword => [::sittir_core::types::KindId(57)].iter().any(|k| kinds.contains(k)),
-            Self::Dash => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
-            Self::AmpAmp => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
-            Self::PipePipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
-            Self::Pipe => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
-            Self::Caret => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
-            Self::EqEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
-            Self::BangEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
-            Self::LtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
-            Self::GtEq => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
-            Self::LtLt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
-            Self::GtGt => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
-            Self::Slash => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
-            Self::Percent => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
-            Self::PlusEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
-            Self::DashEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
-            Self::StarEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
-            Self::SlashEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
-            Self::PercentEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
-            Self::AmpEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
-            Self::PipeEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
-            Self::CaretEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
-            Self::LtLtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
-            Self::GtGtEq => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
-            Self::ReturnKeyword => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
-            Self::YieldKeyword => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
-            Self::DotDot => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
-            Self::IfKeyword => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
-            Self::MatchKeyword => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
+            Self::AsyncKeyword => [::sittir_core::types::KindId(112)].iter().any(|k| kinds.contains(k)),
+            Self::DefaultKeyword => [::sittir_core::types::KindId(50)].iter().any(|k| kinds.contains(k)),
+            Self::UnsafeKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::WhereKeyword => [::sittir_core::types::KindId(39)].iter().any(|k| kinds.contains(k)),
+            Self::TraitKeyword => [::sittir_core::types::KindId(40)].iter().any(|k| kinds.contains(k)),
+            Self::ForKeyword => [::sittir_core::types::KindId(41)].iter().any(|k| kinds.contains(k)),
+            Self::Lt => [::sittir_core::types::KindId(42)].iter().any(|k| kinds.contains(k)),
+            Self::Gt => [::sittir_core::types::KindId(43)].iter().any(|k| kinds.contains(k)),
+            Self::LetKeyword => [::sittir_core::types::KindId(44)].iter().any(|k| kinds.contains(k)),
+            Self::ElseKeyword => [::sittir_core::types::KindId(102)].iter().any(|k| kinds.contains(k)),
+            Self::UseKeyword => [::sittir_core::types::KindId(45)].iter().any(|k| kinds.contains(k)),
+            Self::ColonColon => [::sittir_core::types::KindId(46)].iter().any(|k| kinds.contains(k)),
+            Self::Amp => [::sittir_core::types::KindId(54)].iter().any(|k| kinds.contains(k)),
+            Self::DotDotDot => [::sittir_core::types::KindId(48)].iter().any(|k| kinds.contains(k)),
+            Self::Squote => [::sittir_core::types::KindId(49)].iter().any(|k| kinds.contains(k)),
+            Self::ImplKeyword => [::sittir_core::types::KindId(55)].iter().any(|k| kinds.contains(k)),
+            Self::DynKeyword => [::sittir_core::types::KindId(56)].iter().any(|k| kinds.contains(k)),
+            Self::Dash => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::AmpAmp => [::sittir_core::types::KindId(76)].iter().any(|k| kinds.contains(k)),
+            Self::PipePipe => [::sittir_core::types::KindId(77)].iter().any(|k| kinds.contains(k)),
+            Self::Pipe => [::sittir_core::types::KindId(78)].iter().any(|k| kinds.contains(k)),
+            Self::Caret => [::sittir_core::types::KindId(79)].iter().any(|k| kinds.contains(k)),
+            Self::EqEq => [::sittir_core::types::KindId(80)].iter().any(|k| kinds.contains(k)),
+            Self::BangEq => [::sittir_core::types::KindId(81)].iter().any(|k| kinds.contains(k)),
+            Self::LtEq => [::sittir_core::types::KindId(82)].iter().any(|k| kinds.contains(k)),
+            Self::GtEq => [::sittir_core::types::KindId(83)].iter().any(|k| kinds.contains(k)),
+            Self::LtLt => [::sittir_core::types::KindId(84)].iter().any(|k| kinds.contains(k)),
+            Self::GtGt => [::sittir_core::types::KindId(85)].iter().any(|k| kinds.contains(k)),
+            Self::Slash => [::sittir_core::types::KindId(86)].iter().any(|k| kinds.contains(k)),
+            Self::Percent => [::sittir_core::types::KindId(87)].iter().any(|k| kinds.contains(k)),
+            Self::PlusEq => [::sittir_core::types::KindId(88)].iter().any(|k| kinds.contains(k)),
+            Self::DashEq => [::sittir_core::types::KindId(89)].iter().any(|k| kinds.contains(k)),
+            Self::StarEq => [::sittir_core::types::KindId(90)].iter().any(|k| kinds.contains(k)),
+            Self::SlashEq => [::sittir_core::types::KindId(91)].iter().any(|k| kinds.contains(k)),
+            Self::PercentEq => [::sittir_core::types::KindId(92)].iter().any(|k| kinds.contains(k)),
+            Self::AmpEq => [::sittir_core::types::KindId(93)].iter().any(|k| kinds.contains(k)),
+            Self::PipeEq => [::sittir_core::types::KindId(94)].iter().any(|k| kinds.contains(k)),
+            Self::CaretEq => [::sittir_core::types::KindId(95)].iter().any(|k| kinds.contains(k)),
+            Self::LtLtEq => [::sittir_core::types::KindId(96)].iter().any(|k| kinds.contains(k)),
+            Self::GtGtEq => [::sittir_core::types::KindId(97)].iter().any(|k| kinds.contains(k)),
+            Self::ReturnKeyword => [::sittir_core::types::KindId(98)].iter().any(|k| kinds.contains(k)),
+            Self::YieldKeyword => [::sittir_core::types::KindId(99)].iter().any(|k| kinds.contains(k)),
+            Self::DotDot => [::sittir_core::types::KindId(100)].iter().any(|k| kinds.contains(k)),
+            Self::IfKeyword => [::sittir_core::types::KindId(101)].iter().any(|k| kinds.contains(k)),
+            Self::MatchKeyword => [::sittir_core::types::KindId(103)].iter().any(|k| kinds.contains(k)),
             Self::Comma => [::sittir_core::types::KindId(130)].iter().any(|k| kinds.contains(k)),
-            Self::WhileKeyword => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
-            Self::LoopKeyword => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
-            Self::InKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
-            Self::BreakKeyword => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
-            Self::ContinueKeyword => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
-            Self::Dot => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
-            Self::AwaitKeyword => [::sittir_core::types::KindId(111)].iter().any(|k| kinds.contains(k)),
+            Self::WhileKeyword => [::sittir_core::types::KindId(104)].iter().any(|k| kinds.contains(k)),
+            Self::LoopKeyword => [::sittir_core::types::KindId(105)].iter().any(|k| kinds.contains(k)),
+            Self::InKeyword => [::sittir_core::types::KindId(106)].iter().any(|k| kinds.contains(k)),
+            Self::BreakKeyword => [::sittir_core::types::KindId(107)].iter().any(|k| kinds.contains(k)),
+            Self::ContinueKeyword => [::sittir_core::types::KindId(108)].iter().any(|k| kinds.contains(k)),
+            Self::Dot => [::sittir_core::types::KindId(109)].iter().any(|k| kinds.contains(k)),
+            Self::AwaitKeyword => [::sittir_core::types::KindId(110)].iter().any(|k| kinds.contains(k)),
             Self::MoveKeyword => [::sittir_core::types::KindId(129)].iter().any(|k| kinds.contains(k)),
-            Self::GenKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
-            Self::TryKeyword => [::sittir_core::types::KindId(114)].iter().any(|k| kinds.contains(k)),
-            Self::At => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
-            Self::TrueKeyword => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
-            Self::FalseKeyword => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
-            Self::SlashSlash => [::sittir_core::types::KindId(119)].iter().any(|k| kinds.contains(k)),
-            Self::SlashStar => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
-            Self::StarSlash => [::sittir_core::types::KindId(123)].iter().any(|k| kinds.contains(k)),
-            Self::U8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
-            Self::I8Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
-            Self::U16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
-            Self::I16Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
-            Self::U32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
-            Self::I32Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
-            Self::U64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
-            Self::I64Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
-            Self::U128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
-            Self::I128Keyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
-            Self::IsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
-            Self::UsizeKeyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
-            Self::F32Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
-            Self::F64Keyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
-            Self::BoolKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
-            Self::StrKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
-            Self::CharKeyword => [::sittir_core::types::KindId(75)].iter().any(|k| kinds.contains(k)),
+            Self::GenKeyword => [::sittir_core::types::KindId(51)].iter().any(|k| kinds.contains(k)),
+            Self::TryKeyword => [::sittir_core::types::KindId(113)].iter().any(|k| kinds.contains(k)),
+            Self::At => [::sittir_core::types::KindId(115)].iter().any(|k| kinds.contains(k)),
+            Self::TrueKeyword => [::sittir_core::types::KindId(116)].iter().any(|k| kinds.contains(k)),
+            Self::FalseKeyword => [::sittir_core::types::KindId(117)].iter().any(|k| kinds.contains(k)),
+            Self::SlashSlash => [::sittir_core::types::KindId(118)].iter().any(|k| kinds.contains(k)),
+            Self::SlashStar => [::sittir_core::types::KindId(121)].iter().any(|k| kinds.contains(k)),
+            Self::StarSlash => [::sittir_core::types::KindId(122)].iter().any(|k| kinds.contains(k)),
+            Self::U8Keyword => [::sittir_core::types::KindId(58)].iter().any(|k| kinds.contains(k)),
+            Self::I8Keyword => [::sittir_core::types::KindId(59)].iter().any(|k| kinds.contains(k)),
+            Self::U16Keyword => [::sittir_core::types::KindId(60)].iter().any(|k| kinds.contains(k)),
+            Self::I16Keyword => [::sittir_core::types::KindId(61)].iter().any(|k| kinds.contains(k)),
+            Self::U32Keyword => [::sittir_core::types::KindId(62)].iter().any(|k| kinds.contains(k)),
+            Self::I32Keyword => [::sittir_core::types::KindId(63)].iter().any(|k| kinds.contains(k)),
+            Self::U64Keyword => [::sittir_core::types::KindId(64)].iter().any(|k| kinds.contains(k)),
+            Self::I64Keyword => [::sittir_core::types::KindId(65)].iter().any(|k| kinds.contains(k)),
+            Self::U128Keyword => [::sittir_core::types::KindId(66)].iter().any(|k| kinds.contains(k)),
+            Self::I128Keyword => [::sittir_core::types::KindId(67)].iter().any(|k| kinds.contains(k)),
+            Self::IsizeKeyword => [::sittir_core::types::KindId(68)].iter().any(|k| kinds.contains(k)),
+            Self::UsizeKeyword => [::sittir_core::types::KindId(69)].iter().any(|k| kinds.contains(k)),
+            Self::F32Keyword => [::sittir_core::types::KindId(70)].iter().any(|k| kinds.contains(k)),
+            Self::F64Keyword => [::sittir_core::types::KindId(71)].iter().any(|k| kinds.contains(k)),
+            Self::BoolKeyword => [::sittir_core::types::KindId(72)].iter().any(|k| kinds.contains(k)),
+            Self::StrKeyword => [::sittir_core::types::KindId(73)].iter().any(|k| kinds.contains(k)),
+            Self::CharKeyword => [::sittir_core::types::KindId(74)].iter().any(|k| kinds.contains(k)),
             Self::Underscore => [::sittir_core::types::KindId(136)].iter().any(|k| kinds.contains(k)),
             Self::DotDotEq => [::sittir_core::types::KindId(137)].iter().any(|k| kinds.contains(k)),
             Self::ModKeyword => [::sittir_core::types::KindId(138)].iter().any(|k| kinds.contains(k)),
             Self::PubKeyword => [::sittir_core::types::KindId(139)].iter().any(|k| kinds.contains(k)),
             Self::StructKeyword => [::sittir_core::types::KindId(140)].iter().any(|k| kinds.contains(k)),
-            Self::RawKeyword => [::sittir_core::types::KindId(53)].iter().any(|k| kinds.contains(k)),
+            Self::RawKeyword => [::sittir_core::types::KindId(52)].iter().any(|k| kinds.contains(k)),
             Self::MacroRulesBang => [::sittir_core::types::KindId(156)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => false,
         }
@@ -43697,9 +43697,9 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
             AnyNode::InnerLineDocCommentMarker => render_inner_line_doc_comment_marker(w),
             AnyNode::OuterLineDocCommentMarker => render_outer_line_doc_comment_marker(w),
-            AnyNode::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_self),
-            AnyNode::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_super),
-            AnyNode::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(127), edges, w, render_crate),
+            AnyNode::Self_(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(124), edges, w, render_self),
+            AnyNode::Super(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(125), edges, w, render_super),
+            AnyNode::Crate(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(126), edges, w, render_crate),
             AnyNode::_RangeExpressionBare => render__range_expression_bare(w),
             AnyNode::ImplItemUnsafeMarker => render_impl_item_unsafe_marker(w),
             AnyNode::RangePatternWithLeftBare => render_range_pattern_with_left_bare(w),

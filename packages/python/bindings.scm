@@ -68,7 +68,7 @@
 (case_clause) @clause.case.match
 (case_clause guard: (if_clause condition: _ @guard))
 (case_clause consequence: _ @body)
-(with_clause with_items: (_)? @items) @clause.resource
+((with_clause with_items: (_)? @items) @clause.resource (#set! default with_clause_bare))
 (with_item) @clause.resource.item
 (with_item value: (as_pattern expression: (_) @value))
 (with_item value: (as_pattern alias: (_) @name))
@@ -80,7 +80,7 @@
 (aliased_import) @clause.import.alias
 (wildcard_import) @clause.import.wildcard
 (comprehension_clauses) @clause.comprehension
-(lambda_within_for_in_clause) @expression.lambda
+((lambda_within_for_in_clause) @expression.lambda (#set! default))
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 (keyword_argument) @argument.keyword

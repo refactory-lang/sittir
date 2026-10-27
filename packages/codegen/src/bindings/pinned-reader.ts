@@ -633,7 +633,9 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			refuseAnchoredPlacement(v, name, origin);
 			(claimed.get(v) ?? claimed.set(v, []).get(v))?.push(facts.claims.length);
 			const claim = claimFact(v, name, top, nodes, claimPredicates, origin);
-			facts.claims.push(atTop(v, top) && claim.kind !== null && directivesOf(predicates).get('default') === true ? { ...claim, default: claim.kind } : claim);
+			const declared = atTop(v, top) ? directivesOf(predicates).get('default') : undefined;
+			const named = declared === true ? claim.kind : declared;
+			facts.claims.push(named === undefined || named === null ? claim : { ...claim, default: named });
 		}
 	}
 	for (const v of nodes) {

@@ -1594,8 +1594,15 @@
           ]
         },
         {
-          "type": "STRING",
-          "value": "static"
+          "type": "FIELD",
+          "name": "static",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_kw_static"
+          },
+          "metadata": {
+            "fieldSource": "override"
+          }
         },
         {
           "type": "CHOICE",

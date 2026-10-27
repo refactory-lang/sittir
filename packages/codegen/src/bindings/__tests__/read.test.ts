@@ -512,6 +512,10 @@ describe('the default directive', () => {
 			['literal.string.docstring', undefined]
 		]);
 	});
+	it("names a form on its supertype's claim, so the default adds no claim of its own", async () => {
+		const facts = await readBindings('((with_clause with_items: (_)? @items) @clause.resource (#set! default with_clause_bare))');
+		expect(facts.claims.map((c) => [c.vocab, c.kind, c.default])).toEqual([['clause.resource', 'with_clause', 'with_clause_bare']]);
+	});
 	it('reads a reason beside it', async () => {
 		const facts = await readBindings('((line_comment) @unclaimed (#set! reason "trivia") (#set! default))');
 		expect(facts.unclaimed).toEqual([{ kind: 'line_comment', reason: 'trivia' }]);

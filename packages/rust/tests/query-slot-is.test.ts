@@ -50,10 +50,14 @@ describe('c.<slot>.is(flag) in a where condition', () => {
 		);
 	});
 
-	it('refuses static on a module\'s declarations, whose kinds declare no such flag', () => {
-		expect(() => [...lists().where((c) => (c.declarations.is as (flag: string) => ReturnType<typeof c.declarations.is>)('static'))]).toThrow(
-			'query: no kind declaration_list.declarations holds declares the flag static'
-		);
+	it("selects the modules declaring a static item, by the item's own flag", () => {
+		const MODULES = 'mod m { static X: u8 = 0; }\nmod n { const Y: u8 = 0; }\n';
+		const modules = () => rs.parse(MODULES).$query().$descendants.ofType(rs.kinds.DeclarationList);
+		const spelled = (node: unknown): string => {
+			const { start, end } = (node as Node).$_layout.at.$span;
+			return MODULES.slice(start, end);
+		};
+		expect([...modules().where((c) => c.declarations.is('static'))].map(spelled)).toEqual(['{ static X: u8 = 0; }']);
 	});
 
 	it('selects the impl bodies declaring a static method, by the method\'s own flag', () => {
