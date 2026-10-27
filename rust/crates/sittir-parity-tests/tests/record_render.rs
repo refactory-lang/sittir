@@ -586,14 +586,16 @@ fn an_address_that_names_no_record_of_the_arena_is_refused() {
     use sittir_core::arena::ArenaError;
     let mut engine = rust().engine();
     let options = engine.options().clone();
-    let tree = RustRenders::parse(&mut engine, &EDITED.repeat(40));
+    let tree = RustRenders::parse(&mut engine, &EDITED.repeat(400));
     RustRenders::first_read(&tree, Depth::All).expect("every record written");
     assert!(matches!(tree.render_record(Address::NONE, ChangedEdges::default(), &options, &tree), Err(RenderError::Record(ArenaError::Malformed { what: "record address", .. }))));
     let past = Address::new(sittir_core::arena::MAX_CHUNKS - 1, 0).expect("an address");
     assert!(matches!(tree.render_record(past, ChangedEdges::default(), &options, &tree), Err(RenderError::Record(ArenaError::OutOfBounds { .. }))));
-    let chunk = tree.record_chunk(1).expect("a source this long fills a second chunk");
-    let word = chunk.iter().take(chunk.len() - 1).position(|&word| word > u32::from(u16::MAX)).expect("a word past every kind id");
-    let at = Address::new(1, u32::try_from(word).expect("a chunk's word")).expect("an address");
+    let (n, word) = (1..)
+        .map_while(|n| tree.record_chunk(n).map(|chunk| (n, chunk)))
+        .find_map(|(n, chunk)| chunk.iter().take(chunk.len() - 1).position(|&word| word > u32::from(u16::MAX)).map(|word| (n, word)))
+        .expect("a source this long fills chunks whose cells name addresses past every kind id");
+    let at = Address::new(n, u32::try_from(word).expect("a chunk's word")).expect("an address");
     assert!(matches!(tree.render_record(at, ChangedEdges::default(), &options, &tree), Err(RenderError::Record(ArenaError::Malformed { what: "record kind", .. }))), "a header naming no kind is never read as a record");
 }
 

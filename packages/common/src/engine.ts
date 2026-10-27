@@ -196,8 +196,14 @@ export interface NativeEngineLike<TNode = unknown> {
 	hydrateRecord?(treeId: number, index: number, depth?: number): number | null;
 	/** JSON pairs of coordinates and native record addresses for the hydrated typed subtree, including nested content but no node fields or words. */
 	recordCandidates?(treeId: number, index: number): string;
-	/** The words records fill in chunk `n` of the tree's arena from word `from` on, copied; refuses a `from` past them. Present when the addon carries the record codec. */
-	chunk?(treeId: number, n: number, from: number): Uint32Array;
+	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
+	chunk?(treeId: number, n: number): Uint32Array;
+	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, and its number. Present when the addon carries the record codec. */
+	builtWords?(length: number): { chunk: number; data: Uint32Array };
+	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, and its number. Present when the addon carries the record codec. */
+	builtBytes?(length: number): { chunk: number; data: Uint8Array };
+	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
+	externalBuffers?(): void;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
@@ -217,7 +223,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtUnitSides?(address: number): unknown[];
 	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
-	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, options?: object): string;
 	/**
@@ -389,23 +394,7 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 	if (readRecord === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
-	const copies = new Map<number, { readonly buffer: Uint32Array; readonly view: Uint32Array }>();
-	const grown = (n: number): Uint32Array => {
-		const copy = copies.get(n);
-		const held = copy?.view.length ?? 0;
-		const tail = chunk.call(engine, treeId, n, held);
-		const length = held + tail.length;
-		let buffer = copy?.buffer;
-		if (buffer === undefined || buffer.length < length) {
-			const larger = new Uint32Array(Math.max(length, (buffer?.length ?? 0) * 2));
-			if (copy !== undefined) larger.set(copy.view);
-			buffer = larger;
-		}
-		buffer.set(tail, held);
-		const view = buffer.subarray(0, length);
-		copies.set(n, { buffer, view });
-		return view;
-	};
+	const chunks: Uint32Array[] = [];
 	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
 	return {
 		format,
@@ -430,10 +419,10 @@ function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, fo
 		words(address, length) {
 			const n = chunkOf(address, format);
 			const end = wordOf(address, format) + length;
-			let copy = copies.get(n)?.view;
-			if (copy === undefined || copy.length < end) copy = grown(n);
-			if (copy.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${copy.length} words, short of a record that ends at word ${end}`);
-			return copy;
+			let words = chunks[n];
+			if (words === undefined || words.length < end) words = chunks[n] = chunk.call(engine, treeId, n);
+			if (words.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${words.length} words, short of a record that ends at word ${end}`);
+			return words;
 		},
 		coordinate(index) {
 			let at = coordinates.get(index);
@@ -485,6 +474,10 @@ export function createNativeEngine<
 
 	try {
 		const engine = new status.native.SittirEngine(options?.options === undefined ? undefined : { options: options.options });
+		if (nodeStorage === 'arena') {
+			if (engine.externalBuffers === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+			engine.externalBuffers();
+		}
 		const kindView: KindView = {
 			isWrapper: (kindId) => config.rebuildWrappers.has(kindId)
 		};
@@ -632,21 +625,23 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, holdBuiltArena } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtWords, builtBytes } = engine;
 	if (
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
 		writeBuiltUnitSides === undefined ||
 		writeBuiltLeafSide === undefined ||
-		holdBuiltArena === undefined
+		builtWords === undefined ||
+		builtBytes === undefined
 	)
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	return {
 		format,
 		owner: engine,
 		kinds,
-		hold: (words, bytes, writtenWords, writtenBytes) => holdBuiltArena.call(engine, words, bytes, writtenWords, writtenBytes),
+		words: (length) => builtWords.call(engine, length),
+		bytes: (length) => builtBytes.call(engine, length),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),

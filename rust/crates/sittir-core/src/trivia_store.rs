@@ -63,15 +63,15 @@ pub struct TriviaStore<T> {
     sides: Arc<RwLock<Sides<T>>>,
     /// The chunks of the arena the engine's builders write, which a record
     /// entry this store answers renders from.
-    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
-    built: Arc<RwLock<crate::napi_engine::BuiltChunks>>,
+    #[cfg(feature = "arena")]
+    built: Arc<RwLock<crate::arena::BuiltChunks>>,
 }
 
 impl<T> Clone for TriviaStore<T> {
     fn clone(&self) -> Self {
         Self {
             sides: Arc::clone(&self.sides),
-            #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+            #[cfg(feature = "arena")]
             built: Arc::clone(&self.built),
         }
     }
@@ -89,7 +89,7 @@ impl<T> Default for TriviaStore<T> {
     fn default() -> Self {
         Self {
             sides: Arc::new(RwLock::new(BTreeMap::new())),
-            #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+            #[cfg(feature = "arena")]
             built: Arc::default(),
         }
     }
@@ -97,14 +97,15 @@ impl<T> Default for TriviaStore<T> {
 
 impl<T> TriviaStore<T> {
     /// The chunks of the engine's built arena this store holds.
-    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
-    pub fn built(&self) -> std::sync::RwLockReadGuard<'_, crate::napi_engine::BuiltChunks> {
+    #[cfg(feature = "arena")]
+    pub fn built(&self) -> std::sync::RwLockReadGuard<'_, crate::arena::BuiltChunks> {
         self.built.read().unwrap_or_else(PoisonError::into_inner)
     }
 
-    /// The chunks of the engine's built arena this store holds, to replace.
-    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
-    pub fn built_mut(&self) -> std::sync::RwLockWriteGuard<'_, crate::napi_engine::BuiltChunks> {
+    /// The chunks of the engine's built arena this store holds, to add to or
+    /// release.
+    #[cfg(feature = "arena")]
+    pub fn built_mut(&self) -> std::sync::RwLockWriteGuard<'_, crate::arena::BuiltChunks> {
         self.built.write().unwrap_or_else(PoisonError::into_inner)
     }
 }
@@ -234,7 +235,6 @@ impl<T: Clone> TriviaStore<T> {
     pub fn root_leaf(&self, sides: Option<crate::trivia::NodeTrivia<T>>) -> Self {
         let store = Self {
             sides: Arc::default(),
-            #[cfg(feature = "napi-bindings")]
             built: Arc::clone(&self.built),
         };
         if let Some(sides) = sides {

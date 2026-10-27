@@ -1,12 +1,15 @@
-//! Arena storage for records: fixed chunks of `u32` words that never move,
-//! and a string table of UTF-8 bytes in chunks that never move either.
+//! Arena storage for records: chunks of `u32` words, and a string table of
+//! UTF-8 bytes in chunks. Every chunk is native memory, zeroed when it is
+//! allocated, at one length for its life, and never moved, so JavaScript
+//! reads a chunk in place through an external array buffer (`memory`).
 //!
 //! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
 //! record, and [`rows`] keeps a parsed tree's arena with its row index. The
 //! record writer (`write_record`) writes a native node's records, children
 //! before parents. A built record's trivia is outside the arena, in the
 //! engine's store of written sides (`trivia_store`), and what a render's
-//! prepare fills is in its overlay (`Prepared`).
+//! prepare fills is in its overlay (`Prepared`). An engine's built records
+//! are in its `BuiltChunks`, which JavaScript's builders write.
 //!
 //! An arena only appends: no record is freed or moved, so an address names
 //! one record for as long as the arena lives.
@@ -15,6 +18,7 @@ mod admit;
 mod borrowed;
 mod built;
 pub mod cell;
+pub mod memory;
 mod parsed;
 mod prep;
 mod prepared;
@@ -26,11 +30,13 @@ mod write;
 
 use std::collections::HashMap;
 use std::fmt;
+use std::sync::Arc;
 
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
 pub use cell::{Cell, ListCell};
+pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
@@ -71,21 +77,27 @@ fn entry_by_word<S>(entries: &mut Vec<S>, word: u32, word_of: impl Fn(&S) -> u32
     &mut entries[at]
 }
 
+/// The bits of a packed address or string offset below its chunk.
+pub const CHUNK_SHIFT: u32 = 14;
 /// The words a shared chunk holds at most, and the bound on a word's index
 /// within a packed address.
-pub const CHUNK_WORDS: u32 = 1 << 20;
+pub const CHUNK_WORDS: u32 = 1 << CHUNK_SHIFT;
 /// The chunks an arena holds at most: the bound a packed address leaves.
-pub const MAX_CHUNKS: u32 = 1 << 12;
+pub const MAX_CHUNKS: u32 = 1 << (32 - CHUNK_SHIFT);
 /// The words of an arena's first chunk; each later shared chunk doubles it,
 /// up to `CHUNK_WORDS`.
 const FIRST_CHUNK_WORDS: u32 = 1 << 10;
-/// The bytes a shared string chunk holds; a longer string gets its own.
-pub const STRING_CHUNK_BYTES: u32 = 1 << 16;
-/// The bits of a packed address or string offset below its chunk.
-pub const CHUNK_SHIFT: u32 = 20;
+/// The bytes a shared string chunk holds at most; a longer string gets its
+/// own.
+pub const STRING_CHUNK_BYTES: u32 = 1 << CHUNK_SHIFT;
+/// The bytes of an arena's first string chunk; each later shared one
+/// doubles it, up to `STRING_CHUNK_BYTES`.
+const FIRST_STRING_BYTES: u32 = 1 << 10;
+/// The elements one chunk holds at most, a part's own chunk included.
+const MOST_CHUNK_UNITS: u32 = 1 << 28;
 
 /// A record's or run's place in an arena: its chunk and its first word,
-/// packed as `chunk << 20 | word`. Address 0 is no record.
+/// packed as `chunk << CHUNK_SHIFT | word`. Address 0 is no record.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Address(pub u32);
 
@@ -136,7 +148,8 @@ pub struct StringRef {
 
 impl StringRef {
     /// The chunk and first byte packed into one word, as a cell holds them:
-    /// `chunk << 20 | byte`. `None` when either is past what the packing holds.
+    /// `chunk << CHUNK_SHIFT | byte`. `None` when either is past what the
+    /// packing holds.
     #[must_use]
     pub fn offset(self) -> Option<u32> {
         (self.chunk < MAX_CHUNKS && self.byte < CHUNK_WORDS).then_some(self.chunk << CHUNK_SHIFT | self.byte)
@@ -151,7 +164,8 @@ impl StringRef {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ArenaError {
-    /// The arena holds `MAX_CHUNKS` chunks already.
+    /// The arena holds `MAX_CHUNKS` chunks already, or a chunk was asked
+    /// for at more elements than one holds.
     Full,
     /// Words `[word, word + len)` of `chunk` are not all written.
     OutOfBounds { chunk: u32, word: u32, len: u32 },
@@ -176,7 +190,7 @@ pub const ARENA_RELEASED: ArenaError = ArenaError::Unwritable("the arena that bu
 impl fmt::Display for ArenaError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ArenaError::Full => write!(f, "the arena holds its {MAX_CHUNKS} chunks"),
+            ArenaError::Full => write!(f, "the arena holds its {MAX_CHUNKS} chunks, or a chunk past {MOST_CHUNK_UNITS} elements was asked for"),
             ArenaError::OutOfBounds { chunk, word, len } => {
                 write!(f, "words {word}..{} of chunk {chunk} are past what the arena wrote", u64::from(*word) + u64::from(*len))
             }
@@ -193,31 +207,50 @@ impl fmt::Display for ArenaError {
 
 impl std::error::Error for ArenaError {}
 
-/// A chunk and the words it may hold: its storage is reserved for them up
-/// front, so writing up to the limit never moves it.
+/// A chunk of an arena native code writes, and the elements written of it.
 #[derive(Debug)]
-struct Chunk<T> {
-    data: Vec<T>,
-    limit: u32,
+struct Chunk<T: ChunkUnit> {
+    mem: Arc<ChunkMem<T>>,
+    written: u32,
 }
 
-impl<T: Clone + Default> Chunk<T> {
+impl<T: ChunkUnit> Chunk<T> {
     fn with_limit(limit: u32) -> Self {
-        Self { data: Vec::with_capacity(limit as usize), limit }
+        Self { mem: ChunkMem::zeroed(limit as usize), written: 0 }
     }
 
-    #[allow(clippy::cast_possible_truncation, reason = "a chunk holds at most its u32 limit")]
-    fn len(&self) -> u32 {
-        self.data.len() as u32
+    #[allow(clippy::cast_possible_truncation, reason = "a chunk holds at most MOST_CHUNK_UNITS elements")]
+    fn limit(&self) -> u32 {
+        self.mem.len() as u32
     }
 
     fn room(&self) -> u32 {
-        self.limit - self.len()
+        self.limit() - self.written
+    }
+
+    fn written(&self) -> &[T] {
+        // SAFETY: the arena's shared borrow is held for the slice's life,
+        // and a native call runs no JavaScript.
+        unsafe { &self.mem.slice()[..self.written as usize] }
+    }
+
+    fn written_mut(&mut self) -> &mut [T] {
+        // SAFETY: the arena's mutable borrow is held for the slice's life,
+        // and a native call runs no JavaScript.
+        unsafe { &mut self.mem.slice_mut()[..self.written as usize] }
+    }
+
+    /// `n` more elements written, zeroed, and where they start.
+    fn extend(&mut self, n: u32) -> u32 {
+        let start = self.written;
+        self.written += n;
+        self.written_mut()[start as usize..].fill(T::default());
+        start
     }
 }
 
 /// The index of the next chunk of `chunks`, while it stays below `MAX_CHUNKS`.
-fn next_chunk<T>(chunks: &[Chunk<T>]) -> Result<u32, ArenaError> {
+fn next_chunk<T>(chunks: &[T]) -> Result<u32, ArenaError> {
     u32::try_from(chunks.len()).ok().filter(|&n| n < MAX_CHUNKS).ok_or(ArenaError::Full)
 }
 
@@ -227,7 +260,14 @@ fn word_range(at: Address, len: u32, written: usize) -> Result<std::ops::Range<u
     Ok(word as usize..end as usize)
 }
 
-/// One arena: word chunks for records and runs, and the string table.
+/// The limit of the shared chunk after one of `last` elements: double it,
+/// from `first` up to `cap`, and never less than `least`.
+fn next_limit(last: Option<u32>, first: u32, cap: u32, least: u32) -> u32 {
+    last.map_or(first, |last| last.saturating_mul(2)).clamp(first, cap).max(least)
+}
+
+/// One arena native code writes: word chunks for records and runs, and the
+/// string table.
 #[derive(Debug)]
 pub struct Arena {
     chunks: Vec<Chunk<u32>>,
@@ -235,6 +275,8 @@ pub struct Arena {
     /// never it.
     open: u32,
     strings: Vec<Chunk<u8>>,
+    /// The shared string chunk strings are appended to, once one is.
+    open_strings: Option<u32>,
     interned: HashMap<Box<str>, StringRef>,
 }
 
@@ -249,29 +291,29 @@ impl Arena {
     #[must_use]
     pub fn new() -> Self {
         let mut first = Chunk::with_limit(FIRST_CHUNK_WORDS);
-        first.data.push(0);
-        Self { chunks: vec![first], open: 0, strings: Vec::new(), interned: HashMap::new() }
+        first.extend(1);
+        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: HashMap::new() }
     }
 
     /// `words` zeroed words, contiguous in one chunk, and their address.
     pub fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
+        if words > MOST_CHUNK_UNITS {
+            return Err(ArenaError::Full);
+        }
         if words > CHUNK_WORDS {
             let chunk = next_chunk(&self.chunks)?;
             let mut own = Chunk::with_limit(words);
-            own.data.resize(words as usize, 0);
+            own.extend(words);
             self.chunks.push(own);
             return Ok(Address(chunk << CHUNK_SHIFT));
         }
-        let open = &self.chunks[self.open as usize];
-        if open.room() < words {
-            let limit = open.limit.saturating_mul(2).clamp(FIRST_CHUNK_WORDS, CHUNK_WORDS).max(words);
+        if self.chunks[self.open as usize].room() < words {
+            let limit = next_limit(Some(self.chunks[self.open as usize].limit()), FIRST_CHUNK_WORDS, CHUNK_WORDS, words);
             let chunk = next_chunk(&self.chunks)?;
             self.chunks.push(Chunk::with_limit(limit));
             self.open = chunk;
         }
-        let chunk = &mut self.chunks[self.open as usize];
-        let word = chunk.len();
-        chunk.data.resize(chunk.data.len() + words as usize, 0);
+        let word = self.chunks[self.open as usize].extend(words);
         Ok(Address(self.open << CHUNK_SHIFT | word))
     }
 
@@ -286,7 +328,7 @@ impl Arena {
     fn range(&self, at: Address, len: u32) -> Result<(usize, std::ops::Range<usize>), ArenaError> {
         let chunk = at.chunk() as usize;
         let words = self.chunks.get(chunk).ok_or(ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len })?;
-        Ok((chunk, word_range(at, len, words.data.len())?))
+        Ok((chunk, word_range(at, len, words.written as usize)?))
     }
 
     /// The `len` words at `at`, all of them written.
@@ -296,7 +338,7 @@ impl Arena {
 
     pub fn words_mut(&mut self, at: Address, len: u32) -> Result<&mut [u32], ArenaError> {
         let (chunk, range) = self.range(at, len)?;
-        Ok(&mut self.chunks[chunk].data[range])
+        Ok(&mut self.chunks[chunk].written_mut()[range])
     }
 
     pub fn word(&self, at: Address) -> Result<u32, ArenaError> {
@@ -306,7 +348,20 @@ impl Arena {
     /// Chunk `n`'s written words.
     #[must_use]
     pub fn chunk(&self, n: u32) -> Option<&[u32]> {
-        self.chunks.get(n as usize).map(|chunk| chunk.data.as_slice())
+        self.chunks.get(n as usize).map(Chunk::written)
+    }
+
+    /// Chunk `n`'s storage, every word of it, written or not, to share with a
+    /// buffer JavaScript reads it through.
+    #[must_use]
+    pub fn chunk_memory(&self, n: u32) -> Option<Arc<ChunkMem<u32>>> {
+        self.chunks.get(n as usize).map(|chunk| Arc::clone(&chunk.mem))
+    }
+
+    /// The bytes every chunk of the arena takes, words and strings.
+    #[must_use]
+    pub fn allocated_bytes(&self) -> usize {
+        self.chunks.iter().map(|chunk| chunk.mem.byte_len()).chain(self.strings.iter().map(|chunk| chunk.mem.byte_len())).sum()
     }
 
     /// `text` in the string table, written once however often it is stored.
@@ -315,18 +370,29 @@ impl Arena {
             return Ok(at);
         }
         let len = u32::try_from(text.len()).map_err(|_| ArenaError::Full)?;
-        let shared = len <= STRING_CHUNK_BYTES;
-        let chunk = match self.strings.last() {
-            Some(last) if shared && last.limit == STRING_CHUNK_BYTES && last.room() >= len => next_chunk(&self.strings)? - 1,
-            _ => {
-                let chunk = next_chunk(&self.strings)?;
-                self.strings.push(Chunk::with_limit(if shared { STRING_CHUNK_BYTES } else { len }));
-                chunk
+        if len > MOST_CHUNK_UNITS {
+            return Err(ArenaError::Full);
+        }
+        let chunk = if len > STRING_CHUNK_BYTES {
+            let chunk = next_chunk(&self.strings)?;
+            self.strings.push(Chunk::with_limit(len));
+            chunk
+        } else {
+            match self.open_strings {
+                Some(open) if self.strings[open as usize].room() >= len => open,
+                open => {
+                    let limit = next_limit(open.map(|open| self.strings[open as usize].limit()), FIRST_STRING_BYTES, STRING_CHUNK_BYTES, len);
+                    let chunk = next_chunk(&self.strings)?;
+                    self.strings.push(Chunk::with_limit(limit));
+                    self.open_strings = Some(chunk);
+                    chunk
+                }
             }
         };
         let bytes = &mut self.strings[chunk as usize];
-        let at = StringRef { chunk, byte: bytes.len(), len };
-        bytes.data.extend_from_slice(text.as_bytes());
+        let byte = bytes.extend(len);
+        bytes.written_mut()[byte as usize..].copy_from_slice(text.as_bytes());
+        let at = StringRef { chunk, byte, len };
         self.interned.insert(text.into(), at);
         Ok(at)
     }
@@ -343,7 +409,96 @@ impl ArenaRead for Arena {
     }
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
-        self.strings.get(n as usize).map(|chunk| chunk.data.as_slice())
+        self.strings.get(n as usize).map(Chunk::written)
+    }
+}
+
+/// The chunks of an engine's built arena: native memory JavaScript's
+/// builders ask for one chunk at a time and write records into through
+/// external array buffers. Native code reads every element of a chunk, so an
+/// element no builder wrote reads as zero, and every word is untrusted.
+#[derive(Debug, Default)]
+pub struct BuiltChunks {
+    words: Vec<Arc<ChunkMem<u32>>>,
+    bytes: Vec<Arc<ChunkMem<u8>>>,
+    released: bool,
+}
+
+impl BuiltChunks {
+    /// A new words chunk of `len` words, zeroed, and its number.
+    ///
+    /// # Errors
+    ///
+    /// `ARENA_RELEASED` once released, and `ArenaError::Full` for an empty
+    /// chunk, one past `MOST_CHUNK_UNITS` words, or more chunks than an
+    /// address names.
+    pub fn words(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u32>>), ArenaError> {
+        let chunk = self.room(&self.words, len)?;
+        let mem = ChunkMem::zeroed(len as usize);
+        self.words.push(Arc::clone(&mem));
+        Ok((chunk, mem))
+    }
+
+    /// A new string chunk of `len` bytes, zeroed, and its number.
+    ///
+    /// # Errors
+    ///
+    /// As `words`.
+    pub fn bytes(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u8>>), ArenaError> {
+        let chunk = self.room(&self.bytes, len)?;
+        let mem = ChunkMem::zeroed(len as usize);
+        self.bytes.push(Arc::clone(&mem));
+        Ok((chunk, mem))
+    }
+
+    fn room<T>(&self, chunks: &[T], len: u32) -> Result<u32, ArenaError> {
+        if self.released {
+            return Err(ARENA_RELEASED);
+        }
+        if len == 0 || len > MOST_CHUNK_UNITS {
+            return Err(ArenaError::Full);
+        }
+        next_chunk(chunks)
+    }
+
+    /// Lets go of every chunk, and answers the bytes they took: a record of
+    /// the arena renders no more. A buffer over a chunk keeps its memory
+    /// until it is collected.
+    pub fn release(&mut self) -> usize {
+        self.released = true;
+        let bytes = self.allocated_bytes();
+        self.words.clear();
+        self.bytes.clear();
+        bytes
+    }
+
+    /// The bytes every chunk takes.
+    #[must_use]
+    pub fn allocated_bytes(&self) -> usize {
+        self.words.iter().map(|chunk| chunk.byte_len()).chain(self.bytes.iter().map(|chunk| chunk.byte_len())).sum()
+    }
+
+    /// The chunks, for one call to read.
+    ///
+    /// # Errors
+    ///
+    /// `ARENA_RELEASED` once released.
+    pub fn readable(&self) -> Result<&Self, ArenaError> {
+        if self.released { Err(ARENA_RELEASED) } else { Ok(self) }
+    }
+}
+
+impl ArenaRead for BuiltChunks {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        // SAFETY: the store's shared borrow is held for the slice's life, no
+        // native code writes a built chunk, and a native call runs no
+        // JavaScript.
+        self.words.get(n as usize).map(|chunk| unsafe { chunk.slice() })
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        // SAFETY: as `chunk`.
+        self.bytes.get(n as usize).map(|chunk| unsafe { chunk.slice() })
     }
 }
 

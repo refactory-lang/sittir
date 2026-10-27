@@ -38,11 +38,17 @@ export interface BuiltChunks {
 	readonly bytes: readonly Uint8Array[];
 }
 
+export interface BuiltChunk<A extends Uint32Array | Uint8Array> {
+	readonly chunk: number;
+	readonly data: A;
+}
+
 export interface BuiltRecords {
 	readonly format: CellFormat;
 	readonly owner: object;
 	readonly kinds: KindView;
-	hold(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
+	words(length: number): BuiltChunk<Uint32Array>;
+	bytes(length: number): BuiltChunk<Uint8Array>;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
@@ -55,7 +61,7 @@ export interface BuiltRecords {
 export type WriteLeafSites = (leaf: object, sites: readonly number[]) => void;
 
 const FIRST_CHUNK_WORDS = 1 << 10;
-const FIRST_STRING_BYTES = 1 << 12;
+const FIRST_STRING_BYTES = 1 << 10;
 const DRAFT_WORDS = 1 << 12;
 const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0, at: 0, words: 0 });
 const encoder = new TextEncoder();
@@ -66,22 +72,19 @@ function units(size: number, least: number): void {
 }
 
 class Chunks<A extends Uint32Array | Uint8Array> {
-	readonly #make: (length: number) => A;
-	readonly #pushed: () => void;
+	readonly #make: (length: number) => BuiltChunk<A>;
 	readonly #first: number;
 	readonly #limit: number;
 	readonly #most: number;
 	readonly chunks: A[] = [];
-	readonly used: Uint32Array;
+	readonly used: number[] = [];
 	#open = -1;
 
-	constructor(make: (length: number) => A, first: number, format: CellFormat, pushed: () => void) {
+	constructor(make: (length: number) => BuiltChunk<A>, first: number, format: CellFormat) {
 		this.#make = make;
-		this.#pushed = pushed;
 		this.#limit = 2 ** format.chunkShift;
 		this.#most = 2 ** (32 - format.chunkShift);
 		this.#first = Math.min(first, this.#limit);
-		this.used = new Uint32Array(this.#most);
 	}
 
 	alloc(size: number): { readonly chunk: number; readonly word: number; readonly data: A } {
@@ -103,10 +106,11 @@ class Chunks<A extends Uint32Array | Uint8Array> {
 	}
 
 	#push(length: number): number {
-		const chunk = this.chunks.length;
-		if (chunk >= this.#most) throw new Error('a built arena holds as many chunks as an address can name');
-		this.chunks.push(this.#make(length));
-		this.#pushed();
+		if (this.chunks.length >= this.#most) throw new Error('a built arena holds as many chunks as an address can name');
+		const { chunk, data } = this.#make(length);
+		if (chunk !== this.chunks.length) throw new Error(`a built arena's chunk ${this.chunks.length} came back as chunk ${chunk}`);
+		this.chunks.push(data);
+		this.used.push(0);
 		return chunk;
 	}
 
@@ -156,7 +160,7 @@ export class BuiltArena {
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 
-	constructor({ format, owner, kinds, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, words, bytes, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
 		this.kinds = kinds;
@@ -183,9 +187,8 @@ export class BuiltArena {
 			}
 		};
 		bindTree(this.tree, handle);
-		const pushed = () => hold(this.#words.chunks, this.#bytes.chunks, this.#words.used, this.#bytes.used);
-		this.#words = new Chunks((length) => new Uint32Array(length), FIRST_CHUNK_WORDS, format, pushed);
-		this.#bytes = new Chunks((length) => new Uint8Array(length), FIRST_STRING_BYTES, format, pushed);
+		this.#words = new Chunks(words, FIRST_CHUNK_WORDS, format);
+		this.#bytes = new Chunks(bytes, FIRST_STRING_BYTES, format);
 		this.#words.alloc(1);
 	}
 

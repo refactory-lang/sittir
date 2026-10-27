@@ -126,7 +126,7 @@
 	],
 	"addresses": [
 		{ "chunk": 0, "word": 2, "address": 2 },
-		{ "chunk": 3, "word": 9, "address": 3145737 },
-		{ "chunk": 4095, "word": 1048575, "address": 4294967295 }
+		{ "chunk": 3, "word": 9, "address": 49161 },
+		{ "chunk": 262143, "word": 16383, "address": 4294967295 }
 	]
 }

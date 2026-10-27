@@ -17,9 +17,13 @@ const NO_SIDES: SideStore = {
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
+const chunksOf = <A extends Uint32Array | Uint8Array>(make: (length: number) => A) => {
+	let made = 0;
+	return (length: number) => ({ chunk: made++, data: make(length) });
+};
 const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {}, words: {} }, writeLeafSites: WriteLeafSites = () => undefined): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, kinds: PLAIN_KINDS, hold: () => undefined, trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, words: chunksOf((length) => new Uint32Array(length)), bytes: chunksOf((length) => new Uint8Array(length)), trivia },
 		(data) => ({ ...data }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,

@@ -16,19 +16,29 @@ function addon() {
 
 function arenaEngine() {
 	const native = new (addon().SittirEngine)();
-	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = native;
+	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, builtWords, builtBytes } = native;
 	if (
 		renderBuilt === undefined ||
 		renderBuiltLeaf === undefined ||
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
-		holdBuiltArena === undefined
+		builtWords === undefined ||
+		builtBytes === undefined
 	)
 		throw new Error('the native addon was built without the arena feature');
-	const written = (chunks: readonly { readonly length: number }[]) => new Uint32Array(chunks.map((chunk) => chunk.length));
 	return {
-		hold: (words: readonly Uint32Array[], bytes: readonly Uint8Array[] = [], writtenWords = written(words)) =>
-			holdBuiltArena.call(native, words, bytes, writtenWords, written(bytes)),
+		words: (values: readonly number[], length = values.length) => {
+			const chunk = builtWords.call(native, length);
+			chunk.data.set(values);
+			return chunk;
+		},
+		bytes: (text: string) => {
+			const encoded = new TextEncoder().encode(text);
+			const chunk = builtBytes.call(native, encoded.length);
+			chunk.data.set(encoded);
+			return chunk;
+		},
+		builtWords: (length: number) => builtWords.call(native, length),
 		renderBuilt: (address: number) => renderBuilt.call(native, native, address, false, false),
 		renderBuiltLeaf: (kind: number, text: { readonly at: number; readonly len: number }) => renderBuiltLeaf.call(native, native, kind, text, null, false, false),
 		dispose: () => native.dispose(),
@@ -37,55 +47,58 @@ function arenaEngine() {
 	};
 }
 
-const words = (...values: number[]) => new Uint32Array([0, ...values]);
+const record = (...values: number[]) => [0, ...values];
 
 const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
 
 const recordEngine = () => rust.createEngine();
 
 describe('a built arena rendered natively', () => {
-	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer, each when the render first reads it', () => {
+	it('writes records into native chunks in place, numbered as they are made, and refuses an empty chunk', () => {
 		const native = arenaEngine();
-		native.hold([new Uint32Array(new SharedArrayBuffer(16))]);
-		expect(() => native.renderBuilt(1)).toThrow(/a built arena chunk must be a Uint32Array over an ordinary ArrayBuffer/);
-		native.hold([new Uint8Array(16) as never]);
-		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
-		native.hold([[0, 1] as never]);
-		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
-		native.hold([words(TSKindId.Identifier, 0)], [new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
-		native.hold([words(1, 0)], [], [3] as never);
-		expect(() => native.renderBuilt(1)).toThrow(/written table/);
+		const first = native.builtWords(4);
+		const second = native.builtWords(8);
+		expect([first.chunk, second.chunk]).toEqual([0, 1]);
+		expect([first.data.length, second.data.length]).toEqual([4, 8]);
+		expect(Array.from(first.data)).toEqual([0, 0, 0, 0]);
+		first.data.set(record(TSKindId.Identifier, 0));
+		expect(Array.from(first.data)).toEqual([0, TSKindId.Identifier, 0, 0]);
+		expect(() => native.builtWords(0)).toThrow(/chunk past/);
 	});
 
-	it('borrows no chunk the render does not read', () => {
+	it('reads a word no builder wrote as zero, inside its chunk', () => {
 		const native = arenaEngine();
-		native.hold([words(TSKindId.Identifier, 0), new Uint32Array(new SharedArrayBuffer(16))], [new TextEncoder().encode('x'), new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toBe('x');
+		native.words([0], 16);
+		expect(() => native.renderBuilt(9)).toThrow(/record kind 0 is not one a record writer writes/);
 	});
 
 	it('admits a lone leaf by its kind and its text', () => {
 		const native = arenaEngine();
-		native.hold([words(1, 0)], [new TextEncoder().encode('x')]);
+		native.words(record(1, 0));
+		native.bytes('x');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toBe('x');
 		expect(() => native.renderBuiltLeaf(60000, { at: 0, len: 1 })).toThrow(/built leaf kind 60000/);
 		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 9 })).toThrow();
 	});
 
 	it('refuses words that are no record it admits', () => {
 		const native = arenaEngine();
-		native.hold([words(1, 0)]);
+		native.words(record(1, 0));
 		expect(() => native.renderBuilt(0)).toThrow(/record address 0 is not one a record writer writes/);
 		expect(() => native.renderBuilt(9)).toThrow(/past what the arena wrote/);
-		native.hold([words(60000, 0)]);
-		expect(() => native.renderBuilt(1)).toThrow(/record kind 60000 is not one a record writer writes/);
+		const other = arenaEngine();
+		other.words(record(60000, 0));
+		expect(() => other.renderBuilt(1)).toThrow(/record kind 60000 is not one a record writer writes/);
 	});
 
-	it('refuses, by name, a render from an arena its engine let go of', () => {
+	it('refuses, by name, a render from an arena its engine let go of, and detaches its chunks', () => {
 		const native = arenaEngine();
-		expect(() => native.renderBuilt(1)).toThrow(/the arena that built a side's record was released/);
-		native.hold([words(1, 0)]);
+		expect(() => native.renderBuilt(1)).toThrow(/past what the arena wrote/);
+		const { data } = native.words(record(1, 0));
 		native.dispose();
+		expect(data.length).toBe(0);
 		expect(() => native.renderBuilt(1)).toThrow(/the arena that built a side's record was released/);
+		expect(() => native.builtWords(4)).toThrow(/the arena that built a side's record was released/);
 	});
 
 	it("refuses, by name, a record in a side once the engine that built it is disposed, and renders the rest after", async () => {

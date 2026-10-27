@@ -91,3 +91,9 @@ cc = "1"
 # kind K" candidate selection during validation) nondeterministic
 # across parses. IndexMap preserves tree-sitter child insertion order.
 indexmap = { version = "2", features = ["serde"] }
+# The N-API level is the highest the Node floor (22.18) provides: N-API 10
+# is in Node 22.14+ and 23.6+. Arena chunks cross as external array buffers
+# and are detached when freed, which needs N-API 7.
+napi = { version = "3.15", default-features = false, features = ["napi10"] }
+napi-derive = "3.6"
+napi-build = "2"

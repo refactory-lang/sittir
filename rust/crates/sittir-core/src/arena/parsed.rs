@@ -116,6 +116,20 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.tree_arena().arena().chunk(n).map(f)
     }
 
+    /// The storage of chunk `n` of the tree's arena, every word of it, to
+    /// share with a buffer JavaScript reads it through; `None` for a chunk
+    /// the arena does not hold.
+    #[must_use]
+    pub fn record_chunk_memory(&self, n: u32) -> Option<std::sync::Arc<super::ChunkMem<u32>>> {
+        self.tree_arena().arena().chunk_memory(n)
+    }
+
+    /// The bytes the tree's arena takes.
+    #[must_use]
+    pub fn arena_bytes(&self) -> usize {
+        self.tree_arena().arena().allocated_bytes()
+    }
+
     /// The words of chunk `n` of the tree's arena that records fill, copied:
     /// a later read that appends to the chunk leaves the copy as it was.
     #[must_use]
