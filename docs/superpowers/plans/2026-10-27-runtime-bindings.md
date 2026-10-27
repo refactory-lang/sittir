@@ -185,7 +185,7 @@
   - `builder` is the kind's stamped `builderPath`, dotted, and `builders` holds each one's stamped `factoryShape`. A fixed literal has no builder and builds as its kind id. A kind its holder's builder builds (an alias the holder admits by content, a seated config) has no builder either, and `seated` says whether the holder takes its config or its sole value.
   - A step's `builder` is the kind the next step sits in. It is absent when that kind has no builder, and its config then fills the key as the holder's seat takes it.
   - `leaf` is the slot's default leaf builder: the one text leaf the slot admits (`slotResolverKinds`), with numeric leaves and variant forms left out.
-- Modify: `packages/codegen/src/bindings/pinned-reader.ts` and `facts.ts`. One `#set!` reader serves `reason` and `default`. A claim at the pattern's top, or directly under a top-level grouping, with `(#set! default)` carries `ClaimFact.default`, set to the kind as authored. Binding can map two kinds onto one parser kind, as python's `lambda` and `lambda_within_for_in_clause` both bind to `lambda_expression`, so the pick matches an arm to the authored kind, not to the bound claim.
+- Modify: `packages/codegen/src/bindings/pinned-reader.ts` and `facts.ts`. One `#set!` reader serves `reason` and `default`. A claim at the pattern's top, or directly under a top-level grouping, with `(#set! default)` carries `ClaimFact.default`, set to the kind as authored. Binding can map two kinds onto one parser kind, as python's `lambda` and `lambda_within_for_in_clause` both bind to `lambda_expression`, so the pick matches an arm to the authored kind, not to the bound claim. On a supertype's claim, `(#set! default <form>)` names the form instead, so a default for forms that reach their path through the supertype's claim adds no claim of its own and moves no read.
 - Create: `packages/codegen/src/emitters/overlays/portable/build.ts`, with `portableBuildTable(input)` and `emitPortableBuild(input)`. `input` is `{ routes, model, nodeMap, kindEntries, flagPlans }`, and the result is the table (or its source) and its `PickDiagnostic[]`.
   - Arms: one per (kind, path) entry with an own read entry. A kind with no parser id, a hidden kind and a supertype get none. A display kind's builder is its stored kind's.
   - Presets: from the entry's pins, and from its single-kind child tests. A preset that another preset's steps extend is dropped.
@@ -195,22 +195,22 @@
     2. scalar;
     3. the variant default, which is the supertype's `optionDefaultSubtype ?? defaultVariantSubtype`, found by walking up `variantOf`;
     4. the flag the form implies (its plan is `ALWAYS`);
-    5. presence, by `absent` and `required`; arms one input could satisfy stay together;
+    5. presence, by `required`; arms one input could satisfy stay together;
     6. member element kinds, disjoint or nested, narrower first;
     7. the bindings default;
     8. holder.
 
-    An arm admitted in fewer holder slots than its siblings gets `holders`. A kind a holder's kind-flag route presets is never a holder candidate.
-  - Diagnostics: `portable-pick-undecided`, `portable-default-redundant` and `portable-default-repeated`. `generate` returns them as grammar diagnostics, and `runCodegen` appends them to `.sittir/grammar-diagnostics.json`, the file the report's code ceilings read. Each has ceiling 0.
+    Every arm's `absent` lists the members the path's other arms have and it lacks, so no step's order lets an arm take a member it has no slot for. An arm admitted in fewer holder slots than its siblings gets `holders`. A kind a holder's kind-flag route presets leaves any path where another arm builds.
+  - Diagnostics: `portable-pick-undecided`, `portable-default-redundant`, `portable-default-repeated` and `portable-default-unknown` (a default naming no arm at its path). `generate` returns them as grammar diagnostics, and `runCodegen` appends them to `.sittir/grammar-diagnostics.json`, the file the report's code ceilings read. Each has ceiling 0.
 - Modify: `packages/codegen/src/compiler/model/node-map.ts`, adding the `optionDefaultSubtype` getter, which `from.ts`'s `defaultArmKindOf` also reads.
 - Modify: `emitPortable` (returns the build source and its diagnostics), `generate.ts`, `run-codegen.ts` (writes `src/portable-build.ts`), and `engine.ts`'s `emitApi` (`hooks.portableBuild: () => import('./portable-build.js').then((m) => m.build)`). Also `packages/types/src/engine-api.ts` (`LanguageHooks.portableBuild?: () => Promise<PortableBuildTable>`).
 - Vocabulary (by hand, then `tool vocabulary-features --write`):
   - the `static-storage` feature (`declaration.variable`'s `static` flag), composed by rust;
   - `paren`, `bracket` and `brace` refinements of `element.macro.token_tree`, its `delimited` and `pattern`, and `declaration.macro`.
 - Bindings:
-  - rust: `static_item`'s `static` flag; the delimiter refinement claims; `(#set! default)` on each paren form at its base path and on `struct_pattern`;
-  - python: defaults on `with_clause_bare` and `lambda_within_for_in_clause`;
-  - typescript: defaults on `number_float_point` at `literal.number` and on `parenthesized_expression_sequence`.
+  - rust: `static_item`'s `static` flag; the delimiter refinement claims; the paren form named as the default on each token-tree and macro-definition supertype's claim; `(#set! default)` on `struct_pattern`'s own claim;
+  - python: `with_clause_bare` named on `with_clause`'s claim; `(#set! default)` on `lambda_within_for_in_clause`'s claim;
+  - typescript: `number_float_point` named on `number`'s claim, and `parenthesized_expression_sequence` on `parenthesized_expression`'s.
 - Test: `packages/common/tests/portable-build-table.test.ts`, which loads each table through `hooks.portableBuild()` and the strict table through `hooks.tables.strict()`.
 
 **Interfaces:**
@@ -231,16 +231,20 @@
   - rust's `type.primitive` `u8` arm has no builder, and its `when` is `[{ text: 'u8' }]`.
   - rust's `expression.reference` mut arm is picked by `{ flag: 'exclusive', set: true }`.
   - python's `literal.string.escape` builds `escape_sequence_simple` by default, ahead of the other escape forms.
-  - Each grammar's `grammar-diagnostics.json` holds no `portable-pick-undecided`, `portable-default-redundant` or `portable-default-repeated`.
+  - Each grammar's `grammar-diagnostics.json` holds no `portable-*` code.
+  - rust's `declaration.variable` tells `static_item` from `let_declaration` by `{ flag: 'static', set }`.
+  - The bindings defaults order their ties: `struct_pattern` before `tuple_struct_pattern`, python's `with_clause_bare` first, typescript's `parenthesized_expression_sequence` first.
+  - typescript's sequence form carries `{ absent: ['type'], required: [] }`, so a structure with a type reaches the typed form.
+  - typescript's `identifier` has no `private_property_identifier` arm, and `expression.member`'s `privateName` flag presets `privatePropertyIdentifier`.
   - rust's `element.macro.token_tree` builds `token_tree_paren` by default, and `element.macro.token_tree.bracket` builds `token_tree_bracket`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement the files above.
 - [ ] **Step 4:** Regenerate the five grammars.
   - The tests pass.
-  - Validation history is compared row by row, with the row diff read first: rust's `static` keyword claim mints `static_keyword`, which shifts rust's kind ids.
+  - Validation history is compared row by row, with the row diff read first: rust's `static` presence claim moves the `static` token from kind id 36 to 128, shifting the ids between by one.
   - The import-graph test passes: the descriptor loads no build table.
   - **Stop rule:** if any grammar reports a pick diagnostic, stop before committing and send brainstorm the list (path, kinds, the holder slot). Do not raise the ceiling.
-- [ ] **Step 5:** Pathspec commits, in order: the bindings directive, the vocabulary, the bindings, then the emitter with the regenerated files. Open the PR.
+- [ ] **Step 5:** Pathspec commits, in order: the default directive; the vocabulary; the bindings, with the directive's named form (the commit hook checks regenerated outputs against the whole tree, so the named form lands with its first claims); then the emitter with the regenerated files. Open the PR.
 
 ### Task 4: `build` through the strict table
 
