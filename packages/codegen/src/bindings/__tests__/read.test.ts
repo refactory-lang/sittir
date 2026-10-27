@@ -497,3 +497,23 @@ describe('bindingPatterns', () => {
 		]);
 	});
 });
+
+describe('the default directive', () => {
+	it("stamps a claim at the pattern's top with its kind as authored", async () => {
+		const facts = await readBindings('((token_tree_paren) @element.macro.token_tree (#set! default))');
+		expect(facts.claims.map((c) => [c.vocab, c.default])).toEqual([['element.macro.token_tree', 'token_tree_paren']]);
+	});
+	it('leaves a claim with no directive, and a claim below the top, unstamped', async () => {
+		const plain = await readBindings('(struct_pattern) @pattern.struct');
+		expect(plain.claims[0]?.default).toBeUndefined();
+		const nested = await readBindings('((function_definition body: (block (expression_statement (string) @literal.string.docstring))) @declaration.function (#set! default))');
+		expect(nested.claims.map((c) => [c.vocab, c.default])).toEqual([
+			['declaration.function', 'function_definition'],
+			['literal.string.docstring', undefined]
+		]);
+	});
+	it('reads a reason beside it', async () => {
+		const facts = await readBindings('((line_comment) @unclaimed (#set! reason "trivia") (#set! default))');
+		expect(facts.unclaimed).toEqual([{ kind: 'line_comment', reason: 'trivia' }]);
+	});
+});
