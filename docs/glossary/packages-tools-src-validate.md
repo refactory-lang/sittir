@@ -239,11 +239,6 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 What `walkNativeForKind` records for a node it visits: an unread coordinate as the coordinate alone, a native node as its stamped `at` beside the native node itself, and a native node with no `at` (a trivia entry the read handed over whole) as its data alone.
 
 
-### `packages/tools/src/validate/common.ts::isUnitModelType`
-
-Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
-
-
 ### `packages/tools/src/validate/common.ts::NativeNodeCoords::embeddedData`
 
 ```text
@@ -1008,7 +1003,7 @@ otherwise.
 
 The comparison of a from() result against a factory result when either is a kind id: a kind stored as its id has no node, so equality of the ids is the whole check. It answers `undefined` when neither side is an id (the structural diff applies), an empty list when the ids match, and one message when they differ. Both the scalarized leaf route and the read-driven route call it, so a from() that returns the wrong constant fails on either.
 
-### `packages/tools/src/validate/common.ts::FactoryEntry`
+### `packages/tools/src/grammar-internals.ts::FactoryEntry`
 
 One entry of a factory map: the factory function of a kind, or, for a `constant`-shaped kind (a keyword or punctuation kind with a build entry), the value itself. The dispatch returns a constant entry as it is and calls every other.
 
@@ -1405,10 +1400,6 @@ Every named node's kind under `node`, `node` included, as `kindOf` names it (by 
 
 A node's kind as tree-sitter names it, its `type`: the kind `findFirst` and `collectKinds` use unless given another.
 
-### `packages/tools/src/validate/common.ts::isLeafModelType`
-
-Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
-
 ### `packages/tools/src/validate/common.ts::slotKeyOf`
 
 The key a config holds a kind's slot under: the slot's model name, read from the factory slot metadata (`FactorySlotMeta.propertyName`), which the node-model reader derives once (`slotPropertyName`). The validators build every config through it and never camel-case or pluralize a slot name themselves. A slot with no metadata throws, naming the kind and slot, instead of falling back to a guessed key.
@@ -1672,3 +1663,19 @@ A fixture the render check reads.
 ### `packages/tools/src/validate/read-render-parse.ts::RenderReparseContext`
 
 The context in which a render is reparsed.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::unitKinds`
+
+The kinds that are units in the loaded node model.
+
+### `packages/tools/src/validate/common.ts::IrSurface::unitKinds`
+
+The kinds that are units in the IR surface.
+
+### `packages/tools/src/validate/common.ts::isLeafKind`
+
+Whether a kind is a leaf (has no child slots) in the model.
+
+### `packages/tools/src/validate/display-families.ts::displayStorageKinds`
+
+The storage kinds a display covers, across the families.
