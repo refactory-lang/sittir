@@ -504,9 +504,19 @@ counted or weakly held per node.
   so a freed number comes back only after every other number has been used since it was freed. A
   built leaf's site keeps its one packed number, with no second number per site and no allocation:
   a stale site names a chunk number no live chunk has, so its write is skipped and the site
-  dropped. A leaf that outlives its holder never writes into a record that reuses the slot, and it
-  never keeps its holder alive. The probe that sets the size cap also confirms the chunk bits it
-  leaves hold the number space.
+  dropped, and a leaf never keeps its holder alive.
+  - **The bound.** Round-robin delays reuse; it doesn't prevent it. Suppose the arena allocates
+    about 2^32 words after a holder's chunk is freed, so its number comes back, and the leaf it held
+    was neither written nor placed in the meantime. Then the leaf's stale site names a live chunk,
+    and its next write replaces the sides at that place. The consequence is wrong sides on another
+    node, never memory outside the arena, since a side write is keyed by place and every read is
+    bounds-checked.
+  - The probe that sets the size cap also confirms that the chunk bits it leaves hold the number
+    space.
+- **A leaf's sites are pruned at placement.** A leaf object placed in many builds (a hoisted `self`
+  identifier) gains a site each time. So placement prunes, amortized: when the site list reaches
+  twice its length after the last prune, the sites whose chunk is freed are dropped. A leaf at one
+  site keeps its one packed number. Pruning also narrows the bound above.
 - **A range is reused only after its callback.** A chunk number enters the free ring only after its
   callback has removed that range's sides, native and JavaScript, and its interned entries.
 - **Native keeps nothing after a call.** A render or a side read borrows the chunks it reads for
