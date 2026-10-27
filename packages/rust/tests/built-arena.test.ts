@@ -184,9 +184,10 @@ describe('a built arena', () => {
 		expect([cell.kind, arena.textOf(cell.offset, cell.len), cell.changed]).toEqual([4, 'name', { leading: false, trailing: false }]);
 	});
 
-	it('records each site a built leaf is placed at, in the field its literal declares', () => {
+	it('records each site a built leaf is placed at, in a field its first placement adds', () => {
 		const arena = arenaOf();
-		const leaf = arena.adoptLeaf({ $type: 4, [LEAF_SITES]: undefined }, 'name');
+		const leaf = arena.adoptLeaf({ $type: 4 }, 'name');
+		expect(LEAF_SITES in leaf).toBe(false);
 		const one = arena.record(9, 7);
 		storeCell(arena, one, 2, leaf);
 		const first = builtRecordOf(arena.view(one), arena)!;
@@ -197,13 +198,13 @@ describe('a built arena', () => {
 	});
 
 	it('holds a leaf placed once as one number in its field, and makes the field a list at a second site or one too wide to pack', () => {
-		const once = { [LEAF_SITES]: undefined };
+		const once: { [LEAF_SITES]?: unknown } = {};
 		placeLeaf(once, 0xffffffff, 127, 16383);
 		expect(typeof once[LEAF_SITES]).toBe('number');
 		expect(leafSitesOf(once)).toEqual([0xffffffff, 127, 16383]);
 		placeLeaf(once, 5, 2, 0);
 		expect(once[LEAF_SITES]).toEqual([0xffffffff, 127, 16383, 5, 2, 0]);
-		const wide = { [LEAF_SITES]: undefined };
+		const wide: { [LEAF_SITES]?: unknown } = {};
 		placeLeaf(wide, 5, 128, 0);
 		placeLeaf(wide, 6, 2, 16384);
 		expect(wide[LEAF_SITES]).toEqual([5, 128, 0, 6, 2, 16384]);
@@ -212,8 +213,8 @@ describe('a built arena', () => {
 	it('writes the sides of a leaf it places only when the leaf holds some', () => {
 		const written: [object, number[]][] = [];
 		const arena = arenaOf(NO_SIDES, { rows: {} }, (leaf, sites) => void written.push([leaf, [...sites]]));
-		const bare = arena.adoptLeaf({ $type: 4, [LEAF_SITES]: undefined }, 'a');
-		const sided = arena.adoptLeaf({ $type: 4, [LEAF_SITES]: undefined }, 'b');
+		const bare = arena.adoptLeaf({ $type: 4 }, 'a');
+		const sided = arena.adoptLeaf({ $type: 4 }, 'b');
 		setTriviaOf(sided, { leading: [3] });
 		const record = arena.record(9, 13);
 		storeCell(arena, record, 2, bare);

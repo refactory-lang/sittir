@@ -21,7 +21,6 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
-	LEAF_SITES,
 	storeCell,
 	storeFlag,
 	storeList
@@ -259,7 +258,6 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 
 function leafPatternCharacter(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.PatternCharacter as const,
 		$named: true as const,
 		$text: () => text,
@@ -367,7 +365,6 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 
 function leafPosixClassName(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.PosixClassName as const,
 		$named: true as const,
 		$text: () => text,
@@ -430,7 +427,6 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 
 function leafClassCharacter(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ClassCharacter as const,
 		$named: true as const,
 		$text: () => text,
@@ -589,7 +585,6 @@ export function buildFlags(text: string): T.Flags.Bound {
 
 function leafFlags(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.Flags as const,
 		$named: true as const,
 		$text: () => text,
@@ -789,7 +784,6 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 
 function leafDecimalEscape(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.DecimalEscape as const,
 		$named: true as const,
 		$text: () => text,
@@ -850,7 +844,6 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 
 function leafUnicodeCharacterEscape(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.UnicodeCharacterEscape as const,
 		$named: true as const,
 		$text: () => text,
@@ -937,7 +930,6 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 
 function leafUnicodePropertyValue(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.UnicodePropertyValue as const,
 		$named: true as const,
 		$text: () => text,
@@ -964,7 +956,6 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 
 function leafControlEscape(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ControlEscape as const,
 		$named: true as const,
 		$text: () => text,
@@ -994,7 +985,6 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 
 function leafControlLetterEscape(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ControlLetterEscape as const,
 		$named: true as const,
 		$text: () => text,
@@ -1057,7 +1047,6 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 
 function leafGroupName(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.GroupName as const,
 		$named: true as const,
 		$text: () => text,
@@ -1088,7 +1077,6 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 
 function leafDecimalDigits(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.DecimalDigits as const,
 		$named: true as const,
 		$text: () => text,
@@ -1311,7 +1299,6 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 
 function leafCharacterClassEscapeText1(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.CharacterClassEscapeText1 as const,
 		$named: true as const,
 		$text: () => text,
@@ -1342,7 +1329,6 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 
 function leafCharacterClassEscapeText2(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.CharacterClassEscapeText2 as const,
 		$named: true as const,
 		$text: () => text,
@@ -1511,7 +1497,6 @@ export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bo
 
 function leafUnicodePropertyName(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.UnicodePropertyName as const,
 		$named: true as const,
 		$text: () => text,
