@@ -90,9 +90,11 @@ macro_rules! napi_engine {
             if let Some(mut buffers) = TREE_BUFFERS.with(|buffers| buffers.borrow_mut().remove(&tree_id)) {
                 let _ = buffers.detach(&env);
             }
-            LIVE_TREES.with(|trees| {
-                trees.borrow_mut().remove(&tree_id);
-            });
+            if let Some(tree) = LIVE_TREES.with(|trees| trees.borrow_mut().remove(&tree_id)) {
+                let store = tree.written().clone();
+                drop(tree);
+                let _ = $crate::napi_engine::settle(&env, &store);
+            }
         }
 
         /// Runs `f` on the live tree `tree_id` and the node at `index` of it,
@@ -154,9 +156,6 @@ macro_rules! napi_engine {
         #[::napi_derive::napi]
         pub struct SittirEngine {
             engine: $crate::engine::Engine<$grammar>,
-            /// The buffers JavaScript's builders write the built arena's
-            /// chunks through.
-            buffers: ::std::cell::RefCell<$crate::napi_engine::Buffers>,
         }
 
         #[::napi_derive::napi]
@@ -176,7 +175,6 @@ macro_rules! napi_engine {
                         $crate::napi_engine::engine_store::<$grammar>(),
                     )
                     .map_err(::napi::Error::from_reason)?,
-                    buffers: ::std::default::Default::default(),
                 })
             }
 
@@ -341,7 +339,7 @@ macro_rules! napi_engine {
             ) -> ::napi::Result<()> {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                 with_live_node(tree_id, index, |parsed, index| parsed.write_trivia_side(index, side, entries).map_err(::napi::Error::from_reason))?;
-                $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
+                $crate::napi_engine::settle(&env, self.engine.written())
             }
 
             /// Whether a write replaced a side of a node under the node at
@@ -557,9 +555,7 @@ macro_rules! napi_engine {
             /// whoever still names them.
             #[::napi_derive::napi]
             pub fn dispose(&mut self, env: ::napi::Env) -> ::napi::Result<()> {
-                self.buffers.borrow_mut().detach(&env)?;
-                $crate::napi_engine::release_built(self.engine.written());
-                Ok(())
+                $crate::napi_engine::release_built(&env, self.engine.written())
             }
         }
 
@@ -918,7 +914,7 @@ macro_rules! napi_engine {
                 #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }")]
                 pub fn built_words(&self, env: ::napi::Env, length: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                     let length: u32 = $crate::napi_engine::checked_whole(length, "length")?;
-                    $crate::napi_engine::built_chunk(&env, &mut self.buffers.borrow_mut(), self.engine.written(), false, length)
+                    $crate::napi_engine::built_chunk(&env, self.engine.written(), false, length)
                 }
 
                 /// A new chunk of `length` bytes of the built arena's strings,
@@ -927,7 +923,7 @@ macro_rules! napi_engine {
                 #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }")]
                 pub fn built_bytes(&self, env: ::napi::Env, length: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                     let length: u32 = $crate::napi_engine::checked_whole(length, "length")?;
-                    $crate::napi_engine::built_chunk(&env, &mut self.buffers.borrow_mut(), self.engine.written(), true, length)
+                    $crate::napi_engine::built_chunk(&env, self.engine.written(), true, length)
                 }
 
                 /// The `segment`th segment of the counts of the entries the
@@ -937,7 +933,7 @@ macro_rules! napi_engine {
                 /// records and a segment that is not the next.
                 #[::napi_derive::napi(ts_return_type = "Uint8Array")]
                 pub fn built_counts(&self, env: ::napi::Env, chunk: u32, segment: u32) -> ::napi::Result<$crate::napi_engine::Made> {
-                    $crate::napi_engine::built_counts(&env, &mut self.buffers.borrow_mut(), self.engine.written(), chunk, segment)
+                    $crate::napi_engine::built_counts(&env, self.engine.written(), chunk, segment)
                 }
 
                 /// Takes one more count of the built entry at `address`, whose
@@ -963,7 +959,7 @@ macro_rules! napi_engine {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                     let released = self.engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
-                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())?;
+                    $crate::napi_engine::settle(&env, self.engine.written())?;
                     released?;
                     Ok(self.engine.written().built_mut().take_trees().into_iter().map(|tree| tree.0).collect())
                 }
@@ -1036,7 +1032,7 @@ macro_rules! napi_engine {
                     let sites: Vec<_> = sites.chunks_exact(3).map(|site| $crate::trivia_store::Site { holder: $crate::arena::Address(site[0]), word: site[1], item: $crate::types::ItemIndex(site[2]) }).collect();
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                     self.engine.write_built_leaf_side(&sites, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
+                    $crate::napi_engine::settle(&env, self.engine.written())
                 }
 
                 /// The sides writes gave each unit the record at `address` in
@@ -1067,7 +1063,7 @@ macro_rules! napi_engine {
                 ) -> ::napi::Result<()> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     self.engine.write_built_unit_sides(address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
+                    $crate::napi_engine::settle(&env, self.engine.written())
                 }
 
                 /// Replace `side` of the built record at `address` with
@@ -1085,7 +1081,7 @@ macro_rules! napi_engine {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                     self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
+                    $crate::napi_engine::settle(&env, self.engine.written())
                 }
 
                 /// Renders the parsed candidate at row `index` without exporting
@@ -1392,6 +1388,13 @@ pub struct Buffers {
 unsafe impl Send for Buffers {}
 
 #[cfg(feature = "arena")]
+impl std::fmt::Debug for Buffers {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Buffers").field("chunks", &self.held.len()).field("reported", &self.reported).field("unreported", &self.unreported).finish_non_exhaustive()
+    }
+}
+
+#[cfg(feature = "arena")]
 impl Buffers {
     /// The typed array JavaScript reads chunk `chunk` (of the string chunks
     /// when `bytes`) through: the one it was given while that lives, else a
@@ -1520,30 +1523,29 @@ impl napi::bindgen_prelude::TypeName for Made {
 
 /// A new chunk of the built arena `store` holds, of `length` bytes when
 /// `bytes`, else of `length` words: `{ chunk, data, meta, freed }`, its
-/// number, the typed arrays over it and its meta, held weakly in `buffers`
-/// and reported to V8, and the chunks freed since `buffers` last told.
+/// number, the typed arrays over it and its meta, held weakly in the store's
+/// buffers and reported to V8, and the chunks freed since JavaScript was
+/// last told.
 ///
 /// # Errors
 ///
 /// What `BuiltChunks` refuses, and what `Buffers::view` does.
 #[cfg(feature = "arena")]
-pub fn built_chunk<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>, bytes: bool, length: u32) -> napi::Result<Made> {
+pub fn built_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>, bytes: bool, length: u32) -> napi::Result<Made> {
     use napi::JsValue;
     let refused = |e: crate::arena::ArenaError| napi::Error::from_reason(e.to_string());
-    let (chunk, data, meta) = {
-        let mut built = store.built_mut();
-        if bytes {
-            let made = built.alloc_bytes(length).map_err(refused)?;
-            (made.chunk, buffers.view::<u8>(env, true, made.chunk, || Some(made.mem))?, made.meta)
-        } else {
-            let made = built.alloc_words(length).map_err(refused)?;
-            (made.chunk, buffers.view::<u32>(env, false, made.chunk, || Some(made.mem))?, made.meta)
-        }
+    let mut buffers = store.buffers();
+    let (chunk, data, meta) = if bytes {
+        let made = store.built_mut().alloc_bytes(length).map_err(refused)?;
+        (made.chunk, buffers.view::<u8>(env, true, made.chunk, || Some(made.mem))?, made.meta)
+    } else {
+        let made = store.built_mut().alloc_words(length).map_err(refused)?;
+        (made.chunk, buffers.view::<u32>(env, false, made.chunk, || Some(made.mem))?, made.meta)
     };
     let data = data.ok_or_else(|| napi::Error::from_reason("a built chunk made no buffer"))?;
     let meta = external_view::<u8>(env, meta)?;
     buffers.hold_counts(env, chunk, meta)?;
-    settle(env, buffers, store)?;
+    settle_buffers(*env, &mut buffers, store)?;
     let mut object = napi::bindgen_prelude::Object::new(env)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "chunk", chunk)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
@@ -1554,13 +1556,14 @@ pub fn built_chunk<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::tri
 
 /// The `segment`th segment of the counts of the built arena `store` holds'
 /// word chunk `chunk` (`BuiltChunks::counts`): a `Uint8Array` over it, held
-/// weakly in `buffers` and reported to V8.
+/// weakly in the store's buffers and reported to V8.
 ///
 /// # Errors
 ///
 /// What `BuiltChunks::counts` refuses, and what making the buffer does.
 #[cfg(feature = "arena")]
-pub fn built_counts<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>, chunk: u32, segment: u32) -> napi::Result<Made> {
+pub fn built_counts<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>, chunk: u32, segment: u32) -> napi::Result<Made> {
+    let mut buffers = store.buffers();
     let mem = store.built_mut().counts(chunk, segment).map_err(|e| napi::Error::from_reason(e.to_string()))?;
     let array = external_view::<u8>(env, mem)?;
     buffers.hold_counts(env, chunk, array)?;
@@ -1587,17 +1590,24 @@ pub fn built_memory<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore
 }
 
 /// Detaches the buffers over each chunk the built arena `store` holds freed
-/// since the last call, and reports its memory now to V8.
+/// since the last call, and reports its memory now to V8. Every call that
+/// can free a chunk ends here, so no buffer over a freed chunk outlives the
+/// call that freed it.
 ///
 /// # Errors
 ///
 /// A status napi refuses with.
 #[cfg(feature = "arena")]
-pub fn settle<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+pub fn settle<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    settle_buffers(*env, &mut store.buffers(), store)
+}
+
+#[cfg(feature = "arena")]
+fn settle_buffers<T>(env: napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
     let freed = store.built_mut().take_freed();
-    freed.iter().try_for_each(|&chunk| buffers.detach_chunk(env, chunk))?;
+    freed.iter().try_for_each(|&chunk| buffers.detach_chunk(&env, chunk))?;
     buffers.unreported.extend(freed);
-    buffers.report(env, store.built().allocated_bytes())
+    buffers.report(&env, store.built().allocated_bytes())
 }
 
 /// Without the arena no chunk is freed.
@@ -1606,7 +1616,7 @@ pub fn settle<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_s
 ///
 /// None.
 #[cfg(not(feature = "arena"))]
-pub fn settle<T>(_env: &napi::Env, _buffers: &mut Buffers, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+pub fn settle<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
     Ok(())
 }
 
@@ -1625,15 +1635,28 @@ pub fn engine_store<G: crate::engine::EngineGrammar>() -> crate::trivia_store::T
     crate::trivia_store::TriviaStore::with_kind_bits(G::KIND_BITS)
 }
 
-/// Frees the built arena chunks `store` holds (`BuiltChunks::release_all`).
+/// Detaches every buffer over the built arena `store` holds, then frees its
+/// chunks (`BuiltChunks::release_all`).
+///
+/// # Errors
+///
+/// A status napi refuses with.
 #[cfg(feature = "arena")]
-pub fn release_built<T>(store: &crate::trivia_store::TriviaStore<T>) {
+pub fn release_built<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    store.buffers().detach(env)?;
     store.built_mut().release_all();
+    Ok(())
 }
 
 /// Without the arena a store holds no built arena chunks.
+///
+/// # Errors
+///
+/// None.
 #[cfg(not(feature = "arena"))]
-pub fn release_built<T>(_store: &crate::trivia_store::TriviaStore<T>) {}
+pub fn release_built<T>(_env: &napi::Env, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    Ok(())
+}
 
 /// The table one call renders through: every lookup is the live `trees`',
 /// and a trivia entry's built record renders from the arena its store holds

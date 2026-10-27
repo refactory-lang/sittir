@@ -65,6 +65,10 @@ pub struct TriviaStore<T> {
     /// entry this store answers renders from.
     #[cfg(feature = "arena")]
     built: Arc<RwLock<crate::arena::BuiltChunks>>,
+    /// The buffers JavaScript reads the built arena's chunks through, which
+    /// whatever frees a chunk detaches in the same call.
+    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+    buffers: Arc<std::sync::Mutex<crate::napi_engine::Buffers>>,
 }
 
 impl<T> Clone for TriviaStore<T> {
@@ -73,6 +77,8 @@ impl<T> Clone for TriviaStore<T> {
             sides: Arc::clone(&self.sides),
             #[cfg(feature = "arena")]
             built: Arc::clone(&self.built),
+            #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+            buffers: Arc::clone(&self.buffers),
         }
     }
 }
@@ -106,6 +112,8 @@ impl<T> TriviaStore<T> {
             sides: Arc::new(RwLock::new(BTreeMap::new())),
             #[cfg(feature = "arena")]
             built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, no_shape))),
+            #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+            buffers: Arc::default(),
         }
     }
 
@@ -114,7 +122,12 @@ impl<T> TriviaStore<T> {
     #[cfg(feature = "arena")]
     #[must_use]
     pub fn for_records(kind_bits: u32, shape: crate::arena::ShapeOf) -> Self {
-        Self { sides: Arc::new(RwLock::new(BTreeMap::new())), built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, shape))) }
+        Self {
+            sides: Arc::new(RwLock::new(BTreeMap::new())),
+            built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits, shape))),
+            #[cfg(feature = "napi-bindings")]
+            buffers: Arc::default(),
+        }
     }
 }
 
@@ -130,6 +143,13 @@ impl<T> TriviaStore<T> {
     #[cfg(feature = "arena")]
     pub fn built_mut(&self) -> std::sync::RwLockWriteGuard<'_, crate::arena::BuiltChunks> {
         self.built.write().unwrap_or_else(PoisonError::into_inner)
+    }
+
+    /// The buffers JavaScript reads the built arena's chunks through. Taken
+    /// before the chunks' lock wherever both are held.
+    #[cfg(all(feature = "arena", feature = "napi-bindings"))]
+    pub fn buffers(&self) -> std::sync::MutexGuard<'_, crate::napi_engine::Buffers> {
+        self.buffers.lock().unwrap_or_else(PoisonError::into_inner)
     }
 }
 
@@ -394,6 +414,8 @@ impl<T: Clone> TriviaStore<T> {
         let store = Self {
             sides: Arc::default(),
             built: Arc::clone(&self.built),
+            #[cfg(feature = "napi-bindings")]
+            buffers: Arc::clone(&self.buffers),
         };
         if let Some(sides) = sides {
             for (side, entries) in [(TriviaSide::Leading, sides.leading), (TriviaSide::Trailing, sides.trailing), (TriviaSide::Inner, sides.inner)] {
