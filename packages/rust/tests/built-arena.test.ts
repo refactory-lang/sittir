@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { BuiltArena, cellFormatOf, chunkOf, decodeCell, wordOf } from '@sittir/common/engine';
 import { builtRecordOf, LEAF_SITES, storeCell, storeList, storeListOptions } from '@sittir/common/utils';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
-import { setTriviaOf } from '../../common/src/node-data.ts';
+import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
@@ -19,7 +19,7 @@ type Views = ConstructorParameters<typeof BuiltArena>[3];
 type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
 const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {}, words: {} }, writeLeafSites: WriteLeafSites = () => undefined): BuiltArena =>
 	new BuiltArena(
-		{ format: format!, owner: {}, hold: () => undefined, trivia },
+		{ format: format!, owner: {}, kinds: PLAIN_KINDS, hold: () => undefined, trivia },
 		(data) => ({ ...data }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
@@ -231,6 +231,19 @@ describe('a built arena', () => {
 		const arena = arenaOf(NO_SIDES, { rows: {}, words: { 9: 13 } });
 		expect(arena.record(9).words).toBe(13);
 		expect(() => arena.record(8)).toThrow(/no width/);
+	});
+
+	it("keeps the edges a copied leaf's one holder changed on its record's side, beside the parsed leaf it names", () => {
+		const arena = arenaOf();
+		const sideOf = (record: number): number[] => {
+			const side = arena.words(record, 2)[wordOf(record, format!) + 1]!;
+			return Array.from(arena.words(side, 6).subarray(wordOf(side, format!), wordOf(side, format!) + 6));
+		};
+		const span = { start: 40, end: 52 };
+		const { sideSides, sideChanged } = format!;
+		expect(sideOf(arena.parsedLeaf(4, 7, 21, 22, span, { leading: false, trailing: false }))).toEqual([sideSides.bit, 7, 21, 22, 40, 52]);
+		expect(sideOf(arena.parsedLeaf(4, 7, 21, 22, span, { leading: true, trailing: false }))).toEqual([sideSides.bit | sideChanged.leading, 7, 21, 22, 40, 52]);
+		expect(sideOf(arena.parsedLeaf(4, 7, 21, 22, span, { leading: true, trailing: true }))[0]).toBe(sideSides.bit | sideChanged.leading | sideChanged.trailing);
 	});
 
 	it('copies a record rebuilt from a parsed node, naming that node beside its list settings, and places its leaves at the copy', () => {

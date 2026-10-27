@@ -18,7 +18,8 @@ use crate::types::{Delimiter, KindId, NodeIndex, Span, TreeId};
 /// builder writes, the delimiters and the chosen separator, one word each.
 /// The addon exports them: JavaScript reads a parsed record's row and a
 /// list's delimiters setting through them, and writes a built list's
-/// settings.
+/// settings and the edges a copied leaf's one holder changed, two flags
+/// that take no words.
 pub mod field {
     pub const AT: u32 = super::mask::AT;
     pub const AT_WORDS: u32 = 4;
@@ -28,6 +29,8 @@ pub mod field {
     pub const SPAN_WORDS: u32 = 4;
     pub const SIDES: u32 = super::mask::SIDES;
     pub const SIDES_WORDS: u32 = 5;
+    pub const CHANGED_LEADING: u32 = super::mask::CHANGED_LEADING;
+    pub const CHANGED_TRAILING: u32 = super::mask::CHANGED_TRAILING;
     pub const SEPARATOR: u32 = super::mask::SEPARATOR;
     pub const SEPARATOR_WORDS: u32 = 1;
     pub const DELIMITER: u32 = super::mask::DELIMITER;

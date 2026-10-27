@@ -425,6 +425,10 @@ export type NodeIndex =
  */
 export const SIDE_FIELD_AT: number
 
+export const SIDE_FIELD_CHANGED_LEADING: number
+
+export const SIDE_FIELD_CHANGED_TRAILING: number
+
 export const SIDE_FIELD_DELIMITER: number
 
 export const SIDE_FIELD_EDGES: number

@@ -534,7 +534,7 @@ export function createNativeEngine<
 
 		return {
 			engine: {
-				builtRecords: cellFormat === undefined ? undefined : builtRecordsOf(engine, cellFormat),
+				builtRecords: cellFormat === undefined ? undefined : builtRecordsOf(engine, cellFormat, kindView),
 				render(node, opts) {
 					return renderNativeNode(node, opts);
 				},
@@ -629,7 +629,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 	return nativeRecords.get(native);
 }
 
-function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
+function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
 	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, holdBuiltArena } = engine;
 	if (
 		builtTriviaSide === undefined ||
@@ -643,6 +643,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 	return {
 		format,
 		owner: engine,
+		kinds,
 		hold: (words, bytes, writtenWords, writtenBytes) => holdBuiltArena.call(engine, words, bytes, writtenWords, writtenBytes),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,

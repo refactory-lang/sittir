@@ -591,7 +591,7 @@ export interface ChangedEdges {
 	readonly trailing: boolean;
 }
 
-const NO_EDGES: ChangedEdges = { leading: false, trailing: false };
+export const NO_EDGES: ChangedEdges = { leading: false, trailing: false };
 const BOTH_EDGES: ChangedEdges = { leading: true, trailing: true };
 
 /**
@@ -645,7 +645,7 @@ function keepsNeighbour(span: Siblings['previous'], neighbour: unknown, token: T
 	return other !== undefined && other.token === token && other.span.start === span.start && other.span.end === span.end;
 }
 
-function changedEdges(list: readonly unknown[], index: number, view: KindView): ChangedEdges {
+export function changedEdges(list: readonly unknown[], index: number, view: KindView): ChangedEdges {
 	const entry = list[index];
 	const source = isRecord(entry) ? placeOf(evidenceOf(entry, view)) : undefined;
 	const siblings = source === undefined ? undefined : siblingsOf(source);

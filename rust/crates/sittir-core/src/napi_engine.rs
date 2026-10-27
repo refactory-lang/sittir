@@ -642,6 +642,10 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub const SIDE_WORDS_SIDES: u32 = $crate::arena::side::field::SIDES_WORDS;
             #[::napi_derive::napi]
+            pub const SIDE_FIELD_CHANGED_LEADING: u32 = $crate::arena::side::field::CHANGED_LEADING;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_CHANGED_TRAILING: u32 = $crate::arena::side::field::CHANGED_TRAILING;
+            #[::napi_derive::napi]
             pub const SIDE_FIELD_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR;
             #[::napi_derive::napi]
             pub const SIDE_WORDS_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR_WORDS;

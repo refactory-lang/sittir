@@ -37,6 +37,33 @@ function fieldName(ts: Engine, source: string) {
 	return name;
 }
 
+function editedBody(ts: Engine, source: string, edit: (statements: readonly unknown[]) => readonly unknown[]): string {
+	const file = ts.parse(source);
+	const declaration = file.statements()[0];
+	if (declaration === undefined || !ts.is.functionDeclaration(declaration)) throw new Error('expected a function');
+	const body = declaration.body();
+	const statements = edit(body.statements()) as Parameters<typeof body.$with.statements>;
+	return ts.render(file.$with.statements(declaration.$with.body(body.$with.statements(...statements)))).toString();
+}
+
+const moved: readonly (readonly [string, (statements: readonly unknown[]) => readonly unknown[], string])[] = [
+	['reversed', (statements) => [...statements].reverse(), 'function f() {\n c()\n b++\n a();\n}\n'],
+	['the first dropped', (statements) => statements.slice(1), 'function f() {\n b++\n c() }\n'],
+	['the middle dropped', (statements) => [statements[0], ...statements.slice(2)], 'function f() { a();\n c() }\n']
+];
+
+describe('a parsed body whose statements move or go renders as it does under object storage', () => {
+	for (const [label, ts] of engines) {
+		for (const [name, edit, expected] of moved) {
+			it(`${label}: ${name}, and the result parses`, () => {
+				const text = editedBody(ts, 'function f() { a(); b++\n c() }\n', edit);
+				expect(text).toBe(expected);
+				expect(ts.parse(text).$errors).toEqual([]);
+			});
+		}
+	}
+});
+
 describe('an alias envelope rebuilt around its read content renders as it does under object storage', () => {
 	for (const [label, ts] of engines) {
 		it(`${label}: a type argument that opens a line renders its bytes`, () => {
