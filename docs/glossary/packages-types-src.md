@@ -530,7 +530,7 @@ The node's kind name.
 
 The node's rendered text.
 
-### `packages/types/src/engine-api.ts::NodeMethods::$trivia`
+### `packages/types/src/engine-api.ts::HoldsTrivia::$trivia`
 
 The trivia attached to the node.
 
@@ -921,3 +921,31 @@ The synonyms the `Statement` vocabulary resolves: each canonical kind mapped to 
 ### `packages/types/src/vocabulary/type.ts::TypeSynonyms`
 
 The synonyms the `Type` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/engine-api.ts::HoldsTrivia`
+
+The shape of a value that holds trivia side entries.
+
+### `packages/types/src/index.ts::WidenSlots`
+
+Widens the slot input types of a factory signature, keyed by slot name.
+
+### `packages/types/src/vocabulary/features/attributes/clause.ts::Clause::Case`
+
+The `Case` clause kind of the attributes feature.
+
+### `packages/types/src/vocabulary/features/complex-numbers/pattern.ts::Pattern::Complex`
+
+The complex-number pattern kind.
+
+### `packages/types/src/vocabulary/features/match-expressions/pattern.ts::Pattern::Map`
+
+The map pattern kind.
+
+### `packages/types/src/vocabulary/flags.ts::Flags::Prefix`
+
+The prefix flag bit (`1 << 19`).
+
+### `packages/types/src/vocabulary/identifier.ts::Identifier::Qualified`
+
+The qualified identifier kind.
