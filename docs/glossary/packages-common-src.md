@@ -54,10 +54,6 @@ Captures the active hooks of one operation and composes them in registration ord
 
 A lazy output handle whose text is produced through render middleware. The hook receives the resolved node and engine render options overlaid by per-call options. The native output handle is created at the original render boundary, preserving the native node snapshot taken there; its text stays lazy. `next` materializes that handle through the supplied continuation, which also measures native rendering when metrics are enabled. Capture alone does not format text or record metrics; a short circuit bypasses both. Disposing the outer handle disposes both handles, including an inner handle that was never materialized. The outer handle caches successful transformed text once, so `toString`, `print` and `save` share the same bytes; a short circuit never materializes the native output. Disposal retains the existing output refusal.
 
-### `packages/common/src/create-engine.ts::materializeNative`
-
-Produces text from an already captured native handle and, when enabled, records the native materialization duration and input/output sizes. Render middleware reaches it through `next`; the direct path retains its existing immediate measurement when metrics are enabled.
-
 ### `packages/common/src/create-engine.ts::assemblePortableEngine`
 
 The portable engine: the language's identity, with its portable rows; the shared portable `kinds` (`portable/index.ts::portable`, the same object as the descriptor's `kinds.portable`); and the language's view of the portable guards (`portableGuardsOf(language)`, the same object as the descriptor's `is.portable`), which reads a node of the language or a bare kind id of it. It has no native engine, so it holds nothing to dispose. A language whose hooks carry no portable surface (its grammar has no bindings) is refused with its name.
@@ -1035,3 +1031,43 @@ The kind id for a kind name, or `undefined` when the language has no kind of tha
 ### `packages/common/src/utils.ts::OwnerView`
 
 A view of a node's owner.
+
+### `packages/common/src/node-data.ts::mapSideEntries`
+
+Maps each entry of a side table, returning the table in the same shape.
+
+### `packages/common/src/node-data.ts::mapUnitSides`
+
+Maps each entry of a unit side list.
+
+### `packages/common/src/runtime.ts::SplicedEnvelope`
+
+A spliced envelope: a kind id, the content text and the name.
+
+### `packages/common/src/runtime.ts::admitSplicedEnvelope`
+
+Admits a value against a spliced envelope, refusing with a message that names the site when it does not fit.
+
+### `packages/common/src/side-entries.ts::readCoordinateOf`
+
+The node coordinate of a side entry, or undefined when the entry is not a coordinate.
+
+### `packages/common/src/side-entries.ts::refuseForeignEntry`
+
+Refuses a side entry from another engine, naming the holder.
+
+### `packages/common/src/side-entries.ts::holdSideEntries`
+
+Holds side entries in a table under a place name, keeping them reachable.
+
+### `packages/common/src/side-entries.ts::readEntries`
+
+Reads side entries from a table: coordinates resolve against the table, others are returned as they are.
+
+### `packages/common/src/side-entries.ts::readCoordinate`
+
+Resolves one coordinate entry against the table.
+
+### `packages/common/src/side-entries.ts::readUnits`
+
+Reads unit side entries from a table.
