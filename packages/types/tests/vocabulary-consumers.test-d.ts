@@ -25,7 +25,6 @@ import type {
 	Statement,
 	Type
 } from '../src/vocabulary/index.ts';
-import { Flags } from '../src/vocabulary/index.ts';
 import type { Flag } from '../src/vocabulary/utils.ts';
 
 // An ordinary function needs a name and parameters, nothing accessor-shaped.
@@ -172,12 +171,6 @@ export function unsafeTrait(name: Declaration.Interface.Trait<Composed>['name'],
 		unsafe: true
 	};
 }
-
-// The flags are one bitflag, each flag under its declaration's name: `|` combines two and `&` tests one.
-export const staticAsync: number = Flags.Static | Flags.Async;
-export const isStatic: boolean = (staticAsync & Flags.Static) !== 0;
-// @ts-expect-error a private name's flag is `privateName`
-export const privateFlag = Flags.Private;
 
 // The kind-set is the type for "any declaration": shared members read directly, the rest after narrowing on `$kind`.
 export function nameOf<G extends GrammarContext<G>>(d: Declaration.Any<G>): unknown {

@@ -1,5 +1,5 @@
 import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
-import { anchored, holds, slotItems } from '../query-holds.ts';
+import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts';
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
 import { nodeText, spanOf } from '../node-data.ts';
@@ -37,7 +37,18 @@ const readsItself = (plan: QueryPlan<QuerySubject>): boolean => {
 const decidesKindId = (entry: PortableReadEntry): boolean =>
 	entry.test.every((condition) => condition.via.length === 0 && readsItself(condition.plan));
 
-const classifiers = new WeakMap<PortableRows, PortableClassifier>();
+interface RowsReader {
+	readonly classify: PortableClassifier;
+	readonly flagHolds: (value: Node | number, flag: string) => boolean;
+}
+
+const readers = new WeakMap<PortableRows, RowsReader>();
+
+const readerOf = (rows: PortableRows): RowsReader => {
+	let reader = readers.get(rows);
+	if (reader === undefined) readers.set(rows, (reader = rowsReader(rows)));
+	return reader;
+};
 
 export const portablePathOf = (rows: PortableRows, path: string): PortablePath | undefined =>
 	Object.hasOwn(rows.table.paths, path) ? rows.table.paths[path] : undefined;
@@ -60,12 +71,18 @@ export const readsAs = (rows: PortableRows, path: string, value: Node | number):
  * the same way.
  */
 export function classifierOf(rows: PortableRows): PortableClassifier {
-	let classifier = classifiers.get(rows);
-	if (classifier === undefined) classifiers.set(rows, (classifier = classify(rows)));
-	return classifier;
+	return readerOf(rows).classify;
 }
 
-function classify({ table, querySlots }: PortableRows): PortableClassifier {
+/**
+ * Whether a node, or a bare kind id, of a bound grammar sets `flag`: its kind's flag plan in `rows` holds over it. A kind with
+ * no plan for the flag, or a plan that depends on where the value sits, answers false.
+ */
+export function flagHolds(rows: PortableRows, value: Node | number, flag: string): boolean {
+	return readerOf(rows).flagHolds(value, flag);
+}
+
+function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
 		const number = subject.slots[node.$type];
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
@@ -93,25 +110,34 @@ function classify({ table, querySlots }: PortableRows): PortableClassifier {
 					: undefined;
 	const typeOf = (item: unknown): readonly number[] =>
 		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
+	const subjectsOf = (reached: readonly unknown[]): PlanSubjects => {
+		const subjects = (subject: QuerySubject): readonly unknown[] =>
+			reached.flatMap((item) => ('self' in subject ? [item] : hasKind(item) ? itemsIn(item, subject) : []));
+		return {
+			texts: (subject) => subjects(subject).flatMap((item) => textOf(item) ?? []),
+			types: (subject) => subjects(subject).flatMap(typeOf),
+			children: (subject) => subjects(subject).filter(hasKind).map((child) => subjectsOf([child]))
+		};
+	};
 	const conditionHolds = (condition: PortableCondition, value: Node | number): boolean => {
 		let reached: readonly unknown[] = [value];
 		for (const step of condition.via)
 			reached = reached.filter(hasKind).flatMap((n) => anchored(itemsIn(n, step), step.anchor));
-		const subjects = (subject: QuerySubject): readonly unknown[] =>
-			reached.flatMap((item) => ('self' in subject ? [item] : hasKind(item) ? itemsIn(item, subject) : []));
-		return holds(condition.plan, {
-			texts: (subject) => subjects(subject).flatMap((item) => textOf(item) ?? []),
-			types: (subject) => subjects(subject).flatMap(typeOf)
-		});
+		return holds(condition.plan, subjectsOf(reached));
 	};
 	const entriesWhere = (keep: (entry: PortableReadEntry) => boolean): ReadonlyMap<number, readonly PortableReadEntry[]> =>
 		new Map(Object.entries(table.entries).map(([kind, entries]) => [Number(kind), entries.filter(keep)]));
 	const nodeEntries = entriesWhere(unplaced);
 	const kindIdEntries = entriesWhere((entry) => unplaced(entry) && decidesKindId(entry));
-	return (value) => {
+	const classify: PortableClassifier = (value) => {
 		const holding = ((typeof value === 'number' ? kindIdEntries.get(value) : nodeEntries.get(value.$type)) ?? []).filter((entry) =>
 			entry.test.every((condition) => conditionHolds(condition, value))
 		);
 		return holding.find((entry) => !holding.some((other) => other.path !== entry.path && portablePathHasFacts(entry.path, other.path)))?.path;
 	};
+	const flagHolds = (value: Node | number, flag: string): boolean => {
+		const plan = flags[typeof value === 'number' ? value : value.$type]?.[flag];
+		return plan !== undefined && plan !== null && holds(plan, subjectsOf([value]));
+	};
+	return { classify, flagHolds };
 }
