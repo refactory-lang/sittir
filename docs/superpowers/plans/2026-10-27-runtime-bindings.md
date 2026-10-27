@@ -256,11 +256,13 @@
 
   A member value is a structure, an array of them, a string (its slot's default leaf), a scalar, a kind id, or a node carried unchanged.
 - Create: `packages/common/src/portable/build.ts`, with `buildPortable(table: PortableBuildTable, strict: object, structure: PortableStructure, at?: readonly [holder: number, key: string]): unknown`:
-  1. Pick the path's arm. With `at`, only arms whose `holders` include `at`, or that have no holders, are candidates; the `when` tests decide among them.
+  1. Pick the path's arm. A `$value` takes the arm whose `scalar` is its type (Task 5). Otherwise, with `at`, only arms whose `holders` include `at`, or that have no holders, are candidates, and the `when` tests decide among them.
   2. Build each member through its steps, recursing with `at` set to the member's last step.
   3. Apply presets and flag steps.
   4. Call the arm's strict builder once.
-  - A predicate arm refuses text its predicate rejects, and a template arm builds the member's text from its holes.
+  - A template arm builds its member's text from its holes. A claim's fixed text is already a preset.
+  - A built node must pass the path's read tests, which carry the claim's other predicates (a pattern, a kind test). The build reads the node back through the path's guard and refuses a node that doesn't read as its path.
+  - **Whole-text tests (brainstorm, 2026-10-27):** a test on a built composite's whole text (rust's `b"…"` for `literal.string.bytes`) reads the node's rendered text. That's one native render call, made only for those tests. The round-trip lane (Task 6) checks it against the parsed read.
   - `$flags` naming a flag the arm has no step for is refused with the path, the flag and the kind.
 - Modify: `packages/common/src/portable/runtime.ts`. `portableRuntime<API>(engine: Engine<API, 'strict'>): Promise<PortableRuntime<API>>` returns `{ engine, is, build }`:
   - the caller makes `engine`, a strict engine, which loads the strict table lazily;
@@ -294,18 +296,21 @@
 ### Task 5: The scalar adaptation
 
 **Files:**
-- Modify: `packages/common/src/portable/build.ts` (the `scalar` pick test and the `$value` hand-off)
+- Modify: `packages/common/src/portable/build.ts` (the `scalar` arm and the `$value` hand-off)
 - Test: the two `portable-build.test.ts` files
 
 **Interfaces:**
-- Consumes: the numeric leaf builders, which already take `string | number | bigint` and spell the value by their form's shape (`numberShape`).
+- Consumes: the `scalar` arm and its builder; the form's stamped `numberShape` (the source for splitting a value).
 
 The rules:
 - An integer path's `$value` is `number | bigint`. A `number` that is not a safe integer is refused (Review Focus 3).
 - A float path's `$value` is `number`.
 - `literal.number` itself picks integer for a bigint or an integral `number`, and float otherwise.
 - A boolean builds as its fixed literal's kind id (`true` or `false`).
-- The value goes to the picked form's leaf builder unchanged; no text is assembled here.
+- The value reaches the picked arm by its builder's shape:
+  - a text-shaped arm takes it unchanged (rust's float, python's plain decimal, typescript's decimal);
+  - a form with one numeric slot takes it there (rust's integers' `content`, and the hex, binary and octal `content` of python and typescript);
+  - **split floats (brainstorm, 2026-10-27, option (a)):** a form whose members are `integer`, `fraction` and `exponent` (python's and typescript's point, leading-point and scientific forms) takes it split by the form's `numberShape`. numberShape is the stamped source, so the split adds no derivation. Refusing the value would refuse a natural input. A numeric leaf builder would break the rule that leaf builders take strings only.
 
 - [ ] **Step 1:** Write the failing tests:
   - rust:
@@ -318,7 +323,9 @@ The rules:
   - `{ $path: 'type.primitive', $value: 'u8' }` returns `u8`'s kind id, and `$value: 'u9'` throws naming the path and the text;
   - python:
     - `literal.boolean` false returns `False`'s kind id;
-    - `literal.number.float` with `$value: 2` renders `2.0`.
+    - `literal.number.float` with `$value: 2` renders `2.0`;
+    - `literal.number.float` with `$value: 1.5` renders `1.5`, and `literal.number.float.scientific` with `$value: 1e21` renders in the scientific form;
+  - typescript: `{ $path: 'literal.number', $value: 1.5 }` renders `1.5`, through `number_float_point`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement.
 - [ ] **Step 4:** Rerun the tests, then the suite. Expected: PASS.
