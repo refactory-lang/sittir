@@ -38,7 +38,8 @@ import {
 	recordOf,
 	recordSlot,
 	recordFlag,
-	recordItems,
+	keptSlot,
+	keptItems,
 	recordLength,
 	recordDelimiter,
 	rowData,
@@ -79,7 +80,7 @@ function viewSlot<T>(
 	inline = 0,
 	role?: Role
 ): ParsedOfData<T> {
-	return hydrateWith(recordSlot(view, tree, word, width, inline), tree, _wrap, undefined, role) as ParsedOfData<T>;
+	return keptSlot(view, tree, word, width, inline, _wrap, role) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: object,
@@ -89,15 +90,7 @@ function viewSlots<T>(
 	run?: number,
 	inline = 0
 ): readonly ParsedOfData<T>[] {
-	return recordItems(
-		view,
-		tree,
-		word,
-		width,
-		run,
-		(data) => hydrateWith(data, tree, _wrap),
-		inline
-	) as readonly ParsedOfData<T>[];
+	return keptItems(view, tree, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];
 }
 
 export function wrapSourceFile(data: T.SourceFile, tree: TreeHandle): T.SourceFile.Parsed {
@@ -11311,7 +11304,7 @@ function viewTokenBindingPattern(data: RecordStub, tree: TreeHandle): T.TokenBin
 			return viewSlot<T.Metavariable>(this, tree, 2, 8, 6);
 		},
 		type() {
-			return recordSlot(this, tree, 10, 5, 0);
+			return keptSlot(this, tree, 10, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -11345,7 +11338,7 @@ function viewTokenRepetitionPattern(data: RecordStub, tree: TreeHandle): T.Token
 			return viewSlot<T.TokenRepetitionPatternText | undefined>(this, tree, 4, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 9, 5, 0);
+			return keptSlot(this, tree, 9, 5, 0);
 		},
 		$with: {
 			tokenPatterns: (...args: unknown[]) => rowWith(node, tree, _wrap, 'tokenPatterns', args),
@@ -11378,7 +11371,7 @@ function viewTokenRepetition(data: RecordStub, tree: TreeHandle): T.TokenRepetit
 			return viewSlot<T.TokenRepetitionPatternText | undefined>(this, tree, 4, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 9, 5, 0);
+			return keptSlot(this, tree, 9, 5, 0);
 		},
 		$with: {
 			tokens: (...args: unknown[]) => rowWith(node, tree, _wrap, 'tokens', args),
@@ -11712,7 +11705,7 @@ function viewEnumItem(data: RecordStub, tree: TreeHandle): T.EnumItem.Parsed {
 
 function viewEnumVariantList(data: RecordStub, tree: TreeHandle): T.EnumVariantList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.EnumVariantList as const,
@@ -11790,7 +11783,7 @@ function viewEnumVariant(data: RecordStub, tree: TreeHandle): T.EnumVariant.Pars
 
 function viewFieldDeclarationList(data: RecordStub, tree: TreeHandle): T.FieldDeclarationList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.FieldDeclarationList as const,
@@ -11864,7 +11857,7 @@ function viewFieldDeclaration(data: RecordStub, tree: TreeHandle): T.FieldDeclar
 
 function viewOrderedFieldDeclarationList(data: RecordStub, tree: TreeHandle): T.OrderedFieldDeclarationList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.OrderedFieldDeclarationList as const,
@@ -12198,7 +12191,7 @@ function viewFunctionModifiers(data: RecordStub, tree: TreeHandle): T.FunctionMo
 
 function viewWhereClause(data: RecordStub, tree: TreeHandle): T.WhereClause.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.WhereClause as const,
@@ -12454,7 +12447,7 @@ function viewRemovedTraitBound(data: RecordStub, tree: TreeHandle): T.RemovedTra
 
 function viewTypeParameters(data: RecordStub, tree: TreeHandle): T.TypeParameters.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeParameters as const,
@@ -12701,7 +12694,7 @@ function viewScopedUseList(data: RecordStub, tree: TreeHandle): T.ScopedUseList.
 
 function viewUseList(data: RecordStub, tree: TreeHandle): T.UseList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.UseList as const,
@@ -13078,7 +13071,7 @@ function viewArrayType(data: RecordStub, tree: TreeHandle): T.ArrayType.Parsed {
 
 function viewForLifetimes(data: RecordStub, tree: TreeHandle): T.ForLifetimes.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ForLifetimes as const,
@@ -13150,7 +13143,7 @@ function viewFunctionType(data: RecordStub, tree: TreeHandle): T.FunctionType.Pa
 
 function viewTupleType(data: RecordStub, tree: TreeHandle): T.TupleType.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TupleType as const,
@@ -13301,7 +13294,7 @@ function viewBoundedType(data: RecordStub, tree: TreeHandle): T.BoundedType.Pars
 
 function viewUseBounds(data: RecordStub, tree: TreeHandle): T.UseBounds.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.UseBounds as const,
@@ -13337,7 +13330,7 @@ function viewUseBounds(data: RecordStub, tree: TreeHandle): T.UseBounds.Parsed {
 
 function viewTypeArguments(data: RecordStub, tree: TreeHandle): T.TypeArguments.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TypeArguments as const,
@@ -13665,7 +13658,7 @@ function viewUnaryExpression(data: RecordStub, tree: TreeHandle): T.UnaryExpress
 		...data,
 		$type: TSKindId.UnaryExpression as const,
 		operator() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		argument() {
 			return viewSlot<T.Expression>(this, tree, 7, 5, 0);
@@ -13722,7 +13715,7 @@ function viewBinaryExpression(data: RecordStub, tree: TreeHandle): T.BinaryExpre
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5, 0);
+			return keptSlot(this, tree, 7, 5, 0);
 		},
 		right() {
 			return viewSlot<T.Expression>(this, tree, 12, 5, 0);
@@ -13784,7 +13777,7 @@ function viewCompoundAssignmentExpr(data: RecordStub, tree: TreeHandle): T.Compo
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5, 0);
+			return keptSlot(this, tree, 7, 5, 0);
 		},
 		right() {
 			return viewSlot<T.Expression>(this, tree, 12, 5, 0);
@@ -13958,7 +13951,7 @@ function viewCallExpression(data: RecordStub, tree: TreeHandle): T.CallExpressio
 
 function viewArguments(data: RecordStub, tree: TreeHandle): T.Arguments.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.Arguments as const,
@@ -14088,7 +14081,7 @@ function viewStructExpression(data: RecordStub, tree: TreeHandle): T.StructExpre
 
 function viewFieldInitializerList(data: RecordStub, tree: TreeHandle): T.FieldInitializerList.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.FieldInitializerList as const,
@@ -14407,7 +14400,7 @@ function viewLastMatchArm(data: RecordStub, tree: TreeHandle): T.LastMatchArm.Pa
 			return viewSlot<T.Expression>(this, tree, 9, 5, 0);
 		},
 		trailingComma() {
-			return recordSlot(this, tree, 14, 5, 0);
+			return keptSlot(this, tree, 14, 5, 0);
 		},
 		$with: {
 			attributes: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributes', args),
@@ -14953,7 +14946,7 @@ function viewGenericPattern(data: RecordStub, tree: TreeHandle): T.GenericPatter
 
 function viewTuplePattern(data: RecordStub, tree: TreeHandle): T.TuplePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.TuplePattern as const,
@@ -14989,7 +14982,7 @@ function viewTuplePattern(data: RecordStub, tree: TreeHandle): T.TuplePattern.Pa
 
 function viewSlicePattern(data: RecordStub, tree: TreeHandle): T.SlicePattern.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.SlicePattern as const,
@@ -17267,7 +17260,7 @@ function viewRangeExpressionBinary(data: RecordStub, tree: TreeHandle): T.RangeE
 			return viewSlot<T.Expression>(this, tree, 2, 5, 0);
 		},
 		operator() {
-			return recordSlot(this, tree, 7, 5, 0);
+			return keptSlot(this, tree, 7, 5, 0);
 		},
 		end() {
 			return viewSlot<T.Expression>(this, tree, 12, 5, 0);
@@ -17347,7 +17340,7 @@ function viewRangeExpressionBare(data: RecordStub, tree: TreeHandle): T.RangeExp
 		...data,
 		$type: TSKindId.RangeExpressionBare as const,
 		rangeExpressionBare() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		$with: {
 			rangeExpressionBare: (...args: unknown[]) => rowWith(node, tree, _wrap, 'rangeExpressionBare', args)
@@ -18040,7 +18033,7 @@ function viewRangePatternPrefix(data: RecordStub, tree: TreeHandle): T.RangePatt
 		...data,
 		$type: TSKindId.RangePatternPrefix as const,
 		content() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		right() {
 			return viewSlot<
@@ -18077,7 +18070,7 @@ function viewRangePatternWithLeftWithRight(data: RecordStub, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.RangePatternWithLeftWithRight as const,
 		content() {
-			return recordSlot(this, tree, 2, 5, 0);
+			return keptSlot(this, tree, 2, 5, 0);
 		},
 		right() {
 			return viewSlot<
@@ -18652,7 +18645,7 @@ function viewParametersElementsReceiverGroup(
 	tree: TreeHandle
 ): T.ParametersElementsReceiverGroup.Parsed {
 	const handle = currentHandle();
-	const listView = ownerView(recordSlot(data, tree, 2, 6, 4), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(keptSlot(data, tree, 2, 6, 4, _wrap), '_item', (list) => hydrate(list, tree));
 	const node = {
 		...data,
 		$type: TSKindId.ParametersElementsReceiverGroup as const,

@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "generatedSha256": "b9c509c13028aca51f193a9035641ce9b148fd46921a2421c5834e7df04c7644",
+  "generatedSha256": "7323a6fceb41feb3fb7eaae0e0a70f9ba141c74693ddc9a967d09626825f5831",
   "covered": [
     "source_file",
     "expression_statement",
@@ -239,6 +239,8 @@
     "raw_string_literal_end",
     "doc_comment",
     "_block_comment_content",
+    "trait_interface_declaration_body",
+    "extension_declaration_body",
     "receiver_parameter_declaration",
     "attributed_parameter_receiver",
     "parameters_elements_receiver",
@@ -247,8 +249,9 @@
     "_error_sentinel",
     "type_identifier",
     "field_identifier",
-    "crate_visibility_modifier",
-    "shorthand_field_identifier"
+    "shorthand_field_identifier",
+    "method_declaration",
+    "signature_method_declaration"
   ],
   "skipped": []
 }

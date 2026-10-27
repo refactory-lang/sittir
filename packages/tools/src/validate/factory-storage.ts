@@ -80,6 +80,7 @@ export type FactorySurface = 'raw' | 'ir';
 export interface ValidateFactoryStorageOptions {
 	readonly surface?: FactorySurface;
 	readonly profile?: RoundtripProfile;
+	readonly onBuilt?: (built: AnyUntypedNode, at: { readonly kind: string; readonly entry: string }) => void;
 }
 
 /** Return the named tree-sitter child kinds for a parsed CST node, in source order. */
@@ -626,6 +627,7 @@ export async function validateFactoryStorage(
 				} catch (e) {
 					buildErrors.push({ kind, message: `factory threw: ${(e as Error)?.message ?? String(e)}` });
 				}
+				if (builtTree !== null) options.onBuilt?.(builtTree, { kind, entry: entry.name });
 				const hostless = wrapRendered('', kind, node1?.type ?? kind, renderReparseContext) === null;
 				if (hostless) {
 					render.cases.remove(kind);

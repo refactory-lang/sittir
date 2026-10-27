@@ -19,11 +19,21 @@ import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './nod
 /** The own key of a record stub and of the view made from it: the record's address. */
 export const RECORD = Symbol.for('sittir.record');
 
+export const SLOTS = Symbol.for('sittir.slots');
+
+export const SEEDS = Symbol.for('sittir.seeds');
+
+export type KeptSlots = Record<number, unknown>;
+
+export type SeededSlots = Readonly<KeptSlots>;
+
 /** A record as the read returns it, before the wrap table makes it a view: its kind, its address and its coordinate. */
 export interface RecordStub {
 	readonly $type: number;
 	readonly [RECORD]: number;
 	readonly $_layout: { readonly at: NodeCoordinate };
+	readonly [SEEDS]?: SeededSlots;
+	[SLOTS]?: KeptSlots;
 }
 
 /** The address a record stub or view holds, `undefined` for any other value. */
@@ -93,7 +103,7 @@ export function recordStub(tree: TreeHandle, at: number): RecordStub {
 	const records = parsedRecordsOf(tree);
 	const { words, start } = wordsAt(records, at, 2);
 	const kind = words[start]!;
-	return { $type: kind, [RECORD]: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) } };
+	return { $type: kind, [RECORD]: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) }, [SLOTS]: undefined };
 }
 
 export function recordDelimiter(holder: object, tree: TreeHandle): number | undefined {
@@ -231,27 +241,6 @@ export function recordSlots(
 	return Array.from({ length: list.len }, (_, n) =>
 		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format))
 	);
-}
-
-const itemsRead = new WeakMap<object, Map<number, readonly unknown[]>>();
-
-/** The items of the list slot at the generated `word` offset of the record `holder` views, each hydrated by `hydrateOne` once and kept frozen, so every read returns the same array. */
-export function recordItems(
-	holder: object,
-	tree: TreeHandle,
-	word: number,
-	width: number,
-	run: number | undefined,
-	hydrateOne: (data: unknown) => unknown,
-	inline = 0
-): readonly unknown[] {
-	let read = itemsRead.get(holder);
-	if (read === undefined) itemsRead.set(holder, (read = new Map()));
-	const known = read.get(word);
-	if (known !== undefined) return known;
-	const items = Object.freeze(recordSlots(holder, tree, word, width, run, inline).map(hydrateOne));
-	read.set(word, items);
-	return items;
 }
 
 /** The number of items the list slot at the generated `word` offset of the record `holder` views holds. */

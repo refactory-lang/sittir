@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { writeUnitSides } from '@sittir/common/utils';
 import { constructions } from './constructions.mts';
 
 const source = 'fn f() {\n    /* c */ ;\n    x();\n}\n';
@@ -18,14 +17,5 @@ describe.each(constructions)("a unit's sides through a rebuild (%s)", (_, rs) =>
 
 	it('keeps them in a rebuild of a rebuild', () => {
 		expect(rendered(rebuilt(rebuilt(parsed())))).toBe(kept);
-	});
-
-	it('refuses the sides of one unit given twice, before either is written', () => {
-		const block = rs.build.block({ statements: [...parsed().statements()] as never });
-		const comment = rs.build.blockComment(rs.build.blockCommentRegular(' d '));
-		expect(() => writeUnitSides(block, [{ slot: '_statements', item: 0, leading: [comment] }, { slot: '_statements', item: 0, trailing: [] }])).toThrow(
-			'trivia: the sides of the unit at _statements[0] are given twice'
-		);
-		expect(rendered(block as never)).toBe('{\n    ;\n    x();\n}');
 	});
 });

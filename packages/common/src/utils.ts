@@ -11,7 +11,7 @@ import { treeOf, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, recordOf } from './record-view.ts';
+import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, SEEDS, SLOTS, type KeptSlots, type SeededSlots } from './record-view.ts';
 import { builtRefOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
 
@@ -119,12 +119,6 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 }
 
 export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
-	const given = new Set<string>();
-	for (const { slot, item } of units) {
-		const unit = `${slot}[${item}]`;
-		if (given.has(unit)) throw new Error(`trivia: the sides of the unit at ${unit} are given twice`);
-		given.add(unit);
-	}
 	const built = builtRefOf(node);
 	if (built === undefined) {
 		for (const unit of units) refuseBuiltEntries(unit);
@@ -684,6 +678,39 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
 }
 
+function keptOf(view: object): KeptSlots {
+	const holder = view as { [SLOTS]?: KeptSlots };
+	return (holder[SLOTS] ??= {});
+}
+
+function seedsOf(view: object): SeededSlots | undefined {
+	return (view as { readonly [SEEDS]?: SeededSlots })[SEEDS];
+}
+
+function seededItems(seed: unknown): unknown[] {
+	return seed == null ? [] : Array.isArray(seed) ? seed.map((item) => hydrateStored(item)) : [hydrateStored(seed)];
+}
+
+export function keptSlot(view: object, tree: TreeHandle, word: number, width: number, inline = 0, wrap?: WrapNode, role: Role = 'node'): unknown {
+	const kept = keptOf(view);
+	if (word in kept) return kept[word];
+	const seeds = seedsOf(view);
+	if (seeds !== undefined && word in seeds) return (kept[word] = hydrateStored(seeds[word]) ?? undefined);
+	const value = recordSlot(view, tree, word, width, inline);
+	return (kept[word] = wrap === undefined ? value : hydrateWith(value, tree, wrap, undefined, role));
+}
+
+export function keptItems(view: object, tree: TreeHandle, word: number, width: number, run?: number, inline = 0, wrap?: WrapNode): readonly unknown[] {
+	const kept = keptOf(view);
+	if (word in kept) return kept[word] as readonly unknown[];
+	const seeds = seedsOf(view);
+	const items =
+		seeds !== undefined && word in seeds
+			? seededItems(seeds[word])
+			: recordSlots(view, tree, word, width, run, inline).map((item) => (wrap === undefined ? item : hydrateWith(item, tree, wrap)));
+	return (kept[word] = Object.freeze(items)) as readonly unknown[];
+}
+
 /** `hydrateSlotWith` for a list slot. */
 export function hydrateSlotsWith(node: object, key: string, tree: TreeHandle, wrap: WrapNode): readonly unknown[] {
 	return hydrateSlotsBy(node, key, (value) => hydrateWith(value, tree, wrap));
@@ -737,7 +764,6 @@ export {
 	recordDelimiter,
 	recordSeparator,
 	recordFlag,
-	recordItems,
 	recordLength,
 	recordOf,
 	recordSlot,

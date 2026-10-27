@@ -791,15 +791,16 @@ macro_rules! napi_engine {
                         None => $crate::arena::BuiltRoot::Record(record),
                     };
                     let chunks = owner.engine.written().built();
-                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let arena = chunks.visit(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
                     let table = self.render_options(None, options)?;
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let changed = $crate::slot::ChangedEdges { leading, trailing };
                         let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| {
                             let ctx = $crate::prepare::RenderContext { options: &table, sources };
-                            ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| owner.engine.render_built(&arena, root, changed, &*trees, &ctx)))
+                            ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
+                                owner.engine.render_built(&arena, root, changed, &*trees, &ctx).map_err(|e| arena.refused_or(e, $crate::render::RenderError::Record))
+                            }))
                         })
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
@@ -837,9 +838,8 @@ macro_rules! napi_engine {
                 pub fn built_unit_sides(&self, env: ::napi::Env, address: f64) -> ::napi::Result<Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let chunks = self.engine.written().built();
-                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    self.engine.built_unit_sides(&arena, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    let arena = chunks.visit(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    self.engine.built_unit_sides(&arena, address).map_err(|e| ::napi::Error::from_reason(arena.refused_or(e, ::std::convert::identity).to_string()))
                 }
 
                 /// The units the record at `address` in the arena this engine
@@ -858,9 +858,8 @@ macro_rules! napi_engine {
                 ) -> ::napi::Result<()> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let chunks = self.engine.written().built();
-                    let (words, bytes) = chunks.borrow(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    let arena = $crate::arena::BorrowedArena::new(&words, &bytes).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    self.engine.write_built_unit_sides(&arena, address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    let arena = chunks.visit(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    self.engine.write_built_unit_sides(&arena, address, units).map_err(|e| ::napi::Error::from_reason(arena.refused_or(e, ::std::convert::identity).to_string()))
                 }
 
                 /// Replace `side` of the built record at `address` with
@@ -914,17 +913,22 @@ macro_rules! napi_engine {
                 }
 
                 /// The words records fill in chunk `n` of the live tree
-                /// `treeId`'s arena, copied into a buffer JavaScript owns: a
-                /// later read that appends to the chunk leaves the copy as it
-                /// was. Refuses a tree that is not live and a chunk its arena
-                /// does not hold.
+                /// `treeId`'s arena from word `from` on, copied into a buffer
+                /// JavaScript owns. Records only append to a chunk, so a
+                /// reader that holds the words before `from` asks only for the
+                /// rest. Refuses a tree that is not live, a chunk its arena
+                /// does not hold, and a `from` past the chunk's words.
                 #[::napi_derive::napi]
-                pub fn chunk(&self, tree_id: $crate::types::TreeId, n: f64) -> ::napi::Result<::napi::bindgen_prelude::Uint32Array> {
+                pub fn chunk(&self, tree_id: $crate::types::TreeId, n: f64, from: f64) -> ::napi::Result<::napi::bindgen_prelude::Uint32Array> {
                     let n: u32 = $crate::napi_engine::checked_whole(n, "chunk")?;
+                    let from: usize = $crate::napi_engine::checked_whole(from, "from")?;
                     LIVE_TREES.with(|trees| {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                        let words = parsed.record_chunk(n).ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s arena holds no chunk {n}")))?;
+                        let tail = parsed
+                            .with_record_chunk(n, |words| words.get(from..).map(<[u32]>::to_vec).ok_or(words.len()))
+                            .ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s arena holds no chunk {n}")))?;
+                        let words = tail.map_err(|len| ::napi::Error::from_reason(format!("tree {tree_id}'s chunk {n} holds {len} words, short of word {from}")))?;
                         Ok(::napi::bindgen_prelude::Uint32Array::new(words))
                     })
                 }
@@ -1175,29 +1179,79 @@ impl BuiltChunks {
         held.into_iter().try_for_each(|reference| reference.delete(env))
     }
 
-    /// The chunks, each cut to what is written, borrowed for the call.
+    /// The chunks as one call reads them (`VisitedChunks`): the two written
+    /// tables borrowed now, and each chunk borrowed on the call's first read
+    /// of it.
     ///
     /// # Errors
     ///
-    /// `ArenaError::Unwritable` once a chunk is released, or for a chunk
-    /// that is no typed array of its kind or is shorter than its written
-    /// length.
-    pub fn borrow<'e>(&self, env: &'e napi::Env) -> Result<BorrowedChunks<'e>, crate::arena::ArenaError> {
-        use crate::arena::ArenaError;
-        let released = crate::arena::ARENA_RELEASED;
-        let array = |weak: &WeakValue| weak.get(env).ok().flatten().ok_or(released.clone());
-        let [words_written, bytes_written] = self.written.as_ref().ok_or(released.clone())?;
-        let table = |weak| borrowed_chunk::<u32>(env, array(weak)?).map_err(|_| ArenaError::Unwritable("a built arena's written table is no Uint32Array"));
-        let (words_written, bytes_written) = (table(words_written)?, table(bytes_written)?);
-        let words = self.words.iter().zip(0..).map(|(weak, n)| written_chunk::<u32>(env, array(weak)?, words_written.get(n))).collect::<Result<_, _>>()?;
-        let bytes = self.bytes.iter().zip(0..).map(|(weak, n)| written_chunk::<u8>(env, array(weak)?, bytes_written.get(n))).collect::<Result<_, _>>()?;
-        Ok((words, bytes))
+    /// `ARENA_RELEASED` once the chunks are released,
+    /// `ArenaError::Unwritable` for a written table that is no `Uint32Array`,
+    /// and `ArenaError::Full` for more chunks than an address can name.
+    pub fn visit<'e>(&'e self, env: &'e napi::Env) -> Result<VisitedChunks<'e>, crate::arena::ArenaError> {
+        use crate::arena::{ArenaError, ARENA_RELEASED, MAX_CHUNKS};
+        let [words_written, bytes_written] = self.written.as_ref().ok_or(ARENA_RELEASED)?;
+        let table = |weak: &WeakValue| {
+            let array = weak.get(env).ok().flatten().ok_or(ARENA_RELEASED)?;
+            borrowed_chunk::<u32>(env, array).map_err(|_| ArenaError::Unwritable("a built arena's written table is no Uint32Array"))
+        };
+        let written = [table(words_written)?, table(bytes_written)?];
+        if self.words.len() > MAX_CHUNKS as usize || self.bytes.len() > MAX_CHUNKS as usize {
+            return Err(ArenaError::Full);
+        }
+        Ok(VisitedChunks {
+            env,
+            held: self,
+            written,
+            words: self.words.iter().map(|_| std::cell::OnceCell::new()).collect(),
+            bytes: self.bytes.iter().map(|_| std::cell::OnceCell::new()).collect(),
+            refused: std::cell::OnceCell::new(),
+        })
     }
 }
 
-/// A built arena's words and bytes chunks, borrowed for a call.
+/// A built arena's chunks as one call reads them: each chunk is borrowed
+/// and cut to its written length on the call's first read of it, so a call
+/// borrows only the chunks it visits. A chunk it cannot borrow reads as no
+/// chunk, and its refusal is kept (`refused_or`).
 #[cfg(feature = "arena")]
-pub type BorrowedChunks<'e> = (Vec<&'e [u32]>, Vec<&'e [u8]>);
+pub struct VisitedChunks<'e> {
+    env: &'e napi::Env,
+    held: &'e BuiltChunks,
+    written: [&'e [u32]; 2],
+    words: Vec<std::cell::OnceCell<Option<&'e [u32]>>>,
+    bytes: Vec<std::cell::OnceCell<Option<&'e [u8]>>>,
+    refused: std::cell::OnceCell<crate::arena::ArenaError>,
+}
+
+#[cfg(feature = "arena")]
+impl<'e> VisitedChunks<'e> {
+    fn visited<T: ChunkElement>(&self, cells: &[std::cell::OnceCell<Option<&'e [T]>>], held: &[WeakValue], written: &[u32], n: u32) -> Option<&'e [T]> {
+        let index = n as usize;
+        *cells.get(index)?.get_or_init(|| {
+            let array = held[index].get(self.env).ok().flatten().ok_or(crate::arena::ARENA_RELEASED);
+            array.and_then(|array| written_chunk::<T>(self.env, array, written.get(index))).map_err(|refusal| self.refused.get_or_init(|| refusal)).ok()
+        })
+    }
+
+    /// `error`, or in its place the refusal of the first chunk the call
+    /// could not borrow, made into `error`'s type by `wrap`: that chunk read
+    /// as no chunk, so its refusal says why the call failed.
+    pub fn refused_or<E>(&self, error: E, wrap: impl FnOnce(crate::arena::ArenaError) -> E) -> E {
+        self.refused.get().cloned().map_or(error, wrap)
+    }
+}
+
+#[cfg(feature = "arena")]
+impl crate::arena::ArenaRead for VisitedChunks<'_> {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        self.visited(&self.words, &self.held.words, self.written[0], n)
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        self.visited(&self.bytes, &self.held.bytes, self.written[1], n)
+    }
+}
 
 /// `chunk` borrowed and cut to its `written` length.
 #[cfg(feature = "arena")]
@@ -1292,9 +1346,10 @@ where
         let store = held
             .downcast_ref::<crate::trivia_store::TriviaStore<G::Trivia>>()
             .ok_or(RenderError::Record(crate::arena::ArenaError::Unwritable("a trivia entry's store is another grammar's")))?;
-        let (words, bytes) = store.built().borrow(self.env).map_err(RenderError::Record)?;
-        let arena = crate::arena::BorrowedArena::new(&words, &bytes).map_err(RenderError::Record)?;
+        let built = store.built();
+        let arena = built.visit(self.env).map_err(RenderError::Record)?;
         crate::arena::render_record_entry(self.grammar, &arena, record, store, self.trees, &crate::prepare::RenderContext { options, sources: self }, w)
+            .map_err(|e| arena.refused_or(e, RenderError::Record))
     }
 }
 
