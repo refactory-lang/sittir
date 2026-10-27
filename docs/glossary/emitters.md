@@ -11320,7 +11320,7 @@ A slot's resolver kinds: its kind names expanded through supertypes (`expandAndD
 
 ### `packages/codegen/src/emitters/from.ts::transparentEnvelopeTextLeaves`
 
-The text leaf kinds a bare string reaches through an envelope that adds no text of its own: a surface-hidden envelope (hidden storage the parser shows under an alias, such as typescript `_lhs_expression`) with a coercer and one slot, whose leaves are that slot's `slotResolverKinds` leaf kinds. Any other node reaches none: an envelope with fixed text (`array`, `await_expression`) would wrap a bare string in text the author never wrote. The coercer's `_ENVELOPE_TEXT_LEAVES` table and the node model's `textLeavesThrough` both read it.
+The text leaf kinds a bare string reaches through an envelope that adds no text of its own: an alias envelope, or a surface-hidden envelope (hidden storage the parser shows under an alias, such as typescript `_lhs_expression`), with a coercer and one slot, whose leaves are that slot's `slotResolverKinds` leaf kinds. Any other node reaches none: an envelope with fixed text (`array`, `await_expression`) would wrap a bare string in text the author never wrote. The coercer's `_ENVELOPE_TEXT_LEAVES` table and the node model's `textLeavesThrough` both read it.
 
 ### `packages/codegen/src/emitters/from.ts::defaultArmKindOf`
 
