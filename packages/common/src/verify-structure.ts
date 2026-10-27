@@ -62,6 +62,9 @@ function checkRow(node: Record<string, unknown>, row: StructureRow, membership: 
 	for (const [storage, slot] of row.required ?? []) {
 		if (node[storage] === undefined || node[storage] === null) throw new Error(`Missing required slot '${slot}' on ${row.kind}`);
 	}
+	for (const [storage, label] of row.single ?? []) {
+		if (Array.isArray(node[storage])) throw new Error(`${label}: holds one value, not a list`);
+	}
 	for (const [storage, label] of row.nonEmpty ?? []) {
 		const items = node[storage];
 		if (!Array.isArray(items) || items.length === 0) throw new Error(`${label}: requires at least one element`);

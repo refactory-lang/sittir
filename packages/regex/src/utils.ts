@@ -113,10 +113,15 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 });
 
 export const structure: StructureTable = Object.freeze({
-	37: { kind: 'identity_escape', required: [['_content', 'content']] },
+	37: {
+		kind: 'identity_escape',
+		required: [['_content', 'content']],
+		single: [['_content', 'IdentityEscape.content']]
+	},
 	51: {
 		kind: 'pattern',
 		required: [['_content', 'content']],
+		single: [['_content', 'Pattern.content']],
 		nodeOnly: [['_content', 'Pattern.content', 'a built Alternation / Term', [52, 53]]]
 	},
 	52: {
@@ -134,6 +139,7 @@ export const structure: StructureTable = Object.freeze({
 	55: {
 		kind: 'lookaround_assertion',
 		required: [['_content', 'content']],
+		single: [['_content', 'LookaroundAssertion.content']],
 		nodeOnly: [
 			['_content', 'LookaroundAssertion.content', 'a built LookaheadAssertion / LookbehindAssertion', [56, 57]]
 		]
@@ -144,6 +150,7 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'content'],
 			['_pattern', 'pattern']
 		],
+		single: [['_pattern', 'LookaheadAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookaheadAssertion.pattern', 'a built Pattern', [51]]],
 		kindIds: [['_content', 'LookaheadAssertion.content', [8, 9]]],
 		config: ['content', 'pattern']
@@ -154,6 +161,7 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'content'],
 			['_pattern', 'pattern']
 		],
+		single: [['_pattern', 'LookbehindAssertion.pattern']],
 		nodeOnly: [['_pattern', 'LookbehindAssertion.pattern', 'a built Pattern', [51]]],
 		kindIds: [['_content', 'LookbehindAssertion.content', [8, 9]]],
 		config: ['content', 'pattern']
@@ -178,6 +186,7 @@ export const structure: StructureTable = Object.freeze({
 	59: {
 		kind: 'posix_character_class',
 		required: [['_posix_class_name', 'posixClassName']],
+		single: [['_posix_class_name', 'PosixCharacterClass.posixClassName']],
 		nodeOnly: [['_posix_class_name', 'PosixCharacterClass.posixClassName', 'buildPosixClassName(…)', [60]]]
 	},
 	61: {
@@ -185,6 +194,10 @@ export const structure: StructureTable = Object.freeze({
 		required: [
 			['_start', 'start'],
 			['_end', 'end']
+		],
+		single: [
+			['_start', 'ClassRange.start'],
+			['_end', 'ClassRange.end']
 		],
 		nodeOnly: [
 			['_start', 'ClassRange.start', 'buildClassCharacter(…) / buildControlEscape(…)'],
@@ -195,6 +208,7 @@ export const structure: StructureTable = Object.freeze({
 	62: {
 		kind: 'anonymous_capturing_group',
 		required: [['_pattern', 'pattern']],
+		single: [['_pattern', 'AnonymousCapturingGroup.pattern']],
 		nodeOnly: [['_pattern', 'AnonymousCapturingGroup.pattern', 'a built Pattern', [51]]]
 	},
 	63: {
@@ -203,6 +217,10 @@ export const structure: StructureTable = Object.freeze({
 			['_content', 'content'],
 			['_group_name', 'groupName'],
 			['_pattern', 'pattern']
+		],
+		single: [
+			['_group_name', 'NamedCapturingGroup.groupName'],
+			['_pattern', 'NamedCapturingGroup.pattern']
 		],
 		nodeOnly: [
 			['_group_name', 'NamedCapturingGroup.groupName', 'buildGroupName(…)', [38]],
@@ -214,6 +232,7 @@ export const structure: StructureTable = Object.freeze({
 	64: {
 		kind: 'non_capturing_group',
 		required: [['_pattern', 'pattern']],
+		single: [['_pattern', 'NonCapturingGroup.pattern']],
 		nodeOnly: [['_pattern', 'NonCapturingGroup.pattern', 'a built Pattern', [51]]]
 	},
 	67: { kind: 'zero_or_more', booleans: [['_lazy', 'ZeroOrMore.lazy']], config: ['lazy'] },
@@ -222,6 +241,7 @@ export const structure: StructureTable = Object.freeze({
 	70: {
 		kind: 'count_quantifier',
 		required: [['_content', 'content']],
+		single: [['_content', 'CountQuantifier.content']],
 		nodeOnly: [['_content', 'CountQuantifier.content', 'buildDecimalDigits(…)', [39, 79]]],
 		booleans: [['_lazy', 'CountQuantifier.lazy']],
 		config: ['content', 'lazy']
@@ -229,16 +249,19 @@ export const structure: StructureTable = Object.freeze({
 	71: {
 		kind: 'backreference_escape',
 		required: [['_group_name', 'groupName']],
+		single: [['_group_name', 'BackreferenceEscape.groupName']],
 		nodeOnly: [['_group_name', 'BackreferenceEscape.groupName', 'buildGroupName(…)', [38]]]
 	},
 	72: {
 		kind: 'named_group_backreference',
 		required: [['_group_name', 'groupName']],
+		single: [['_group_name', 'NamedGroupBackreference.groupName']],
 		nodeOnly: [['_group_name', 'NamedGroupBackreference.groupName', 'buildGroupName(…)', [38]]]
 	},
 	73: {
 		kind: 'character_class_escape',
 		required: [['_content', 'content']],
+		single: [['_content', 'CharacterClassEscape.content']],
 		nodeOnly: [
 			[
 				'_content',
@@ -251,6 +274,13 @@ export const structure: StructureTable = Object.freeze({
 	75: {
 		kind: 'unicode_property_value_expression',
 		required: [['_unicode_property_value', 'unicodePropertyValue']],
+		single: [
+			[
+				'_unicode_property_value_expression_group',
+				'UnicodePropertyValueExpression.unicodePropertyValueExpressionGroup'
+			],
+			['_unicode_property_value', 'UnicodePropertyValueExpression.unicodePropertyValue']
+		],
 		nodeOnly: [
 			[
 				'_unicode_property_value_expression_group',
@@ -270,6 +300,10 @@ export const structure: StructureTable = Object.freeze({
 	77: {
 		kind: 'term_group',
 		required: [['_content', 'content']],
+		single: [
+			['_content', 'TermGroup.content'],
+			['_quantifier', 'TermGroup.quantifier']
+		],
 		nodeOnly: [
 			[
 				'_content',
@@ -287,11 +321,16 @@ export const structure: StructureTable = Object.freeze({
 	},
 	78: {
 		kind: 'count_quantifier_group',
+		single: [['_decimal_digits', 'CountQuantifierGroup.decimalDigits']],
 		nodeOnly: [['_decimal_digits', 'CountQuantifierGroup.decimalDigits', 'buildDecimalDigits(…)', [39]]]
 	},
 	79: {
 		kind: 'count_quantifier_arm',
 		required: [['_decimal_digits', 'decimalDigits']],
+		single: [
+			['_decimal_digits', 'CountQuantifierArm.decimalDigits'],
+			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup']
+		],
 		nodeOnly: [
 			['_decimal_digits', 'CountQuantifierArm.decimalDigits', 'buildDecimalDigits(…)', [39]],
 			['_count_quantifier_group', 'CountQuantifierArm.countQuantifierGroup', 'a built CountQuantifierGroup', [78]]
@@ -303,6 +342,10 @@ export const structure: StructureTable = Object.freeze({
 		required: [
 			['_character_class_escape_text2', 'characterClassEscapeText2'],
 			['_unicode_property_value_expression', 'unicodePropertyValueExpression']
+		],
+		single: [
+			['_character_class_escape_text2', 'CharacterClassEscapeArm.characterClassEscapeText2'],
+			['_unicode_property_value_expression', 'CharacterClassEscapeArm.unicodePropertyValueExpression']
 		],
 		nodeOnly: [
 			[
@@ -323,6 +366,7 @@ export const structure: StructureTable = Object.freeze({
 	81: {
 		kind: 'unicode_property_value_expression_group',
 		required: [['_unicode_property_name', 'unicodePropertyName']],
+		single: [['_unicode_property_name', 'UnicodePropertyValueExpressionGroup.unicodePropertyName']],
 		nodeOnly: [
 			[
 				'_unicode_property_name',
@@ -335,6 +379,10 @@ export const structure: StructureTable = Object.freeze({
 	83: {
 		kind: 'inline_flags_group_enable',
 		required: [['_enabled', 'enabled']],
+		single: [
+			['_enabled', 'InlineFlagsGroupEnable.enabled'],
+			['_pattern', 'InlineFlagsGroupEnable.pattern']
+		],
 		nodeOnly: [
 			['_enabled', 'InlineFlagsGroupEnable.enabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupEnable.pattern', 'a built Pattern', [51]]
@@ -347,6 +395,11 @@ export const structure: StructureTable = Object.freeze({
 			['_enabled', 'enabled'],
 			['_disabled', 'disabled']
 		],
+		single: [
+			['_enabled', 'InlineFlagsGroupToggle.enabled'],
+			['_disabled', 'InlineFlagsGroupToggle.disabled'],
+			['_pattern', 'InlineFlagsGroupToggle.pattern']
+		],
 		nodeOnly: [
 			['_enabled', 'InlineFlagsGroupToggle.enabled', 'buildFlags(…)', [66]],
 			['_disabled', 'InlineFlagsGroupToggle.disabled', 'buildFlags(…)', [66]],
@@ -357,6 +410,10 @@ export const structure: StructureTable = Object.freeze({
 	85: {
 		kind: 'inline_flags_group_disable',
 		required: [['_disabled', 'disabled']],
+		single: [
+			['_disabled', 'InlineFlagsGroupDisable.disabled'],
+			['_pattern', 'InlineFlagsGroupDisable.pattern']
+		],
 		nodeOnly: [
 			['_disabled', 'InlineFlagsGroupDisable.disabled', 'buildFlags(…)', [66]],
 			['_pattern', 'InlineFlagsGroupDisable.pattern', 'a built Pattern', [51]]
