@@ -3341,7 +3341,7 @@ The file types of a grammar built outside a grammar package (a test's synthetic 
 
 The file types a grammar declares: the `file-types` of its upstream package's `tree-sitter.json`. The entry is the only one the file has, or, when it has several, the one named as our grammar (typescript's upstream lists typescript, tsx and flow; the union or the first entry would be wrong), and several entries with none named so is refused. An entry that declares no file types, or a null list, gives none (regex), and a list that is not strings, or a package with no `tree-sitter.json`, is refused with the path. It is the one source: `evaluatePackage` passes the result to `evaluate`, which stamps it on the raw grammar it builds (a grammar built outside a package, as a test's is, declares none through `NO_FILE_TYPES`); it is required on every later phase and on the node map, so a pass that fails to carry it is a type error. And the generated `tree-sitter.json` files read the same function, so extensions are never restated in a grammar file. The generated `tree-sitter.json` is written before the compile runs, so it cannot read the model; both call this function and therefore agree by construction, and a grammar package with no upstream package installed is refused by both.
 
-### `packages/codegen/src/compiler/rule-catalog.ts::classifyByType`
+### `packages/codegen/src/dsl/rule-patterns.ts::classifyByType`
 
 ```text
 /**
@@ -3355,7 +3355,7 @@ The file types a grammar declares: the `file-types` of its upstream package's `t
  */
 ```
 
-### `packages/codegen/src/compiler/rule-catalog.ts::isNonterminalRuleType`
+### `packages/codegen/src/dsl/rule-patterns.ts::isNonterminalRuleType`
 
 ```text
 /**
@@ -3509,7 +3509,7 @@ The shell declares no file types (`NO_FILE_TYPES`) and no name: it stands in for
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::isSlotPromotedLiteral`
+### `packages/codegen/src/dsl/builders.ts::isSlotPromotedLiteral`
 
 ```text
 /**
@@ -4272,12 +4272,6 @@ collector parameter.
 	 */
 ```
 
-### `packages/codegen/src/compiler/ctx.ts::builder`
-
-```text
-/** Rule-construction strategy (structural vs attribute); falls back to structuralBuilder. */
-```
-
 ### `packages/codegen/src/compiler/rule-catalog.ts::collectReferences`
 
 The grammar's reference graph, derived in one walk over the final rules: one
@@ -4317,7 +4311,7 @@ The path part of a rule id (`root`, or `content/members.2`), the inverse of `cre
 
 The source kind a rule id was minted under, decoded; the other inverse of `createRuleId`.
 
-### `packages/codegen/src/compiler/generate.ts::engine`
+### `packages/codegen/src/bindings/pinned-reader.ts::engine`
 
 ```text
 /** engine.ts — thin wrapper around createNativeEngine from @sittir/common/engine. Native-only; no JS-engine fallback (see emitters/engine.ts). */
@@ -4381,12 +4375,6 @@ The source kind a rule id was minted under, decoded; the other inverse of `creat
 
 ```text
 /** Emit grammar-owned Rust render-module artifacts in emit.ts. */
-```
-
-### `packages/codegen/src/compiler/generated-metadata.ts::id`
-
-```text
-/** STORAGE kind id — the rule's own truth, independent of aliasing. */
 ```
 
 ### `packages/codegen/src/compiler/generated-metadata.ts::collectSymbolFlags`
@@ -4505,12 +4493,6 @@ parser.c's `#define TOKEN_COUNT`: symbol ids below it are the parser's tokens (t
 
 ```text
 /** Members of the outer seq that appear after the choice. */
-```
-
-### `packages/codegen/src/compiler/link.ts::classification`
-
-```text
-/** Set only when `rule` was newly classified this call (enum or supertype). */
 ```
 
 ### `packages/codegen/src/compiler/link.ts::fieldName`
@@ -4768,7 +4750,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 	 */
 ```
 
-### `packages/codegen/src/compiler/types.ts::RefineForm`
+### `packages/codegen/src/dsl/wire/wire.ts::RefineForm`
 
 ```text
 /** The authored refine() form, re-exported from `dsl/wire/wire.ts::RefineForm`
@@ -4804,31 +4786,7 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 /** Name of the field to wrap the reference in. */
 ```
 
-### `packages/codegen/src/compiler/types.ts::agreement`
-
-```text
-/** Numeric agreement — e.g. 10/10 → 1.0, 6/7 → ~0.857. */
-```
-
-### `packages/codegen/src/compiler/types.ts::applied`
-
-```text
-/** True if Link mutated the rule tree; false if held back by `include`. */
-```
-
-### `packages/codegen/src/compiler/types.ts::kinds`
-
-```text
-/** The kind set — sorted, canonicalized. */
-```
-
-### `packages/codegen/src/compiler/types.ts::parents`
-
-```text
-/** Parent rules whose fields carry this exact kind set. */
-```
-
-### `packages/codegen/src/compiler/types.ts::shape`
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::shape`
 
 ```text
 /** Suggested shape: 'supertype' for choice-of-named, 'group' for heterogeneous. */
@@ -4838,18 +4796,6 @@ The text-token rules enrich minted (`mintInlineTextTokens`): each is a visible r
 
 ```text
 /** Kind whose rule was classified via promotion. */
-```
-
-### `packages/codegen/src/compiler/types.ts::classification`
-
-```text
-/** What it was promoted to. */
-```
-
-### `packages/codegen/src/compiler/types.ts::applied`
-
-```text
-/** True if Link kept the promotion; false if held back by `include`. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::LinkedGrammar::topLevelAliasBodies`
@@ -4966,12 +4912,6 @@ grammar no wire ran over; then no label is automatic.
 
 ```text
 /** Derived rule classifications to KEEP. Defaults to all. */
-```
-
-### `packages/codegen/src/compiler/types.ts::fields`
-
-```text
-/** Derived field provenances to KEEP. Defaults to all. */
 ```
 
 ### `packages/codegen/src/compiler/types.ts::KindProvenance`
@@ -5314,7 +5254,7 @@ they hold — normalize's inline gate, `resolveGroupOrMultiInlineTarget`,
  */
 ```
 
-### `packages/codegen/src/compiler/simplify.ts::attributeBuilder`
+### `packages/codegen/src/dsl/builders.ts::attributeBuilder`
 
 ```text
 /**
