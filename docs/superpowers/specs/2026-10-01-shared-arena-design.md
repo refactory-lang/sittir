@@ -244,7 +244,7 @@ pub enum FunctionModifiersModifierNodeSlot {
 
 From one declaration, three things:
 
-- **The reader:** one reader for both storages, its routing derived once, with two sinks: under object storage it returns the typed node (`ReadNode::read(cursor, source, tree, depth) -> Self`), and under arena storage it writes the node's record in place, so an arena read goes through no typed struct (direct hydration; its design follows in this section's revision). It walks the node's
+- **The reader:** one reader for both storages, its routing derived once, with two sinks: under object storage it returns the typed node (`ReadNode::read(cursor, source, tree, depth) -> Self`), and under arena storage it writes the node's record in place, so an arena read goes through no typed struct (§ Direct hydration). It walks the node's
   children once with a `TreeCursor` (first child, next sibling), never by index. Each child goes to
   the slot its field names, or, with no field, the one slot whose type admits its kind, and is
   stored as that type's variant for its kind: a fixed literal as its kind id, a node as its
@@ -264,6 +264,44 @@ From one declaration, three things:
 
 The render functions (the templates) stay emitted by codegen as today; they are not expanded from
 attributes (ruling 9).
+
+### Direct hydration
+
+Under arena storage a read writes a node's record without making its typed node first; the
+maintainer put this on the path on 2026-10-27. One reader serves both storages.
+
+- **One routing walk.** The macro expands each kind's routing once:
+  - the cursor walk that sends each child to its slot, by its field, else to the one slot whose type
+    admits its kind;
+  - the variant each kind stores, a presence keyword stored as its flag, and a fixed literal stored
+    as its kind id;
+  - extras and layout tokens skipped, `MISSING` routed as its kind, and the refusals of ruling 7.
+
+  Today's `ReadNode::read` and `ReadNode::routes` become two callers of that one walk.
+- **Two sinks.** The walk hands each routed child to a sink. Neither sink routes: a slot's word and
+  cell form are the layout's stamped facts, and the typed node's are its fields.
+  - **The typed sink** builds the kind's native node, which object storage returns. Its result is
+    `ReadNode::read`'s, unchanged.
+  - **The record sink** writes the node's record into its tree's arena: the header, then each
+    slot's cell as its children arrive. Each cell holds what its slot stores:
+    - a child with structure: its coordinate, since a parsed holder's cell stays a coordinate
+      (§ Packed AST is definitive);
+    - a bounded child: embedded in place;
+    - a leaf: its kind, span and row;
+    - a unit: its kind and row;
+    - a presence slot: its flag bit;
+    - a text slot: its captured span.
+
+    A list slot's items gather in a per-call scratch run, which is written when the slot closes.
+- **Depth.** Within the read's depth, a child with structure gets its own record in the same call,
+  through the same sink. Its holder's cell still names it by coordinate, and the tree's index
+  finds its record.
+- **Published once.** The record sink writes a draft and publishes the record, with its row's index
+  entry, when the node's walk ends. A refusal discards the draft, so no partial record is ever
+  visible, and records already published stay as they are.
+- **What goes.** The arena read's detour through the typed node: `materialize_record`'s
+  `read::<N>` followed by `write_cell`, and the parsed arm of the record writer's target.
+  `WriteCell` keeps its built arm.
 
 ### Laziness
 
@@ -755,6 +793,10 @@ members in the builder's literal — changed all three, and the maintainer ruled
     - A leaf kept after its holder is freed writes no side into the record that later reuses the
       address.
     - Building is no slower than before reclamation, measured by the build profile.
+20. **Direct hydration writes today's records.** For every corpus node of the five grammars, at
+    depth 1 and at `Infinity`, the record sink's words equal the words the typed read and
+    `write_cell` write today, compared before the detour goes. Object storage's reads are
+    unchanged (Verification 3), and the arena read's time is recorded before and after.
 
 ## Feasibility probe
 
