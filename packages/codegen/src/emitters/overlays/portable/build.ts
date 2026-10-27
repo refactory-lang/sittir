@@ -211,6 +211,14 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				if ('text' in child) return textPreset(path, child.text) ?? [];
 				if ('kinds' in child && child.kinds.length === 1) return valuePreset(path, child.kinds[0]!) ?? [];
 				return [];
+			}),
+			...entry.claim.predicates.flatMap((predicate) => {
+				const [value, ...more] = predicate.arguments;
+				if (predicate.operator !== 'eq' || value === undefined || more.length > 0 || !('text' in value)) return [];
+				const site = predicate.subject ?? { up: 0, down: [] };
+				if (site.down.length === 0 && fixedText.get(node.kind) === value.text) return [];
+				const path = held(kind, site);
+				return path === undefined ? [] : (textPreset(path, value.text) ?? []);
 			})
 		];
 		const keys = (preset: PortablePreset): string => preset.steps.map((step) => step.key).join('.');
@@ -243,7 +251,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				...(seated === undefined ? {} : { seated }),
 				members,
 				presets: deepest,
-				flags
+				flags,
+				...(entry.template === undefined ? {} : { template: { member: entry.template.target, pattern: entry.template.template, holes: entry.template.holes } })
 			}
 		};
 	};
@@ -293,7 +302,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const scalars = [...new Set(group.flatMap((arm) => arm.scalar ?? []))];
 			if (scalars.length === 0 || (scalars.length === 1 && group.every((arm) => arm.scalar !== undefined))) return undefined;
 			const rest = group.filter((arm) => arm.scalar === undefined);
-			return [...scalars.map((scalar): Part => [{ scalar }, group.filter((arm) => arm.scalar === scalar)]), ...(rest.length === 0 ? [] : [[undefined, rest] as Part])];
+			return [...scalars.map((scalar): Part => [undefined, group.filter((arm) => arm.scalar === scalar)]), ...(rest.length === 0 ? [] : [[undefined, rest] as Part])];
 		},
 		(group) => {
 			const implied = (arm: Arm, flag: string): boolean | undefined => {
@@ -411,6 +420,19 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			return group;
 		};
 		const ordered = decide(arms);
+		const scalarArms = new Map<Arm, 'integer' | 'float'>();
+		for (const scalar of ['integer', 'float'] as const) {
+			const pool = ordered.filter((arm) => arm.scalar === scalar);
+			if (pool.length === 0) continue;
+			const variantDefault = pool.filter((arm) => tests.get(arm)!.some((test) => 'variant' in test && test.default === true));
+			const declared = pool.filter((arm) => arm.isDefault);
+			const chosen = pool.length === 1 ? pool[0] : variantDefault.length === 1 ? variantDefault[0] : declared.length === 1 ? declared[0] : undefined;
+			if (chosen === undefined) diagnostics.push({ code: 'portable-pick-undecided', path, kinds: pool.map((arm) => arm.kind) });
+			else {
+				scalarArms.set(chosen, scalar);
+				if (pool.length > 1 && variantDefault.length !== 1) defaulted.add(chosen);
+			}
+		}
 		const memberNames = (arm: Arm): readonly string[] => arm.arm.members.map((member) => member.name);
 		const stated = new Set(arms.flatMap(memberNames));
 		for (const arm of arms) {
@@ -430,6 +452,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			arms: ordered.map(
 				(arm): PortableBuildArm => ({
 					...arm.arm,
+					...(scalarArms.has(arm) ? { scalar: scalarArms.get(arm)! } : {}),
 					when: tests.get(arm)!,
 					...(holders.has(arm) ? { holders: holders.get(arm)! } : {})
 				})

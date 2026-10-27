@@ -116,6 +116,19 @@ describe('the portable build table', () => {
 		expect(typed!.kind).toBe(typescript.kinds.ParenthesizedExpressionTyped);
 	});
 
+	it('builds a number by the one arm at its path that takes its scalar type, apart from the structural tests', () => {
+		const scalarArm = (scalar: 'integer' | 'float') => armsOf('typescript', 'literal.number').filter((arm) => arm.scalar === scalar);
+		expect(scalarArm('integer').map((arm) => arm.kind)).toEqual([typescript.kinds.NumberDecimal]);
+		expect(scalarArm('float').map((arm) => arm.kind)).toEqual([typescript.kinds.NumberFloatPoint]);
+		for (const { table } of Object.values(tables))
+			for (const { arms } of Object.values(table.paths)) for (const arm of arms) for (const test of arm.when) expect(Object.keys(test)).not.toContain('scalar');
+	});
+
+	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
+		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__' });
+		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
+	});
+
 	it('reaches a kind a flag presets only through the flag', () => {
 		expect(armsOf('typescript', 'identifier').map((arm) => arm.kind)).not.toContain(typescript.kinds.PrivatePropertyIdentifier);
 		expect(armOf('typescript', 'expression.member', typescript.kinds.MemberExpression).flags.privateName).toEqual({

@@ -59,7 +59,7 @@ export interface PortableMemberStep {
 	readonly leaf?: string;
 }
 
-/** A value an arm or a flag sets whatever the structure says: a fixed literal's kind id, a token's text, or a builder called with no input, placed at the end of its steps. */
+/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
 export interface PortablePreset {
 	readonly steps: readonly PortableSlotStep[];
 	readonly kind?: number;
@@ -72,26 +72,31 @@ export interface PortableFlagStep {
 	readonly presets: readonly PortablePreset[];
 }
 
-/** A test a build arm passes for a structure: it states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`, a scalar's type, a fixed literal's text, or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
+/** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
 export type PortablePickTest =
 	| { readonly absent: readonly string[]; readonly required: readonly string[] }
 	| { readonly flag: string; readonly set: boolean }
 	| { readonly member: string; readonly kinds: readonly number[] }
-	| { readonly scalar: 'integer' | 'float' | 'boolean' }
 	| { readonly text: string }
 	| { readonly variant: string; readonly value: number; readonly default?: true };
 
-/** One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated` whether the holder takes its config or its sole value. */
+/**
+ * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
+ * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
+ * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type. A `template`
+ * spells its member from the named holes. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
+ * holds) are the path's read tests, which a built node must pass.
+ */
 export interface PortableBuildArm {
 	readonly kind: number;
 	readonly builder?: string;
 	readonly seated?: PortableCallShape;
+	readonly scalar?: 'integer' | 'float';
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];
 	readonly presets: readonly PortablePreset[];
 	readonly flags: Readonly<Record<string, PortableFlagStep>>;
-	readonly predicate?: { readonly member: string; readonly op: 'eq' | 'match'; readonly text: string };
 	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
 }
 

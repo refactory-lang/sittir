@@ -15399,6 +15399,7 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -15431,6 +15432,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -15463,6 +15465,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -15495,6 +15498,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -15527,6 +15531,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]

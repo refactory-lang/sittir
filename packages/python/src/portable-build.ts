@@ -1079,7 +1079,16 @@ export const build: PortableBuildTable = {
 							leaf: 'identifier'
 						}
 					],
-					presets: [],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'name'
+								}
+							],
+							text: '__init__'
+						}
+					],
 					flags: {},
 					when: [
 						{
@@ -1356,6 +1365,11 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					template: {
+						member: 'name',
+						pattern: '__${string}__',
+						holes: ['stem']
+					},
 					when: []
 				}
 			]
@@ -5146,6 +5160,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -5214,6 +5229,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -5273,6 +5289,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -5286,6 +5303,7 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -5331,6 +5349,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -5363,6 +5382,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -5408,6 +5428,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]

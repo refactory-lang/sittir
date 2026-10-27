@@ -13095,10 +13095,8 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: [
-						{
-							scalar: 'integer'
-						},
 						{
 							variant: 'number',
 							value: 159,
@@ -13137,9 +13135,6 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							scalar: 'integer'
-						},
-						{
 							variant: 'number',
 							value: 160
 						},
@@ -13176,9 +13171,6 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							scalar: 'integer'
-						},
-						{
 							variant: 'number',
 							value: 155
 						},
@@ -13214,9 +13206,6 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: [
-						{
-							scalar: 'integer'
-						},
 						{
 							variant: 'number',
 							value: 161
@@ -13271,9 +13260,6 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: [
-						{
-							scalar: 'float'
-						},
 						{
 							absent: ['content', 'integer', 'prefix'],
 							required: ['fraction']
@@ -13332,10 +13318,8 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: [
-						{
-							scalar: 'float'
-						},
 						{
 							absent: ['content', 'prefix'],
 							required: ['integer']
@@ -13386,9 +13370,6 @@ export const build: PortableBuildTable = {
 					presets: [],
 					flags: {},
 					when: [
-						{
-							scalar: 'float'
-						},
 						{
 							absent: ['content', 'fraction', 'prefix'],
 							required: ['integer']
@@ -13561,6 +13542,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -13611,6 +13593,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -13661,6 +13644,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'float',
 					when: []
 				}
 			]
@@ -13674,6 +13658,7 @@ export const build: PortableBuildTable = {
 					members: [],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -13798,6 +13783,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -13830,6 +13816,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
@@ -13862,6 +13849,7 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
+					scalar: 'integer',
 					when: []
 				}
 			]
