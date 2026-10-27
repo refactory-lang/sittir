@@ -36,7 +36,7 @@ a handle the engine mints into a node table.
 5. **No render cache.** An untouched node already renders as a slice of its source; the edited-index
    set (§ Edits and folding) removes the walk that proves it untouched.
 6. **Arena storage holds both kinds of node.** Built nodes write their records eagerly, and every
-   member reads and writes the records directly; the object encoder is retired (§ The record wire).
+   member reads and writes the records directly. Object storage and object construction stay beside records as options, so the object encoder stays (shared arena, ruling 15).
 
 ## Design
 
@@ -223,8 +223,8 @@ and their types do not declare it.
 
 ### The record wire
 
-Arena storage holds both kinds of node (ruling 6 above), so the record layout fixed after this design
-must allow:
+Arena storage holds parsed nodes, and under record construction built nodes too (ruling 6 above;
+shared arena, ruling 15), so the record layout fixed after this design must allow:
 
 - **Children by record address.** A record names each child by its record's address; a shared child
   is one record named twice. A child whose slot admits only non-recursive, fixed-size kinds is the
@@ -241,8 +241,8 @@ must allow:
   classes, trivia joins) goes into side arrays keyed by record address, never into the records.
 
 Records and cells are immutable once written: a setter appends a new record and never writes in
-place, so one child record may sit under two parents. How records nothing names are reclaimed is
-still open; the arena-tables plan carries it as the trigger for resetting a built arena.
+place, so one child record may sit under two parents. Records nothing reaches are reclaimed by
+chunk (shared arena, § Reclamation).
 
 ## Sequencing
 
@@ -251,7 +251,7 @@ still open; the arena-tables plan carries it as the trigger for resetting a buil
 | **one reader** (the typed reader's last step) | the index replaces handles (`row` becomes `index`); the registry and the edited set replace the query path walk, `adoptChild` and `detachAncestors`; the fold check by range replaces `canFold`; the native query returns indexes from the root |
 | **trivia** | moved to the trivia table (`2026-10-09-trivia-table-design.md`), which lands in the shared arena's step 3, after the snapshots: it assigns each comment a side at read, natively, and the `$sameLine` and `$tokensBetween` stamps go there. Of what was planned here, the closing gap and the joins at prepare are superseded, and the line table lands with the snapshot step |
 | **snapshots** | `$snapshot()` with relative points; snapshot seams from geometry; fixtures as snapshots; `$cst()` by index |
-| **record wire** | arena storage for both kinds of node, as § The record wire states |
+| **record wire** | arena storage for parsed nodes, and for built nodes under record construction, as § The record wire states |
 
 The trivia step comes apart from the snapshot step because it can move validation rows: a moved row
 then has one cause. Snapshots need the trivia step's joins.

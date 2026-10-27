@@ -243,12 +243,13 @@
   4. Call the arm's strict builder once.
   - A predicate arm refuses text its predicate rejects, and a template arm builds the member's text from its holes.
   - `$flags` naming a flag the arm has no step for is refused with the path, the flag and the kind.
-- Modify: `packages/common/src/portable/runtime.ts`. `portableRuntime<API>(language: Language<API>): Promise<PortableRuntime<API>>` returns `{ engine, is, build }`:
-  - `engine` is `await createEngine(language, { api: 'strict' })`, which loads the strict table lazily;
-  - `is` is `portableRuntimeTree(language)`;
+- Modify: `packages/common/src/portable/runtime.ts`. `portableRuntime<API>(engine: Engine<API, 'strict'>): Promise<PortableRuntime<API>>` returns `{ engine, is, build }`:
+  - the caller makes `engine`, a strict engine, which loads the strict table lazily;
+  - `is` is `portableRuntimeTree(engine.language)`;
   - `build(structure)` is `buildPortable(await hooks.portableBuild(), engine.build, structure)`.
 
   It throws for a language with no bindings, as `assemblePortableEngine` does.
+- **Constraint (brainstorm, 2026-10-27):** the portable build builds through a storage and construction the caller chose (shared arena, ruling 15), never ones locked to the defaults. It builds through the caller's engine. When `build` is exported on the portable engine, that engine either takes `NodeStorageOptions` itself or builds through a language engine the caller made.
 - Modify: `packages/common/src/engine-boundary.ts` (export `portableRuntime`, `PortableRuntime`).
 - Test: `packages/rust/tests/portable-build.test.ts`, `packages/python/tests/portable-build.test.ts`.
 
@@ -328,7 +329,7 @@ The rules:
 - Test: `packages/rust/tests/portable-read.test.ts`, `packages/tools/src/validate/__tests__/portable-round-trip.test.ts`
 
 **Interfaces:**
-- Consumes: `portableRuntime` (Tasks 4–5), `classifierOf`, `flagHolds`.
+- Consumes: `portableRuntime` (Tasks 4–5), `classifierOf`, `flagHolds`. The lane runs once per storage and construction pair the validation run names.
 - Produces: `PortableRuntime.read`; the lane and its history fields.
 
 - [ ] **Step 1:** Write the failing tests:

@@ -27,7 +27,25 @@ kept: records are the wire in both directions (ruling 3).
 
 ## Packed AST is definitive
 
-The grammar-generated packed, immutable AST is Sittir's **canonical constructed-node representation** and its typed native interchange representation. The object-based N-API native node is a transitional compatibility and measurement path, not a competing permanent storage architecture. Performance measurements determine layout, batching, wrapper and allocation optimizations and may block a particular implementation from replacing the existing path; they do **not** reopen the choice of packed AST as the destination.
+The grammar-generated packed, immutable AST is Sittir's **canonical constructed-node representation** and its typed native interchange representation. Records are not the only storage. Both storage choices stay, permanently, as engine options (ruling 15): where a parsed tree's nodes live (`nodeStorage`: `'arena'`, the default, or `'object'`) and how built nodes are stored (`nodeConstruction`: `'record'`, the default under arena storage, or `'object'`). The object reader, the object codec and object construction are kept beside records, not retired, and measurements choose the defaults. Performance measurements determine layout, batching, wrapper and allocation optimizations; they do **not** reopen the record format as what arena storage and record construction hold.
+
+**The options** (ruling 15). The two keys are typed as a union, so the one invalid pair, object storage with record construction, does not compile:
+
+```ts
+export type NodeStorage = 'arena' | 'object';
+export type NodeConstruction = 'record' | 'object';
+export type NodeStorageOptions =
+	| { readonly nodeStorage?: 'arena'; readonly nodeConstruction?: NodeConstruction }
+	| { readonly nodeStorage: 'object'; readonly nodeConstruction?: 'object' };
+```
+
+- `CreateEngineOptions` and `NativeEngineOptions` take `NodeStorageOptions`, and `NativeEngineOptions` is a type alias over the union.
+- For a caller the types do not reach, `createEngine` refuses the pair by name: `nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena`.
+- `{}` gives arena storage with record construction, `{ nodeConstruction: 'object' }` arena storage with object construction, and `{ nodeStorage: 'object' }` objects for both.
+- An engine with record construction loads its records module lazily, as the builder tables load (`hooks.records`), and makes its built arena when that module first loads. No internal switch turns record construction on.
+- Validation's construction flag takes `NodeConstruction`'s values and type.
+- The `api` table choice (`default` or `strict`) is orthogonal: both tables build through the engine's construction. Built node types are the same under every pair, so neither key is a type parameter of `Engine`.
+- `nodeConstruction`'s JSDoc: how the engine's builders store a built node. `'record'`, the default under arena storage, writes an immutable record into the engine's built arena; `'object'` keeps the node's fields on its object. `'record'` needs `nodeStorage: 'arena'`, and the engine throws when it is given with `nodeStorage: 'object'`.
 
 **Two origins, one representation:** a generated native reader projects Tree-sitter nodes directly into typed binary records, without a JavaScript AST intermediate. This is a projection and copy of selected facts, **not** a zero-copy view of Tree-sitter's internal tree memory. Parsed source and Tree-sitter remain authoritative for untouched source-backed subtrees, with lazy record materialization and coordinate folding. Builders write immutable records directly, without first creating an object graph to serialize at render. Both feed the same native renderer. A record can be materialized later, but is published once.
 
@@ -226,7 +244,7 @@ pub enum FunctionModifiersModifierNodeSlot {
 
 From one declaration, three things:
 
-- **The reader:** `ReadNode::read(cursor, source, tree, depth) -> Self`. It walks the node's
+- **The reader:** one reader for both storages, its routing derived once, with two sinks: under object storage it returns the typed node (`ReadNode::read(cursor, source, tree, depth) -> Self`), and under arena storage it writes the node's record in place, so an arena read goes through no typed struct (direct hydration; its design follows in this section's revision). It walks the node's
   children once with a `TreeCursor` (first child, next sibling), never by index. Each child goes to
   the slot its field names, or, with no field, the one slot whose type admits its kind, and is
   stored as that type's variant for its kind: a fixed literal as its kind id, a node as its
@@ -344,9 +362,9 @@ each comment wrapper.
   JavaScript needs the layout too: codegen emits the JavaScript readers from the same declaration it
   writes the attributes from, so the layout has one derivation and the macro computes no offset.
 
-**Packed arena records** (ruling 3). The probe measured native render decoding 15–32 times faster than the other wires; its first record wrappers read no faster and held more heap per node, which the view's construction accounted for, not the record format. The packed immutable AST is the definitive format; the typed reader and relative coordinates precede the record cutover (ruling 6). The object wire is a temporary comparison and compatibility path.
+**Packed arena records** (ruling 3). The probe measured native render decoding 15–32 times faster than the other wires; its first record wrappers read no faster and held more heap per node, which the view's construction accounted for, not the record format. The packed immutable AST is the definitive format; the typed reader and relative coordinates precede the record step (ruling 6). The object wire stays, for object storage and object construction (ruling 15).
 
-**Measurement and cutover readiness, not an adoption gate.** Compare single-node and batch reads, retained heap, and native render decoding against the object path under identical wrapper APIs. A slower or larger implementation calls for a documented optimization and retest, not abandonment of the packed format. Correctness, source fidelity, lifetime and memory safety are mandatory cutover conditions. The initial record wrapper's 1.9 KB overhead was sensitive to accessor/closure construction: the first view with an empty `$with` and no `$trivia` held 3 702 B against objects' 4 949 B. The view-construction study and its later V2 improvements remain relevant, but wrapper form is a separate choice from the record format.
+**Measurement sets the defaults, not the format.** Compare single-node and batch reads, retained heap, and native render decoding against the object path under identical wrapper APIs. A slower or larger implementation calls for a documented optimization and retest, not abandonment of the packed format. Correctness, source fidelity, lifetime and memory safety are mandatory for every storage and construction. The initial record wrapper's 1.9 KB overhead was sensitive to accessor/closure construction: the first view with an empty `$with` and no `$trivia` held 3 702 B against objects' 4 949 B. The view-construction study and its later V2 improvements remain relevant, but wrapper form is a separate choice from the record format.
 
 ### What the JavaScript wrap keeps
 
@@ -358,8 +376,8 @@ helpers, the enum projections, `readTerminalFromOther`, `_aliasEnvelope`, the sp
 `hydrateChild`) go from every wrap.
 
 A parsed node's literal holds a reference to its record, the buffer and offset, instead of copies
-of its slots (ruling 4); until the record step lands, it holds the node's fields as own keys.
-A built node is constructed directly into an immutable arena record (ruling 5); until the record cutover, it holds fields on its JavaScript object and crosses on the object wire. On either wire it holds the source stamp that makes it a node (the node fact, `2026-10-15-builder-contexts-design.md` § 5).
+of its slots (ruling 4) under arena storage; under object storage it holds the node's fields as own keys.
+A built node is constructed directly into an immutable arena record under record construction (ruling 5); under object construction it holds fields on its JavaScript object and crosses on the object wire. On either wire it holds the source stamp that makes it a node (the node fact, `2026-10-15-builder-contexts-design.md` § 5).
 
 A wrapped node's heap is mostly its wrapper, not its read data: the wrapped tree holds 7–8 times
 its read data today, 2.2–2.5 KB a wrapped node (§ Problem), and a `function_item`'s own wrapper is
@@ -430,7 +448,7 @@ none either (ruling 14).
 
 ### Reclamation
 
-A built arena gives back its memory by chunk. A chunk is freed when nothing can reach a record or
+Under record construction, a built arena gives back its memory by chunk. A chunk is freed when nothing can reach a record or
 a text in it, and JavaScript's collector decides that. No node pays for it: nothing is registered,
 counted or weakly held per node.
 
@@ -457,10 +475,20 @@ counted or weakly held per node.
   to the holder's chunk the same way. Within one chunk nothing is recorded. Cycles between chunks (a
   holder's side naming a later chunk that names the holder's) are ordinary JavaScript cycles, which
   the collector frees together.
-- **A collected chunk is gone before its callback runs.** A finalization callback runs in a later
-  task, never inside a build. So a lookup by address that would hand out a chunk (an interned text,
-  `node(at)`) dereferences the chunk's `WeakRef` first. A lookup whose life object is gone counts as
-  a miss: the text is interned again into the open chunk.
+- **A collected chunk is gone before its callback runs.** A finalization callback runs late, in a
+  later task and never inside a build, or not at all. So every lookup by address first dereferences
+  the `WeakRef` of the chunk the address names, and a chunk whose life object is gone counts as
+  freed:
+  - an interned text, which is interned again into the open chunk;
+  - `node(at)`, an escaped side node by its address;
+  - `words(at, …)` and `textOf(at, …)`, a record's words and a text's bytes;
+  - a record view made from an address (a side entry's `$record`, a copied leaf's record);
+  - a sided or unit-sided address, before the side read crosses to native code;
+  - a parsed tree a record links;
+  - each site a leaf writes its sides to.
+
+  A lookup that finds the chunk freed refuses, naming the address, except the interned text, which
+  is a miss, and a leaf's site, which is skipped.
 - **Escaped side nodes go with their holder.** An escaped side node is held by the life object of
   its holder's chunk, not by the arena, and `node(at)` finds it through the holder a side read
   starts from. A holder that dies takes its side nodes' hold with it.
@@ -470,11 +498,17 @@ counted or weakly held per node.
   2. One native call drops every written side whose place lies in the chunk: a built record's sides
      by its address, and a unit's or built leaf's by its holder's address. The native store is
      ordered by place, so this is one range removal.
-  3. The chunk's index goes to a free list, and its generation counts up.
-- **Sites carry a generation.** A built leaf records each site it is placed at with its holder
-  chunk's generation. A write to a site whose chunk was freed skips it and drops it, so a leaf that
-  outlives its holder never writes into a record that later reuses the address, and it never keeps
-  its holder alive.
+  3. The chunk's number goes to the free ring.
+- **The generation is in the address.** A chunk's number, the address's chunk bits, names its slot
+  and its generation together. Chunk numbers are handed out round-robin over the whole number space,
+  so a freed number comes back only after every other number has been used since it was freed. A
+  built leaf's site keeps its one packed number, with no second number per site and no allocation:
+  a stale site names a chunk number no live chunk has, so its write is skipped and the site
+  dropped. A leaf that outlives its holder never writes into a record that reuses the slot, and it
+  never keeps its holder alive. The probe that sets the size cap also confirms the chunk bits it
+  leaves hold the number space.
+- **A range is reused only after its callback.** A chunk number enters the free ring only after its
+  callback has removed that range's sides, native and JavaScript, and its interned entries.
 - **Native keeps nothing after a call.** A render or a side read borrows the chunks it reads for
   that call (§ Packed AST is definitive); no native structure holds a chunk between calls, and the
   arena's chunk-holding call goes. Native code holds only the written sides. It attributes their
@@ -498,7 +532,7 @@ escaped nodes and held trees, which move onto life objects.
   node never has a rebuilt descendant. The walk that is 95 % of today's untouched whole-read
   render goes with the record step. Until then a parsed node holds fields, and the walk stays
   until no write touches a parsed node's storage, which the trivia table brings (§ Trivia).
-- **A built node or draft** references its immutable arena record directly after cutover; a `$with` draft produces a new record sharing unchanged child addresses. Before cutover the object-backed construction and native decode remain transitional. There is no permanent built-object-to-record encoding at each render.
+- **A built node or draft**, under record construction, references its immutable arena record directly; a `$with` draft produces a new record sharing unchanged child addresses. Under object construction it crosses on the object wire, decoded natively. No render encodes a built object into a record.
 - The native side reads, prepares and renders as today. The prepare walk stamps a private copy, never
   memory JavaScript can see.
 
@@ -569,14 +603,15 @@ members in the builder's literal — changed all three, and the maintainer ruled
 - With the parsed trivia table: `TriviaEntry`'s `same_line` and `tokens_between`, the line-gap
   query (`line_gaps`, `line_gaps_of`), and the outside trivia a folded coordinate carries in
   `SlotValue::Coord`.
-- At the record step: the napi decode of `SlotValue`, and the trivia nodes (`NodeTrivia`,
-  `TriviaEntry`) with built nodes' trivia on the node, which the written-sides store replaces.
+- Kept (ruling 15): the napi decode of `SlotValue`, and the trivia nodes (`NodeTrivia`,
+  `TriviaEntry`) with built nodes' trivia on the node, which object construction uses; under record
+  construction the written-sides store holds built nodes' sides.
 
 **Generated, per grammar**
 
 - `stores_scalar` and `inner_gap_key` in `kind_ids.rs`, and the `ReadModel` impl in `lib.rs`.
-- At the record step: the `#[napi(object)]` attribute and every `FromNapiValue` and `ToNapiValue`
-  impl in `node.rs`.
+- Kept (ruling 15): the `#[napi(object)]` attribute and every `FromNapiValue` and `ToNapiValue`
+  impl in `node.rs`, the object codec of object storage and object construction.
 - In `wrap.ts`: every projection helper listed under § What the JavaScript wrap keeps, the
   `_ROUTES_<Kind>` tables, `_LIST_OWNER_KINDS`, and stub hydration.
 
@@ -584,8 +619,8 @@ members in the builder's literal — changed all three, and the maintainer ruled
 
 - `modelSlots`, the storage coercions and the stub machinery (`isStub`, `hydrateStub`) in `utils.ts`
   and `readUntypedNode.ts`.
-- `node-data.ts`, at the record step: the fold walk (`canFold`, `isUntouchedBelow`,
-  `foldToCoordinate`) and `toNodeData`, replaced by the encoder for built nodes.
+- `node-data.ts`: the fold walk (`canFold`, `isUntouchedBelow`, `foldToCoordinate`) goes with the
+  edited-index set; `toNodeData` stays for object construction (ruling 15).
 - With the parsed trivia table: trivia on parsed wrappers (`$_layout.trivia`, the written-sides map,
   the composed-trivia cache), the line-gap composition (`lineGapsOf`), the edited-index set and the
   refusal of a write through a query.
@@ -599,7 +634,7 @@ members in the builder's literal — changed all three, and the maintainer ruled
 
 - `emitters/wrap.ts` emits members only. `renderNodeDataStruct` (`emitters/render-module.ts`)
   prints the attributes from the node projection (`emitters/node-projection.ts`), with the
-  `#[napi(object)]` attribute gone at the record step. `emitters/kind-id-rust.ts` stops emitting the
+  `#[napi(object)]` attribute kept for the object codec (ruling 15). `emitters/kind-id-rust.ts` stops emitting the
   two read tables. `wireRoutesOf` stays the one route derivation.
 
 ## Relationship to other designs
@@ -742,7 +777,7 @@ include them and the probe's do not (§ The wire).
 ## Rulings (2026-10-04)
 
 Made by the maintainer on the ten choices this draft left open (1–10) and on the one those rulings
-raised (11), with three made since (12–14).
+raised (11), with four made since (12–15).
 
 1. **The unread child's coordinate is the tree and the row** (§ Laziness).
 2. **`depth: number` replaces `ParseOptions.deep`.** The default is 1, so reads stay one level and
@@ -753,7 +788,7 @@ raised (11), with three made since (12–14).
 3. **The wire is canonical packed immutable arena records,** following the measured implementation and safety/correctness cutover checks; performance numbers guide optimization, not whether the format is adopted (§ The wire; § Packed AST is definitive).
 4. **A parsed node's storage is a reference to its record** (§ What the JavaScript wrap keeps,
    § Render).
-5. **A built node's storage is an immutable arena record.** Builders write it directly; members read it, and `$with` appends a new record referencing the unchanged children. The object encoder is retired at cutover (`2026-10-06-relative-coordinates-design.md`, § The record wire).
+5. **A built node's storage is an immutable arena record.** Builders write it directly; members read it, and `$with` appends a new record referencing the unchanged children. Under object construction a built node keeps its fields and the object encoder (ruling 15; `2026-10-06-relative-coordinates-design.md`, § The record wire).
 6. **The typed reader lands first on the transitional object wire; the definitive record format is implemented and measured in its own later step.** Where the relative-coordinates work falls was left to this draft; placed here and
    accepted in review:
    1. **The typed reader**, emitting today's napi objects: the cursor reader, tree-and-row
@@ -761,7 +796,7 @@ raised (11), with three made since (12–14).
       go, which settles a source-backed node's coordinate.
    2. **Relative coordinates**, re-based on rows and narrowed to what rows leave (§ Relationship to
       other designs). This settles a detached node's coordinate.
-   3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs removed at cutover. Object-wire measurements are re-taken beside record measurements to optimize and verify the implementation; numerical performance superiority is not a prerequisite for adoption (§ The wire; § Packed AST is definitive).
+   3. **The definitive record format**, laid out once for Rust and TypeScript: records in both directions, parsed nodes over lazily materialized records with no fold walk, built nodes written directly as immutable records, and the N-API object codecs kept beside them for object storage and object construction (ruling 15). Object-wire measurements are re-taken beside record measurements; they set the defaults (§ The wire; § Packed AST is definitive).
       The written-sides store, which holds built nodes' trivia, lands in this step (§ Trivia). The parsed
       tree's table lands in this step too, ahead of the record wire. The typed reader's feature carries steps 1 and 2, and step 3 with the
       table and the store is a feature of its own.
@@ -793,6 +828,12 @@ raised (11), with three made since (12–14).
     address: its holder's cell holds its kind, its text and the edges the holder changed beside it.
     The holder keeps the leaf object, which records each site it is placed at, and the leaf's sides
     are written to the store at each of them, keyed as a unit's are (§ Leaves, § Trivia).
+15. **Both storage options stay** (the maintainer, 2026-10-27). Records measure at best flat against
+    objects, and arena storage with object construction is the fastest mix today. So `nodeStorage`
+    (`'arena'`, the default, or `'object'`) and `nodeConstruction` (`'record'`, the default under
+    arena storage, or `'object'`, and only `'object'` under object storage) are permanent options,
+    and the object reader, the object codec and object construction are kept beside records
+    (§ Packed AST is definitive).
 
 ## Appendix A. Attributed declarations
 
@@ -953,7 +994,7 @@ counts.
 | table | rust | typescript | python | scm | regex | under the typed node |
 | --- | --- | --- | --- | --- | --- | --- |
 | `node.rs` structs (slot fields) | 395 (696) | 400 (740) | 284 (478) | 52 (83) | 81 (101) | **folded**: they become the declarations, with the attributes added |
-| `node.rs` napi `FromNapiValue`/`ToNapiValue` impls, lines | 40 592 | 53 338 | 26 075 | 4 902 | 5 976 | **retired** at the record step (the macro emits the object codec until then) |
+| `node.rs` napi `FromNapiValue`/`ToNapiValue` impls, lines | 40 592 | 53 338 | 26 075 | 4 902 | 5 976 | **still needed**: the object codec of object storage and object construction (ruling 15) |
 | `node.rs` render functions, lines | 4 158 | 4 094 | 2 658 | 530 | 532 | **still needed**: they stay codegen-emitted (ruling 9) |
 | `kind_ids.rs` kind constants | 468 | 467 | 336 | 69 | 91 | **still needed**: the attributes name them (ruling 10) |
 | `kind_ids.rs` `kind_name_from_id`, arms | 469 | 685 | 338 | 69 | 100 | **still needed**: refusals and diagnostics name kinds (ruling 7) |
@@ -980,6 +1021,6 @@ counts.
 
 The typed reader retires or folds the read's projection: 29 518 lines of wrap projection across the
 five grammars, the route, supertype, list-owner, envelope and reclaim tables, `stores_scalar` and
-`ReadModel`, and `inner_gap_key`. The record step retires the napi impls, 130 883 lines across the
-five grammars. Render functions, kind constants, option sites, query slots, trivia facts, the node
+`ReadModel`, and `inner_gap_key`. The napi impls, 130 883 lines across the five grammars, stay for
+object storage and object construction (ruling 15). Render functions, kind constants, option sites, query slots, trivia facts, the node
 model and the fixtures stay.
