@@ -24,6 +24,7 @@ import {
 	AssembledPattern,
 	AssembledSupertype,
 	isMultiple,
+	isRequired,
 	slotFilledWhenOmitted,
 	storageKindOfRef,
 	valueParseKindsOf,
@@ -337,6 +338,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	}
 	interface Placed extends Site {
 		readonly preset: PortablePreset;
+		readonly kind?: string;
 	}
 	interface Frame {
 		readonly prefix: readonly SlotStep[];
@@ -349,7 +351,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	}
 	const placedValue = (path: readonly SlotStep[], kind: string): Placed | undefined => {
 		const preset = valuePreset(path, kind);
-		return preset === undefined ? undefined : { preset, path, ...(preset.kind === undefined ? { enters: kind } : {}) };
+		return preset === undefined ? undefined : { preset, path, kind, ...(preset.kind === undefined ? { enters: kind } : {}) };
 	};
 	const placedText = (path: readonly SlotStep[], text: string): Placed | undefined => {
 		const kind = tokenKind(path, text);
@@ -368,6 +370,13 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			case 'nested':
 				return undefined;
 		}
+	};
+	const unsetOf = (flag: Placed): PortablePreset | undefined => {
+		const slot = lastSlot(flag.path);
+		if (slot === undefined || flag.kind === undefined || !isRequired(slot) || slotFilledWhenOmitted(slot, nodeMap)) return undefined;
+		const values = admitted(slot);
+		const others = values.filter((kind) => kind !== flag.kind);
+		return others.length === 1 && values.length === 2 && values.every((kind) => fixedText.has(kind)) ? placedValue(flag.path, others[0]!)?.preset : undefined;
 	};
 	const unfilledOf = (kind: string): readonly string[] => {
 		const node = nodeOf(kind);
@@ -502,7 +511,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const presets = placed.map(({ preset }) => preset);
 			const deepest = presets.filter((preset) => !presets.some((other) => other !== preset && keys(other).startsWith(`${keys(preset)}.`)));
 			const flagSteps: Record<string, PortableFlagStep> = {};
-			for (const flag of flags) flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset] };
+			for (const flag of flags) {
+				const other = unsetOf(flag);
+				const unset = [...(flagSteps[flag.name]?.unset ?? []), ...(other === undefined ? [] : [other])];
+				flagSteps[flag.name] = { presets: [...(flagSteps[flag.name]?.presets ?? []), flag.preset], ...(unset.length === 0 ? {} : { unset }) };
+			}
 			const requiredPath = (path: readonly SlotStep[]): boolean => path.every((step) => requiredSlot(step.owner, step.slot));
 			const dropped = new Set(members.flatMap(({ site }) => (survivors.some((member) => member.site === site) ? [] : [site.path])));
 			const required = new Set(

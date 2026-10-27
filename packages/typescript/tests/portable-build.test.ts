@@ -20,6 +20,13 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'statement.export', exportClause: { $path: 'clause.export.namespace', moduleExportName: 'ns' }, source }))).toBe('export * as ns from "m";');
 	});
 
+	it("writes a member access's dot when the optional chain flag is unset, and gives a flag's preset builder the member's text", () => {
+		const member = { $path: 'expression.member', object: 'a', property: 'b' };
+		expect(render(runtime.build(member))).toBe('a.b');
+		expect(render(runtime.build({ ...member, $flags: ['optionalChain'] }))).toBe('a?.b');
+		expect(render(runtime.build({ ...member, $flags: ['privateName'] }))).toBe('a.#b');
+	});
+
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
 		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x');
 		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };

@@ -126,9 +126,10 @@ export interface PortablePreset {
 	readonly builder?: string;
 }
 
-/** What setting a flag adds to a build. */
+/** What setting a flag adds to a build, and what leaving it unset writes: where the flag's slot must hold one of two tokens, the other one. */
 export interface PortableFlagStep {
 	readonly presets: readonly PortablePreset[];
+	readonly unset?: readonly PortablePreset[];
 }
 
 /** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */

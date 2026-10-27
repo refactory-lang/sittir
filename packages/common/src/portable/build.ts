@@ -342,10 +342,13 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				descend(frame, member.steps.slice(0, stop), true);
 				return;
 			}
-			const placed = valueOf(value, member, path);
 			const owner = ownerOf(frame, member.steps.slice(0, -1), path);
+			const key = member.steps.at(-1)!.key;
+			const held = owner.config[key];
+			if (typeof value === 'string' && held instanceof Frame && held.builder !== undefined) return set(owner, key, value, path);
+			const placed = valueOf(value, member, path);
 			if (placed.mount !== undefined) mountOn(owner, placed, path);
-			else set(owner, member.steps.at(-1)!.key, placed.value, path);
+			else set(owner, key, placed.value, path);
 		};
 		const takesList = (route: PortableMemberStep): boolean => route.multiple || route.seats.some((seat) => seat.many === true);
 		const seats = (route: PortableMemberStep, item: unknown): boolean =>
@@ -391,6 +394,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					throw new Error(`portable build: ${structure.$path}: ${flag} is not a flag of ${nameOf(arm.kind)}`);
 				for (const step of steps?.presets ?? []) preset(frame, step, structure.$path);
 			}
+			for (const [flag, steps] of Object.entries(arm.flags))
+				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
 			const holes = new Set(arm.template?.holes ?? []);
 			const values = new Map<string, unknown>(memberKeys(structure).flatMap((name) => (holes.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const])));
 			const spelled = templated(arm, structure);

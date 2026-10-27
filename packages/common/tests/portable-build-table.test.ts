@@ -25,7 +25,7 @@ describe('the portable build table', () => {
 		const named = new Set<string>();
 		for (const { arms } of Object.values(table.paths))
 			for (const arm of arms) {
-				const presets = [...arm.presets, ...Object.values(arm.flags).flatMap((flag) => flag.presets)];
+				const presets = [...arm.presets, ...Object.values(arm.flags).flatMap((flag) => [...flag.presets, ...(flag.unset ?? [])])];
 				const seats = arm.members.flatMap((member) => member.seats);
 				const builders = [
 					arm.builder,
@@ -220,6 +220,13 @@ describe('the portable build table', () => {
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__' });
 		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
+	});
+
+	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
+		expect(armOf('typescript', 'expression.member', typescript.kinds.MemberExpression).flags.optionalChain).toEqual({
+			presets: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.OptionalChain }],
+			unset: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.Dot }]
+		});
 	});
 
 	it('reaches a kind a flag presets only through the flag', () => {

@@ -20247,6 +20247,16 @@ export const build: PortableBuildTable = {
 									],
 									kind: 254
 								}
+							],
+							unset: [
+								{
+									steps: [
+										{
+											key: 'optionalChain'
+										}
+									],
+									kind: 63
+								}
 							]
 						},
 						privateName: {
