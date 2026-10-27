@@ -20,6 +20,8 @@ export interface RecordCodecConstants {
 	readonly SIDE_WORDS_SPAN: number;
 	readonly SIDE_FIELD_SIDES: number;
 	readonly SIDE_WORDS_SIDES: number;
+	readonly SIDE_FIELD_CHANGED_LEADING: number;
+	readonly SIDE_FIELD_CHANGED_TRAILING: number;
 	readonly SIDE_FIELD_SEPARATOR: number;
 	readonly SIDE_WORDS_SEPARATOR: number;
 	readonly SIDE_FIELD_DELIMITER: number;
@@ -51,6 +53,7 @@ export interface CellFormat {
 	readonly sideDelimiter: number;
 	/** The side record's `sides`: the parsed node a built one stands for, by its tree, rows and byte span. */
 	readonly sideSides: SideField;
+	readonly sideChanged: { readonly leading: number; readonly trailing: number };
 	/** The mask bit of a list's chosen separator, the one word after its delimiters setting. */
 	readonly sideSeparatorKind: number;
 }
@@ -117,6 +120,8 @@ const CODEC_KEYS = [
 	'SIDE_WORDS_SPAN',
 	'SIDE_FIELD_SIDES',
 	'SIDE_WORDS_SIDES',
+	'SIDE_FIELD_CHANGED_LEADING',
+	'SIDE_FIELD_CHANGED_TRAILING',
 	'SIDE_FIELD_SEPARATOR',
 	'SIDE_WORDS_SEPARATOR',
 	'SIDE_FIELD_DELIMITER',
@@ -149,6 +154,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		],
 		sideDelimiter: codec.SIDE_FIELD_DELIMITER,
 		sideSides: { bit: codec.SIDE_FIELD_SIDES, words: codec.SIDE_WORDS_SIDES },
+		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
 		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND
 	};
 }

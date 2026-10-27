@@ -2,7 +2,7 @@ import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { stampBuilt } from './source-stamp.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { coordinateOf, holdReadTree, isRead, isRebuilt, triviaOf } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -41,6 +41,7 @@ export interface BuiltChunks {
 export interface BuiltRecords {
 	readonly format: CellFormat;
 	readonly owner: object;
+	readonly kinds: KindView;
 	hold(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	readonly trivia: {
 		triviaSide(at: number, side: TriviaSideName): unknown[] | undefined;
@@ -131,11 +132,13 @@ export type BuiltRow = {
 
 export interface BuiltViews {
 	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
+	readonly words: Readonly<Record<number, number>>;
 }
 
 export class BuiltArena {
 	readonly format: CellFormat;
 	readonly owner: object;
+	readonly kinds: KindView;
 	readonly tree: TreeHandle & Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'unitSides' | 'writeUnitSides'>>;
 	readonly #wrap: Wrap;
 	readonly #handle: TreeEngineHandle;
@@ -153,9 +156,10 @@ export class BuiltArena {
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 
-	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
+	constructor({ format, owner, kinds, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
 		this.owner = owner;
+		this.kinds = kinds;
 		this.#wrap = wrap;
 		this.#handle = handle;
 		this.#views = views;
@@ -194,7 +198,11 @@ export class BuiltArena {
 		return { data, base: word, at: addressOf(chunk, word, this.format), words: size };
 	}
 
-	record(kind: number, words: number): BuiltDraft {
+	record(kind: number): BuiltDraft {
+		return this.draft(kind, this.#widthOf(kind));
+	}
+
+	draft(kind: number, words: number): BuiltDraft {
 		if (this.#drafted + words > this.#drafts.length) {
 			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
 			this.#drafted = 0;
@@ -336,9 +344,61 @@ export class BuiltArena {
 		return wrapRegistered(stub, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, decodeIndex(stub.$_layout.at.$treeHandle), at));
 	}
 
-	parsedLeaf(kind: number, tree: number, index: number, end: number, span: { readonly start: number; readonly end: number }): number {
+	#widthOf(kind: number): number {
+		const words = this.#views.words[kind];
+		if (words === undefined) throw new Error(`no builder writes records of kind ${kind}, so the arena has no width for one`);
+		return words;
+	}
+
+	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }): object {
+		const at = builtRecordOf(node, this);
+		if (at === undefined) throw new Error('only a record this arena built is rebuilt from a parsed node');
+		this.hold(tree, token);
+		const head = wordOf(at, this.format);
+		const header = this.words(at, 2);
+		const words = this.#widthOf(header[head]!);
+		const side = this.#sidesNaming(header[head + 1]!, [tree.id, index, end, span.start, span.end]);
+		const place = this.#place(words);
+		place.data.set(this.words(at, words).subarray(head, head + words), place.base);
+		place.data[place.base + 1] = side;
+		const seeds = (node as { readonly [SEEDS]?: SeededSlots })[SEEDS];
+		for (const [word, seed] of Object.entries(seeds ?? {})) {
+			const items: readonly unknown[] = Array.isArray(seed) ? seed : [seed];
+			for (let item = 0; item < items.length; item++) {
+				const leaf = items[item];
+				if (typeof leaf === 'object' && leaf !== null && builtRefOf(leaf)?.text !== undefined) this.#site(leaf, place.at, Number(word), item);
+			}
+		}
+		return this.#view(place.at, seeds);
+	}
+
+	#sidesNaming(side: number, sides: readonly number[]): number {
+		const { sideBeforeDelimiter, sideSides, sideDelimiter, sideSeparatorKind } = this.format;
+		if (side === 0) return this.push([sideSides.bit, ...sides]);
+		const start = wordOf(side, this.format);
+		const mask = this.words(side, 1)[start]!;
+		const known = sideBeforeDelimiter.reduce((bits, field) => bits | field.bit, sideDelimiter | sideSeparatorKind);
+		if ((mask & ~known) !== 0) throw new Error(`a built record's side record holds fields ${mask & ~known} no builder writes`);
+		let length = 1 + ((mask & sideDelimiter) === 0 ? 0 : 1) + ((mask & sideSeparatorKind) === 0 ? 0 : 1);
+		let offset = 1;
+		let before = true;
+		for (const field of sideBeforeDelimiter) {
+			if (field.bit === sideSides.bit) before = false;
+			if ((mask & field.bit) === 0) continue;
+			length += field.words;
+			if (before) offset += field.words;
+		}
+		const words = Array.from(this.words(side, length).subarray(start, start + length));
+		words.splice(offset, (mask & sideSides.bit) === 0 ? 0 : sideSides.words, ...sides);
+		words[0] = mask | sideSides.bit;
+		return this.push(words);
+	}
+
+	parsedLeaf(kind: number, tree: number, index: number, end: number, span: { readonly start: number; readonly end: number }, changed: ChangedEdges): number {
 		const record = this.#header(kind, 2);
-		record.data[record.base + 1] = this.push([this.format.sideSides.bit, tree, index, end, span.start, span.end]);
+		const { sideSides, sideChanged } = this.format;
+		const mask = sideSides.bit | (changed.leading ? sideChanged.leading : 0) | (changed.trailing ? sideChanged.trailing : 0);
+		record.data[record.base + 1] = this.push([mask, tree, index, end, span.start, span.end]);
 		return record.at;
 	}
 
@@ -533,25 +593,25 @@ export function encodeCell(words: Uint32Array | number[], at: number, format: Ce
 	}
 }
 
-function changedWord(changed: { readonly leading: boolean; readonly trailing: boolean }): number {
+function changedWord(changed: ChangedEdges): number {
 	return (changed.leading ? 1 : 0) | (changed.trailing ? 2 : 0);
 }
 
 /** Writes the cell of the slot whose cell is at `word` of the drafted `record`, holding `value`. */
 export function storeCell(arena: BuiltArena, record: BuiltDraft, word: number, value: unknown): void {
-	storeAt(arena, record.data, record.base + word, value, record, word, 0);
+	storeAt(arena, record.data, record.base + word, value, record, word, 0, NO_EDGES);
 }
 
-function storeAt(arena: BuiltArena, data: Uint32Array, at: number, value: unknown, record: BuiltDraft, word: number, item: number): void {
+function storeAt(arena: BuiltArena, data: Uint32Array, at: number, value: unknown, record: BuiltDraft, word: number, item: number, changed: ChangedEdges): void {
 	if (value === undefined || value === null) return;
 	if (typeof value === 'number') return writeUnit(data, at, arena.format, value, 0);
 	if (typeof value === 'string') return writeBuiltText(data, at, arena.format, arena.text(value));
 	const ref = builtRefOf(value);
-	if (ref === undefined && typeof value === 'object') return storeParsed(arena, data, at, value);
+	if (ref === undefined && typeof value === 'object') return storeParsed(arena, data, at, value, changed);
 	if (ref === undefined || ref.arena !== arena) throw new Error(`a built record holds only nodes its own engine built, not ${foreignValue(value, ref)}`);
 	const kind = (value as { readonly $type: number }).$type;
-	if (ref.at !== undefined) return writeChild(data, at, arena.format, kind, ref.at, 0, 0);
-	writeBuiltLeaf(data, at, arena.format, kind, ref.text, 0);
+	if (ref.at !== undefined) return writeChild(data, at, arena.format, kind, ref.at, 0, changedWord(changed));
+	writeBuiltLeaf(data, at, arena.format, kind, ref.text, changedWord(changed));
 	(record.placed ??= []).push(value, word, item);
 }
 
@@ -567,7 +627,7 @@ export function storeFlag(data: Uint32Array, at: number, mask: number): void {
  *
  * @throws For a node no read produced, or one read through an engine that does not read trees as records.
  */
-function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: object): void {
+function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: object, changed: ChangedEdges): void {
 	const coordinate = isCoordinate(value) ? value : coordinateOf(value);
 	const token = treeTokenOf(value);
 	const tree = coordinate === undefined ? undefined : treeOf(value);
@@ -580,10 +640,10 @@ function storeParsed(arena: BuiltArena, data: Uint32Array, at: number, value: ob
 	arena.hold(tree as TreeHandle & { readonly id: number }, token);
 	const index = decodeIndex(coordinate.$treeHandle);
 	const record = recordOf(value) ?? rowRecordOf(tree.records, index, kind);
-	if (record !== undefined) return writeChild(data, at, arena.format, kind, record, tree.id + 1, 0);
+	if (record !== undefined) return writeChild(data, at, arena.format, kind, record, tree.id + 1, changedWord(changed));
 	const text = tree.text?.(coordinate.$span);
 	if (text === undefined) throw new Error(`the parsed leaf of kind ${kind} has a tree that answers no text`);
-	writeCopiedLeaf(data, at, arena.format, kind, arena.text(text), arena.parsedLeaf(kind, tree.id, index, coordinate.$end, coordinate.$span));
+	writeCopiedLeaf(data, at, arena.format, kind, arena.text(text), arena.parsedLeaf(kind, tree.id, index, coordinate.$end, coordinate.$span, changed));
 }
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {
@@ -604,7 +664,7 @@ function foreignValue(value: unknown, ref: BuiltRef | undefined): string {
 export function storeList(arena: BuiltArena, record: BuiltDraft, word: number, items: readonly unknown[], stride: number): void {
 	if (items.length === 0) return;
 	const run = arena.run(items.length, stride);
-	for (let n = 0; n < items.length; n++) storeAt(arena, run.data, run.base + n * stride, items[n], record, word, n);
+	for (let n = 0; n < items.length; n++) storeAt(arena, run.data, run.base + n * stride, items[n], record, word, n, changedEdges(items, n, arena.kinds));
 	record.data[record.base + word] = run.at;
 	record.data[record.base + word + 1] = items.length;
 }

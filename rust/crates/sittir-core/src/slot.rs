@@ -53,6 +53,12 @@ pub struct ChangedEdges {
 }
 
 impl ChangedEdges {
+    /// The edges changed on `self` or on `other`.
+    #[must_use]
+    pub fn or(self, other: Self) -> Self {
+        Self { leading: self.leading || other.leading, trailing: self.trailing || other.trailing }
+    }
+
     /// Whether the edge `side` lies on changed.
     #[must_use]
     pub fn on(self, side: crate::trivia_table::TriviaSide) -> bool {

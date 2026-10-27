@@ -2,7 +2,8 @@ import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
 import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
-import { treeSlotTable, treeStructureTable } from './engine-scope.ts';
+import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
+import type { BuiltArena } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
 	decodeCell,
@@ -161,7 +162,18 @@ export function rowWith(
 	name: string,
 	args: readonly unknown[]
 ): unknown {
-	return (rowOf(node, tree, wrap).$with as Members)[name]!(...args);
+	const built = tree.built === undefined ? treeBuiltArena(tree) : undefined;
+	return ((built === undefined ? rowOf(node, tree, wrap) : builtRowOf(node, built)).$with as Members)[name]!(...args);
+}
+
+const builtRows = new WeakMap<object, Record<string, unknown>>();
+
+function builtRowOf(node: object, arena: BuiltArena): Record<string, unknown> {
+	const known = builtRows.get(node);
+	if (known !== undefined) return known;
+	const row = arena.row(node);
+	builtRows.set(node, row);
+	return row;
 }
 
 /** A view's trivia `side` read or written with `items`, through its row's `$trivia`. */
@@ -274,17 +286,22 @@ export function recordFlag(holder: object, tree: TreeHandle, word: number, bit: 
 }
 
 export function chosenSeparatorOf(node: object): unknown {
-	const own = (node as Record<string, unknown>)._separator;
-	if (own !== undefined || recordOf(node) === undefined) return own;
-	const built = builtRefOf(node);
-	return built === undefined ? undefined : recordSeparator(node, built.arena.tree);
+	return chosenListSetting(node, '_separator', recordSeparator);
 }
 
 function chosenDelimiterOf(node: object): unknown {
-	const own = (node as Record<string, unknown>)._delimiter;
+	return chosenListSetting(node, '_delimiter', recordDelimiter);
+}
+
+function chosenListSetting(node: object, key: '_delimiter' | '_separator', read: (holder: object, tree: TreeHandle) => number | undefined): unknown {
+	const own = (node as Record<string, unknown>)[key];
 	if (own !== undefined || recordOf(node) === undefined) return own;
-	const tree = builtRefOf(node)?.arena.tree ?? treeOf(node);
-	return tree === undefined ? undefined : recordDelimiter(node, tree);
+	const tree = viewTreeOf(node);
+	return tree === undefined ? undefined : read(node, tree);
+}
+
+function viewTreeOf(node: object): TreeHandle | undefined {
+	return builtRefOf(node)?.arena.tree ?? treeOf(node);
 }
 
 export interface RefusedSlot {
@@ -317,8 +334,8 @@ export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refu
 }
 
 export function builtInputs(node: object): BuilderInputs {
-	const tree = builtRefOf(node)?.arena.tree;
-	if (tree === undefined) throw new Error('a built row reads the record of a built view');
+	const tree = recordOf(node) === undefined ? undefined : viewTreeOf(node);
+	if (tree === undefined) throw new Error('a built row reads the record of a record view');
 	const kind = (node as { readonly $type: number }).$type;
 	const members = node as Record<string, unknown>;
 	const inputs = builderInputs(treeSlotTable(tree)?.[kind] ?? [], treeStructureTable(tree)?.[kind], (accessor) => {

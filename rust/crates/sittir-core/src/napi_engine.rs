@@ -642,6 +642,10 @@ macro_rules! napi_engine {
             #[::napi_derive::napi]
             pub const SIDE_WORDS_SIDES: u32 = $crate::arena::side::field::SIDES_WORDS;
             #[::napi_derive::napi]
+            pub const SIDE_FIELD_CHANGED_LEADING: u32 = $crate::arena::side::field::CHANGED_LEADING;
+            #[::napi_derive::napi]
+            pub const SIDE_FIELD_CHANGED_TRAILING: u32 = $crate::arena::side::field::CHANGED_TRAILING;
+            #[::napi_derive::napi]
             pub const SIDE_FIELD_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR;
             #[::napi_derive::napi]
             pub const SIDE_WORDS_SEPARATOR: u32 = $crate::arena::side::field::SEPARATOR_WORDS;
@@ -674,6 +678,7 @@ macro_rules! napi_engine {
                 engine: &SittirEngine,
                 env: &::napi::Env,
                 owner: &SittirEngine,
+                tree_id: Option<$crate::types::TreeId>,
                 options: Option<$options>,
                 render: impl FnOnce(
                     &dyn $crate::arena::ArenaRead,
@@ -683,9 +688,9 @@ macro_rules! napi_engine {
             ) -> ::napi::Result<String> {
                 let chunks = owner.engine.written().built();
                 let arena = chunks.visit(env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                let table = engine.render_options(None, options)?;
                 LIVE_TREES.with(|trees| {
                     let trees = trees.borrow();
+                    let table = engine.render_options(tree_id.and_then(|id| trees.get(&id)), options)?;
                     let canonical = $crate::napi_engine::entry_sources(env, engine.engine.grammar(), &*trees, |sources| {
                         let ctx = $crate::prepare::RenderContext { options: &table, sources };
                         ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(&arena, &*trees, &ctx).map_err(|e| arena.refused_or(e, $crate::render::RenderError::Record))))
@@ -804,7 +809,9 @@ macro_rules! napi_engine {
                 /// The built record at `address` of the built arena `owner`
                 /// holds (`holdBuiltArena`) rendered as a render root whose
                 /// `leading` and `trailing` edges have no neighbour, under
-                /// `options` over this engine's, with the sides `owner` holds:
+                /// `options` over the layer of the tree `treeId` names, the
+                /// tree the root was rebuilt from, over this engine's, with
+                /// the sides `owner` holds:
                 /// the engine that built the arena, which its records' side
                 /// writes went to. The arena's chunks are borrowed for this
                 /// call; the records the root reaches are admitted, and the
@@ -813,10 +820,11 @@ macro_rules! napi_engine {
                 /// longer holds, an address naming no record its words admit,
                 /// a linked tree that is not live, and a record whose render
                 /// refuses.
-                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
-                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
+                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null")]
+                #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
+                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, address: f64, leading: bool, trailing: bool, tree_id: Option<$crate::types::TreeId>, options: Option<$options>) -> ::napi::Result<String> {
                     let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                    render_built_with(self, &env, owner, options, |arena, trees, ctx| owner.engine.render_built(arena, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
+                    render_built_with(self, &env, owner, tree_id, options, |arena, trees, ctx| owner.engine.render_built(arena, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
                 }
 
                 /// The lone built leaf of `kind` whose text the built arena
@@ -842,7 +850,7 @@ macro_rules! napi_engine {
                 ) -> ::napi::Result<String> {
                     let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
                     let text = $crate::arena::StringRef::from_offset(text.at, text.len);
-                    render_built_with(self, &env, owner, options, |arena, _, ctx| owner.engine.render_built_leaf(arena, kind, text, sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
+                    render_built_with(self, &env, owner, None, options, |arena, _, ctx| owner.engine.render_built_leaf(arena, kind, text, sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
                 }
 
                 /// Holds the chunks of the built arena whose records this

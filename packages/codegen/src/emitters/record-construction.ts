@@ -52,6 +52,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), after: [] };
+	views.width(spec.node, layout.words);
 	const placed = spec.slots.map((slot) => {
 		const place = places.get(slot.storageKey);
 		if (place === undefined) throw new Error(`recordTailLines: ${spec.node.kind}.${slot.name} has no record place`);
@@ -63,7 +64,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const tail = [
 		'  const arena = builtArenaOf(handle);',
 		`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`,
-		`  const record = arena.record(${spec.kind}, ${layout.words});`,
+		`  const record = arena.record(${spec.kind});`,
 		...stores,
 		...(options === undefined
 			? []
@@ -97,6 +98,7 @@ export class BuiltViewTable {
 	readonly #rows = new Map<number, string>();
 	readonly #leaves = new Map<number, { readonly name: string; readonly body: string }>();
 	readonly #required = new Map<number, string>();
+	readonly #widths = new Map<number, number>();
 
 	row(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, trivia: TriviaPositions | undefined): string[] {
 		const kindId = viewKindId(node);
@@ -104,6 +106,13 @@ export class BuiltViewTable {
 		const name = `row${node.typeName}`;
 		this.#rows.set(kindId, name);
 		return builtRowLines(name, inputs, setters, trivia);
+	}
+
+	width(node: ViewKind, words: number): void {
+		const kindId = viewKindId(node);
+		const known = this.#widths.get(kindId);
+		if (known !== undefined && known !== words) throw new Error(`record views: ${node.kind} has record builders of ${known} and ${words} words`);
+		this.#widths.set(kindId, words);
 	}
 
 	requireRow(node: ViewKind): void {
@@ -127,10 +136,11 @@ export class BuiltViewTable {
 		for (const [kindId, kind] of this.#required) {
 			if (!this.#rows.has(kindId)) throw new Error(`record views: a form builder writes ${kind} records, and ${kind} has no row`);
 		}
-		const entries = (table: ReadonlyMap<number, string>) => [...table].sort(([a], [b]) => a - b).map(([kindId, name]) => ` ${kindId}: ${name}`).join(',');
+		const entries = (table: ReadonlyMap<number, string | number>) => [...table].sort(([a], [b]) => a - b).map(([kindId, value]) => ` ${kindId}: ${value}`).join(',');
 		return [
 			'export const builtViews: BuiltViews = Object.freeze({',
-			`  rows: Object.freeze({${entries(this.#rows)} })`,
+			`  rows: Object.freeze({${entries(this.#rows)} }),`,
+			`  words: Object.freeze({${entries(this.#widths)} })`,
 			'});'
 		];
 	}

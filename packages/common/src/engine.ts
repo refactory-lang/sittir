@@ -63,6 +63,11 @@ export function createRenderHandle(renderText: () => string, saveImpl?: (path: s
 	};
 }
 
+function renderTreeOf(node: object): number | undefined {
+	const handle = sourceHandleOf(node);
+	return handle === undefined ? undefined : decodeTree(handle);
+}
+
 /** The level count a read takes: one by default. */
 function depthOf(options: ParseOptions | undefined): number {
 	return options?.depth ?? 1;
@@ -196,7 +201,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
-	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, options?: object): string;
+	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number, options?: object): string;
 	renderBuiltLeaf?(
 		owner: object,
 		kind: number,
@@ -490,7 +495,7 @@ export function createNativeEngine<
 				const changed = rootEdges(node as object);
 				const { renderBuilt, renderBuiltLeaf } = engine;
 				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
-				if (built.at !== undefined) return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, changed.leading, changed.trailing, perCall));
+				if (built.at !== undefined) return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, changed.leading, changed.trailing, renderTreeOf(node as object), perCall));
 				const kind = (node as AnyUntypedNode).$type as number;
 				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.text, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
 			}
@@ -510,8 +515,7 @@ export function createNativeEngine<
 				});
 			}
 			const data = (typeof node === 'number' ? node : toNodeData(node, kindView)) as TNode;
-			const handle = typeof node === 'number' ? undefined : sourceHandleOf(node);
-			const treeId = handle === undefined ? undefined : decodeTree(handle);
+			const treeId = typeof node === 'number' ? undefined : renderTreeOf(node);
 			return createRenderHandle(
 				() => {
 					holdsTrees();
@@ -530,7 +534,7 @@ export function createNativeEngine<
 
 		return {
 			engine: {
-				builtRecords: cellFormat === undefined ? undefined : builtRecordsOf(engine, cellFormat),
+				builtRecords: cellFormat === undefined ? undefined : builtRecordsOf(engine, cellFormat, kindView),
 				render(node, opts) {
 					return renderNativeNode(node, opts);
 				},
@@ -625,7 +629,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 	return nativeRecords.get(native);
 }
 
-function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
+function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
 	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, holdBuiltArena } = engine;
 	if (
 		builtTriviaSide === undefined ||
@@ -639,6 +643,7 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 	return {
 		format,
 		owner: engine,
+		kinds,
 		hold: (words, bytes, writtenWords, writtenBytes) => holdBuiltArena.call(engine, words, bytes, writtenWords, writtenBytes),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,

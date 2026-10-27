@@ -7,7 +7,7 @@ import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, t
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
-import { treeOf, treeTokenOf } from './tree-token.ts';
+import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
@@ -59,8 +59,9 @@ export function queryOf(handle: EngineHandle, node: object): object {
 
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
 	const node = source as AnyUntypedNode;
-	const result = handle === undefined ? build() : inEngine(handle, build);
-	if (!isNode(result)) return result;
+	const built = handle === undefined ? build() : inEngine(handle, build);
+	if (!isNode(built)) return built;
+	const result = sourcedRecord(node, built);
 	markRebuilt(result);
 	carryRead(node, result);
 	carryPlace(node, result);
@@ -215,6 +216,14 @@ function hydratedEntries(entries: readonly TriviaEntry[], tree: TreeHandle | und
 export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEntry {
 	if (isCoordinate(entry)) return hydrateStored(entry) as TriviaEntry;
 	return asTextNode(tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
+}
+
+function sourcedRecord<R extends object>(source: object, built: R): R {
+	const ref = builtRefOf(built);
+	const from = placeOf(source);
+	const tree = from === undefined ? undefined : treeOfToken(from.token);
+	if (ref?.at === undefined || from === undefined || tree?.id === undefined) return built;
+	return ref.arena.rebuiltFrom(built, tree as TreeHandle & { readonly id: number }, from.token, decodeIndex(from.treeHandle), from.end, from.span) as R;
 }
 
 /**
@@ -415,7 +424,7 @@ export interface OwnerView {
 export function ownerView(stored: unknown, count: string, hydrate?: (list: object) => unknown): OwnerView {
 	const list = stored as (object & Partial<AnyUntypedNode>) | null | undefined;
 	if (list == null) return { list: undefined, stored: [], length: 0 };
-	const source = count in list || isBuiltNode(list) || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
+	const source = count in list || isBuiltNode(list) || isParsedNode(list) || !(isCoordinate(list) || recordOf(list) !== undefined) ? list : hydrate?.(list);
 	if (source === undefined) return { list: undefined, stored: undefined, length: undefined };
 	if (recordOf(source) !== undefined) return { list: source as Record<string, unknown>, stored: undefined, length: (source as { readonly length: number }).length };
 	const elements = (source as Record<string, unknown>)[count];
