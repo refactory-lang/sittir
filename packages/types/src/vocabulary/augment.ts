@@ -70,6 +70,7 @@ import type * as scopeDeclarations from './features/scope-declarations/index.ts'
 import type * as scopedVisibility from './features/visibility/scoped-visibility/index.ts';
 import type * as singleInheritance from './features/methods/classes/single-inheritance/index.ts';
 import type * as sliceExpressions from './features/slice-expressions/index.ts';
+import type * as staticStorage from './features/static-storage/index.ts';
 import type * as stringInterpolation from './features/string-interpolation/index.ts';
 import type * as structs from './features/structs/index.ts';
 import type * as structuralConformance from './features/type-annotations/structural-conformance/index.ts';
@@ -742,6 +743,16 @@ declare module './declaration.ts' {
 				| V.Declaration.Interface.Trait.Public.Restricted<G>;
 		}
 		interface Macro<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro<G> {}
+		namespace Macro {
+			interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro.Brace<G> {}
+			interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro.Bracket<G> {}
+			interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Declaration.Macro.Paren<G> {}
+			type Any<G extends GrammarContext<G>> =
+				| V.Declaration.Macro<G>
+				| V.Declaration.Macro.Brace<G>
+				| V.Declaration.Macro.Bracket<G>
+				| V.Declaration.Macro.Paren<G>;
+		}
 		interface Method<G extends GrammarContext<G>> extends methods.Declaration.Method<G> {
 			readonly async?: gate.In<G, features.AsyncAwait, asyncAwait.Declaration.Method<G>['async']>;
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Declaration.Method<G>['computed']>;
@@ -1385,6 +1396,7 @@ declare module './declaration.ts' {
 		interface Variable<G extends GrammarContext<G>> {
 			readonly byReference?: gate.In<G, features.References, references.Declaration.Variable<G>['byReference']>;
 			readonly definite?: gate.In<G, features.NonNullAssertions, nonNullAssertions.Declaration.Variable<G>['definite']>;
+			readonly static?: gate.In<G, features.StaticStorage, staticStorage.Declaration.Variable<G>['static']>;
 			readonly type?: gate.In<G, features.TypeAnnotations, typeAnnotations.Declaration.Variable<G>['type']>;
 		}
 		namespace Variable {
@@ -1480,6 +1492,9 @@ declare module './declaration.ts' {
 			| V.Declaration.Interface.Trait.Public.Internal<G>
 			| V.Declaration.Interface.Trait.Public.Restricted<G>
 			| V.Declaration.Macro<G>
+			| V.Declaration.Macro.Brace<G>
+			| V.Declaration.Macro.Bracket<G>
+			| V.Declaration.Macro.Paren<G>
 			| V.Declaration.Method<G>
 			| V.Declaration.Method.Private<G>
 			| V.Declaration.Method.Protected<G>
@@ -1647,14 +1662,55 @@ declare module './element.ts' {
 			}
 			interface TokenTree<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree<G> {}
 			namespace TokenTree {
+				interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+					.Brace<G> {}
+				interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+					.Bracket<G> {}
 				interface Delimited<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
 					.Delimited<G> {}
+				namespace Delimited {
+					interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Delimited.Brace<G> {}
+					interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Delimited.Bracket<G> {}
+					interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Delimited.Paren<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Element.Macro.TokenTree.Delimited<G>
+						| V.Element.Macro.TokenTree.Delimited.Brace<G>
+						| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+						| V.Element.Macro.TokenTree.Delimited.Paren<G>;
+				}
+				interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+					.Paren<G> {}
 				interface Pattern<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
 					.Pattern<G> {}
+				namespace Pattern {
+					interface Brace<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree.Pattern
+						.Brace<G> {}
+					interface Bracket<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree
+						.Pattern.Bracket<G> {}
+					interface Paren<G extends GrammarContext<G>> extends syntacticMetaprogramming.Element.Macro.TokenTree.Pattern
+						.Paren<G> {}
+					type Any<G extends GrammarContext<G>> =
+						| V.Element.Macro.TokenTree.Pattern<G>
+						| V.Element.Macro.TokenTree.Pattern.Brace<G>
+						| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+						| V.Element.Macro.TokenTree.Pattern.Paren<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Element.Macro.TokenTree<G>
+					| V.Element.Macro.TokenTree.Brace<G>
+					| V.Element.Macro.TokenTree.Bracket<G>
 					| V.Element.Macro.TokenTree.Delimited<G>
-					| V.Element.Macro.TokenTree.Pattern<G>;
+					| V.Element.Macro.TokenTree.Delimited.Brace<G>
+					| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+					| V.Element.Macro.TokenTree.Delimited.Paren<G>
+					| V.Element.Macro.TokenTree.Paren<G>
+					| V.Element.Macro.TokenTree.Pattern<G>
+					| V.Element.Macro.TokenTree.Pattern.Brace<G>
+					| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+					| V.Element.Macro.TokenTree.Pattern.Paren<G>;
 			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Element.Macro<G>
@@ -1663,8 +1719,17 @@ declare module './element.ts' {
 				| V.Element.Macro.TokenRepetition<G>
 				| V.Element.Macro.TokenRepetition.Pattern<G>
 				| V.Element.Macro.TokenTree<G>
+				| V.Element.Macro.TokenTree.Brace<G>
+				| V.Element.Macro.TokenTree.Bracket<G>
 				| V.Element.Macro.TokenTree.Delimited<G>
-				| V.Element.Macro.TokenTree.Pattern<G>;
+				| V.Element.Macro.TokenTree.Delimited.Brace<G>
+				| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+				| V.Element.Macro.TokenTree.Delimited.Paren<G>
+				| V.Element.Macro.TokenTree.Paren<G>
+				| V.Element.Macro.TokenTree.Pattern<G>
+				| V.Element.Macro.TokenTree.Pattern.Brace<G>
+				| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+				| V.Element.Macro.TokenTree.Pattern.Paren<G>;
 		}
 		interface Pair<G extends GrammarContext<G>> {
 			readonly computed?: gate.In<G, features.ComputedKeys, computedKeys.Element.Pair<G>['computed']>;
@@ -1733,8 +1798,17 @@ declare module './element.ts' {
 			| V.Element.Macro.TokenRepetition<G>
 			| V.Element.Macro.TokenRepetition.Pattern<G>
 			| V.Element.Macro.TokenTree<G>
+			| V.Element.Macro.TokenTree.Brace<G>
+			| V.Element.Macro.TokenTree.Bracket<G>
 			| V.Element.Macro.TokenTree.Delimited<G>
+			| V.Element.Macro.TokenTree.Delimited.Brace<G>
+			| V.Element.Macro.TokenTree.Delimited.Bracket<G>
+			| V.Element.Macro.TokenTree.Delimited.Paren<G>
+			| V.Element.Macro.TokenTree.Paren<G>
 			| V.Element.Macro.TokenTree.Pattern<G>
+			| V.Element.Macro.TokenTree.Pattern.Brace<G>
+			| V.Element.Macro.TokenTree.Pattern.Bracket<G>
+			| V.Element.Macro.TokenTree.Pattern.Paren<G>
 			| V.Element.Pair<G>
 			| V.Element.Spread<G>
 			| V.Element.Spread.Map<G>

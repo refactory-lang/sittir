@@ -71,6 +71,7 @@ export type { ScopeDeclarations } from './scope-declarations/index.ts';
 export type { ScopedVisibility } from './visibility/scoped-visibility/index.ts';
 export type { SingleInheritance } from './methods/classes/single-inheritance/index.ts';
 export type { SliceExpressions } from './slice-expressions/index.ts';
+export type { StaticStorage } from './static-storage/index.ts';
 export type { StringInterpolation } from './string-interpolation/index.ts';
 export type { Structs } from './structs/index.ts';
 export type { StructuralConformance } from './type-annotations/structural-conformance/index.ts';
