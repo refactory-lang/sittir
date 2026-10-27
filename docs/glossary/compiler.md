@@ -8197,3 +8197,7 @@ How a rule is classified.
 ### `packages/codegen/src/compiler/types.ts::SimplifiedGrammar::fixedNameLiterals`
 
 The fixed literals a simplified grammar's names take.
+
+### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::tableFiles`
+
+The generated builder table files, by path, for the grammar.
