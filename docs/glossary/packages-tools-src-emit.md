@@ -341,7 +341,7 @@ The one required slot of a seat kind, or nothing when it has none or several. It
  */
 ```
 
-### `packages/tools/src/emit/factory-source.ts::triviaOf`
+### `packages/common/src/node-data.ts::triviaOf`
 
 ```text
 /**
@@ -655,3 +655,71 @@ Always `true`: a printed node is a named node.
 ### `packages/tools/src/emit/factory-source.ts::Printed::$type`
 
 The printed node's kind id.
+
+### `packages/tools/src/emit/factory-source.ts::ModelFacts::unitKinds`
+
+The kinds that are units in the model.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpelling`
+
+A kind and slot whose output is spelled as the grammar writes it.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpelling::kind`
+
+The kind name.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpelling::slot`
+
+The slot name.
+
+### `packages/tools/src/emit/output-spellings.ts::OUTPUT_SPELLINGS`
+
+The output spellings, per grammar: which kinds and slots spell their output as written.
+
+### `packages/tools/src/emit/output-spellings.ts::OUTPUT_SPELLINGS::python`
+
+The Python grammar's spelling entries.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingSite`
+
+The storage key of an output spelling site.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingSite::storageKey`
+
+The storage key of the site.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingSites`
+
+Looks up the output spelling site for a kind.
+
+### `packages/tools/src/emit/output-spellings.ts::outputSpellingSites`
+
+Builds the output spelling sites for a grammar.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingCheck`
+
+The check that a printed output keeps its grammar spelling.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingCheck::grammar`
+
+The grammar the check runs for.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingCheck::source`
+
+The source text the check renders.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingCheck::sites`
+
+The output spelling sites the check consults.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingCheck::kindNameFromId`
+
+Maps a kind id to its name.
+
+### `packages/tools/src/emit/output-spellings.ts::OutputSpellingCheck::render`
+
+Renders a node to its output text.
+
+### `packages/tools/src/emit/output-spellings.ts::refuseRespelledOutput`
+
+Refuses a printed output whose spelling differs from the grammar's.
