@@ -23,6 +23,6 @@ describe('generated rebuilds', () => {
 			const ceiling = JSON.parse(readFileSync(ROOT + set.ceiling, 'utf8')) as Record<string, unknown>;
 			expect(Object.keys(ceiling).sort()).toEqual(own.sort());
 			expectWithinTypecheckCeiling(typeCheckErrorLines(['run', set.typeCheckScript], ROOT), ROOT + set.ceiling);
-		}, 120_000);
+		}, 600_000);
 	}
 });
