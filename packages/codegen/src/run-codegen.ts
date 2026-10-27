@@ -238,6 +238,11 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 		if (!allowDiagnostics.has('dropped-token')) throw new GrammarDiagnosticError(dropped, dropped);
 	}
 
+	if (result.portableDiagnostics.length > 0) {
+		writeDiagnostics(result.portableDiagnostics, formatGrammarDiagnostics);
+		writeGrammarDiagnosticsJson([...(compilation?.grammarDiagnostics ?? []), ...result.portableDiagnostics], join(sittirDirOf(grammarPackage(grammar)), 'grammar-diagnostics.json'));
+	}
+
 	const outDir = outputDir;
 
 	await writeFile(join(outDir, 'render-engine.ts'), result.renderEngine);
@@ -314,6 +319,8 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	else await writeFile(join(outDir, 'node-model-portable.json5'), result.portableNodeModel);
 	if (result.portable === undefined) rmSync(join(outDir, 'portable.ts'), { force: true });
 	else await writeFile(join(outDir, 'portable.ts'), result.portable);
+	if (result.portableBuild === undefined) rmSync(join(outDir, 'portable-build.ts'), { force: true });
+	else await writeFile(join(outDir, 'portable-build.ts'), result.portableBuild);
 
 	const testsDirResolved = testsDir ?? join(dirname(outDir), 'tests');
 	await writeFile(join(testsDirResolved, 'nodes.test.ts'), result.tests);

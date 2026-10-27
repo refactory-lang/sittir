@@ -173,7 +173,7 @@ ${BUILDER_TABLES.map(({ mode, surface }) => `\t\t${mode}: () => import('./${irMo
 	membership: Object.freeze({ isMember, membersOf }),
 	createNative: (options) => nativeLanguageEngine<${api}, IndentChar>(createRenderEngine(options)),
 	wrap: (root, tree) => wrapNode(root as ${rootTypeName}Root & ParsedRoot, tree as TreeHandle),
-	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ',\n\tportable: rows,\n\tqueryFlags,\n\tquerySlotFlags' : ''}
+	hydrate: (node, tree) => hydrate(node, tree as TreeHandle)${config.portable === true ? ",\n\tportable: rows,\n\tportableBuild: () => import('./portable-build.js').then((m) => m.build),\n\tqueryFlags,\n\tquerySlotFlags" : ''}
 });
 `;
 }

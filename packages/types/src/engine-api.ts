@@ -3,7 +3,7 @@ import type { IndentOption } from './options.ts';
 import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
 import type { KindMembership, QueryFacet, QueryFlags, QuerySlotFlags, QuerySlots } from './query.ts';
-import type { PortableRows, PortableSurface } from './portable.ts';
+import type { PortableBuildTable, PortableRows, PortableSurface } from './portable.ts';
 
 export interface TriviaFacts<Kind extends number = number> {
 	kindName(type: Kind): string | undefined;
@@ -288,6 +288,8 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	wrap(root: unknown, tree: unknown): API['root'];
 	hydrate(node: unknown, tree: unknown): unknown;
 	readonly portable?: PortableRows;
+	/** Loads the language's portable build table; a language with no bindings has none. */
+	readonly portableBuild?: () => Promise<PortableBuildTable>;
 }
 
 export interface NativeLanguageEngine<API extends LanguageAPI> {

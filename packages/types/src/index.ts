@@ -28,12 +28,21 @@ export type {
 	View
 } from './query.ts';
 export type {
+	PortableBuildArm,
+	PortableBuildPath,
+	PortableBuildTable,
+	PortableCallShape,
 	PortableCondition,
+	PortableFlagStep,
 	PortableGuard,
 	PortableKind,
+	PortableMemberStep,
 	PortablePath,
+	PortablePickTest,
+	PortablePreset,
 	PortableReadEntry,
 	PortableRows,
+	PortableSlotStep,
 	PortableStep,
 	PortableSurface,
 	PortableTable

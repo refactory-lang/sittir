@@ -17,7 +17,7 @@ import { emitAll } from '../emitters/emit.ts';
 import type { RenderModuleBundle } from '../emitters/render-module.ts';
 import { loadPackageIdTables } from './generated-metadata.ts';
 import { assertGrammarJsonInlineIntegrity } from './inline-sets.ts';
-import { DiagnosticSink, type CompilerDiagnostic } from '../types/diagnostics.ts';
+import { DiagnosticSink, type CompilerDiagnostic, type GrammarDiagnostic } from '../types/diagnostics.ts';
 import { formatCompilerDiagnostics, formatNamingEvents } from './diagnostics/grammar-diagnostics.ts';
 import { addUnnamedChoiceListener } from './collect-slots.ts';
 
@@ -51,6 +51,8 @@ export interface GeneratedFiles {
 	nodeModel: string;
 	portableNodeModel: string | undefined;
 	portable: string | undefined;
+	portableBuild: string | undefined;
+	portableDiagnostics: readonly GrammarDiagnostic[];
 	is: string;
 	kindIds: string;
 	fieldIds: string;
@@ -137,6 +139,25 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 		const nodeModel = printNodeModel(nodeModelData);
 		const routesInput = await grammarInput(cfg.grammar, raw, nodeModelData, bindingsPathIn(pkg.dir));
 		const portable = routesInput === undefined ? undefined : emitPortable(routesInput, nodeMap, emitted.kindEntries);
+		const portableDiagnostics = (portable?.pickDiagnostics ?? []).map(
+			({ code, path, kinds, holder, slot }): GrammarDiagnostic => ({
+				scope: 'grammar',
+				grammar: cfg.grammar,
+				code,
+				severity: 'warning',
+				canProceed: true,
+				...(holder === undefined ? {} : { ownerKind: holder }),
+				...(slot === undefined ? {} : { slotName: slot }),
+				message:
+					code === 'portable-default-repeated'
+						? `${path}: ${kinds.join(', ')} are each declared its build default`
+						: code === 'portable-default-unknown'
+							? `${path}: ${kinds[0]} is declared its build default, but no arm at the path is that kind`
+							: code === 'portable-default-redundant'
+							? `${path}: ${kinds[0]} is declared its build default, but the pick already decides it`
+							: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
+			})
+		);
 
 		const rootTypeName = nodeMap.nodes.get(rootKind)?.typeName;
 		if (rootTypeName === undefined) {
@@ -181,6 +202,8 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			nodeModel,
 			portableNodeModel: portable?.nodeModel,
 			portable: portable?.surface,
+			portableBuild: portable?.build,
+			portableDiagnostics,
 			is: emitted.is,
 			kindIds: emitKindIdRust({ grammar: cfg.grammar, nodeMap, generatedIdTables }),
 			fieldIds: emitFieldIdRust(cfg.grammar, generatedIdTables),

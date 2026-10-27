@@ -2327,6 +2327,10 @@ export class AssembledSupertype extends AssembledNodeBase<SupertypeRule | Choice
 		return this.variantSubtypes?.find((ref) => ref.default === true);
 	}
 
+	get optionDefaultSubtype(): NodeBackedRef | undefined {
+		return this.optionDefaultArm === undefined ? undefined : this.variantSubtypes?.find((ref) => ref.variant === this.optionDefaultArm);
+	}
+
 	get subtypeParseNames(): Readonly<Record<string, string>> | undefined {
 		if (this.rule.type !== SUPERTYPE) return undefined;
 		const pairs = subtypeParseNamesOf(this.rule);

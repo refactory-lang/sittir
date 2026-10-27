@@ -55,6 +55,7 @@ export const hooks: LanguageHooks<RustAPI> = Object.freeze<LanguageHooks<RustAPI
 	wrap: (root, tree) => wrapNode(root as SourceFileRoot & ParsedRoot, tree as TreeHandle),
 	hydrate: (node, tree) => hydrate(node, tree as TreeHandle),
 	portable: rows,
+	portableBuild: () => import('./portable-build.js').then((m) => m.build),
 	queryFlags,
 	querySlotFlags
 });
