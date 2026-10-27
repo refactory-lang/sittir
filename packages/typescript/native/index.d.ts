@@ -252,21 +252,31 @@ readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | 
  */
 renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
- * r" The built node at `address` of the built arena `owner`
+ * r" The built record at `address` of the built arena `owner`
  * r" holds (`holdBuiltArena`) rendered as a render root whose
  * r" `leading` and `trailing` edges have no neighbour, under
  * r" `options` over this engine's, with the sides `owner` holds:
  * r" the engine that built the arena, which its records' side
- * r" writes went to. A leaf passes the `text` its cells hold; a
- * r" compound record passes none. The arena's chunks are
- * r" borrowed for this call; the records the root reaches are
- * r" admitted, and the parsed trees they link held for the
- * r" render (`Engine::render_built`). Refuses an arena `owner`
- * r" no longer holds, an address naming no record its words
- * r" admit, a linked tree that is not live, and a record whose
- * r" render refuses.
+ * r" writes went to. The arena's chunks are borrowed for this
+ * r" call; the records the root reaches are admitted, and the
+ * r" parsed trees they link held for the render
+ * r" (`Engine::render_built`). Refuses an arena `owner` no
+ * r" longer holds, an address naming no record its words admit,
+ * r" a linked tree that is not live, and a record whose render
+ * r" refuses.
  */
-renderBuilt(owner: SittirEngine, address: number, text: BuiltText | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+renderBuilt(owner: SittirEngine, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+/**
+ * r" The lone built leaf of `kind` whose text the built arena
+ * r" `owner` holds at `text`, rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, under
+ * r" `options` over this engine's, with `sides`, the sides the
+ * r" leaf holds (`{ leading?, trailing?, inner? }`): a root has
+ * r" no site in the store. Refuses a kind no node of the grammar
+ * r" is written as, text outside the arena's strings, and a leaf
+ * r" whose render refuses.
+ */
+renderBuiltLeaf(owner: SittirEngine, kind: number, text: BuiltText, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
 /**
  * r" Holds the chunks of the built arena whose records this
  * r" engine's builders write, in place of the ones it held:
@@ -283,6 +293,15 @@ holdBuiltArena(words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Ar
  * r" no write did. Refuses address 0 and any other side.
  */
 builtTriviaSide(address: number, side: string): object[] | null
+/**
+ * r" Replace `side` of the built leaf at each site `sites` names,
+ * r" `[holder, word, item]` after another, with `entries`, which
+ * r" `renderBuilt` then writes; a built record among them
+ * r" renders as `writeTriviaSide` says. Refuses a list whose
+ * r" length is not a multiple of three, holder 0 and any other
+ * r" side, before writing any site.
+ */
+writeBuiltLeafSide(sites: number[], side: string, entries: object[]): void
 /**
  * r" The sides writes gave each unit the record at `address` in
  * r" the arena this engine built holds: `{ slot, item, leading?,
@@ -352,6 +371,9 @@ export const CELL_TAG_CHILD: number
 
 /** r" The tag word of a coordinate cell. */
 export const CELL_TAG_COORDINATE: number
+
+/** r" The tag word of a parsed leaf's cell in a built record. */
+export const CELL_TAG_COPIED_LEAF: number
 
 /** r" The tag word of an embedded bounded child's record. */
 export const CELL_TAG_INLINE: number

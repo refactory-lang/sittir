@@ -21,6 +21,7 @@ import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts
 import { recordOf, recordStub } from './record-view.ts';
 import { readEntries, readUnits, type BuiltRecords, type BuiltText } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
+import { leafWireSides } from './utils.ts';
 
 /** The options object a grammar package types as its `Options`. */
 export type RenderOptionValues = Readonly<Record<string, unknown>>;
@@ -195,10 +196,12 @@ export interface NativeEngineLike<TNode = unknown> {
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
-	renderBuilt?(
+	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, options?: object): string;
+	renderBuiltLeaf?(
 		owner: object,
-		address: number,
-		text: BuiltText | null,
+		kind: number,
+		text: BuiltText,
+		sides: object | null,
 		leading: boolean,
 		trailing: boolean,
 		options?: object
@@ -207,6 +210,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	builtUnitSides?(address: number): unknown[];
 	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
+	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
 	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, options?: object): string;
@@ -484,9 +488,11 @@ export function createNativeEngine<
 			const built = typeof node === 'number' ? undefined : builtRefOf(node);
 			if (built !== undefined) {
 				const changed = rootEdges(node as object);
-				const renderBuilt = engine.renderBuilt;
-				if (renderBuilt === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
-				return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, built.text ?? null, changed.leading, changed.trailing, perCall));
+				const { renderBuilt, renderBuiltLeaf } = engine;
+				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+				if (built.at !== undefined) return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, changed.leading, changed.trailing, perCall));
+				const kind = (node as AnyUntypedNode).$type as number;
+				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.text, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
@@ -620,8 +626,15 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, holdBuiltArena } = engine;
-	if (builtTriviaSide === undefined || writeBuiltTriviaSide === undefined || builtUnitSides === undefined || writeBuiltUnitSides === undefined || holdBuiltArena === undefined)
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, holdBuiltArena } = engine;
+	if (
+		builtTriviaSide === undefined ||
+		writeBuiltTriviaSide === undefined ||
+		builtUnitSides === undefined ||
+		writeBuiltUnitSides === undefined ||
+		writeBuiltLeafSide === undefined ||
+		holdBuiltArena === undefined
+	)
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	return {
 		format,
@@ -631,7 +644,8 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
 			unitSides: (at) => builtUnitSides.call(engine, at),
-			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units)
+			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units),
+			writeLeafSide: (sites, side, entries) => writeBuiltLeafSide.call(engine, sites, side, entries)
 		}
 	};
 }

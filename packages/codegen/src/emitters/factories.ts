@@ -2929,7 +2929,7 @@ function emitTextFactory(
 		return body.join('\n');
 	}
 	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, members);
-	body.push(...leafAdoptLines(leaf.name, typeExpr, textExpr, `T.${node.typeName}.Bound`), '}');
+	body.push(...leafAdoptLines(leaf.name, textExpr, `T.${node.typeName}.Bound`), '}');
 	return [...body, ...(leaf.lines.length === 0 ? [] : ['', ...leaf.lines])].join('\n');
 }
 

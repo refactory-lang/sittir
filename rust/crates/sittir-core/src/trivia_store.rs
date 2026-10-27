@@ -19,12 +19,23 @@ use crate::types::{NodeIndex, TreeId};
 pub enum Place {
     /// A parsed node, unit or leaf: its tree and its row there.
     Row { tree: TreeId, row: NodeIndex },
-    /// A built node or a built leaf, by its record.
+    /// A built record, by its address.
     #[cfg(feature = "arena")]
     Record(crate::arena::Address),
     /// A built unit, which has no record: its site in its holder's record.
     #[cfg(feature = "arena")]
     Unit(Site<crate::arena::Address>),
+    /// A built leaf, which has no record: its site in its holder's record,
+    /// keyed apart from the holder's units, which a write replaces together.
+    #[cfg(feature = "arena")]
+    Leaf(Site<crate::arena::Address>),
+}
+
+#[cfg(feature = "arena")]
+impl Place {
+    /// The place of the lone built leaf a render roots at, which has no
+    /// site: its sides are the ones the render is given.
+    pub const ROOT_LEAF: Place = Place::Leaf(Site { holder: crate::arena::Address::NONE, word: 0, item: crate::types::ItemIndex(0) });
 }
 
 /// A position in a holder: the holder, the slot's stamped word and the
@@ -214,6 +225,28 @@ impl<T: Clone> TriviaStore<T> {
         self.write().insert((place, side), entries);
     }
 
+    /// A store over this one's built arena that holds `sides` alone, as the
+    /// sides of the lone leaf a render roots at (`Place::ROOT_LEAF`), which
+    /// has no site in this store to key them by. A built record among them
+    /// renders from the arena this store holds.
+    #[cfg(feature = "arena")]
+    #[must_use]
+    pub fn root_leaf(&self, sides: Option<crate::trivia::NodeTrivia<T>>) -> Self {
+        let store = Self {
+            sides: Arc::default(),
+            #[cfg(feature = "napi-bindings")]
+            built: Arc::clone(&self.built),
+        };
+        if let Some(sides) = sides {
+            for (side, entries) in [(TriviaSide::Leading, sides.leading), (TriviaSide::Trailing, sides.trailing), (TriviaSide::Inner, sides.inner)] {
+                if let Some(entries) = entries {
+                    store.write_side(Place::ROOT_LEAF, side, entries);
+                }
+            }
+        }
+        store
+    }
+
     /// Whether a write set a side of a node in rows `[index, end)` of `tree`:
     /// of a descendant of the node at `index`, or of that node's own `inner`,
     /// and of its own leading and trailing too when `own_sides` is set.
@@ -358,11 +391,14 @@ mod tests {
         store.write_side(unit(5, 7, 1), TriviaSide::Inner, Vec::new());
         store.write_side(unit(6, 2, 0), TriviaSide::Leading, vec![entry("// other")]);
         store.write_side(Place::Record(Address(5)), TriviaSide::Leading, vec![entry("// own")]);
+        let leaf = Place::Leaf(Site { holder: Address(5), word: 2, item: ItemIndex(0) });
+        store.write_side(leaf, TriviaSide::Trailing, vec![entry("// leaf")]);
         let kept = NodeTrivia { leading: None, trailing: Some(vec![entry("// b")]), inner: None };
         store.write_units(Address(5), vec![(7, ItemIndex(0), kept.clone())]);
         assert_eq!(store.units(Address(5)), [(7, ItemIndex(0), kept)]);
         assert_eq!(store.units(Address(6)), [(2, ItemIndex(0), NodeTrivia { leading: Some(vec![entry("// other")]), trailing: None, inner: None })]);
         assert_eq!(store.side(Place::Record(Address(5)), TriviaSide::Leading), Some(vec![entry("// own")]), "the holder's own sides are not its units'");
+        assert_eq!(store.side(leaf, TriviaSide::Trailing), Some(vec![entry("// leaf")]), "a leaf at a unit's site keeps its sides");
         store.write_units(Address(5), Vec::new());
         assert_eq!(store.units(Address(5)), []);
     }

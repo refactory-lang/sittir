@@ -168,7 +168,7 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn cell_text(self, cell: Cell) -> Result<&'a str, ArenaError> {
         match cell {
             Cell::ParsedLeaf { span, .. } | Cell::ParsedText { span } => self.source_text(span),
-            Cell::BuiltLeaf { text, .. } | Cell::BuiltText { text } => self.string(text),
+            Cell::BuiltLeaf { text, .. } | Cell::CopiedLeaf { text, .. } | Cell::BuiltText { text } => self.string(text),
             _ => Err(malformed("text cell", 0)),
         }
     }
@@ -476,6 +476,21 @@ pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<Pr
     match site {
         Some(Site { holder: PrepPlace::Stored(holder), word, item }) if ctx.row_record(row).is_some() => Ok(PrepPlace::Content(Site { holder, word, item })),
         _ => Ok(Place::Row { tree, row }.into()),
+    }
+}
+
+/// The place of a built leaf held at `site`: its site in its holder's
+/// record, or, for a root, which has no site, `Place::ROOT_LEAF`, whose sides
+/// the render is given.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for a site whose holder is no built record.
+pub fn built_leaf_place(site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
+    match site {
+        None => Ok(Place::ROOT_LEAF.into()),
+        Some(Site { holder: PrepPlace::Stored(Place::Record(holder)), word, item }) => Ok(Place::Leaf(Site { holder, word, item }).into()),
+        Some(_) => Err(malformed("built leaf holder", 0)),
     }
 }
 

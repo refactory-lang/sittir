@@ -96,6 +96,11 @@ export function triviaOf(node: object): NodeLayout['trivia'] {
 	return (node as { readonly $_layout?: NodeLayout }).$_layout?.trivia;
 }
 
+export function setTriviaOf(node: object, trivia: NodeTrivia): void {
+	const record = node as { $_layout?: NodeLayout };
+	record.$_layout = { ...record.$_layout, trivia };
+}
+
 /**
  * Give every parsed object under `value` the tree's token, through slots and
  * trivia. A coordinate is a number, which keeps nothing alive: a leaf is
@@ -295,7 +300,8 @@ function tableOf(tree: TreeHandle | undefined, index: number | undefined): Table
 
 export function tableAt(node: object): TableAt | undefined {
 	const built = builtRefOf(node);
-	return built === undefined ? tableOf(treeOf(node), indexOf(node)) : { tree: built.arena.tree, index: built.at };
+	if (built === undefined) return tableOf(treeOf(node), indexOf(node));
+	return built.at === undefined ? undefined : { tree: built.arena.tree, index: built.at };
 }
 
 /** The tree of the node a source identity names, while it lives. */
@@ -310,7 +316,7 @@ function sourceTree(source: SourceIdentity): TreeHandle | undefined {
  */
 export function unitSidesOf(node: object): readonly unknown[] | undefined {
 	const built = builtRefOf(node);
-	if (built !== undefined) return built.arena.tree.unitSides(built.at);
+	if (built !== undefined) return built.at === undefined ? undefined : built.arena.tree.unitSides(built.at);
 	const held = heldUnitSides(node);
 	if (held !== undefined) return held;
 	const tree = treeOf(node);
@@ -532,7 +538,7 @@ export function sidesOf(node: object): NodeTrivia | undefined {
 
 export function writtenSides(node: object): NodeTrivia | undefined {
 	const built = builtRefOf(node);
-	if (built === undefined) return triviaOf(node);
+	if (built?.at === undefined) return triviaOf(node);
 	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
 	for (const side of TRIVIA_SIDES) {
 		const entries = built.arena.tree.triviaSide(built.at, side);

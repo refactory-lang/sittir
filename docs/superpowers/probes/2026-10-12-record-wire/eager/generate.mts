@@ -89,7 +89,7 @@ function cellStores(field: Field, data: string, at: string, value: string): stri
   if (field.leaves)
     arms.push({
       test: field.nodes ? `${value}._offset !== undefined` : undefined,
-      body: `${set(0, format.builtLeaf)} ${set(1, `${value}.$type`)} ${set(2, `${value}._offset`)} ${set(3, `${value}._len`)} ${set(4, `${value}._r`)}`
+      body: `${set(0, format.builtLeaf)} ${set(1, `${value}.$type`)} ${set(2, `${value}._offset`)} ${set(3, `${value}._len`)} ${set(4, '0')}`
     });
   if (field.nodes)
     arms.push({

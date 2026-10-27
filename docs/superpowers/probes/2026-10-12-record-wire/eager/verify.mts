@@ -8,12 +8,14 @@ assert.equal(native.heldArenaReferences(), 0);
 
 {
   const { store, build } = setup('arena', 16);
+  const records = store.records;
   const first = build.identifier('repeated café');
   const occupied = store.memory().stringBytes;
   const second = build.identifier('repeated café');
   assert.equal(store.memory().stringBytes, occupied, 'equal text is encoded once per arena');
-  assert.equal(typeof first._r, 'number', 'arena views own their numeric address');
-  assert.notEqual(first._r, second._r, 'deduplicating text does not merge records');
+  assert.equal(store.records, records, 'a built leaf is its cell: building one appends no record');
+  assert.equal(first._r, undefined, 'a built leaf has no address');
+  assert.equal(store.identity(first), store.identity(second), 'equal text makes equal leaf cells');
   const original = 'unpaired\ud800';
   const leaf = build.identifier(original);
   assert.equal(leaf.text(), original, 'text access retains the original builder string');
@@ -113,7 +115,7 @@ for (const open of [-1, 0.5, sourcePacket.chunks.length, Infinity]) {
 assert.equal(native.heldArenaReferences(), 0, 'invalid open indices retain no buffers');
 const growing = native.registerArena(sourcePacket.chunks, sourcePacket.strings, 0, 0);
 const renderPrefix = (words = sourcePacket.chunks[0].length, bytes = sourcePacket.strings[0].length) =>
-  growing.render(packetSource.at, undefined, undefined, words, bytes);
+  growing.render(packetSource.at, words, bytes);
 assert.equal(renderPrefix().text, packetSource.expected);
 assert.equal(
   growing.renderRecord(packetSource.at, sourcePacket.chunks[0].length, sourcePacket.strings[0].length).text,
@@ -180,6 +182,7 @@ for (const mode of ['object', 'arena']) {
   const renamed = name.$with.text('renamed');
   assert.notEqual(store.identity(name), store.identity(renamed));
   assert.equal(first.name().text(), 'shared');
+  assert.equal(name.render().text, 'shared', 'a lone leaf renders from its kind and its text');
   assert.equal(second.name().text(), 'shared');
   const replaced = first.$with.name(renamed);
   assert.notEqual(store.identity(first), store.identity(replaced));

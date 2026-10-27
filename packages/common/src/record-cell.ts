@@ -8,6 +8,7 @@ export interface RecordCodecConstants {
 	readonly CELL_TAG_CHILD: number;
 	readonly CELL_TAG_UNIT: number;
 	readonly CELL_TAG_BUILT_LEAF: number;
+	readonly CELL_TAG_COPIED_LEAF: number;
 	readonly CELL_TAG_INLINE: number;
 	readonly CELL_INLINE_HEADER_WORDS: number;
 	readonly ARENA_CHUNK_SHIFT: number;
@@ -39,6 +40,7 @@ export interface CellFormat {
 	readonly child: number;
 	readonly unit: number;
 	readonly builtLeaf: number;
+	readonly copiedLeaf: number;
 	readonly inline: number;
 	readonly inlineHeaderWords: number;
 	readonly chunkShift: number;
@@ -79,9 +81,16 @@ export type RecordCell =
 			readonly kind: number;
 			readonly offset: number;
 			readonly len: number;
-			readonly record: number;
+			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  }
-	| { readonly form: 'builtText'; readonly offset: number; readonly len: number };
+	| { readonly form: 'builtText'; readonly offset: number; readonly len: number }
+	| {
+			readonly form: 'copiedLeaf';
+			readonly kind: number;
+			readonly offset: number;
+			readonly len: number;
+			readonly record: number;
+	  };
 
 /** A list slot's cell: its run's address and the items in it. */
 export interface RecordListCell {
@@ -96,6 +105,7 @@ const CODEC_KEYS = [
 	'CELL_TAG_CHILD',
 	'CELL_TAG_UNIT',
 	'CELL_TAG_BUILT_LEAF',
+	'CELL_TAG_COPIED_LEAF',
 	'CELL_TAG_INLINE',
 	'CELL_INLINE_HEADER_WORDS',
 	'ARENA_CHUNK_SHIFT',
@@ -125,6 +135,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		child: codec.CELL_TAG_CHILD,
 		unit: codec.CELL_TAG_UNIT,
 		builtLeaf: codec.CELL_TAG_BUILT_LEAF,
+		copiedLeaf: codec.CELL_TAG_COPIED_LEAF,
 		inline: codec.CELL_TAG_INLINE,
 		inlineHeaderWords: codec.CELL_INLINE_HEADER_WORDS,
 		chunkShift: codec.ARENA_CHUNK_SHIFT,
@@ -216,14 +227,7 @@ export function decodeCell(
 				: { form: 'parsedLeaf', kind: kind(), span: spanAt(words, at, tag), row: field(words, at, 4, tag) };
 		case format.child: {
 			const tree = field(words, at, 3, tag);
-			const changed = field(words, at, 4, tag);
-			return {
-				form: 'child',
-				kind: kind(),
-				at: field(words, at, 2, tag),
-				link: tree === 0 ? undefined : tree - 1,
-				changed: { leading: (changed & 1) !== 0, trailing: (changed & 2) !== 0 }
-			};
+			return { form: 'child', kind: kind(), at: field(words, at, 2, tag), link: tree === 0 ? undefined : tree - 1, changed: changedAt(words, at, tag) };
 		}
 		case format.unit: {
 			const row = field(words, at, 2, tag);
@@ -234,11 +238,18 @@ export function decodeCell(
 			const len = field(words, at, 3, tag);
 			return kind() === 0
 				? { form: 'builtText', offset, len }
-				: { form: 'builtLeaf', kind: kind(), offset, len, record: field(words, at, 4, tag) };
+				: { form: 'builtLeaf', kind: kind(), offset, len, changed: changedAt(words, at, tag) };
 		}
+		case format.copiedLeaf:
+			return { form: 'copiedLeaf', kind: kind(), offset: field(words, at, 2, tag), len: field(words, at, 3, tag), record: field(words, at, 4, tag) };
 		default:
 			throw new Error(`word ${at} holds cell tag ${tag}, which no record writer writes`);
 	}
+}
+
+function changedAt(words: ArrayLike<number>, at: number, tag: number): { readonly leading: boolean; readonly trailing: boolean } {
+	const changed = field(words, at, 4, tag);
+	return { leading: (changed & 1) !== 0, trailing: (changed & 2) !== 0 };
 }
 
 /** The list cell whose two words start at `at` in `words`. */

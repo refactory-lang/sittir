@@ -200,25 +200,31 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 		case 'unit':
 			return cell.kind;
 		case 'builtLeaf':
-			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.leaf(cell);
+			throw new Error(tree.built === undefined ? 'a parsed record holds no built cell' : 'a built leaf is read from the holder that keeps it');
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
 			return tree.built.textOf(cell.offset, cell.len);
+		case 'copiedLeaf':
+			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
+			return tree.built.copiedLeaf(cell);
 	}
 }
 
 /** The value of the one-cell slot at the generated `word` offset of the record `holder` views, as read data. */
 export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): unknown {
+	return cellData(holder, tree, slotCell(holder, tree, word, width, inline));
+}
+
+export function recordPresent(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): boolean {
+	return slotCell(holder, tree, word, width, inline).form !== 'absent';
+}
+
+function slotCell(holder: object, tree: TreeHandle, word: number, width: number, inline: number): RecordCell {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
 	const { words, start } = wordsAt(records, at, word + width);
-	return cellData(
-		holder,
-		tree,
-		decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word)
-	);
+	return decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word);
 }
 
 /** The items of the list slot at the generated `word` offset of the record `holder` views, each as read data. */
@@ -252,11 +258,10 @@ export function recordLength(
 	run?: number,
 	inline = 0
 ): number {
+	if (run === undefined) return recordPresent(holder, tree, word, width, inline) ? 1 : 0;
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
-	const records = recordsOf(tree);
-	if (run === undefined) return recordSlot(holder, tree, word, width, inline) === undefined ? 0 : 1;
-	const { words, start } = wordsAt(records, at, word + width);
+	const { words, start } = wordsAt(recordsOf(tree), at, word + width);
 	return decodeListCell(words, start + word).len;
 }
 

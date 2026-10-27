@@ -37,6 +37,7 @@ import {
 	textOf,
 	recordOf,
 	recordSlot,
+	recordPresent,
 	recordFlag,
 	keptSlot,
 	keptItems,
@@ -10880,7 +10881,12 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeIdentifier['_content']>) =>
@@ -10908,7 +10914,12 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.FieldIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.FieldIdentifier['_content']>) =>
@@ -10939,7 +10950,12 @@ export function wrapShorthandFieldIdentifier(
 		...data,
 		$type: TSKindId.ShorthandFieldIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandFieldIdentifier['_content']>) =>
@@ -12772,10 +12788,9 @@ function viewUseWildcard(data: RecordStub, tree: TreeHandle): T.UseWildcard.Pars
 			useWildcardGroup: (...args: unknown[]) => rowWith(node, tree, _wrap, 'useWildcardGroup', args),
 			path: (...args: unknown[]) => rowWith(node, tree, _wrap, 'path', args)
 		},
-		path:
-			recordSlot(data, tree, 2, 9, 7) === undefined
-				? undefined
-				: () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
+		path: !recordPresent(data, tree, 2, 9, 7)
+			? undefined
+			: () => groupField(readGroup_useWildcardGroup.call(node), 'path'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14361,14 +14376,12 @@ function viewMatchBlock(data: RecordStub, tree: TreeHandle): T.MatchBlock.Parsed
 			arms: (...args: unknown[]) => rowWith(node, tree, _wrap, 'arms', args),
 			lastArm: (...args: unknown[]) => rowWith(node, tree, _wrap, 'lastArm', args)
 		},
-		arms:
-			recordSlot(data, tree, 2, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
-		lastArm:
-			recordSlot(data, tree, 2, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
+		arms: !recordPresent(data, tree, 2, 5, 0)
+			? undefined
+			: () => groupField(readGroup_matchBlockArms.call(node), 'arms'),
+		lastArm: !recordPresent(data, tree, 2, 5, 0)
+			? undefined
+			: () => groupField(readGroup_matchBlockArms.call(node), 'lastArm'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -14410,14 +14423,10 @@ function viewLastMatchArm(data: RecordStub, tree: TreeHandle): T.LastMatchArm.Pa
 			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
 			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args)
 		},
-		pattern:
-			recordSlot(data, tree, 4, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_match.call(node), 'pattern'),
-		condition:
-			recordSlot(data, tree, 4, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_match.call(node), 'condition'),
+		pattern: !recordPresent(data, tree, 4, 5, 0) ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: !recordPresent(data, tree, 4, 5, 0)
+			? undefined
+			: () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17468,14 +17477,10 @@ function viewMatchArmWithComma(data: RecordStub, tree: TreeHandle): T.MatchArmWi
 			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
 			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args)
 		},
-		pattern:
-			recordSlot(data, tree, 4, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_match.call(node), 'pattern'),
-		condition:
-			recordSlot(data, tree, 4, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_match.call(node), 'condition'),
+		pattern: !recordPresent(data, tree, 4, 5, 0) ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: !recordPresent(data, tree, 4, 5, 0)
+			? undefined
+			: () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -17524,14 +17529,10 @@ function viewMatchArmBlockEnding(data: RecordStub, tree: TreeHandle): T.MatchArm
 			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
 			condition: (...args: unknown[]) => rowWith(node, tree, _wrap, 'condition', args)
 		},
-		pattern:
-			recordSlot(data, tree, 4, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_match.call(node), 'pattern'),
-		condition:
-			recordSlot(data, tree, 4, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_match.call(node), 'condition'),
+		pattern: !recordPresent(data, tree, 4, 5, 0) ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
+		condition: !recordPresent(data, tree, 4, 5, 0)
+			? undefined
+			: () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18618,14 +18619,12 @@ function viewParametersElementsReceiver(data: RecordStub, tree: TreeHandle): T.P
 			attributeItem: (...args: unknown[]) => rowWith(node, tree, _wrap, 'attributeItem', args),
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
 		},
-		attributeItem:
-			recordSlot(data, tree, 2, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_receiver.call(node), 'attributeItem'),
-		content:
-			recordSlot(data, tree, 2, 5, 0) === undefined
-				? undefined
-				: () => groupField(readGroup_receiver.call(node), 'content'),
+		attributeItem: !recordPresent(data, tree, 2, 5, 0)
+			? undefined
+			: () => groupField(readGroup_receiver.call(node), 'attributeItem'),
+		content: !recordPresent(data, tree, 2, 5, 0)
+			? undefined
+			: () => groupField(readGroup_receiver.call(node), 'content'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -18689,7 +18688,14 @@ function viewTypeIdentifier(data: RecordStub, tree: TreeHandle): T.TypeIdentifie
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -18714,7 +18720,14 @@ function viewFieldIdentifier(data: RecordStub, tree: TreeHandle): T.FieldIdentif
 		...data,
 		$type: TSKindId.FieldIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -18739,7 +18752,14 @@ function viewShorthandFieldIdentifier(data: RecordStub, tree: TreeHandle): T.Sho
 		...data,
 		$type: TSKindId.ShorthandFieldIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)

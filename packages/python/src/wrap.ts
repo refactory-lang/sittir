@@ -38,6 +38,7 @@ import {
 	textOf,
 	recordOf,
 	recordSlot,
+	recordPresent,
 	recordFlag,
 	keptSlot,
 	keptItems,
@@ -6924,7 +6925,12 @@ export function wrapAsPatternTarget(data: T.AsPatternTarget, tree: TreeHandle): 
 		...data,
 		$type: TSKindId.AsPatternTarget as const,
 		content() {
-			return hydrateSlot<T.Expression>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Expression>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.AsPatternTarget['_content']>) =>
@@ -9553,10 +9559,9 @@ function viewSlice(data: RecordStub, tree: TreeHandle): T.Slice.Parsed {
 			step: (...args: unknown[]) => rowWith(node, tree, _wrap, 'step', args),
 			expression: (...args: unknown[]) => rowWith(node, tree, _wrap, 'expression', args)
 		},
-		expression:
-			recordSlot(data, tree, 12, 9, 7) === undefined
-				? undefined
-				: () => groupField(readGroup_step.call(node), 'expression'),
+		expression: !recordPresent(data, tree, 12, 9, 7)
+			? undefined
+			: () => groupField(readGroup_step.call(node), 'expression'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -12270,7 +12275,14 @@ function viewAsPatternTarget(data: RecordStub, tree: TreeHandle): T.AsPatternTar
 		...data,
 		$type: TSKindId.AsPatternTarget as const,
 		content() {
-			return viewSlot<T.Expression>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Expression>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)

@@ -233,53 +233,77 @@ pub fn render_built(
     chunks: Vec<Unknown<'_>>,
     strings: Vec<Unknown<'_>>,
     address: f64,
-    text_offset: Option<f64>,
-    text_len: Option<f64>,
 ) -> Result<RenderSample> {
     measured(|| {
         let words = typed_slices::<u32>(&env, &chunks)?;
         let bytes = typed_slices::<u8>(&env, &strings)?;
         let arena =
             BorrowedArena::new(&words, &bytes).map_err(|e| Error::from_reason(e.to_string()))?;
-        render_arena(&arena, address, text_offset, text_len)
+        render_arena(&arena, Root::Record(address))
     })
 }
 
-fn render_arena(
-    arena: &dyn ArenaRead,
-    address: f64,
-    text_offset: Option<f64>,
-    text_len: Option<f64>,
-) -> Result<String> {
-    let at = Address(word_argument(address)?);
-    if at == Address::NONE {
-        return Err(Error::from_reason("a built root must name a record"));
-    }
-    admit(arena, at, AnyNode::shape).map_err(|e| Error::from_reason(e.to_string()))?;
-    let kind = KindId(
-        u16::try_from(
-            arena
-                .word(at)
-                .map_err(|e| Error::from_reason(e.to_string()))?,
-        )
-        .map_err(|_| Error::from_reason("record kind exceeds u16"))?,
-    );
-    let cell = match (text_offset, text_len) {
-        (None, None) => Cell::Child {
-            kind,
-            at,
-            link: None,
-            changed: Default::default(),
-        },
-        (Some(offset), Some(len)) => Cell::BuiltLeaf {
-            kind,
-            text: StringRef::from_offset(word_argument(offset)?, word_argument(len)?),
-            record: at,
-        },
-        _ => {
-            return Err(Error::from_reason(
-                "a leaf needs both text offset and length",
-            ))
+#[napi]
+pub fn render_built_leaf(
+    env: Env,
+    chunks: Vec<Unknown<'_>>,
+    strings: Vec<Unknown<'_>>,
+    kind: f64,
+    text_offset: f64,
+    text_len: f64,
+) -> Result<RenderSample> {
+    measured(|| {
+        let words = typed_slices::<u32>(&env, &chunks)?;
+        let bytes = typed_slices::<u8>(&env, &strings)?;
+        let arena =
+            BorrowedArena::new(&words, &bytes).map_err(|e| Error::from_reason(e.to_string()))?;
+        render_arena(&arena, Root::Leaf { kind, text_offset, text_len })
+    })
+}
+
+/// A built root: a record by its address, or a leaf, which has no record,
+/// by its kind and its text.
+enum Root {
+    Record(f64),
+    Leaf { kind: f64, text_offset: f64, text_len: f64 },
+}
+
+fn render_arena(arena: &dyn ArenaRead, root: Root) -> Result<String> {
+    let cell = match root {
+        Root::Record(address) => {
+            let at = Address(word_argument(address)?);
+            if at == Address::NONE {
+                return Err(Error::from_reason("a built root must name a record"));
+            }
+            admit(arena, at, AnyNode::shape).map_err(|e| Error::from_reason(e.to_string()))?;
+            let kind = KindId(
+                u16::try_from(
+                    arena
+                        .word(at)
+                        .map_err(|e| Error::from_reason(e.to_string()))?,
+                )
+                .map_err(|_| Error::from_reason("record kind exceeds u16"))?,
+            );
+            Cell::Child {
+                kind,
+                at,
+                link: None,
+                changed: Default::default(),
+            }
+        }
+        Root::Leaf { kind, text_offset, text_len } => {
+            let kind = KindId(
+                u16::try_from(word_argument(kind)?)
+                    .map_err(|_| Error::from_reason("leaf kind exceeds u16"))?,
+            );
+            AnyNode::shape(kind).ok_or_else(|| Error::from_reason(format!("built leaf kind {} is not one the grammar writes", kind.0)))?;
+            let text = StringRef::from_offset(word_argument(text_offset)?, word_argument(text_len)?);
+            arena.text(text).map_err(|e| Error::from_reason(e.to_string()))?;
+            Cell::BuiltLeaf {
+                kind,
+                text,
+                changed: Default::default(),
+            }
         }
     };
     let root = CellAt {
@@ -465,6 +489,28 @@ impl ArenaRead for RegisteredRead<'_> {
     }
 }
 
+impl RegisteredArena {
+    fn render_root(&self, env: Env, root: Root, word_len: Option<f64>, string_len: Option<f64>) -> Result<RenderSample> {
+        measured(|| {
+            let (words, bytes) = self
+                .chunks
+                .as_ref()
+                .ok_or_else(|| Error::from_reason("arena registration was released"))?;
+            let arena = RegisteredRead {
+                words: CachedChunks::new(&env, words, self.word_open, word_len)?,
+                strings: CachedChunks::new(&env, bytes, self.string_open, string_len)?,
+            };
+            let rendered = render_arena(&arena, root);
+            arena
+                .words
+                .error
+                .into_inner()
+                .or_else(|| arena.strings.error.into_inner())
+                .map_or(rendered, Err)
+        })
+    }
+}
+
 #[napi]
 impl RegisteredArena {
     #[napi]
@@ -475,7 +521,7 @@ impl RegisteredArena {
         word_len: f64,
         string_len: f64,
     ) -> Result<RenderSample> {
-        self.render(env, address, None, None, Some(word_len), Some(string_len))
+        self.render_root(env, Root::Record(address), Some(word_len), Some(string_len))
     }
 
     #[napi]
@@ -483,28 +529,23 @@ impl RegisteredArena {
         &self,
         env: Env,
         address: f64,
-        text_offset: Option<f64>,
-        text_len: Option<f64>,
         word_len: Option<f64>,
         string_len: Option<f64>,
     ) -> Result<RenderSample> {
-        measured(|| {
-            let (words, bytes) = self
-                .chunks
-                .as_ref()
-                .ok_or_else(|| Error::from_reason("arena registration was released"))?;
-            let arena = RegisteredRead {
-                words: CachedChunks::new(&env, words, self.word_open, word_len)?,
-                strings: CachedChunks::new(&env, bytes, self.string_open, string_len)?,
-            };
-            let rendered = render_arena(&arena, address, text_offset, text_len);
-            arena
-                .words
-                .error
-                .into_inner()
-                .or_else(|| arena.strings.error.into_inner())
-                .map_or(rendered, Err)
-        })
+        self.render_root(env, Root::Record(address), word_len, string_len)
+    }
+
+    #[napi]
+    pub fn render_leaf(
+        &self,
+        env: Env,
+        kind: f64,
+        text_offset: f64,
+        text_len: f64,
+        word_len: Option<f64>,
+        string_len: Option<f64>,
+    ) -> Result<RenderSample> {
+        self.render_root(env, Root::Leaf { kind, text_offset, text_len }, word_len, string_len)
     }
 
     #[napi]

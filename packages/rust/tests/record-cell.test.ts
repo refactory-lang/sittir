@@ -62,10 +62,18 @@ function expected(entry: Entry): RecordCell {
 				kind: entry.kind as number,
 				offset: entry.offset as number,
 				len: entry.len as number,
-				record: entry.record as number
+				changed: { leading: entry.leading as boolean, trailing: entry.trailing as boolean }
 			};
 		case 'builtText':
 			return { form: 'builtText', offset: entry.offset as number, len: entry.len as number };
+		case 'copiedLeaf':
+			return {
+				form: 'copiedLeaf',
+				kind: entry.kind as number,
+				offset: entry.offset as number,
+				len: entry.len as number,
+				record: entry.record as number
+			};
 	}
 }
 
@@ -84,7 +92,7 @@ describe('the record cell decoder reads what the native codec writes', () => {
 		}
 	);
 
-	const written = new Set<RecordCell['form']>(['absent', 'child', 'unit', 'builtLeaf', 'builtText']);
+	const written = new Set<RecordCell['form']>(['absent', 'child', 'unit', 'builtLeaf', 'builtText', 'copiedLeaf']);
 	it.each(fixture.cells.filter((entry) => written.has(entry.form)).map((entry) => [JSON.stringify(entry.words), entry] as const))(
 		'encodes %s as the codec writes it',
 		(_, entry) => {

@@ -139,12 +139,16 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
                     link: None,
                     ..
                 }
-                | Cell::BuiltLeaf {
+                | Cell::CopiedLeaf {
                     kind,
                     record: child,
                     ..
                   } => pending.push((child, kind, inline, if inline == 0 { child } else { floor })),
                 Cell::Child { link: Some(tree), .. } => linked.push(tree),
+                Cell::BuiltLeaf { kind, text, .. } => {
+                    shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
+                    arena.text(text)?;
+                }
                 _ => {}
             }
             Ok(())
@@ -158,6 +162,7 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::arena::StringRef;
     use crate::slot::ChangedEdges;
 
     const PAIR: KindId = KindId(7);
@@ -187,6 +192,25 @@ mod tests {
         let inner = pair(&mut arena, leaf, LEAF);
         let outer = pair(&mut arena, inner, PAIR);
         assert_eq!(admit(&arena, outer, shape), Ok(Vec::new()));
+    }
+
+    #[test]
+    fn a_built_leaf_cell_is_admitted_by_its_kind_and_its_text() {
+        let mut arena = Arena::new();
+        let text = arena.intern("x").expect("room");
+        let holding = |arena: &mut Arena, kind: KindId, text| {
+            let mut words = [0; 7];
+            words[0] = u32::from(PAIR.0);
+            Cell::BuiltLeaf { kind, text, changed: ChangedEdges::default() }.encode(&mut words[2..]).expect("it fits");
+            arena.push(&words).expect("room")
+        };
+        let admitted = holding(&mut arena, LEAF, text);
+        assert_eq!(admit(&arena, admitted, shape), Ok(Vec::new()));
+        let unknown = holding(&mut arena, KindId(40), text);
+        assert_eq!(admit(&arena, unknown, shape), Err(ArenaError::Malformed { what: "built leaf kind", word: 40 }));
+        let past = StringRef { len: 64, ..text };
+        let outside = holding(&mut arena, LEAF, past);
+        assert_eq!(admit(&arena, outside, shape), Err(ArenaError::BadString(past)));
     }
 
     #[test]

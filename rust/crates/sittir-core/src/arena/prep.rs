@@ -254,7 +254,10 @@ impl RecordKey {
                 let place = place_of(view, record, &side)?;
                 Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: if at.site.is_some() { changed } else { side.changed } })
             }
-            Cell::BuiltLeaf { kind, record, .. } if claims(kind) => {
+            Cell::BuiltLeaf { kind, changed, .. } if claims(kind) => {
+                Ok(Self { tree: None, at: None, side_at: Address::NONE, place: super::built_leaf_place(at.site)?, changed })
+            }
+            Cell::CopiedLeaf { kind, record, .. } if claims(kind) => {
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 Ok(Self { tree: None, at: Some(record), side_at: Address(words[1]), place: Place::Record(record).into(), changed: side.changed })
             }
@@ -277,7 +280,7 @@ impl RecordKey {
 /// fill at its site starts from; none for a unit or a parsed node.
 fn stored_edges<T>(prep: &RecordPrep<'_, T>, at: CellAt) -> Edges {
     let record = match at.cell {
-        Cell::Child { kind, .. } | Cell::BuiltLeaf { kind, .. } => RecordKey::of(prep, at, |named| named == kind).ok(),
+        Cell::Child { kind, .. } | Cell::CopiedLeaf { kind, .. } => RecordKey::of(prep, at, |named| named == kind).ok(),
         _ => None,
     };
     record.and_then(|key| key.side(prep).ok()).and_then(|side| side.edges).unwrap_or_default()
@@ -395,6 +398,7 @@ impl<T: Clone + 'static> LayoutAt<'_, T> {
                 let units = prep.store.units(record).into_iter().map(|(word, item, trivia)| Ok(UnitSides { slot: key_of(word)?.to_owned(), item, trivia })).collect::<Result<_, ArenaError>>()?;
                 (prep.store.sides(Place::Record(record)), units)
             }
+            (None, PrepPlace::Stored(place @ Place::Leaf(_))) => (prep.store.sides(place), Vec::new()),
             _ => return Err(malformed("record place", 0)),
         };
         merge_source_sides(&mut trivia, self.rebuilt_from(prep)?.as_ref(), prep.sources);

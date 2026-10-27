@@ -58,18 +58,37 @@
 			"kind": 16,
 			"offset": 1048581,
 			"len": 4,
-			"record": 3145737,
-			"words": [5, 16, 1048581, 4, 3145737]
+			"leading": false,
+			"trailing": false,
+			"words": [5, 16, 1048581, 4, 0]
+		},
+		{
+			"form": "builtLeaf",
+			"kind": 16,
+			"offset": 1048581,
+			"len": 4,
+			"leading": false,
+			"trailing": true,
+			"words": [5, 16, 1048581, 4, 2]
 		},
 		{
 			"form": "builtLeaf",
 			"kind": 65535,
 			"offset": 1048581,
 			"len": 4,
-			"record": 3145737,
-			"words": [5, 65535, 1048581, 4, 3145737]
+			"leading": true,
+			"trailing": false,
+			"words": [5, 65535, 1048581, 4, 1]
 		},
-		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] }
+		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] },
+		{
+			"form": "copiedLeaf",
+			"kind": 16,
+			"offset": 1048581,
+			"len": 4,
+			"record": 3145737,
+			"words": [7, 16, 1048581, 4, 3145737]
+		}
 	],
 	"inlineHeaderWords": 2,
 	"inlines": [

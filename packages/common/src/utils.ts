@@ -1,6 +1,6 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setUnitSides, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
 import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, type EngineHandle } from './engine-scope.ts';
@@ -12,8 +12,8 @@ import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, SEEDS, SLOTS, type KeptSlots, type SeededSlots } from './record-view.ts';
-import { builtRefOf } from './built-ref.ts';
-import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf } from './built-arena.ts';
+import { builtLeafOf, builtRefOf, leafSitesOf } from './built-ref.ts';
+import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
 export { refuseJSON } from './json-refusal.ts';
@@ -102,25 +102,61 @@ export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] 
 const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
 
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
+	const leaf = builtLeafOf(node);
+	if (leaf !== undefined) {
+		const wired = wireSides(node, trivia);
+		const sites = leafSitesOf(node);
+		if (sites !== undefined) writeSites(leaf.arena, sites, trivia, wired);
+		const own = triviaOf(node);
+		setTriviaOf(node, own === undefined ? trivia : { ...own, ...trivia });
+		return;
+	}
 	const at = tableAt(node);
 	if (at === undefined) {
 		refuseBuiltEntries(trivia);
 		const own = triviaOf(node);
-		setTriviaData(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
+		setTriviaOf(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
 	}
-	const wire = entryWire(node);
+	const wired = wireSides(node, trivia);
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
-		if (entries === undefined) continue;
-		at.tree.writeTriviaSide(at.index, side, entries.map(wire));
+		const wire = wired[side];
+		if (entries === undefined || wire === undefined) continue;
+		at.tree.writeTriviaSide(at.index, side, wire);
 		holdSideEntries(at.tree, `${at.index}:${side}`, entries);
+	}
+}
+
+export function writeLeafSites(leaf: object, sites: readonly number[]): void {
+	const ref = builtLeafOf(leaf);
+	const own = triviaOf(leaf);
+	if (ref !== undefined && own !== undefined) writeSites(ref.arena, sites, own, wireSides(leaf, own));
+}
+
+export function leafWireSides(leaf: object): TriviaSides<unknown> | undefined {
+	const own = triviaOf(leaf);
+	return own === undefined ? undefined : wireSides(leaf, own);
+}
+
+function wireSides(node: object, trivia: NodeTrivia): TriviaSides<unknown> {
+	const wire = entryWire(node);
+	return mapTriviaEntries(trivia as TriviaSides<TriviaEntry>, (entries) => entries.map(wire));
+}
+
+function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia, wired: TriviaSides<unknown>): void {
+	for (const side of TRIVIA_SIDES) {
+		const entries = trivia[side];
+		const wire = wired[side];
+		if (entries === undefined || wire === undefined) continue;
+		arena.writeLeafSide(sites, side, wire);
+		for (let n = 0; n < sites.length; n += 3) holdSideEntries(arena.tree, `${sites[n]}.${sites[n + 1]}.${sites[n + 2]}:${side}`, entries);
 	}
 }
 
 export function writeUnitSides(node: object, units: readonly UnitSidesData[]): void {
 	const built = builtRefOf(node);
-	if (built === undefined) {
+	if (built?.at === undefined) {
 		for (const unit of units) refuseBuiltEntries(unit);
 		setUnitSides(node, units);
 		return;
@@ -197,7 +233,7 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		if (placeOf(freshNode) !== undefined) continue;
 		if (placeOf(heldNode) === undefined) {
 			const trivia = triviaOf(heldNode);
-			if (trivia !== undefined && triviaOf(freshNode) === undefined) setTriviaData(freshNode as unknown as AnyUntypedNode, trivia);
+			if (trivia !== undefined && triviaOf(freshNode) === undefined) setTriviaOf(freshNode as unknown as AnyUntypedNode, trivia);
 			carryUnitSides(heldNode, freshNode);
 			continue;
 		}
@@ -616,10 +652,6 @@ export function hasKind(v: object): v is { kind: string } & Record<string, unkno
 	return 'kind' in v && typeof (v as Record<string, unknown>).kind === 'string';
 }
 
-function setTriviaData(node: AnyUntypedNode, triviaData: NodeTrivia): void {
-	node.$_layout = { ...node.$_layout, trivia: triviaData };
-}
-
 /** How a hydrate turns a native node into its kind's node: the grammar's `wrapNode`. */
 export type WrapNode = (data: object, tree: TreeHandle) => unknown;
 
@@ -641,10 +673,11 @@ export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, de
 
 
 /** The role an envelope's content is reached in: `aliasContent` when it shares the envelope's parser node (both stamp one index), else `node`. */
-export function contentRole(envelope: object, content: unknown): Role {
-	if (content === null || typeof content !== 'object') return 'node';
+export function contentRole(envelope: object, content: () => unknown): Role {
 	const own = indexOf(envelope);
-	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
+	if (own === undefined) return 'node';
+	const value = content();
+	return value !== null && typeof value === 'object' && own === indexOf(value) ? 'aliasContent' : 'node';
 }
 
 /** How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree, or `hydrateStored` for a built node. */
@@ -766,6 +799,7 @@ export {
 	recordFlag,
 	recordLength,
 	recordOf,
+	recordPresent,
 	recordSlot,
 	recordSlots,
 	rowData,
@@ -781,3 +815,4 @@ export {
 } from './record-view.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltRow, type BuiltText, type BuiltViews } from './built-arena.ts';
+export { LEAF_SITES } from './built-ref.ts';

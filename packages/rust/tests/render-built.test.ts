@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
 import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
-import { builtRefOf } from '../../common/src/built-ref.ts';
+import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
 import { TSKindId } from '../src/kinds.ts';
@@ -17,14 +17,21 @@ function addon() {
 
 function arenaEngine() {
 	const native = new (addon().SittirEngine)();
-	const { renderBuilt, builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = native;
-	if (renderBuilt === undefined || builtTriviaSide === undefined || writeBuiltTriviaSide === undefined || holdBuiltArena === undefined)
+	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = native;
+	if (
+		renderBuilt === undefined ||
+		renderBuiltLeaf === undefined ||
+		builtTriviaSide === undefined ||
+		writeBuiltTriviaSide === undefined ||
+		holdBuiltArena === undefined
+	)
 		throw new Error('the native addon was built without the arena feature');
 	const written = (chunks: readonly { readonly length: number }[]) => new Uint32Array(chunks.map((chunk) => chunk.length));
 	return {
 		hold: (words: readonly Uint32Array[], bytes: readonly Uint8Array[] = [], writtenWords = written(words)) =>
 			holdBuiltArena.call(native, words, bytes, writtenWords, written(bytes)),
-		renderBuilt: (address: number, text: { readonly at: number; readonly len: number } | null = null) => renderBuilt.call(native, native, address, text, false, false),
+		renderBuilt: (address: number) => renderBuilt.call(native, native, address, false, false),
+		renderBuiltLeaf: (kind: number, text: { readonly at: number; readonly len: number }) => renderBuiltLeaf.call(native, native, kind, text, null, false, false),
 		dispose: () => native.dispose(),
 		builtTriviaSide: builtTriviaSide.bind(native),
 		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native)
@@ -51,7 +58,7 @@ describe('a built arena rendered natively', () => {
 		native.hold([[0, 1] as never]);
 		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
 		native.hold([words(TSKindId.Identifier, 0)], [new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(() => native.renderBuilt(1, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
+		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
 		native.hold([words(1, 0)], [], [3] as never);
 		expect(() => native.renderBuilt(1)).toThrow(/written table/);
 	});
@@ -59,7 +66,14 @@ describe('a built arena rendered natively', () => {
 	it('borrows no chunk the render does not read', () => {
 		const native = arenaEngine();
 		native.hold([words(TSKindId.Identifier, 0), new Uint32Array(new SharedArrayBuffer(16))], [new TextEncoder().encode('x'), new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(native.renderBuilt(1, { at: 0, len: 1 })).toBe('x');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toBe('x');
+	});
+
+	it('admits a lone leaf by its kind and its text', () => {
+		const native = arenaEngine();
+		native.hold([words(1, 0)], [new TextEncoder().encode('x')]);
+		expect(() => native.renderBuiltLeaf(60000, { at: 0, len: 1 })).toThrow(/built leaf kind 60000/);
+		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 9 })).toThrow();
 	});
 
 	it('refuses words that are no record it admits', () => {
@@ -99,6 +113,21 @@ describe('a built arena rendered natively', () => {
 		expect(() => native.builtTriviaSide(0, 'leading')).toThrow(/record address 0/);
 		expect(() => native.writeBuiltTriviaSide(0, 'leading', [])).toThrow(/record address 0/);
 		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
+	});
+
+	it('writes a side of a built leaf at each site it names, refusing holder 0 and anything but triples before writing any', async () => {
+		const rs = await recordEngine();
+		const b = rs.build;
+		const x = b.identifier('x');
+		const statement = b.expressionStatement(x);
+		const [holder, word, item] = leafSitesOf(x)!;
+		const arena = builtRefOf(x)!.arena;
+		const entry = writtenEntry(b.blockComment(b.blockCommentRegular(' c ')));
+		expect(() => arena.writeLeafSide([holder!, word!, item!, 0, word!, item!], 'leading', [entry])).toThrow(/record address 0/);
+		expect(() => arena.writeLeafSide([holder!, word!], 'leading', [entry])).toThrow(/triples/);
+		expect(rs.render(statement).toString()).toBe('x;');
+		arena.writeLeafSide([holder!, word!, item!], 'leading', [entry]);
+		expect(rs.render(statement).toString()).toBe('/* c */ x;');
 	});
 
 	it.each([

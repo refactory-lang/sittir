@@ -1,5 +1,4 @@
 import { addressOf, chunkOf, wordOf, decodeCell } from '../../../../../packages/common/src/record-cell.ts';
-import { RECORD_HEADER_WORDS } from '../../../../../packages/rust/src/records.ts';
 
 const nodes = new WeakMap();
 const encoder = new TextEncoder();
@@ -134,7 +133,8 @@ export class Storage {
 	}
 
 	identity(node) {
-		return this.ref(node)._r;
+		const ref = this.ref(node);
+		return ref._r ?? `${ref.$type}:${ref._offset}:${ref._len}`;
 	}
 
 	address(ref) {
@@ -167,9 +167,9 @@ export class Storage {
 
 	leaf(kind, text) {
 		if (typeof text !== 'string') throw new Error('a leaf needs text');
-		const ref = this.begin(kind, RECORD_HEADER_WORDS);
-		if (this.#mode === 'object') ref.data.$text = text;
-		else Object.assign(ref, this.#text(text));
+		if (this.#mode === 'arena') return { kind, ...this.#text(text) };
+		const ref = this.begin(kind, 0);
+		ref.data.$text = text;
 		return ref;
 	}
 
@@ -239,7 +239,7 @@ export class Storage {
 			case 'builtText':
 				return this.text(cell);
 			case 'builtLeaf':
-				return this.#wrap(this, { kind: cell.kind, at: cell.record, offset: cell.offset, len: cell.len });
+				return this.#wrap(this, { kind: cell.kind, offset: cell.offset, len: cell.len });
 			case 'child':
 				if (cell.link !== undefined) throw new Error('the construction probe does not own parsed links');
 				return this.#wrap(this, { kind: cell.kind, at: cell.at });
@@ -280,7 +280,7 @@ export class Storage {
 		const bytes = this.#strings.written();
 		return ref._offset === undefined
 			? this.#registration.renderRecord(ref._r, words, bytes)
-			: this.#registration.render(ref._r, ref._offset, ref._len, words, bytes);
+			: this.#registration.renderLeaf(ref.$type, ref._offset, ref._len, words, bytes);
 	}
 
 	render(node) {

@@ -38,6 +38,7 @@ import {
 	textOf,
 	recordOf,
 	recordSlot,
+	recordPresent,
 	recordFlag,
 	keptSlot,
 	keptItems,
@@ -11237,7 +11238,12 @@ export function wrapStatementIdentifier(data: T.StatementIdentifier, tree: TreeH
 		...data,
 		$type: TSKindId.StatementIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.StatementIdentifier['_content']>) =>
@@ -11271,7 +11277,12 @@ export function wrapShorthandPropertyIdentifier(
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandPropertyIdentifier['_content']>) =>
@@ -11305,7 +11316,12 @@ export function wrapShorthandPropertyIdentifierPattern(
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifierPattern as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.ShorthandPropertyIdentifierPattern['_content']>) =>
@@ -11336,7 +11352,12 @@ export function wrapPropertyIdentifier(data: T.PropertyIdentifier, tree: TreeHan
 		...data,
 		$type: TSKindId.PropertyIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.PropertyIdentifier['_content']>) =>
@@ -11367,7 +11388,12 @@ export function wrapTypeIdentifier(data: T.TypeIdentifier, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		content() {
-			return hydrateSlot<T.Identifier>(this, '_content', tree, contentRole(this, this._content));
+			return hydrateSlot<T.Identifier>(
+				this,
+				'_content',
+				tree,
+				contentRole(this, () => this._content)
+			);
 		},
 		$with: {
 			content: (v: NonNullable<T.TypeIdentifier['_content']>) =>
@@ -12447,14 +12473,12 @@ function viewCatchClause(data: RecordStub, tree: TreeHandle): T.CatchClause.Pars
 			parameter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'parameter', args),
 			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args)
 		},
-		parameter:
-			recordSlot(data, tree, 2, 15, 13) === undefined
-				? undefined
-				: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
-		type:
-			recordSlot(data, tree, 2, 15, 13) === undefined
-				? undefined
-				: () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
+		parameter: !recordPresent(data, tree, 2, 15, 13)
+			? undefined
+			: () => groupField(readGroup_catchClauseGroup.call(node), 'parameter'),
+		type: !recordPresent(data, tree, 2, 15, 13)
+			? undefined
+			: () => groupField(readGroup_catchClauseGroup.call(node), 'type'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -19039,7 +19063,14 @@ function viewStatementIdentifier(data: RecordStub, tree: TreeHandle): T.Statemen
 		...data,
 		$type: TSKindId.StatementIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -19064,7 +19095,14 @@ function viewShorthandPropertyIdentifier(data: RecordStub, tree: TreeHandle): T.
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -19092,7 +19130,14 @@ function viewShorthandPropertyIdentifierPattern(
 		...data,
 		$type: TSKindId.ShorthandPropertyIdentifierPattern as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -19117,7 +19162,14 @@ function viewPropertyIdentifier(data: RecordStub, tree: TreeHandle): T.PropertyI
 		...data,
 		$type: TSKindId.PropertyIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
@@ -19142,7 +19194,14 @@ function viewTypeIdentifier(data: RecordStub, tree: TreeHandle): T.TypeIdentifie
 		...data,
 		$type: TSKindId.TypeIdentifier as const,
 		content() {
-			return viewSlot<T.Identifier>(this, tree, 2, 5, 0, contentRole(this, recordSlot(this, tree, 2, 5, 0)));
+			return viewSlot<T.Identifier>(
+				this,
+				tree,
+				2,
+				5,
+				0,
+				contentRole(this, () => recordSlot(this, tree, 2, 5, 0))
+			);
 		},
 		$with: {
 			content: (...args: unknown[]) => rowWith(node, tree, _wrap, 'content', args)
