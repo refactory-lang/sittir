@@ -286,7 +286,7 @@ export function buildRelativeImport(config: T.RelativeImport.Config): T.Relative
 	if (handle !== undefined) admitChildren(handle, 'relative_import', { prefix: _prefix, name: _name });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.RelativeImport as const, { _prefix, _name });
-	const record = arena.record(TSKindId.RelativeImport as const, 13);
+	const record = arena.record(TSKindId.RelativeImport as const, 12);
 	storeCell(arena, record, 2, _prefix);
 	storeCell(arena, record, 7, _name);
 	const node = arena.view(record, { 2: _prefix, 7: _name });
@@ -355,10 +355,10 @@ export function buildImportFromStatement(config: T.ImportFromStatement.Config): 
 		admitChildren(handle, 'import_from_statement', { moduleName: _module_name, content: _content });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ImportFromStatement as const, { _module_name, _content });
-	const record = arena.record(TSKindId.ImportFromStatement as const, 27);
+	const record = arena.record(TSKindId.ImportFromStatement as const, 17);
 	storeCell(arena, record, 2, _module_name);
-	storeCell(arena, record, 17, _content);
-	const node = arena.view(record, { 2: _module_name, 17: _content });
+	storeCell(arena, record, 7, _content);
+	const node = arena.view(record, { 2: _module_name, 7: _content });
 	return node as unknown as T.ImportFromStatement.Bound;
 }
 
@@ -449,10 +449,10 @@ export function buildAliasedImport(config: T.AliasedImport.Config): T.AliasedImp
 	if (handle !== undefined) admitChildren(handle, 'aliased_import', { name: _name, alias: _alias });
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AliasedImport as const, { _name, _alias });
-	const record = arena.record(TSKindId.AliasedImport as const, 13);
+	const record = arena.record(TSKindId.AliasedImport as const, 12);
 	storeCell(arena, record, 2, _name);
-	storeCell(arena, record, 8, _alias);
-	const node = arena.view(record, { 2: _name, 8: _alias });
+	storeCell(arena, record, 7, _alias);
+	const node = arena.view(record, { 2: _name, 7: _alias });
 	return node as unknown as T.AliasedImport.Bound;
 }
 
@@ -914,30 +914,26 @@ function rowMatchStatement(node: object, handle: EngineHandle | undefined): Buil
 }
 
 export function buildCaseClause<
-	CasePatternsSlot extends T.CaseClause.Config['casePatterns'],
+	PatternSlot extends T.CaseClause.Config['pattern'],
 	GuardSlot extends T.CaseClause.Config['guard'],
-	ConsequenceSlot extends T.CaseClause.Config['consequence']
+	BodySlot extends T.CaseClause.Config['body']
 >(
-	config: RefusingConfig<
-		T.CaseClause.Config,
-		{ casePatterns: CasePatternsSlot; guard: GuardSlot; consequence: ConsequenceSlot }
-	>
+	config: RefusingConfig<T.CaseClause.Config, { pattern: PatternSlot; guard: GuardSlot; body: BodySlot }>
 ): T.CaseClause.Bound;
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound {
 	currentHandle()?.admit(TSKindId.CaseClause, [config]);
-	const _case_patterns = config.casePatterns;
+	const _pattern = config.pattern;
 	const _guard = config.guard;
-	const _consequence = config.consequence;
+	const _body = config.body;
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'case_clause', { casePatterns: _case_patterns, guard: _guard, consequence: _consequence });
+	if (handle !== undefined) admitChildren(handle, 'case_clause', { pattern: _pattern, guard: _guard, body: _body });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.CaseClause as const, { _case_patterns, _guard, _consequence });
-	const record = arena.record(TSKindId.CaseClause as const, 27);
-	storeCell(arena, record, 2, _case_patterns);
-	storeCell(arena, record, 8, _guard);
-	storeCell(arena, record, 17, _consequence);
-	const node = arena.view(record, { 2: _case_patterns, 8: _guard, 17: _consequence });
+	handle?.verifyStored?.(TSKindId.CaseClause as const, { _pattern, _guard, _body });
+	const record = arena.record(TSKindId.CaseClause as const, 26);
+	storeCell(arena, record, 2, _pattern);
+	storeCell(arena, record, 7, _guard);
+	storeCell(arena, record, 16, _body);
+	const node = arena.view(record, { 2: _pattern, 7: _guard, 16: _body });
 	return node as unknown as T.CaseClause.Bound;
 }
 
@@ -946,17 +942,10 @@ function rowCaseClause(node: object, handle: EngineHandle | undefined): BuiltRow
 	const config = inputs.config as T.CaseClause.Config;
 	return {
 		$with: {
-			casePatterns: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CasePatterns as const, optional: false, make: buildCasePatterns },
-						(value: Admit<T.CasePatterns>) => buildCaseClause({ ...config, casePatterns: value })
-					)
-				),
+			pattern: (value: Admit<T.CasePattern | T.CasePatternList>) =>
+				rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value })),
 			guard: (value?: Admit<T.IfClause>) => rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value })),
-			consequence: (value: Admit<T.Suite>) =>
-				rebuilt(node, handle, () => buildCaseClause({ ...config, consequence: value }))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildCaseClause({ ...config, body: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2026,27 +2015,33 @@ function rowExpressionList(node: object, handle: EngineHandle | undefined): Buil
 	};
 }
 
-export function buildDottedName<A extends NonEmptyArray<Admit<T.Identifier>>>(
-	...children: A & RefuseUndeclared<A>
-): T.DottedName.Bound;
-export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>): T.DottedName.Bound {
-	currentHandle()?.admit(TSKindId.DottedName, children);
-	const _names = children;
+export function buildDottedName<
+	QualifierSlot extends T.DottedName.Config['qualifier'],
+	NameSlot extends T.DottedName.Config['name']
+>(config: RefusingConfig<T.DottedName.Config, { qualifier: QualifierSlot; name: NameSlot }>): T.DottedName.Bound;
+export function buildDottedName(config: T.DottedName.Config): T.DottedName.Bound {
+	currentHandle()?.admit(TSKindId.DottedName, [config]);
+	const _qualifier = config.qualifier;
+	const _name = config.name;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'dotted_name', { names: _names });
+	if (handle !== undefined) admitChildren(handle, 'dotted_name', { qualifier: _qualifier, name: _name });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.DottedName as const, { _names });
-	const record = arena.record(TSKindId.DottedName as const, 4);
-	storeList(arena, record, 2, _names, 5);
-	const node = arena.view(record, { 2: _names });
+	handle?.verifyStored?.(TSKindId.DottedName as const, { _qualifier, _name });
+	const record = arena.record(TSKindId.DottedName as const, 12);
+	storeCell(arena, record, 2, _qualifier);
+	storeCell(arena, record, 7, _name);
+	const node = arena.view(record, { 2: _qualifier, 7: _name });
 	return node as unknown as T.DottedName.Bound;
 }
 
 function rowDottedName(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const config = inputs.config as T.DottedName.Config;
 	return {
 		$with: {
-			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
-				rebuilt(node, handle, () => buildDottedName(...restItems('names', vs)))
+			qualifier: (value?: Admit<T.DottedName>) =>
+				rebuilt(node, handle, () => buildDottedName({ ...config, qualifier: value })),
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildDottedName({ ...config, name: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2371,31 +2366,31 @@ function rowKeyValuePattern(node: object, handle: EngineHandle | undefined): Bui
 
 export function buildKeywordPattern<
 	NameSlot extends T.KeywordPattern.Config['name'],
-	ValueSlot extends T.KeywordPattern.Config['value']
+	PatternSlot extends T.KeywordPattern.Config['pattern']
 >(
 	config: RefusingConfig<
-		WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>,
-		{ name: NameSlot; value: ValueSlot }
+		WidenSlots<T.KeywordPattern.Config, { pattern: Admit<T.SimplePattern> }>,
+		{ name: NameSlot; pattern: PatternSlot }
 	>
 ): T.KeywordPattern.Bound;
 export function buildKeywordPattern(
-	config: WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>
+	config: WidenSlots<T.KeywordPattern.Config, { pattern: Admit<T.SimplePattern> }>
 ): T.KeywordPattern.Bound {
 	currentHandle()?.admit(TSKindId.KeywordPattern, [config]);
 	const _name = config.name;
-	const _value = admitSplicedEnvelope(
-		kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value),
+	const _pattern = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.KeywordPattern['_pattern']>>(config.pattern),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
-		'KeywordPattern.value'
+		'KeywordPattern.pattern'
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'keyword_pattern', { name: _name, value: _value });
+	if (handle !== undefined) admitChildren(handle, 'keyword_pattern', { name: _name, pattern: _pattern });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.KeywordPattern as const, { _name, _value });
+	handle?.verifyStored?.(TSKindId.KeywordPattern as const, { _name, _pattern });
 	const record = arena.record(TSKindId.KeywordPattern as const, 12);
 	storeCell(arena, record, 2, _name);
-	storeCell(arena, record, 7, _value);
-	const node = arena.view(record, { 2: _name, 7: _value });
+	storeCell(arena, record, 7, _pattern);
+	const node = arena.view(record, { 2: _name, 7: _pattern });
 	return node as unknown as T.KeywordPattern.Bound;
 }
 
@@ -2406,48 +2401,8 @@ function rowKeywordPattern(node: object, handle: EngineHandle | undefined): Buil
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordPattern({ ...config, name: value })),
-			value: (value: Admit<NonNullable<T.KeywordPattern.Config>['value']>) =>
-				rebuilt(node, handle, () => buildKeywordPattern({ ...config, value: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
-}
-
-export function buildSplatPattern<NameSlot extends T.SplatPattern.Config['name']>(
-	config: RefusingConfig<T.SplatPattern.Config, { name: NameSlot }>
-): T.SplatPattern.Bound;
-export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Bound {
-	currentHandle()?.admit(TSKindId.SplatPattern, [config]);
-	const _operator = kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator);
-	const _name = rejectKeywordText(
-		kindIdStorage<NonNullable<T.SplatPattern['_name']>>(config.name),
-		'SplatPattern.name',
-		TSKindId.Identifier,
-		['_']
-	);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'splat_pattern', { operator: _operator, name: _name });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.SplatPattern as const, { _operator, _name });
-	const record = arena.record(TSKindId.SplatPattern as const, 12);
-	storeCell(arena, record, 2, _operator);
-	storeCell(arena, record, 7, _name);
-	const node = arena.view(record, { 2: _operator, 7: _name });
-	return node as unknown as T.SplatPattern.Bound;
-}
-
-function rowSplatPattern(node: object, handle: EngineHandle | undefined): BuiltRow {
-	const inputs = builtInputs(node);
-	const config = inputs.config as T.SplatPattern.Config;
-	return {
-		$with: {
-			operator: (value: Admit<NonNullable<T.SplatPattern.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildSplatPattern({ ...config, operator: value })),
-			name: (value: Admit<NonNullable<T.SplatPattern.Config>['name']>) =>
-				rebuilt(node, handle, () => buildSplatPattern({ ...config, name: value }))
+			pattern: (value: Admit<NonNullable<T.KeywordPattern.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildKeywordPattern({ ...config, pattern: value }))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -2457,21 +2412,21 @@ function rowSplatPattern(node: object, handle: EngineHandle | undefined): BuiltR
 }
 
 export function buildClassPattern<
-	NameSlot extends T.ClassPattern.Config['name'],
-	ArgumentsSlot extends T.ClassPattern.Config['arguments']
->(config: RefusingConfig<T.ClassPattern.Config, { name: NameSlot; arguments: ArgumentsSlot }>): T.ClassPattern.Bound;
+	TypeSlot extends T.ClassPattern.Config['type'],
+	FieldsSlot extends T.ClassPattern.Config['fields']
+>(config: RefusingConfig<T.ClassPattern.Config, { type: TypeSlot; fields: FieldsSlot }>): T.ClassPattern.Bound;
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
 	currentHandle()?.admit(TSKindId.ClassPattern, [config]);
-	const _name = config.name;
-	const _arguments = config.arguments;
+	const _type = config.type;
+	const _fields = config.fields;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'class_pattern', { name: _name, arguments: _arguments });
+	if (handle !== undefined) admitChildren(handle, 'class_pattern', { type: _type, fields: _fields });
 	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.ClassPattern as const, { _name, _arguments });
-	const record = arena.record(TSKindId.ClassPattern as const, 14);
-	storeCell(arena, record, 2, _name);
-	storeCell(arena, record, 8, _arguments);
-	const node = arena.view(record, { 2: _name, 8: _arguments });
+	handle?.verifyStored?.(TSKindId.ClassPattern as const, { _type, _fields });
+	const record = arena.record(TSKindId.ClassPattern as const, 13);
+	storeCell(arena, record, 2, _type);
+	storeCell(arena, record, 7, _fields);
+	const node = arena.view(record, { 2: _type, 7: _fields });
 	return node as unknown as T.ClassPattern.Bound;
 }
 
@@ -2480,13 +2435,13 @@ function rowClassPattern(node: object, handle: EngineHandle | undefined): BuiltR
 	const config = inputs.config as T.ClassPattern.Config;
 	return {
 		$with: {
-			name: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, name: value })),
-			arguments: (...args: unknown[]) =>
+			type: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, type: value })),
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-						(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, arguments: value })
+						(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, fields: value })
 					)
 				)
 		},
@@ -2925,8 +2880,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224,
-				233, 238, 236, 239, 234, 240, 235, 242, 241, 64, 201, 246, 143, 203
+				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
+				233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -4909,62 +4864,6 @@ function rowSubjects(node: object, handle: EngineHandle | undefined): BuiltRow {
 	};
 }
 
-export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.CasePattern>>;
-	return _buildCasePatterns(elements, options);
-}
-function _buildCasePatterns(
-	elements: NonEmptyArray<Admit<T.CasePattern>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.CasePatterns.Bound {
-	currentHandle()?.admit(TSKindId.CasePatterns, elements);
-	const _item = elements;
-	const _delimiter = options.delimiter;
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'case_patterns', { items: _item });
-	const arena = builtArenaOf(handle);
-	handle?.verifyStored?.(TSKindId.CasePatterns as const, { _item });
-	const record = arena.record(TSKindId.CasePatterns as const, 4);
-	storeList(arena, record, 2, _item, 5);
-	storeListOptions(arena, record, _delimiter, undefined);
-	const node = arena.view(record, { 2: _item });
-	return node as unknown as T.CasePatterns.Bound;
-}
-
-function rowCasePatterns(node: object, handle: EngineHandle | undefined): BuiltRow {
-	const inputs = builtInputs(node);
-	const elements = inputs.elements as NonEmptyArray<Admit<T.CasePattern>>;
-	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	return {
-		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () => buildCasePatterns(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
-}
-
 export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildWithClauseWithItems>;
@@ -5479,6 +5378,62 @@ function rowTuplePatternElements(node: object, handle: EngineHandle | undefined)
 				rebuilt(node, handle, () => buildTuplePatternElements(options, ...vs)),
 			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
 				rebuilt(node, handle, () => buildTuplePatternElements({ ...options, delimiter: v }, ...elements))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	};
+}
+
+export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildCasePatternList>;
+export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildCasePatternList>;
+export function buildCasePatternList(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.CasePattern>>;
+	return _buildCasePatternList(elements, options);
+}
+function _buildCasePatternList(
+	elements: NonEmptyArray<Admit<T.CasePattern>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.CasePatternList.Bound {
+	currentHandle()?.admit(TSKindId.CasePatternList, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'case_pattern_list', { items: _item });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CasePatternList as const, { _item });
+	const record = arena.record(TSKindId.CasePatternList as const, 4);
+	storeList(arena, record, 2, _item, 5);
+	storeListOptions(arena, record, _delimiter, undefined);
+	const node = arena.view(record, { 2: _item });
+	return node as unknown as T.CasePatternList.Bound;
+}
+
+function rowCasePatternList(node: object, handle: EngineHandle | undefined): BuiltRow {
+	const inputs = builtInputs(node);
+	const elements = inputs.elements as NonEmptyArray<Admit<T.CasePattern>>;
+	const options = inputs.options as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	return {
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
 		},
 		$trivia: {
 			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
@@ -6981,6 +6936,74 @@ function rowExceptClauseException(node: object, handle: EngineHandle | undefined
 	};
 }
 
+export function buildSplatPatternList<V extends Admit<T.Identifier | TSKindId.Underscore>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatPatternList.Bound;
+export function buildSplatPatternList(value: Admit<T.Identifier | TSKindId.Underscore>): T.SplatPatternList.Bound {
+	const _pattern = rejectKeywordText(
+		kindIdStorage<NonNullable<T.SplatPatternList['_pattern']>>(value),
+		'SplatPatternList.pattern',
+		TSKindId.Identifier,
+		['_']
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'splat_pattern_list', { pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.SplatPatternList as const, { _pattern });
+	const record = arena.record(TSKindId.SplatPatternList as const, 7);
+	storeCell(arena, record, 2, _pattern);
+	const node = arena.view(record, { 2: _pattern });
+	return node as unknown as T.SplatPatternList.Bound;
+}
+
+function rowSplatPatternList(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
+		$with: {
+			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+				rebuilt(node, handle, () => buildSplatPatternList(value))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	};
+}
+
+export function buildSplatPatternDictionary<V extends Admit<T.Identifier | TSKindId.Underscore>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatPatternDictionary.Bound;
+export function buildSplatPatternDictionary(
+	value: Admit<T.Identifier | TSKindId.Underscore>
+): T.SplatPatternDictionary.Bound {
+	const _pattern = rejectKeywordText(
+		kindIdStorage<NonNullable<T.SplatPatternDictionary['_pattern']>>(value),
+		'SplatPatternDictionary.pattern',
+		TSKindId.Identifier,
+		['_']
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'splat_pattern_dictionary', { pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.SplatPatternDictionary as const, { _pattern });
+	const record = arena.record(TSKindId.SplatPatternDictionary as const, 7);
+	storeCell(arena, record, 2, _pattern);
+	const node = arena.view(record, { 2: _pattern });
+	return node as unknown as T.SplatPatternDictionary.Bound;
+}
+
+function rowSplatPatternDictionary(node: object, handle: EngineHandle | undefined): BuiltRow {
+	return {
+		$with: {
+			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+				rebuilt(node, handle, () => buildSplatPatternDictionary(value))
+		},
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		}
+	};
+}
+
 export function buildAssignmentEq<
 	NameSlot extends T.AssignmentEq.Config['name'],
 	ValueSlot extends T.AssignmentEq.Config['value']
@@ -8204,7 +8227,6 @@ export type FluentKindMap = {
 	dict_pattern: T.DictPattern.Bound;
 	key_value_pattern: T.KeyValuePattern.Bound;
 	keyword_pattern: T.KeywordPattern.Bound;
-	splat_pattern: T.SplatPattern.Bound;
 	class_pattern: T.ClassPattern.Bound;
 	complex_pattern: T.ComplexPattern.Bound;
 	parameters_elements: T.ParametersElements.Bound;
@@ -8270,7 +8292,6 @@ export type FluentKindMap = {
 	keyword_separator: T.KeywordSeparator;
 	simple_statements_elements: T.SimpleStatementsElements.Bound;
 	subjects: T.Subjects.Bound;
-	case_patterns: T.CasePatterns.Bound;
 	with_clause_with_items: T.WithClauseWithItems.Bound;
 	types: T.Types.Bound;
 	argument_list_elements: T.ArgumentListElements.Bound;
@@ -8281,6 +8302,7 @@ export type FluentKindMap = {
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
+	case_pattern_list: T.CasePatternList.Bound;
 	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
@@ -8313,6 +8335,8 @@ export type FluentKindMap = {
 	simple_pattern_negative: T.SimplePatternNegative.Bound;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Bound;
 	except_clause_exception: T.ExceptClauseException.Bound;
+	splat_pattern_list: T.SplatPatternList.Bound;
+	splat_pattern_dictionary: T.SplatPatternDictionary.Bound;
 	assignment_eq: T.AssignmentEq.Bound;
 	assignment_type: T.AssignmentType.Bound;
 	assignment_typed: T.AssignmentTyped.Bound;
@@ -8408,7 +8432,6 @@ export const _factoryMap = {
 	dict_pattern: buildDictPattern,
 	key_value_pattern: buildKeyValuePattern,
 	keyword_pattern: buildKeywordPattern,
-	splat_pattern: buildSplatPattern,
 	class_pattern: buildClassPattern,
 	complex_pattern: buildComplexPattern,
 	parameters_elements: buildParametersElements,
@@ -8474,7 +8497,6 @@ export const _factoryMap = {
 	keyword_separator: buildKeywordSeparator,
 	simple_statements_elements: buildSimpleStatementsElements,
 	subjects: buildSubjects,
-	case_patterns: buildCasePatterns,
 	with_clause_with_items: buildWithClauseWithItems,
 	types: buildTypes,
 	argument_list_elements: buildArgumentListElements,
@@ -8485,6 +8507,7 @@ export const _factoryMap = {
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
 	tuple_pattern_elements: buildTuplePatternElements,
+	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
@@ -8517,6 +8540,8 @@ export const _factoryMap = {
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
+	splat_pattern_list: buildSplatPatternList,
+	splat_pattern_dictionary: buildSplatPatternDictionary,
 	assignment_eq: buildAssignmentEq,
 	assignment_type: buildAssignmentType,
 	assignment_typed: buildAssignmentTyped,
@@ -8555,7 +8580,7 @@ export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
 	rows: Object.freeze({
-		73: rowComment,
+		72: rowComment,
 		90: rowIntegerHex,
 		91: rowIntegerOctal,
 		92: rowIntegerBinary,
@@ -8623,7 +8648,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		187: rowDictPattern,
 		188: rowKeyValuePattern,
 		189: rowKeywordPattern,
-		190: rowSplatPattern,
 		191: rowClassPattern,
 		192: rowComplexPattern,
 		193: rowParametersElements,
@@ -8679,16 +8703,16 @@ export const builtViews: BuiltViews = Object.freeze({
 		257: rowAwait,
 		260: rowSimpleStatementsElements,
 		261: rowSubjects,
-		262: rowCasePatterns,
-		263: rowWithClauseWithItems,
-		264: rowTypes,
-		265: rowArgumentListElements,
-		266: rowListPatternCasePatterns,
-		267: rowDictPatternElements,
-		268: rowSubscripts,
-		269: rowDictionaryElements,
-		270: rowSliceGroup,
-		271: rowTuplePatternElements,
+		262: rowWithClauseWithItems,
+		263: rowTypes,
+		264: rowArgumentListElements,
+		265: rowListPatternCasePatterns,
+		266: rowDictPatternElements,
+		267: rowSubscripts,
+		268: rowDictionaryElements,
+		269: rowSliceGroup,
+		270: rowTuplePatternElements,
+		271: rowCasePatternList,
 		272: rowTupleElements,
 		273: rowExceptClauseExceptionAs,
 		274: rowCaseTuplePattern,
@@ -8702,26 +8726,28 @@ export const builtViews: BuiltViews = Object.freeze({
 		284: rowSimplePatternNegative,
 		285: rowExceptClauseExceptionList,
 		286: rowExceptClauseException,
-		287: rowAssignmentEq,
-		288: rowAssignmentType,
-		289: rowAssignmentTyped,
-		290: rowExpressionStatementTuple,
-		291: rowWithClauseBare,
-		292: rowWithClauseParen,
-		293: rowMatchBlockBlock,
-		294: rowMatchBlockEmpty,
-		295: rowSuiteInline,
-		296: rowSuiteBlock,
-		297: rowSuiteEmpty,
-		298: rowComparisonOperatorComparator,
-		299: rowYieldFromClause,
-		300: rowConstructorDeclaration,
-		302: rowBlockClassDeclaration,
-		303: rowSuiteBlockClassDeclaration,
-		304: rowDecoratedDefinitionClassDeclaration,
-		341: rowAsPatternTarget,
-		342: rowFormatExpression,
-		343: rowMethodDeclaration,
-		344: rowNames
+		287: rowSplatPatternList,
+		288: rowSplatPatternDictionary,
+		289: rowAssignmentEq,
+		290: rowAssignmentType,
+		291: rowAssignmentTyped,
+		292: rowExpressionStatementTuple,
+		293: rowWithClauseBare,
+		294: rowWithClauseParen,
+		295: rowMatchBlockBlock,
+		296: rowMatchBlockEmpty,
+		297: rowSuiteInline,
+		298: rowSuiteBlock,
+		299: rowSuiteEmpty,
+		300: rowComparisonOperatorComparator,
+		301: rowYieldFromClause,
+		302: rowConstructorDeclaration,
+		304: rowBlockClassDeclaration,
+		305: rowSuiteBlockClassDeclaration,
+		306: rowDecoratedDefinitionClassDeclaration,
+		343: rowAsPatternTarget,
+		344: rowFormatExpression,
+		345: rowMethodDeclaration,
+		346: rowNames
 	})
 });

@@ -104,6 +104,13 @@ describe('the reparsed node is found by grammar id', () => {
 		]);
 	}, 120_000);
 
+	it("python: a case clause's tuple pattern and an assignment's target list sharing the bare tuple pattern display each reparse where they parse", async () => {
+		await expectStorageHosts('python', 'bare_tuple_pattern', [
+			['match x:\n    case a, b:\n        pass\n', 'case_pattern_list'],
+			['a, b = c', 'pattern_list']
+		]);
+	}, 120_000);
+
 	it('python: the named yield and the yield keyword it wraps are told apart', async () => {
 		const { Parser, lang } = await loadLanguageForGrammar('python');
 		const parser = new Parser();

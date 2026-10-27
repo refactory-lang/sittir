@@ -15,7 +15,7 @@ const fastCount = (make: () => object): number => Array.from({ length: COUNT }, 
 const rs = await createEngine(rust);
 const ts = await createEngine(typescript);
 const py = await createEngine(python);
-const { identifier: buildIdentifier } = (await rust.load()).build;
+const { identifier: buildIdentifier } = await (await rust.load()).tables.default();
 const rustSlots = await loadSlotAccessorOf('rust');
 
 const parsedMatchBlock = () => {

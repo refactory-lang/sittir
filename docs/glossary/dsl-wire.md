@@ -1576,13 +1576,6 @@ The per-rule `Rule<'evaluate'>` bodies, built with clean `$` builders. `previous
 `overriddenList` builds the result from it, so a grammar that spreads the base
 extras types cleanly.
 
-### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::rules::previous`
-
-`previous` reaches a `rules` callback typed `any`, not as the base rule: the
-index-signature arm for new rule names is intersected with the per-base-rule
-arm, and the callback's contextual signature collapses to the `any` one. A
-callback that walks `previous` annotates the parameters it uses.
-
 ### `packages/codegen/src/dsl/wire/wire.ts::WireConfig::factoryInline`
 
 ```text
@@ -2193,7 +2186,7 @@ Mints the hidden keyword rule for a field over a text in the active context and 
 
 Moves each rule's own layer function into `WireContext.pendingRules` and puts in its place one that evaluates it once (`evaluateLayerRule`). It sits between the rule wrapper (`wrapAllRuleFns`) and the pattern and visible-external rewrites, so the pattern pass, which evaluates every authored rule when it first runs, and the layer's pass reuse a body a copy evaluated earlier instead of running its callback again.
 
-### `packages/codegen/src/dsl/wire/wire.ts::namedAliasValues`
+### `packages/codegen/src/dsl/verbs/effects.ts::namedAliasValues`
 
 The value of every named `ALIAS` in `bodies`: each kind name that some rule presents content as.
 

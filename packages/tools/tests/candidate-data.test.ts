@@ -18,7 +18,7 @@ function caseBlock(source: string): AnyUntypedNode {
 	const root = py.parse(source);
 	const clause = root.$query().$descendants.ofType(py.kinds.CaseClause).at(0);
 	if (clause === undefined || !py.is.caseClause(clause)) throw new Error('expected a case clause');
-	const suite = clause.consequence();
+	const suite = clause.body();
 	if (!py.is.suiteBlock(suite)) throw new Error('expected a block suite');
 	const block = suite.block();
 	const tree = treeOf(block);

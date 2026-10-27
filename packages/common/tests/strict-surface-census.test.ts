@@ -4,41 +4,34 @@ import rust from '@sittir/rust';
 import python from '@sittir/python';
 import typescript from '@sittir/typescript';
 
-const tables = {
-	rust: (await createEngine(rust)).build,
-	python: (await createEngine(python)).build,
-	typescript: (await createEngine(typescript)).build
-};
-
 const FUNCTION_OWN = new Set(['length', 'name', 'prototype', 'arguments', 'caller']);
-const FLAVOURS = new Set(['strict', 'coerce']);
 
-function hasStrict(value: unknown): boolean {
-	return (typeof value === 'function' || (typeof value === 'object' && value !== null)) && typeof (value as { strict?: unknown }).strict === 'function';
-}
-
-function strictLessCallablesWithStrictMembers(table: object): string[] {
-	const found: string[] = [];
-	const seen = new Set<unknown>();
-	const walk = (value: unknown, path: string): void => {
-		if ((typeof value !== 'function' && (typeof value !== 'object' || value === null)) || seen.has(value)) return;
-		seen.add(value);
-		const members = Object.getOwnPropertyNames(value).filter((key) => !(typeof value === 'function' && FUNCTION_OWN.has(key)) && !FLAVOURS.has(key));
-		if (typeof value === 'function' && !hasStrict(value)) {
-			for (const key of members) if (hasStrict((value as unknown as Record<string, unknown>)[key])) found.push(`${path}.${key}`);
+function pathsOf(table: object): string[] {
+	const rows: string[] = [];
+	const walk = (value: unknown, path: string, stack: readonly unknown[]): void => {
+		if (typeof value !== 'function' && (typeof value !== 'object' || value === null)) {
+			rows.push(`${path}\t${typeof value}`);
+			return;
 		}
-		for (const key of members) walk((value as unknown as Record<string, unknown>)[key], `${path}.${key}`);
+		rows.push(`${path}\t${typeof value === 'function' ? 'call' : 'object'}`);
+		if (stack.includes(value)) return;
+		for (const key of Object.getOwnPropertyNames(value)) {
+			if (typeof value === 'function' && FUNCTION_OWN.has(key)) continue;
+			walk((value as Record<string, unknown>)[key], `${path}.${key}`, [...stack, value]);
+		}
 	};
-	walk(table, 'ir');
-	return found;
+	for (const key of Object.getOwnPropertyNames(table)) walk((table as Record<string, unknown>)[key], key, [table]);
+	return rows.sort();
 }
 
-describe('the strict surface covers every builder table', () => {
-	it.each([
-		['rust', tables.rust],
-		['python', tables.python],
-		['typescript', tables.typescript]
-	])('%s: no callable without a strict flavour carries a member that has one', (_grammar, table) => {
-		expect(strictLessCallablesWithStrictMembers(table)).toEqual([]);
+const tables: readonly (readonly [string, object, object])[] = [
+	['rust', (await createEngine(rust)).build, (await createEngine(rust, { api: 'strict' })).build],
+	['python', (await createEngine(python)).build, (await createEngine(python, { api: 'strict' })).build],
+	['typescript', (await createEngine(typescript)).build, (await createEngine(typescript, { api: 'strict' })).build]
+];
+
+describe("the strict builder table has the default table's shape", () => {
+	it.each(tables)('%s: every path, and whether it is callable, is the same in both tables', (_grammar, loose, strict) => {
+		expect(pathsOf(strict)).toEqual(pathsOf(loose));
 	});
 });

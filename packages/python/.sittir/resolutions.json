@@ -1,5 +1,5 @@
 {
-	"grammarHash": "c58637dc0f146853e374073758bc6bc5646d8add13a6ce7ded4a00696147a693",
+	"grammarHash": "290fda6a7e047756ff51ed790dbc5c40964916107f3e8ae9d1c2820f3945deff",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["as_pattern","except_clause_exception_as"]},"step":"default","sourceChains":[["as_pattern"],["except_clause_exception_as","except_clause_exception","except_clause"]],"conflict":{"symbolSequence":["'try'","':'","suite_inline","'except'","expression","'as'","expression"],"lookahead":"':'","interpretations":["as_pattern","except_clause_exception_as"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["except_clause_exception_as","except_clause_exception_list"]},"step":"default","sourceChains":[["except_clause_exception_as","except_clause_exception","except_clause"],["except_clause_exception_list","except_clause_exception","except_clause"]],"conflict":{"symbolSequence":["'try'","':'","suite_inline","'except'","expression"],"lookahead":"':'","interpretations":["except_clause_exception_as","except_clause_exception_list"]}},
@@ -14,7 +14,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["with_item","_tuple_elements"]},"step":"default","sourceChains":[["with_item"],["_tuple_elements"]],"conflict":{"symbolSequence":["'with'","'('","expression"],"lookahead":"','","interpretations":["with_item","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements","_tuple_elements"]}}
 	],
 	"bound": {
-		"grammarHash": "d81f0bd8df0549a6cc5f415ca3259ddfb6165d89e4851794b447507ac24d43c1",
+		"grammarHash": "f14c45056e4c3176a238f9b0cc3158f7aad5472cdead238d48092062bbdb5068",
 		"resolutions": []
 	}
 }

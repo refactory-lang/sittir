@@ -226,7 +226,7 @@ describe('attribute_item', () => {
 				$type: TSKindId.Attribute,
 				$text: 'test',
 				$named: true,
-				_path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+				_path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 				_input: stampBuilt({ $type: TSKindId.AttributeInput, $text: 'test', $named: true }) as any
 			}) as any
 		);
@@ -239,7 +239,7 @@ describe('attribute_item', () => {
 				$type: TSKindId.Attribute,
 				$text: 'test',
 				$named: true,
-				_path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+				_path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 				_input: stampBuilt({ $type: TSKindId.AttributeInput, $text: 'test', $named: true }) as any
 			}) as any
 		);
@@ -256,7 +256,7 @@ describe('inner_attribute_item', () => {
 				$type: TSKindId.Attribute,
 				$text: 'test',
 				$named: true,
-				_path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+				_path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 				_input: stampBuilt({ $type: TSKindId.AttributeInput, $text: 'test', $named: true }) as any
 			}) as any
 		);
@@ -269,7 +269,7 @@ describe('inner_attribute_item', () => {
 				$type: TSKindId.Attribute,
 				$text: 'test',
 				$named: true,
-				_path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+				_path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 				_input: stampBuilt({ $type: TSKindId.AttributeInput, $text: 'test', $named: true }) as any
 			}) as any
 		);
@@ -281,12 +281,12 @@ describe('inner_attribute_item', () => {
 
 describe('attribute', () => {
 	it('factory produces correct type', () => {
-		const node = ir.attribute({ path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any });
+		const node = ir.attribute({ path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any });
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.attribute({ path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any });
+		const node = ir.attribute({ path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
 	});
@@ -294,7 +294,9 @@ describe('attribute', () => {
 
 describe('attribute sub-factories', () => {
 	it('input builds the parent', () => {
-		const node = ir.attribute.input({ path: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any });
+		const node = ir.attribute.input({
+			path: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
+		});
 		expect(node.$type).toBe(TSKindId.Attribute);
 		expect((node as any).input()?.$type).toBe(TSKindId.AttributeInput);
 		expect(node.$render!().length).toBeGreaterThan(0);
@@ -931,14 +933,14 @@ describe('let_declaration', () => {
 describe('use_declaration', () => {
 	it('factory produces correct type', () => {
 		const node = ir.useDeclaration({
-			argument: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			argument: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.UseDeclaration);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.useDeclaration({
-			argument: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			argument: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -977,7 +979,7 @@ describe('use_list', () => {
 describe('use_as_clause', () => {
 	it('factory produces correct type', () => {
 		const node = ir.useAsClause({
-			name: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 			alias: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.UseAsClause);
@@ -985,7 +987,7 @@ describe('use_as_clause', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.useAsClause({
-			name: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+			name: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 			alias: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
@@ -1104,7 +1106,7 @@ describe('visibility_modifier sub-factories', () => {
 				$type: TSKindId.VisibilityModifierPubScope,
 				$text: 'test',
 				$named: true,
-				_content: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+				_content: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 			}) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
@@ -1113,7 +1115,7 @@ describe('visibility_modifier sub-factories', () => {
 	});
 	it('pub.scope builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope(
-			stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect((node as any).content()).toBeDefined();
@@ -1139,7 +1141,7 @@ describe('visibility_modifier sub-factories', () => {
 	});
 	it('pub.scope.inPath builds the parent', () => {
 		const node = ir.visibilityModifier.pub.scope.inPath(
-			stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		);
 		expect(node.$type).toBe(TSKindId.VisibilityModifier);
 		expect((node as any).content()).toBeDefined();
@@ -2298,7 +2300,7 @@ describe('last_match_arm', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.LastMatchArm);
 		expectBuiltNode(node);
@@ -2311,7 +2313,7 @@ describe('last_match_arm', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -3326,12 +3328,12 @@ describe('type_parameters_elements', () => {
 
 describe('use_clauses', () => {
 	it('factory produces correct type', () => {
-		const node = ir.useClauses(...[stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any]);
+		const node = ir.useClauses(...[stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any]);
 		expect(node.$type).toBe(TSKindId.UseClauses);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.useClauses(...[stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any]);
+		const node = ir.useClauses(...[stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any]);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 });
@@ -4269,7 +4271,7 @@ describe('match_arm_with_comma', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.MatchArmWithComma);
 		expectBuiltNode(node);
@@ -4282,7 +4284,7 @@ describe('match_arm_with_comma', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+			body: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4298,7 +4300,7 @@ describe('match_arm_block_ending', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({
+			body: stampBuilt({
 				$type: TSKindId.UnsafeBlock,
 				$text: 'test',
 				$named: true,
@@ -4316,7 +4318,7 @@ describe('match_arm_block_ending', () => {
 				$named: true,
 				_pattern: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
 			}) as any,
-			value: stampBuilt({
+			body: stampBuilt({
 				$type: TSKindId.UnsafeBlock,
 				$text: 'test',
 				$named: true,
@@ -4574,7 +4576,7 @@ describe('range_pattern_prefix', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rangePatternPrefix({
 			content: '..=',
-			right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 		expectBuiltNode(node);
@@ -4582,7 +4584,7 @@ describe('range_pattern_prefix', () => {
 	it('render produces non-empty string', () => {
 		const node = ir.rangePatternPrefix({
 			content: '..=',
-			right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
@@ -4592,7 +4594,7 @@ describe('range_pattern_prefix', () => {
 describe('range_pattern_prefix sub-factories', () => {
 	it('dotDotEq builds the parent', () => {
 		const node = ir.rangePatternPrefix.dotDotEq({
-			right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 		const seated = (node as any).content();
@@ -4601,7 +4603,7 @@ describe('range_pattern_prefix sub-factories', () => {
 	});
 	it('dotDot builds the parent', () => {
 		const node = ir.rangePatternPrefix.dotDot({
-			right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternPrefix);
 		const seated = (node as any).content();
@@ -4619,7 +4621,7 @@ describe('range_pattern_with_left_bare', () => {
 describe('range_pattern_with_left', () => {
 	it('factory produces correct type', () => {
 		const node = ir.rangePatternWithLeft({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 			content: stampBuilt({ $type: TSKindId.RangePatternWithLeftBare, $text: '..', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
@@ -4627,7 +4629,7 @@ describe('range_pattern_with_left', () => {
 	});
 	it('render produces non-empty string', () => {
 		const node = ir.rangePatternWithLeft({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 			content: stampBuilt({ $type: TSKindId.RangePatternWithLeftBare, $text: '..', $named: true }) as any
 		});
 		const rendered = node.$render!();
@@ -4638,9 +4640,9 @@ describe('range_pattern_with_left', () => {
 describe('range_pattern_with_left sub-factories', () => {
 	it('withRight builds the parent', () => {
 		const node = ir.rangePatternWithLeft.withRight({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
 			content: '...',
-			right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect((node as any).content()).toBeDefined();
@@ -4648,7 +4650,7 @@ describe('range_pattern_with_left sub-factories', () => {
 	});
 	it('bare builds the parent', () => {
 		const node = ir.rangePatternWithLeft.bare({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		const seated = (node as any).content();
@@ -4657,8 +4659,8 @@ describe('range_pattern_with_left sub-factories', () => {
 	});
 	it('withRight.dotDotDot builds the parent', () => {
 		const node = ir.rangePatternWithLeft.withRight.dotDotDot({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
-			content: [{ right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any }]
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
+			content: [{ right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any }]
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect((node as any).content()).toBeDefined();
@@ -4666,8 +4668,8 @@ describe('range_pattern_with_left sub-factories', () => {
 	});
 	it('withRight.dotDotEq builds the parent', () => {
 		const node = ir.rangePatternWithLeft.withRight.dotDotEq({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
-			content: [{ right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any }]
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
+			content: [{ right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any }]
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect((node as any).content()).toBeDefined();
@@ -4675,8 +4677,8 @@ describe('range_pattern_with_left sub-factories', () => {
 	});
 	it('withRight.dotDot builds the parent', () => {
 		const node = ir.rangePatternWithLeft.withRight.dotDot({
-			left: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any,
-			content: [{ right: stampBuilt({ $type: TSKindId.Self, $text: 'self', $named: true }) as any }]
+			left: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any,
+			content: [{ right: stampBuilt({ $type: TSKindId.SelfModule, $text: 'self', $named: true }) as any }]
 		});
 		expect(node.$type).toBe(TSKindId.RangePatternWithLeft);
 		expect((node as any).content()).toBeDefined();
@@ -4916,6 +4918,12 @@ describe('parameters_elements_receiver', () => {
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+	});
+});
+
+describe('self_module', () => {
+	it('is the kind id', () => {
+		expect(ir.selfModule).toBe(TSKindId.SelfModule);
 	});
 });
 

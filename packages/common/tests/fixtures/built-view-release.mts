@@ -14,7 +14,7 @@ import { useRecordConstruction } from '../../src/engine-boundary.ts';
 import { builtRefOf } from '../../src/built-ref.ts';
 import { isNode, isParsedNode, nodeText, snapshotOf } from '../../src/utils.ts';
 import { structureOf } from '../../../../examples/helpers.ts';
-import arena from '../../../rust/src/arena.ts';
+import arena, { type Engine } from '../../../rust/src/arena.ts';
 import rust from '../../../rust/src/index.ts';
 
 if (typeof globalThis.gc !== 'function') throw new Error('run with --expose-gc');
@@ -26,8 +26,6 @@ async function settle(): Promise<void> {
 		await new Promise((resolve) => setTimeout(resolve, 25));
 	}
 }
-
-type Engine = Awaited<ReturnType<typeof arena.createEngine>>;
 
 async function engineOf(construction: string): Promise<Engine> {
 	if (construction === 'objects') return (await createEngine(rust)) as unknown as Engine;

@@ -3,6 +3,7 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 function memberNames(node: object): string[] {
 	const names = new Set<string>();
@@ -33,7 +34,7 @@ describe('the reserved set in effect at a position', () => {
 
 	it('still refuses the keyword in a slot under the global set', () => {
 		const word = (ts.build.identifier as (text: string) => never)('for');
-		expect(() => ts.build.throwStatement.strict(word)).toThrow("ThrowStatement.expression: 'for' is a reserved word");
+		expect(() => tsStrict.build.throwStatement(word)).toThrow("ThrowStatement.expression: 'for' is a reserved word");
 	});
 
 	it.each(['a?.for;', 'a?.class();', 'a?.await;', 'a?.static;'])('parses %s after an optional chain', (src) => {

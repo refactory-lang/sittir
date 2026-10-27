@@ -3,7 +3,7 @@ import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import { collectKindEntries, findKindEntryForLiteral, type KindEnumEntry } from './kind-discriminant.ts';
 import { toScreamingSnakeCase } from '../compiler/model/casing.ts';
 import { ERROR_KIND_ID, ERROR_KIND_NAME } from '@sittir/common/error-kind';
-import { findEntryForKindName } from '../dsl/symbol-table.ts';
+import { findEntryForKindName, treeNameOf } from '../dsl/symbol-table.ts';
 import { depthMembersOf } from '../compiler/model/layout-kinds.ts';
 import { layoutMemberKindIds, listKindIds, rootKindIds, unitKindIds } from './wrap.ts';
 
@@ -139,7 +139,7 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 	lines.push(`pub fn kind_name_from_id(id: KindId) -> &'static str {`);
 	lines.push(`    match id.0 {`);
 	for (const entry of entries) {
-		const displayStr = entry.symbolName ?? entry.kind;
+		const displayStr = treeNameOf(entry);
 		lines.push(`        ${entry.id} => ${JSON.stringify(displayStr)}, // ${JSON.stringify(entry.kind)}`);
 		if (entry.parseId !== undefined && entry.parseId !== entry.id && entry.parseName !== undefined) {
 			lines.push(`        ${entry.parseId} => ${JSON.stringify(entry.parseName)}, // ${JSON.stringify(entry.kind)}`);

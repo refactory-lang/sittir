@@ -66,7 +66,6 @@ export const buildUnionPattern = dispatched(() => backend().buildUnionPattern);
 export const buildDictPattern = dispatched(() => backend().buildDictPattern);
 export const buildKeyValuePattern = dispatched(() => backend().buildKeyValuePattern);
 export const buildKeywordPattern = dispatched(() => backend().buildKeywordPattern);
-export const buildSplatPattern = dispatched(() => backend().buildSplatPattern);
 export const buildClassPattern = dispatched(() => backend().buildClassPattern);
 export const buildComplexPattern = dispatched(() => backend().buildComplexPattern);
 export const buildParametersElements = dispatched(() => backend().buildParametersElements);
@@ -132,7 +131,6 @@ export const buildPositionalSeparator = O.buildPositionalSeparator;
 export const buildKeywordSeparator = O.buildKeywordSeparator;
 export const buildSimpleStatementsElements = dispatched(() => backend().buildSimpleStatementsElements);
 export const buildSubjects = dispatched(() => backend().buildSubjects);
-export const buildCasePatterns = dispatched(() => backend().buildCasePatterns);
 export const buildWithClauseWithItems = dispatched(() => backend().buildWithClauseWithItems);
 export const buildTypes = dispatched(() => backend().buildTypes);
 export const buildArgumentListElements = dispatched(() => backend().buildArgumentListElements);
@@ -143,6 +141,7 @@ export const buildDictionaryElements = dispatched(() => backend().buildDictionar
 export const buildSliceGroup = dispatched(() => backend().buildSliceGroup);
 export const buildFormatSpecifierText = dispatched(() => backend().buildFormatSpecifierText);
 export const buildTuplePatternElements = dispatched(() => backend().buildTuplePatternElements);
+export const buildCasePatternList = dispatched(() => backend().buildCasePatternList);
 export const buildTupleElements = dispatched(() => backend().buildTupleElements);
 export const buildExceptClauseExceptionAs = dispatched(() => backend().buildExceptClauseExceptionAs);
 export const buildCaseTuplePattern = dispatched(() => backend().buildCaseTuplePattern);
@@ -175,6 +174,8 @@ export const buildLineContinuationNul = O.buildLineContinuationNul;
 export const buildSimplePatternNegative = dispatched(() => backend().buildSimplePatternNegative);
 export const buildExceptClauseExceptionList = dispatched(() => backend().buildExceptClauseExceptionList);
 export const buildExceptClauseException = dispatched(() => backend().buildExceptClauseException);
+export const buildSplatPatternList = dispatched(() => backend().buildSplatPatternList);
+export const buildSplatPatternDictionary = dispatched(() => backend().buildSplatPatternDictionary);
 export const buildAssignmentEq = dispatched(() => backend().buildAssignmentEq);
 export const buildAssignmentType = dispatched(() => backend().buildAssignmentType);
 export const buildAssignmentTyped = dispatched(() => backend().buildAssignmentTyped);
@@ -271,7 +272,6 @@ export const _factoryMap = {
 	dict_pattern: buildDictPattern,
 	key_value_pattern: buildKeyValuePattern,
 	keyword_pattern: buildKeywordPattern,
-	splat_pattern: buildSplatPattern,
 	class_pattern: buildClassPattern,
 	complex_pattern: buildComplexPattern,
 	parameters_elements: buildParametersElements,
@@ -337,7 +337,6 @@ export const _factoryMap = {
 	keyword_separator: buildKeywordSeparator,
 	simple_statements_elements: buildSimpleStatementsElements,
 	subjects: buildSubjects,
-	case_patterns: buildCasePatterns,
 	with_clause_with_items: buildWithClauseWithItems,
 	types: buildTypes,
 	argument_list_elements: buildArgumentListElements,
@@ -348,6 +347,7 @@ export const _factoryMap = {
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
 	tuple_pattern_elements: buildTuplePatternElements,
+	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
@@ -380,6 +380,8 @@ export const _factoryMap = {
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
+	splat_pattern_list: buildSplatPatternList,
+	splat_pattern_dictionary: buildSplatPatternDictionary,
 	assignment_eq: buildAssignmentEq,
 	assignment_type: buildAssignmentType,
 	assignment_typed: buildAssignmentTyped,

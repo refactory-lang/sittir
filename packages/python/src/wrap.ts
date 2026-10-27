@@ -858,35 +858,27 @@ export function wrapCaseClause(data: T.CaseClause, tree: TreeHandle): T.CaseClau
 	const node = {
 		...data,
 		$type: TSKindId.CaseClause as const,
-		casePatterns() {
-			return hydrateSlot<T.CasePatterns>(this, '_case_patterns', tree);
+		pattern() {
+			return hydrateSlot<T.CasePattern | T.CasePatternList>(this, '_pattern', tree);
 		},
 		guard() {
 			return hydrateSlot<T.IfClause | undefined>(this, '_guard', tree);
 		},
-		consequence() {
-			return hydrateSlot<T.Suite>(this, '_consequence', tree);
+		body() {
+			return hydrateSlot<T.Suite>(this, '_body', tree);
 		},
 		$with: {
-			casePatterns: (...args: unknown[]) =>
+			pattern: (v: NonNullable<T.CaseClause['_pattern']>) =>
 				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CasePatterns as const, optional: false, make: RAW.buildCasePatterns },
-						(v: NonNullable<T.CaseClause['_case_patterns']>) =>
-							wrapCaseClause(
-								{ ...$edited(data), _case_patterns: admitSlot(handle, 'case_clause', 'casePatterns', v) },
-								tree
-							)
-					)
+					wrapCaseClause({ ...$edited(data), _pattern: admitSlot(handle, 'case_clause', 'pattern', v) }, tree)
 				),
 			guard: (v: NonNullable<T.CaseClause['_guard']>) =>
 				rebuilt(node, handle, () =>
 					wrapCaseClause({ ...$edited(data), _guard: admitSlot(handle, 'case_clause', 'guard', v) }, tree)
 				),
-			consequence: (v: NonNullable<T.CaseClause['_consequence']>) =>
+			body: (v: NonNullable<T.CaseClause['_body']>) =>
 				rebuilt(node, handle, () =>
-					wrapCaseClause({ ...$edited(data), _consequence: admitSlot(handle, 'case_clause', 'consequence', v) }, tree)
+					wrapCaseClause({ ...$edited(data), _body: admitSlot(handle, 'case_clause', 'body', v) }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -1926,16 +1918,20 @@ export function wrapDottedName(data: T.DottedName, tree: TreeHandle): T.DottedNa
 	const node = {
 		...data,
 		$type: TSKindId.DottedName as const,
-		names() {
-			return hydrateSlots<T.Identifier>(this, '_names', tree);
+		qualifier() {
+			return hydrateSlot<T.DottedName | undefined>(this, '_qualifier', tree);
+		},
+		name() {
+			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
 		$with: {
-			names: (...v: NonEmptyArray<NonNullable<T.DottedName['_names']>[number]>) =>
+			qualifier: (v: NonNullable<T.DottedName['_qualifier']>) =>
 				rebuilt(node, handle, () =>
-					wrapDottedName(
-						{ ...$edited(data), _names: admitSlot(handle, 'dotted_name', 'names', restItems('names', v)) },
-						tree
-					)
+					wrapDottedName({ ...$edited(data), _qualifier: admitSlot(handle, 'dotted_name', 'qualifier', v) }, tree)
+				),
+			name: (v: NonNullable<T.DottedName['_name']>) =>
+				rebuilt(node, handle, () =>
+					wrapDottedName({ ...$edited(data), _name: admitSlot(handle, 'dotted_name', 'name', v) }, tree)
 				)
 		},
 		$render: () => renderText(handle, node),
@@ -2276,7 +2272,7 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 		name() {
 			return hydrateSlot<T.Identifier>(this, '_name', tree);
 		},
-		value() {
+		pattern() {
 			return hydrateSlot<
 				| T.ClassPattern
 				| T.SplatPattern
@@ -2295,23 +2291,23 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 				| T.ComplexPattern
 				| T.DottedName
 				| TSKindId.WildcardPattern
-			>(this, '_value', tree);
+			>(this, '_pattern', tree);
 		},
 		$with: {
 			name: (v: NonNullable<T.KeywordPattern['_name']>) =>
 				rebuilt(node, handle, () =>
 					wrapKeywordPattern({ ...$edited(data), _name: admitSlot(handle, 'keyword_pattern', 'name', v) }, tree)
 				),
-			value: (v: NonNullable<T.KeywordPattern['_value']> | Admit<T.SimplePattern>) =>
+			pattern: (v: NonNullable<T.KeywordPattern['_pattern']> | Admit<T.SimplePattern>) =>
 				rebuilt(node, handle, () =>
 					wrapKeywordPattern(
 						{
 							...$edited(data),
-							_value: admitSlot(
+							_pattern: admitSlot(
 								handle,
 								'keyword_pattern',
-								'value',
-								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.value')
+								'pattern',
+								admitSplicedEnvelope(v, [TSKindId.SimplePattern, 'content', 'simple_pattern'], 'KeywordPattern.pattern')
 							)
 						},
 						tree
@@ -2332,67 +2328,29 @@ export function wrapKeywordPattern(data: T.KeywordPattern, tree: TreeHandle): T.
 	return node as unknown as T.KeywordPattern.Parsed;
 }
 
-export function wrapSplatPattern(data: T.SplatPattern, tree: TreeHandle): T.SplatPattern.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.SplatPattern as const,
-		operator() {
-			return this._operator;
-		},
-		name() {
-			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_name', tree);
-		},
-		$with: {
-			operator: (v: NonNullable<T.SplatPattern['_operator']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatPattern({ ...$edited(data), _operator: admitSlot(handle, 'splat_pattern', 'operator', v) }, tree)
-				),
-			name: (v: NonNullable<T.SplatPattern['_name']>) =>
-				rebuilt(node, handle, () =>
-					wrapSplatPattern({ ...$edited(data), _name: admitSlot(handle, 'splat_pattern', 'name', v) }, tree)
-				)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.SplatPattern.Parsed;
-}
-
 export function wrapClassPattern(data: T.ClassPattern, tree: TreeHandle): T.ClassPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.ClassPattern as const,
-		name() {
-			return hydrateSlot<T.DottedName>(this, '_name', tree);
+		type() {
+			return hydrateSlot<T.DottedName>(this, '_type', tree);
 		},
-		arguments() {
-			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_arguments', tree);
+		fields() {
+			return hydrateSlot<T.ListPatternCasePatterns | undefined>(this, '_fields', tree);
 		},
 		$with: {
-			name: (v: NonNullable<T.ClassPattern['_name']>) =>
+			type: (v: NonNullable<T.ClassPattern['_type']>) =>
 				rebuilt(node, handle, () =>
-					wrapClassPattern({ ...$edited(data), _name: admitSlot(handle, 'class_pattern', 'name', v) }, tree)
+					wrapClassPattern({ ...$edited(data), _type: admitSlot(handle, 'class_pattern', 'type', v) }, tree)
 				),
-			arguments: (...args: unknown[]) =>
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: RAW.buildListPatternCasePatterns },
-						(v: NonNullable<T.ClassPattern['_arguments']>) =>
-							wrapClassPattern(
-								{ ...$edited(data), _arguments: admitSlot(handle, 'class_pattern', 'arguments', v) },
-								tree
-							)
+						(v: NonNullable<T.ClassPattern['_fields']>) =>
+							wrapClassPattern({ ...$edited(data), _fields: admitSlot(handle, 'class_pattern', 'fields', v) }, tree)
 					)
 				)
 		},
@@ -4625,49 +4583,6 @@ export function wrapSubjects(data: T.Subjects, tree: TreeHandle): T.Subjects.Par
 	return node as unknown as T.Subjects.Parsed;
 }
 
-export function wrapCasePatterns(data: T.CasePatterns, tree: TreeHandle): T.CasePatterns.Parsed {
-	const handle = currentHandle();
-	const listedLength = storedElements(data._item).length;
-	const node = {
-		...data,
-		$type: TSKindId.CasePatterns as const,
-		items() {
-			return hydrateSlots<T.CasePattern>(this, '_item', tree);
-		},
-		$with: {
-			items: (...v: NonEmptyArray<NonNullable<T.CasePatterns['_item']>[number]>) =>
-				rebuilt(node, handle, () =>
-					wrapCasePatterns(
-						{ ...$edited(data), _item: admitSlot(handle, 'case_patterns', 'items', restItems('items', v)) },
-						tree
-					)
-				),
-			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
-				rebuilt(node, handle, () => wrapCasePatterns({ ...$edited(data), _delimiter: v }, tree))
-		},
-		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedLength);
-	return node as unknown as T.CasePatterns.Parsed;
-}
-
 export function wrapWithClauseWithItems(data: T.WithClauseWithItems, tree: TreeHandle): T.WithClauseWithItems.Parsed {
 	const handle = currentHandle();
 	const listedLength = storedElements(data._item).length;
@@ -5049,6 +4964,49 @@ export function wrapTuplePatternElements(
 	};
 	defineListIndices(node, listedLength);
 	return node as unknown as T.TuplePatternElements.Parsed;
+}
+
+export function wrapCasePatternList(data: T.CasePatternList, tree: TreeHandle): T.CasePatternList.Parsed {
+	const handle = currentHandle();
+	const listedLength = storedElements(data._item).length;
+	const node = {
+		...data,
+		$type: TSKindId.CasePatternList as const,
+		items() {
+			return hydrateSlots<T.CasePattern>(this, '_item', tree);
+		},
+		$with: {
+			items: (...v: NonEmptyArray<NonNullable<T.CasePatternList['_item']>[number]>) =>
+				rebuilt(node, handle, () =>
+					wrapCasePatternList(
+						{ ...$edited(data), _item: admitSlot(handle, 'case_pattern_list', 'items', restItems('items', v)) },
+						tree
+					)
+				),
+			delimiter: (v: NonNullable<{ delimiter?: Delimiter.None | Delimiter.Trailing }['delimiter']>) =>
+				rebuilt(node, handle, () => wrapCasePatternList({ ...$edited(data), _delimiter: v }, tree))
+		},
+		length: listedLength,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: (data as { readonly _delimiter?: unknown })._delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedLength);
+	return node as unknown as T.CasePatternList.Parsed;
 }
 
 export function wrapTupleElements(data: T.TupleElements, tree: TreeHandle): T.TupleElements.Parsed {
@@ -6147,6 +6105,71 @@ export function wrapExceptClauseException(
 	return node as unknown as T.ExceptClauseException.Parsed;
 }
 
+export function wrapSplatPatternList(data: T.SplatPatternList, tree: TreeHandle): T.SplatPatternList.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SplatPatternList as const,
+		pattern() {
+			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_pattern', tree);
+		},
+		$with: {
+			pattern: (v: NonNullable<T.SplatPatternList['_pattern']>) =>
+				rebuilt(node, handle, () =>
+					wrapSplatPatternList(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_list', 'pattern', v) },
+						tree
+					)
+				)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SplatPatternList.Parsed;
+}
+
+export function wrapSplatPatternDictionary(
+	data: T.SplatPatternDictionary,
+	tree: TreeHandle
+): T.SplatPatternDictionary.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SplatPatternDictionary as const,
+		pattern() {
+			return hydrateSlot<T.Identifier | TSKindId.Underscore>(this, '_pattern', tree);
+		},
+		$with: {
+			pattern: (v: NonNullable<T.SplatPatternDictionary['_pattern']>) =>
+				rebuilt(node, handle, () =>
+					wrapSplatPatternDictionary(
+						{ ...$edited(data), _pattern: admitSlot(handle, 'splat_pattern_dictionary', 'pattern', v) },
+						tree
+					)
+				)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SplatPatternDictionary.Parsed;
+}
+
 export function wrapAssignmentEq(data: T.AssignmentEq, tree: TreeHandle): T.AssignmentEq.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -7200,7 +7223,7 @@ function viewRelativeImport(data: RecordStub, tree: TreeHandle): T.RelativeImpor
 			return viewSlot<T.ImportPrefix>(this, tree, 2, 5, 0);
 		},
 		name() {
-			return viewSlot<T.DottedName | undefined>(this, tree, 7, 6, 4);
+			return viewSlot<T.DottedName | undefined>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			prefix: (...args: unknown[]) => rowWith(node, tree, _wrap, 'prefix', args),
@@ -7251,10 +7274,10 @@ function viewImportFromStatement(data: RecordStub, tree: TreeHandle): T.ImportFr
 		...data,
 		$type: TSKindId.ImportFromStatement as const,
 		moduleName() {
-			return viewSlot<T.RelativeImport | T.DottedName>(this, tree, 2, 15, 13);
+			return viewSlot<T.RelativeImport | T.DottedName>(this, tree, 2, 5, 0);
 		},
 		content() {
-			return viewSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, tree, 17, 10, 8);
+			return viewSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, tree, 7, 10, 8);
 		},
 		$with: {
 			moduleName: (...args: unknown[]) => rowWith(node, tree, _wrap, 'moduleName', args),
@@ -7316,10 +7339,10 @@ function viewAliasedImport(data: RecordStub, tree: TreeHandle): T.AliasedImport.
 		...data,
 		$type: TSKindId.AliasedImport as const,
 		name() {
-			return viewSlot<T.DottedName>(this, tree, 2, 6, 4);
+			return viewSlot<T.DottedName>(this, tree, 2, 5, 0);
 		},
 		alias() {
-			return viewSlot<T.Identifier>(this, tree, 8, 5, 0);
+			return viewSlot<T.Identifier>(this, tree, 7, 5, 0);
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
@@ -7699,19 +7722,19 @@ function viewCaseClause(data: RecordStub, tree: TreeHandle): T.CaseClause.Parsed
 	const node = {
 		...data,
 		$type: TSKindId.CaseClause as const,
-		casePatterns() {
-			return viewSlot<T.CasePatterns>(this, tree, 2, 6, 4);
+		pattern() {
+			return viewSlot<T.CasePattern | T.CasePatternList>(this, tree, 2, 5, 0);
 		},
 		guard() {
-			return viewSlot<T.IfClause | undefined>(this, tree, 8, 9, 7);
+			return viewSlot<T.IfClause | undefined>(this, tree, 7, 9, 7);
 		},
-		consequence() {
-			return viewSlot<T.Suite>(this, tree, 17, 10, 8);
+		body() {
+			return viewSlot<T.Suite>(this, tree, 16, 10, 8);
 		},
 		$with: {
-			casePatterns: (...args: unknown[]) => rowWith(node, tree, _wrap, 'casePatterns', args),
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args),
 			guard: (...args: unknown[]) => rowWith(node, tree, _wrap, 'guard', args),
-			consequence: (...args: unknown[]) => rowWith(node, tree, _wrap, 'consequence', args)
+			body: (...args: unknown[]) => rowWith(node, tree, _wrap, 'body', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8481,11 +8504,15 @@ function viewDottedName(data: RecordStub, tree: TreeHandle): T.DottedName.Parsed
 	const node = {
 		...data,
 		$type: TSKindId.DottedName as const,
-		names() {
-			return viewSlots<T.Identifier>(this, tree, 2, 2, 5, 0);
+		qualifier() {
+			return viewSlot<T.DottedName | undefined>(this, tree, 2, 5, 0);
+		},
+		name() {
+			return viewSlot<T.Identifier>(this, tree, 7, 5, 0);
 		},
 		$with: {
-			names: (...args: unknown[]) => rowWith(node, tree, _wrap, 'names', args)
+			qualifier: (...args: unknown[]) => rowWith(node, tree, _wrap, 'qualifier', args),
+			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8754,7 +8781,7 @@ function viewKeywordPattern(data: RecordStub, tree: TreeHandle): T.KeywordPatter
 		name() {
 			return viewSlot<T.Identifier>(this, tree, 2, 5, 0);
 		},
-		value() {
+		pattern() {
 			return viewSlot<
 				| T.ClassPattern
 				| T.SplatPattern
@@ -8777,7 +8804,7 @@ function viewKeywordPattern(data: RecordStub, tree: TreeHandle): T.KeywordPatter
 		},
 		$with: {
 			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
-			value: (...args: unknown[]) => rowWith(node, tree, _wrap, 'value', args)
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -8793,49 +8820,20 @@ function viewKeywordPattern(data: RecordStub, tree: TreeHandle): T.KeywordPatter
 	return node as unknown as T.KeywordPattern.Parsed;
 }
 
-function viewSplatPattern(data: RecordStub, tree: TreeHandle): T.SplatPattern.Parsed {
-	const handle = currentHandle();
-	const node = {
-		...data,
-		$type: TSKindId.SplatPattern as const,
-		operator() {
-			return keptSlot(this, tree, 2, 5, 0);
-		},
-		name() {
-			return viewSlot<T.Identifier | TSKindId.Underscore>(this, tree, 7, 5, 0);
-		},
-		$with: {
-			operator: (...args: unknown[]) => rowWith(node, tree, _wrap, 'operator', args),
-			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args)
-		},
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	return node as unknown as T.SplatPattern.Parsed;
-}
-
 function viewClassPattern(data: RecordStub, tree: TreeHandle): T.ClassPattern.Parsed {
 	const handle = currentHandle();
 	const node = {
 		...data,
 		$type: TSKindId.ClassPattern as const,
-		name() {
-			return viewSlot<T.DottedName>(this, tree, 2, 6, 4);
+		type() {
+			return viewSlot<T.DottedName>(this, tree, 2, 5, 0);
 		},
-		arguments() {
-			return viewSlot<T.ListPatternCasePatterns | undefined>(this, tree, 8, 6, 4);
+		fields() {
+			return viewSlot<T.ListPatternCasePatterns | undefined>(this, tree, 7, 6, 4);
 		},
 		$with: {
-			name: (...args: unknown[]) => rowWith(node, tree, _wrap, 'name', args),
-			arguments: (...args: unknown[]) => rowWith(node, tree, _wrap, 'arguments', args)
+			type: (...args: unknown[]) => rowWith(node, tree, _wrap, 'type', args),
+			fields: (...args: unknown[]) => rowWith(node, tree, _wrap, 'fields', args)
 		},
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
@@ -10553,42 +10551,6 @@ function viewSubjects(data: RecordStub, tree: TreeHandle): T.Subjects.Parsed {
 	return node as unknown as T.Subjects.Parsed;
 }
 
-function viewCasePatterns(data: RecordStub, tree: TreeHandle): T.CasePatterns.Parsed {
-	const handle = currentHandle();
-	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
-	const node = {
-		...data,
-		$type: TSKindId.CasePatterns as const,
-		items() {
-			return viewSlots<T.CasePattern>(this, tree, 2, 2, 5, 0);
-		},
-		$with: {
-			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
-			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
-		},
-		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: recordDelimiter(data, tree) ?? undefined,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
-			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
-		},
-		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
-		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedLength);
-	return node as unknown as T.CasePatterns.Parsed;
-}
-
 function viewWithClauseWithItems(data: RecordStub, tree: TreeHandle): T.WithClauseWithItems.Parsed {
 	const handle = currentHandle();
 	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
@@ -10907,6 +10869,42 @@ function viewTuplePatternElements(data: RecordStub, tree: TreeHandle): T.TuplePa
 	};
 	defineListIndices(node, listedLength);
 	return node as unknown as T.TuplePatternElements.Parsed;
+}
+
+function viewCasePatternList(data: RecordStub, tree: TreeHandle): T.CasePatternList.Parsed {
+	const handle = currentHandle();
+	const listedLength = recordLength(data, tree, 2, 2, 5, 0);
+	const node = {
+		...data,
+		$type: TSKindId.CasePatternList as const,
+		items() {
+			return viewSlots<T.CasePattern>(this, tree, 2, 2, 5, 0);
+		},
+		$with: {
+			items: (...args: unknown[]) => rowWith(node, tree, _wrap, 'items', args),
+			delimiter: (...args: unknown[]) => rowWith(node, tree, _wrap, 'delimiter', args)
+		},
+		length: listedLength,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: recordDelimiter(data, tree) ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedLength);
+	return node as unknown as T.CasePatternList.Parsed;
 }
 
 function viewTupleElements(data: RecordStub, tree: TreeHandle): T.TupleElements.Parsed {
@@ -11710,6 +11708,56 @@ function viewExceptClauseException(data: RecordStub, tree: TreeHandle): T.Except
 	return node as unknown as T.ExceptClauseException.Parsed;
 }
 
+function viewSplatPatternList(data: RecordStub, tree: TreeHandle): T.SplatPatternList.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SplatPatternList as const,
+		pattern() {
+			return viewSlot<T.Identifier | TSKindId.Underscore>(this, tree, 2, 5, 0);
+		},
+		$with: {
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SplatPatternList.Parsed;
+}
+
+function viewSplatPatternDictionary(data: RecordStub, tree: TreeHandle): T.SplatPatternDictionary.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.SplatPatternDictionary as const,
+		pattern() {
+			return viewSlot<T.Identifier | TSKindId.Underscore>(this, tree, 2, 5, 0);
+		},
+		$with: {
+			pattern: (...args: unknown[]) => rowWith(node, tree, _wrap, 'pattern', args)
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'leading', items),
+			trailing: (...items: unknown[]) => rowTrivia(node, tree, _wrap, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, rowOf(node, tree, _wrap)) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(rowOf(node, tree, _wrap)) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.SplatPatternDictionary.Parsed;
+}
+
 function viewAssignmentEq(data: RecordStub, tree: TreeHandle): T.AssignmentEq.Parsed {
 	const handle = currentHandle();
 	const node = {
@@ -12472,7 +12520,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.DictPattern]: (d, t) => wrapDictPattern(d as unknown as T.DictPattern, t),
 	[TSKindId.KeyValuePattern]: (d, t) => wrapKeyValuePattern(d as unknown as T.KeyValuePattern, t),
 	[TSKindId.KeywordPattern]: (d, t) => wrapKeywordPattern(d as unknown as T.KeywordPattern, t),
-	[TSKindId.SplatPattern]: (d, t) => wrapSplatPattern(d as unknown as T.SplatPattern, t),
 	[TSKindId.ClassPattern]: (d, t) => wrapClassPattern(d as unknown as T.ClassPattern, t),
 	[TSKindId.ComplexPattern]: (d, t) => wrapComplexPattern(d as unknown as T.ComplexPattern, t),
 	[TSKindId.ParametersElements]: (d, t) => wrapParametersElements(d as unknown as T.ParametersElements, t),
@@ -12533,7 +12580,6 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.SimpleStatementsElements]: (d, t) =>
 		wrapSimpleStatementsElements(d as unknown as T.SimpleStatementsElements, t),
 	[TSKindId.Subjects]: (d, t) => wrapSubjects(d as unknown as T.Subjects, t),
-	[TSKindId.CasePatterns]: (d, t) => wrapCasePatterns(d as unknown as T.CasePatterns, t),
 	[TSKindId.WithClauseWithItems]: (d, t) => wrapWithClauseWithItems(d as unknown as T.WithClauseWithItems, t),
 	[TSKindId.Types]: (d, t) => wrapTypes(d as unknown as T.Types, t),
 	[TSKindId.ArgumentListElements]: (d, t) => wrapArgumentListElements(d as unknown as T.ArgumentListElements, t),
@@ -12544,6 +12590,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.DictionaryElements]: (d, t) => wrapDictionaryElements(d as unknown as T.DictionaryElements, t),
 	[TSKindId.SliceGroup]: (d, t) => wrapSliceGroup(d as unknown as T.SliceGroup, t),
 	[TSKindId.TuplePatternElements]: (d, t) => wrapTuplePatternElements(d as unknown as T.TuplePatternElements, t),
+	[TSKindId.CasePatternList]: (d, t) => wrapCasePatternList(d as unknown as T.CasePatternList, t),
 	[TSKindId.TupleElements]: (d, t) => wrapTupleElements(d as unknown as T.TupleElements, t),
 	[TSKindId.ExceptClauseExceptionAs]: (d, t) =>
 		wrapExceptClauseExceptionAs(d as unknown as T.ExceptClauseExceptionAs, t),
@@ -12576,6 +12623,8 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => objec
 	[TSKindId.ExceptClauseExceptionList]: (d, t) =>
 		wrapExceptClauseExceptionList(d as unknown as T.ExceptClauseExceptionList, t),
 	[TSKindId.ExceptClauseException]: (d, t) => wrapExceptClauseException(d as unknown as T.ExceptClauseException, t),
+	[TSKindId.SplatPatternList]: (d, t) => wrapSplatPatternList(d as unknown as T.SplatPatternList, t),
+	[TSKindId.SplatPatternDictionary]: (d, t) => wrapSplatPatternDictionary(d as unknown as T.SplatPatternDictionary, t),
 	[TSKindId.AssignmentEq]: (d, t) => wrapAssignmentEq(d as unknown as T.AssignmentEq, t),
 	[TSKindId.AssignmentType]: (d, t) => wrapAssignmentType(d as unknown as T.AssignmentType, t),
 	[TSKindId.AssignmentTyped]: (d, t) => wrapAssignmentTyped(d as unknown as T.AssignmentTyped, t),
@@ -12670,7 +12719,6 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.DictPattern]: viewDictPattern,
 	[TSKindId.KeyValuePattern]: viewKeyValuePattern,
 	[TSKindId.KeywordPattern]: viewKeywordPattern,
-	[TSKindId.SplatPattern]: viewSplatPattern,
 	[TSKindId.ClassPattern]: viewClassPattern,
 	[TSKindId.ComplexPattern]: viewComplexPattern,
 	[TSKindId.ParametersElements]: viewParametersElements,
@@ -12727,7 +12775,6 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.Comment]: viewComment,
 	[TSKindId.SimpleStatementsElements]: viewSimpleStatementsElements,
 	[TSKindId.Subjects]: viewSubjects,
-	[TSKindId.CasePatterns]: viewCasePatterns,
 	[TSKindId.WithClauseWithItems]: viewWithClauseWithItems,
 	[TSKindId.Types]: viewTypes,
 	[TSKindId.ArgumentListElements]: viewArgumentListElements,
@@ -12737,6 +12784,7 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.DictionaryElements]: viewDictionaryElements,
 	[TSKindId.SliceGroup]: viewSliceGroup,
 	[TSKindId.TuplePatternElements]: viewTuplePatternElements,
+	[TSKindId.CasePatternList]: viewCasePatternList,
 	[TSKindId.TupleElements]: viewTupleElements,
 	[TSKindId.ExceptClauseExceptionAs]: viewExceptClauseExceptionAs,
 	[TSKindId.CaseTuplePattern]: viewCaseTuplePattern,
@@ -12763,6 +12811,8 @@ const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object>
 	[TSKindId.SimplePatternNegative]: viewSimplePatternNegative,
 	[TSKindId.ExceptClauseExceptionList]: viewExceptClauseExceptionList,
 	[TSKindId.ExceptClauseException]: viewExceptClauseException,
+	[TSKindId.SplatPatternList]: viewSplatPatternList,
+	[TSKindId.SplatPatternDictionary]: viewSplatPatternDictionary,
 	[TSKindId.AssignmentEq]: viewAssignmentEq,
 	[TSKindId.AssignmentType]: viewAssignmentType,
 	[TSKindId.AssignmentTyped]: viewAssignmentTyped,

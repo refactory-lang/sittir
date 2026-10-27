@@ -4,11 +4,11 @@ import type * as V from '../../index.ts';
 export namespace Clause {
 	export namespace Case {
 		export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Case<G>> {
-			// claimed by p
+			// claimed by pr
 			readonly $kind: 'clause.case.match';
-			readonly casePatterns: V.Pattern.Case<G>[];
-			readonly consequence: G['slots']['clause.case.match']['consequence'];
-			readonly guard?: V.Clause.Comprehension.If<G>;
+			readonly body: G['slots']['clause.case.match']['body'];
+			readonly guard?: G['slots']['clause.case.match']['guard'];
+			readonly pattern: G['pattern'];
 		}
 	}
 	export interface Let<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
@@ -23,26 +23,6 @@ export namespace Clause {
 			readonly $kind: 'clause.let.chain';
 			readonly left: G['slots']['clause.let.chain']['left'];
 			readonly rights?: G['slots']['clause.let.chain']['rights'][];
-		}
-	}
-	export interface Match<G extends GrammarContext<G>> extends SubKindOf<V.Clause<G>> {
-		readonly $kind: 'clause.match';
-	}
-	export namespace Match {
-		export interface Arm<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Match<G>> {
-			// claimed by r
-			readonly $kind: 'clause.match.arm';
-			readonly match: V.Pattern.Match<G>;
-			readonly value: G['slots']['clause.match.arm']['value'];
-		}
-		export namespace Arm {
-			export interface Last<G extends GrammarContext<G>> extends SubKindOf<V.Clause.Match.Arm<G>> {
-				// claimed by r
-				readonly $kind: 'clause.match.arm.last';
-				readonly trailingComma?: boolean;
-				readonly match: V.Pattern.Match<G>;
-				readonly value: G['slots']['clause.match.arm.last']['value'];
-			}
 		}
 	}
 }

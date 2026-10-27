@@ -57,7 +57,7 @@ describe('an optional sibling slot does not block a required forwarding slot fro
 
 	it('from.ts: the loose coercer takes no argument and defaults body to an empty construction', () => {
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
-		expect(emitted).toContain('export function coerceToAsyncBlock(input?:');
+		expect(emitted).toContain('export const coerceToAsyncBlock: OptionalConfigSeat<');
 		expect(emitted).toContain('?? F.buildBlock()');
 		expect(emitted).not.toContain("_requireField('async_block', 'body',");
 	});
@@ -156,7 +156,7 @@ describe('a kind whose only slot is a required literal builds with no argument',
 
 	it('from.ts: the loose coercer takes no argument and fills the literal', () => {
 		const emitted = emitFrom({ grammar: 'synth', nodeMap, generatedIdTables });
-		expect(emitted).toContain('export function coerceToLazy(input?:');
+		expect(emitted).toContain('export const coerceToLazy: OptionalConfigSeat<');
 		expect(emitted).toContain('?? TSKindId.Qmark as const');
 	});
 });

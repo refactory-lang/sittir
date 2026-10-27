@@ -2,6 +2,7 @@ import { grammarNodeTypeName, grammarTypePrefix, languageApiName } from '../gram
 import { spelledTriviaTable } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { ownTextLeaf } from './shared.ts';
+import { BUILDER_TABLES, irModuleOf } from './overlays/module.ts';
 
 export interface EmitEngineConfig {
 	grammar: string;
@@ -134,8 +135,7 @@ export function emitApi(config: EmitEngineConfig): string {
 import type { IndentOption, KindTypes, LanguageAPI, LanguageHooks } from '@sittir/types';
 import type { TreeHandle } from '@sittir/common/utils';
 import { nativeLanguageEngine, type ParsedRoot } from '@sittir/common/engine';
-import { ir } from './ir.js';
-import { isMember, membersOf, type is } from './is.js';
+${BUILDER_TABLES.map(({ surface, alias }) => `import type { ir as ${alias} } from './${irModuleOf(surface)}.js';\n`).join('')}import { isMember, membersOf, type is } from './is.js';
 ${config.portable === true ? "import { rows, queryFlags, querySlotFlags, type PortableIs, type PortableKinds } from './portable.js';\n" : ''}import type { TSKindId } from './kinds.js';
 import type { FixedTextKindId, TypeKeyOf, NamespaceMap, ${grammarNodeTypeName(grammar)}, ${grammarTypeMapName(grammar)} } from './types.js';
 import type { IndentChar, Options } from './options.js';
@@ -146,7 +146,7 @@ import { wrapNode, hydrate, type ${rootTreeTypeName} } from './wrap.js';
 
 export interface ${api} extends LanguageAPI {
 	readonly name: '${grammar}';
-	readonly build: typeof ir;
+	readonly build: { ${BUILDER_TABLES.map(({ mode, alias }) => `readonly ${mode}: typeof ${alias}`).join('; ')} };
 	readonly is: typeof is${config.portable === true ? ' & { readonly portable: PortableIs }' : ''};
 	readonly kinds: typeof TSKindId${config.portable === true ? ' & { readonly portable: PortableKinds }' : ''};
 	readonly types: KindTypes<TypeKeyOf, NamespaceMap>;
@@ -162,7 +162,9 @@ ${config.portable === true ? '\treadonly portable: { readonly kinds: PortableKin
 export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>({
 	name: '${grammar}',
 	renderModuleHash: RENDER_MODULE_HASH,
-	build: ir,
+	tables: Object.freeze({
+${BUILDER_TABLES.map(({ mode, surface }) => `\t\t${mode}: () => import('./${irModuleOf(surface)}.js').then((m) => m.ir)`).join(',\n')}
+	}),
 	trivia: ${triviaHook(config)},
 	querySlots,
 	structure,

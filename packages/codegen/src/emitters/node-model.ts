@@ -2,7 +2,7 @@ import type { AssembledEnum, AuthoredCompound, FullForm } from '../compiler/mode
 import { spelledTriviaTable, type SpelledTriviaTable } from '../compiler/model/trivia.ts';
 import { seatOf, type Seat } from '../compiler/model/sub-factories.ts';
 import { collectPolymorphWires, emittedArmPath, type PolymorphWires } from './overlays/polymorphs.ts';
-import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
+import { parsesUnderOwnName, type GeneratedIdTables, type KindEntryLike } from '../dsl/symbol-table.ts';
 import type { DisplayUnionMember, NodeMap } from '../compiler/types.ts';
 import type {
 	AssembledNode,
@@ -21,7 +21,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { printRecordLines } from './record-lines.ts';
-import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectKindEntries } from './kind-discriminant.ts';
@@ -74,13 +73,13 @@ interface SerializedNodeBase {
 	splitFrom?: string;
 	aliasStorage?: string;
 	variantOf?: string;
-	oneSurface?: true;
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	forwardsArguments?: true;
 	factoryFields?: string[];
 	bareAccepts?: string[];
 	textLeavesThrough?: string[];
+	shownAs?: readonly string[];
 }
 
 interface SerializedCompoundNode extends SerializedNodeBase {
@@ -155,6 +154,11 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 	const factoryData = buildFactoryMap(nodeMap, kindEntries);
 	const wires = collectPolymorphWires(nodeMap, { silent: true });
 	const bareAccepts = bareAcceptClosure(nodeMap, kindEntries);
+	const displayUnions = Object.fromEntries([...(nodeMap.displayUnions ?? [])].sort(([a], [b]) => compareOrdinal(a, b)));
+	const shownAs = shownAsOf(displayUnions, factoryData.fieldAliasMap, kindEntries);
+	const unshown = [...shownAs.keys()].filter((storage) => !nodeMap.nodes.has(storage));
+	if (unshown.length > 0)
+		throw new Error(`node model: ${unshown.join(', ')} show as a display but have no node to carry it`);
 
 	const nodes: SerializedNode[] = [];
 	const kinds = Array.from(nodeMap.nodes.keys()).sort();
@@ -166,7 +170,6 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 			throw new Error(`node model: '${kind}' has factory slots but no factory shape, so its readers cannot tell it has a factory`);
 		}
 		const serialized = serializeNode(node, nodeMap, wires, factorySlots);
-		if (hasOneSurface(node)) serialized.oneSurface = true;
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];
@@ -178,6 +181,8 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 		if (accepts !== undefined && accepts.size > 0) serialized.bareAccepts = [...accepts].sort(compareOrdinal);
 		const textLeavesThrough = transparentEnvelopeTextLeaves(node, nodeMap);
 		if (textLeavesThrough.length > 0) serialized.textLeavesThrough = [...textLeavesThrough];
+		const shown = shownAs.get(kind);
+		if (shown !== undefined) serialized.shownAs = shown;
 		nodes.push(serialized);
 	}
 
@@ -186,11 +191,29 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 		root: nodeMap.root ?? null,
 		polymorphVariants: factoryData.polymorphVariants,
 		fieldAliasMap: factoryData.fieldAliasMap,
-		displayUnions: Object.fromEntries([...(nodeMap.displayUnions ?? [])].sort(([a], [b]) => compareOrdinal(a, b))),
+		displayUnions,
 		spelledTrivia: spelledTriviaTable(nodeMap) ?? null,
 		relaxes: relaxationTable(nodeMap, kindEntries),
 		nodes
 	};
+}
+
+function shownAsOf(
+	displayUnions: Readonly<Record<string, readonly DisplayUnionMember[]>>,
+	fieldAliasMap: Readonly<Record<string, Readonly<Record<string, string>>>>,
+	kindEntries: readonly KindEntryLike[]
+): ReadonlyMap<string, readonly string[]> {
+	const shown = new Map<string, Set<string>>();
+	const show = (storage: string, display: string): void => {
+		if (storage === display || parsesUnderOwnName(storage, kindEntries)) return;
+		(shown.get(storage) ?? shown.set(storage, new Set()).get(storage)!).add(display);
+	};
+	for (const [display, members] of Object.entries(displayUnions))
+		for (const member of members) if (!member.literal) show(member.storage, display);
+	for (const aliases of Object.values(fieldAliasMap))
+		for (const [display, storage] of Object.entries(aliases))
+			if (!Object.hasOwn(displayUnions, display)) show(storage, display);
+	return new Map([...shown].map(([storage, displays]) => [storage, [...displays].sort(compareOrdinal)]));
 }
 
 function enumMembersOf(node: AssembledEnum): { kind: string; text: string }[] {

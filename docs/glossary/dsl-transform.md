@@ -80,20 +80,7 @@ can travel through it (see `descendThroughGroupLiftSymbol`).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::descendThroughGroupLiftSymbol`
 
-```text
-/**
- * Travel through an enrich group-lift symbol by LOOKING UP its referenced rule
- * body (not by descending into carried content). Descends into the resolved
- * body without consuming a path segment, patches it, and records the patched
- * body in the active wire context's patched lift bodies (`wireSetLiftBody`). The
- * lift's own wire rule fn (`passthroughBaseRuleFn`) returns that body, so the
- * hidden group rule reflects the patch in both pipelines. The symbol ref
- * itself is returned unchanged (it still points at the same name).
- *
- * @throws {ApplyPathSkip} If there is no active wire context or the referenced
- *   rule is absent — surfaces loudly rather than silently dropping the patch.
- */
-```
+Travels through an enrich group-lift symbol by looking up its referenced rule body (`editGroupLift`). It applies the path to that body without consuming a segment, and records the patched body in the active wire context (`wireSetLiftBody`) when the edit matched. The symbol ref is returned unchanged. It throws `ApplyPathSkip` when the symbol has no name, or when its body is not found (no `wire()` context, or the name was pruned).
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isEnrichContentAlias`
 
@@ -210,7 +197,7 @@ Applies `edit` to the copy a request names (`wire/wire.ts::wireCopy`) and return
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::enteredHiddenRule`
 
-A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. The body the request names (`wire/wire.ts::wireCopyBody`) is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireEnteringRule`, which also enters a rule that reaches itself only once). That body is the copy's when the reference is one or the context already has one, otherwise the rule's own. Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift is part of its owner and is never entered. A hidden copy the entry has already edited is not walked again: the reference is re-pointed at it (`wire/wire.ts::wireCopyEdited`). A second reach therefore neither applies the edit twice nor misses and leaves the reference on the shared rule.
+A hidden rule between the visible kinds of a path, entered implicitly so a path reads in tree terms. The body the request names (`wire/wire.ts::wireCopyBody`) is walked for the segment as its own rule: unfielded, with no enclosing wrappers, and inside the copy (`wire/wire.ts::wireEnteringRule`, which also enters a rule that reaches itself only once). That body is the copy's when the reference is one or the context already has one, otherwise the rule's own. Only a walk that matches makes the copy, so a hidden rule that never reaches the kind stays shared. An enrich group lift reached here is entered like any other hidden rule. A hidden copy the entry has already edited is not walked again: the reference is re-pointed at it (`wire/wire.ts::wireCopyEdited`). A second reach therefore neither applies the edit twice nor misses and leaves the reference on the shared rule.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::applyKindMatchToCopyReference`
 
@@ -235,6 +222,8 @@ A walk's match test at one node: a result for a node it decides, or `undefined` 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::walkMatches`
 
 Walks a subtree to the nodes its leaf decides, and rebuilds only the parts that matched. Prec wrappers are seen through and stacked as enclosing wrappers. Containers and other wrappers are descended. A field marks its content as fielded, unless enrich synthesized it (`fieldSource: 'enriched'`): whether a path reaches a reference doesn't depend on how enrich wraps a list. Strings, patterns and blanks are leaves no walk descends.
+
+A group-lift symbol goes through `walkGroupLift`. Each lift is walked once per walk: the `lifts` map memoizes its result, and marks it in progress before the walk, so a cycle through a lift is not walked again. Its edited body is recorded only when the walk matched.
 
 ### `packages/codegen/src/dsl/transform/transform-path.ts::isWalkableNode`
 

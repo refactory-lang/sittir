@@ -2848,7 +2848,7 @@ export function buildUseList<V extends Admit<T.UseClauses>>(
 export function buildUseList<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -2867,7 +2867,7 @@ export function buildUseList<
 export function buildUseList<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -2979,7 +2979,9 @@ export function buildUseWildcard<V extends Admit<T.UseWildcardGroup>>(
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard<
-	V extends Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	V extends Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 >(...value: [value?: V] & RefuseUndeclared<V>): ReturnType<typeof _buildUseWildcard>;
 export function buildUseWildcard(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -5335,9 +5337,9 @@ export function buildMatchBlock(value?: Admit<T.MatchBlockArms>): T.MatchBlock.B
 export function buildLastMatchArm<
 	AttributesSlot extends T.LastMatchArm.Config['attributes'],
 	MatchSlot extends T.LastMatchArm.Config['match'],
-	ValueSlot extends T.LastMatchArm.Config['value']
+	BodySlot extends T.LastMatchArm.Config['body']
 >(
-	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>,
+	config: RefusingConfig<T.LastMatchArm.Config, { attributes: AttributesSlot; match: MatchSlot; body: BodySlot }>,
 	options?: T.LastMatchArm.Options
 ): T.LastMatchArm.Bound;
 export function buildLastMatchArm(
@@ -5347,7 +5349,7 @@ export function buildLastMatchArm(
 	currentHandle()?.admit(TSKindId.LastMatchArm, [config]);
 	const _attributes = listStorage<NonNullable<T.LastMatchArm['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
-	const _value = kindIdStorage<NonNullable<T.LastMatchArm['_value']>>(config.value);
+	const _body = kindIdStorage<NonNullable<T.LastMatchArm['_body']>>(config.body);
 	const _trailing_comma = coerceKindEnumStorage<NonNullable<T.LastMatchArm['_trailing_comma']>>(
 		options?.trailingComma === null ? 0 : options?.trailingComma,
 		[[',', TSKindId.Comma] as const]
@@ -5358,7 +5360,7 @@ export function buildLastMatchArm(
 		admitChildren(handle, 'last_match_arm', {
 			attributes: _attributes,
 			match: _match,
-			value: _value,
+			body: _body,
 			trailingComma: _trailing_comma
 		});
 	const node = {
@@ -5366,7 +5368,7 @@ export function buildLastMatchArm(
 		$named: true as const,
 		_attributes,
 		_match,
-		_value,
+		_body,
 		_trailing_comma,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
@@ -5375,8 +5377,8 @@ export function buildLastMatchArm(
 				),
 			match: (value: Admit<T.MatchPattern>) =>
 				rebuilt(node, handle, () => buildLastMatchArm({ ...config, match: value }, options)),
-			value: (value: Admit<NonNullable<T.LastMatchArm.Config>['value']>) =>
-				rebuilt(node, handle, () => buildLastMatchArm({ ...config, value: value }, options)),
+			body: (value: Admit<NonNullable<T.LastMatchArm.Config>['body']>) =>
+				rebuilt(node, handle, () => buildLastMatchArm({ ...config, body: value }, options)),
 			trailingComma: (spelling: TSKindId.Comma | null) =>
 				rebuilt(node, handle, () => buildLastMatchArm(config, { ...options, trailingComma: spelling })),
 			pattern: (...args: unknown[]) =>
@@ -5418,7 +5420,7 @@ export function buildLastMatchArm(
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		trailingComma: () => _trailing_comma,
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
@@ -5650,12 +5652,22 @@ function _buildConstBlock(value: Admit<T.Block>): T.ConstBlock.Bound {
 }
 
 export function buildClosureParameters(): T.EmptyClosureParameters;
-export function buildClosureParameters<A extends Admit<(T.Pattern | T.Parameter)[]>>(
-	...children: A & RefuseUndeclared<A>
-): T.ClosureParameters.Bound;
-export function buildClosureParameters(...children: Admit<(T.Pattern | T.Parameter)[]>): T.ClosureParameters.Bound {
+export function buildClosureParameters<
+	A extends Admit<((T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types)[]>
+>(...children: A & RefuseUndeclared<A>): T.ClosureParameters.Bound;
+export function buildClosureParameters(
+	...children: Admit<((T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types)[]>
+): T.ClosureParameters.Bound {
 	currentHandle()?.admit(TSKindId.ClosureParameters, children);
-	const _parameters = children;
+	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
+		[
+			[
+				332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+			],
+			(v: unknown) => buildClosureParameter(v as never)
+		]
+	]);
 	const handle = currentHandle();
 	if (handle !== undefined) admitChildren(handle, 'closure_parameters', { parameters: _parameters });
 	const node = {
@@ -5663,7 +5675,7 @@ export function buildClosureParameters(...children: Admit<(T.Pattern | T.Paramet
 		$named: true as const,
 		_parameters,
 		$with: {
-			parameters: (...vs: Admit<T.Pattern | T.Parameter>[]) =>
+			parameters: (...vs: Admit<(T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types>[]) =>
 				rebuilt(node, handle, () => buildClosureParameters(...restItems('parameters', vs)))
 		},
 		parameters: () => hydrateStoredSlots(node, '_parameters'),
@@ -6283,35 +6295,35 @@ function _buildSlicePattern(value?: Admit<T.Patterns>): T.SlicePattern.Bound {
 
 export function buildTupleStructPattern<
 	TypeSlot extends T.TupleStructPattern.Config['type'],
-	PatternsSlot extends T.TupleStructPattern.Config['patterns']
+	FieldsSlot extends T.TupleStructPattern.Config['fields']
 >(
-	config: RefusingConfig<T.TupleStructPattern.Config, { type: TypeSlot; patterns: PatternsSlot }>
+	config: RefusingConfig<T.TupleStructPattern.Config, { type: TypeSlot; fields: FieldsSlot }>
 ): T.TupleStructPattern.Bound;
 export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.TupleStructPattern.Bound {
 	currentHandle()?.admit(TSKindId.TupleStructPattern, [config]);
 	const _type = config.type;
-	const _patterns = config.patterns;
+	const _fields = config.fields;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { type: _type, patterns: _patterns });
+	if (handle !== undefined) admitChildren(handle, 'tuple_struct_pattern', { type: _type, fields: _fields });
 	const node = {
 		$type: TSKindId.TupleStructPattern as const,
 		$named: true as const,
 		_type,
-		_patterns,
+		_fields,
 		$with: {
 			type: (value: Admit<T.Identifier | T.ScopedIdentifier | T.GenericTypeWithTurbofish>) =>
 				rebuilt(node, handle, () => buildTupleStructPattern({ ...config, type: value })),
-			patterns: (...args: unknown[]) =>
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.Patterns as const, optional: true, make: buildPatterns },
-						(value?: Admit<T.Patterns>) => buildTupleStructPattern({ ...config, patterns: value })
+						(value?: Admit<T.Patterns>) => buildTupleStructPattern({ ...config, fields: value })
 					)
 				)
 		},
 		type: () => hydrateStoredSlot(node, '_type'),
-		patterns: () => hydrateStoredSlot(node, '_patterns'),
+		fields: () => hydrateStoredSlot(node, '_fields'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -7267,7 +7279,7 @@ function _buildTypeParametersElements(
 export function buildUseClauses<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7283,7 +7295,7 @@ export function buildUseClauses<
 export function buildUseClauses<
 	A extends NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7303,7 +7315,7 @@ export function buildUseClauses(
 	...args: (
 		| { delimiter?: Delimiter.None | Delimiter.Trailing }
 		| Admit<
-				| TSKindId.Self
+				| TSKindId.SelfModule
 				| T.Metavariable
 				| TSKindId.Super
 				| TSKindId.Crate
@@ -7325,7 +7337,7 @@ export function buildUseClauses(
 	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
 	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7342,7 +7354,7 @@ export function buildUseClauses(
 function _buildUseClauses(
 	elements: NonEmptyArray<
 		Admit<
-			| TSKindId.Self
+			| TSKindId.SelfModule
 			| T.Metavariable
 			| TSKindId.Super
 			| TSKindId.Crate
@@ -7371,7 +7383,7 @@ function _buildUseClauses(
 			items: (
 				...vs: NonEmptyArray<
 					Admit<
-						| TSKindId.Self
+						| TSKindId.SelfModule
 						| T.Metavariable
 						| TSKindId.Super
 						| TSKindId.Crate
@@ -8241,10 +8253,14 @@ function _buildStructPatternElements(
 }
 
 export function buildUseWildcardGroup<
-	V extends Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	V extends Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 >(...value: [value?: V] & RefuseUndeclared<V>): T.UseWildcardGroup.Bound;
 export function buildUseWildcardGroup(
-	value?: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	value?: Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 ): T.UseWildcardGroup.Bound {
 	const _path = rejectKeywordText(
 		kindIdStorage<NonNullable<T.UseWildcardGroup['_path']>>(value),
@@ -8262,7 +8278,7 @@ export function buildUseWildcardGroup(
 			path: (
 				value?: Admit<
 					NonNullable<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>
 				>
 			) => rebuilt(node, handle, () => buildUseWildcardGroup(value))
@@ -9618,10 +9634,14 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 }
 
 export function buildVisibilityModifierPubScopeInPath<
-	V extends Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	V extends Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 >(value: V & RefuseUndeclared<V>): T.VisibilityModifierPubScopeInPath.Bound;
 export function buildVisibilityModifierPubScopeInPath(
-	value: Admit<TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier>
+	value: Admit<
+		TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+	>
 ): T.VisibilityModifierPubScopeInPath.Bound {
 	const _path = rejectKeywordText(
 		kindIdStorage<NonNullable<T.VisibilityModifierPubScopeInPath['_path']>>(value),
@@ -9639,7 +9659,7 @@ export function buildVisibilityModifierPubScopeInPath(
 			path: (
 				value: Admit<
 					NonNullable<
-						TSKindId.Self | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
+						TSKindId.SelfModule | T.Metavariable | TSKindId.Super | TSKindId.Crate | T.Identifier | T.ScopedIdentifier
 					>
 				>
 			) => rebuilt(node, handle, () => buildVisibilityModifierPubScopeInPath(value))
@@ -9658,10 +9678,10 @@ export function buildVisibilityModifierPubScopeInPath(
 }
 
 export function buildVisibilityModifierPubScope<
-	V extends Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+	V extends Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 >(value: V & RefuseUndeclared<V>): T.VisibilityModifierPubScope.Bound;
 export function buildVisibilityModifierPubScope(
-	value: Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+	value: Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 ): T.VisibilityModifierPubScope.Bound {
 	const _content = kindIdStorage<NonNullable<T.VisibilityModifierPubScope['_content']>>(value);
 	const handle = currentHandle();
@@ -9672,7 +9692,9 @@ export function buildVisibilityModifierPubScope(
 		_content,
 		$with: {
 			content: (
-				value: Admit<NonNullable<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>>
+				value: Admit<
+					NonNullable<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+				>
 			) => rebuilt(node, handle, () => buildVisibilityModifierPubScope(value))
 		},
 		content: () => hydrateStoredSlot(node, '_content'),
@@ -9692,7 +9714,7 @@ export function buildVisibilityModifierPub<V extends Admit<T.VisibilityModifierP
 	...value: [value?: V] & RefuseUndeclared<V>
 ): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub<
-	V extends Admit<TSKindId.Self | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
+	V extends Admit<TSKindId.SelfModule | TSKindId.Super | TSKindId.Crate | T.VisibilityModifierPubScopeInPath>
 >(value: V & RefuseUndeclared<V>): ReturnType<typeof _buildVisibilityModifierPub>;
 export function buildVisibilityModifierPub(...args: unknown[]) {
 	if (args.length === 0 || (args.length === 1 && args[0] === undefined)) {
@@ -10271,32 +10293,32 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 export function buildMatchArmWithComma<
 	AttributesSlot extends T.MatchArmWithComma.Config['attributes'],
 	MatchSlot extends T.MatchArmWithComma.Config['match'],
-	ValueSlot extends T.MatchArmWithComma.Config['value']
+	BodySlot extends T.MatchArmWithComma.Config['body']
 >(
-	config: RefusingConfig<T.MatchArmWithComma.Config, { attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }>
+	config: RefusingConfig<T.MatchArmWithComma.Config, { attributes: AttributesSlot; match: MatchSlot; body: BodySlot }>
 ): T.MatchArmWithComma.Bound;
 export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.MatchArmWithComma.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmWithComma, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmWithComma['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
-	const _value = kindIdStorage<NonNullable<T.MatchArmWithComma['_value']>>(config.value);
+	const _body = kindIdStorage<NonNullable<T.MatchArmWithComma['_body']>>(config.body);
 	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, match: _match, value: _value });
+		admitChildren(handle, 'match_arm_with_comma', { attributes: _attributes, match: _match, body: _body });
 	const node = {
 		$type: TSKindId.MatchArmWithComma as const,
 		$named: true as const,
 		_attributes,
 		_match,
-		_value,
+		_body,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, attributes: restItems('attributes', values) })),
 			match: (value: Admit<T.MatchPattern>) =>
 				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, match: value })),
-			value: (value: Admit<NonNullable<T.MatchArmWithComma.Config>['value']>) =>
-				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, value: value })),
+			body: (value: Admit<NonNullable<T.MatchArmWithComma.Config>['body']>) =>
+				rebuilt(node, handle, () => buildMatchArmWithComma({ ...config, body: value })),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -10336,7 +10358,7 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
@@ -10354,28 +10376,25 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 export function buildMatchArmBlockEnding<
 	AttributesSlot extends T.MatchArmBlockEnding.Config['attributes'],
 	MatchSlot extends T.MatchArmBlockEnding.Config['match'],
-	ValueSlot extends T.MatchArmBlockEnding.Config['value']
+	BodySlot extends T.MatchArmBlockEnding.Config['body']
 >(
-	config: RefusingConfig<
-		T.MatchArmBlockEnding.Config,
-		{ attributes: AttributesSlot; match: MatchSlot; value: ValueSlot }
-	>
+	config: RefusingConfig<T.MatchArmBlockEnding.Config, { attributes: AttributesSlot; match: MatchSlot; body: BodySlot }>
 ): T.MatchArmBlockEnding.Bound;
 export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): T.MatchArmBlockEnding.Bound {
 	currentHandle()?.admit(TSKindId.MatchArmBlockEnding, [config]);
 	const _attributes = listStorage<NonNullable<T.MatchArmBlockEnding['_attributes']>>(config.attributes ?? []);
 	const _match = config.match;
-	const _value = config.value;
+	const _body = config.body;
 	const readGroup_match = () => _match;
 	const handle = currentHandle();
 	if (handle !== undefined)
-		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, match: _match, value: _value });
+		admitChildren(handle, 'match_arm_block_ending', { attributes: _attributes, match: _match, body: _body });
 	const node = {
 		$type: TSKindId.MatchArmBlockEnding as const,
 		$named: true as const,
 		_attributes,
 		_match,
-		_value,
+		_body,
 		$with: {
 			attributes: (...values: Admit<(T.AttributeItem | T.InnerAttributeItem)[]>) =>
 				rebuilt(node, handle, () =>
@@ -10383,7 +10402,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 				),
 			match: (value: Admit<T.MatchPattern>) =>
 				rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, match: value })),
-			value: (
+			body: (
 				value: Admit<
 					| T.UnsafeBlock
 					| T.AsyncBlock
@@ -10397,7 +10416,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 					| T.ForExpression
 					| T.ConstBlock
 				>
-			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, value: value })),
+			) => rebuilt(node, handle, () => buildMatchArmBlockEnding({ ...config, body: value })),
 			pattern: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					seatWith(
@@ -10437,7 +10456,7 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 		},
 		attributes: () => hydrateStoredSlots(node, '_attributes'),
 		match: () => hydrateStoredSlot(node, '_match'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		pattern: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'pattern'),
 		condition: _match === undefined ? undefined : () => groupField(readGroup_match.call(node), 'condition'),
 		$render: () => renderText(handle, node),
@@ -12445,6 +12464,8 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	return stampBuilt(node) as unknown as T.ErrorSentinel.Bound;
 }
 
+export const buildSelfModule: TSKindId.SelfModule = TSKindId.SelfModule;
+
 export function buildTypeIdentifier<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
 ): T.TypeIdentifier.Bound;
@@ -12500,6 +12521,33 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 }
 
 export const buildCrateVisibilityModifier: TSKindId.CrateVisibilityModifier = TSKindId.CrateVisibilityModifier;
+
+export function buildClosureParameter<V extends Admit<T.Pattern>>(
+	value: V & RefuseUndeclared<V>
+): T.ClosureParameter.Bound;
+export function buildClosureParameter(value: Admit<T.Pattern>): T.ClosureParameter.Bound {
+	const _content = kindIdStorage<NonNullable<T.ClosureParameter['_content']>>(value);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'closure_parameter', { content: _content });
+	const node = {
+		$type: TSKindId.ClosureParameter as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: Admit<NonNullable<T.Pattern>>) => rebuilt(node, handle, () => buildClosureParameter(value))
+		},
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ClosureParameter.Bound;
+}
 
 export function buildShorthandFieldIdentifier<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
@@ -13020,9 +13068,11 @@ export type FluentKindMap = {
 	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
 	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
+	self_module: T.SelfModule;
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
 	crate_visibility_modifier: T.CrateVisibilityModifier;
+	closure_parameter: T.ClosureParameter.Bound;
 	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
 	method_declaration: T.MethodDeclaration.Bound;
 	signature_method_declaration: T.SignatureMethodDeclaration.Bound;
@@ -13297,9 +13347,11 @@ export const _factoryMap = {
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
 	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
+	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
 	crate_visibility_modifier: buildCrateVisibilityModifier,
+	closure_parameter: buildClosureParameter,
 	shorthand_field_identifier: buildShorthandFieldIdentifier,
 	method_declaration: buildMethodDeclaration,
 	signature_method_declaration: buildSignatureMethodDeclaration

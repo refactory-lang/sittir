@@ -279,9 +279,11 @@ export const buildParametersElementsReceiver = dispatched(() => backend().buildP
 export const buildParametersElementsReceiverGroup = dispatched(() => backend().buildParametersElementsReceiverGroup);
 export const buildStringClose = dispatched(() => backend().buildStringClose);
 export const buildErrorSentinel = dispatched(() => backend().buildErrorSentinel);
+export const buildSelfModule = O.buildSelfModule;
 export const buildTypeIdentifier = dispatched(() => backend().buildTypeIdentifier);
 export const buildFieldIdentifier = dispatched(() => backend().buildFieldIdentifier);
 export const buildCrateVisibilityModifier = O.buildCrateVisibilityModifier;
+export const buildClosureParameter = dispatched(() => backend().buildClosureParameter);
 export const buildShorthandFieldIdentifier = dispatched(() => backend().buildShorthandFieldIdentifier);
 export const buildMethodDeclaration = dispatched(() => backend().buildMethodDeclaration);
 export const buildSignatureMethodDeclaration = dispatched(() => backend().buildSignatureMethodDeclaration);
@@ -555,9 +557,11 @@ export const _factoryMap = {
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
 	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
+	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
 	crate_visibility_modifier: buildCrateVisibilityModifier,
+	closure_parameter: buildClosureParameter,
 	shorthand_field_identifier: buildShorthandFieldIdentifier,
 	method_declaration: buildMethodDeclaration,
 	signature_method_declaration: buildSignatureMethodDeclaration

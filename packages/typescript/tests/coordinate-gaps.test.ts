@@ -6,6 +6,7 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('gaps between coordinates', () => {
 	it('keeps the blank lines a parsed block spelled and seats a statement appended after them', () => {
@@ -15,8 +16,8 @@ describe('gaps between coordinates', () => {
 		const body = fn.body();
 		const rebuilt = body.$with.statements(
 			...body.statements(),
-			ts.build.expressionStatement.strict(
-				ts.build.callExpression.call.strict({ function: ts.build.identifier('d'), arguments: ts.build.arguments.strict() }),
+			tsStrict.build.expressionStatement(
+				tsStrict.build.callExpression.call({ function: ts.build.identifier('d'), arguments: tsStrict.build.arguments() }),
 				{ terminator: ts.kinds.Semi }
 			)
 		);

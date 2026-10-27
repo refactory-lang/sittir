@@ -134,8 +134,6 @@ export default grammar(enrich(base), wire({
 			'","/before': preference('tight'),
 			'_/separator/","/before': preference('tight'),
 			'_/separator/";"/before': preference('tight'),
-			'_/separator/"."/before': preference('tight'),
-			'_/separator/"."/after': preference('tight'),
 			'":"/before': preference('tight'),
 			'":"/after': preference('space'),
 			'"->"/before': preference('space'),
@@ -152,7 +150,8 @@ export default grammar(enrich(base), wire({
 		default_parameter: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		keyword_pattern: { '"="/before': preference('tight'), '"="/after': preference('tight') },
 		slice: { '":"/before': preference('tight'), '":"/after': preference('tight') },
-		splat_pattern: { 'operator:/after': preference('tight') },
+		splat_pattern_list: { '"*"/after': preference('tight') },
+		splat_pattern_dictionary: { '"**"/after': preference('tight') },
 		list_splat: { '"*"/after': preference('tight') },
 		list_splat_pattern: { '"*"/after': preference('tight') },
 		dictionary_splat: { '"**"/after': preference('tight') },
@@ -344,7 +343,8 @@ export default grammar(enrich(base), wire({
 		},
 
 		splat_pattern: {
-			'0': field('operator'),
+			'0/0': variant('list'),
+			'0/1': variant('dictionary'),
 			1: field('name')
 		},
 
@@ -371,7 +371,10 @@ export default grammar(enrich(base), wire({
 		relative_import: { 0: field('prefix'), '1/0': field('name') },
 		global_statement: { 1: field('names') },
 		nonlocal_statement: { 1: field('names') },
-		dotted_name: { 0: field('names'), 1: field('names') },
+		dotted_name: {
+			0: ($) => field('qualifier', optional(seq($.dotted_name, '.'))),
+			1: ($) => field('name', $.identifier)
+		},
 		union_pattern: { 0: field('left'), 1: ($) => seq('|', field('right', $._simple_pattern)) },
 		if_clause: { 1: field('condition') },
 		await: { 1: field('expression') },
@@ -412,6 +415,26 @@ export default grammar(enrich(base), wire({
 			'semantic-gap',
 			[{ text: '(x) = y\n', form: ['(', { symbol: 'pattern' }, ')'], kind: 'tuple_pattern', meaning: 'Binds the entire value, rather than unpacking a one-element tuple (#550).' }],
 			($, original) => edit(original, { 1: field('elements', optional(alias($._tuple_pattern_elements, $.tuple_pattern_elements))) })
+		),
+		case_pattern_list: vocabulary(($) => tupleElements(field('item', $.case_pattern))),
+		case_clause: reauthored(
+			'semantic-gap',
+			[
+				{
+					text: 'match x:\n    case a,:\n        pass\n',
+					form: ['case', { symbol: 'case_pattern' }, ',', ':', { symbol: '_suite' }],
+					kind: 'case_clause',
+					meaning: 'Matches a one-element sequence, rather than capturing the whole value as the case without the comma does.'
+				}
+			],
+			($) =>
+				seq(
+					'case',
+					field('pattern', choice($.case_pattern, $.case_pattern_list)),
+					optional(field('guard', $.if_clause)),
+					':',
+					field('consequence', $._suite)
+				)
 		),
 		// See docs/python-grammar-sittir-glossary.md::tuple
 		_tuple_elements: vocabulary(($) => tupleElements(field('item', choice($.expression, $.yield, $.list_splat, $.parenthesized_list_splat)))),

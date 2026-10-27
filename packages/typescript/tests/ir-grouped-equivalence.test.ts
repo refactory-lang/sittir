@@ -7,11 +7,12 @@ import typescript from '@sittir/typescript';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('typescript ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
 		expect(ts.build.type.function).toBe(ts.build.functionType);
-		expect(ts.build.type.function.strict).toBe(ts.build.functionType.strict);
+		expect(tsStrict.build.type.function).toBe(tsStrict.build.functionType);
 	});
 
 	it('type group has at least one member', () => {

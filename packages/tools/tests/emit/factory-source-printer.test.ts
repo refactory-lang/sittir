@@ -28,7 +28,6 @@ const ctx: PrintContext = {
 		listDefaults: {},
 		listElementKinds: {},
 		hoistedKinds: new Set(),
-		oneSurfaceKinds: new Set<string>(),
 		unitKinds: new Set<string>(),
 		kindIdOfName: (kind) => ({ source_file: 1, function_item: 2, identifier: 3, comma: 4, arguments: 5 })[kind]
 	},
@@ -66,14 +65,14 @@ describe('printValue', () => {
 			ctx
 		);
 		const printed = map.function_item!({ name: map.identifier!('main'), body: undefined });
-		expect(expectPrinted(printed).source).toBe('ir.functionItem.strict({\n\tname: ir.identifier("main"),\n})');
+		expect(expectPrinted(printed).source).toBe('ir.functionItem({\n\tname: ir.identifier("main"),\n})');
 	});
 	it('prints an alias envelope over a kind id as that kind id, not as text', () => {
 		const aliasCtx: PrintContext = { ...ctx, aliasKinds: new Set(['wrapper']) };
 		const map = printingFactoryMap({ wrapper: 'direct', bag: 'spread' }, (k) => ({ wrapper: 9, bag: 10 })[k], aliasCtx);
 		const content = map.wrapper!(4);
 		expect(expectPrinted(content).source).toBe('rs.kinds.Comma');
-		expect(expectPrinted(map.bag!(content)).source).toBe('ir.bag.strict(rs.kinds.Comma)');
+		expect(expectPrinted(map.bag!(content)).source).toBe('ir.bag(rs.kinds.Comma)');
 	});
 	it('prints direct, spread and elements shapes', () => {
 		const map = printingFactoryMap(
@@ -81,14 +80,14 @@ describe('printValue', () => {
 			(k) => ({ wrapper: 9, bag: 10, arguments: 5, identifier: 3 })[k],
 			ctx
 		);
-		expect(expectPrinted(map.wrapper!(map.identifier!('x'))).source).toBe('ir.wrapper.strict(ir.identifier("x"))');
+		expect(expectPrinted(map.wrapper!(map.identifier!('x'))).source).toBe('ir.wrapper(ir.identifier("x"))');
 		expect(expectPrinted(map.bag!(map.identifier!('x'), map.identifier!('y'))).source).toBe(
-			'ir.bag.strict(ir.identifier("x"), ir.identifier("y"))'
+			'ir.bag(ir.identifier("x"), ir.identifier("y"))'
 		);
 		expect(expectPrinted(map.arguments!({ delimiter: 8 }, map.identifier!('x'))).source).toBe(
-			'ir.arguments.strict({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
+			'ir.arguments({ delimiter: Delimiter.Trailing }, ir.identifier("x"))'
 		);
-		expect(expectPrinted(map.arguments!(map.identifier!('x'))).source).toBe('ir.arguments.strict(ir.identifier("x"))');
+		expect(expectPrinted(map.arguments!(map.identifier!('x'))).source).toBe('ir.arguments(ir.identifier("x"))');
 	});
 	it('prints a keyword kind as its kind id, and a text kind with its text', () => {
 		const map = printingFactoryMap(
@@ -125,16 +124,15 @@ describe('printValue', () => {
 				}
 			}
 		);
-		const pub = (surface.entries.visibility_modifier as unknown as Record<string, { strict: (...a: unknown[]) => Printed }>)
-			.pub!;
-		expect(pub.strict(undefined).source).toBe('ir.visibilityModifier.pub.strict()');
-		expect(pub.strict().source).toBe('ir.visibilityModifier.pub.strict()');
-		expect(pub.strict(map.identifier!('x')).source).toBe('ir.visibilityModifier.pub.strict(ir.identifier("x"))');
+		const pub = (surface.entries.visibility_modifier as unknown as Record<string, (...a: unknown[]) => Printed>).pub!;
+		expect(pub(undefined).source).toBe('ir.visibilityModifier.pub()');
+		expect(pub().source).toBe('ir.visibilityModifier.pub()');
+		expect(pub(map.identifier!('x')).source).toBe('ir.visibilityModifier.pub(ir.identifier("x"))');
 	});
 	it('appends a node trivia call from the trivia the value carries', () => {
-		const printed = new Printed(2, 'ir.functionItem.strict({})', 'function_item');
+		const printed = new Printed(2, 'ir.functionItem({})', 'function_item');
 		printed.$_layout = { trivia: { leading: [new Printed(3, 'ir.lineComment(" a")', 'line_comment')] } } as never;
-		expect(printValue(printed, ctx, 0)).toBe('ir.functionItem.strict({}).$trivia.leading(ir.lineComment(" a"))');
+		expect(printValue(printed, ctx, 0)).toBe('ir.functionItem({}).$trivia.leading(ir.lineComment(" a"))');
 	});
 });
 

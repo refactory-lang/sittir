@@ -508,7 +508,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "case_patterns"
+			"name": "pattern"
 		},
 		{
 			"kind": "if",
@@ -538,7 +538,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "consequence"
+			"name": "body"
 		},
 		{
 			"kind": "seam",
@@ -591,7 +591,7 @@
 			"name": "content"
 		}
 	],
-	"case_patterns": [
+	"case_pattern_list": [
 		{
 			"kind": "slot",
 			"name": "item"
@@ -732,7 +732,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "name"
+			"name": "type"
 		},
 		{
 			"kind": "seam",
@@ -750,11 +750,11 @@
 			"kind": "if",
 			"arms": [
 				{
-					"test": "arguments",
+					"test": "fields",
 					"body": [
 						{
 							"kind": "slot",
-							"name": "arguments"
+							"name": "fields"
 						}
 					]
 				}
@@ -1374,7 +1374,7 @@
 	"dictionary_splat_pattern": [
 		{
 			"kind": "seam",
-			"field": "dictionary_splat_pattern_before"
+			"field": "map_rest_pattern_before"
 		},
 		{
 			"kind": "text",
@@ -1390,13 +1390,57 @@
 		},
 		{
 			"kind": "seam",
-			"field": "dictionary_splat_pattern_after"
+			"field": "map_rest_pattern_after"
 		}
 	],
 	"dotted_name": [
 		{
+			"kind": "seam",
+			"field": "qualified_identifier_before"
+		},
+		{
+			"kind": "if",
+			"arms": [
+				{
+					"test": "qualifier",
+					"body": [
+						{
+							"kind": "if",
+							"arms": [
+								{
+									"test": "qualifier",
+									"body": [
+										{
+											"kind": "slot",
+											"name": "qualifier"
+										}
+									]
+								}
+							]
+						},
+						{
+							"kind": "seam",
+							"field": "dot_before"
+						},
+						{
+							"kind": "text",
+							"text": "."
+						},
+						{
+							"kind": "seam",
+							"field": "dot_after"
+						}
+					]
+				}
+			]
+		},
+		{
 			"kind": "slot",
-			"name": "names"
+			"name": "name"
+		},
+		{
+			"kind": "seam",
+			"field": "qualified_identifier_after"
 		}
 	],
 	"elif_clause": [
@@ -2888,7 +2932,7 @@
 		},
 		{
 			"kind": "slot",
-			"name": "value"
+			"name": "pattern"
 		},
 		{
 			"kind": "seam",
@@ -3142,7 +3186,7 @@
 	"list_splat_pattern": [
 		{
 			"kind": "seam",
-			"field": "list_splat_pattern_before"
+			"field": "rest_pattern_before"
 		},
 		{
 			"kind": "text",
@@ -3158,7 +3202,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "list_splat_pattern_after"
+			"field": "rest_pattern_after"
 		}
 	],
 	"match_block_block": [
@@ -3234,7 +3278,7 @@
 	"member_type": [
 		{
 			"kind": "seam",
-			"field": "member_type_before"
+			"field": "qualified_identifier_before"
 		},
 		{
 			"kind": "slot",
@@ -3258,7 +3302,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "member_type_after"
+			"field": "qualified_identifier_after"
 		}
 	],
 	"method_declaration": [
@@ -4031,26 +4075,48 @@
 			"field": "slice_group_after"
 		}
 	],
-	"splat_pattern": [
+	"splat_pattern_dictionary": [
 		{
 			"kind": "seam",
-			"field": "splat_pattern_before"
+			"field": "map_rest_pattern_before"
+		},
+		{
+			"kind": "text",
+			"text": "**"
+		},
+		{
+			"kind": "seam",
+			"field": "star_star_after"
 		},
 		{
 			"kind": "slot",
-			"name": "operator"
+			"name": "pattern"
 		},
 		{
 			"kind": "seam",
-			"field": "operator_after"
+			"field": "map_rest_pattern_after"
+		}
+	],
+	"splat_pattern_list": [
+		{
+			"kind": "seam",
+			"field": "rest_pattern_before"
+		},
+		{
+			"kind": "text",
+			"text": "*"
+		},
+		{
+			"kind": "seam",
+			"field": "star_after"
 		},
 		{
 			"kind": "slot",
-			"name": "name"
+			"name": "pattern"
 		},
 		{
 			"kind": "seam",
-			"field": "splat_pattern_after"
+			"field": "rest_pattern_after"
 		}
 	],
 	"splat_type": [

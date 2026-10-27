@@ -6,30 +6,31 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 const arm = () =>
-	rs.build.matchArm.blockEnding.strict({
-		match: rs.build.matchPattern.strict({ pattern: rs.build.identifier('x') }),
-		value: rs.build.block.strict({})
+	rsStrict.build.matchArm.blockEnding({
+		match: rsStrict.build.matchPattern({ pattern: rs.build.identifier('x') }),
+		body: rsStrict.build.block({})
 	});
 const last = () =>
-	rs.build.lastMatchArm.strict({
-		match: rs.build.matchPattern.strict({ pattern: rs.build.identifier('y') }),
-		value: rs.build.identifier('z')
+	rsStrict.build.lastMatchArm({
+		match: rsStrict.build.matchPattern({ pattern: rs.build.identifier('y') }),
+		body: rs.build.identifier('z')
 	});
 
 describe('a group flattened into the parent config', () => {
 	it('renders with its arms and renders empty without the group', () => {
-		expect(rs.build.matchBlock.strict({ arms: [arm()], lastArm: last() }).$render()).toBe(
+		expect(rsStrict.build.matchBlock({ arms: [arm()], lastArm: last() }).$render()).toBe(
 			'{\n    x => {}\n    y => z\n}'
 		);
-		expect(rs.build.matchBlock.strict().$render()).toBe('{}');
+		expect(rsStrict.build.matchBlock().$render()).toBe('{}');
 	});
 	it('refuses a partial group and a lone node where the seat takes an array', () => {
 		// @ts-expect-error the group's last arm is required once the group is given
-		const partial = () => rs.build.matchBlock.strict({ arms: [arm()] });
+		const partial = () => rsStrict.build.matchBlock({ arms: [arm()] });
 		const lone = () =>
-			rs.build.matchBlock.strict({
+			rsStrict.build.matchBlock({
 				// @ts-expect-error a list seat takes an array
 				arms: arm(),
 				lastArm: last()

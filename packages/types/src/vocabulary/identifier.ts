@@ -12,11 +12,6 @@ export interface IdentifierSynonyms {
 }
 
 export namespace Identifier {
-	export interface Dotted<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
-		// claimed by p
-		readonly $kind: 'identifier.dotted';
-		readonly names: G['identifier'][];
-	}
 	export interface Qualified<G extends GrammarContext<G>> extends SubKindOf<V.Identifier<G>> {
 		// claimed by prt
 		readonly $kind: 'identifier.qualified';

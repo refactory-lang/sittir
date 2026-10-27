@@ -136,21 +136,13 @@ A file's text before and after a change, by path. `before` is `undefined` for a 
 
 Which builder surface an engine's `build` exposes: the coercing default, the strict flavour, or the portable surface, which is reserved and not implemented.
 
-### `packages/types/src/engine-api.ts::StrictMembers`
-
-An object's members under the strict surface, with the `strict` and `coerce` flavours hidden.
-
-### `packages/types/src/engine-api.ts::StrictSurface`
-
-The strict builder surface, derived from the default one. A builder carrying a `strict` flavour becomes that flavour plus its members' strict surfaces (its variants). A callable without a `strict` flavour has no loose form and stays whole, which keeps its generic and overloaded signatures. A namespace object is only its members' strict surfaces, so none of its raw members survive beside the strict ones.
-
 ### `packages/types/src/engine-api.ts::BuildSurface`
 
 The type of an engine's `build` for a surface: the builder table, its strict surface, or `never` for the unimplemented portable surface.
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code. Its mode parameter is invariant (`in out`), so an engine built for either mode is not assignable to one built for the strict mode.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 
@@ -182,7 +174,7 @@ Whether two types are identical, by comparing two generic signatures that differ
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
-An engine's options, grouped by concern: the builder surface, the render options, and the interceptors.
+An engine's options, grouped by concern: the API selection (`ApiSelection`, which requires `api` for every mode except the default) and the other settings (`EngineSettings`). It is a type alias, not an interface.
 
 ### `packages/types/src/engine-api.ts::Interceptor`
 
@@ -318,10 +310,6 @@ A slot's setter: `ValueSetter`, and for a list slot also `ListItems`.
 
 `$with` for a node: the slot setters of `WithOf`, whose results read a replaced slot through the `.Bound` map. Each emitted `.Bound` and `.Parsed` interface declares it over `this`.
 
-### `packages/types/src/index.ts::Hoisted`
-
-The type of a hoisted pair or route tree. The flavours are read by key (`B['coerce']`, then `B['strict']`), never by testing `B` against an object type with a `coerce` member: a pair whose flavours are intersections (an overlay's flavour over a base's) would otherwise be compared member against member, and that comparison exceeds the checker's depth. The pair's `arity` stamp is read by `hoist` and is not a route, so it is dropped from the hoisted members.
-
 ### `packages/types/src/index.ts::NodeNs`
 
 The single computed namespace of a kind. `Bound`, `Parsed` and `Empty` are the kind's engine-bound surface, its tree-bound surface and its empty form (`never` when the kind cannot be empty). `Loose` and `LooseArgs` admit a node of the kind through `Admit`.
@@ -337,18 +325,6 @@ The members of a supertype union whose `$with` setter for a slot admits a given 
 ### `packages/types/src/node-surface.ts::BoundWithNode`
 
 `$with` for an engine-bound node: the same admitted slot setters as `WithNode`, but each returns the node itself, since a bound node is not tied to a tree and needs no retyped accessor. A tree-bound node keeps `WithNode`, whose setters return the node with the replaced slot reading as `.Bound`.
-
-### `packages/types/src/index.ts::MaxArity`
-
-The most arguments any declared overload of a function accepts, read off `ArgsOf`: the largest tuple length across the overloads, or `number` when one of them takes a rest parameter. `bundle` types each pair's arity stamp with it.
-
-### `packages/types/src/index.ts::HoistArity`
-
-A flavor pair's arity stamp: the route key, for the refusal message, and `max`, the most arguments the hoisted call takes, typed by `bundle` as the flavor's `MaxArity`.
-
-### `packages/types/src/index.ts::StrictFlavor`
-
-A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
 
 ### `packages/types/src/index.ts::UndefinedIfOptional`
 
@@ -530,7 +506,7 @@ The node's kind name.
 
 The node's rendered text.
 
-### `packages/types/src/engine-api.ts::NodeMethods::$trivia`
+### `packages/types/src/engine-api.ts::HoldsTrivia::$trivia`
 
 The trivia attached to the node.
 
@@ -921,3 +897,79 @@ The synonyms the `Statement` vocabulary resolves: each canonical kind mapped to 
 ### `packages/types/src/vocabulary/type.ts::TypeSynonyms`
 
 The synonyms the `Type` vocabulary resolves: each canonical kind mapped to the spellings that stand for it.
+
+### `packages/types/src/engine-api.ts::HoldsTrivia`
+
+The shape of a value that holds trivia side entries.
+
+### `packages/types/src/index.ts::WidenSlots`
+
+Widens the slot input types of a factory signature, keyed by slot name.
+
+### `packages/types/src/vocabulary/features/attributes/clause.ts::Clause::Case`
+
+The `Case` clause kind of the attributes feature.
+
+### `packages/types/src/vocabulary/features/complex-numbers/pattern.ts::Pattern::Complex`
+
+The complex-number pattern kind.
+
+### `packages/types/src/vocabulary/features/match-expressions/pattern.ts::Pattern::Map`
+
+The map pattern kind.
+
+### `packages/types/src/vocabulary/flags.ts::Flags::Prefix`
+
+The prefix flag bit (`1 << 19`).
+
+### `packages/types/src/vocabulary/identifier.ts::Identifier::Qualified`
+
+The qualified identifier kind.
+
+### `packages/types/src/engine-api.ts::LanguageHooks::tables`
+
+The table loaders, one per builder mode: each loads the table that mode's `api` names.
+
+### `packages/types/src/engine-api.ts::BuilderMode`
+
+The builder mode an engine loads: `default` or `strict`.
+
+### `packages/types/src/engine-api.ts::ApiSelection`
+
+The `api` option. It is required for every mode except the default.
+
+### `packages/types/src/engine-api.ts::ApiSelection::api`
+
+The API mode the engine loads.
+
+### `packages/types/src/engine-api.ts::EngineSettings`
+
+The engine options that are not the builder mode: render, interceptors and verify-structure.
+
+### `packages/types/src/engine-api.ts::EngineSettings::render`
+
+The render options, checked against the API.
+
+### `packages/types/src/engine-api.ts::EngineSettings::intercept`
+
+The interceptors, in registration order.
+
+### `packages/types/src/engine-api.ts::EngineSettings::verifyStructure`
+
+Whether structure is verified at compile time only, or also at run time.
+
+### `packages/types/src/node-surface.ts::Seat`
+
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result.
+
+### `packages/types/src/node-surface.ts::ConfigSeat`
+
+A config-only signature: one loose config argument, refusing undeclared keys, returning its result.
+
+### `packages/types/src/node-surface.ts::OptionalConfigSeat`
+
+A config-only signature whose argument may be left out.
+
+### `packages/types/src/node-surface.ts::EmptyForm`
+
+A builder's empty form: a zero-argument call returning the empty type, intersected with the builder.

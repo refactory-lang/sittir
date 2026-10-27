@@ -216,10 +216,6 @@ Parses `source` in the engine and returns the raw `{ root, tree }` its diagnosti
 Returns the public engine's native tree handle without requesting its diagnostic root. A caller explicitly chooses its first read: wrapped shallow data, a deep object root, or native arena hydration. The handle and all rendering share the same cached grammar engine.
 
 
-### `packages/tools/src/validate/common.ts::isUnitModelType`
-
-Whether a kind's model type stores it as its kind id alone: a `keyword` or `punctuation` kind has one fixed text, so a slot holding it holds the id and no node. The one predicate behind the leaf test's unit case (`isLeafModelType`), the arm projection's unit case (`projectArmSlot`) and from-validation's unit-variant exclusion (`validateFrom`).
-
 ### `packages/tools/src/validate/common.ts::nativeNodeIsKind`
 
 Whether a node is of a kind name: the kind `kindNameFromId` gives its `$type`, else the id itself as text. The validators pass a lookup that names a kind as the corpus does (the from validator's `nativeKindName` maps a shared display to its physical kind), so a node found by kind matches the corpus node it stands for. `wrappedNodesOfKind` and the probe's lane search find nodes through it.
@@ -905,7 +901,7 @@ otherwise.
 
 The comparison of a from() result against a factory result when either is a kind id: a kind stored as its id has no node, so equality of the ids is the whole check. It answers `undefined` when neither side is an id (the structural diff applies), an empty list when the ids match, and one message when they differ. Both the scalarized leaf route and the read-driven route call it, so a from() that returns the wrong constant fails on either.
 
-### `packages/tools/src/validate/common.ts::FactoryEntry`
+### `packages/tools/src/grammar-internals.ts::FactoryEntry`
 
 One entry of a factory map: the factory function of a kind, or, for a `constant`-shaped kind (a keyword or punctuation kind with a build entry), the value itself. The dispatch returns a constant entry as it is and calls every other.
 
@@ -1117,10 +1113,6 @@ The rows and summary for one grammar's whole corpus. Entries that parse with err
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::fullForms`
 
 Each kind's `fullForm` from the node model: the literal delimiters around its one text content.
-
-### `packages/tools/src/validate/common.ts::LoadedNodeModel::oneSurfaceKinds`
-
-The kinds the node model stamps `oneSurface`: one builder, no `.strict` or `.coerce` member. The factory-source printer spells their call as the bare path.
 
 ### `packages/tools/src/validate/common.ts::LoadedNodeModel::root`
 
@@ -1362,10 +1354,6 @@ A wrapped node a search found, with its byte span, or `undefined` for a node wit
 ### `packages/tools/src/validate/common.ts::materializeShallow`
 
 A wrapped node one level down: its own data as `materialize` gives it, with each node its slots hold as that node's coordinate (`coordinateOf`), holding its tree, so the render reads the child from the tree. This is the input read-render-parse's shallow lane renders: data whose children are coordinates, the shape a lazy caller sends. A child with no coordinate of its own (a built child, or an alias envelope's content, which shares its envelope's row) is materialized whole instead, since that coordinate would name its holder. The copy holds the root's tree (`holdingTreeOf`). It reads through the slot readers, so it gives the same data on either wire.
-
-### `packages/tools/src/validate/common.ts::isLeafModelType`
-
-Whether a kind's model type makes it a leaf, a kind that carries text rather than slots: a `pattern`, an `enum`, or a unit (`isUnitModelType`). The one predicate behind the leaf test by kind id (`loadIsLeafKind`) and template coverage's skip of leaf kinds. Node-types can show a leaf with fields or children, for example a shared display's fixed-text storage or a pattern token's interior pieces, so coverage asks the model.
 
 ### `packages/tools/src/validate/common.ts::wrappedNodesOf`
 
@@ -1694,3 +1682,19 @@ A fixture the render check reads.
 ### `packages/tools/src/validate/read-render-parse.ts::RenderReparseContext`
 
 The context in which a render is reparsed.
+
+### `packages/tools/src/validate/common.ts::LoadedNodeModel::unitKinds`
+
+The kinds that are units in the loaded node model.
+
+### `packages/tools/src/validate/common.ts::IrSurface::unitKinds`
+
+The kinds that are units in the IR surface.
+
+### `packages/tools/src/validate/common.ts::isLeafKind`
+
+Whether a kind is a leaf (has no child slots) in the model.
+
+### `packages/tools/src/validate/display-families.ts::displayStorageKinds`
+
+The storage kinds a display covers, across the families.

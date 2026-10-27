@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "e799d30e9ac531e7786a191e208f3fdbf49c77af194910e35852c9afebff21ca";
+export const hash = "a7547ba5715ff49b4f2479f467086345d1e6ccf69aa2a29f6c753028f463cc3d";
 
 export const renames = {
 	source_file: "file",
@@ -43,8 +43,7 @@ export const renames = {
 	continue_expression: "continue_statement",
 	where_predicate: "predicate_where_clause",
 	let_condition: "let_clause",
-	match_arm: "arm_match_clause",
-	last_match_arm: "last_arm_match_clause",
+	match_arm: "match_case_clause",
 	use_as_clause: "alias_import_clause",
 	use_list: "list_import_clause",
 	scoped_use_list: "scoped_list_import_clause",
@@ -83,7 +82,6 @@ export const renames = {
 	try_block: "try_block_expression",
 	gen_block: "generator_block_expression",
 	generic_function: "instantiation_expression",
-	tuple_struct_pattern: "struct_tuple_pattern",
 	field_pattern: "field_struct_pattern",
 	remaining_field_pattern: "rest_struct_pattern",
 	slice_pattern: "list_pattern",
@@ -140,11 +138,11 @@ export default grammar(
 			impl_item_negative_clause: { "1/0/1": alias("qualified_identifier") },
 			impl_item_positive_clause: { "0/0/1": alias("qualified_identifier") },
 			inner_attribute_item: { "3": field("content") },
-			last_match_arm: { "1": field("match") },
+			last_match_arm: { "3": field("body") },
 			let_declaration: { "2": field("name") },
 			macro_invocation: [{ "0": field("function") }, { "0/0/0": alias("qualified_identifier") }],
-			match_arm_block_ending: { "1": field("match") },
-			match_arm_with_comma: { "1": field("match") },
+			match_arm_block_ending: { "3": field("body") },
+			match_arm_with_comma: { "3/0": field("body") },
 			match_expression: { "1": field("subject") },
 			pointer_type_mut: { "1": field("writable") },
 			reference_expression_bare: { "1": field("argument") },
@@ -165,7 +163,7 @@ export default grammar(
 			struct_pattern: { "0/0/1": alias("qualified_identifier") },
 			try_expression: { "0": field("argument") },
 			tuple_expression: { "2": field("elements") },
-			tuple_struct_pattern: [{ "2/0": field("patterns") }, { "0/0/1": alias("qualified_identifier") }],
+			tuple_struct_pattern: [{ "2/0": field("fields") }, { "0/0/1": alias("qualified_identifier") }],
 			tuple_type: { "1": field("types") },
 			type_cast_expression: { "0": field("expression") },
 			type_item: { "6": field("value") },

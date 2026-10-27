@@ -8,7 +8,7 @@ import { flatten } from '../../compiler/flatten.ts';
 import { makeNodeMapWith, withGeneratedIdTables } from '../../__tests__/helpers/node-map-fixtures.ts';
 import { emitFrom } from '../../__tests__/helpers/emit-from.ts';
 import { classifyFromEmission } from '../shared.ts';
-import { bundleEntries } from '../overlays/module.ts';
+import { bundleKeyedNodes } from '../../compiler/model/ir-surface.ts';
 
 /**
  * Mirrors rust's `impl_item` trait clause: a single-value slot whose two arms
@@ -74,14 +74,14 @@ describe('from() for a hoisted form', () => {
 		const src = emitFrom({ generatedIdTables, grammar: 'synth', nodeMap });
 
 		expect(fromFn).toBeDefined();
-		expect(src).toContain(`export function ${fromFn}`);
+		expect(src).toContain(`export const ${fromFn}: ConfigSeat<`);
 		expect(src).toContain(`"_impl_positive": ${fromFn}`);
 	});
 
-	it('keeps the form off the top-level bundle', () => {
-		const { nodeMap, generatedIdTables } = withGeneratedIdTables(makeImplNodeMap);
+	it('keeps the form off the top level of the ir namespace', () => {
+		const { nodeMap } = withGeneratedIdTables(makeImplNodeMap);
 
-		const keys = bundleEntries(nodeMap, generatedIdTables).map((e) => e.node.kind);
+		const keys = bundleKeyedNodes(nodeMap).map((e) => e.node.kind);
 
 		expect(keys).toContain('impl');
 		expect(keys).not.toContain('_impl_positive');

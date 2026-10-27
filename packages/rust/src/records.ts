@@ -284,7 +284,7 @@ export const records = {
 		words: 19,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 },
+		body: { word: 9, width: 5 },
 		trailing_comma: { word: 14, width: 5 }
 	},
 	MatchPatternNode: { words: 12, pattern: { word: 2, width: 5 }, condition: { word: 7, width: 5 } },
@@ -323,7 +323,7 @@ export const records = {
 	GenericPatternNode: { words: 17, name: { word: 2, width: 5 }, type_arguments: { word: 7, width: 10, inline: 8 } },
 	TuplePatternNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
 	SlicePatternNode: { words: 8, elements: { word: 2, width: 6, inline: 4 } },
-	TupleStructPatternNode: { words: 13, type_: { word: 2, width: 5 }, patterns: { word: 7, width: 6, inline: 4 } },
+	TupleStructPatternNode: { words: 13, type_: { word: 2, width: 5 }, fields: { word: 7, width: 6, inline: 4 } },
 	StructPatternNode: { words: 13, type_: { word: 2, width: 5 }, fields: { word: 7, width: 6, inline: 4 } },
 	MutPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
 	RefPatternNode: { words: 7, pattern: { word: 2, width: 5 } },
@@ -474,13 +474,13 @@ export const records = {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 }
+		body: { word: 9, width: 5 }
 	},
 	MatchArmBlockEndingNode: {
 		words: 14,
 		attributes: { word: 2, width: 2, run: 5 },
 		match_: { word: 4, width: 5 },
-		value: { word: 9, width: 5 }
+		body: { word: 9, width: 5 }
 	},
 	LineCommentExtraSlashesNode: { words: 2 },
 	LineCommentDocOuterNode: { words: 7, doc: { word: 2, width: 5 } },
@@ -589,5 +589,6 @@ export const records = {
 	ErrorSentinelNode: { words: 2 },
 	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
 	FieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
+	ClosureParameterNode: { words: 7, content: { word: 2, width: 5 } },
 	ShorthandFieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } }
 } as const;

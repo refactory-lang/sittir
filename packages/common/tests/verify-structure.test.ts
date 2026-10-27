@@ -56,19 +56,19 @@ describe('verifyStructure', () => {
 
 	it('refuses bare text in a node-only slot, alone or in a list', () => {
 		expect(() => verify(built(CALL, { _callee: 'f', _arguments: [] }))).toThrow(
-			'Call.callee: a strict factory takes a built node, not a string; expected a built Name, or use .coerce'
+			'Call.callee: a strict factory takes a built node, not a string; expected a built Name, or the default engine\'s builder, which takes loose input'
 		);
 		expect(() => verify(built(CALL, { _callee: name(), _arguments: [name(), 1n] }))).toThrow(
-			'Call.arguments: a strict factory takes a built node, not a bigint; expected a built Name, or use .coerce'
+			'Call.arguments: a strict factory takes a built node, not a bigint; expected a built Name, or the default engine\'s builder, which takes loose input'
 		);
 	});
 
 	it('refuses a value in a node-only slot that is not a node, a coordinate, a list or a kind id', () => {
 		expect(() => verify(built(CALL, { _callee: () => 1, _arguments: [] }))).toThrow(
-			'Call.callee: a strict factory takes a built node, not a function; expected a built Name, or use .coerce'
+			'Call.callee: a strict factory takes a built node, not a function; expected a built Name, or the default engine\'s builder, which takes loose input'
 		);
 		expect(() => verify(built(CALL, { _callee: name(), _arguments: [true] }))).toThrow(
-			'Call.arguments: a strict factory takes a built node, not a boolean; expected a built Name, or use .coerce'
+			'Call.arguments: a strict factory takes a built node, not a boolean; expected a built Name, or the default engine\'s builder, which takes loose input'
 		);
 		expect(() => verify(built(CALL, { _callee: name(), _arguments: [NAME] }))).not.toThrow();
 	});
@@ -79,14 +79,14 @@ describe('verifyStructure', () => {
 		expect(() => verify(built(LITERAL, { _terminator: () => SEMI }))).toThrow('Literal.terminator: takes a kind id of 6 / 7, not a function');
 		expect(() => verify(built(LITERAL, { _terminator: OTHER }))).toThrow('Literal.terminator: takes a kind id of 6 / 7, not kind id 4');
 		expect(() => verify(built(LITERAL, { _terminator: ';' }))).toThrow(
-			'Literal.terminator: a strict factory takes a built node, not a string; expected a kind id, or use .coerce'
+			'Literal.terminator: a strict factory takes a built node, not a string; expected a kind id, or the default engine\'s builder, which takes loose input'
 		);
 	});
 
 	it('holds a boolean slot to a boolean, or nothing', () => {
 		expect(() => verify(built(LITERAL, { _signed: true }))).not.toThrow();
 		expect(() => verify(built(LITERAL, { _signed: 'signed' }))).toThrow(
-			'Literal.signed: a strict factory takes a built node, not a string; expected a boolean, or use .coerce'
+			'Literal.signed: a strict factory takes a built node, not a string; expected a boolean, or the default engine\'s builder, which takes loose input'
 		);
 		expect(() => verify(built(LITERAL, { _signed: () => true }))).toThrow('Literal.signed: takes a boolean, not a function');
 	});

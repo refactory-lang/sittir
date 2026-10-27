@@ -19,7 +19,6 @@ const FILE_MAP: Record<string, string> = {
 	factories: 'factories.ts',
 	consts: 'consts.ts',
 	index: 'index.ts',
-	irNamespace: 'ir.ts',
 	utils: 'utils.ts',
 	wrap: 'wrap.ts',
 	from: 'from.ts'

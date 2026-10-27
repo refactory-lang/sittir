@@ -19784,13 +19784,6 @@ export namespace Object {
 				...children: (
 					| T.Object.Loose
 					| LooseValue<
-							| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-							| T.ShorthandPropertyIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-					| LooseValue<
 							T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
 							T.LeafScalarMap,
 							T.LeafStringMap,
@@ -19800,21 +19793,12 @@ export namespace Object {
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								| (T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier)
-								| T.ShorthandPropertyIdentifier.Types,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-					)[]
+					LooseValue<
+						T.Pair | T.SpreadElement | T.MethodDefinition | T.ShorthandPropertyIdentifier,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
 				>
 		  ];
 	export type Kind = TSKindId.Object;
@@ -19852,13 +19836,6 @@ export namespace ObjectPattern {
 				...children: (
 					| T.ObjectPattern.Loose
 					| LooseValue<
-							| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-							| T.ShorthandPropertyIdentifierPattern.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-					| LooseValue<
 							T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
 							T.LeafScalarMap,
 							T.LeafStringMap,
@@ -19868,21 +19845,12 @@ export namespace ObjectPattern {
 		  ]
 		| [
 				children: Readonly<
-					(
-						| LooseValue<
-								| (T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern)
-								| T.ShorthandPropertyIdentifierPattern.Types,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-					)[]
+					LooseValue<
+						T.PairPattern | T.RestPattern | T.ObjectAssignmentPattern | T.ShorthandPropertyIdentifierPattern,
+						T.LeafScalarMap,
+						T.LeafStringMap,
+						T.NamespaceMap
+					>[]
 				>
 		  ];
 	export type Kind = TSKindId.ObjectPattern;
@@ -21293,19 +21261,10 @@ export namespace ImplementsClause {
 	export type LooseArgs =
 		| [
 				...children: NonEmptyArray<
-					| T.ImplementsClause.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					| LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					T.ImplementsClause.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				>
 		  ]
-		| [
-				children: Readonly<
-					NonEmptyArray<
-						| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-						| LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-					>
-				>
-		  ];
+		| [children: Readonly<NonEmptyArray<LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>>>];
 	export type Kind = TSKindId.ImplementsClause;
 	type NonEmptySlots = Proven<
 		[KeyRefusesEmpty<Config, 'types'>, KeyRefusesEmpty<LooseConfig, 'types'>, SetterRefusesEmpty<Bound, 'types'>]
@@ -21514,12 +21473,6 @@ export namespace ExtendsTypeClause {
 				...children: NonEmptyArray<
 					| T.ExtendsTypeClause.Loose
 					| LooseValue<
-							(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
-					| LooseValue<
 							T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType,
 							T.LeafScalarMap,
 							T.LeafStringMap,
@@ -21530,18 +21483,12 @@ export namespace ExtendsTypeClause {
 		| [
 				children: Readonly<
 					NonEmptyArray<
-						| LooseValue<
-								(T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType) | T.TypeIdentifier.Types,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						LooseValue<
+							T.TypeIdentifier | T.NestedTypeIdentifier | T.GenericType,
+							T.LeafScalarMap,
+							T.LeafStringMap,
+							T.NamespaceMap
+						>
 					>
 				>
 		  ];
@@ -23190,23 +23137,13 @@ export namespace Types {
 		  ];
 	export type LooseArgs =
 		| [
-				element:
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				element: T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-				element:
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				element: T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
 	export type Kind = TSKindId.Types;
 	type NonEmptySlots = Proven<
@@ -23248,40 +23185,20 @@ export namespace TypeParametersElements {
 		| [
 				element:
 					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
+					| LooseValue<T.TypeParameter | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (
 					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.TypeParameter | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
+					| LooseValue<T.TypeParameter | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (
 					| T.TypeParametersElements.Loose
-					| LooseValue<
-							T.TypeParameter | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.TypeParameter | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ];
 	export type Kind = TSKindId.TypeParametersElements;
@@ -23332,12 +23249,7 @@ export namespace TupleTypeMembers {
 				element:
 					| T.TupleTypeMembers.Loose
 					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23345,12 +23257,7 @@ export namespace TupleTypeMembers {
 				...elements: (
 					| T.TupleTypeMembers.Loose
 					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23362,12 +23269,7 @@ export namespace TupleTypeMembers {
 				element:
 					| T.TupleTypeMembers.Loose
 					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23375,12 +23277,7 @@ export namespace TupleTypeMembers {
 				...elements: (
 					| T.TupleTypeMembers.Loose
 					| LooseValue<
-							| T.TupleParameter
-							| T.OptionalTupleParameter
-							| T.OptionalType
-							| T.RestType
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.TupleParameter | T.OptionalTupleParameter | T.OptionalType | T.RestType | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap

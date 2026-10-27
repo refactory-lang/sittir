@@ -50,3 +50,28 @@ describe('c.<slot>.is(flag) on a slot whose kinds carry the flag always or by th
 		expect([...statements().where((c) => c.expression.is('optionalChain'))].map(textOf)).toEqual(reference);
 	});
 });
+
+describe('c.<slot>.is(flag) on a slot whose kind spells the flag by its form', () => {
+	const SOURCE = 'x++;\n++x;\nx--;\n--x;\n';
+	const textOf = (node: unknown): string => {
+		const { start, end } = (node as Node).$_layout.at.$span;
+		return SOURCE.slice(start, end);
+	};
+	const statements = () => ts.parse(SOURCE).$query().$descendants.ofType(ts.kinds.ExpressionStatement);
+
+	it('selects the statements whose update comes before its argument', () => {
+		expect([...statements().where((c) => c.expression.is('prefix'))].map(textOf)).toEqual(['++x;', '--x;']);
+		expect([...statements().where((c) => c.expression.is('prefix').not())].map(textOf)).toEqual(['x++;', 'x--;']);
+	});
+
+	it('selects natively what the read holds', () => {
+		const reference = [...statements()]
+			.filter(
+				(statement) =>
+					(statement as { expression(): { readonly $type: number } }).expression().$type ===
+					TSKindId.UpdateExpressionPrefix
+			)
+			.map(textOf);
+		expect([...statements().where((c) => c.expression.is('prefix'))].map(textOf)).toEqual(reference);
+	});
+});

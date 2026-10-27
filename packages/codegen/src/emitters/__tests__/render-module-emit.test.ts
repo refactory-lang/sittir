@@ -23,6 +23,7 @@ import { link } from '../../compiler/link.ts';
 import { normalizeGrammar } from '../../compiler/normalize.ts';
 import { assemble, AssembleCtx } from '../../compiler/assemble.ts';
 import { loadGeneratedIdTables } from '../../compiler/generated-metadata.ts';
+import { computeNodeSCC } from '../../compiler/scc.ts';
 import { runTemplateEmitter, stampStaticSpacing } from '../templates.ts';
 import type { NodeMap } from '../../compiler/types.ts';
 import { evaluatePackage } from '../../dsl/evaluate-package.ts';
@@ -107,6 +108,7 @@ async function buildModel(grammar: 'rust' | 'typescript' | 'scm' | 'python') {
 	const nodeMap = assemble(
 		AssembleCtx.from({ ...normalized, generatedIdTables: generatedIdTables })
 	);
+	nodeMap.scc = computeNodeSCC(nodeMap);
 
 	const kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	const rulesConfig = {

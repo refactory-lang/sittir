@@ -385,19 +385,7 @@ re-run disqualifies the same bare symbols the first run did.
  *  when no prec wrapper is present. */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::canonicalStringifyClause`
-
-```text
-/**
- * @internal — canonical JSON stringify with sorted object keys. Ensures
- * that two structurally-equal rule bodies stringify identically even
- * when property insertion order differs between rule construction paths.
- * Mirrors the helper in auto-groups.ts; the two are kept in sync by hand
- * and should be extracted into one shared helper.
- */
-```
-
-### `packages/codegen/src/dsl/enrich.ts::listSeparatorOfOptionalSeq`
+### `packages/codegen/src/dsl/rule-patterns.ts::listSeparatorOfOptionalSeq`
 
 ```text
 /**
@@ -434,7 +422,7 @@ re-run disqualifies the same bare symbols the first run did.
 // scanning for a real separator elsewhere in the same seq.
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::optionalStringLiteral`
+### `packages/codegen/src/dsl/rule-patterns.ts::optionalStringLiteral`
 
 ```text
 /**
@@ -1066,7 +1054,7 @@ The one derivation of names, literals and patterns from an `extras` rule list. A
 // content fallback in dsl/transform/transform.ts).
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::armStartsWithSymbol`
+### `packages/codegen/src/dsl/rule-patterns.ts::armStartsWithSymbol`
 
 ```text
 /**
@@ -2385,21 +2373,6 @@ The runtime's `token`, with `immediate`, typed for authoring (`AuthoringToken`);
 /** Rebuild the original seq-member rule around a freshly-built FIELD node. */
 ```
 
-### `packages/codegen/src/dsl/enrich.ts::slotKey`
-
-```text
-/**
-	 * Enclosing FIELD name, when this value sits (directly or transitively)
-	 * inside a `field(name, …)` wrapper — otherwise `undefined` (positional).
-	 * Two aliases sharing a `targetName` but living in DIFFERENT fields are
-	 * genuinely distinguishable (the field name disambiguates the read-time
-	 * slot), so the collision bucketing keys on `(slotKey ?? targetName,
-	 * targetName)` rather than `targetName` alone. When `undefined` the
-	 * effective key falls back to `targetName`, preserving the pre-slotKey
-	 * behavior for positional (non-field-wrapped) collisions.
-	 */
-```
-
 ### `packages/codegen/src/dsl/list-patterns.ts::SeparatorFact`
 
 ```text
@@ -2478,7 +2451,7 @@ content alias it mints for a promoted hidden rule. The only reader is
 this field alone to decide whether path-descent should travel transparently
 through the alias.
 
-### `packages/codegen/src/dsl/rule-transforms.ts::RuleBuilder`
+### `packages/codegen/src/dsl/builders.ts::RuleBuilder`
 
 ```text
 /**
@@ -3345,11 +3318,7 @@ one representation difference `rulesEqual` treats as equal).
 /** Runtime-injected `string()` literal wrapper (see saveAndInjectDslGlobals). */
 ```
 
-### `packages/codegen/src/dsl/authoring-globals.d.ts::grammar`
-
-The runtime's global `grammar(base, options)`, typed generic over the base: `enrich(base)` returns `PendingBase<B>` and `wire(config)` returns `LayerOptions<B>`, so a grammar file's `grammar(enrich(base), wire({…}))` infers `B` from the base and checks `wire`'s config against it through the call's contextual type.
-
-### `packages/codegen/src/dsl/authoring-globals.d.ts::token`
+### `packages/codegen/src/dsl/dsl-authoring.ts::token`
 
 ```text
 // `token` / `prec` are callable VALUES with method properties, so they are
@@ -3358,7 +3327,7 @@ The runtime's global `grammar(base, options)`, typed generic over the base: `enr
 // container would make bare `token(...)` uninstantiable).
 ```
 
-### `packages/codegen/src/dsl/authoring-globals.d.ts::eof`
+### `packages/codegen/src/dsl/evaluate.ts::eof`
 
 The global `eof()` a grammar file calls. Under tree-sitter's CLI it is tree-sitter's own builder; under sittir's evaluate it is `evaluate.ts::eof`. Both give `{ type: 'EOF' }`.
 
@@ -7903,7 +7872,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::synthesizeFieldEnumRules`
+### `packages/codegen/src/dsl/enrich.ts::synthesizeFieldEnumRules`
 
 ```text
 /**
@@ -7938,7 +7907,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::collectFieldEnumOccurrences`
+### `packages/codegen/src/dsl/enrich.ts::collectFieldEnumOccurrences`
 
 ```text
 /**
@@ -7950,7 +7919,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::walkFieldEnums`
+### `packages/codegen/src/dsl/enrich.ts::walkFieldEnums`
 
 ```text
 /**
@@ -7963,7 +7932,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::buildCanonicalEnumNames`
+### `packages/codegen/src/dsl/enrich.ts::buildCanonicalEnumNames`
 
 ```text
 /**
@@ -7985,7 +7954,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::fallbackName`
+### `packages/codegen/src/dsl/enrich.ts::fallbackName`
 
 ```text
 /**
@@ -7994,7 +7963,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::collectConflictingFieldEnumSites`
+### `packages/codegen/src/dsl/enrich.ts::collectConflictingFieldEnumSites`
 
 ```text
 /**
@@ -8007,7 +7976,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::claimUniqueEnumName`
+### `packages/codegen/src/dsl/enrich.ts::claimUniqueEnumName`
 
 ```text
 /**
@@ -8020,7 +7989,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::canReuseExistingEnumName`
+### `packages/codegen/src/dsl/enrich.ts::canReuseExistingEnumName`
 
 ```text
 /**
@@ -8030,7 +7999,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::buildEnumMemberKey`
+### `packages/codegen/src/dsl/enrich.ts::buildEnumMemberKey`
 
 ```text
 /**
@@ -8038,7 +8007,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::enumMemberKeySlug`
+### `packages/codegen/src/dsl/enrich.ts::enumMemberKeySlug`
 
 ```text
 /**
@@ -8049,7 +8018,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::deriveCandidateName`
+### `packages/codegen/src/dsl/enrich.ts::deriveCandidateName`
 
 ```text
 /**
@@ -8070,7 +8039,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::rewriteFieldEnums`
+### `packages/codegen/src/dsl/enrich.ts::rewriteFieldEnums`
 
 ```text
 /**
@@ -8086,7 +8055,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::tryExtractFieldEnum`
+### `packages/codegen/src/dsl/enrich.ts::tryExtractFieldEnum`
 
 ```text
 /**
@@ -8125,7 +8094,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::peelRepeatWrapper`
+### `packages/codegen/src/dsl/enrich.ts::peelRepeatWrapper`
 
 ```text
 /**
@@ -8140,7 +8109,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::resolveToEnumMembers`
+### `packages/codegen/src/dsl/enrich.ts::resolveToEnumMembers`
 
 ```text
 /**
@@ -8159,7 +8128,7 @@ as given; `repeat1(repeat1(x))` collapses at the compile boundary
  */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::resolveToEnumMembersOneLevelDeep`
+### `packages/codegen/src/dsl/enrich.ts::resolveToEnumMembersOneLevelDeep`
 
 ```text
 /**
@@ -8253,7 +8222,7 @@ What `appendMetadataRules` needs for one list: its name for the error, the rule 
 
 Appends the rules an `extras` callback returns to the list's sink, in order, each once (`ruleListEntryKey`). Every entry is stored in grammar.json's shape (`ruleListEntryOf`); an entry of a type the list does not accept throws, naming the list and the types it accepts.
 
-### `packages/codegen/src/dsl/evaluate.ts::ruleListEntryOf`
+### `packages/codegen/src/dsl/rule-patterns.ts::ruleListEntryOf`
 
 The grammar.json shape of a SYMBOL, STRING or PATTERN rule — its type and its name or value, without evaluate's ids — or `undefined` for any other rule type.
 
@@ -8478,18 +8447,6 @@ Whether evaluating the package with these options reads its grammar bindings: ex
 The context of one `grammarFn` call: the options, the base's rules and grammar, the list accumulators
 (`MetadataSinks`) and the setter for `word`. Every field is set when the call builds it.
 
-### `packages/codegen/src/dsl/evaluate.ts::rules`
-
-```text
-/** The rule record under evaluation (mutated by passes). */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::refs`
-
-```text
-/** Symbol-reference accumulator shared across all rule evaluations. */
-```
-
 ### `packages/codegen/src/dsl/evaluate.ts::opts`
 
 ```text
@@ -8526,58 +8483,16 @@ The context of one `grammarFn` call: the options, the base's rules and grammar, 
 /** Setter for the word-rule name. */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::FieldEnumOccurrence`
+### `packages/codegen/src/dsl/enrich.ts::FieldEnumOccurrence`
 
 ```text
 /** A field-enum candidate discovered during the first collection pass. */
 ```
 
-### `packages/codegen/src/dsl/evaluate.ts::parentKind`
-
-```text
-/** The grammar kind that owns the field. */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::fieldName`
-
-```text
-/** The field name (e.g. `'mutable_specifier'`). */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::memberKey`
-
-```text
-/** The sorted, comma-joined literal values — used as the dedup key. */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::members`
-
-```text
-/** The actual member list for constructing the EnumRule<'evaluate'>. */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::FieldEnumSweepState`
+### `packages/codegen/src/dsl/enrich.ts::FieldEnumSweepState`
 
 ```text
 /** Pass-local state for one synthesizeFieldEnumRules sweep (an explicit param, not ctx). */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::newRules`
-
-```text
-/** Accumulator for synthesized literal-set rule entries. */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::memberKeyToCanonicalName`
-
-```text
-/** Pre-computed dedup map from the first pass. */
-```
-
-### `packages/codegen/src/dsl/evaluate.ts::conflictingSites`
-
-```text
-/** Field sites with conflicting member sets — left inline. */
 ```
 
 ### `packages/codegen/src/dsl/evaluate.ts::MetadataSinks`
@@ -9326,3 +9241,11 @@ One entry of the C enum table.
 ### `packages/codegen/src/dsl/symbol-table.ts::ReservedWordset`
 
 A reserved word set.
+
+### `packages/codegen/src/dsl/symbol-table.ts::treeNameOf`
+
+The name a kind entry carries in the parse tree.
+
+### `packages/codegen/src/dsl/symbol-table.ts::parsesUnderOwnName`
+
+Whether a kind parses under its own name, with no alias entry for it.

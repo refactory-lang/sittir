@@ -11,6 +11,7 @@ import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 const edit = rs.build.identifier('Edit');
 
@@ -19,16 +20,16 @@ rs.build.genericType({ type: 'Vec', typeArguments: edit });
 rs.build.genericType({ type: 'Vec', typeArguments: [edit] });
 rs.build.genericType({ type: 'Vec', typeArguments: 'Edit' });
 rs.build.genericType({ type: 'Vec', typeArguments: ['Edit', 'Other'] });
-rs.build.genericType({ type: 'Vec', typeArguments: rs.build.typeArguments.strict(rs.build.typeArgumentsElements.strict(edit)) });
+rs.build.genericType({ type: 'Vec', typeArguments: rsStrict.build.typeArguments(rsStrict.build.typeArgumentsElements(edit)) });
 
 // The options object is first and optional, on both surfaces.
 rs.build.typeArgumentsElements(edit);
 rs.build.typeArgumentsElements({ delimiter: Delimiter.Trailing }, edit);
-rs.build.typeArgumentsElements.strict(edit);
-rs.build.typeArgumentsElements.strict({ delimiter: Delimiter.Trailing }, edit);
+rsStrict.build.typeArgumentsElements(edit);
+rsStrict.build.typeArgumentsElements({ delimiter: Delimiter.Trailing }, edit);
 
 // A trailing options object is not a spelling.
 // @ts-expect-error the options object is the first parameter
 rs.build.typeArgumentsElements(edit, { delimiter: Delimiter.Trailing });
 // @ts-expect-error the options object is the first parameter
-rs.build.typeArgumentsElements.strict(edit, { delimiter: Delimiter.Trailing });
+rsStrict.build.typeArgumentsElements(edit, { delimiter: Delimiter.Trailing });

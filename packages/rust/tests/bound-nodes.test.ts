@@ -73,9 +73,10 @@ describe('the engine a node belongs to', () => {
 
 	it('is the stamp of a child coerced from a string, a strict build, and a trivia entry made outside any build', async () => {
 		const engine = await createEngine(rust);
+		const strict = await createEngine(rust, { api: 'strict' });
 		const param = engine.build.parameter({ name: 'a', type: 'String' }) as any;
 		expect(stampOf(param.type())).toBe(engine);
-		expect(stampOf(engine.build.parameters.strict())).toBe(engine);
+		expect(stampOf(strict.build.parameters())).toBe(strict);
 		const fn = engine.build.functionItem({
 			name: 'f',
 			parameters: engine.build.parameters(),
@@ -130,16 +131,20 @@ describe('the language facts an engine shares', () => {
 			(first.trivia as { innerKinds: unknown }).innerKinds = new Set();
 		});
 		expect(() => {
-			(first.build as Record<string, unknown>).identifier = () => undefined;
+			(first.build as unknown as Record<string, unknown>).identifier = () => undefined;
 		}).toThrow(/read-only/);
 		expect(second.trivia.comment).toBe(first.trivia.comment);
 		expect(second.parse('fn f() {}\n').statements()).toHaveLength(1);
 	});
 
-	it('leave the ir table of the package frozen at its source', async () => {
+	it('leave the builder tables of the package frozen at their source, and the builders they share unfrozen', async () => {
 		const { ir } = await import('../src/ir.ts');
+		const { ir: strictIr } = await import('../src/ir-strict.ts');
 		expect(Object.isFrozen(ir)).toBe(true);
-		expect(Object.isFrozen(ir.functionItem)).toBe(true);
-		expect(Object.isFrozen(ir.functionItem.strict)).toBe(false);
+		expect(Object.isFrozen(strictIr)).toBe(true);
+		expect(Object.isFrozen(ir.visibilityModifier)).toBe(true);
+		expect(Object.isFrozen(strictIr.visibilityModifier)).toBe(true);
+		expect(Object.isFrozen(ir.functionItem)).toBe(false);
+		expect(Object.isFrozen(strictIr.functionItem)).toBe(false);
 	});
 });

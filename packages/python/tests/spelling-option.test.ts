@@ -3,17 +3,18 @@ import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
+const pyStrict = await createEngine(python, { api: 'strict' });
 
 describe('a registered spelling site leaves the config and takes an option', () => {
 	it('the value stands alone and the prefix defaults to the registered arm', () => {
 		expect(py.build.integer.hex('ff').$render()).toBe('0xff');
-		expect(py.build.integer.hex.strict('ff').$render()).toBe('0xff');
+		expect(pyStrict.build.integer.hex('ff').$render()).toBe('0xff');
 		expect(py.build.integer.hex(255).$render()).toBe('0xff');
 	});
 
 	it('the second parameter chooses the other spelling', () => {
 		expect(py.build.integer.hex('FF', { prefix: '0X' }).$render()).toBe('0XFF');
-		expect(py.build.integer.hex.strict('ff', { prefix: '0X' }).$render()).toBe('0Xff');
+		expect(pyStrict.build.integer.hex('ff', { prefix: '0X' }).$render()).toBe('0Xff');
 	});
 
 	it('the setter for the option keeps the value', () => {

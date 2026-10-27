@@ -1285,10 +1285,6 @@ The part of a node-model record the bindings read: each node's kind, model type,
 
 The slot model of a node-model record: per kind its slots, with each slot's kinds from its values (`slotKindsOf`) and its property name as the record stamps it (`accessor`), a slot's terminals being the values it stores as terminal text, and an enum's members as `enumMembers`, with the record's omissions filled (`branch`, not required, single, `verbatim`, no members, no `variantOf`), and each kind's `shownAs` from `shownNames`.
 
-### `packages/codegen/src/bindings/input.ts::shownNames`
-
-Per grammar kind, the names the parser shows it by where a slot holds it under another name: every node-reference value's stamped `parseKind` that differs from its `name`, sorted.
-
 ### `packages/codegen/src/bindings/input.ts::renamedFromOf`
 
 Each kind the grammar bindings renamed, mapped to its base kind, from the record. `bindFacts` names the facts' base kinds by it (`boundNameOf`).
@@ -1504,10 +1500,6 @@ An anchored `#match?` with named holes as a template: the vocabulary paths the p
 ### `packages/codegen/src/bindings/facts.ts::ModelSlot`
 
 A slot of the node model as the bindings read it: its name and property name, whether it is required and repeated, its storage, the kinds it holds and the terminal texts it admits.
-
-### `packages/codegen/src/bindings/facts.ts::FIXED_TEXT_MODEL_TYPES`
-
-The model types of a kind that is always one fixed text: keywords and punctuation.
 
 ### `packages/codegen/src/bindings/facts.ts::isFixedText`
 
@@ -1941,3 +1933,15 @@ Where a vocabulary is read from.
 ### `packages/codegen/src/bindings/vocabulary.ts::VocabularySource::synonyms`
 
 The synonyms the vocabulary source declares.
+
+### `packages/codegen/src/bindings/facts.ts::ModelNode::unit`
+
+Whether the model node is a unit.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::unit`
+
+Whether the node model entry is a unit.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelNode::shownAs`
+
+The names the node is shown under, when they differ from its kind.

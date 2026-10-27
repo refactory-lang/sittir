@@ -1,13 +1,17 @@
 /**
  * Type-level pin: a leaf that is its own text takes its content, or its text
  * spelled in full with the affix toggle off. The spelled form is typed by
- * the kind's affixes, a built node is not text, and there is no strict or
- * coerce form.
+ * the kind's affixes, a built node is not text, and the strict table holds
+ * the same builder.
  *
  * Compile-time only: `pnpm --filter @sittir/python type-check`.
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
 
 export function ownTextLeafEntries(text: string): void {
 	const comment = ir.comment(' x');
@@ -22,10 +26,9 @@ export function ownTextLeafEntries(text: string): void {
 	ir.comment(text, false);
 	// @ts-expect-error a built comment is not text
 	ir.comment(comment);
-	// @ts-expect-error a leaf has one builder, no strict form
-	void ir.comment.strict;
-	// @ts-expect-error a leaf has one builder, no coerce form
-	void ir.escapeSequence.octal.coerce;
 	// @ts-expect-error a leaf takes no config object
 	ir.comment({ content: ' x' });
+
+	expectTrue<Equals<typeof strictIr.comment, typeof ir.comment>>();
+	expectTrue<Equals<typeof strictIr.escapeSequence.octal, typeof ir.escapeSequence.octal>>();
 }

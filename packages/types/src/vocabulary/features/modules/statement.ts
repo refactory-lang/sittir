@@ -33,7 +33,7 @@ export namespace Statement {
 		// t only
 		readonly importClause?: V.Clause.Import.Names<G>;
 		// t only
-		readonly names?: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
+		readonly names?: (V.Clause.Import.Alias<G> | V.Identifier.Qualified<G>)[];
 		// p only
 		readonly source?: V.Literal.String<G>;
 		// t only
@@ -49,15 +49,15 @@ export namespace Statement {
 			// claimed by p
 			readonly $kind: 'statement.import.from';
 			readonly content:
-				| V.Identifier.Dotted<G>
+				| V.Identifier.Qualified<G>
 				| V.Clause.Import.Any<G>
-				| (V.Identifier.Dotted<G> | V.Clause.Import.Any<G>)[];
-			readonly moduleName: V.Clause.Import.Relative<G> | V.Identifier.Dotted<G>;
+				| (V.Identifier.Qualified<G> | V.Clause.Import.Any<G>)[];
+			readonly moduleName: V.Clause.Import.Relative<G> | V.Identifier.Qualified<G>;
 		}
 		export interface Future<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by p
 			readonly $kind: 'statement.import.future';
-			readonly content: (V.Clause.Import.Alias<G> | V.Identifier.Dotted<G>)[];
+			readonly content: (V.Clause.Import.Alias<G> | V.Identifier.Qualified<G>)[];
 		}
 		export interface Package<G extends GrammarContext<G>> extends SubKindOf<V.Statement.Import<G>> {
 			// claimed by r

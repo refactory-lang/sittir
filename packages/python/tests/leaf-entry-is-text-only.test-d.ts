@@ -1,11 +1,15 @@
 /**
  * Type-level pin: a leaf's entry takes text and nothing else, at the top of
- * `ir` and under a parent alike, and has no strict or coerce form.
+ * `ir` and under a parent alike, and is the same builder in the strict table.
  *
  * Compile-time only: `pnpm --filter @sittir/python type-check`.
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
+
+type Equals<A, B> = (<X>() => X extends A ? 1 : 2) extends <X>() => X extends B ? 1 : 2 ? true : false;
+function expectTrue<_T extends true>(): void {}
 
 export function leafEntriesTakeTextOnly(): void {
 	const name = ir.identifier('x');
@@ -23,8 +27,6 @@ export function leafEntriesTakeTextOnly(): void {
 	// @ts-expect-error a built integer is not text
 	ir.integer.decimal(three);
 
-	// @ts-expect-error a leaf has one builder, no strict form
-	void ir.parameter.identifier.strict;
-	// @ts-expect-error a leaf has one builder, no coerce form
-	void ir.integer.decimal.plain.coerce;
+	expectTrue<Equals<typeof strictIr.parameter.identifier, typeof ir.parameter.identifier>>();
+	expectTrue<Equals<typeof strictIr.integer.decimal.plain, typeof ir.integer.decimal.plain>>();
 }

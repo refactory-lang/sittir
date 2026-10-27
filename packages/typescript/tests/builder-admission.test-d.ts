@@ -11,6 +11,7 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 export function draftsIntoBuilders(): string[] {
 	const fn = ts.parse('function f(a) { a; }\n').statements()[0]!;
@@ -26,7 +27,7 @@ export function draftsIntoBuilders(): string[] {
 	return [
 		ts.build.functionDeclaration({ name: 'g', parameters: ts.build.formalParameters(), body: draftBody }).$render(),
 		ts.build.functionDeclaration({ name: 'g', parameters: draftParams, body: ts.build.statementBlock() }).$render(),
-		ts.build.functionDeclaration.strict({ name: ts.build.identifier('g'), parameters: draftParams, body: draftBody }).$render(),
+		tsStrict.build.functionDeclaration({ name: ts.build.identifier('g'), parameters: draftParams, body: draftBody }).$render(),
 		ts.build.statementBlock({ statements: [body.statements()[0]!] }).$render()
 	];
 }
@@ -35,7 +36,7 @@ export function wrongKindRefused(): void {
 	// @ts-expect-error a FormalParameters node is not a StatementBlock
 	ts.build.functionDeclaration({ name: 'g', parameters: ts.build.formalParameters(), body: ts.build.formalParameters() });
 	// @ts-expect-error a FormalParameters node is not a StatementBlock
-	ts.build.functionDeclaration.strict({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: ts.build.formalParameters() });
+	tsStrict.build.functionDeclaration({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: ts.build.formalParameters() });
 }
 
 export function listBuilderOptionsRefuseNodes(): void {
@@ -48,9 +49,9 @@ export function listBuilderOptionsRefuseNodes(): void {
 export function storageShapeRefused(storage: T.StatementBlock): void {
 	const fn = ts.build.functionDeclaration({ name: 'g', parameters: ts.build.formalParameters(), body: ts.build.statementBlock() });
 	// @ts-expect-error the storage interface is not a node
-	ts.build.functionDeclaration.strict({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: storage });
+	tsStrict.build.functionDeclaration({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: storage });
 	// @ts-expect-error a storage-shaped literal is not a node
-	ts.build.functionDeclaration.strict({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: { $type: ts.kinds.StatementBlock } });
+	tsStrict.build.functionDeclaration({ name: ts.build.identifier('g'), parameters: ts.build.formalParameters(), body: { $type: ts.kinds.StatementBlock } });
 	// @ts-expect-error the storage interface is not a node
 	fn.$with.body(storage);
 	// @ts-expect-error a storage-shaped literal is not a node
@@ -65,12 +66,12 @@ export function aliasContentNamesBuiltForms(): void {
 }
 
 export function optionsAndValueKeepTheirPlaces(): void {
-	const statement = ts.build.expressionStatement.strict(ts.build.identifier('x'));
+	const statement = tsStrict.build.expressionStatement(ts.build.identifier('x'));
 	// @ts-expect-error the static block takes its body first; a terminator object is not a StatementBlock
-	ts.build.classStaticBlock.strict({ terminator: ts.kinds.AutomaticSemicolon }, statement);
+	tsStrict.build.classStaticBlock({ terminator: ts.kinds.AutomaticSemicolon }, statement);
 	// @ts-expect-error a statement is not the static block's options
-	ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement), statement);
-	ts.build.classStaticBlock.strict(ts.build.statementBlock.strict(statement), { terminator: ts.kinds.AutomaticSemicolon });
+	tsStrict.build.classStaticBlock(tsStrict.build.statementBlock(statement), statement);
+	tsStrict.build.classStaticBlock(tsStrict.build.statementBlock(statement), { terminator: ts.kinds.AutomaticSemicolon });
 }
 
 export function thisTypeInATypePosition(): void {

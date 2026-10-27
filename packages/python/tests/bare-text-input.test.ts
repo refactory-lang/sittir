@@ -3,26 +3,26 @@ import python from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
-const verifying = await createEngine(python, { verifyStructure: 'runtime' });
+const verifyingStrict = await createEngine(python, { verifyStructure: 'runtime', api: 'strict' });
 
 describe('a text leaf slot takes a built node strictly and its text loosely', () => {
 	it('rejects bare text strictly, naming the leaf builders', () => {
 		// @ts-expect-error a strict slot takes a built node, not text
-		expect(() => verifying.build.stringContent.strict('hello')).toThrow(/a strict factory takes a built node, not a string/);
+		expect(() => verifyingStrict.build.stringContent('hello')).toThrow(/a strict factory takes a built node, not a string/);
 	});
 
 	it('builds the first text kind, in lexical rank order, whose pattern accepts the text', () => {
-		expect(py.build.stringContent.coerce('hello').$render()).toBe('hello');
+		expect(py.build.stringContent('hello').$render()).toBe('hello');
 	});
 
 	it('throws when no text kind accepts the text', () => {
-		expect(() => py.build.stringContent.coerce('')).toThrow(/matches none of \[.*string_fragment/);
+		expect(() => py.build.stringContent('')).toThrow(/matches none of \[.*string_fragment/);
 	});
 
 	it.each([['a"b'], ['.*\\.txt$'], ['a\nb'], ['a{b}']])(
 		'builds a string fragment from %j, text the scanner reads inside some string',
 		(text) => {
-			expect(py.build.stringContent.coerce(text).$render()).toBe(text);
+			expect(py.build.stringContent(text).$render()).toBe(text);
 			expect(py.build.stringFragment(text).$text()).toBe(text);
 		}
 	);
@@ -37,6 +37,6 @@ describe('a text leaf slot takes a built node strictly and its text loosely', ()
 
 	it('rejects bare text strictly in a node slot', () => {
 		// @ts-expect-error a strict node slot takes a built node, not text
-		expect(() => verifying.build.returnStatement.strict('x')).toThrow(/ReturnStatement\.\w+: a strict factory takes a built node, not a string; expected a built /);
+		expect(() => verifyingStrict.build.returnStatement('x')).toThrow(/ReturnStatement\.\w+: a strict factory takes a built node, not a string; expected a built /);
 	});
 });

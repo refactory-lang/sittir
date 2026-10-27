@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "generatedSha256": "5ee0d25dba602f6e6ea4bd8d56207b9778a7028ad77286e262254167b4584269",
+  "generatedSha256": "23de10147826c09861df1aa1530b07461731247a1859233e510ebc36518a3c85",
   "covered": [
     "source_file",
     "expression_statement",
@@ -249,6 +249,7 @@
     "_error_sentinel",
     "type_identifier",
     "field_identifier",
+    "closure_parameter",
     "shorthand_field_identifier",
     "method_declaration",
     "signature_method_declaration"

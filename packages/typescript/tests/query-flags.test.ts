@@ -49,6 +49,11 @@ describe('a flag a boolean slot holds', () => {
 		expect(queryFlags[TSKindId.Unique]!['unique']).toEqual({ op: 'and', of: [] });
 		expect(queryFlags[TSKindId.SymbolKeyword]?.['unique']).toBeUndefined();
 	});
+
+	it('holds the prefix flag on the prefix update form always, and declares it on no postfix form', () => {
+		expect(queryFlags[TSKindId.UpdateExpressionPrefix]!['prefix']).toEqual({ op: 'and', of: [] });
+		expect(queryFlags[TSKindId.UpdateExpressionPostfix]?.['prefix']).toBeUndefined();
+	});
 });
 
 describe('c.is(flag) with slot comparisons', () => {

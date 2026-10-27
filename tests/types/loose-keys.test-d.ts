@@ -14,6 +14,7 @@ import type { RustAPI } from '@sittir/rust';
 import type { PythonAPI } from '@sittir/python';
 
 declare const rs: Engine<RustAPI>;
+declare const rsStrict: Engine<RustAPI, 'strict'>;
 declare const py: Engine<PythonAPI>;
 
 // @ts-expect-error a misspelled key refuses the call
@@ -32,7 +33,7 @@ py.build.ifStatement({ condition: 'x', consequence: py.build.block(), altrnative
 // @ts-expect-error a numeric builder refuses a misspelled key
 rs.build.integerLiteralDecimal({ content: 1, sufix: 'u8' });
 // @ts-expect-error a strict numeric builder, whose config is generic as well, refuses a misspelled key
-rs.build.integerLiteralDecimal.strict({ content: 1, sufix: 'u8' });
+rsStrict.build.integerLiteralDecimal({ content: 1, sufix: 'u8' });
 
 // @ts-expect-error a polymorph form builder refuses a misspelled key
 rs.build.attribute.input({ path: 'x', valu: 'y' });
@@ -68,7 +69,7 @@ export const nestedKeys = rs.build.functionItem({ name: 'f', parameters: rs.buil
 export const listItemKeys = rs.build.block({ statements: [{ $type: rs.kinds.ExpressionStatement, content: 'a' }] });
 export const deepKeys = rs.build.block({ trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, trailingExpression: { $type: rs.kinds.Block, statements: [] } } } });
 export const numericKeys = rs.build.integerLiteralDecimal({ content: 1 });
-export const strictNumericKeys = rs.build.integerLiteralDecimal.strict({ content: 1 });
+export const strictNumericKeys = rsStrict.build.integerLiteralDecimal({ content: 1 });
 export const pythonKeys = py.build.ifStatement({ condition: 'x', consequence: py.build.block(), alternatives: [] });
 
 // The two shapes whose keys stay unchecked, each admitted:

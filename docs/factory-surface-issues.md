@@ -4,9 +4,10 @@ Measured state of the two construction surfaces, per grammar. Supersedes the
 class-A/B/C/D grouping in the 2026-08-25 dogfood gap worklist, most of whose
 rows were calling mistakes rather than surface limits.
 
-**The two surfaces.** The *strict* surface is the factory layer: `ir.<kind>.strict(…)`
-and `ir.<kind>.<form>.strict(…)`, every node spelled explicitly. The *loose*
-surface is the coercion layer: `ir.<kind>(…)` and `ir.<kind>.<form>(…)`, which
+**The two surfaces.** The *strict* surface is the factory layer, the strict engine's
+builder table (`strict` below is `(await createEngine(lang, { api: 'strict' })).build`):
+`strict.<kind>(…)` and `strict.<kind>.<form>(…)`, every node spelled explicitly. The *loose*
+surface is the coercion layer, the default engine's table: `ir.<kind>(…)` and `ir.<kind>.<form>(…)`, which
 resolves plain objects, strings and arrays into nodes before calling the
 factory. A shape that fails on one and works on the other tells you which layer
 owns the defect.
@@ -29,9 +30,9 @@ itself. Spelling the slot as a config key is the wrong shape, and the typed
 surface says so at the call site:
 
 ```ts
-ir.enumBody.strict(ir.identifier('A'), ir.identifier('B'))          // → "{\n    A,\n    B,\n}"
-ir.enumBody.strict(ir.enumBodyElements.strict(a, b))                 // → same
-ir.enumBody.strict({ enumBodyElements: ir.enumBodyElements.strict(a, b) })
+strict.enumBody(ir.identifier('A'), ir.identifier('B'))          // → "{\n    A,\n    B,\n}"
+strict.enumBody(strict.enumBodyElements(a, b))                 // → same
+strict.enumBody({ enumBodyElements: strict.enumBodyElements(a, b) })
 // error TS2769: No overload matches this call.
 ```
 
@@ -57,21 +58,21 @@ Reference: `packages/typescript/src/factories/raw.ts::buildEnumBody`.
 
 ### S2 — A no-argument form call is rejected — RESOLVED
 
-Was: `ir.visibilityModifier.pub.strict()` rejected with `TS2554: Expected 1 arguments, but got 0`, and the rebuild printed `strict(undefined)` for the empty slot.
+Was: `strict.visibilityModifier.pub()` rejected with `TS2554: Expected 1 arguments, but got 0`, and the rebuild printed `strict(undefined)` for the empty slot.
 One cause with S3. The `pub` wrapper declares its own surface first, `(value?: T.VisibilityModifierGroup)`, and the group's surface after it, `(value: TSKindId.Self | … | T.VisibilityModifierPubInPath)`; `ArgsOf<F>` inferred the parameter tuple from a plain call signature, which matches only the LAST overload, so the form's type kept the required group member and lost the optional own-surface the runtime accepts. `ArgsOf` is now the union of every declared overload's tuple, and the rebuild prints a form's arguments only up to the last defined one, so an empty optional slot spells `strict()`.
 
 ### S3 — A prebuilt node is refused where a wrapper's seat forwards to its target — RESOLVED
 
-Was: python `ir.classDefinition.block.strict({ body: [ir.block.strict(…)] })` rejected with `TS2322: Type 'Built' is not assignable to type 'SimpleStatements | CompoundStatement'` at six sites of the rebuild; the earlier spelling of this entry (a statement slot naming the hidden `_statement` wrappers) had already gone with the supertype expansion, and the surviving error was this one.
-The seat's config key is typed `ArgsOf<typeof F.buildSuiteBlock>`; that wrapper declares `(value: T.Block)` first and the block's `(...children: (SimpleStatements | CompoundStatement)[])` after it, and `ArgsOf` kept only the last, so the type admitted the statements but not the `Block` the read tree holds and the runtime wrapper accepts by its `$type`. With `ArgsOf` the union of every overload's tuple, `body: [ir.block.strict(…)]` and `body: [stmt, stmt]` are both admitted. The generated rebuilds type-check with no errors in all three grammars.
+Was: python `strict.classDefinition.block({ body: [strict.block(…)] })` rejected with `TS2322: Type 'Built' is not assignable to type 'SimpleStatements | CompoundStatement'` at six sites of the rebuild; the earlier spelling of this entry (a statement slot naming the hidden `_statement` wrappers) had already gone with the supertype expansion, and the surviving error was this one.
+The seat's config key is typed `ArgsOf<typeof F.buildSuiteBlock>`; that wrapper declares `(value: T.Block)` first and the block's `(...children: (SimpleStatements | CompoundStatement)[])` after it, and `ArgsOf` kept only the last, so the type admitted the statements but not the `Block` the read tree holds and the runtime wrapper accepts by its `$type`. With `ArgsOf` the union of every overload's tuple, `body: [strict.block(…)]` and `body: [stmt, stmt]` are both admitted. The generated rebuilds type-check with no errors in all three grammars.
 
 ### S4 — The validators' config vocabulary is not the strict config's — RESOLVED
 
-Two causes, both in `nodeToConfig`. The read stores an unnamed slot under the child's kind (`_parameter`, `_impl_item_body`); the factory map now stamps those spellings as the slot's `wireKeys` (the set the wrap accepts) and the projection resolves a read key to its slot through them. And the projection stamped a `$variant` and promoted a "variant child's" surface into the parent whenever a child kind appeared in some polymorph's map, which projected a `declaration_list` under an impl body as `foreignModItem.body`; no generated code reads `$variant` (polymorphs were retired into transforms), so the inference and its promotion are gone. `ir.implItem.strict({ traitClause: ir.implItem.positiveClause.strict(…), content: ir.implItem.body.strict(ir.declarationList.strict(…)) })` now prints as the hand-written strict example spells it.
+Two causes, both in `nodeToConfig`. The read stores an unnamed slot under the child's kind (`_parameter`, `_impl_item_body`); the factory map now stamps those spellings as the slot's `wireKeys` (the set the wrap accepts) and the projection resolves a read key to its slot through them. And the projection stamped a `$variant` and promoted a "variant child's" surface into the parent whenever a child kind appeared in some polymorph's map, which projected a `declaration_list` under an impl body as `foreignModItem.body`; no generated code reads `$variant` (polymorphs were retired into transforms), so the inference and its promotion are gone. `strict.implItem({ traitClause: strict.implItem.positiveClause(…), content: strict.implItem.body(strict.declarationList(…)) })` now prints as the hand-written strict example spells it.
 
 ### S5 — An attributed single-slot wrapper projects to `{}` — RESOLVED
 
-Resolved with S4's slot keys: `ir.attributedParameter.strict({ content: ir.selfParameter.strict({ reference: true }) })` now prints, as do the argument, type-argument and import wrappers.
+Resolved with S4's slot keys: `strict.attributedParameter({ content: strict.selfParameter({ reference: true }) })` now prints, as do the argument, type-argument and import wrappers.
 
 ### S6 — Verbatim text in an expression or pattern position has no leaf to wrap — RESOLVED
 
@@ -86,11 +87,11 @@ The terminator is a declared choice slot whose values are kind ids (`terminator:
 ### S9 — A config-shaped parent does not build its hoisted group from a config — RESOLVED
 
 Was: the group's config under the slot key (`content: { kind, left }`) rejected, `comparators: [{ operators, primaryExpression }]` rejected, and rust's render throwing on a list seat handed one node.
-Resolved by group seating on the parent: a hoisted group is reached through the parent's mount route, which merges the group's keys into the call (`ir.forInStatement.letConstKind.strict({ kind, left, operator, right, body })`); an element group in a list slot takes each element as the group's config (`ir.comparisonOperator.strict({ left, comparators: [{ operators, primaryExpression }] })`); a spliced group keeps its own arity (`ir.matchBlock.strict({ matchArm, lastArm })`, `ir.matchBlock.strict()` for the empty block) and a list seat handed one node is refused at compile time, so the render throw is behind a type error. The config-under-slot-key spelling this row asked for is refused on purpose: the plain route takes the built group, the mount route takes its keys. Witnesses: `strict-surface-seats.test.ts` in each grammar package.
+Resolved by group seating on the parent: a hoisted group is reached through the parent's mount route, which merges the group's keys into the call (`strict.forInStatement.letConstKind({ kind, left, operator, right, body })`); an element group in a list slot takes each element as the group's config (`strict.comparisonOperator({ left, comparators: [{ operators, primaryExpression }] })`); a spliced group keeps its own arity (`strict.matchBlock({ matchArm, lastArm })`, `strict.matchBlock()` for the empty block) and a list seat handed one node is refused at compile time, so the render throw is behind a type error. The config-under-slot-key spelling this row asked for is refused on purpose: the plain route takes the built group, the mount route takes its keys. Witnesses: `strict-surface-seats.test.ts` in each grammar package.
 
 ### S8 — Form names the read data reaches are not on `ir` — RESOLVED
 
-Generated: python `ir.assignment.eq.strict(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
+Generated: python `strict.assignment.eq(…)`, `ir.comparisonOperatorComparator(…)`; typescript `TSKindId.<Member>` where `ImportClause | …` is expected.
 Error: `TS2339: Property 'eq' does not exist on type …`; at render: `Cannot read properties of undefined (reading 'strict')`; typescript at render: `unknown kind id 390 in StatementNode on ProgramNode._statements`.
 
 The python half closed when the example emitter began consuming seats, which
@@ -103,7 +104,7 @@ bundle — yet the emitter spelled every unseated one as `ir.<irKey>`, a path
 that by construction never exists. The five typescript residues all reach `ir`
 by a route the census does not measure: the variant form their parent declares,
 where the entry is the CHILD's own builder namespaced under the parent
-(`ir.importStatement.clauseFrom.strict` is `F.buildImportStatementClauseFrom`),
+(`strict.importStatement.clauseFrom` is `F.buildImportStatementClauseFrom`),
 yielding the child kind for the caller to seat. That is the alias-form
 convention.
 
@@ -128,14 +129,14 @@ The typescript rebuild now constructs and renders; its `examples-verify`
 ### S11 — Two arm slots cannot both be named in one call — RESOLVED
 
 Arms of one slot now chain onto arms of another, so a caller names both:
-`ir.exceptClause.exception.list.block.strict({ exception: [a, b], suite: [block] })`
+`strict.exceptClause.exception.list.block({ exception: [a, b], suite: [block] })`
 renders `except a, b:` with its block suite. A later slot's arms are emitted
 again under each earlier arm, applied to it, and the validators' projection
 composes the mounts in slot order rather than refusing the second.
 
 ### S12 — A separated list's separator is printed as an element — RESOLVED
 
-Generated: typescript `ir.arguments.strict("result", TSKindId.Comma, "format")`.
+Generated: typescript `strict.arguments("result", TSKindId.Comma, "format")`.
 Error at render: `unknown kind id 14 in ArgumentsArgumentsNodeSlot`. The
 comma is the list's separator, which the list factory supplies itself, and the
 two operands print as bare text where an expression node is wanted.
@@ -165,7 +166,7 @@ an earlier attempt at the switch alone fixed typescript while regressing rust:
   and `config` route a bare string through `printVerbatimText`; `spread`,
   `elements` and the mount route handed it straight to `printValue`, which
   spells it as a string literal. That, not supertype resolution, is why
-  `"Debug"` stayed bare in `ir.delimTokenTree.paren.strict(…)` — the existing
+  `"Debug"` stayed bare in `strict.delimTokenTree.paren(…)` — the existing
   resolution had never been asked. All four shapes wrap now.
 - **A tuple seat carries the child's options bag.** It hands the parent's slot
   the child's WHOLE argument list, so a separated list's options object reaches
@@ -231,8 +232,8 @@ Each open row below names the rule it falls under.
 ### The loose rebuild is the loose gate
 
 `sittir tool emit-factory-source --surface loose` prints the same file the
-strict emitter prints, through the bundle calls (`ir.<key>(…)`, never
-`.coerce`), with every coercion the contract admits spelled bare: a text
+strict emitter prints, through the default engine's builders (`ir.<key>(…)`),
+with every coercion the contract admits spelled bare: a text
 leaf as its string where the slot admits one pattern kind (rule 1), a list
 envelope as its array where the slot's one branch kind or its declared
 default is the envelope (rules 4 and 6), a single-slot wrapper dropped
@@ -302,8 +303,8 @@ last position is a compile-time overload-resolution error, not a runtime
 throw.
 
 ```ts
-ir.enumVariantList.strict({ delimiter: Delimiter.Trailing }, variantA)  // → "{A,}"
-ir.enumVariantList.strict(variantA, { delimiter: Delimiter.Trailing })  // type error
+strict.enumVariantList({ delimiter: Delimiter.Trailing }, variantA)  // → "{A,}"
+strict.enumVariantList(variantA, { delimiter: Delimiter.Trailing })  // type error
 ```
 
 Affects rust, typescript, python.
@@ -393,8 +394,8 @@ A kind whose rule is a choice of complete alternatives cannot be built from the
 bare kind; the arm's form has to be named, even on the loose surface.
 
 ```ts
-ir.callExpression({ function: 'f', arguments: ir.arguments.strict() })      // rejected
-ir.callExpression.call({ function: 'f', arguments: ir.arguments.strict() }) // → "f()"
+ir.callExpression({ function: 'f', arguments: strict.arguments() })      // rejected
+ir.callExpression.call({ function: 'f', arguments: strict.arguments() }) // → "f()"
 ```
 
 This is the surface, not a gap: naming an alternative chooses a form, on both
@@ -416,8 +417,8 @@ admits no text, so the native render refuses it.
 ir.genericType({ type: 'Vec', typeArguments: ['Edit'] })                 // envelope slot holds "Edit"
 ir.genericType({ type: 'Result', typeArguments: ['String', 'SpliceError'] }) // holds "String"; SpliceError is gone
 ir.callExpression({ function: 'Ok', arguments: ['buf'] })                // envelope slot holds "buf"
-ir.typeArguments.strict(ir.typeArgumentsElements.strict({ delimiter: Delimiter.None }, { content: 'Edit' })) // → "<Edit>"
-ir.arguments.strict(ir.argumentsElements.strict({ delimiter: Delimiter.None }, 'buf'))                       // → "(buf)"
+strict.typeArguments(strict.typeArgumentsElements({ delimiter: Delimiter.None }, { content: 'Edit' })) // → "<Edit>"
+strict.arguments(strict.argumentsElements({ delimiter: Delimiter.None }, 'buf'))                       // → "(buf)"
 ```
 
 The slot carrier used to echo the stored text, so the first form rendered
@@ -490,7 +491,7 @@ actually constructed — at the call site, on the object literal — and it name
 the real slots:
 
 ```ts
-ir.attribute.strict({ path, arguments: tokenTree })
+strict.attribute({ path, arguments: tokenTree })
 // error TS2353: 'arguments' does not exist in type
 //   '{ readonly input?: AttributeInput; readonly path: … }'
 ```
@@ -512,8 +513,8 @@ at runtime:
 
 ```ts
 const cfg = { path, arguments: tokenTree };
-ir.attribute.strict(cfg);        // accepted, `arguments` dropped
-ir.attribute.strict({ ...cfg }); // spread defeats freshness
+strict.attribute(cfg);        // accepted, `arguments` dropped
+strict.attribute({ ...cfg }); // spread defeats freshness
 ```
 
 An exact-type encoding closes this — `type Exact<T, C> = C &
@@ -529,7 +530,7 @@ Revisit only if by-reference config construction becomes a common pattern.
 ### X2 — No-argument construction is inconsistent on the loose surface — RESOLVED
 
 A factory whose slots are all omittable should be callable with no argument. The
-strict surface now derives this from slot multiplicity, so `ir.tryBlock.strict()`
+strict surface now derives this from slot multiplicity, so `strict.tryBlock()`
 renders `try{}`. The loose surface still requires `{}` in these cases:
 
 | grammar | count | kinds |
@@ -561,7 +562,7 @@ argument.
 unconditionally true (an empty separated list is a legal JS construction
 regardless of a `repeat1` grammar constraint), so `typeParameters`,
 `forLifetimes`, `tupleType`, `typeArguments` and `tuple` build empty with no
-argument too, matching what `ir.<kind>.strict()` already does today.
+argument too, matching what `strict.<kind>()` already does today.
 
 **Root-caused and fixed the remaining kinds.** `scopedUseList`,
 `loopExpression`, `genBlock`, `async`, `gen`, `loop`, `scopedList` threw on
@@ -599,18 +600,18 @@ awk '/export function build<Kind>\(/{c=8} c&&c--' packages/<lang>/src/factories/
 That line states whether the factory is positional, variadic or config-shaped,
 and names the real slot keys. Four conventions account for most confusion:
 
-- **A thin wrapper is positional.** `ir.typeAnnotation.strict(type)`, not
-  `.strict({ type })`. A config bag there yields
+- **A thin wrapper is positional.** `strict.typeAnnotation(type)`, not
+  `strict.typeAnnotation({ type })`. A config bag there yields
   `$type property missing in <X>NodeSlot`, which reads like a node
   bug.
-- **A form is `ir.<kind>.<form>.strict(…)`.** `ir.<kind>.<form>(…)` is its
+- **A form is `strict.<kind>.<form>(…)`.** `ir.<kind>.<form>(…)` is its
   coercing twin.
 - **An alias form yields its own kind, not the parent's.**
-  `ir.importStatement.clauseFrom.strict(…)` builds the arm; the caller seats it in
+  `strict.importStatement.clauseFrom(…)` builds the arm; the caller seats it in
   `import_statement.fromClause`. Rendered alone it lacks the `import` keyword
   because that is the parent's template text.
 - **A seat holding an argument tuple takes an array, and that array is the
-  child's argument list.** `ir.functionDefinition.block.strict({ body: [line] })`
+  child's argument list.** `strict.functionDefinition.block({ body: [line] })`
   — the statements go in directly, not pre-wrapped in a block. A bare node
   there is a type error; bypassing the types gives
   `seated is not iterable` or `Spread syntax requires ...iterable`.

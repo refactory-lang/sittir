@@ -3,29 +3,30 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
-const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
+const rsStrict = await createEngine(rust, { api: 'strict' });
+const verifyingStrict = await createEngine(rust, { verifyStructure: 'runtime', api: 'strict' });
 
 describe('a text leaf slot takes a built node strictly and its text loosely', () => {
 	it('takes the built leaf strictly and renders it', () => {
-		const built = rs.build.stringLiteral.strict({ stringOpen: rs.build.stringOpen('"'), elements: [rs.build.stringContent('hi')] });
+		const built = rsStrict.build.stringLiteral({ stringOpen: rs.build.stringOpen('"'), elements: [rs.build.stringContent('hi')] });
 		expect(built.$render()).toBe('"hi"');
 	});
 
 	it('rejects bare text strictly, naming the leaf builder', () => {
 		// @ts-expect-error a strict slot takes a built node, not text
-		expect(() => verifying.build.stringLiteral.strict({ stringOpen: '"', elements: [] })).toThrow(/a strict factory takes a built node, not a string; expected buildStringOpen/);
+		expect(() => verifyingStrict.build.stringLiteral({ stringOpen: '"', elements: [] })).toThrow(/a strict factory takes a built node, not a string; expected buildStringOpen/);
 	});
 
 	it('builds the sole text leaf from bare text when coercing', () => {
-		expect(rs.build.stringLiteral.coerce({ stringOpen: '"', elements: [rs.build.stringContent('hi')] }).$render()).toBe('"hi"');
+		expect(rs.build.stringLiteral({ stringOpen: '"', elements: [rs.build.stringContent('hi')] }).$render()).toBe('"hi"');
 	});
 
 	it('runs the leaf guard on unmatched text when coercing', () => {
-		expect(() => rs.build.stringLiteral.coerce({ stringOpen: 'x', elements: [] })).toThrow(/^string_open: text does not match pattern/);
+		expect(() => rs.build.stringLiteral({ stringOpen: 'x', elements: [] })).toThrow(/^string_open: text does not match pattern/);
 	});
 	it('rejects bare text strictly in a node slot', () => {
 		// @ts-expect-error a strict node slot takes a built node, not text
-		expect(() => verifying.build.returnExpression.strict('x')).toThrow(/ReturnExpression\.expression: a strict factory takes a built node, not a string; expected a built /);
+		expect(() => verifyingStrict.build.returnExpression('x')).toThrow(/ReturnExpression\.expression: a strict factory takes a built node, not a string; expected a built /);
 	});
 });
 

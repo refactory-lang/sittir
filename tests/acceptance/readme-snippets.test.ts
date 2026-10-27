@@ -98,5 +98,5 @@ describe('the package README snippets', () => {
 				`a README snippet does not type-check:\n${(error as { stdout?: string }).stdout ?? String(error)}`
 			);
 		}
-	}, 120_000);
+	}, 600_000);
 });

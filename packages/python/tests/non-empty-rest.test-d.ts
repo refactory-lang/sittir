@@ -7,11 +7,12 @@
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
 
 export function nonEmptySlotTakesAtLeastOneChild(): void {
-	void ir.dottedName.strict(ir.identifier('a'));
+	void strictIr.globalStatement(ir.identifier('a'));
 	// @ts-expect-error zero children are refused
-	ir.dottedName.strict();
+	strictIr.globalStatement();
 	// @ts-expect-error the setter of a non-empty slot takes at least one child too
-	ir.dottedName.strict(ir.identifier('a')).$with.names();
+	strictIr.globalStatement(ir.identifier('a')).$with.names();
 }

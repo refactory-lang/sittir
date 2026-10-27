@@ -159,7 +159,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "287": 0
+                  "289": 0
                 }
               }
             },
@@ -172,7 +172,7 @@
                   1
                 ],
                 "slots": {
-                  "287": 0
+                  "289": 0
                 }
               }
             }
@@ -227,7 +227,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "288": 0
+                  "290": 0
                 }
               }
             },
@@ -240,7 +240,7 @@
                   1
                 ],
                 "slots": {
-                  "288": 0
+                  "290": 0
                 }
               }
             }
@@ -295,7 +295,7 @@
                 "op": "match",
                 "pattern": "^[A-Z][A-Z_0-9]*$",
                 "slots": {
-                  "289": 0
+                  "291": 0
                 }
               }
             },
@@ -308,7 +308,7 @@
                   1
                 ],
                 "slots": {
-                  "289": 0
+                  "291": 0
                 }
               }
             }
@@ -786,6 +786,19 @@
         "terminals": [],
         "list": false
       }
+    },
+    "bare_tuple_pattern": {
+      "vocab": "pattern.tuple.bare",
+      "read": [
+        {
+          "vocab": "pattern.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "binary_operator": {
       "vocab": "expression.binary",
@@ -1417,45 +1430,59 @@
       ],
       "members": [
         {
-          "name": "casePatterns",
+          "name": "pattern",
           "route": "slot",
-          "slot": "case_patterns",
+          "slot": "pattern",
           "path": [
             {
               "owner": "case_clause",
-              "slot": "case_patterns"
+              "slot": "pattern"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "case_clause",
+              "slot": "body"
             }
           ]
         },
         {
           "name": "guard",
-          "route": "slot",
-          "slot": "guard",
+          "route": "nested",
+          "via": [
+            {
+              "field": "guard",
+              "kind": "if_clause",
+              "after": null,
+              "anchor": null
+            }
+          ],
+          "parent": "if_clause",
+          "slot": "condition",
+          "multiple": false,
           "path": [
             {
               "owner": "case_clause",
               "slot": "guard"
-            }
-          ]
-        },
-        {
-          "name": "consequence",
-          "route": "slot",
-          "slot": "consequence",
-          "path": [
+            },
             {
-              "owner": "case_clause",
-              "slot": "consequence"
+              "owner": "if_clause",
+              "slot": "condition"
             }
           ]
         }
       ]
     },
     "case_list_pattern": {
-      "vocab": "pattern.case.list",
+      "vocab": "pattern.list",
       "read": [
         {
-          "vocab": "pattern.case.list",
+          "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1484,29 +1511,6 @@
       }
     },
     "case_pattern": {
-      "vocab": "pattern.case",
-      "read": [
-        {
-          "vocab": "pattern.case",
-          "toplevel": true,
-          "within": [],
-          "pins": [],
-          "test": []
-        }
-      ],
-      "members": [
-        {
-          "name": "content",
-          "route": "slot",
-          "slot": "content",
-          "path": [
-            {
-              "owner": "case_pattern",
-              "slot": "content"
-            }
-          ]
-        }
-      ],
       "container": {
         "kinds": [
           "case_as_pattern",
@@ -1517,7 +1521,25 @@
         "list": false
       }
     },
-    "case_patterns": {
+    "case_pattern_list": {
+      "vocab": "pattern.tuple.bare",
+      "read": [
+        {
+          "vocab": "pattern.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.tuple.bare",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [],
       "container": {
         "kinds": [
           "case_pattern"
@@ -1527,10 +1549,10 @@
       }
     },
     "case_tuple_pattern": {
-      "vocab": "pattern.case.tuple",
+      "vocab": "pattern.tuple",
       "read": [
         {
-          "vocab": "pattern.case.tuple",
+          "vocab": "pattern.tuple",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1684,15 +1706,42 @@
           "parent": "expression_statement",
           "slot": "content",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "class_definition",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
     "class_pattern": {
-      "vocab": "pattern.case.class",
+      "vocab": "pattern.struct",
       "read": [
         {
-          "vocab": "pattern.case.class",
+          "vocab": "pattern.struct",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -1701,24 +1750,24 @@
       ],
       "members": [
         {
-          "name": "name",
+          "name": "type",
           "route": "slot",
-          "slot": "name",
+          "slot": "type",
           "path": [
             {
               "owner": "class_pattern",
-              "slot": "name"
+              "slot": "type"
             }
           ]
         },
         {
-          "name": "arguments",
+          "name": "fields",
           "route": "slot",
-          "slot": "arguments",
+          "slot": "fields",
           "path": [
             {
               "owner": "class_pattern",
-              "slot": "arguments"
+              "slot": "fields"
             }
           ]
         }
@@ -1784,7 +1833,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1810,7 +1859,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1836,7 +1885,7 @@
                 "op": "eq",
                 "text": "<>",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1862,7 +1911,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1888,7 +1937,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1914,7 +1963,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1940,7 +1989,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1966,7 +2015,7 @@
                 "op": "eq",
                 "text": "in",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -1992,7 +2041,7 @@
                 "op": "eq",
                 "text": "not in",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2018,7 +2067,7 @@
                 "op": "eq",
                 "text": "is",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2044,7 +2093,7 @@
                 "op": "eq",
                 "text": "is not",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2071,7 +2120,7 @@
                 "of": {
                   "op": "is",
                   "types": [
-                    298
+                    300
                   ],
                   "self": true
                 }
@@ -2168,7 +2217,7 @@
                 "op": "eq",
                 "text": "==",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2193,7 +2242,7 @@
                 "op": "eq",
                 "text": "!=",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2218,7 +2267,7 @@
                 "op": "eq",
                 "text": "<>",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2243,7 +2292,7 @@
                 "op": "eq",
                 "text": "<",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2268,7 +2317,7 @@
                 "op": "eq",
                 "text": ">",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2293,7 +2342,7 @@
                 "op": "eq",
                 "text": "<=",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2318,7 +2367,7 @@
                 "op": "eq",
                 "text": ">=",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2343,7 +2392,7 @@
                 "op": "eq",
                 "text": "in",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2368,7 +2417,7 @@
                 "op": "eq",
                 "text": "not in",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2393,7 +2442,7 @@
                 "op": "eq",
                 "text": "is",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2418,7 +2467,7 @@
                 "op": "eq",
                 "text": "is not",
                 "slots": {
-                  "298": 0
+                  "300": 0
                 }
               }
             }
@@ -2447,10 +2496,60 @@
       ]
     },
     "complex_pattern": {
-      "vocab": "pattern.case.complex",
+      "vocab": "pattern.complex",
       "read": [
         {
-          "vocab": "pattern.case.complex",
+          "vocab": "pattern.complex.add",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "+"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "+",
+                "slots": {
+                  "192": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.complex.subtract",
+          "toplevel": true,
+          "within": [],
+          "pins": [
+            {
+              "member": "operator",
+              "slot": "operator",
+              "text": "-"
+            }
+          ],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "-",
+                "slots": {
+                  "192": 2
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "pattern.complex",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2477,17 +2576,6 @@
             {
               "owner": "complex_pattern",
               "slot": "real"
-            }
-          ]
-        },
-        {
-          "name": "operator",
-          "route": "slot",
-          "slot": "operator",
-          "path": [
-            {
-              "owner": "complex_pattern",
-              "slot": "operator"
             }
           ]
         },
@@ -2858,10 +2946,10 @@
       }
     },
     "dict_pattern": {
-      "vocab": "pattern.case.dictionary",
+      "vocab": "pattern.map",
       "read": [
         {
-          "vocab": "pattern.case.dictionary",
+          "vocab": "pattern.map",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3018,6 +3106,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "pattern.rest.map",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -3035,10 +3130,10 @@
       ]
     },
     "dotted_name": {
-      "vocab": "identifier.dotted",
+      "vocab": "identifier.qualified",
       "read": [
         {
-          "vocab": "identifier.dotted",
+          "vocab": "identifier.qualified",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -3047,24 +3142,28 @@
       ],
       "members": [
         {
-          "name": "names",
+          "name": "qualifier",
           "route": "slot",
-          "slot": "names",
+          "slot": "qualifier",
           "path": [
             {
               "owner": "dotted_name",
-              "slot": "names"
+              "slot": "qualifier"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "name",
+          "path": [
+            {
+              "owner": "dotted_name",
+              "slot": "name"
             }
           ]
         }
-      ],
-      "container": {
-        "kinds": [
-          "identifier"
-        ],
-        "terminals": [],
-        "list": true
-      }
+      ]
     },
     "elif_clause": {
       "vocab": "clause.else_if",
@@ -4153,7 +4252,34 @@
           "parent": "expression_statement",
           "slot": "content",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "function_definition",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -4425,7 +4551,7 @@
     "import_list": {
       "container": {
         "kinds": [
-          "dotted_name",
+          "qualified_identifier",
           "aliased_import"
         ],
         "terminals": [],
@@ -4720,10 +4846,10 @@
       ]
     },
     "keyword_pattern": {
-      "vocab": "pattern.case.keyword",
+      "vocab": "pattern.struct.field",
       "read": [
         {
-          "vocab": "pattern.case.keyword",
+          "vocab": "pattern.struct.field",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -4743,13 +4869,56 @@
           ]
         },
         {
-          "name": "value",
+          "name": "pattern",
           "route": "slot",
-          "slot": "value",
+          "slot": "pattern",
           "path": [
             {
               "owner": "keyword_pattern",
-              "slot": "value"
+              "slot": "pattern"
+            }
+          ]
+        }
+      ]
+    },
+    "lambda": {
+      "vocab": "expression.lambda",
+      "read": [
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "expression.lambda",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "parameters",
+          "route": "slot",
+          "slot": "parameters",
+          "path": [
+            {
+              "owner": "lambda",
+              "slot": "parameters"
+            }
+          ]
+        },
+        {
+          "name": "body",
+          "route": "slot",
+          "slot": "body",
+          "path": [
+            {
+              "owner": "lambda",
+              "slot": "body"
             }
           ]
         }
@@ -4977,6 +5146,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "pattern.rest",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -4992,6 +5168,26 @@
           ]
         }
       ]
+    },
+    "map_rest_pattern": {
+      "vocab": "pattern.rest.map",
+      "read": [
+        {
+          "vocab": "pattern.rest.map",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.rest.map",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "match_block_block": {
       "container": {
@@ -5070,6 +5266,13 @@
           "within": [],
           "pins": [],
           "test": []
+        },
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         }
       ],
       "members": [
@@ -5113,7 +5316,7 @@
                 "op": "eq",
                 "text": "__init__",
                 "slots": {
-                  "343": 1
+                  "345": 1
                 }
               }
             }
@@ -5132,7 +5335,7 @@
                 "op": "match",
                 "pattern": "^__(?<stem>.*)__$",
                 "slots": {
-                  "343": 1
+                  "345": 1
                 }
               }
             }
@@ -5266,7 +5469,34 @@
           "parent": "expression_statement",
           "slot": "content",
           "multiple": false,
-          "path": null
+          "path": [
+            {
+              "owner": "method_declaration",
+              "slot": "body"
+            },
+            {
+              "owner": "suite_block",
+              "slot": "block"
+            },
+            {
+              "owner": "block",
+              "slot": "statements",
+              "anchor": "first"
+            },
+            {
+              "owner": "_simple_statements",
+              "slot": "elements"
+            },
+            {
+              "owner": "simple_statements_elements",
+              "slot": "item",
+              "anchor": "first"
+            },
+            {
+              "owner": "expression_statement",
+              "slot": "content"
+            }
+          ]
         }
       ]
     },
@@ -5341,7 +5571,7 @@
     "names": {
       "container": {
         "kinds": [
-          "dotted_name",
+          "qualified_identifier",
           "aliased_import"
         ],
         "terminals": [],
@@ -5699,6 +5929,19 @@
         "list": false
       }
     },
+    "qualified_identifier": {
+      "vocab": "identifier.qualified",
+      "read": [
+        {
+          "vocab": "identifier.qualified",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
+    },
     "raise_statement": {
       "vocab": "statement.throw",
       "read": [
@@ -5770,6 +6013,26 @@
           ]
         }
       ]
+    },
+    "rest_pattern": {
+      "vocab": "pattern.rest",
+      "read": [
+        {
+          "vocab": "pattern.rest",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.rest",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": []
     },
     "return_statement": {
       "vocab": "statement.return",
@@ -5962,11 +6225,18 @@
         "list": false
       }
     },
-    "splat_pattern": {
-      "vocab": "pattern.case.splat",
+    "splat_pattern_dictionary": {
+      "vocab": "pattern.rest.map",
       "read": [
         {
-          "vocab": "pattern.case.splat",
+          "vocab": "pattern.rest.map",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        },
+        {
+          "vocab": "pattern.rest.map",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -5975,24 +6245,45 @@
       ],
       "members": [
         {
-          "name": "operator",
+          "name": "pattern",
           "route": "slot",
-          "slot": "operator",
+          "slot": "pattern",
           "path": [
             {
-              "owner": "splat_pattern",
-              "slot": "operator"
+              "owner": "splat_pattern_dictionary",
+              "slot": "pattern"
             }
           ]
+        }
+      ]
+    },
+    "splat_pattern_list": {
+      "vocab": "pattern.rest",
+      "read": [
+        {
+          "vocab": "pattern.rest",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
         },
         {
-          "name": "name",
+          "vocab": "pattern.rest",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "pattern",
           "route": "slot",
-          "slot": "name",
+          "slot": "pattern",
           "path": [
             {
-              "owner": "splat_pattern",
-              "slot": "name"
+              "owner": "splat_pattern_list",
+              "slot": "pattern"
             }
           ]
         }
@@ -7402,15 +7693,15 @@
       },
       {
         "depth": 2,
-        "paths": 75,
-        "kinds": 73,
-        "refinements": 6
+        "paths": 76,
+        "kinds": 81,
+        "refinements": 5
       },
       {
         "depth": 3,
-        "paths": 69,
-        "kinds": 63,
-        "refinements": 46
+        "paths": 65,
+        "kinds": 62,
+        "refinements": 42
       },
       {
         "depth": 4,

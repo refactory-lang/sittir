@@ -78,6 +78,10 @@ const MODEL = [
 	node('struct_tuple', [slot('name', ['identifier']), slot('fields', ['identifier'], { multiple: true })], { variantOf: '_struct' }),
 	node('struct_named', [slot('name', ['identifier'])], { variantOf: '_struct' }),
 	node('arrow', [slot('param', ['arrow_param'])]),
+	node('_arm', [], { modelType: 'supertype', subtypes: ['arm_comma', 'arm_block'] }),
+	node('arm_comma', [slot('match', ['arm_pattern']), slot('value', ['expr'])], { variantOf: '_arm' }),
+	node('arm_block', [slot('match', ['arm_pattern']), slot('value', ['block'])], { variantOf: '_arm' }),
+	node('arm_pattern', [slot('pattern', ['identifier']), slot('condition', ['expr'], { required: false })]),
 	node('arrow_param', [slot('name', ['identifier'])], { variantOf: 'arrow' }),
 	node('_template_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
 	node('_quoted_text', [], { modelType: 'pattern', shownAs: ['text_fragment'] }),
@@ -201,6 +205,29 @@ describe("a base's claim on its clones", () => {
 		expect(routes.readEntries.get('constructor_declaration')?.map((e) => e.vocab).sort()).toEqual(['declaration', 'declaration.constructor', 'declaration.constructor.special']);
 		expect(routes.readEntries.get('lambda_definition')?.map((e) => e.vocab)).toContain('declaration.function');
 		expect(unenteredForms(input, routes)).toEqual([]);
+	});
+
+	it("keeps a base's deep captures off a clone with an unrelated claim of its own, a member-only pattern's and the stopped claim's alike", async () => {
+		const deep = async (bindings: readonly string[]) =>
+			(resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).members.get('constructor_declaration') ?? []).flatMap((r) =>
+				r.route === 'nested' ? [r.name] : []
+			);
+		expect(await deep(['(function_definition) @declaration.function', '(function_definition body: (block (function_definition) @inner))'])).toEqual([]);
+		expect(await deep(['(function_definition body: (block (function_definition) @inner)) @declaration.function'])).toEqual([]);
+	});
+
+	it("keeps a clone's own members when its base's stopped claim reads through the slot that holds them", async () => {
+		const members = async (bindings: readonly string[]) =>
+			(
+				resolveRoutes(await cloned([...bindings, '(constructor_declaration) @declaration.constructor'])).members.get(
+					'constructor_declaration'
+				) ?? []
+			).map((r) => r.name);
+		const plain = await members(['(function_definition) @declaration.function']);
+		expect(plain).toContain('body');
+		expect(
+			await members(['(function_definition body: (block (function_definition) @inner)) @declaration.function'])
+		).toEqual(plain);
 	});
 
 	it('keeps reaching a clone whose own claim tests a field absent, since that claim does not always hold', async () => {
@@ -697,6 +724,15 @@ describe("keptKinds over a supertype the slot holds", () => {
 		const routes = resolveRoutes(await grammar('(_struct name: (_) @title) @declaration.struct'));
 		expect(routes.members.get('struct_unit')?.map((r) => r.name)).toEqual(['title']);
 		expect(routes.members.get('struct_tuple')?.map((r) => r.name)).toEqual(['title', 'fields']);
+	});
+
+	it("carries a supertype claim's nested captures to each form, through the slot each form holds", async () => {
+		const routes = resolveRoutes(await grammar('(_arm match: (arm_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case'));
+		for (const form of ['arm_comma', 'arm_block']) {
+			const members = routes.members.get(form) ?? [];
+			expect(members.map((r) => r.name)).toEqual(['body', 'pattern', 'guard']);
+			expect(members.find((r) => r.name === 'guard')).toMatchObject({ route: 'nested', path: [{ owner: form, slot: 'match' }, { owner: 'arm_pattern', slot: 'condition' }] });
+		}
 	});
 
 	it("carries a supertype claim's field renames to a form with claims of its own", async () => {

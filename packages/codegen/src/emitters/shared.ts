@@ -1355,9 +1355,12 @@ export function refuseUndeclared(typeParam: string, declared?: string): string {
 	return declared === undefined ? `RefuseUndeclared<${typeParam}>` : `RefuseUndeclared<${typeParam}, ${declared}>`;
 }
 
+export type SeatGeneric = 'Seat' | 'ConfigSeat' | 'OptionalConfigSeat';
+
 export interface RefusingParams {
 	readonly typeParams: string;
 	readonly params: string;
+	readonly seat?: { readonly generic: SeatGeneric; readonly declared: string };
 }
 
 export function plainParams(params: string): RefusingParams {
@@ -1371,13 +1374,15 @@ export function refusingParam(
 ): RefusingParams {
 	const typeParam = shape.rest ? 'A' : 'V';
 	const refusal = refuseUndeclared(typeParam, shape.loose ? type : undefined);
+	const generic: SeatGeneric = shape.rest ? 'Seat' : shape.optional ? 'OptionalConfigSeat' : 'ConfigSeat';
 	return {
 		typeParams: `<${shape.loose ? 'const ' : ''}${typeParam} extends ${type}>`,
 		params: shape.rest
 			? `...${label}: ${typeParam} & ${refusal}`
 			: shape.optional
 				? `...${label}: [${label}?: ${typeParam}] & ${refusal}`
-				: `${label}: ${typeParam} & ${refusal}`
+				: `${label}: ${typeParam} & ${refusal}`,
+		...(shape.loose ? { seat: { generic, declared: type } } : {})
 	};
 }
 
@@ -1387,20 +1392,21 @@ const REQUIRED_REFUSING = /^(\w+): (\w+) & (RefuseUndeclared<\w+(?:, [^,]+)?>)((
 export function withTrailingParam(refusing: RefusingParams, trailing: string): RefusingParams {
 	const optional = OPTIONAL_REFUSING.exec(refusing.params);
 	return {
-		...refusing,
+		typeParams: refusing.typeParams,
 		params: optional === null ? `${refusing.params}, ${trailing}` : `...${optional[1]}: [${optional[2]}, ${trailing}] & ${optional[3]}`
 	};
 }
 
 export function optionalRefusing(refusing: RefusingParams): RefusingParams {
 	const required = REQUIRED_REFUSING.exec(refusing.params);
-	return {
-		...refusing,
-		params:
-			required === null
-				? refusing.params.replace(/^(\w+): /, '$1?: ')
-				: `...${required[1]}: [${required[1]}?: ${required[2]}${required[4]}] & ${required[3]}`
-	};
+	if (required === null) {
+		const params = refusing.params.replace(/^(\w+): /, '$1?: ');
+		return params === refusing.params ? refusing : { typeParams: refusing.typeParams, params };
+	}
+	const params = `...${required[1]}: [${required[1]}?: ${required[2]}${required[4]}] & ${required[3]}`;
+	return refusing.seat?.generic === 'ConfigSeat' && required[4] === ''
+		? { typeParams: refusing.typeParams, params, seat: { ...refusing.seat, generic: 'OptionalConfigSeat' } }
+		: { typeParams: refusing.typeParams, params };
 }
 
 export function declaredOverload(head: string, refusing: RefusingParams, returnType: string): string {
@@ -1408,7 +1414,9 @@ export function declaredOverload(head: string, refusing: RefusingParams, returnT
 }
 
 export function functionTypeOf(refusing: RefusingParams, returnType: string): string {
-	return `${refusing.typeParams}(${refusing.params}) => ${returnType}`;
+	return refusing.seat === undefined
+		? `${refusing.typeParams}(${refusing.params}) => ${returnType}`
+		: `${refusing.seat.generic}<${refusing.seat.declared}, ${returnType}>`;
 }
 
 export function withEmptyOverload(
@@ -1421,6 +1429,20 @@ export function withEmptyOverload(
 	const empty = emptyForms(nodeMap).get(kind);
 	if (empty === undefined) return [...lines];
 	return [`${head}(): T.${empty.typeName};`, ...(general === undefined ? [] : [general]), ...lines];
+}
+
+export interface ArrowBody {
+	readonly params: string;
+	readonly returnType: string;
+	readonly body: readonly string[];
+}
+
+export function seatDeclaration(nodeMap: NodeMap, kind: string, name: string, type: string, value: string | ArrowBody): string {
+	const empty = emptyForms(nodeMap).get(kind);
+	const expr = typeof value === 'string' ? value : [`(${value.params}): ${value.returnType} => {`, ...value.body, '}'].join('\n');
+	return empty === undefined
+		? `export const ${name}: ${type} = ${expr};`
+		: `export const ${name}: EmptyForm<T.${empty.typeName}, ${type}> = withEmptyForm(${expr});`;
 }
 
 export function classifyKindsForResolver(

@@ -4,7 +4,7 @@
 // engine holds a record of its own at the same address with sides of its own.
 // A child process, because a collection can only be forced under `--expose-gc`.
 import { useRecordConstruction } from '../../src/engine-boundary.ts';
-import arena from '../../../rust/src/arena.ts';
+import arena, { type Engine } from '../../../rust/src/arena.ts';
 
 if (typeof globalThis.gc !== 'function') throw new Error('run with --expose-gc');
 const collect = globalThis.gc;
@@ -17,7 +17,6 @@ async function settle(): Promise<void> {
 }
 
 const recordsModule = await import('../../../rust/src/factories/records.ts');
-type Engine = Awaited<ReturnType<typeof arena.createEngine>>;
 
 async function recordEngine(): Promise<Engine> {
 	const engine = await arena.createEngine();

@@ -521,9 +521,11 @@ function membersOf(
 	const pathTo = (slot: ModelSlot): readonly SlotStep[] => [...through, { owner: holder, slot: slot.name }];
 	const names = claims === kind ? slotNamesOf(kind) : new Map([...slotNamesOf(claims), ...slotNamesOf(kind)]);
 	const owns = (member: { readonly owner: string }): boolean => member.owner === kind || member.owner === claims;
+	const routesHere = (member: MemberFact): boolean =>
+		owns(member) || (isDeep(member) && attaches(member, inherited) && captureReaches(input.model, member, kind));
 	const deepRoute = (member: DeepMember): MemberRoute => {
 		if (member.owner === kind) return deepRouteOf(input.model, kind, member);
-		if (envelope === undefined) return deepRouteOf(input.model, kind, member.route === 'nested' && member.parent === claims ? { ...member, parent: kind } : member);
+		if (envelope === undefined) return deepRouteOf(input.model, kind, member.route === 'nested' && member.parent === member.owner ? { ...member, parent: kind } : member);
 		const route = deepRouteOf(input.model, holder, member);
 		return route.path === undefined ? route : { ...route, path: [...through, ...route.path] };
 	};
@@ -572,7 +574,7 @@ function membersOf(
 		return (
 			isLayout(input, at, held) ||
 			slotNamesOf(at).get(held.name) === null ||
-			input.bindings.members.some((m) => owns(m) && m.route === 'nested' && m.parent === at && slotFor(input.model, shownSlots(input.model, at), m) === held) ||
+			input.bindings.members.some((m) => routesHere(m) && m.route === 'nested' && m.parent === at && slotFor(input.model, shownSlots(input.model, at), m) === held) ||
 			(values !== undefined && values.every((value) => told.has(value))) ||
 			concreteKinds(input.model, held.kinds).every((k) => told.has(k))
 		);
@@ -589,7 +591,7 @@ function membersOf(
 		}
 	};
 	const identifier = entries.some((entry) => isIdentifierPath(entry.vocab));
-	const shaping = input.bindings.members.filter((m) => owns(m) && m.route !== 'rename' && m.route !== 'dropped');
+	const shaping = input.bindings.members.filter((m) => routesHere(m) && m.route !== 'rename' && m.route !== 'dropped');
 	const deep = shaping.filter((m) => attaches(m, inherited));
 	const paths = new Map(shaping.flatMap((m) => (isDeep(m) ? [[m, deepRoute(m)] as const] : [])));
 	const counted = new Set([...paths.values()].flatMap((route) => route.path?.filter((step) => step.owner === holder && step.anchor === 'only').map((step) => step.slot) ?? []));
@@ -854,10 +856,11 @@ export function envelopeTargets(model: SlotModel, container: ContainerFact, voca
 }
 
 export function captureReaches(model: SlotModel, member: NamedMemberFact, kind: string): boolean {
-	if (member.route !== 'rename') return member.owner === kind;
+	if (member.route !== 'rename' && !(isDeep(member) && member.claims !== undefined)) return member.owner === kind;
 	const forms = formsOf(model, member.owner);
 	if (!forms.includes(kind)) return false;
-	const holds = (form: string): boolean => slotFor(model, shownSlots(model, form), member) !== undefined;
+	const holds = (form: string): boolean =>
+		member.route === 'rename' ? slotFor(model, shownSlots(model, form), member) !== undefined : isDeep(member) && viaPath(model, form, member.via) !== undefined;
 	return holds(kind) || !forms.some(holds);
 }
 

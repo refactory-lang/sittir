@@ -4,6 +4,7 @@ import { Delimiter } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 const fnOf = (src: string) => {
 	const item = rs.parse(src).statements()[0]!;
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
@@ -42,7 +43,7 @@ describe('a list owner', () => {
 	});
 	it('a built owner iterates what it was built from', () => {
 		const p = rs.build.parameter({ name: 'a', type: 'u8' });
-		const ps = rs.build.parametersElements.strict({ delimiter: Delimiter.Trailing }, p);
+		const ps = rsStrict.build.parametersElements({ delimiter: Delimiter.Trailing }, p);
 		expect([...ps]).toHaveLength(1);
 		expect(ps.delimiter).toBe(Delimiter.Trailing);
 	});
@@ -61,7 +62,7 @@ describe('a list owner', () => {
 	});
 	it('the list slot setter on a built owner takes the list factory arguments', () => {
 		const q = rs.build.parameter({ name: 'q', type: 'u8' });
-		const ps = rs.build.parameters.strict(rs.build.parametersElements.strict(q));
+		const ps = rsStrict.build.parameters(rsStrict.build.parametersElements(q));
 		expect(ps.$with.elements(rs.build.parametersElements({ delimiter: Delimiter.Trailing }, q)).$render()).toBe(
 			'(q: u8,)'
 		);

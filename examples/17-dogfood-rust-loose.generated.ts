@@ -103,7 +103,7 @@ export function rebuildSpliceLoose() {
 										name: "end",
 									})],
 								}),
-								value: rs.build.block({
+								body: rs.build.block({
 									trailingExpression: rs.build.macroInvocation({
 										function: "write",
 										arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
@@ -124,7 +124,7 @@ export function rebuildSpliceLoose() {
 										name: "source_len",
 									})],
 								}),
-								value: rs.build.macroInvocation({
+								body: rs.build.macroInvocation({
 									function: "write",
 									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 										stringOpen: "\"",
@@ -144,7 +144,7 @@ export function rebuildSpliceLoose() {
 										name: "end",
 									})],
 								}),
-								value: rs.build.macroInvocation({
+								body: rs.build.macroInvocation({
 									function: "write",
 									arguments: rs.build.delimTokenTreeParen(rs.build.identifier("f"), rs.kinds.Comma, rs.build.stringLiteral({
 										stringOpen: "\"",

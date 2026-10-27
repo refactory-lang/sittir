@@ -100,7 +100,14 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly bodies: G['declaration'] | G['statement'];
 		};
 		readonly 'clause.case.match': {
-			readonly consequence: V.Declaration.TypeAlias<G> | G['statement'];
+			readonly body:
+				| G['expression']
+				| G['identifier']
+				| G['literal']
+				| G['statement']
+				| V.Declaration.TypeAlias<G>
+				| V.Type.Primitive<G>;
+			readonly guard: G['expression'] | G['identifier'] | G['literal'] | V.Clause.Let.Any<G> | G['statement'];
 		};
 		readonly 'clause.case.switch': {
 			readonly bodies: G['declaration'] | G['statement'];
@@ -220,21 +227,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 		readonly 'clause.mapped_type': {
 			readonly alias: G['identifier'] | G['type'];
 			readonly type: G['identifier'] | G['type'];
-		};
-		readonly 'clause.match.arm': {
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement']
-				| V.Type.Primitive<G>;
-		};
-		readonly 'clause.match.arm.last': {
-			readonly value:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| G['statement'];
 		};
 		readonly 'clause.print': {
 			readonly expression:
@@ -1301,7 +1293,7 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 			readonly content: unknown;
 		};
 		readonly 'pattern.as': {
-			readonly pattern: unknown | V.Pattern.Case<G>;
+			readonly pattern: unknown | G['pattern'];
 		};
 		readonly 'pattern.assignment': {
 			readonly left:
@@ -1315,31 +1307,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['identifier']
 				| G['literal'];
 		};
-		readonly 'pattern.case': {
-			readonly content:
-				| unknown
-				| V.Identifier.Dotted<G>
-				| G['literal']
-				| string
-				| V.Pattern.Case.Any<G>;
-		};
-		readonly 'pattern.case.complex': {
-			readonly operator: string;
-		};
-		readonly 'pattern.case.dictionary': {
-			readonly elements: unknown | V.Pattern.Case.Splat<G>;
-		};
-		readonly 'pattern.case.keyword': {
-			readonly value:
-				| unknown
-				| V.Identifier.Dotted<G>
-				| G['literal']
-				| string
-				| V.Pattern.Case.Any<G>;
-		};
-		readonly 'pattern.case.splat': {
-			readonly operator: string;
-		};
 		readonly 'pattern.list': {
 			readonly elements:
 				| unknown
@@ -1348,14 +1315,8 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| V.Literal.Null.Undefined<G>
 				| G['pattern'];
 		};
-		readonly 'pattern.match': {
-			readonly condition:
-				| G['expression']
-				| G['identifier']
-				| G['literal']
-				| V.Clause.Let.Any<G>
-				| G['statement'];
-			readonly pattern: unknown;
+		readonly 'pattern.map': {
+			readonly elements: unknown | V.Pattern.Rest<G>;
 		};
 		readonly 'pattern.mutable': {
 			readonly pattern: unknown;
@@ -1418,6 +1379,9 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['pattern']
 				| string;
 		};
+		readonly 'pattern.struct': {
+			readonly fields: G['pattern'];
+		};
 		readonly 'pattern.struct.field': {
 			readonly pattern:
 				| G['expression']
@@ -1433,10 +1397,6 @@ export interface GrammarContext<G extends GrammarContext<G>> {
 				| G['literal']
 				| G['pattern']
 				| V.Type.Primitive<G>;
-		};
-		readonly 'pattern.tuple.struct': {
-			readonly patterns: unknown;
-			readonly type: G['identifier'] | V.Type.Generic.Turbofish<G>;
 		};
 		readonly 'statement.assert': {
 			readonly expressions:

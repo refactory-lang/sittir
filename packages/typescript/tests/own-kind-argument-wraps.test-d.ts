@@ -8,6 +8,7 @@
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
 import type { AwaitExpression, TupleType, Array, Arguments, ParenthesizedExpressionSequence } from '../src/types.ts';
 
 export function ownKindArguments(): void {
@@ -16,14 +17,14 @@ export function ownKindArguments(): void {
 	const tuple = ir.tupleType('A', 'B');
 	const array = ir.array(x);
 	const args = ir.arguments(x);
-	const sequence = ir.parenthesizedExpression.sequence.strict(x, ir.identifier('y'));
+	const sequence = strictIr.parenthesizedExpression.sequence(x, ir.identifier('y'));
 
 	ir.awaitExpression(awaited);
 	ir.tupleType(tuple);
 	ir.array(array);
 	ir.arguments(args);
 	ir.parenthesizedExpression.sequence(sequence);
-	ir.parenthesizedExpression.sequence.strict(sequence);
+	strictIr.parenthesizedExpression.sequence(sequence);
 
 	[awaited] satisfies AwaitExpression.LooseArgs;
 	[tuple] satisfies TupleType.LooseArgs;

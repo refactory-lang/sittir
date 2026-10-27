@@ -6,16 +6,17 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 const letX = (value: string) =>
-	ts.build.lexicalDeclaration.strict({
+	tsStrict.build.lexicalDeclaration({
 		kind: ts.kinds.LetKeyword,
-		declarators: [ts.build.variableDeclarator.plain.strict({ name: ts.build.identifier('x'), value: ts.build.number(value) })]
+		declarators: [tsStrict.build.variableDeclarator.plain({ name: ts.build.identifier('x'), value: ts.build.number(value) })]
 	});
 
 describe('hash_bang_line', () => {
 	it('breaks the line after a built hash-bang, and the text reparses to the same program', () => {
-		const text = ts.build.program.strict({ hashBangLine: ts.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
+		const text = tsStrict.build.program({ hashBangLine: ts.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
 		expect(text).toBe('#!/usr/bin/env node\nlet x = 1;\n');
 		const reparsed = ts.parse(text);
 		expect(reparsed.hashBangLine()?.$render()).toBe('#!/usr/bin/env node\n');

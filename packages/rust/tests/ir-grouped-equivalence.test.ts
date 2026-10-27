@@ -1,8 +1,8 @@
 /**
  * SC-012: grouped sub-namespace access produces identical output to flat access.
  *
- * `ir.expression.binary(config)` and `ir.binaryExpression(config)` must resolve to the
- * same factory bundle — same callable, same `.strict` attachment.
+ * `ir.expression.binary(config)` and `ir.binaryExpression(config)` resolve to the
+ * same entry, in the default engine's builder table and in the strict one.
  * (The flat `ir.*` already uses supertype-stripped short keys; the grouped
  * surface mirrors those under `ir.<supertype>.<member>`.)
  */
@@ -12,14 +12,12 @@ import { createEngine } from '@sittir/common';
 import { snapshotOf } from '@sittir/common/utils';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 describe('ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
-		const irExpression = rs.build.expression;
-		// `ir.binaryExpression` (flat) and `ir.expression.binary` (grouped) point
-		// at the same _attach bundle.
-		expect(irExpression.binary).toBe(rs.build.binaryExpression);
-		expect(irExpression.binary.strict).toBe(rs.build.binaryExpression.strict);
+		expect(rs.build.expression.binary).toBe(rs.build.binaryExpression);
+		expect(rsStrict.build.expression.binary).toBe(rsStrict.build.binaryExpression);
 	});
 
 	it('produces structurally identical output via flat vs grouped', () => {

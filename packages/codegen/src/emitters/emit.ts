@@ -18,7 +18,6 @@ import { emitTypesModules } from './types.ts';
 import { emitConsts } from './consts.ts';
 import { addressTablesFor, emitOptions } from './options.ts';
 import { collectSitePreferences } from '../compiler/model/site-preferences.ts';
-import { emitIr } from './ir.ts';
 import { emitIs } from './is.ts';
 import { emitTests } from './test.ts';
 import { TemplateEmitter, stampStaticSpacing } from './templates.ts';
@@ -33,16 +32,8 @@ import {
 	classifyWrapEmission,
 	reportSkippedParserSymbol
 } from './shared.ts';
-import {
-	emitBundleModule,
-	emitFactoriesIndex,
-	overlayFrame,
-	overlayImportPath,
-	OVERLAY_CHAIN
-} from './overlays/module.ts';
-import { emitRefinesOverlay } from './overlays/refines.ts';
-import { collectPolymorphWires, emitPolymorphsOverlay } from './overlays/polymorphs.ts';
-import type { OverlayName } from './overlays/module.ts';
+import { builderTables } from './overlays/build-table.ts';
+import { collectPolymorphWires } from './overlays/polymorphs.ts';
 
 export interface EmitAllConfig {
 	grammar: string;
@@ -65,9 +56,7 @@ export interface EmitAllResult {
 	factories: string;
 	factoriesRecords: string;
 	factoriesDispatch: string;
-	overlays: Record<OverlayName, string>;
-	factoriesBundle: string;
-	factoriesIndex: string;
+	tableFiles: Readonly<Record<string, string>>;
 	from: string;
 	wrap: string;
 	types: string;
@@ -75,7 +64,6 @@ export interface EmitAllResult {
 	kinds: string | undefined;
 	consts: string;
 	options: string;
-	irNamespace: string;
 	is: string;
 	tests: string;
 	templates: EmittedTemplates;
@@ -179,7 +167,7 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 	const renderModule = renderModuleEmitterInst?.finalize(templates);
 
 	const wires = collectPolymorphWires(nodeMap);
-	const polymorphsOverlay = emitPolymorphsOverlay({ nodeMap, generatedIdTables, wires });
+	const tables = builderTables(nodeMap, wires);
 	const { types, internal: typesInternal, kinds } = emitTypesModules({
 		grammar,
 		nodeMap,
@@ -188,30 +176,19 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		addresses: addressTables,
 		triviaKinds,
 		wires,
-		entryRows: polymorphsOverlay.entryRows
+		entryRows: tables.entryRows
 	});
 	const consts = emitConsts({ grammar, nodeMap });
 	const options = emitOptions({ nodeMap, kindEntries, renderRules, options: optionsBlock, sites: sitePreferences, addresses: addressTables });
-	const irNamespace = emitIr({ grammar, nodeMap });
 	const is = emitIs({ grammar, nodeMap, generatedIdTables });
 	const tests = emitTests({ grammar, nodeMap, generatedIdTables, expectTestFailures, renderBodies: templates.bodies });
 	const utils = emitClientUtils({ grammar, nodeMap, triviaKinds, structure: factoryEmitter.structure });
-
-	const overlays: Record<OverlayName, string> = {
-		refines: emitRefinesOverlay({ nodeMap, generatedIdTables }),
-		polymorphs: polymorphsOverlay.text,
-		supertypes: overlayFrame(overlayImportPath(2), []).join('\n')
-	};
-	const factoriesBundle = emitBundleModule({ nodeMap, generatedIdTables });
-	const factoriesIndex = emitFactoriesIndex(OVERLAY_CHAIN[2], { nodeMap, generatedIdTables });
 
 	return {
 		factories,
 		factoriesRecords,
 		factoriesDispatch,
-		overlays,
-		factoriesBundle,
-		factoriesIndex,
+		tableFiles: tables.files,
 		from,
 		wrap,
 		types,
@@ -219,7 +196,6 @@ export function emitAll(config: EmitAllConfig): EmitAllResult {
 		kinds,
 		consts,
 		options,
-		irNamespace,
 		is,
 		tests,
 		templates,

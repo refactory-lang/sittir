@@ -4,12 +4,13 @@ import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
 const b = py.build;
-const call = (name: string) => b.call.strict({ function: b.identifier(name), arguments: b.argumentList.strict() });
-const statement = (expression: object) => b.module.strict(b.simpleStatements.strict(b.expressionStatement.strict(expression as never)));
+const strict = (await createEngine(python, { api: 'strict' })).build;
+const call = (name: string) => strict.call({ function: b.identifier(name), arguments: strict.argumentList() });
+const statement = (expression: object) => strict.module(strict.simpleStatements(strict.expressionStatement(expression as never)));
 
 describe('a line continuation trailing an expression', () => {
 	it('is the seam before the next token, with no line break ahead of its backslash', () => {
-		const joined = b.booleanOperator.strict({
+		const joined = strict.booleanOperator({
 			left: call('f').$trivia.trailing(b.lineContinuation.newline('\\\n')),
 			operator: py.kinds.OrKeyword,
 			right: call('g')

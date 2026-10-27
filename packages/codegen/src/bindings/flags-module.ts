@@ -7,9 +7,9 @@ export async function flagsModuleInProcess(members: readonly FlagMember[]): Prom
 	const ts = await common.createEngine(typescript.default, { render: { layout: { indent: '\t' } } });
 	const { build } = ts;
 	const assignments = members.map(({ name, bit }) =>
-		build.enumAssignment.strict({
+		build.enumAssignment({
 			name: build.identifier(name),
-			value: build.binaryExpression.strict({
+			value: build.binaryExpression({
 				left: build.number.decimal('1'),
 				operator: ts.kinds.LtLt,
 				right: build.number.decimal(String(bit))
@@ -19,12 +19,11 @@ export async function flagsModuleInProcess(members: readonly FlagMember[]): Prom
 	const [first, ...rest] = assignments;
 	const body =
 		first === undefined
-			? build.enumBody.strict()
-			: build.enumBody.strict(build.enumBodyElements.strict({ delimiter: utils.Delimiter.None }, first, ...rest));
-	const program = build.program.strict({
+			? build.enumBody()
+			: build.enumBody(build.enumBodyElements({ delimiter: utils.Delimiter.None }, first, ...rest));
+	const program = build.program({
 		statements: [
-			build.exportStatementDefaultDeclaration
-				.strict({ content: build.enumDeclaration.strict({ name: build.identifier('Flags'), body }) })
+			build.exportStatementDefaultDeclaration({ content: build.enumDeclaration({ name: build.identifier('Flags'), body }) })
 				.$trivia.leading(
 					build.commentLine(` Generated from the vocabulary's Flag declarations by \`${REGENERATE_BINDINGS_COMMAND}\`. Do not edit.`)
 				)

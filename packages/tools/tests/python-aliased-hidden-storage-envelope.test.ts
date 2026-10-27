@@ -4,6 +4,7 @@ import { createEngine } from '@sittir/common';
 import { loadSlotAccessorOf } from '../src/validate/common.ts';
 
 const py = await createEngine(python);
+const pyStrict = await createEngine(python, { api: 'strict' });
 const pythonSlots = await loadSlotAccessorOf('python');
 
 function shapeOf(node: unknown): unknown {
@@ -56,9 +57,14 @@ function parsedShape(node: unknown): unknown {
 
 describe('a case pattern over aliased hidden storage', () => {
 	it('builds the same envelope the reader reads', () => {
-		const built = py.build.casePattern.strict(
-			py.build.simplePattern.strict(
-				py.build.classPattern.strict({ name: py.build.dottedName.strict(py.build.identifier('a'), py.build.identifier('test')) })
+		const built = pyStrict.build.casePattern(
+			pyStrict.build.simplePattern(
+				pyStrict.build.classPattern({
+					type: pyStrict.build.dottedName({
+						qualifier: pyStrict.build.dottedName({ name: py.build.identifier('a') }),
+						name: py.build.identifier('test')
+					})
+				})
 			)
 		);
 		expect(py.render(built).toString()).toBe('a.test()');

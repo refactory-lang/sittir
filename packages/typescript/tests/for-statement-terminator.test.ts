@@ -11,6 +11,7 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 const SOURCE = 'for (let i = 0; i < 3; i++) {}\n';
 
@@ -27,19 +28,19 @@ describe('for_statement.condition', () => {
 	});
 
 	it('builds `for (let i = 0; i < 3; i++) {}` with both terminators from the factory', () => {
-		const built = ts.build.program.strict({
+		const built = tsStrict.build.program({
 			statements: [
-				ts.build.forStatement.strict({
-					initializer: ts.build.lexicalDeclaration.strict(
+				tsStrict.build.forStatement({
+					initializer: tsStrict.build.lexicalDeclaration(
 						{
 							kind: ts.kinds.LetKeyword,
-							declarators: [ts.build.variableDeclarator.plain.strict({ name: ts.build.identifier('i'), value: ts.build.number('0') })]
+							declarators: [tsStrict.build.variableDeclarator.plain({ name: ts.build.identifier('i'), value: ts.build.number('0') })]
 						},
 						{ terminator: ts.kinds.Semi }
 					),
-					condition: ts.build.binaryExpression.strict({ left: ts.build.identifier('i'), operator: ts.kinds.Lt, right: ts.build.number('3') }),
-					increment: ts.build.updateExpression.postfix.strict({ argument: ts.build.identifier('i'), operator: ts.kinds.PlusPlus }),
-					body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
+					condition: tsStrict.build.binaryExpression({ left: ts.build.identifier('i'), operator: ts.kinds.Lt, right: ts.build.number('3') }),
+					increment: tsStrict.build.updateExpression.postfix({ argument: ts.build.identifier('i'), operator: ts.kinds.PlusPlus }),
+					body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 				})
 			]
 		});
@@ -47,12 +48,12 @@ describe('for_statement.condition', () => {
 	});
 
 	it('keeps `for (;;) {}` at three semicolons: an empty statement is its own', () => {
-		const built = ts.build.program.strict({
+		const built = tsStrict.build.program({
 			statements: [
-				ts.build.forStatement.strict({
+				tsStrict.build.forStatement({
 					initializer: ts.kinds.EmptyStatement,
 					condition: ts.kinds.EmptyStatement,
-					body: ts.build.statementBlock.strict({ terminator: ts.kinds.AutomaticSemicolon })
+					body: tsStrict.build.statementBlock({ terminator: ts.kinds.AutomaticSemicolon })
 				})
 			]
 		});

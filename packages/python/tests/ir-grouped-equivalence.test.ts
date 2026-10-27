@@ -7,11 +7,12 @@ import python from '@sittir/python';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
+const pyStrict = await createEngine(python, { api: 'strict' });
 
 describe('python ir grouped sub-namespaces (SC-012)', () => {
 	it('flat and grouped access resolve to the same factory bundle', () => {
 		expect(py.build.statement.if).toBe(py.build.ifStatement);
-		expect(py.build.statement.if.strict).toBe(py.build.ifStatement.strict);
+		expect(pyStrict.build.statement.if).toBe(pyStrict.build.ifStatement);
 	});
 
 	it('covers known supertypes with at least one member', () => {

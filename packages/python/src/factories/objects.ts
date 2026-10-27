@@ -969,45 +969,34 @@ export function buildMatchStatement(config: T.MatchStatement.Config): T.MatchSta
 }
 
 export function buildCaseClause<
-	CasePatternsSlot extends T.CaseClause.Config['casePatterns'],
+	PatternSlot extends T.CaseClause.Config['pattern'],
 	GuardSlot extends T.CaseClause.Config['guard'],
-	ConsequenceSlot extends T.CaseClause.Config['consequence']
+	BodySlot extends T.CaseClause.Config['body']
 >(
-	config: RefusingConfig<
-		T.CaseClause.Config,
-		{ casePatterns: CasePatternsSlot; guard: GuardSlot; consequence: ConsequenceSlot }
-	>
+	config: RefusingConfig<T.CaseClause.Config, { pattern: PatternSlot; guard: GuardSlot; body: BodySlot }>
 ): T.CaseClause.Bound;
 export function buildCaseClause(config: T.CaseClause.Config): T.CaseClause.Bound {
 	currentHandle()?.admit(TSKindId.CaseClause, [config]);
-	const _case_patterns = config.casePatterns;
+	const _pattern = config.pattern;
 	const _guard = config.guard;
-	const _consequence = config.consequence;
+	const _body = config.body;
 	const handle = currentHandle();
-	if (handle !== undefined)
-		admitChildren(handle, 'case_clause', { casePatterns: _case_patterns, guard: _guard, consequence: _consequence });
+	if (handle !== undefined) admitChildren(handle, 'case_clause', { pattern: _pattern, guard: _guard, body: _body });
 	const node = {
 		$type: TSKindId.CaseClause as const,
 		$named: true as const,
-		_case_patterns,
+		_pattern,
 		_guard,
-		_consequence,
+		_body,
 		$with: {
-			casePatterns: (...args: unknown[]) =>
-				rebuilt(node, handle, () =>
-					listSlotWith(
-						args,
-						{ kind: TSKindId.CasePatterns as const, optional: false, make: buildCasePatterns },
-						(value: Admit<T.CasePatterns>) => buildCaseClause({ ...config, casePatterns: value })
-					)
-				),
+			pattern: (value: Admit<T.CasePattern | T.CasePatternList>) =>
+				rebuilt(node, handle, () => buildCaseClause({ ...config, pattern: value })),
 			guard: (value?: Admit<T.IfClause>) => rebuilt(node, handle, () => buildCaseClause({ ...config, guard: value })),
-			consequence: (value: Admit<T.Suite>) =>
-				rebuilt(node, handle, () => buildCaseClause({ ...config, consequence: value }))
+			body: (value: Admit<T.Suite>) => rebuilt(node, handle, () => buildCaseClause({ ...config, body: value }))
 		},
-		casePatterns: () => hydrateStoredSlot(node, '_case_patterns'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		guard: () => hydrateStoredSlot(node, '_guard'),
-		consequence: () => hydrateStoredSlot(node, '_consequence'),
+		body: () => hydrateStoredSlot(node, '_body'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2121,23 +2110,28 @@ function _buildExpressionList(
 	return stampBuilt(node) as unknown as T.ExpressionList.Bound;
 }
 
-export function buildDottedName<A extends NonEmptyArray<Admit<T.Identifier>>>(
-	...children: A & RefuseUndeclared<A>
-): T.DottedName.Bound;
-export function buildDottedName(...children: NonEmptyArray<Admit<T.Identifier>>): T.DottedName.Bound {
-	currentHandle()?.admit(TSKindId.DottedName, children);
-	const _names = children;
+export function buildDottedName<
+	QualifierSlot extends T.DottedName.Config['qualifier'],
+	NameSlot extends T.DottedName.Config['name']
+>(config: RefusingConfig<T.DottedName.Config, { qualifier: QualifierSlot; name: NameSlot }>): T.DottedName.Bound;
+export function buildDottedName(config: T.DottedName.Config): T.DottedName.Bound {
+	currentHandle()?.admit(TSKindId.DottedName, [config]);
+	const _qualifier = config.qualifier;
+	const _name = config.name;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'dotted_name', { names: _names });
+	if (handle !== undefined) admitChildren(handle, 'dotted_name', { qualifier: _qualifier, name: _name });
 	const node = {
 		$type: TSKindId.DottedName as const,
 		$named: true as const,
-		_names,
+		_qualifier,
+		_name,
 		$with: {
-			names: (...vs: NonEmptyArray<Admit<T.Identifier>>) =>
-				rebuilt(node, handle, () => buildDottedName(...restItems('names', vs)))
+			qualifier: (value?: Admit<T.DottedName>) =>
+				rebuilt(node, handle, () => buildDottedName({ ...config, qualifier: value })),
+			name: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildDottedName({ ...config, name: value }))
 		},
-		names: () => hydrateStoredSlots(node, '_names'),
+		qualifier: () => hydrateStoredSlot(node, '_qualifier'),
+		name: () => hydrateStoredSlot(node, '_name'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2472,38 +2466,38 @@ export function buildKeyValuePattern(
 
 export function buildKeywordPattern<
 	NameSlot extends T.KeywordPattern.Config['name'],
-	ValueSlot extends T.KeywordPattern.Config['value']
+	PatternSlot extends T.KeywordPattern.Config['pattern']
 >(
 	config: RefusingConfig<
-		WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>,
-		{ name: NameSlot; value: ValueSlot }
+		WidenSlots<T.KeywordPattern.Config, { pattern: Admit<T.SimplePattern> }>,
+		{ name: NameSlot; pattern: PatternSlot }
 	>
 ): T.KeywordPattern.Bound;
 export function buildKeywordPattern(
-	config: WidenSlots<T.KeywordPattern.Config, { value: Admit<T.SimplePattern> }>
+	config: WidenSlots<T.KeywordPattern.Config, { pattern: Admit<T.SimplePattern> }>
 ): T.KeywordPattern.Bound {
 	currentHandle()?.admit(TSKindId.KeywordPattern, [config]);
 	const _name = config.name;
-	const _value = admitSplicedEnvelope(
-		kindIdStorage<NonNullable<T.KeywordPattern['_value']>>(config.value),
+	const _pattern = admitSplicedEnvelope(
+		kindIdStorage<NonNullable<T.KeywordPattern['_pattern']>>(config.pattern),
 		[TSKindId.SimplePattern, 'content', 'simple_pattern'],
-		'KeywordPattern.value'
+		'KeywordPattern.pattern'
 	);
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'keyword_pattern', { name: _name, value: _value });
+	if (handle !== undefined) admitChildren(handle, 'keyword_pattern', { name: _name, pattern: _pattern });
 	const node = {
 		$type: TSKindId.KeywordPattern as const,
 		$named: true as const,
 		_name,
-		_value,
+		_pattern,
 		$with: {
 			name: (value: Admit<T.Identifier>) =>
 				rebuilt(node, handle, () => buildKeywordPattern({ ...config, name: value })),
-			value: (value: Admit<NonNullable<T.KeywordPattern.Config>['value']>) =>
-				rebuilt(node, handle, () => buildKeywordPattern({ ...config, value: value }))
+			pattern: (value: Admit<NonNullable<T.KeywordPattern.Config>['pattern']>) =>
+				rebuilt(node, handle, () => buildKeywordPattern({ ...config, pattern: value }))
 		},
 		name: () => hydrateStoredSlot(node, '_name'),
-		value: () => hydrateStoredSlot(node, '_value'),
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -2516,73 +2510,34 @@ export function buildKeywordPattern(
 	return stampBuilt(node) as unknown as T.KeywordPattern.Bound;
 }
 
-export function buildSplatPattern<NameSlot extends T.SplatPattern.Config['name']>(
-	config: RefusingConfig<T.SplatPattern.Config, { name: NameSlot }>
-): T.SplatPattern.Bound;
-export function buildSplatPattern(config: T.SplatPattern.Config): T.SplatPattern.Bound {
-	currentHandle()?.admit(TSKindId.SplatPattern, [config]);
-	const _operator = kindIdStorage<NonNullable<T.SplatPattern['_operator']>>(config.operator);
-	const _name = rejectKeywordText(
-		kindIdStorage<NonNullable<T.SplatPattern['_name']>>(config.name),
-		'SplatPattern.name',
-		TSKindId.Identifier,
-		['_']
-	);
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'splat_pattern', { operator: _operator, name: _name });
-	const node = {
-		$type: TSKindId.SplatPattern as const,
-		$named: true as const,
-		_operator,
-		_name,
-		$with: {
-			operator: (value: Admit<NonNullable<T.SplatPattern.Config>['operator']>) =>
-				rebuilt(node, handle, () => buildSplatPattern({ ...config, operator: value })),
-			name: (value: Admit<NonNullable<T.SplatPattern.Config>['name']>) =>
-				rebuilt(node, handle, () => buildSplatPattern({ ...config, name: value }))
-		},
-		operator: () => _operator,
-		name: () => hydrateStoredSlot(node, '_name'),
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.SplatPattern.Bound;
-}
-
 export function buildClassPattern<
-	NameSlot extends T.ClassPattern.Config['name'],
-	ArgumentsSlot extends T.ClassPattern.Config['arguments']
->(config: RefusingConfig<T.ClassPattern.Config, { name: NameSlot; arguments: ArgumentsSlot }>): T.ClassPattern.Bound;
+	TypeSlot extends T.ClassPattern.Config['type'],
+	FieldsSlot extends T.ClassPattern.Config['fields']
+>(config: RefusingConfig<T.ClassPattern.Config, { type: TypeSlot; fields: FieldsSlot }>): T.ClassPattern.Bound;
 export function buildClassPattern(config: T.ClassPattern.Config): T.ClassPattern.Bound {
 	currentHandle()?.admit(TSKindId.ClassPattern, [config]);
-	const _name = config.name;
-	const _arguments = config.arguments;
+	const _type = config.type;
+	const _fields = config.fields;
 	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'class_pattern', { name: _name, arguments: _arguments });
+	if (handle !== undefined) admitChildren(handle, 'class_pattern', { type: _type, fields: _fields });
 	const node = {
 		$type: TSKindId.ClassPattern as const,
 		$named: true as const,
-		_name,
-		_arguments,
+		_type,
+		_fields,
 		$with: {
-			name: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, name: value })),
-			arguments: (...args: unknown[]) =>
+			type: (value: Admit<T.DottedName>) => rebuilt(node, handle, () => buildClassPattern({ ...config, type: value })),
+			fields: (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					listSlotWith(
 						args,
 						{ kind: TSKindId.ListPatternCasePatterns as const, optional: true, make: buildListPatternCasePatterns },
-						(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, arguments: value })
+						(value?: Admit<T.ListPatternCasePatterns>) => buildClassPattern({ ...config, fields: value })
 					)
 				)
 		},
-		name: () => hydrateStoredSlot(node, '_name'),
-		arguments: () => hydrateStoredSlot(node, '_arguments'),
+		type: () => hydrateStoredSlot(node, '_type'),
+		fields: () => hydrateStoredSlot(node, '_fields'),
 		$render: () => renderText(handle, node),
 		toString: () => node.$render(),
 		toJSON: refuseJSON,
@@ -3055,8 +3010,8 @@ export function buildAsPattern(config: T.AsPattern.Config): T.AsPattern.Bound {
 	const _alias = admitAliasContent<NonNullable<T.AsPattern['_alias']>>(config.alias, [
 		[
 			[
-				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 70, 71, 72, 210, 221, 222, 224,
-				233, 238, 236, 239, 234, 240, 235, 242, 241, 64, 201, 246, 143, 203
+				213, 207, 208, 214, 257, 209, 1, 248, 247, 90, 91, 92, 93, 94, 95, 96, 97, 98, 69, 70, 71, 210, 221, 222, 224,
+				233, 238, 236, 239, 234, 240, 235, 242, 241, 63, 201, 246, 143, 203
 			],
 			(v: unknown) => buildAsPatternTarget(v as never)
 		]
@@ -5073,69 +5028,6 @@ function _buildSubjects(
 	return stampBuilt(node) as unknown as T.Subjects.Bound;
 }
 
-export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns<A extends NonEmptyArray<Admit<T.CasePattern>>>(
-	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-	...elements: A & RefuseUndeclared<A>
-): ReturnType<typeof _buildCasePatterns>;
-export function buildCasePatterns(
-	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
-) {
-	const _optsFirst =
-		typeof args[0] === 'object' &&
-		args[0] !== null &&
-		!Array.isArray(args[0]) &&
-		!('$type' in (args[0] as object)) &&
-		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
-	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
-	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.CasePattern>>;
-	return _buildCasePatterns(elements, options);
-}
-function _buildCasePatterns(
-	elements: NonEmptyArray<Admit<T.CasePattern>>,
-	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
-): T.CasePatterns.Bound {
-	currentHandle()?.admit(TSKindId.CasePatterns, elements);
-	const _item = elements;
-	const _delimiter = options.delimiter;
-	const listedLength = storedElements(_item).length;
-	const handle = currentHandle();
-	if (handle !== undefined) admitChildren(handle, 'case_patterns', { items: _item });
-	const node = {
-		$type: TSKindId.CasePatterns as const,
-		$named: true as const,
-		_item,
-		_delimiter,
-		$with: {
-			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
-				rebuilt(node, handle, () => buildCasePatterns(options, ...vs)),
-			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
-				rebuilt(node, handle, () => buildCasePatterns({ ...options, delimiter: v }, ...elements))
-		},
-		items: () => hydrateStoredSlots(node, '_item'),
-		length: listedLength,
-		[LIST_ITEMS]: undefined,
-		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
-		...LIST_METHODS,
-		[Symbol.iterator]: listIterator,
-		[Symbol.isConcatSpreadable]: true,
-		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
-		delimiter: _delimiter ?? undefined,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	defineListIndices(node, listedLength);
-	return stampBuilt(node) as unknown as T.CasePatterns.Bound;
-}
-
 export function buildWithClauseWithItems<A extends NonEmptyArray<Admit<T.WithItem>>>(
 	...elements: A & RefuseUndeclared<A>
 ): ReturnType<typeof _buildWithClauseWithItems>;
@@ -5702,6 +5594,69 @@ function _buildTuplePatternElements(
 	};
 	defineListIndices(node, listedLength);
 	return stampBuilt(node) as unknown as T.TuplePatternElements.Bound;
+}
+
+export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildCasePatternList>;
+export function buildCasePatternList<A extends NonEmptyArray<Admit<T.CasePattern>>>(
+	options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
+	...elements: A & RefuseUndeclared<A>
+): ReturnType<typeof _buildCasePatternList>;
+export function buildCasePatternList(
+	...args: ({ delimiter?: Delimiter.None | Delimiter.Trailing } | Admit<T.CasePattern>)[]
+) {
+	const _optsFirst =
+		typeof args[0] === 'object' &&
+		args[0] !== null &&
+		!Array.isArray(args[0]) &&
+		!('$type' in (args[0] as object)) &&
+		Object.keys(args[0] as object).every((k) => ['delimiter'].includes(k));
+	const options = (_optsFirst ? (args[0] as unknown) : {}) as { delimiter?: Delimiter.None | Delimiter.Trailing };
+	const elements = (_optsFirst ? args.slice(1) : args) as unknown as NonEmptyArray<Admit<T.CasePattern>>;
+	return _buildCasePatternList(elements, options);
+}
+function _buildCasePatternList(
+	elements: NonEmptyArray<Admit<T.CasePattern>>,
+	options: { delimiter?: Delimiter.None | Delimiter.Trailing }
+): T.CasePatternList.Bound {
+	currentHandle()?.admit(TSKindId.CasePatternList, elements);
+	const _item = elements;
+	const _delimiter = options.delimiter;
+	const listedLength = storedElements(_item).length;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'case_pattern_list', { items: _item });
+	const node = {
+		$type: TSKindId.CasePatternList as const,
+		$named: true as const,
+		_item,
+		_delimiter,
+		$with: {
+			items: (...vs: NonEmptyArray<Admit<T.CasePattern>>) =>
+				rebuilt(node, handle, () => buildCasePatternList(options, ...vs)),
+			delimiter: (v?: Delimiter.None | Delimiter.Trailing) =>
+				rebuilt(node, handle, () => buildCasePatternList({ ...options, delimiter: v }, ...elements))
+		},
+		items: () => hydrateStoredSlots(node, '_item'),
+		length: listedLength,
+		[LIST_ITEMS]: undefined,
+		[LIST_READ]: () => listItems(ownerElements(node, 'items'), undefined),
+		...LIST_METHODS,
+		[Symbol.iterator]: listIterator,
+		[Symbol.isConcatSpreadable]: true,
+		[Symbol.unscopables]: Array.prototype[Symbol.unscopables],
+		delimiter: _delimiter ?? undefined,
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	defineListIndices(node, listedLength);
+	return stampBuilt(node) as unknown as T.CasePatternList.Bound;
 }
 
 export function buildTupleElements<
@@ -7211,6 +7166,74 @@ export function buildExceptClauseException(
 	return stampBuilt(node) as unknown as T.ExceptClauseException.Bound;
 }
 
+export function buildSplatPatternList<V extends Admit<T.Identifier | TSKindId.Underscore>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatPatternList.Bound;
+export function buildSplatPatternList(value: Admit<T.Identifier | TSKindId.Underscore>): T.SplatPatternList.Bound {
+	const _pattern = rejectKeywordText(
+		kindIdStorage<NonNullable<T.SplatPatternList['_pattern']>>(value),
+		'SplatPatternList.pattern',
+		TSKindId.Identifier,
+		['_']
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'splat_pattern_list', { pattern: _pattern });
+	const node = {
+		$type: TSKindId.SplatPatternList as const,
+		$named: true as const,
+		_pattern,
+		$with: {
+			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+				rebuilt(node, handle, () => buildSplatPatternList(value))
+		},
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.SplatPatternList.Bound;
+}
+
+export function buildSplatPatternDictionary<V extends Admit<T.Identifier | TSKindId.Underscore>>(
+	value: V & RefuseUndeclared<V>
+): T.SplatPatternDictionary.Bound;
+export function buildSplatPatternDictionary(
+	value: Admit<T.Identifier | TSKindId.Underscore>
+): T.SplatPatternDictionary.Bound {
+	const _pattern = rejectKeywordText(
+		kindIdStorage<NonNullable<T.SplatPatternDictionary['_pattern']>>(value),
+		'SplatPatternDictionary.pattern',
+		TSKindId.Identifier,
+		['_']
+	);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'splat_pattern_dictionary', { pattern: _pattern });
+	const node = {
+		$type: TSKindId.SplatPatternDictionary as const,
+		$named: true as const,
+		_pattern,
+		$with: {
+			pattern: (value: Admit<NonNullable<T.Identifier | TSKindId.Underscore>>) =>
+				rebuilt(node, handle, () => buildSplatPatternDictionary(value))
+		},
+		pattern: () => hydrateStoredSlot(node, '_pattern'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: refuseJSON,
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.SplatPatternDictionary.Bound;
+}
+
 export function buildAssignmentEq<
 	NameSlot extends T.AssignmentEq.Config['name'],
 	ValueSlot extends T.AssignmentEq.Config['value']
@@ -8434,7 +8457,6 @@ export type FluentKindMap = {
 	dict_pattern: T.DictPattern.Bound;
 	key_value_pattern: T.KeyValuePattern.Bound;
 	keyword_pattern: T.KeywordPattern.Bound;
-	splat_pattern: T.SplatPattern.Bound;
 	class_pattern: T.ClassPattern.Bound;
 	complex_pattern: T.ComplexPattern.Bound;
 	parameters_elements: T.ParametersElements.Bound;
@@ -8500,7 +8522,6 @@ export type FluentKindMap = {
 	keyword_separator: T.KeywordSeparator;
 	simple_statements_elements: T.SimpleStatementsElements.Bound;
 	subjects: T.Subjects.Bound;
-	case_patterns: T.CasePatterns.Bound;
 	with_clause_with_items: T.WithClauseWithItems.Bound;
 	types: T.Types.Bound;
 	argument_list_elements: T.ArgumentListElements.Bound;
@@ -8511,6 +8532,7 @@ export type FluentKindMap = {
 	slice_group: T.SliceGroup.Bound;
 	format_specifier_text: T.FormatSpecifierText;
 	tuple_pattern_elements: T.TuplePatternElements.Bound;
+	case_pattern_list: T.CasePatternList.Bound;
 	tuple_elements: T.TupleElements.Bound;
 	except_clause_exception_as: T.ExceptClauseExceptionAs.Bound;
 	case_tuple_pattern: T.CaseTuplePattern.Bound;
@@ -8543,6 +8565,8 @@ export type FluentKindMap = {
 	simple_pattern_negative: T.SimplePatternNegative.Bound;
 	except_clause_exception_list: T.ExceptClauseExceptionList.Bound;
 	except_clause_exception: T.ExceptClauseException.Bound;
+	splat_pattern_list: T.SplatPatternList.Bound;
+	splat_pattern_dictionary: T.SplatPatternDictionary.Bound;
 	assignment_eq: T.AssignmentEq.Bound;
 	assignment_type: T.AssignmentType.Bound;
 	assignment_typed: T.AssignmentTyped.Bound;
@@ -8638,7 +8662,6 @@ export const _factoryMap = {
 	dict_pattern: buildDictPattern,
 	key_value_pattern: buildKeyValuePattern,
 	keyword_pattern: buildKeywordPattern,
-	splat_pattern: buildSplatPattern,
 	class_pattern: buildClassPattern,
 	complex_pattern: buildComplexPattern,
 	parameters_elements: buildParametersElements,
@@ -8704,7 +8727,6 @@ export const _factoryMap = {
 	keyword_separator: buildKeywordSeparator,
 	simple_statements_elements: buildSimpleStatementsElements,
 	subjects: buildSubjects,
-	case_patterns: buildCasePatterns,
 	with_clause_with_items: buildWithClauseWithItems,
 	types: buildTypes,
 	argument_list_elements: buildArgumentListElements,
@@ -8715,6 +8737,7 @@ export const _factoryMap = {
 	slice_group: buildSliceGroup,
 	format_specifier_text: buildFormatSpecifierText,
 	tuple_pattern_elements: buildTuplePatternElements,
+	case_pattern_list: buildCasePatternList,
 	tuple_elements: buildTupleElements,
 	except_clause_exception_as: buildExceptClauseExceptionAs,
 	case_tuple_pattern: buildCaseTuplePattern,
@@ -8747,6 +8770,8 @@ export const _factoryMap = {
 	simple_pattern_negative: buildSimplePatternNegative,
 	except_clause_exception_list: buildExceptClauseExceptionList,
 	except_clause_exception: buildExceptClauseException,
+	splat_pattern_list: buildSplatPatternList,
+	splat_pattern_dictionary: buildSplatPatternDictionary,
 	assignment_eq: buildAssignmentEq,
 	assignment_type: buildAssignmentType,
 	assignment_typed: buildAssignmentTyped,

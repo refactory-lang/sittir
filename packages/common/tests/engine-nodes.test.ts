@@ -29,12 +29,15 @@ function fakeLanguage(name: string) {
 	const hooks = {
 		name,
 		renderModuleHash: `hash-${name}`,
-		build: {
-			leaf: Object.assign((text: string) => built({ $type: 1, $text: text }), {
-				strict: (text: string) => built({ $type: 1, $text: text })
+		tables: {
+			default: async () => ({
+				leaf: Object.assign((text: string) => built({ $type: 1, $text: text }), {
+					plain: (text: string) => built({ $type: 1, $text: text })
+				}),
+				group: (...items: unknown[]) => built({ $type: 3, _items: items }),
+				number: { bigint: (v: bigint) => built({ $type: 2, $text: String(v) }) }
 			}),
-			group: (...items: unknown[]) => built({ $type: 3, _items: items }),
-			number: { bigint: (v: bigint) => built({ $type: 2, $text: String(v) }) }
+			strict: async () => ({})
 		},
 		trivia,
 		createNative: (opts?: { options?: Options }) => {
@@ -78,10 +81,10 @@ async function engineOf(language: ReturnType<typeof fakeLanguage>, indent?: stri
 const stampOf = (n: unknown): unknown => (n as { $engine?: () => unknown }).$engine?.();
 
 describe('the nodes an engine builds and reads', () => {
-	it('stamps every builder, including nested variants and flavours', async () => {
+	it('stamps every builder, including nested variants and the members of a callable entry', async () => {
 		const engine = await engineOf(fakeLanguage('fake'));
 		expect(stampOf(engine.build.leaf('a'))).toBe(engine);
-		expect(stampOf(engine.build.leaf.strict('a'))).toBe(engine);
+		expect(stampOf(engine.build.leaf.plain('a'))).toBe(engine);
 		expect(stampOf(engine.build.number.bigint(1n))).toBe(engine);
 		expect(stampOf(engine.build.group(engine.build.leaf('a')))).toBe(engine);
 	});
@@ -191,7 +194,7 @@ describe('the immutability of an engine', () => {
 			engine.build.leaf = () => undefined;
 		}).toThrow(/read-only/);
 		expect(() => {
-			engine.build.leaf.strict = () => undefined;
+			engine.build.leaf.plain = () => undefined;
 		}).toThrow(/read-only/);
 		expect(() => {
 			delete engine.build.number.bigint;

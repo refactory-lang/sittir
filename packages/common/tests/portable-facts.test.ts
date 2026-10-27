@@ -23,6 +23,32 @@ describe('portablePathHasFacts', () => {
 		).toBe(false);
 	});
 
+	it.each([
+		['assignment', 'pattern.assignment', 'pattern.object.assignment'],
+		['constant', 'declaration.constant', 'declaration.variable.constant'],
+		['default', 'clause.default', 'clause.case.default'],
+		['map', 'pattern.map', 'pattern.rest.map'],
+		['match', 'clause.match', 'clause.case.match'],
+		['member', 'expression.member', 'expression.call.member'],
+		['object', 'type.object', 'type.primitive.object'],
+		['rest', 'pattern.rest', 'pattern.struct.rest'],
+		['signature', 'declaration.signature', 'declaration.method.signature'],
+		['struct', 'declaration.struct', 'declaration.enum_member.struct']
+	])('reads %s as the kind it names, never as a refinement of another kind spelled the same', (_, guard, read) => {
+		expect(portablePathHasFacts(guard, read)).toBe(false);
+		expect(portablePathHasFacts(guard, guard)).toBe(true);
+	});
+
+	it('matches a refinement under its own kind across other refinements', () => {
+		expect(portablePathHasFacts('pattern.rest', 'pattern.rest.map')).toBe(true);
+		expect(portablePathHasFacts('pattern.rest.map', 'pattern.rest.map')).toBe(true);
+		expect(portablePathHasFacts('declaration.property.getter', 'declaration.property.signature.abstract.getter')).toBe(
+			true
+		);
+		expect(portablePathHasFacts('literal.number.integer.binary', 'literal.number.integer.big.binary')).toBe(true);
+		expect(portablePathHasFacts('literal.string.raw', 'literal.string.bytes.raw')).toBe(true);
+	});
+
 	it('holds for no read path when there is none', () => {
 		expect(portablePathHasFacts('declaration', undefined)).toBe(false);
 	});

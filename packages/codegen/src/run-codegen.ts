@@ -32,7 +32,6 @@ import type { NodeMap } from './compiler/types.ts';
 import { formatEmitDiff } from './scripts/emit-diff.ts';
 import { clearNapiTypedefs } from './scripts/napi-typedefs.ts';
 import { WORKSPACE_CHECK, runWorkspaceCheck } from './scripts/workspace-check.ts';
-import { OVERLAY_CHAIN } from './emitters/overlays/module.ts';
 import { compareOrdinal } from './emitters/shared.ts';
 
 export interface CodegenOptions {
@@ -260,22 +259,19 @@ async function runCodegenInternal(opts: CodegenOptions, read: SourceFingerprint 
 	await writeFile(join(outDir, 'types-internal.ts'), result.typesInternal);
 	if (result.kinds !== undefined) await writeFile(join(outDir, 'kinds.ts'), result.kinds);
 	const factoriesDir = join(outDir, 'factories');
-	mkdirSync(join(factoriesDir, 'overlays'), { recursive: true });
 	rmSync(join(outDir, 'factories.ts'), { force: true });
 	rmSync(join(outDir, 'from.ts'), { force: true });
+	rmSync(join(factoriesDir, 'overlays'), { recursive: true, force: true });
+	rmSync(join(factoriesDir, 'bundle.ts'), { force: true });
+	rmSync(join(factoriesDir, 'index.ts'), { force: true });
 	await writeFile(join(factoriesDir, 'raw.ts'), result.factoriesDispatch);
 	await writeFile(join(factoriesDir, 'objects.ts'), result.factories);
 	await writeFile(join(factoriesDir, 'records.ts'), result.factoriesRecords);
 	await writeFile(join(factoriesDir, 'coerce.ts'), result.from);
-	await writeFile(join(factoriesDir, 'bundle.ts'), result.factoriesBundle);
-	for (const name of OVERLAY_CHAIN) {
-		await writeFile(join(factoriesDir, 'overlays', `${name}.ts`), result.overlays[name]);
-	}
-	await writeFile(join(factoriesDir, 'index.ts'), result.factoriesIndex);
+	for (const [path, text] of Object.entries(result.tableFiles)) await writeFile(join(outDir, path), text);
 	await writeFile(join(outDir, 'wrap.ts'), result.wrap);
 	await writeFile(join(outDir, 'utils.ts'), result.utils);
 	if (result.reparseHosts !== undefined) await writeFile(join(outDir, 'reparse-hosts.ts'), result.reparseHosts);
-	await writeFile(join(outDir, 'ir.ts'), result.irNamespace);
 	await writeFile(join(outDir, 'consts.ts'), result.consts);
 	await writeFile(join(outDir, 'options.ts'), result.options);
 	await writeFile(join(outDir, 'is.ts'), result.is);
