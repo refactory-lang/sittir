@@ -44,7 +44,6 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
-	LEAF_SITES,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -3378,7 +3377,6 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 
 function leafUnescapedDoubleStringFragment(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.UnescapedDoubleStringFragment as const,
 		$named: true as const,
 		$text: () => text,
@@ -3409,7 +3407,6 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 
 function leafUnescapedSingleStringFragment(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.UnescapedSingleStringFragment as const,
 		$named: true as const,
 		$text: () => text,
@@ -3571,7 +3568,6 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 
 function leafRegexPattern(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.RegexPattern as const,
 		$named: true as const,
 		$text: () => text,
@@ -3598,7 +3594,6 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 
 function leafRegexFlags(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.RegexFlags as const,
 		$named: true as const,
 		$text: () => text,
@@ -3625,7 +3620,6 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 
 function leafIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.Identifier as const,
 		$named: true as const,
 		$text: () => text,
@@ -9325,7 +9319,6 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 
 function leafNumberDecimal(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.NumberDecimal as const,
 		$named: true as const,
 		$text: () => text,
@@ -12652,7 +12645,6 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 
 function leafHtmlComment(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.HtmlComment as const,
 		$named: true as const,
 		$text: () => text,
@@ -12675,7 +12667,6 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 
 function leafJsxText(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.JsxText as const,
 		$named: true as const,
 		$text: () => text,
@@ -12702,7 +12693,6 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 
 function leafTemplateChars(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.TemplateChars as const,
 		$named: true as const,
 		$text: () => text,
@@ -13014,7 +13004,6 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 
 function leafTernaryQmark(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.TernaryQmark as const,
 		$named: true as const,
 		$text: () => text,
@@ -13039,7 +13028,6 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 
 function leafErrorRecovery(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ErrorRecovery as const,
 		$named: true as const,
 		$text: () => text,

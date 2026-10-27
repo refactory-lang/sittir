@@ -42,7 +42,6 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
-	LEAF_SITES,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -258,7 +257,6 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 
 function leafImportPrefix(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ImportPrefix as const,
 		$named: true as const,
 		$text: () => text,
@@ -4642,7 +4640,6 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 
 function leafTypeConversion(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.TypeConversion as const,
 		$named: true as const,
 		$text: () => text,
@@ -4672,7 +4669,6 @@ export function buildIdentifier<const W extends string>(
 
 function leafIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.Identifier as const,
 		$named: true as const,
 		$text: () => text,
@@ -5314,7 +5310,6 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 
 function leafFormatSpecifierText(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.FormatSpecifierText as const,
 		$named: true as const,
 		$text: () => text,
@@ -6144,7 +6139,6 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 
 function leafIntegerDecimalLong(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.IntegerDecimalLong as const,
 		$named: true as const,
 		$text: () => text,
@@ -6175,7 +6169,6 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 
 function leafIntegerDecimalImaginary(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.IntegerDecimalImaginary as const,
 		$named: true as const,
 		$text: () => text,
@@ -6209,7 +6202,6 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 
 function leafIntegerDecimalPlain(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.IntegerDecimalPlain as const,
 		$named: true as const,
 		$text: () => text,
@@ -6834,7 +6826,6 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 
 function leafLineContinuationNewline(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.LineContinuationNewline as const,
 		$named: true as const,
 		$text: () => text,
@@ -7599,7 +7590,6 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 
 function leafStringStart(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringStart as const,
 		$named: true as const,
 		$text: () => text,
@@ -7626,7 +7616,6 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 
 function leafStringFragment(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringFragment as const,
 		$named: true as const,
 		$text: () => text,
@@ -7656,7 +7645,6 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 
 function leafEscapeInterpolation(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.EscapeInterpolation as const,
 		$named: true as const,
 		$text: () => text,
@@ -7683,7 +7671,6 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 
 function leafStringEnd(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringEnd as const,
 		$named: true as const,
 		$text: () => text,

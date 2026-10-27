@@ -20,7 +20,6 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
-	LEAF_SITES,
 	storeCell,
 	storeFlag,
 	storeList
@@ -111,7 +110,6 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 
 function leafIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.Identifier as const,
 		$named: true as const,
 		$text: () => text,
@@ -141,7 +139,6 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 
 function leafImmediateIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ImmediateIdentifier as const,
 		$named: true as const,
 		$text: () => text,
@@ -784,7 +781,6 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 
 function leafStringContentText(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringContentText as const,
 		$named: true as const,
 		$text: () => text,

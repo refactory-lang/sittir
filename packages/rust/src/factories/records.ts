@@ -42,7 +42,6 @@ import {
 	unaffixed,
 	builtArenaOf,
 	builtInputs,
-	LEAF_SITES,
 	storeCell,
 	storeFlag,
 	storeList,
@@ -6629,7 +6628,6 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 
 function leafIdentifier(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.Identifier as const,
 		$named: true as const,
 		$text: () => text,
@@ -8110,7 +8108,6 @@ export function buildTokenRepetitionPatternText(text: string): T.TokenRepetition
 
 function leafTokenRepetitionPatternText(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.TokenRepetitionPatternText as const,
 		$named: true as const,
 		$text: () => text,
@@ -8137,7 +8134,6 @@ export function buildStringOpen(text: string): T.StringOpen.Bound {
 
 function leafStringOpen(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringOpen as const,
 		$named: true as const,
 		$text: () => text,
@@ -8490,7 +8486,6 @@ export function buildCharLiteralEmpty(text: string): T.CharLiteralEmpty.Bound {
 
 function leafCharLiteralEmpty(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.CharLiteralEmpty as const,
 		$named: true as const,
 		$text: () => text,
@@ -10326,7 +10321,6 @@ export function buildLineCommentExtraSlashes(text: string): T.LineCommentExtraSl
 
 function leafLineCommentExtraSlashes(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.LineCommentExtraSlashes as const,
 		$named: true as const,
 		$text: () => text,
@@ -10397,7 +10391,6 @@ export function buildLineCommentRegular(text: string): T.LineCommentRegular.Boun
 
 function leafLineCommentRegular(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.LineCommentRegular as const,
 		$named: true as const,
 		$text: () => text,
@@ -10468,7 +10461,6 @@ export function buildBlockCommentRegular(text: string): T.BlockCommentRegular.Bo
 
 function leafBlockCommentRegular(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.BlockCommentRegular as const,
 		$named: true as const,
 		$text: () => text,
@@ -11823,7 +11815,6 @@ export function buildFloatLiteral(text: string | number): T.FloatLiteral.Bound {
 
 function leafFloatLiteral(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.FloatLiteral as const,
 		$named: true as const,
 		$text: () => text,
@@ -11850,7 +11841,6 @@ export function buildStringContent(text: string): T.StringContent.Bound {
 
 function leafStringContent(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringContent as const,
 		$named: true as const,
 		$text: () => text,
@@ -11880,7 +11870,6 @@ export function buildRawStringLiteralContent(text: string): T.RawStringLiteralCo
 
 function leafRawStringLiteralContent(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.RawStringLiteralContent as const,
 		$named: true as const,
 		$text: () => text,
@@ -11915,7 +11904,6 @@ export function buildRawStringLiteralStart(text: string): T.RawStringLiteralStar
 
 function leafRawStringLiteralStart(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.RawStringLiteralStart as const,
 		$named: true as const,
 		$text: () => text,
@@ -11946,7 +11934,6 @@ export function buildRawStringLiteralEnd(text: string): T.RawStringLiteralEnd.Bo
 
 function leafRawStringLiteralEnd(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.RawStringLiteralEnd as const,
 		$named: true as const,
 		$text: () => text,
@@ -11972,7 +11959,6 @@ export function buildDocComment(text: string): T.DocComment.Bound {
 
 function leafDocComment(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.DocComment as const,
 		$named: true as const,
 		$text: () => text,
@@ -11998,7 +11984,6 @@ export function buildBlockCommentContent(text: string): T.BlockCommentContent.Bo
 
 function leafBlockCommentContent(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.BlockCommentContent as const,
 		$named: true as const,
 		$text: () => text,
@@ -12365,7 +12350,6 @@ export function buildStringClose(text: string): T.StringClose.Bound {
 
 function leafStringClose(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.StringClose as const,
 		$named: true as const,
 		$text: () => text,
@@ -12390,7 +12374,6 @@ export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 
 function leafErrorSentinel(text: string, handle: EngineHandle | undefined): object {
 	const node = {
-		[LEAF_SITES]: undefined,
 		$type: TSKindId.ErrorSentinel as const,
 		$named: true as const,
 		$text: () => text,

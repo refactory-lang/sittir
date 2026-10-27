@@ -5,7 +5,7 @@ import { rustFieldIdent } from './node-common.ts';
 import type { RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
 
-export const RECORD_CONSTRUCTION_IMPORTS = ['builtArenaOf', 'builtInputs', 'LEAF_SITES', 'storeCell', 'storeFlag', 'storeList', 'storeListOptions'] as const;
+export const RECORD_CONSTRUCTION_IMPORTS = ['builtArenaOf', 'builtInputs', 'storeCell', 'storeFlag', 'storeList', 'storeListOptions'] as const;
 
 export const RECORD_VIEW_TYPES = ['BuiltRow', 'BuiltViews', 'EngineHandle'] as const;
 
@@ -120,7 +120,7 @@ export class BuiltViewTable {
 		}
 		const name = `leaf${node.typeName}`;
 		this.#leaves.set(kindId, { name, body });
-		return { name, lines: [`function ${name}(text: string, handle: EngineHandle | undefined): object {`, '  const node = {', '    [LEAF_SITES]: undefined,', ...members, '  };', '  return node;', '}'] };
+		return { name, lines: [`function ${name}(text: string, handle: EngineHandle | undefined): object {`, '  const node = {', ...members, '  };', '  return node;', '}'] };
 	}
 
 	tableLines(): string[] {

@@ -10,9 +10,10 @@ declaration.field.public: attributed_ordered_field, field_declaration
 declaration.field: attributed_ordered_field, field_declaration
 element.macro.fragment: block_keyword, expr_2021_keyword, expr_keyword, ident_keyword, item_keyword, lifetime_keyword, literal_keyword, meta_keyword, pat_keyword, pat_param_keyword, path_keyword, stmt_keyword, tt_keyword, ty_keyword, vis_keyword
 type.primitive: bool_keyword, char_keyword, f32_keyword, f64_keyword, i128_keyword, i16_keyword, i32_keyword, i64_keyword, i8_keyword, isize_keyword, str_keyword, u128_keyword, u16_keyword, u32_keyword, u64_keyword, u8_keyword, usize_keyword
-declaration.parameter: attributed_parameter_receiver, captured_pattern, char_literal_empty, char_literal_escaped_hex, char_literal_escaped_simple, char_literal_escaped_unicode_braced, char_literal_escaped_unicode_fixed, char_literal_plain, const_block, false_keyword, float_literal, generic_pattern, identifier, integer_literal_binary, integer_literal_decimal, integer_literal_hex, integer_literal_octal, macro_invocation, mut_pattern, negative_literal, or_pattern_binary, or_pattern_prefix, parameter, range_pattern_prefix, range_pattern_with_left, raw_string_literal, ref_pattern, reference_pattern, remaining_field_pattern, scoped_identifier, slice_pattern, string_literal, struct_pattern, true_keyword, tuple_pattern, tuple_struct_pattern, wildcard_pattern
 literal.character: char_literal_empty, char_literal_escaped_hex, char_literal_escaped_simple, char_literal_escaped_unicode_braced, char_literal_escaped_unicode_fixed, char_literal_plain
 expression.lambda: closure_expression_block, closure_expression_expr
+declaration.parameter: attributed_parameter_receiver, closure_parameter, parameter
+identifier: crate, field_identifier, identifier, self_module, shorthand_field_identifier, super, type_identifier
 modifier.visibility.public.internal: crate_visibility_modifier, visibility_modifier
 element.macro.token_tree.delimited: delim_token_tree_brace, delim_token_tree_bracket, delim_token_tree_paren
 literal.string.escape: escape_sequence_hex, escape_sequence_simple, escape_sequence_unicode_braced, escape_sequence_unicode_fixed
@@ -27,9 +28,9 @@ type.primitive.integral.int64: i64_keyword, u64_keyword
 type.primitive.integral.int8: i8_keyword, u8_keyword
 declaration.extension: impl_item_body, impl_item_semi
 type.primitive.integral.size: isize_keyword, usize_keyword
+clause.case.match: last_match_arm, match_arm_block_ending, match_arm_with_comma
 declaration.variable: let_declaration, static_item
 declaration.macro: macro_definition_brace, macro_definition_bracket, macro_definition_paren
-clause.match.arm: match_arm_block_ending, match_arm_with_comma
 declaration.module: mod_item_external, mod_item_inline
 declaration.module.private: mod_item_external, mod_item_inline
 declaration.module.public.internal: mod_item_external, mod_item_inline
@@ -38,6 +39,7 @@ declaration.module.public: mod_item_external, mod_item_inline
 pattern.or: or_pattern_binary, or_pattern_prefix
 declaration.parameter.receiver: attributed_parameter_receiver, parameter, self_parameter
 type.pointer: pointer_type_const, pointer_type_mut
+identifier.qualified: qualified_identifier, scoped_identifier, scoped_type_identifier, scoped_type_identifier_in_expression_position
 expression.range: range_expression_bare, range_expression_binary, range_expression_postfix, range_expression_prefix
 expression.range.exclusive: range_expression_bare, range_expression_binary, range_expression_postfix, range_expression_prefix
 pattern.range: range_pattern_prefix, range_pattern_with_left
@@ -46,6 +48,7 @@ pattern.range.exclusive: range_pattern_prefix, range_pattern_with_left
 literal.string.text: raw_string_literal_content, string_content
 expression.reference: reference_expression_bare, reference_expression_mut, reference_expression_raw_const, reference_expression_raw_mut
 declaration.struct: struct_item_brace, struct_item_tuple, struct_item_unit
+pattern.struct: struct_pattern, tuple_struct_pattern
 element.macro.token_tree: token_tree_brace, token_tree_bracket, token_tree_paren
 element.macro.token_tree.pattern: token_tree_pattern_brace, token_tree_pattern_bracket, token_tree_pattern_paren
 
@@ -56,6 +59,7 @@ comment.text: block_comment, doc_comment, line_comment []
 element.macro.fragment: block_keyword, expr_2021_keyword, expr_keyword, ident_keyword, item_keyword, lifetime_keyword, literal_keyword, meta_keyword, pat_keyword, pat_param_keyword, path_keyword, stmt_keyword, tt_keyword, ty_keyword, vis_keyword []
 type.primitive: bool_keyword, char_keyword, f32_keyword, f64_keyword, i128_keyword, i16_keyword, i32_keyword, i64_keyword, i8_keyword, isize_keyword, str_keyword, u128_keyword, u16_keyword, u32_keyword, u64_keyword, u8_keyword, usize_keyword []
 literal.character: char_literal_escaped_hex, char_literal_escaped_simple, char_literal_escaped_unicode_braced, char_literal_escaped_unicode_fixed, char_literal_plain [byte,content]
+identifier: crate, field_identifier, identifier, self_module, shorthand_field_identifier, super, type_identifier []
 element.macro.token_tree.delimited: delim_token_tree_brace, delim_token_tree_bracket, delim_token_tree_paren [tokens]
 literal.string.escape: escape_sequence_hex, escape_sequence_simple, escape_sequence_unicode_braced, escape_sequence_unicode_fixed [content]
 literal.boolean: false_keyword, true_keyword []
@@ -65,10 +69,12 @@ type.primitive.integral.int32: i32_keyword, u32_keyword []
 type.primitive.integral.int64: i64_keyword, u64_keyword []
 type.primitive.integral.int8: i8_keyword, u8_keyword []
 type.primitive.integral.size: isize_keyword, usize_keyword []
+clause.case.match: last_match_arm, match_arm_block_ending, match_arm_with_comma [attributes,body,guard,pattern]
 declaration.macro: macro_definition_brace, macro_definition_bracket, macro_definition_paren [name,rules]
-clause.match.arm: match_arm_block_ending, match_arm_with_comma [attributes,match,value]
+identifier.qualified: scoped_identifier, scoped_type_identifier, scoped_type_identifier_in_expression_position [name,qualifier]
 literal.string.text: raw_string_literal_content, string_content []
 declaration.struct: struct_item_brace, struct_item_tuple [body,name,scope,typeParameters,whereClause]
+pattern.struct: struct_pattern, tuple_struct_pattern [fields,type]
 element.macro.token_tree: token_tree_brace, token_tree_bracket, token_tree_paren [tokens]
 element.macro.token_tree.pattern: token_tree_pattern_brace, token_tree_pattern_bracket, token_tree_pattern_paren [tokens]
 
@@ -142,18 +148,31 @@ literal.number.negative: negative_literal
 ### paths that pick among several kinds or forms, hidden and supertype kinds left out; a form counts as its base unless the base is a supertype (path: kinds)
 declaration.constant: assignment_eq, assignment_type, assignment_typed
 declaration.variable: assignment_eq, assignment_type, assignment_typed
+pattern.tuple.bare: bare_tuple_pattern, case_pattern_list, pattern_list
 expression.binary: binary_operator, comparison_operator
 statement.block: block, block_class_declaration
+pattern.list: _simple_pattern, list_pattern
+pattern.tuple: _simple_pattern, tuple_pattern
 declaration.constructor: constructor_declaration, method_declaration
+pattern.rest.map: dictionary_splat_pattern, map_rest_pattern, splat_pattern_dictionary
+identifier.qualified: dotted_name, member_type, qualified_identifier
 literal.string.escape: escape_interpolation, escape_sequence_hex, escape_sequence_line_break, escape_sequence_named, escape_sequence_octal, escape_sequence_simple, escape_sequence_unicode_fixed, escape_sequence_unicode_wide
-expression.lambda: lambda_expression, lambda_within_for_in_clause
+expression.lambda: lambda, lambda_expression, lambda_within_for_in_clause
+pattern.rest: list_splat_pattern, rest_pattern, splat_pattern_list
 clause.resource: with_clause_bare, with_clause_paren
 
 ### paths that claim only hidden or supertype kinds
 
 ### same member names, no refinement test (path: kinds [members])
+pattern.tuple.bare: bare_tuple_pattern, case_pattern_list, pattern_list []
 statement.block: block, block_class_declaration [statements]
+pattern.list: _simple_pattern, list_pattern [elements]
+pattern.tuple: _simple_pattern, tuple_pattern [elements]
+pattern.rest.map: dictionary_splat_pattern, splat_pattern_dictionary [pattern]
+identifier.qualified: dotted_name, member_type [name,qualifier]
 literal.string.escape: escape_sequence_hex, escape_sequence_line_break, escape_sequence_named, escape_sequence_octal, escape_sequence_simple, escape_sequence_unicode_fixed, escape_sequence_unicode_wide [content]
+expression.lambda: lambda, lambda_within_for_in_clause [body,parameters]
+pattern.rest: list_splat_pattern, splat_pattern_list [pattern]
 clause.resource: with_clause_bare, with_clause_paren [items]
 
 ### flag guards no kind at or under the path reads (path.flag)
@@ -214,6 +233,7 @@ literal.number.integer.binary: integer_binary
 literal.number.integer.hex: integer_hex
 literal.number.integer.imaginary: integer_decimal_imaginary
 literal.number.integer.octal: integer_octal
+literal.number.negative: simple_pattern_negative
 
 ## typescript
 
@@ -226,11 +246,13 @@ declaration.enum_member: enum_assignment, enum_body_element_name
 statement.export: export_statement_default_declaration, export_statement_default_from, export_statement_equals_export, export_statement_namespace_export
 declaration.function: function_declaration, generator_function_declaration
 expression.function: function_expression, generator_function
+identifier: identifier, private_property_identifier, property_identifier, shorthand_property_identifier, shorthand_property_identifier_pattern, type_identifier
 clause.import.specifier: import_specifier_as, import_specifier_name
 clause.import.specifier.typeof: import_specifier_as, import_specifier_name
 declaration.signature.index: index_signature_colon, index_signature_mapped_type_clause
 declaration.variable: lexical_declaration, variable_declarator_definite, variable_declarator_plain
 expression.meta: meta_property_import_meta, meta_property_new_target
+identifier.qualified: nested_identifier, nested_type_identifier, qualified_identifier
 literal.number: number_bigint_binary, number_bigint_decimal, number_bigint_hex, number_bigint_octal, number_binary, number_decimal, number_float_leading_point, number_float_point, number_float_scientific, number_hex, number_octal
 declaration.parameter.private: optional_parameter, receiver_parameter_declaration, required_parameter, setter_parameter
 declaration.parameter.protected: optional_parameter, receiver_parameter_declaration, required_parameter, setter_parameter
@@ -238,9 +260,7 @@ declaration.parameter.public: optional_parameter, receiver_parameter_declaration
 declaration.parameter: optional_parameter, receiver_parameter_declaration, required_parameter, setter_parameter
 expression.parenthesized: parenthesized_expression_sequence, parenthesized_expression_typed
 modifier.visibility: private_keyword, protected_keyword, public_keyword
-identifier.property: private_property_identifier, property_identifier
 declaration.parameter.receiver: receiver_parameter_declaration, required_parameter
-identifier.property.shorthand: shorthand_property_identifier, shorthand_property_identifier_pattern
 literal.string: string_double, string_single
 type.primitive.symbol: symbol_keyword, unique
 expression.update.increment: update_expression_postfix, update_expression_prefix
@@ -252,12 +272,12 @@ expression.update: update_expression_postfix, update_expression_prefix
 ### same member names, no refinement test (path: kinds [members])
 literal.string.text: string_fragment, unescaped_double_string_fragment, unescaped_single_string_fragment []
 type.primitive: any_keyword, boolean_keyword, never_keyword, number_keyword, object_keyword, string_keyword, symbol_keyword, unique, unknown_keyword, void_keyword []
+identifier: identifier, private_property_identifier, property_identifier, shorthand_property_identifier, shorthand_property_identifier_pattern, type_identifier []
 expression.meta: meta_property_import_meta, meta_property_new_target []
+identifier.qualified: nested_identifier, nested_type_identifier [name,qualifier]
 literal.number: number_bigint_binary, number_bigint_decimal, number_bigint_hex, number_bigint_octal [content]
 literal.number: number_binary, number_hex, number_octal [content,prefix]
 modifier.visibility: private_keyword, protected_keyword, public_keyword []
-identifier.property: private_property_identifier, property_identifier []
-identifier.property.shorthand: shorthand_property_identifier, shorthand_property_identifier_pattern []
 literal.string: string_double, string_single [elements]
 type.primitive.symbol: symbol_keyword, unique []
 expression.update: update_expression_postfix, update_expression_prefix [argument]
