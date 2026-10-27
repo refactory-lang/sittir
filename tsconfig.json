@@ -32,7 +32,7 @@
 		"noUncheckedIndexedAccess": true,
 		"noPropertyAccessFromIndexSignature": false,
 		"verbatimModuleSyntax": true,
-		"noEmit": false,
+		"noEmit": true,
 		"skipLibCheck": true,
 		"forceConsistentCasingInFileNames": true,
 		"rewriteRelativeImportExtensions": true,
