@@ -7,6 +7,7 @@ export interface Identifier<G extends GrammarContext<G>> {
 }
 
 export interface IdentifierSynonyms {
+	readonly qualified: 'dotted' | 'nested' | 'scoped' | 'path';
 	readonly receiver: 'self' | 'this';
 	readonly super: 'base';
 }

@@ -191,10 +191,10 @@
 (dictionary_splat_pattern) @pattern.splat.dictionary
 (dictionary_splat_pattern target: (_) @pattern)
 (union_pattern) @pattern.or
-(dict_pattern) @pattern.map
-(splat_pattern_list) @pattern.rest
+(dict_pattern) @pattern.dict
+(splat_pattern_list) @pattern.splat
 (splat_pattern_list name: (_) @pattern)
-(splat_pattern_dictionary) @pattern.rest.map
+(splat_pattern_dictionary) @pattern.splat.dictionary
 (splat_pattern_dictionary name: (_) @pattern)
 (class_pattern name: (_) @type arguments: (_)? @fields) @pattern.struct
 (keyword_pattern value: (_) @pattern) @pattern.struct.field
@@ -252,7 +252,7 @@
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier
-(dotted_name) @identifier.qualified
+(dotted_name) @identifier.dotted
 
 ; ── modifier ───────────────────────────────────────────────────────────────────
 ; none: Python's modifiers are `async` (a member) and decorators (attributes)
