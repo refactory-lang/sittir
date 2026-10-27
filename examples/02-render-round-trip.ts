@@ -1,13 +1,14 @@
 import rust from '@sittir/rust';
 
 const rs = await rust.createEngine();
+const rsStrict = await rust.createEngine({ api: 'strict' });
 
 export function renderMainFunction() {
 	const fn = rs.build.statement.function({
 		visibilityModifier: 'pub',
 		name: 'main',
-		parameters: rs.build.parameters.strict(),
-		body: rs.build.block.strict(),
+		parameters: rsStrict.build.parameters(),
+		body: rsStrict.build.block(),
 	});
 	return fn.$render();
 }

@@ -1,6 +1,7 @@
 import type {
 	ApiOf,
 	Engine,
+	EngineOptions,
 	ErrorNode,
 	ErrorRegion,
 	Interceptor,
@@ -9,7 +10,6 @@ import type {
 	LanguageHooks,
 	ParsedRoot,
 	Project,
-	StrictSurface,
 	TriviaSetter,
 	Types
 } from '../src/index.ts';
@@ -37,8 +37,8 @@ interface StrictNode extends FakeNode {
 interface FakeAPI extends LanguageAPI {
 	readonly name: 'fake';
 	readonly build: {
-		leaf: ((text: string) => FakeNode) & { strict(text: string): StrictNode; coerce(text: string): FakeNode };
-		number: { bigint: ((v: bigint) => FakeNode) & { strict(v: bigint): StrictNode } };
+		readonly default: { leaf(text: string): FakeNode; readonly number: { bigint(v: bigint): FakeNode } };
+		readonly strict: { leaf(text: string): StrictNode; readonly number: { bigint(v: bigint): StrictNode } };
 	};
 	readonly is: { leaf(n: unknown): n is FakeNode };
 	readonly kinds: { readonly Leaf: 1 };
@@ -75,17 +75,32 @@ export const descriptor: Language<FakeAPI> = {
 	}
 };
 
-declare const strict: StrictSurface<FakeAPI['build']>;
-export const strictLeaf: StrictNode = strict.leaf('a');
-export const strictVariant: StrictNode = strict.number.bigint(1n);
-// @ts-expect-error the strict surface hides the flavours
-export const hidden = strict.leaf.strict;
-
 declare const portable: Engine<API, 'portable'>;
 export const noBuild: never = portable.build;
 
 declare const engine: Engine<API>;
 export const rendered: string = engine.render((b) => b.leaf('a')).toString();
+// @ts-expect-error the default engine builds from the loose table
+export const looseLeaf: StrictNode = engine.build.leaf('a');
+
+declare const strictEngine: Engine<API, 'strict'>;
+export const strictLeaf: StrictNode = strictEngine.build.leaf('a');
+export const strictVariant: StrictNode = strictEngine.build.number.bigint(1n);
+export const strictRendered: string = strictEngine.render((b) => b.leaf('a')).toString();
+export const strictSelected: Promise<Engine<API, 'strict'>> = descriptor.createEngine({ api: 'strict' });
+export const defaultUnselected: Promise<Engine<API>> = descriptor.createEngine({ verifyStructure: 'runtime' });
+// @ts-expect-error options without `api` build with the default engine's loose builders
+export const strictUnselected: Promise<Engine<API, 'strict'>> = descriptor.createEngine({ verifyStructure: 'runtime' });
+// @ts-expect-error strict options name their mode
+export const strictOptions: EngineOptions<API, 'strict'> = { verifyStructure: 'runtime' };
+declare const optionalStrict: { readonly api?: 'strict'; readonly verifyStructure: 'runtime' };
+// @ts-expect-error strict options whose `api` may be absent are refused
+export const maybeStrict = descriptor.createEngine(optionalStrict);
+declare const eitherMode: { readonly api?: 'default' | 'strict' };
+export const eitherEngineOf: Promise<Engine<API, 'default' | 'strict'>> = descriptor.createEngine(eitherMode);
+declare const eitherEngine: Engine<API, 'default' | 'strict'>;
+// @ts-expect-error an engine that may build loose is not a strict engine
+export const eitherAsStrict: Engine<API, 'strict'> = eitherEngine;
 // @ts-expect-error render options are the language's options
 engine.render(leaf, { indnet: '\t' });
 
@@ -108,7 +123,7 @@ interface OtherNode {
 }
 interface OtherAPI extends LanguageAPI {
 	readonly name: 'other';
-	readonly build: { leaf(text: string): OtherNode };
+	readonly build: { readonly default: { leaf(text: string): OtherNode }; readonly strict: { leaf(text: string): OtherNode } };
 	readonly is: object;
 	readonly kinds: object;
 	readonly types: { readonly leaf: OtherNode };

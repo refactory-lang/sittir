@@ -73,9 +73,9 @@ function makeNodeMap(kindEntries: readonly GeneratedKindEntry[]) {
 }
 
 function coercerOf(emitted: string, name: string): string {
-	const start = emitted.indexOf(`export function ${name}(`);
+	const start = emitted.search(new RegExp(`export (?:const ${name}\\b|function ${name}\\()`));
 	expect(start).toBeGreaterThan(-1);
-	return emitted.slice(start, emitted.indexOf('\n}\n', start));
+	return emitted.slice(start, emitted.indexOf('\n}', start));
 }
 
 describe('a separated list coercer resolves its elements through the content slot', () => {

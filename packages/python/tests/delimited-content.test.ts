@@ -7,7 +7,7 @@ const py = await createEngine(python);
 const b = py.build;
 
 const quoted = (start: string, content: string, end: string) =>
-	b.string({ stringStart: b.stringStart(start), contents: [b.stringContent.coerce(content)], stringEnd: b.stringEnd(end) });
+	b.string({ stringStart: b.stringStart(start), contents: [b.stringContent(content)], stringEnd: b.stringEnd(end) });
 
 describe('a string whose content or delimiters would not read back as one string', () => {
 	it.each([

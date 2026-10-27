@@ -6,9 +6,9 @@
  * Compile-time only: `pnpm --filter @sittir/regex type-check`.
  */
 
-import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
 
 export function nonEmptySlotTakesAtLeastOneChild(): void {
 	// @ts-expect-error zero children are refused
-	ir.alternation.strict();
+	strictIr.alternation();
 }

@@ -54,7 +54,6 @@ export interface ModelFacts {
 	readonly listDefaults: Record<string, string>;
 	readonly listElementKinds: Record<string, readonly string[]>;
 	readonly hoistedKinds: ReadonlySet<string>;
-	readonly oneSurfaceKinds: ReadonlySet<string>;
 	readonly unitKinds: ReadonlySet<string>;
 	readonly kindIdOfName: (kind: string) => number | undefined;
 }
@@ -581,10 +580,6 @@ function camelCase(kind: string): string {
 	return kind.replace(/^_+/, '').replace(/_([a-z0-9])/g, (_m, c: string) => c.toUpperCase());
 }
 
-function callSpelling(path: string, ctx: PrintContext, kind?: string): string {
-	return isLoose(ctx) || (kind !== undefined && ctx.facts.oneSurfaceKinds.has(kind)) ? path : `${path}.strict`;
-}
-
 function ownedListArgs(owner: string, value: unknown, ctx: PrintContext): string | undefined {
 	if (!(value instanceof Printed) || value.kind === undefined || value.$_layout?.trivia !== undefined) return undefined;
 	const elements = value.facts?.elements;
@@ -603,14 +598,8 @@ export function printingFactoryMap(
 	const kinds = Object.keys(realShapes);
 	for (const kind of kinds) {
 		const shape: FactoryShape = realShapes[kind]!;
-		let spelling: { readonly path: string; readonly call: string } | undefined;
-		const spelled = (): { readonly path: string; readonly call: string } => {
-			if (spelling === undefined) {
-				const path = builderOf(kind, ctx);
-				spelling = { path, call: callSpelling(path, ctx, kind) };
-			}
-			return spelling;
-		};
+		let path: string | undefined;
+		const spelled = (): string => (path ??= builderOf(kind, ctx));
 		const id = kindIdOf(kind, kindIdOfName);
 		const publicName = kind.replace(/^_+/, '');
 		const entry = (...args: unknown[]): Printed | string => {
@@ -623,7 +612,7 @@ export function printingFactoryMap(
 			}
 			switch (shape) {
 				case 'constant':
-					return new Printed(id, spelled().path, kind);
+					return new Printed(id, spelled(), kind);
 				case 'text': {
 					const text = String(args[0] ?? '');
 					if (ctx.enumKinds?.has(kind)) {
@@ -633,7 +622,7 @@ export function printingFactoryMap(
 					if (kind.startsWith('_')) return text;
 					if (ctx.facts.unitKinds.has(kind))
 						return new Printed(id, printValue(id, ctx, 0), kind);
-					return new Printed(id, `${spelled().path}(${JSON.stringify(text)})`, kind, undefined, { text });
+					return new Printed(id, `${spelled()}(${JSON.stringify(text)})`, kind, undefined, { text });
 				}
 				case 'direct':
 				case 'forwarded': {
@@ -649,7 +638,7 @@ export function printingFactoryMap(
 						optionsSource === undefined
 							? valueSource
 							: `${valueSource === '' ? 'undefined' : valueSource}, ${optionsSource}`;
-					return new Printed(id, `${spelled().call}(${argSource})`, kind, argSource, {
+					return new Printed(id, `${spelled()}(${argSource})`, kind, argSource, {
 						inner: placed.strict,
 						ownsList: ownedList !== undefined
 					});
@@ -660,7 +649,7 @@ export function printingFactoryMap(
 					const items = (options === undefined ? args : rest).map((a) => wrapDirectArg(kind, a, ctx));
 					const head = options === undefined ? [] : [printValue(options, ctx, 0)];
 					const argSource = [...head, ...items.map((a) => printValue(a, ctx, 0))].join(', ');
-					return new Printed(id, `${spelled().call}(${argSource})`, kind, argSource, { elements: { options, items } });
+					return new Printed(id, `${spelled()}(${argSource})`, kind, argSource, { elements: { options, items } });
 				}
 				case 'elements': {
 					const [first, ...rest] = args;
@@ -673,7 +662,7 @@ export function printingFactoryMap(
 					const head =
 						options !== undefined && !listOptionsAreDefault(kind, options, ctx) ? [printListOptions(options, ctx)] : [];
 					const argSource = [...head, ...elements].join(', ');
-					return new Printed(id, `${spelled().call}(${argSource})`, kind, argSource, { elements: { options, items } });
+					return new Printed(id, `${spelled()}(${argSource})`, kind, argSource, { elements: { options, items } });
 				}
 				case 'config':
 				default: {
@@ -682,8 +671,8 @@ export function printingFactoryMap(
 					const optionsSource = isPlainObject(args[1]) ? printValue(args[1], ctx, 0) : undefined;
 					const argSource = optionsSource === undefined ? configSource : `${configSource}, ${optionsSource}`;
 					const source =
-						isLoose(ctx) && argSource === '{}' && optionsSource === undefined ? `${spelled().call}()` : `${spelled().call}(${argSource})`;
-					const emptyCall = argSource === '{}' ? `${spelled().call}()` : undefined;
+						isLoose(ctx) && argSource === '{}' && optionsSource === undefined ? `${spelled()}()` : `${spelled()}(${argSource})`;
+					const emptyCall = argSource === '{}' ? `${spelled()}()` : undefined;
 					return new Printed(id, source, kind, argSource, { config: configSource, emptyCall });
 				}
 			}
@@ -713,15 +702,22 @@ export function printingIrSurface(map: Record<string, PrintingEntry>, ctx: Print
 	for (const [kind, strict] of Object.entries(map)) {
 		const path = ctx.irPathOfKind(kind);
 		if (path === undefined) continue;
-		const entry: Record<string, unknown> = { strict };
+		const entry = mountable((...args: unknown[]) => strict(...args));
 		mountArmPrinters(entry, path, kind, kind, strict.kindId, ctx, new Set([kind]));
-		entries[kind] = entry as IrEntry;
+		entries[kind] = entry;
 	}
 	return { entries, seats: ctx.seats ?? {}, modelTypes: ctx.facts.modelTypes, unitKinds: ctx.facts.unitKinds };
 }
 
+type MountablePrinter = ((...args: unknown[]) => Printed | string) & Record<string, unknown>;
+
+function mountable(printer: (...args: unknown[]) => Printed | string): MountablePrinter {
+	const mounts: Record<string, unknown> = {};
+	return Object.assign(printer, mounts);
+}
+
 function mountArmPrinters(
-	entry: Record<string, unknown>,
+	entry: MountablePrinter,
 	path: string,
 	hostKind: string,
 	builtKind: string,
@@ -731,8 +727,8 @@ function mountArmPrinters(
 ): void {
 	for (const table of Object.values(ctx.seats?.[hostKind] ?? {})) {
 		for (const seat of Object.values(table)) {
-			if (seat.shape !== 'arm' || seat.mount === undefined || seat.mount in entry) continue;
-			const mounted: Record<string, unknown> = { strict: mountPrinter(path, seat, hostKind, builtKind, id, ctx) };
+			if (seat.shape !== 'arm' || seat.mount === undefined || Object.hasOwn(entry, seat.mount)) continue;
+			const mounted = mountable(mountPrinter(path, seat, hostKind, builtKind, id, ctx));
 			entry[seat.mount] = mounted;
 			if (!visiting.has(seat.kind)) {
 				mountArmPrinters(
@@ -763,7 +759,7 @@ function mountPrinter(
 			printValue(isPlainObject(a) ? wrapSeatedConfig(hostKind, a, ctx) : wrapDirectArg(seat.kind, a, ctx), ctx, 0)
 		);
 		const argSource = printed.join(', ');
-		return new Printed(id, `${callSpelling(`${path}.${seat.mount!}`, ctx)}(${argSource})`, builtKind, argSource);
+		return new Printed(id, `${path}.${seat.mount!}(${argSource})`, builtKind, argSource);
 	};
 }
 
@@ -988,8 +984,8 @@ export function engineBinding(grammar: string, fileTypes: readonly string[]): En
 	return { engine, descriptor: engine === grammar ? `${grammar}Language` : grammar };
 }
 
-function engineCall(descriptor: string): string {
-	return `${descriptor}.createEngine()`;
+function engineCall(descriptor: string, surface: Surface): string {
+	return `${descriptor}.createEngine(${surface === 'strict' ? "{ api: 'strict' }" : ''})`;
 }
 
 export async function emitFactorySourceText(
@@ -1077,7 +1073,6 @@ export async function emitFactorySourceText(
 			listDefaults: model.listDefaults,
 			listElementKinds: model.listElementKinds,
 			hoistedKinds: model.hoistedKinds,
-			oneSurfaceKinds: model.oneSurfaceKinds,
 			unitKinds: model.unitKinds,
 			kindIdOfName: (kind) => idOfName.get(kind)
 		}
@@ -1098,7 +1093,7 @@ export async function emitFactorySourceText(
 	const body = printFactorySource(root, rootKind, artifacts, { kindNameFromId, tree: handle, hydrate }, ctx);
 	for (const finding of new Set(leafFindings)) process.stderr.write(`[emit-factory-source] leaf finding: ${finding}\n`);
 	const used = new RegExp(`(?<![\\w.$"'\`])${binding.engine}\\.`).test(body);
-	const engineStatement = `${used ? `const ${binding.engine} = ` : ''}await ${engineCall(binding.descriptor)};`;
+	const engineStatement = `${used ? `const ${binding.engine} = ` : ''}await ${engineCall(binding.descriptor, surface)};`;
 	const flags = surface === 'loose' ? ` --surface loose${nested === 'configs' ? ' --nested configs' : ''}` : '';
 	return [
 		`// @generated by \`sittir tool emit-factory-source${flags}\`; do not edit.`,

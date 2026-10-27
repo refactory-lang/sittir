@@ -98,24 +98,15 @@ describe('factory ergonomics', () => {
 	});
 
 	describe('examples cleanup contract', () => {
-		it('keeps branch and polymorph ir bundles exposing strict explicitly', async () => {
+		it('gives each engine its own table, the coercer under the default engine and the raw builder under the strict one', async () => {
 			const { readFileSync } = await import('node:fs');
 			const { resolve } = await import('node:path');
-			const irContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/ir.ts'), 'utf-8');
-			const bundleContent = readFileSync(
-				resolve(import.meta.dirname, '../../../rust/src/factories/bundle.ts'),
-				'utf-8'
-			);
-			const indexContent = readFileSync(resolve(import.meta.dirname, '../../../rust/src/factories/index.ts'), 'utf-8');
-
-			expect(bundleContent).toContain(
-				"bundle(F.buildSourceFile, C.coerceToSourceFile, { key: 'sourceFile', max: 1 })"
-			);
-			expect(indexContent).toContain('export const sourceFile: Hoisted<typeof O.sourceFile> = hoistAs<typeof O.sourceFile>(O.sourceFile);');
-			expect(irContent).toContain('sourceFile: F.sourceFile,');
-			// The hoisted call position IS the coercer, so a `from` prop would
-			// be the same function under a second name.
-			expect(irContent).not.toContain('from: FR.');
+			const generated = (path: string) => readFileSync(resolve(import.meta.dirname, '../../../rust/src', path), 'utf-8');
+			expect(generated('factories/loose.ts')).toContain('coerceToSourceFile as buildSourceFile,');
+			expect(generated('factories/strict.ts')).toMatch(/export \{[^}]*\bbuildSourceFile,[^}]*\} from '\.\/raw\.js';/);
+			expect(generated('ir.ts')).toContain("import * as table from './factories/loose.js';");
+			expect(generated('ir-strict.ts')).toContain("import * as table from './factories/strict.js';");
+			expect(generated('factories/build-table.ts')).not.toContain('from: FR.');
 		});
 	});
 });

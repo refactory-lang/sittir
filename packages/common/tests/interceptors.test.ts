@@ -6,7 +6,7 @@ import rust, { type RustAPI } from '@sittir/rust';
 import type { Engine, EngineOptions, Interceptor, Language } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 
-const engines: Engine<RustAPI>[] = [];
+const engines: { dispose(): void }[] = [];
 afterEach(() => {
 	for (const engine of engines.splice(0)) engine.dispose();
 });
@@ -28,22 +28,23 @@ describe('engine middleware', () => {
 				return node;
 			}
 		});
-		const engine = await engineOf({ intercept: [middleware('outer'), {}, middleware('inner')] });
-		const node = engine.build.integerLiteral.decimal.strict({ content: 255 });
+		const engine = await createEngine(rust, { api: 'strict', intercept: [middleware('outer'), {}, middleware('inner')] });
+		engines.push(engine);
+		const node = engine.build.integerLiteral.decimal({ content: 255 });
 		expect(events).toEqual([
-			'outer:before:integerLiteral.decimal.strict',
-			'inner:before:integerLiteral.decimal.strict',
-			'inner:after:integerLiteral.decimal.strict',
-			'outer:after:integerLiteral.decimal.strict'
+			'outer:before:integerLiteral.decimal',
+			'inner:before:integerLiteral.decimal',
+			'inner:after:integerLiteral.decimal',
+			'outer:after:integerLiteral.decimal'
 		]);
 		expect(engine.isFactoryNode(node)).toBe(true);
 		expect(node.$render()).toBe('255');
-		expect(engine.build.integerLiteral.decimal.strict).toBe(engine.build.integerLiteral.decimal.strict);
+		expect(engine.build.integerLiteral.decimal).toBe(engine.build.integerLiteral.decimal);
 		expect(() => Reflect.set(engine.build, 'identifier', () => node)).toThrow('read-only');
 	});
 
 	it('lets a build hook substitute a node without running the builder', async () => {
-		const { build } = await rust.load();
+		const build = await (await rust.load()).tables.default();
 		const hook: Interceptor<RustAPI> = {
 			build(call) {
 				expect(call.args).toEqual(['original']);
@@ -187,17 +188,19 @@ describe('engine middleware', () => {
 	});
 
 	it('reports the actual access path when two builders share a function', async () => {
+		type LooseTable = RustAPI['build']['default'];
 		interface AliasedAPI extends RustAPI {
-			readonly build: RustAPI['build'] & { readonly alias: RustAPI['build']['identifier'] };
+			readonly build: RustAPI['build'] & { readonly default: LooseTable & { readonly alias: LooseTable['identifier'] } };
 		}
 		const hooks = await rust.load();
+		const loose = await hooks.tables.default();
 		const language: Language<AliasedAPI> = {
 			name: 'rust',
 			fileTypes: rust.fileTypes,
 			is: rust.is,
 			kinds: rust.kinds,
 			createEngine: (options) => createEngine(language, options),
-			load: async () => ({ ...hooks, build: { ...hooks.build, alias: hooks.build.identifier } })
+			load: async () => ({ ...hooks, tables: { ...hooks.tables, default: async () => ({ ...loose, alias: loose.identifier }) } })
 		};
 		const recorded: string[] = [];
 		const engine = await createEngine(language, {

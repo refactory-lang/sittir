@@ -7,11 +7,12 @@
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
 
 export function nonEmptySlotTakesAtLeastOneChild(): void {
 	void ir.traitBounds('Debug');
 	// @ts-expect-error zero children are refused
-	ir.traitBounds.strict();
+	strictIr.traitBounds();
 	// @ts-expect-error the setter of a non-empty slot takes at least one child too
 	ir.traitBounds('Debug').$with.bounds();
 }

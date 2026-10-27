@@ -11,6 +11,7 @@ import scm from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const q = await createEngine(scm);
+const qStrict = await createEngine(scm, { api: 'strict' });
 
 export function draftsIntoBuilders(): string[] {
 	const list = q.parse('[(a) (b)]\n').definitions()[0]!;
@@ -18,7 +19,7 @@ export function draftsIntoBuilders(): string[] {
 	const draft = list.$with.definitions(...list.definitions());
 	return [
 		q.build.fieldDefinition({ name: 'f', definition: draft }).$render(),
-		q.build.fieldDefinition.strict({ name: q.build.identifier('f'), definition: draft }).$render(),
+		qStrict.build.fieldDefinition({ name: q.build.identifier('f'), definition: draft }).$render(),
 		q.build.fieldDefinition({ name: 'f', definition: list.definitions()[0]! }).$render()
 	];
 }
@@ -27,15 +28,15 @@ export function wrongKindRefused(): void {
 	// @ts-expect-error a Capture is not a Definition
 	q.build.fieldDefinition({ name: 'f', definition: q.build.capture('c') });
 	// @ts-expect-error a Capture is not a Definition
-	q.build.fieldDefinition.strict({ name: q.build.identifier('f'), definition: q.build.capture('c') });
+	qStrict.build.fieldDefinition({ name: q.build.identifier('f'), definition: q.build.capture('c') });
 }
 
 export function storageShapeRefused(storage: T.List): void {
 	const field = q.build.fieldDefinition({ name: 'f', definition: q.parse('(a)\n').definitions()[0]! });
 	// @ts-expect-error the storage interface is not a node
-	q.build.fieldDefinition.strict({ name: q.build.identifier('f'), definition: storage });
+	qStrict.build.fieldDefinition({ name: q.build.identifier('f'), definition: storage });
 	// @ts-expect-error a storage-shaped literal is not a node
-	q.build.fieldDefinition.strict({ name: q.build.identifier('f'), definition: { $type: q.kinds.List } });
+	qStrict.build.fieldDefinition({ name: q.build.identifier('f'), definition: { $type: q.kinds.List } });
 	// @ts-expect-error the storage interface is not a node
 	field.$with.definition(storage);
 	// @ts-expect-error a storage-shaped literal is not a node

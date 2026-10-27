@@ -5,12 +5,13 @@ import type { ComprehensionClauses, StringContent } from '../src/types.ts';
 
 const py = await createEngine(python);
 const verifying = await createEngine(python, { verifyStructure: 'runtime' });
+const verifyingStrict = await createEngine(python, { verifyStructure: 'runtime', api: 'strict' });
 
 describe('required repeated content', () => {
 	it('rejects empty comprehension clauses', () => {
 		expectTypeOf<[]>().not.toMatchTypeOf<ComprehensionClauses.BuildArgs>();
 		expect(() => Reflect.apply(verifying.build.comprehensionClauses, undefined, [])).toThrow('requires at least one element');
-		expect(() => Reflect.apply(verifying.build.comprehensionClauses.strict, undefined, [])).toThrow(
+		expect(() => Reflect.apply(verifyingStrict.build.comprehensionClauses, undefined, [])).toThrow(
 			'requires at least one element'
 		);
 	});

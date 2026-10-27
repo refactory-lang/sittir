@@ -4,10 +4,6 @@
 
 Loads a language's hooks once per descriptor object: later engines for the same descriptor reuse the same promise. A failed load is not cached, so a later call retries; it rejects with `failed to load language "<name>"`, carrying the original error as its `cause`. When the hooks carry portable rows, it records them against the descriptor's `load` (`registerPortableRows`) before resolving, so the language's portable guards read bare kind ids from then on.
 
-### `packages/common/src/create-engine.ts::refuseUnimplemented`
-
-Refuses, before anything loads, an engine option whose behaviour does not exist: an `api` of `'strict'`, which is not implemented. The portable surface never reaches it; `createEngine` assembles a portable engine before refusing. Each message names the option that is not implemented.
-
 ### `packages/common/src/create-engine.ts::nativeEngineOptions`
 
 The one mapping from an engine's options to its native engine's: `format` passes through, and `render` becomes the native `options`. Absent keys stay absent.
@@ -443,30 +439,6 @@ Storage for a slot that holds either a fixed text's kind id or a node: text in t
 
 Storage for a slot that holds only kind ids: text, or a node's text, in the slot's table becomes its id, and a node becomes its `$type`. The slot's own table is the only string surface: an unknown string throws `kind-enum slot: <text> is not a valid value (expected one of: …)` rather than resolving through the grammar's kind catalog into a valid-looking id outside the slot's members.
 
-### `packages/common/src/runtime.ts::bundle`
-
-The `FlavorPair` constructor: a factory's strict and coerce flavours as one value, with the pair's arity stamp, `bundle(strict, coerce, { key, max })`. Every pair the factories surface carries is built here, so each pair holds its own stamp and no route needs a mirror structure for it.
-
-When `coerce` is present, `strict` need not be callable: a keyword leaf's strict entry is its kind id. `coerce` may be `undefined` for a strict-only pair (a refine form); the result is a `StrictFlavor` with no `coerce` key, so hoisting falls back to the strict flavour. The stamp's type is `HoistArity<MaxArity<flavor>>`, the flavor being `coerce` when present and `strict` otherwise: it is required exactly when that flavor's `MaxArity` is a number literal and refused when the flavor takes a rest parameter, so a missing, wrong or superfluous stamp is a type error in the generated package.
-
-The pair always has an `arity` key, `undefined` when unstamped, so spreading a pair into a route object after an earlier pair (`{ ...B.<key>, ...bundle(seated, …) }`) replaces the earlier stamp with its own.
-
-The pair is frozen.
-
-### `packages/common/src/runtime.ts::hoist`
-
-Wraps a flavour pair as a callable (the coerce flavour when present, strict otherwise), copying every property and hoisting nested pairs through `hoistRoutes`; `Hoisted<B>` carries the exact surface. Bundling and hoisting are dynamic because they are uniform across all kinds; everything per-kind is emitted statically.
-
-The callable's copied properties are non-writable and non-configurable, and the callable is frozen, so a factory shared under several keys cannot be changed under one of them.
-
-The pair's own stamp (`b.arity`, set by `bundle`) bounds the callable: a call with more than `max` arguments throws `<key>: takes at most <max> argument(s), got <n>`. An explicit trailing `undefined` counts, as it does for the type checker. A pair without a stamp (an unbounded, rest flavor) takes any number. The `arity` key itself is not copied onto the callable, and every nested pair is hoisted through `hoistRoutes` with its own stamp, so sub-factory and variant routes are bounded exactly as top-level builders are.
-
-### `packages/common/src/runtime.ts::hoistRoutes`
-
-Hoists a route object that need not be a pair at its top: a flattened parent (`{ eq: {strict, coerce}, … }`, or `{ strict, coerce, eq: …, type: … }` when a variant declared `arm.default`). A pair at the top hoists, recursing into its own properties through `hoistRoutes`, not `hoist`, so a pair nested under a pair (a default route whose own variant is itself a route object) stays fully walked; anything else recurses member by member. A flattened parent therefore reads as `ir.<parent>(...)` when it has a default and always keeps its named variants reachable, like a bundle entry's sub-factories.
-
-The route object it returns is frozen.
-
 ### `packages/common/src/utils.ts::isNodeOfKind`
 
 Whether a value is a node of one kind id, a coordinate of that kind included (`isNodeValue`). It answers a boolean and never narrows. Narrowing an argument typed as a union that holds a node's `.Bound` beside its storage type filters the members against each other, and that comparison exceeds the checker's depth on deeply nested grammars; a caller that already knows what it will do with a hit casts once instead.
@@ -478,10 +450,6 @@ The value of the key `key` when the input is a config object (not a node, not an
 ### `packages/common/src/utils.ts::orDefault`
 
 The value, or the default's when it is absent. The default's type is not an inference site (`NoInfer`), so the result is the value's own type and the checker never reduces the value's union against the default's, which is what a `??` expression does and what exceeds the depth on a union that holds a node's `.Bound` beside its storage type.
-
-### `packages/common/src/runtime.ts::hoistAs`
-
-`hoistRoutes` with the result type given and the argument taken as `unknown`, so a bundle entry is hoisted without relating the overlay's declared type to the pair type the hoister would infer. The generated `factories/index.ts` uses it for every entry.
 
 ### `packages/common/src/utils.ts::LIST_VIEW_MEMBERS`
 

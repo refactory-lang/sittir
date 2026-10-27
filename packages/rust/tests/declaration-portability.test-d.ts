@@ -11,7 +11,8 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 export const setter = rs.build.block().$with.statements;
-export const builder = rs.build.functionItem.strict;
+export const builder = rsStrict.build.functionItem;
 export const render = rs.render;

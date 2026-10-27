@@ -9,16 +9,16 @@ describe('re-seating an untouched parsed wrapper', () => {
 	it('keeps the line break a line-break-terminated arm ends in', () => {
 		const [m1, m2] = py.parse('match x:\nmatch y:\n').statements();
 		if (!m1 || !m2 || !py.is.matchStatement(m1) || !py.is.matchStatement(m2)) throw new Error('expected match statements');
-		const first = ir.matchStatement.coerce({ subjects: ir.subjects.coerce(ir.identifier('p')), body: m1.body() });
-		const second = ir.matchStatement.coerce({ subjects: ir.subjects.coerce(ir.identifier('q')), body: m2.body() });
-		expect(ir.module.coerce(first, second).$render()).toBe('match p:\nmatch q:\n');
+		const first = ir.matchStatement({ subjects: ir.subjects(ir.identifier('p')), body: m1.body() });
+		const second = ir.matchStatement({ subjects: ir.subjects(ir.identifier('q')), body: m2.body() });
+		expect(ir.module(first, second).$render()).toBe('match p:\nmatch q:\n');
 	});
 
 	it('keeps the line break around a parsed suite_empty as before', () => {
 		const [loop] = py.parse('while x:\nwhile y:\n').statements();
 		if (!loop || !py.is.whileStatement(loop)) throw new Error('expected a while statement');
-		const first = ir.whileStatement.coerce({ condition: ir.identifier('p'), body: loop.body() });
-		expect(ir.module.coerce(first, first).$render()).toBe('while p:\nwhile p:\n');
+		const first = ir.whileStatement({ condition: ir.identifier('p'), body: loop.body() });
+		expect(ir.module(first, first).$render()).toBe('while p:\nwhile p:\n');
 	});
 
 	it.each([

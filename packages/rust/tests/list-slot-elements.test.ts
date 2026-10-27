@@ -6,6 +6,7 @@ import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const rs = await createEngine(rust);
+const rsStrict = await createEngine(rust, { api: 'strict' });
 
 type TypeArgumentsSlot = NonNullable<GenericType.LooseConfig>['typeArguments'];
 
@@ -15,7 +16,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 	it('builds the same envelope from one bare element, an array, and the built envelope', () => {
 		const bare = rs.build.genericType({ type: 'Vec', typeArguments: 'Edit' });
 		const array = rs.build.genericType({ type: 'Vec', typeArguments: ['Edit'] });
-		const built = rs.build.genericType({ type: 'Vec', typeArguments: rs.build.typeArguments.strict(rs.build.identifier('Edit')) });
+		const built = rs.build.genericType({ type: 'Vec', typeArguments: rsStrict.build.typeArguments(rs.build.identifier('Edit')) });
 		expect(bare.$render()).toBe('Vec<Edit>');
 		expect(array.$render()).toBe('Vec<Edit>');
 		expect(built.$render()).toBe('Vec<Edit>');
@@ -49,7 +50,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 	it('types the slot as the element, the elements, or the envelope', () => {
 		const one = 'Edit' satisfies TypeArgumentsSlot;
 		const many = ['Edit'] satisfies TypeArgumentsSlot;
-		const built = rs.build.typeArguments.strict(rs.build.identifier('Edit')) satisfies TypeArgumentsSlot;
+		const built = rsStrict.build.typeArguments(rs.build.identifier('Edit')) satisfies TypeArgumentsSlot;
 		expect([one, many, built]).toHaveLength(3);
 	});
 
@@ -59,7 +60,7 @@ describe('a list slot takes its elements bare, one or many', () => {
 			rs.build.fieldDeclarationListElements(field(), { delimiter: Delimiter.None });
 		const strict = () =>
 			// @ts-expect-error the strict wrapper takes its options first as well
-			rs.build.fieldDeclarationListElements.strict(field(), { delimiter: Delimiter.None });
+			rsStrict.build.fieldDeclarationListElements(field(), { delimiter: Delimiter.None });
 		expect([loose, strict]).toHaveLength(2);
 	});
 
@@ -81,10 +82,10 @@ describe('a list slot takes its elements bare, one or many', () => {
 			rs.build.fieldDeclarationListElements({ delimiter: Delimiter.None });
 		const strictEmpty = () =>
 			// @ts-expect-error the strict wrapper takes at least one element as well
-			rs.build.fieldDeclarationListElements.strict();
+			rsStrict.build.fieldDeclarationListElements();
 		expect([empty, optionsOnly, strictEmpty]).toHaveLength(3);
 		expect(rs.build.fieldDeclarationListElements(field()).$render()).toBe('a: i32,');
 		expect(rs.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
-		expect(rs.build.fieldDeclarationListElements.strict({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
+		expect(rsStrict.build.fieldDeclarationListElements({ delimiter: Delimiter.None }, field()).$render()).toBe('a: i32');
 	});
 });

@@ -15,6 +15,7 @@ import type { PythonAPI } from '@sittir/python';
 import type { Block } from '@sittir/rust';
 
 declare const rs: Engine<RustAPI>;
+declare const rsStrict: Engine<RustAPI, 'strict'>;
 declare const py: Engine<PythonAPI>;
 
 const untyped = { $type: 7 as number, $render: () => '' };
@@ -34,17 +35,17 @@ fn.$with.body(py.build.block());
 // @ts-expect-error a builder's config field refuses an untyped node
 rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: untyped });
 // @ts-expect-error a strict builder's config field refuses an untyped node
-rs.build.functionItem.strict({ name: rs.build.identifier('f'), parameters: rs.build.parameters(), body: untyped });
+rsStrict.build.functionItem({ name: rs.build.identifier('f'), parameters: rs.build.parameters(), body: untyped });
 // @ts-expect-error a builder's positional child refuses an untyped node
 rs.build.expressionStatement(untyped);
 // @ts-expect-error a strict builder's positional child refuses an untyped node
-rs.build.expressionStatement.strict(untyped);
+rsStrict.build.expressionStatement(untyped);
 // @ts-expect-error a builder taking its own kind refuses an untyped node in that place
 rs.build.block(untyped);
 // @ts-expect-error a list slot's item refuses an untyped node
 rs.build.block({ statements: [untyped] });
 // @ts-expect-error a strict list slot's item refuses an untyped node
-rs.build.block.strict({ statements: [untyped] });
+rsStrict.build.block({ statements: [untyped] });
 // @ts-expect-error an untyped node inside a nested loose config refuses the call
 rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [untyped] } });
 // @ts-expect-error one untyped item among typed ones refuses the call
@@ -90,7 +91,7 @@ rs.build.block(recursive);
 // @ts-expect-error a polymorph form builder refuses an untyped node
 rs.build.expressionStatement.withSemi(untyped);
 // @ts-expect-error a strict polymorph form builder refuses an untyped node
-rs.build.expressionStatement.withSemi.strict(untyped);
+rsStrict.build.expressionStatement.withSemi(untyped);
 // @ts-expect-error a polymorph form builder's config refuses an untyped node
 rs.build.attribute.input({ path: untyped });
 
@@ -101,8 +102,8 @@ export const builtDeep = rs.build.block({ trailingExpression: { $type: rs.kinds.
 export const builtBody = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: block });
 export const builtStatement = rs.build.expressionStatement(rs.build.identifier('a'));
 export const builtNested = rs.build.functionItem({ name: 'f', parameters: rs.build.parameters(), body: { statements: [rs.build.expressionStatement(rs.build.identifier('a'))] } });
-export const builtStrict = rs.build.functionItem.strict({ name: rs.build.identifier('f'), parameters: rs.build.parameters(), body: block });
-export const builtList = rs.build.block.strict({ statements: [rs.build.expressionStatement(rs.build.identifier('a'))] });
+export const builtStrict = rsStrict.build.functionItem({ name: rs.build.identifier('f'), parameters: rs.build.parameters(), body: block });
+export const builtList = rsStrict.build.block({ statements: [rs.build.expressionStatement(rs.build.identifier('a'))] });
 
 const kept: typeof rs.kinds.Block = typedBody.body().$type;
 void kept;

@@ -21,7 +21,6 @@ import {
 } from '../compiler/model/node-map.ts';
 import { buildFactoryMap } from './factory-map.ts';
 import { printRecordLines } from './record-lines.ts';
-import { hasOneSurface } from '../compiler/model/ir-surface.ts';
 import { resolveFieldStorageInfo, compareOrdinal } from './shared.ts';
 import { anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
 import { collectKindEntries } from './kind-discriminant.ts';
@@ -73,7 +72,6 @@ interface SerializedNodeBase {
 	splitFrom?: string;
 	aliasStorage?: string;
 	variantOf?: string;
-	oneSurface?: true;
 	factoryShape?: FactoryShape;
 	forwardsTo?: string;
 	forwardsArguments?: true;
@@ -171,7 +169,6 @@ export function buildNodeModel(nodeMap: NodeMap, generatedIdTables: GeneratedIdT
 			throw new Error(`node model: '${kind}' has factory slots but no factory shape, so its readers cannot tell it has a factory`);
 		}
 		const serialized = serializeNode(node, nodeMap, wires, factorySlots);
-		if (hasOneSurface(node)) serialized.oneSurface = true;
 		const factoryShape = factoryData.factoryShapes[kind];
 		if (factoryShape !== undefined) serialized.factoryShape = factoryShape;
 		const forwardsTo = factoryData.forwardsTo[kind];

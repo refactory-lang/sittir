@@ -263,6 +263,40 @@ export type RefuseUndeclared<V, Declared = never> = [Refusals<V, Declared>] exte
 	: { readonly refused: Refusals<V, Declared> };
 
 /**
+ * A builder's row call: it takes its kind's row, an argument list that may hold a seated group's config in place of
+ * the group, and refuses an untyped node and a key the row does not declare.
+ *
+ * @typeParam Args - the kind's row: `BuildArgs` in the strict table, `LooseArgs` in the default engine's.
+ * @typeParam R - the node the builder returns.
+ */
+export type Seat<Args extends readonly unknown[], R> = <const A extends Args>(...args: A & RefuseUndeclared<A, Args>) => R;
+
+/**
+ * A loose builder's config call: it takes one value of its kind's loose input, and refuses an untyped node and a key
+ * the input does not declare.
+ *
+ * @typeParam Loose - the kind's loose input.
+ * @typeParam R - the node the builder returns.
+ */
+export type ConfigSeat<Loose, R> = <const I extends Loose>(input: I & RefuseUndeclared<I, Loose>) => R;
+
+/**
+ * A {@link ConfigSeat} whose value may be left out.
+ *
+ * @typeParam Loose - the kind's loose input.
+ * @typeParam R - the node the builder returns.
+ */
+export type OptionalConfigSeat<Loose, R> = <const I extends Loose>(...input: [input?: I] & RefuseUndeclared<I, Loose>) => R;
+
+/**
+ * A builder that also takes no argument and returns its kind's empty form.
+ *
+ * @typeParam Empty - the kind's empty form.
+ * @typeParam F - the builder's other calls.
+ */
+export type EmptyForm<Empty, F> = (() => Empty) & F;
+
+/**
  * A builder's config whose node-valued fields refuse an untyped node. Each field named in `Slots` takes the type
  * parameter the builder infers it as, and the config as a whole refuses an untyped node held by any of them; every
  * other field keeps the config's own type, and every field keeps the config's optionality. The refusal sits on the

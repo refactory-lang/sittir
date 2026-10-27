@@ -26,7 +26,6 @@ import type { EmittedTemplates } from '../emitters/templates.ts';
 import type { DroppedTokens } from './diagnostics/grammar-diagnostics.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
 import type { SlotGroupingDiagnostic } from './diagnostics/slot-grouping.ts';
-import type { OverlayName } from '../emitters/overlays/module.ts';
 import { defaultTriviaForm, triviaKinds } from './model/trivia.ts';
 
 export interface GeneratedFiles {
@@ -39,14 +38,11 @@ export interface GeneratedFiles {
 	backend: string;
 	templates: EmittedTemplates;
 	factories: string;
-	overlays: Record<OverlayName, string>;
-	factoriesBundle: string;
-	factoriesIndex: string;
+	tableFiles: Readonly<Record<string, string>>;
 	wrap: string;
 	utils: string;
 	reparseHosts?: string;
 	from: string;
-	irNamespace: string;
 	consts: string;
 	options: string;
 	index: string;
@@ -172,14 +168,11 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 			descriptor: emitDescriptor({ grammar: cfg.grammar, nodeMap, portable: portable !== undefined }),
 			templates: emitted.templates,
 			factories: emitted.factories,
-			overlays: emitted.overlays,
-			factoriesBundle: emitted.factoriesBundle,
-			factoriesIndex: emitted.factoriesIndex,
+			tableFiles: emitted.tableFiles,
 			wrap: emitted.wrap,
 			utils: emitted.utils,
 			reparseHosts: emitted.reparseHosts,
 			from: emitted.from,
-			irNamespace: emitted.irNamespace,
 			consts: emitted.consts,
 			options: emitted.options,
 			index: emitIndex(),

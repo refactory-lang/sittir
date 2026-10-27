@@ -6,6 +6,7 @@
  */
 
 import { ir } from '../src/ir.ts';
+import { ir as strictIr } from '../src/ir-strict.ts';
 
 export function integerBuildersRefuseUnbuildableLiterals(): void {
 	ir.integer.hex(255);
@@ -30,7 +31,7 @@ export function floatBuildersRefuseUnbuildableLiterals(): void {
 
 export function configLiteralsKeepTheirUnknownKeyCheck(): void {
 	// @ts-expect-error a misspelled key is refused, strict
-	ir.float.point.strict({ integer: 1, fraction: 5, exponnet: 2 });
+	strictIr.float.point({ integer: 1, fraction: 5, exponnet: 2 });
 	// @ts-expect-error a misspelled key is refused, loose
 	ir.float.point({ integer: 1, fraction: 5, exponnet: 2 });
 }

@@ -5,7 +5,8 @@ import python from '../src/index.ts';
 describe('a list owner given one element that is a kind id', () => {
 	it('builds its list from that element, on the strict surface', async () => {
 		const py = await createEngine(python);
-		const statements = py.build.simpleStatements.strict(py.build.passStatement);
+		const pyStrict = await createEngine(python, { api: 'strict' });
+		const statements = pyStrict.build.simpleStatements(py.build.passStatement);
 		expect(String(py.render(statements)).trim()).toBe('pass');
 	});
 

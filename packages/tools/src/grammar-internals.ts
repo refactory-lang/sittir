@@ -22,7 +22,7 @@ export interface GrammarModules {
 		wrapNode(data: unknown, tree: TreeHandle): unknown;
 		readonly hydrate: Hydrate;
 	};
-	'ir.ts': { readonly ir: Record<string, unknown> };
+	'ir-strict.ts': { readonly ir: Record<string, unknown> };
 	'consts.ts': { readonly TOKEN_INTERIORS: Readonly<Record<string, TokenInterior>> };
 	'reparse-hosts.ts': { readonly REPARSE_HOSTS: ReparseHosts };
 	'utils.ts': { readonly triviaFacts: TriviaFacts; readonly querySlots: QuerySlots };
@@ -33,13 +33,13 @@ const DECLARED_EXPORTS = {
 	'factories/raw.ts': ['_factoryMap'],
 	'factories/coerce.ts': ['_fromMap'],
 	'wrap.ts': ['wrapNode', 'hydrate'],
-	'ir.ts': ['ir'],
+	'ir-strict.ts': ['ir'],
 	'consts.ts': ['TOKEN_INTERIORS'],
 	'reparse-hosts.ts': ['REPARSE_HOSTS'],
 	'utils.ts': ['triviaFacts', 'querySlots']
 } as const satisfies { readonly [K in keyof GrammarModules]: readonly (keyof GrammarModules[K] & string)[] };
 
-export type GrammarFile = keyof GrammarModules | 'node-model.json5' | 'factories/bundle.ts';
+export type GrammarFile = keyof GrammarModules | 'node-model.json5';
 
 export function grammarModulePath(grammar: string, file: GrammarFile): string | undefined {
 	if (!isGrammar(grammar)) return undefined;

@@ -9,6 +9,7 @@ import { createEngine } from '@sittir/common';
 import typescript from '../src/index.ts';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 const x = ts.build.identifier('x');
 
 describe('an argument of the builder\'s own kind', () => {
@@ -25,10 +26,10 @@ describe('an argument of the builder\'s own kind', () => {
 	});
 
 	it('is one element of the child whose elements the builder takes', () => {
-		const inner = ts.build.parenthesizedExpression.sequence.strict(x, ts.build.identifier('y'));
+		const inner = tsStrict.build.parenthesizedExpression.sequence(x, ts.build.identifier('y'));
 		expect(inner.$render()).toBe('(x, y)');
 		expect(ts.build.parenthesizedExpression.sequence(inner).$render()).toBe('((x, y))');
-		expect(ts.build.parenthesizedExpression.sequence.strict(inner).$render()).toBe('((x, y))');
+		expect(tsStrict.build.parenthesizedExpression.sequence(inner).$render()).toBe('((x, y))');
 	});
 
 	it('is still the elements of a list that cannot hold itself', () => {

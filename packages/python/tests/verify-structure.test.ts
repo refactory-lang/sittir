@@ -3,7 +3,9 @@ import { createEngine } from '@sittir/common';
 import python from '../src/index.ts';
 
 const trusting = await createEngine(python);
+const trustingStrict = await createEngine(python, { api: 'strict' });
 const verifying = await createEngine(python, { verifyStructure: 'runtime' });
+const verifyingStrict = await createEngine(python, { verifyStructure: 'runtime', api: 'strict' });
 
 type Rebuildable = { $render(): string; $with: { decorators(...items: never[]): { $render(): string } } };
 const decorated = (engine: typeof trusting): Rebuildable =>
@@ -11,7 +13,7 @@ const decorated = (engine: typeof trusting): Rebuildable =>
 
 describe('verifyStructure', () => {
 	it("refuses a strict build that leaves a required slot empty, in 'runtime' mode at the call", () => {
-		expect(() => (verifying.build.expressionStatement.strict as unknown as () => unknown)()).toThrow("Missing required slot 'content' on expression_statement");
+		expect(() => (verifyingStrict.build.expressionStatement as unknown as () => unknown)()).toThrow("Missing required slot 'content' on expression_statement");
 	});
 
 	it("refuses a loose build that leaves a required slot empty, in 'runtime' mode at the call", () => {
@@ -24,7 +26,7 @@ describe('verifyStructure', () => {
 	});
 
 	it('trusts the types by default: the build and the rebuild stand, and the render refuses them natively', () => {
-		expect(() => (trusting.build.expressionStatement.strict as unknown as () => { $render(): string })().$render()).toThrow('Missing field `_content`');
+		expect(() => (trustingStrict.build.expressionStatement as unknown as () => { $render(): string })().$render()).toThrow('Missing field `_content`');
 		expect(() => decorated(trusting).$with.decorators().$render()).toThrow(/a repeat1 list holds no item on DecoratedDefinitionNode\._decorator/);
 	});
 

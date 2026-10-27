@@ -3,6 +3,7 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
+const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 describe('a bare number resolves to the number arm its text fits', () => {
 	it('an integer, a point float, a leading-point float and a scientific float', () => {
@@ -14,7 +15,7 @@ describe('a bare number resolves to the number arm its text fits', () => {
 describe('a number given to a number arm is written in the arm base', () => {
 	it('strict and loose alike, and a leaf arm through its one builder', () => {
 		expect(ts.build.number.decimal(255).$render()).toBe('255');
-		expect(ts.build.number.hex.strict(255).$render()).toBe('0xff');
+		expect(tsStrict.build.number.hex(255).$render()).toBe('0xff');
 		expect(ts.build.number.hex(255).$render()).toBe('0xff');
 		expect(ts.build.number.octal(8).$render()).toBe('0o10');
 		expect(ts.build.number.binary(5).$render()).toBe('0b101');

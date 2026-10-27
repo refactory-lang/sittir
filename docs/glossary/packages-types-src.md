@@ -136,14 +136,6 @@ A file's text before and after a change, by path. `before` is `undefined` for a 
 
 Which builder surface an engine's `build` exposes: the coercing default, the strict flavour, or the portable surface, which is reserved and not implemented.
 
-### `packages/types/src/engine-api.ts::StrictMembers`
-
-An object's members under the strict surface, with the `strict` and `coerce` flavours hidden.
-
-### `packages/types/src/engine-api.ts::StrictSurface`
-
-The strict builder surface, derived from the default one. A builder carrying a `strict` flavour becomes that flavour plus its members' strict surfaces (its variants). A callable without a `strict` flavour has no loose form and stays whole, which keeps its generic and overloaded signatures. A namespace object is only its members' strict surfaces, so none of its raw members survive beside the strict ones.
-
 ### `packages/types/src/engine-api.ts::BuildSurface`
 
 The type of an engine's `build` for a surface: the builder table, its strict surface, or `never` for the unimplemented portable surface.
@@ -318,10 +310,6 @@ A slot's setter: `ValueSetter`, and for a list slot also `ListItems`.
 
 `$with` for a node: the slot setters of `WithOf`, whose results read a replaced slot through the `.Bound` map. Each emitted `.Bound` and `.Parsed` interface declares it over `this`.
 
-### `packages/types/src/index.ts::Hoisted`
-
-The type of a hoisted pair or route tree. The flavours are read by key (`B['coerce']`, then `B['strict']`), never by testing `B` against an object type with a `coerce` member: a pair whose flavours are intersections (an overlay's flavour over a base's) would otherwise be compared member against member, and that comparison exceeds the checker's depth. The pair's `arity` stamp is read by `hoist` and is not a route, so it is dropped from the hoisted members.
-
 ### `packages/types/src/index.ts::NodeNs`
 
 The single computed namespace of a kind. `Bound`, `Parsed` and `Empty` are the kind's engine-bound surface, its tree-bound surface and its empty form (`never` when the kind cannot be empty). `Loose` and `LooseArgs` admit a node of the kind through `Admit`.
@@ -337,18 +325,6 @@ The members of a supertype union whose `$with` setter for a slot admits a given 
 ### `packages/types/src/node-surface.ts::BoundWithNode`
 
 `$with` for an engine-bound node: the same admitted slot setters as `WithNode`, but each returns the node itself, since a bound node is not tied to a tree and needs no retyped accessor. A tree-bound node keeps `WithNode`, whose setters return the node with the replaced slot reading as `.Bound`.
-
-### `packages/types/src/index.ts::MaxArity`
-
-The most arguments any declared overload of a function accepts, read off `ArgsOf`: the largest tuple length across the overloads, or `number` when one of them takes a rest parameter. `bundle` types each pair's arity stamp with it.
-
-### `packages/types/src/index.ts::HoistArity`
-
-A flavor pair's arity stamp: the route key, for the refusal message, and `max`, the most arguments the hoisted call takes, typed by `bundle` as the flavor's `MaxArity`.
-
-### `packages/types/src/index.ts::StrictFlavor`
-
-A strict builder with no coercer beside it, as one pair (a refine form); `bundle(strict, undefined, stamp)` builds it and hoisting calls `strict`.
 
 ### `packages/types/src/index.ts::UndefinedIfOptional`
 

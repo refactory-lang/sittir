@@ -19,13 +19,14 @@ Each generated package (`@sittir/rust`, `@sittir/typescript`, `@sittir/python`) 
 - `types.ts` — concrete interfaces, `TSKindId`, config/tree/from projections, unions
 - `factories/raw.ts` — plain strict builders
 - `factories/coerce.ts` — `.from()` coercers and per-field resolvers
-- `factories/bundle.ts` — `{ strict, coerce }` pair per kind (`bundle()`)
-- `factories/overlays/{refines,polymorphs,supertypes}.ts` — static wiring: refine forms, sub-factories (one method per builder, applied to both flavors), grouped namespaces
-- `factories/index.ts` — `hoist()`: the callable consumer surface (bare call = coerce, `.strict` reachable, recursive)
+- `factories/loose.ts` / `factories/strict.ts` — the two flat builder tables: the default engine's (coercers) and the strict engine's (raw builders), each with its seated builders
+- `factories/combinators.ts` — one combinator per sub-factory, seat and refine form
+- `factories/build-table.ts` — the wiring written once over a table (`buildTable`), with its `Routes` and `Ir` types
+- `ir-strict.ts` — the strict engine's namespace, `buildTable` over the strict table
 - `wrap.ts` — tree node → typed node hydration
 - `is.ts` — type guards (`is.*`, `isNode`, `isTree`, `assert.*`)
 - `utils.ts` — per-grammar client helpers
-- `ir.ts` — developer-facing short-name namespace
+- `ir.ts` — the default engine's short-name namespace, `buildTable` over the loose table
 - `consts.ts` — discoverable arrays/maps of kinds, keywords, operators
 - `engine.ts` / `backend.ts` / `hash.ts` — native-only `createEngine()`, backend selection, baked render-module hash
 - `node-model.json5` — debug snapshot of the assembled model

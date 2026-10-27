@@ -1,12 +1,4 @@
-import type {
-	AnyUntypedNode,
-	FlavorPair,
-	HoistArity,
-	GrammarTypeMap,
-	Hoisted,
-	MaxArity,
-	StrictFlavor
-} from '@sittir/types';
+import type { AnyUntypedNode, EmptyForm, GrammarTypeMap } from '@sittir/types';
 import { isNode as isAnyNode, nodeText } from './utils.ts';
 import { sidesOf } from './node-data.ts';
 
@@ -40,7 +32,7 @@ export function rejectBareText<T>(value: T, where: string, expected: string): T 
 	}
 	if (typeof value === 'string' || typeof value === 'bigint' || (isRecord(value) && !('$type' in value))) {
 		throw new Error(
-			`${where}: a strict factory takes a built node, not a ${typeof value}; expected ${expected}, or use .coerce`
+			`${where}: a strict factory takes a built node, not a ${typeof value}; expected ${expected}, or the default engine's builder, which takes loose input`
 		);
 	}
 	return value;
@@ -175,57 +167,10 @@ function extractNodeText(value: unknown): string | undefined {
 	return nodeText(value);
 }
 
-type AnyFlavorFn = (...args: never[]) => unknown;
-
-type ArityArgs<F> = number extends MaxArity<F> ? [] : [arity: HoistArity<MaxArity<F>>];
-
-export function bundle<S extends AnyFlavorFn>(strict: S, coerce: undefined, ...arity: NoInfer<ArityArgs<S>>): StrictFlavor<S>;
-export function bundle<S, C extends AnyFlavorFn>(strict: S, coerce: C, ...arity: NoInfer<ArityArgs<C>>): FlavorPair<S, C>;
-export function bundle(
-	strict: unknown,
-	coerce: AnyFlavorFn | undefined,
-	arity?: HoistArity
-): StrictFlavor<unknown> | FlavorPair<unknown, AnyFlavorFn> {
-	return Object.freeze(coerce === undefined ? { strict, arity } : { strict, coerce, arity });
+export function delegate<F extends (...args: never[]) => unknown>(builder: F): NoInfer<F> {
+	return ((...args: never[]) => builder(...args)) as F;
 }
 
-function isFlavorPair(value: unknown): value is { strict: unknown; coerce?: unknown } {
-	if (typeof value !== 'object' || value === null) return false;
-	const v = value as { strict?: unknown; coerce?: unknown };
-	return typeof v.strict === 'function' || typeof v.coerce === 'function';
-}
-
-export function hoist<B extends { strict: unknown; coerce?: unknown; arity?: HoistArity }>(b: B): Hoisted<B> {
-	const target = (typeof b.coerce === 'function' ? b.coerce : b.strict) as AnyFlavorFn;
-	const arity = b.arity;
-	const callable = (...args: never[]) => {
-		if (arity !== undefined && args.length > arity.max) {
-			throw new Error(
-				`${arity.key}: takes at most ${arity.max} argument${arity.max === 1 ? '' : 's'}, got ${args.length}`
-			);
-		}
-		return target(...args);
-	};
-	for (const [key, value] of Object.entries(b)) {
-		if (key === 'arity') continue;
-		Object.defineProperty(callable, key, {
-			value: hoistRoutes(value),
-			writable: false,
-			configurable: false,
-			enumerable: true
-		});
-	}
-	return Object.freeze(callable) as Hoisted<B>;
-}
-
-export function hoistAs<B>(value: unknown): Hoisted<B> {
-	return hoistRoutes(value) as Hoisted<B>;
-}
-
-export function hoistRoutes<B>(b: B): Hoisted<B> {
-	if (isFlavorPair(b)) return hoist(b) as Hoisted<B>;
-	if (typeof b !== 'object' || b === null || Array.isArray(b)) return b as Hoisted<B>;
-	const out: Record<string, unknown> = {};
-	for (const [key, value] of Object.entries(b)) out[key] = hoistRoutes(value);
-	return Object.freeze(out) as Hoisted<B>;
+export function withEmptyForm<Empty, F extends (...args: never[]) => unknown>(builder: F): EmptyForm<Empty, F> {
+	return builder as EmptyForm<Empty, F>;
 }
