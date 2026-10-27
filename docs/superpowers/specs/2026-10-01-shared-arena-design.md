@@ -466,8 +466,9 @@ none either (ruling 14).
 - **Sides by site.** A leaf's sides are on its object, as object construction holds them, and the
   written-sides store holds them at each site the leaf is placed at, keyed as a unit's are: its
   holder, its slot's word and its item (§ Trivia). Placing a leaf records the site on its object,
-  adding the field at its first placement, so a leaf maker's literal holds no computed key and V8
-  clones it from its template, and writes the sides the object holds to that site; a leaf that holds none writes nothing. A side written on a
+  adding the field at its first placement. No generated literal on the build path, a leaf maker's
+  or a record view's, holds a computed key at its head, so V8 clones each from its template. It then
+  writes the sides the object holds to that site; a leaf that holds none writes nothing. A side written on a
   leaf after it is placed is written to every site recorded on it. One leaf at two sites renders its
   sides at both, and a leaf placed nowhere keeps them on its object alone.
 - **A rebuild places its leaves again.** A `$with` writes a new holder, and each leaf it holds is
@@ -512,8 +513,9 @@ it: nothing is registered, counted or weakly held per node.
 
   String chunks have life objects too. They name nothing, so no chain forms through them.
 - **What holds a chunk.**
-  - A record view holds its chunk's life object, in a field its literal declares, so holding it
-    changes no shape.
+  - A record view holds its chunk's life object. Like every field a generated literal on the build
+    path holds, it is never a computed key at the head of the literal, which would stop V8 cloning
+    the literal from its template (§ Leaves).
   - The arena holds the open chunk it allocates into.
   - A snapshot or a view that names a record holds that record's chunk. A detached snapshot is plain
     data and holds nothing.
