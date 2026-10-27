@@ -86,11 +86,12 @@
 | --- | --- | --- |
 | (a) | 1, 2 | the path list, the flags file, each bound grammar's `portable.ts` |
 | (b) | 3 | adds each bound grammar's `portable-build.ts` |
-| (c) | 4, 5 | nothing new: runtime only |
+| (c) | 4 | each bound grammar's `portable-build.ts`, `node-model-portable.json5` and `node-model.json5` (seats and mount calls) |
+| (c2) | 5 | nothing new: runtime only |
 | (d) | 6 | the lane's baseline row |
 | (e) | 7 | adds each bound grammar's `.sittir/portable.typed.ts` |
 
-(e) is split from (d), since promoting the probe's generator is its own review. Each PR stacks on the one before it.
+(e) is split from (d), since promoting the probe's generator is its own review, and (c2) from (c), since the seats and mounts Task 4 needed made (c) a review of its own. Each PR stacks on the one before it.
 
 ---
 
@@ -163,19 +164,18 @@
   	| { readonly absent: readonly string[]; readonly required: readonly string[] }
   	| { readonly flag: string; readonly set: boolean }
   	| { readonly member: string; readonly kinds: readonly number[] }
-  	| { readonly scalar: 'integer' | 'float' | 'boolean' }
   	| { readonly text: string }
   	| { readonly variant: string; readonly value: number; readonly default?: true };
   export interface PortableBuildArm {
   	readonly kind: number;
   	readonly builder?: string;
   	readonly seated?: PortableCallShape;
+  	readonly scalar?: 'integer' | 'float';
   	readonly when: readonly PortablePickTest[];
   	readonly holders?: readonly (readonly [holder: number, key: string])[];
   	readonly members: readonly PortableMemberStep[];
   	readonly presets: readonly PortablePreset[];
   	readonly flags: Readonly<Record<string, PortableFlagStep>>;
-  	readonly predicate?: { readonly member: string; readonly op: 'eq' | 'match'; readonly text: string };
   	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
   }
   export interface PortableBuildPath { readonly root: boolean; readonly arms: readonly PortableBuildArm[] }
@@ -185,32 +185,32 @@
   - `builder` is the kind's stamped `builderPath`, dotted, and `builders` holds each one's stamped `factoryShape`. A fixed literal has no builder and builds as its kind id. A kind its holder's builder builds (an alias the holder admits by content, a seated config) has no builder either, and `seated` says whether the holder takes its config or its sole value.
   - A step's `builder` is the kind the next step sits in. It is absent when that kind has no builder, and its config then fills the key as the holder's seat takes it.
   - `leaf` is the slot's default leaf builder: the one text leaf the slot admits (`slotResolverKinds`), with numeric leaves and variant forms left out.
-- Modify: `packages/codegen/src/bindings/pinned-reader.ts` and `facts.ts`. One `#set!` reader serves `reason` and `default`. A claim at the pattern's top, or directly under a top-level grouping, with `(#set! default)` carries `ClaimFact.default`, set to the kind as authored. Binding can map two kinds onto one parser kind, as python's `lambda` and `lambda_within_for_in_clause` both bind to `lambda_expression`, so the pick matches an arm to the authored kind, not to the bound claim.
+- Modify: `packages/codegen/src/bindings/pinned-reader.ts` and `facts.ts`. One `#set!` reader serves `reason` and `default`. A claim at the pattern's top, or directly under a top-level grouping, with `(#set! default)` carries `ClaimFact.default`, set to the kind as authored. Binding can map two kinds onto one parser kind, as python's `lambda` and `lambda_within_for_in_clause` both bind to `lambda_expression`, so the pick matches an arm to the authored kind, not to the bound claim. On a supertype's claim, `(#set! default <form>)` names the form instead, so a default for forms that reach their path through the supertype's claim adds no claim of its own and moves no read.
 - Create: `packages/codegen/src/emitters/overlays/portable/build.ts`, with `portableBuildTable(input)` and `emitPortableBuild(input)`. `input` is `{ routes, model, nodeMap, kindEntries, flagPlans }`, and the result is the table (or its source) and its `PickDiagnostic[]`.
   - Arms: one per (kind, path) entry with an own read entry. A kind with no parser id, a hidden kind and a supertype get none. A display kind's builder is its stored kind's.
-  - Presets: from the entry's pins, and from its single-kind child tests. A preset that another preset's steps extend is dropped.
+  - Presets: from the entry's pins, its single-kind child tests, and its claim's `eq` predicates on a slot (an `eq` on a fixed literal's own text is its text test). A preset that another preset's steps extend is dropped. A preset builder takes the member routed to its steps or those beneath them. A claim's template fills `template`; its other predicates stay the path's read tests.
   - Flag steps: a presence flag presets its token's kind id, and a kind flag presets its kind.
   - `when`, tried in order, with the first passing arm taken:
     1. fixed text;
-    2. scalar;
+    2. scalar type, which groups the arms: the one arm per scalar type that builds a number (the variant's or the bindings default) is marked by `scalar`, outside `when`;
     3. the variant default, which is the supertype's `optionDefaultSubtype ?? defaultVariantSubtype`, found by walking up `variantOf`;
     4. the flag the form implies (its plan is `ALWAYS`);
-    5. presence, by `absent` and `required`; arms one input could satisfy stay together;
+    5. presence, by `required`; arms one input could satisfy stay together;
     6. member element kinds, disjoint or nested, narrower first;
     7. the bindings default;
     8. holder.
 
-    An arm admitted in fewer holder slots than its siblings gets `holders`. A kind a holder's kind-flag route presets is never a holder candidate.
-  - Diagnostics: `portable-pick-undecided`, `portable-default-redundant` and `portable-default-repeated`. `generate` returns them as grammar diagnostics, and `runCodegen` appends them to `.sittir/grammar-diagnostics.json`, the file the report's code ceilings read. Each has ceiling 0.
+    Every arm's `absent` lists the members the path's other arms have and it lacks, so no step's order lets an arm take a member it has no slot for. An arm admitted in fewer holder slots than its siblings gets `holders`. A kind a holder's kind-flag route presets leaves any path where another arm builds.
+  - Diagnostics: `portable-pick-undecided`, `portable-default-redundant`, `portable-default-repeated` and `portable-default-unknown` (a default naming no arm at its path). `generate` returns them as grammar diagnostics, and `runCodegen` appends them to `.sittir/grammar-diagnostics.json`, the file the report's code ceilings read. Each has ceiling 0.
 - Modify: `packages/codegen/src/compiler/model/node-map.ts`, adding the `optionDefaultSubtype` getter, which `from.ts`'s `defaultArmKindOf` also reads.
 - Modify: `emitPortable` (returns the build source and its diagnostics), `generate.ts`, `run-codegen.ts` (writes `src/portable-build.ts`), and `engine.ts`'s `emitApi` (`hooks.portableBuild: () => import('./portable-build.js').then((m) => m.build)`). Also `packages/types/src/engine-api.ts` (`LanguageHooks.portableBuild?: () => Promise<PortableBuildTable>`).
 - Vocabulary (by hand, then `tool vocabulary-features --write`):
   - the `static-storage` feature (`declaration.variable`'s `static` flag), composed by rust;
   - `paren`, `bracket` and `brace` refinements of `element.macro.token_tree`, its `delimited` and `pattern`, and `declaration.macro`.
 - Bindings:
-  - rust: `static_item`'s `static` flag; the delimiter refinement claims; `(#set! default)` on each paren form at its base path and on `struct_pattern`;
-  - python: defaults on `with_clause_bare` and `lambda_within_for_in_clause`;
-  - typescript: defaults on `number_float_point` at `literal.number` and on `parenthesized_expression_sequence`.
+  - rust: `static_item`'s `static` flag; the delimiter refinement claims; the paren form named as the default on each token-tree and macro-definition supertype's claim; `(#set! default)` on `struct_pattern`'s own claim;
+  - python: `with_clause_bare` named on `with_clause`'s claim; `(#set! default)` on `lambda_within_for_in_clause`'s claim;
+  - typescript: `number_float_point` named on `number`'s claim, and `parenthesized_expression_sequence` on `parenthesized_expression`'s.
 - Test: `packages/common/tests/portable-build-table.test.ts`, which loads each table through `hooks.portableBuild()` and the strict table through `hooks.tables.strict()`.
 
 **Interfaces:**
@@ -231,16 +231,20 @@
   - rust's `type.primitive` `u8` arm has no builder, and its `when` is `[{ text: 'u8' }]`.
   - rust's `expression.reference` mut arm is picked by `{ flag: 'exclusive', set: true }`.
   - python's `literal.string.escape` builds `escape_sequence_simple` by default, ahead of the other escape forms.
-  - Each grammar's `grammar-diagnostics.json` holds no `portable-pick-undecided`, `portable-default-redundant` or `portable-default-repeated`.
+  - Each grammar's `grammar-diagnostics.json` holds no `portable-*` code.
+  - rust's `declaration.variable` tells `static_item` from `let_declaration` by `{ flag: 'static', set }`.
+  - The bindings defaults order their ties: `struct_pattern` before `tuple_struct_pattern`, python's `with_clause_bare` first, typescript's `parenthesized_expression_sequence` first.
+  - typescript's sequence form carries `{ absent: ['type'], required: [] }`, so a structure with a type reaches the typed form.
+  - typescript's `identifier` has no `private_property_identifier` arm, and `expression.member`'s `privateName` flag presets `privatePropertyIdentifier`.
   - rust's `element.macro.token_tree` builds `token_tree_paren` by default, and `element.macro.token_tree.bracket` builds `token_tree_bracket`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement the files above.
 - [ ] **Step 4:** Regenerate the five grammars.
   - The tests pass.
-  - Validation history is compared row by row, with the row diff read first: rust's `static` keyword claim mints `static_keyword`, which shifts rust's kind ids.
+  - Validation history is compared row by row, with the row diff read first: rust's `static` presence claim moves the `static` token from kind id 36 to 128, shifting the ids between by one.
   - The import-graph test passes: the descriptor loads no build table.
   - **Stop rule:** if any grammar reports a pick diagnostic, stop before committing and send brainstorm the list (path, kinds, the holder slot). Do not raise the ceiling.
-- [ ] **Step 5:** Pathspec commits, in order: the bindings directive, the vocabulary, the bindings, then the emitter with the regenerated files. Open the PR.
+- [ ] **Step 5:** Pathspec commits, in order: the default directive; the vocabulary; the bindings, with the directive's named form (the commit hook checks regenerated outputs against the whole tree, so the named form lands with its first claims); then the emitter with the regenerated files. Open the PR.
 
 ### Task 4: `build` through the strict table
 
@@ -252,12 +256,19 @@
   ```
 
   A member value is a structure, an array of them, a string (its slot's default leaf), a scalar, a kind id, or a node carried unchanged.
-- Create: `packages/common/src/portable/build.ts`, with `buildPortable(table: PortableBuildTable, strict: object, structure: PortableStructure, at?: readonly [holder: number, key: string]): unknown`:
-  1. Pick the path's arm. With `at`, only arms whose `holders` include `at`, or that have no holders, are candidates; the `when` tests decide among them.
-  2. Build each member through its steps, recursing with `at` set to the member's last step.
-  3. Apply presets and flag steps.
-  4. Call the arm's strict builder once.
-  - A predicate arm refuses text its predicate rejects, and a template arm builds the member's text from its holes.
+- Modify: `packages/types/src/portable.ts` and the emitter, so the table says where each value sits and how each builder is called (landed in (c)):
+  - `PortableMemberStep` gains `seats` and loses `leaf`. A `PortableSeat` is `{ at, kinds?, leaf?, within?, many? }`: the holder kind and key the value is picked at, the kinds a value there has (only where the member has more than one seat), the leaf builder text goes through, and the containers the build wraps the value in, outermost first. A container (`PortableContainer { builder?, key, optional?, mounted? }`) is a kind with no read entry that the reader unwraps (`routes.containers`, which gains the element `slot`). A member's kinds for the pick are its seats' kinds, so step 6 of the pick reads through containers.
+  - A form's builder path is its holder's mount: the sub-factory that builds the holder with the form seated in its slot. A step, container, preset or arm whose builder is a mount carries `mounted: PortableMount`, the mount's call: `none`, `holder`, `child`, `merge`, `keyed` or `keyedArgs`. `keyed` and `keyedArgs` (a `PortableKeyedMount`) also carry the `key` that takes the seated kind's input and that kind's call shape (`seats`). The call comes from `mountCallOf`, the classifier `polymorphs.ts` emits the combinator from; the node model's seat stamps it (`call`), with its nested sub-factories' calls (`nested`).
+  - A nested combinator under a keyed mount (`exportStatementDefaultDeclaration.defaultKw.value`) takes its holder's input, so its record carries that call as `outer`, nearest holder first.
+  - Each builder key is registered with one call shape. Codegen refuses a second.
+- Create: `packages/common/src/portable/build.ts`, with `portableBuilder(context: PortableBuildContext): (structure: PortableStructure) => unknown`, where `PortableBuildContext` is `{ language, table, builders, kindName, readsAs }`:
+  1. Pick the path's arm. A `$value` takes the arm whose `scalar` is its type (Task 5). Otherwise, under a holder, only arms with a seat there (`holders` include it, and the seat's `kinds` include the arm's kind) are candidates. At the root, only arms with no holders are, and the `when` tests decide among them.
+  2. Apply presets and flag steps, then place each member along its steps. A member with several routes takes the one that reaches furthest into what the presets and earlier members built, then the one its value's shape fits. A value is wrapped in its seat's containers. An empty list leaves out the first optional step, then the first optional container.
+  3. Mounts: a step's mount builds its frame's holder. A `keyed` mount's seated input is a sub-frame shaped by `seats`, and `outer` walks up to the frame that is built.
+  4. Call each frame's builder once, from the innermost out.
+  - A template arm builds its member's text from its holes. A claim's fixed text is already a preset.
+  - A built node must pass the path's read tests, which carry the claim's other predicates (a pattern, a kind test). The build reads the node back through the path's guard and refuses a node that doesn't read as its path.
+  - **Whole-text tests (brainstorm, 2026-10-27):** a test on a built composite's whole text (rust's `b"…"` for `literal.string.bytes`) reads the node's rendered text. That's one native render call, made only for those tests. The round-trip lane (Task 6) checks it against the parsed read.
   - `$flags` naming a flag the arm has no step for is refused with the path, the flag and the kind.
 - Modify: `packages/common/src/portable/runtime.ts`. `portableRuntime<API>(engine: Engine<API, 'strict'>): Promise<PortableRuntime<API>>` returns `{ engine, is, build }`:
   - the caller makes `engine`, a strict engine, which loads the strict table lazily;
@@ -267,11 +278,11 @@
   It throws for a language with no bindings, as `assemblePortableEngine` does.
 - **Constraint (brainstorm, 2026-10-27):** the portable build builds through a storage and construction the caller chose (shared arena, ruling 15), never ones locked to the defaults. It builds through the caller's engine. When `build` is exported on the portable engine, that engine either takes `NodeStorageOptions` itself or builds through a language engine the caller made.
 - Modify: `packages/common/src/engine-boundary.ts` (export `portableRuntime`, `PortableRuntime`).
-- Test: `packages/rust/tests/portable-build.test.ts`, `packages/python/tests/portable-build.test.ts`.
+- Test: `packages/rust/tests/portable-build.test.ts`, `packages/python/tests/portable-build.test.ts`, `packages/typescript/tests/portable-build.test.ts`; the seats and mounts in `packages/common/tests/portable-build-table.test.ts`.
 
 **Interfaces:**
 - Consumes: `PortableBuildTable`, `hooks.portableBuild`, the strict table.
-- Produces: `portableRuntime`, `PortableRuntime { engine; is; build(structure: PortableStructure): unknown }`, `buildPortable`.
+- Produces: `portableRuntime`, `PortableRuntime { engine; is; build(structure: PortableStructure): unknown }`, `portableBuilder`.
 
 - [ ] **Step 1:** Write the failing tests. Each renders through `runtime.engine.render`:
   - `{ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } }` renders `fn f() {}`;
@@ -282,27 +293,35 @@
   - `{ $path: 'identifier.qualified', ... }` at the root throws an error naming `identifier.qualified` and its holders; the same structure in a type slot builds `scoped_type_identifier` (Review Focus 2);
   - `{ $path: 'declaration.class', ... }` on rust throws naming the path and `rust` (Review Focus 1);
   - `$flags: ['static']` on `declaration.function` throws naming the flag and `function_item`;
-  - python: `{ $path: 'declaration.function', name: 'f', parameters: [], body: [...] }` renders `def f():` and its body.
+  - python: `{ $path: 'declaration.function', name: 'f', parameters: [], body: [...] }` renders `def f():` and its body;
+  - one build per mount call the grammars use:
+    - `merge`: rust's `a..=b`;
+    - `keyed`: typescript's `a => x` and `a in b`, and python's `except E as e: pass`;
+    - `child`: rust's `pub(crate) fn f() {}`;
+    - nested under `keyed`: `export default x` and python's `except E, F: pass`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement.
-- [ ] **Step 4:** Rerun the tests, then the suite. Expected: PASS, with nothing regenerated.
-- [ ] **Step 5:** Pathspec commit.
+- [ ] **Step 4:** Regenerate. The combinators stay byte-identical, and the node models gain only the seat fields. Rerun the tests, then the suite. Expected: PASS.
+- [ ] **Step 5:** Pathspec commits: the table, then the runtime. Open PR (c).
 
 ### Task 5: The scalar adaptation
 
 **Files:**
-- Modify: `packages/common/src/portable/build.ts` (the `scalar` pick test and the `$value` hand-off)
+- Modify: `packages/common/src/portable/build.ts` (the `scalar` arm and the `$value` hand-off)
 - Test: the two `portable-build.test.ts` files
 
 **Interfaces:**
-- Consumes: the numeric leaf builders, which already take `string | number | bigint` and spell the value by their form's shape (`numberShape`).
+- Consumes: the `scalar` arm and its builder; the form's stamped `numberShape` (the source for splitting a value).
 
 The rules:
 - An integer path's `$value` is `number | bigint`. A `number` that is not a safe integer is refused (Review Focus 3).
 - A float path's `$value` is `number`.
 - `literal.number` itself picks integer for a bigint or an integral `number`, and float otherwise.
 - A boolean builds as its fixed literal's kind id (`true` or `false`).
-- The value goes to the picked form's leaf builder unchanged; no text is assembled here.
+- The value reaches the picked arm by its builder's shape:
+  - a text-shaped arm takes it unchanged (rust's float, python's plain decimal, typescript's decimal);
+  - a form with one numeric slot takes it there (rust's integers' `content`, and the hex, binary and octal `content` of python and typescript);
+  - **split floats (brainstorm, 2026-10-27, option (a)):** a form whose members are `integer`, `fraction` and `exponent` (python's and typescript's point, leading-point and scientific forms) takes it split by the form's `numberShape`. numberShape is the stamped source, so the split adds no derivation. Refusing the value would refuse a natural input. A numeric leaf builder would break the rule that leaf builders take strings only.
 
 - [ ] **Step 1:** Write the failing tests:
   - rust:
@@ -315,11 +334,13 @@ The rules:
   - `{ $path: 'type.primitive', $value: 'u8' }` returns `u8`'s kind id, and `$value: 'u9'` throws naming the path and the text;
   - python:
     - `literal.boolean` false returns `False`'s kind id;
-    - `literal.number.float` with `$value: 2` renders `2.0`.
+    - `literal.number.float` with `$value: 2` renders `2.0`;
+    - `literal.number.float` with `$value: 1.5` renders `1.5`, and `literal.number.float.scientific` with `$value: 1e21` renders in the scientific form;
+  - typescript: `{ $path: 'literal.number', $value: 1.5 }` renders `1.5`, through `number_float_point`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement.
 - [ ] **Step 4:** Rerun the tests, then the suite. Expected: PASS.
-- [ ] **Step 5:** Pathspec commit. Open PR (c).
+- [ ] **Step 5:** Pathspec commit. Open PR (c2), stacked on (c).
 
 ### Task 6: The member reader and the round-trip lane
 
