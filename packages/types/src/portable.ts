@@ -1,4 +1,4 @@
-import type { QueryPlan, QuerySlots, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
+import type { QueryFlags, QueryPlan, QuerySlots, QuerySubject, SlotSubject, StepAnchor } from './query.ts';
 
 /** A portable kind: one vocabulary path, the same object for every language. */
 export type PortableKind<Path extends string = string> = { readonly $path: Path };
@@ -35,10 +35,11 @@ export interface PortableTable {
 	readonly fixedText: Readonly<Record<number, string>>;
 }
 
-/** What a bound grammar's engine reads portable classifications from: its {@link PortableTable} and the slots its conditions name. */
+/** What a bound grammar's engine reads portable classifications from: its {@link PortableTable}, the slots its conditions name, and each kind's flag plans. */
 export interface PortableRows {
 	readonly table: PortableTable;
 	readonly querySlots: QuerySlots;
+	readonly flags: QueryFlags;
 }
 
 /**

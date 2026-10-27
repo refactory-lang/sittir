@@ -5976,8 +5976,6 @@ const table: PortableTable = {
 	}
 };
 
-export const rows: PortableRows = Object.freeze({ table, querySlots });
-
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AsyncBlock]: { move: { op: 'present', slots: { '310': 0 } } },
 	[TSKindId.CharLiteralEscapedHex]: { byte: { op: 'present', slots: { '150': 0 } } },
@@ -6054,6 +6052,8 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.UsizeKeyword]: { unsigned: { op: 'and', of: [] } },
 	[TSKindId.VariadicParameter]: { mutable: { op: 'present', slots: { '232': 0 } } }
 } satisfies QueryFlags);
+
+export const rows: PortableRows = Object.freeze({ table, querySlots, flags: queryFlags });
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	176: {

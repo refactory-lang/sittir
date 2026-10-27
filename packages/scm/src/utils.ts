@@ -82,7 +82,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	58: [
 		['groupExpression', 0, undefined, '_group_expression'],
-		['anchor', 1, '.', '_anchor']
+		['anchor', 1, '.', '_anchor', 60]
 	],
 	61: [
 		['name', 0, undefined, '_name'],
@@ -96,11 +96,11 @@ export const querySlots: QuerySlots = Object.freeze({
 		['elements', 3, undefined, '_elements']
 	],
 	63: [
-		['anchor', 0, '.', '_anchor'],
+		['anchor', 0, '.', '_anchor', 60],
 		['namedNodeExpressions', 1, undefined, '_named_node_expressions']
 	],
 	64: [
-		['anchor', 0, '.', '_anchor'],
+		['anchor', 0, '.', '_anchor', 60],
 		['namedNodeExpressions', 1, undefined, '_named_node_expressions'],
 		['last', 2, undefined, '_last']
 	]

@@ -1,7 +1,7 @@
 import { engineOf } from '../engine-scope.ts';
 import { inLanguage } from '../language.ts';
 import { hasKind, readsAs } from './classify.ts';
-import type { PortableRows } from '@sittir/types';
+import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
 import { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree } from './tree.ts';
 import { vocabularyPaths } from './vocabulary-paths.ts';
 
@@ -16,6 +16,8 @@ export type VocabularyPath = (typeof vocabularyPaths)[number];
 export type PortableQueryIds<Ids> = { readonly [P in VocabularyPath]: P extends keyof Ids ? Ids[P] : never };
 
 export { classifierOf, hasKind, type PortableClassifier } from './classify.ts';
+export { Flags } from './flags.ts';
+export { registerPortableRows, type PortableLanguage } from './language-guard.ts';
 export { portablePathHasFacts } from './facts.ts';
 export { portableTrees, type LanguageGuard, type PortableGuard, type PortableGuardTree, type PortableKindTree } from './tree.ts';
 export type { PortableKind } from '@sittir/types';
@@ -30,22 +32,6 @@ const guardOf =
 		const rows = engineOf(node)?.portable;
 		return rows !== undefined && readsAs(rows, path, node);
 	};
-
-const rowsByLoad = new WeakMap<object, PortableRows>();
-
-/**
- * Records a bound grammar's rows against the descriptor function that loads them, so the language's portable guards can read a
- * bare kind id. The engine calls it when a language loads.
- */
-export function registerPortableRows(load: object, rows: PortableRows): void {
-	rowsByLoad.set(load, rows);
-}
-
-/** A language whose portable guards read its kind ids: its name, and the function that loads it, which its copies share. */
-export interface PortableLanguage {
-	readonly name: string;
-	readonly load: object;
-}
 
 const views = new WeakMap<PortableLanguage, PortableGuardTree<VocabularyPath, LanguageGuard>>();
 
@@ -83,21 +69,7 @@ export function portableGuardsOf(language: PortableLanguage): PortableGuardTree<
 	let view = views.get(language);
 	if (view === undefined) {
 		const ofLanguage = inLanguage(language);
-		views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, ofLanguage, path)).is));
+		views.set(language, (view = portableTrees(vocabularyPaths, (path) => languageGuardOf(language, ofLanguage, (rows, value) => readsAs(rows, path, value))).is));
 	}
 	return view;
 }
-
-const languageGuardOf =
-	(language: PortableLanguage, ofLanguage: (value: unknown) => boolean, path: string): LanguageGuard =>
-	(value): value is Node | number => {
-		if (typeof value === 'number') {
-			const rows = rowsByLoad.get(language.load);
-			if (rows === undefined)
-				throw new Error(`${language.name}: a portable guard given a kind id reads the language's rows; create an engine for ${language.name} first`);
-			return readsAs(rows, path, value);
-		}
-		if (!hasKind(value) || !ofLanguage(value)) return false;
-		const rows = engineOf(value)?.portable;
-		return rows !== undefined && readsAs(rows, path, value);
-	};

@@ -4932,8 +4932,6 @@ const table: PortableTable = {
 	}
 };
 
-export const rows: PortableRows = Object.freeze({ table, querySlots });
-
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.AbstractClassDeclaration]: { abstract: { op: 'and', of: [] } },
 	[TSKindId.AbstractMethodSignatureGetter]: {
@@ -5073,6 +5071,8 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.UpdateExpressionPrefix]: { prefix: { op: 'and', of: [] } },
 	[TSKindId.VariableDeclaratorDefinite]: { definite: { op: 'and', of: [] } }
 } satisfies QueryFlags);
+
+export const rows: PortableRows = Object.freeze({ table, querySlots, flags: queryFlags });
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	189: {

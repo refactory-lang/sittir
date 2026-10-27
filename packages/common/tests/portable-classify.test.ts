@@ -29,6 +29,7 @@ const SLOTS: QuerySlots = {
 const subject = (kind: number, row: number) => ({ slots: { [kind]: SLOTS[kind]![row]![1] } });
 
 const ROWS: PortableRows = {
+	flags: {},
 	querySlots: SLOTS,
 	table: {
 		paths: {
@@ -154,6 +155,7 @@ describe('classifierOf conditions through a list', () => {
 	};
 	const PARAMS_STEP = { slots: { [METHOD]: 0 } };
 	const read = classifierOf({
+		flags: {},
 		querySlots: SLOTS,
 		table: {
 			paths: {
@@ -240,6 +242,7 @@ describe('classifierOf refinements', () => {
 	const METHOD = 13;
 	const VISIBILITY = 14;
 	const read = classifierOf({
+		flags: {},
 		querySlots: {
 			[METHOD]: [
 				['name', 0, undefined, '_name'],

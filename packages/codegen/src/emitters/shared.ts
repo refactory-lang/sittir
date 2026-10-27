@@ -361,13 +361,16 @@ export function keywordPresenceKind(field: AssembledNonterminal, nodeMap: NodeMa
 	return null;
 }
 
-export function keywordPresenceValue(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+export function keywordPresenceStorage(field: AssembledNonterminal, nodeMap: NodeMap): TextValueStorage | undefined {
 	if (keywordPresenceKind(field, nodeMap) !== 'boolean') return undefined;
 	for (const v of field.values) {
-		const lit = resolveEntryLiteral(v, nodeMap);
-		if (lit !== undefined) return lit;
+		const storage = valueStorageOf(v, nodeMap);
+		if (storage !== undefined && isTextStorage(storage)) return storage;
 	}
 	return undefined;
+}
+export function keywordPresenceValue(field: AssembledNonterminal, nodeMap: NodeMap): string | undefined {
+	return keywordPresenceStorage(field, nodeMap)?.text;
 }
 
 export function keywordPresenceValues(field: AssembledNonterminal, nodeMap: NodeMap): readonly string[] {

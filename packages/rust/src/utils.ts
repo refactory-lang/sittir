@@ -185,8 +185,8 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	206: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
-		['byReference', 1, 'ref', '_by_reference'],
-		['mutable', 2, 'mut', '_mutable'],
+		['byReference', 1, 'ref', '_by_reference', 115],
+		['mutable', 2, 'mut', '_mutable', 58],
 		['name', 3, undefined, '_name'],
 		['type', 4, undefined, '_type'],
 		['value', 5, undefined, '_value']
@@ -226,7 +226,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	214: [
 		['visibilityModifier', 0, undefined, '_visibility_modifier'],
-		['unsafe', 1, 'unsafe', '_unsafe'],
+		['unsafe', 1, 'unsafe', '_unsafe', 112],
 		['name', 2, undefined, '_name'],
 		['typeParameters', 3, undefined, '_type_parameters'],
 		['bounds', 4, undefined, '_bounds'],
@@ -261,7 +261,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['bounds', 1, undefined, '_bounds']
 	],
 	223: [
-		['mutable', 0, 'mut', '_mutable'],
+		['mutable', 0, 'mut', '_mutable', 58],
 		['name', 1, undefined, '_name'],
 		['type', 2, undefined, '_type'],
 		['value', 3, undefined, '_value'],
@@ -283,16 +283,16 @@ export const querySlots: QuerySlots = Object.freeze({
 	229: [['useWildcardGroup', 0, undefined, '_use_wildcard_group']],
 	230: [['elements', 0, undefined, '_elements']],
 	231: [
-		['reference', 0, '&', '_reference'],
+		['reference', 0, '&', '_reference', 55],
 		['lifetime', 1, undefined, '_lifetime'],
-		['mutable', 2, 'mut', '_mutable']
+		['mutable', 2, 'mut', '_mutable', 58]
 	],
 	232: [
-		['mutable', 0, 'mut', '_mutable'],
+		['mutable', 0, 'mut', '_mutable', 58],
 		['pattern', 1, undefined, '_pattern']
 	],
 	233: [
-		['mutable', 0, 'mut', '_mutable'],
+		['mutable', 0, 'mut', '_mutable', 58],
 		['name', 1, undefined, '_name'],
 		['type', 2, undefined, '_type']
 	],
@@ -341,7 +341,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	252: [
 		['lifetime', 0, undefined, '_lifetime'],
-		['exclusive', 1, 'mut', '_exclusive'],
+		['exclusive', 1, 'mut', '_exclusive', 58],
 		['type', 2, undefined, '_type']
 	],
 	255: [
@@ -478,11 +478,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	309: [['body', 0, undefined, '_body']],
 	310: [
-		['move', 0, 'move', '_move'],
+		['move', 0, 'move', '_move', 129],
 		['body', 1, undefined, '_body']
 	],
 	311: [
-		['move', 0, 'move', '_move'],
+		['move', 0, 'move', '_move', 129],
 		['body', 1, undefined, '_body']
 	],
 	312: [['body', 0, undefined, '_body']],
@@ -512,7 +512,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', 1, undefined, '_pattern']
 	],
 	326: [
-		['exclusive', 0, 'mut', '_exclusive'],
+		['exclusive', 0, 'mut', '_exclusive', 58],
 		['pattern', 1, undefined, '_pattern']
 	],
 	330: [['value', 0, undefined, '_value']],
@@ -560,17 +560,17 @@ export const querySlots: QuerySlots = Object.freeze({
 		['arguments', 1, undefined, '_arguments']
 	],
 	369: [
-		['static', 0, 'static', '_static'],
-		['async', 1, 'async', '_async'],
-		['move', 2, 'move', '_move'],
+		['static', 0, 'static', '_static', 36],
+		['async', 1, 'async', '_async', 113],
+		['move', 2, 'move', '_move', 129],
 		['parameters', 3, undefined, '_parameters'],
 		['returnType', 4, undefined, '_return_type'],
 		['body', 5, undefined, '_body']
 	],
 	370: [
-		['static', 0, 'static', '_static'],
-		['async', 1, 'async', '_async'],
-		['move', 2, 'move', '_move'],
+		['static', 0, 'static', '_static', 36],
+		['async', 1, 'async', '_async', 113],
+		['move', 2, 'move', '_move', 129],
 		['parameters', 3, undefined, '_parameters'],
 		['body', 4, undefined, '_body']
 	],
@@ -581,7 +581,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	375: [['trait', 0, undefined, '_trait']],
 	376: [['trait', 0, undefined, '_trait']],
 	377: [
-		['unsafe', 0, 'unsafe', '_unsafe'],
+		['unsafe', 0, 'unsafe', '_unsafe', 112],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['traitClause', 2, undefined, '_trait_clause'],
 		['type', 3, undefined, '_type'],
@@ -589,7 +589,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', 5, undefined, '_body']
 	],
 	378: [
-		['unsafe', 0, 'unsafe', '_unsafe'],
+		['unsafe', 0, 'unsafe', '_unsafe', 112],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['traitClause', 2, undefined, '_trait_clause'],
 		['type', 3, undefined, '_type'],
@@ -626,11 +626,11 @@ export const querySlots: QuerySlots = Object.freeze({
 	393: [['rangeExpressionBare', 0, undefined, '_range_expression_bare']],
 	394: [['expression', 0, undefined, '_expression']],
 	395: [
-		['unsafe', 0, 'unsafe', '_unsafe'],
+		['unsafe', 0, 'unsafe', '_unsafe', 112],
 		['externModifier', 1, undefined, '_extern_modifier']
 	],
 	396: [
-		['unsafe', 0, 'unsafe', '_unsafe'],
+		['unsafe', 0, 'unsafe', '_unsafe', 112],
 		['externModifier', 1, undefined, '_extern_modifier'],
 		['body', 2, undefined, '_body']
 	],
@@ -658,13 +658,13 @@ export const querySlots: QuerySlots = Object.freeze({
 	412: [['delimTokens', 0, undefined, '_delim_tokens']],
 	413: [['delimTokens', 0, undefined, '_delim_tokens']],
 	414: [
-		['byReference', 0, 'ref', '_by_reference'],
-		['mutable', 1, 'mut', '_mutable'],
+		['byReference', 0, 'ref', '_by_reference', 115],
+		['mutable', 1, 'mut', '_mutable', 58],
 		['name', 2, undefined, '_name']
 	],
 	415: [
-		['byReference', 0, 'ref', '_by_reference'],
-		['mutable', 1, 'mut', '_mutable'],
+		['byReference', 0, 'ref', '_by_reference', 115],
+		['mutable', 1, 'mut', '_mutable', 58],
 		['name', 2, undefined, '_name'],
 		['pattern', 3, undefined, '_pattern']
 	],
@@ -747,7 +747,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	435: [['declarations', 0, undefined, '_declarations']],
 	436: [['declarations', 0, undefined, '_declarations']],
 	437: [
-		['mutable', 0, 'mut', '_mutable'],
+		['mutable', 0, 'mut', '_mutable', 58],
 		['type', 1, undefined, '_type']
 	],
 	438: [

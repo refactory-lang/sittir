@@ -36,10 +36,10 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', 1, undefined, '_pattern']
 	],
 	58: [
-		['negation', 0, '^', '_negation'],
-		['leading', 1, '-', '_leading'],
+		['negation', 0, '^', '_negation', 82],
+		['leading', 1, '-', '_leading', 14],
 		['classAtoms', 2, undefined, '_class_atoms'],
-		['trailing', 3, '-', '_trailing']
+		['trailing', 3, '-', '_trailing', 14]
 	],
 	59: [['posixClassName', 0, undefined, '_posix_class_name']],
 	61: [
@@ -53,12 +53,12 @@ export const querySlots: QuerySlots = Object.freeze({
 		['pattern', 2, undefined, '_pattern']
 	],
 	64: [['pattern', 0, undefined, '_pattern']],
-	67: [['lazy', 0, '?', '_lazy']],
-	68: [['lazy', 0, '?', '_lazy']],
-	69: [['lazy', 0, '?', '_lazy']],
+	67: [['lazy', 0, '?', '_lazy', 89]],
+	68: [['lazy', 0, '?', '_lazy', 89]],
+	69: [['lazy', 0, '?', '_lazy', 89]],
 	70: [
 		['content', 0, undefined, '_content'],
-		['lazy', 1, '?', '_lazy']
+		['lazy', 1, '?', '_lazy', 89]
 	],
 	71: [['groupName', 0, undefined, '_group_name']],
 	72: [['groupName', 0, undefined, '_group_name']],

@@ -2907,8 +2907,6 @@ const table: PortableTable = {
 	}
 };
 
-export const rows: PortableRows = Object.freeze({ table, querySlots });
-
 export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.ConstructorDeclaration]: { async: { op: 'present', slots: { '302': 0 } } },
 	[TSKindId.ExceptClause]: { group: { op: 'present', slots: { '160': 0 } } },
@@ -2919,6 +2917,8 @@ export const queryFlags: QueryFlags = Object.freeze({
 	[TSKindId.MethodDeclaration]: { async: { op: 'present', slots: { '345': 0 } } },
 	[TSKindId.WithStatement]: { async: { op: 'present', slots: { '162': 0 } } }
 } satisfies QueryFlags);
+
+export const rows: PortableRows = Object.freeze({ table, querySlots, flags: queryFlags });
 
 export const querySlotFlags: QuerySlotFlags = Object.freeze({
 	128: { statements: { async: { types: [], kinds: [157, 162, 165] } } },
