@@ -282,20 +282,53 @@ export declare class SittirEngine {
   renderBuiltLeaf(owner: SittirEngine, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
   /**
    * r" A new chunk of `length` words of the built arena this
-   * r" engine's builders write, zeroed: `{ chunk, data }`, its
-   * r" number and a `Uint32Array` over its native memory, which
-   * r" the builders write records into. A trivia entry this
+   * r" engine's builders write, zeroed: `{ chunk, data, meta,
+   * r" freed }`, its number, a `Uint32Array` over its native
+   * r" memory, which the builders write records into, a
+   * r" `Uint8Array` over its counts' meta (`count`), and the
+   * r" chunks freed since the last chunk was made. A trivia entry this
    * r" engine's store answers renders from it. Refuses an empty
    * r" chunk, an engine already disposed, and a runtime that does
    * r" not allow external array buffers.
    */
-  builtWords(length: number): { chunk: number; data: Uint32Array }
+  builtWords(length: number): { chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }
   /**
    * r" A new chunk of `length` bytes of the built arena's strings,
    * r" as `builtWords` answers one of words, its `data` a
    * r" `Uint8Array`.
    */
-  builtBytes(length: number): { chunk: number; data: Uint8Array }
+  builtBytes(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }
+  /**
+   * r" The `segment`th segment of the counts of the entries the
+   * r" built arena's word chunk `chunk` holds, which is the next
+   * r" one: a `Uint8Array` over native memory the builders write
+   * r" each entry's count into. Refuses a chunk that holds no
+   * r" records and a segment that is not the next.
+   */
+  builtCounts(chunk: number, segment: number): Uint8Array
+  /**
+   * r" Takes one more count of the built entry at `address`, whose
+   * r" count saturated. Refuses an address no entry starts at and
+   * r" a count that has not saturated.
+   */
+  builtBump(address: number): void
+  /**
+   * r" Releases a count of the built entry at `address`, a record
+   * r" (`held` 0), a run (1) or a side record (2): with `owned`,
+   * r" the count its builder's handle holds, a no-op when it holds
+   * r" none. An entry whose count reaches zero releases what it
+   * r" holds, and a chunk left holding nothing live is freed and
+   * r" its buffers detached. Answers the tree of each link record
+   * r" and side record released since the last call. Refuses a
+   * r" count below zero, an address no entry starts at, and an
+   * r" engine already disposed.
+   */
+  releaseBuilt(address: number, held: number, owned: boolean): Array<number>
+  /**
+   * r" The bytes the built arena's chunks take, and of them the
+   * r" bytes their counts take: `{ chunks, counts }`. A diagnostic.
+   */
+  builtMemory(): { chunks: number; counts: number }
   /**
    * r" Refuses, by name, a runtime that does not allow external
    * r" array buffers, which arena node storage reads every chunk
@@ -415,6 +448,24 @@ export declare const CELL_TAG_UNIT: number
 export type ChildPosition = number
 
 /**
+ * r" The flag of a built entry's count byte the handle its
+ * r" builder returned holds (`count::OWNED`).
+ */
+export declare const COUNT_OWNED: number
+
+/**
+ * r" The count a built entry's count byte saturates at
+ * r" (`count::SATURATED`).
+ */
+export declare const COUNT_SATURATED: number
+
+/**
+ * r" The counts one segment of a word chunk's counts holds
+ * r" (`count::COUNT_SEGMENT`).
+ */
+export declare const COUNT_SEGMENT: number
+
+/**
  * Drop one tree, detaching every buffer over its arena's chunks.
  * Called from the boundary's `FinalizationRegistry` once JavaScript
  * has collected the last object naming it. Unknown ids are not an
@@ -432,6 +483,18 @@ export interface EngineOptions {
    */
   options?: object
 }
+
+/**
+ * r" The tags `releaseBuilt` reads (`count::held`): a record, a
+ * r" run, a side record, a leaf entry.
+ */
+export declare const HELD_RECORD: number
+
+export declare const HELD_RUN: number
+
+export declare const HELD_SIDE: number
+
+export declare const HELD_TEXT: number
 
 /**
  * r" The bits a record header's or a leaf entry's kind field takes

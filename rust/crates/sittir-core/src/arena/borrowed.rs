@@ -13,9 +13,25 @@ pub trait ArenaRead {
     /// The bits a record header's or a leaf entry's kind field takes here.
     fn kind_bits(&self) -> u32;
 
+    /// Whether the entry at `at` holds no count: released, though its chunk
+    /// lives. An arena that counts no entry releases none.
+    fn released(&self, at: Address) -> bool {
+        let _ = at;
+        false
+    }
+
+    /// Whether chunk `n` was freed: every entry in it was released. An
+    /// arena that frees no chunk answers false.
+    fn freed(&self, n: u32) -> bool {
+        let _ = n;
+        false
+    }
+
     /// The `len` written words at `at`, within one chunk.
     fn words(&self, at: Address, len: u32) -> Result<&[u32], ArenaError> {
-        let words = self.chunk(at.chunk()).ok_or(ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len })?;
+        let words = self.chunk(at.chunk()).ok_or_else(|| {
+            if self.freed(at.chunk()) { ArenaError::Released(at) } else { ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len } }
+        })?;
         Ok(&words[word_range(at, len, words.len())?])
     }
 

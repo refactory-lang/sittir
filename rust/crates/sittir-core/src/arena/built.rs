@@ -5,7 +5,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasher;
 
-use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, HeldArenas, RecordGrammar};
+use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
 use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
@@ -34,8 +34,7 @@ impl<G: EngineGrammar> Engine<G> {
     ///
     /// As `built_trivia_side`.
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
-        self.written().write_side(Place::Record(at.record()?), side, entries);
-        Ok(())
+        self.written().write_held_side(Place::Record(at.record()?), side, entries)
     }
 
     /// The entries a write gave `side` of the built leaf at `site`, or `None`
@@ -60,8 +59,7 @@ impl<G: EngineGrammar> Engine<G> {
     pub fn copy_built_sites(&self, from: Address, to: Address, skip: &[u32]) -> Result<(), ArenaError> {
         from.record()?;
         to.record()?;
-        self.written().copy_sites(from, to, skip);
-        Ok(())
+        self.written().copy_sites(from, to, skip)
     }
 
     /// Replace `side` of the built leaf at each of `sites` with `entries`,
@@ -75,10 +73,7 @@ impl<G: EngineGrammar> Engine<G> {
         for site in sites {
             site.holder.record()?;
         }
-        for &site in sites {
-            self.written().write_side(Place::Leaf(site), side, entries.to_vec());
-        }
-        Ok(())
+        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::Leaf(site), side, entries.to_vec()))
     }
 }
 
@@ -102,16 +97,17 @@ impl<G: RecordGrammar> Engine<G> {
             .collect()
     }
 
-    /// The units the built record at `at` in `arena` holds have the sides
-    /// `units` gives, in place of every unit side it had; its render then
-    /// writes them.
+    /// The units the built record at `at` holds have the sides `units`
+    /// gives, in place of every unit side it had; its render then writes
+    /// them.
     ///
     /// # Errors
     ///
-    /// What `ArenaRead::header_kind` refuses, and `ArenaError::UnknownSlot`
-    /// for a slot the record's kind has no cell for.
-    pub fn write_built_unit_sides(&self, arena: &impl ArenaRead, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
-        let kind = arena.header_kind(at)?;
+    /// What `ArenaRead::header_kind` and `TriviaStore::write_units` refuse,
+    /// and `ArenaError::UnknownSlot` for a slot the record's kind has no
+    /// cell for.
+    pub fn write_built_unit_sides(&self, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
+        let kind = self.written().built().readable()?.header_kind(at)?;
         let units = units
             .into_iter()
             .map(|unit| {
@@ -119,8 +115,7 @@ impl<G: RecordGrammar> Engine<G> {
                 Ok((word, unit.item, unit.trivia))
             })
             .collect::<Result<Vec<_>, ArenaError>>()?;
-        self.written().write_units(at, units);
-        Ok(())
+        self.written().write_units(at, units)
     }
 
     /// The built record at `at`, of the built arena `arena`, rendered as a
@@ -179,7 +174,7 @@ impl<G: RecordGrammar> Engine<G> {
 fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: Address, changed: ChangedEdges) -> Result<Cell, ArenaError> {
     G::shape(kind).ok_or(ArenaError::Malformed { what: "built leaf kind", word: u32::from(kind.0) })?;
     let word = entry.0.checked_mul(4).filter(|_| entry.0 < 1 << 30).ok_or(ArenaError::Malformed { what: "leaf entry address", word: entry.0 })?;
-    match Cell::decode_built(word, arena)? {
+    match Cell::decode_built(CellWord(word), arena)? {
         Cell::BuiltLeaf { kind: found, text, .. } if found == kind => {
             arena.text(text)?;
             Ok(Cell::BuiltLeaf { kind, text, changed })

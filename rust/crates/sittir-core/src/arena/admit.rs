@@ -5,7 +5,7 @@
 
 use super::small::{SmallMap, SmallStack};
 
-use super::{Address, ArenaError, ArenaRead, Cell, ListCell, SideRecord};
+use super::{Address, ArenaError, ArenaRead, Cell, CellWord, ListCell, SideRecord};
 #[cfg(test)]
 use super::Arena;
 use crate::record::HEADER_WORDS;
@@ -105,15 +105,15 @@ pub(super) fn for_each_built_cell(
     for cell in record.cells {
         let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
         if cell.run.is_none() {
-            visit(Cell::decode_built(word, arena)?.below(floor)?)?;
+            visit(Cell::decode_built(CellWord(word), arena)?.below(floor)?)?;
             continue;
         }
-        let list = ListCell::decode_built(word, arena)?;
+        let list = ListCell::decode_built(CellWord(word), arena)?;
         if list.len != 0 && list.run >= floor {
             return Err(malformed("list run address", list.run.0));
         }
         for item in list.items(arena, 1)? {
-            visit(Cell::decode_built(item[0], arena)?.below(floor)?)?;
+            visit(Cell::decode_built(CellWord(item[0]), arena)?.below(floor)?)?;
         }
     }
     Ok(())

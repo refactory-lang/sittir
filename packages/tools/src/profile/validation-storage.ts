@@ -24,6 +24,7 @@ export interface ValidationStorageRun {
 		baseline: NodeJS.MemoryUsage;
 		after: NodeJS.MemoryUsage;
 		peakRssBytes: number;
+		built?: { chunks: number; counts: number };
 	};
 }
 

@@ -2,7 +2,7 @@ import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../c
 import type { NodeMap } from '../compiler/types.ts';
 import { builtWithLines, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
-import type { RecordPlace } from './record-layout.ts';
+import { firstBuiltCell, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
 
 export const RECORD_CONSTRUCTION_IMPORTS = [
@@ -79,7 +79,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), after: [] };
-	views.width(spec.node, layout.builtWords);
+	views.width(spec.node, layout);
 	const placed = spec.slots.map((slot) => {
 		const place = places.get(slot.storageKey);
 		if (place === undefined) throw new Error(`recordTailLines: ${spec.node.kind}.${slot.name} has no record place`);
@@ -131,7 +131,6 @@ function leafMakerLines(name: string, typeExpr: string, trivia: TriviaPositions 
 		'    $tree: tree,',
 		'    $entry: entry,',
 		'    $site: site,',
-		'    $owned: site === undefined,',
 		'    $text: leafText,',
 		'    $render: handleRender,',
 		'    toString: handleToString,',
@@ -157,6 +156,7 @@ export class BuiltViewTable {
 	readonly #leaves = new Map<number, { readonly name: string; readonly body: string }>();
 	readonly #required = new Map<number, string>();
 	readonly #widths = new Map<number, number>();
+	readonly #cells = new Map<number, number>();
 
 	with(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
 		const kindId = viewKindId(node);
@@ -166,11 +166,12 @@ export class BuiltViewTable {
 		return builtWithLines(name, node.kind, inputs, setters);
 	}
 
-	width(node: ViewKind, words: number): void {
+	width(node: ViewKind, layout: RecordLayout): void {
 		const kindId = viewKindId(node);
 		const known = this.#widths.get(kindId);
-		if (known !== undefined && known !== words) throw new Error(`record views: ${node.kind} has record builders of ${known} and ${words} words`);
-		this.#widths.set(kindId, words);
+		if (known !== undefined && known !== layout.builtWords) throw new Error(`record views: ${node.kind} has record builders of ${known} and ${layout.builtWords} words`);
+		this.#widths.set(kindId, layout.builtWords);
+		this.#cells.set(kindId, firstBuiltCell(layout));
 	}
 
 	requireWith(node: ViewKind): void {
@@ -200,6 +201,7 @@ export class BuiltViewTable {
 			'export const builtViews: BuiltViews = Object.freeze({',
 			`  withs: Object.freeze({${entries(this.#withs)} }),`,
 			`  words: Object.freeze({${entries(this.#widths)} }),`,
+			`  cells: Object.freeze({${entries(this.#cells)} }),`,
 			`  leaves: Object.freeze({${entries(new Map([...this.#leaves].map(([kindId, { name }]) => [kindId, name])))} })`,
 			'});'
 		];

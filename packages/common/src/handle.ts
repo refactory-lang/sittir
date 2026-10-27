@@ -12,7 +12,6 @@ export interface RecordPosition {
 export interface RecordHandle extends RecordPosition {
 	readonly $words: ChunkWords;
 	$cache: Record<number, unknown> | undefined;
-	$owned: boolean;
 }
 
 export type LeafSite = number | readonly number[];
@@ -22,15 +21,14 @@ export interface LeafHandle {
 	readonly $tree: TreeHandle;
 	readonly $entry: BuiltText;
 	readonly $site: LeafSite | undefined;
-	$owned: boolean;
 }
 
 export type LeafMaker = (tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined) => object;
 
-export const HANDLE_FIELDS: ReadonlySet<string> = new Set(['$tree', '$at', '$words', '$cache', '$owned', '$entry', '$site']);
+export const HANDLE_FIELDS: ReadonlySet<string> = new Set(['$tree', '$at', '$words', '$cache', '$entry', '$site']);
 
-export function handleDispose(this: { $owned: boolean }): void {
-	this.$owned = false;
+export function handleDispose(this: { readonly $tree: TreeHandle; readonly $at?: number }): void {
+	if (this.$at !== undefined) this.$tree.built?.release(this.$at);
 }
 
 export function isHandle(value: object): boolean {

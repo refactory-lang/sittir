@@ -4,7 +4,7 @@
 //! prepared overlay; every word it reads is bounds-checked, and a cell no
 //! writer writes renders as a record refusal (`RenderError::Record`).
 
-use super::{Address, ArenaRead, ArenaError, Cell, CellShape, ListCell, Prepared, PreparedNode, Sides, StringRef, TreeArena};
+use super::{Address, ArenaRead, ArenaError, Cell, CellShape, CellWord, ListCell, Prepared, PreparedNode, Sides, StringRef, TreeArena};
 use crate::layout::{list_units, render_framed, render_unit, BodyLayout, TriviaRole};
 use crate::options::Edges;
 use crate::render::{Render, RenderError, RenderResult, RenderSink, SourceTable};
@@ -123,7 +123,7 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn slot_cell(self, words: &[u32], at: Address, shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
             let word = *words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?;
-            return Cell::decode_built(word, self.arena);
+            return Cell::decode_built(CellWord(word), self.arena);
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
         Cell::decode_slot(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape.inline)
@@ -134,7 +134,7 @@ impl<'a, T> RecordCtx<'a, T> {
     pub(super) fn slot_list(self, words: &[u32], shape: CellShape) -> Result<(ListCell, u32), ArenaError> {
         if self.tree.is_none() {
             let word = *words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?;
-            return Ok((ListCell::decode_built(word, self.arena)?, 1));
+            return Ok((ListCell::decode_built(CellWord(word), self.arena)?, 1));
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
         Ok((ListCell::decode(cell)?, shape.run.ok_or(malformed("list run width", shape.word))?))
@@ -143,7 +143,7 @@ impl<'a, T> RecordCtx<'a, T> {
     /// The cell an item of a list holds: its run's `item` words.
     pub(super) fn item_cell(self, item: &[u32]) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
-            return Cell::decode_built(*item.first().ok_or(malformed("cell width", 0))?, self.arena);
+            return Cell::decode_built(CellWord(*item.first().ok_or(malformed("cell width", 0))?), self.arena);
         }
         Cell::decode(item)
     }
@@ -458,6 +458,10 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     let words = ctx.words(at, len)?;
     if super::cell::header_of(words[0], ctx.arena.kind_bits()) != (kind, 0) {
         return Err(malformed("record kind", words[0]));
+    }
+    #[cfg(debug_assertions)]
+    if ctx.tree.is_none() && ctx.arena.released(at) {
+        return Err(malformed("released record", at.0));
     }
     if ctx.tree.is_some_and(|tree| {
         ctx.arenas

@@ -43,6 +43,10 @@ export function slotRecordForm(shape: NodeSlotShape, multiple: boolean, inline =
 		: { tag: 'cell', width: Math.max(item, INLINE_HEADER_WORDS + inline), inline };
 }
 
+export function firstBuiltCell(layout: RecordLayout): number {
+	return layout.places.reduce((first, place) => ('built' in place ? Math.min(first, place.built) : first), layout.builtWords);
+}
+
 export function recordLayoutOf(fields: readonly RecordField[]): RecordLayout {
 	const bits = fields.filter(({ form }) => form.tag === 'bit').length;
 	let nextBit = 0;

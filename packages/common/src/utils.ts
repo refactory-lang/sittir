@@ -11,7 +11,7 @@ import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia } from './record-view.ts';
+import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia } from './record-view.ts';
 import type { LeafHandle, RecordHandle, RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, leafSitesOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
@@ -783,6 +783,7 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 }
 
 function cacheOf(node: RecordHandle): Record<number, unknown> {
+	liveWords(node);
 	return (node.$cache ??= {});
 }
 

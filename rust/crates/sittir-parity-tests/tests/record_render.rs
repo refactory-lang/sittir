@@ -351,7 +351,7 @@ fn an_edited_parent_renders_from_its_record_and_an_untouched_child_holding_a_com
     for depth in [Depth::ONE, Depth::All] {
         let tree = RustRenders::parse(&mut engine, EDITED);
         let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
-        tree.write_trivia_side(statement, sittir_core::trivia_table::TriviaSide::Leading, line_comment("// written"));
+        tree.write_trivia_side(statement, sittir_core::trivia_table::TriviaSide::Leading, line_comment("// written")).expect("a side write");
         let native = renders.native(&tree, NodeIndex::ROOT, &options).expect("a root").expect("a native render");
         let record = RustRenders::parsed(&tree, RustRenders::first_read(&tree, depth).expect("a record"), &options).expect("a record render");
         assert_eq!(record, native, "read {depth:?}");

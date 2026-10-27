@@ -17,6 +17,7 @@
 mod admit;
 mod borrowed;
 mod built;
+pub mod count;
 #[cfg(test)]
 mod built_image;
 pub mod cell;
@@ -34,10 +35,12 @@ use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
 
+use crate::types::{KindId, TreeId};
+
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
-pub use cell::{flag, header_of, kind_field, with_kind, Cell, ListCell, LINK_WORDS};
+pub use cell::{flag, header_of, kind_field, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
@@ -185,6 +188,9 @@ pub enum ArenaError {
     /// A record of kind `kind` read where a value of the choice `owner` is
     /// read, which decodes no node of that kind.
     UnknownKind { kind: crate::types::KindId, owner: &'static str },
+    /// A read at `at`, whose chunk was freed once every entry in it was
+    /// released.
+    Released(Address),
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -204,6 +210,7 @@ impl fmt::Display for ArenaError {
             ArenaError::UnknownSlot(key) => write!(f, "the layout names slot `{key}`, which has no stamped cell in its record"),
             ArenaError::Unwritable(what) => write!(f, "a record writer does not write {what}"),
             ArenaError::UnknownKind { kind, owner } => f.write_str(&crate::boundary::unknown_kind(*kind, owner)),
+            ArenaError::Released(at) => write!(f, "the node at {} was released: the chunk its record was in is freed", at.0),
         }
     }
 }
@@ -420,18 +427,20 @@ impl ArenaRead for Arena {
     }
 }
 
-/// One chunk of an engine's built arena: words or UTF-8 bytes.
+/// One chunk of an engine's built arena: words, with the counts of the
+/// entries placed in them, or UTF-8 bytes, with the count of the cells that
+/// name an entry in them.
 #[derive(Debug)]
 enum BuiltChunk {
-    Words(Arc<ChunkMem<u32>>),
-    Bytes(Arc<ChunkMem<u8>>),
+    Words { mem: Arc<ChunkMem<u32>>, counts: count::CountTable },
+    Bytes { mem: Arc<ChunkMem<u8>>, cells: Arc<ChunkMem<u8>> },
 }
 
 impl BuiltChunk {
     fn byte_len(&self) -> usize {
         match self {
-            BuiltChunk::Words(mem) => mem.byte_len(),
-            BuiltChunk::Bytes(mem) => mem.byte_len(),
+            BuiltChunk::Words { mem, counts } => mem.byte_len() + counts.byte_len(),
+            BuiltChunk::Bytes { mem, cells } => mem.byte_len() + cells.byte_len(),
         }
     }
 }
@@ -440,77 +449,147 @@ impl BuiltChunk {
 /// chunk.
 pub const MAX_BUILT_CHUNKS: u32 = 1 << 16;
 
+/// A chunk a built arena made: its number, its memory and its meta
+/// (`count`).
+#[derive(Debug)]
+pub struct NewChunk<T: ChunkUnit> {
+    pub chunk: u32,
+    pub mem: Arc<ChunkMem<T>>,
+    pub meta: Arc<ChunkMem<u8>>,
+}
+
+/// The record shape of a kind, the grammar's (`RecordGrammar::shape`).
+pub type ShapeOf = fn(KindId) -> Option<RecordShape>;
+
 /// The chunks of an engine's built arena: native memory JavaScript's
 /// builders ask for one chunk at a time and write records and leaf entries
-/// into through external array buffers. Word and string chunks take their
-/// numbers from one count, so a built cell's chunk tells its form; chunk 0 is
-/// none, since a cell in it is a unit. Native code reads every element of a
-/// chunk, so an element no builder wrote reads as zero, and every word is
-/// untrusted.
+/// into through external array buffers, with each chunk's counts beside it
+/// (`count`). Word and string chunks take their numbers from one count, so a
+/// built cell's chunk tells its form; chunk 0 is none, since a cell in it is
+/// a unit. A freed chunk's number comes back only once every number has been
+/// handed out. The latest chunk of each form up to `CHUNK_WORDS` units is
+/// open, and builders append to it; a chunk is freed once it is sealed and
+/// holds nothing live. Native code reads every element of a chunk, so an
+/// element no builder wrote reads as zero, and every word is untrusted.
 #[derive(Debug)]
 pub struct BuiltChunks {
     chunks: Vec<Option<BuiltChunk>>,
     kind_bits: u32,
+    shape: ShapeOf,
     released: bool,
+    open: [Option<u32>; 2],
+    free: std::collections::VecDeque<u32>,
+    freed: Vec<u32>,
+    trees: Vec<TreeId>,
+    overflow: HashMap<u32, u32>,
 }
 
 impl BuiltChunks {
-    /// An arena whose kind fields take `kind_bits` bits, the grammar's stamp.
+    /// An arena whose kind fields take `kind_bits` bits and whose records'
+    /// shapes are `shape`'s: the grammar's stamps.
     #[must_use]
-    pub fn new(kind_bits: u32) -> Self {
-        Self { chunks: vec![None], kind_bits, released: false }
+    pub fn new(kind_bits: u32, shape: ShapeOf) -> Self {
+        Self { chunks: vec![None], kind_bits, shape, released: false, open: [None; 2], free: std::collections::VecDeque::new(), freed: Vec::new(), trees: Vec::new(), overflow: HashMap::new() }
     }
 
-    /// A new words chunk of `len` words, zeroed, and its number.
+    /// A new words chunk of `len` words, zeroed: its number, its memory and
+    /// its meta (`count`).
     ///
     /// # Errors
     ///
     /// `ARENA_RELEASED` once released, and `ArenaError::Full` for an empty
-    /// chunk, one past `MOST_CHUNK_UNITS` words, or more chunks than a built
-    /// cell names.
-    pub fn words(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u32>>), ArenaError> {
-        let chunk = self.room(len)?;
+    /// chunk, one past `MOST_CHUNK_UNITS` words, or a chunk past every
+    /// number a built cell names.
+    pub fn alloc_words(&mut self, len: u32) -> Result<NewChunk<u32>, ArenaError> {
+        let chunk = self.number(len)?;
         let mem = ChunkMem::zeroed(len as usize);
-        self.chunks.push(Some(BuiltChunk::Words(Arc::clone(&mem))));
-        Ok((chunk, mem))
+        let counts = count::CountTable::new(len);
+        let meta = Arc::clone(counts.meta());
+        self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts });
+        self.opened(0, chunk, len <= CHUNK_WORDS);
+        Ok(NewChunk { chunk, mem, meta })
     }
 
-    /// A new string chunk of `len` bytes, zeroed, and its number.
+    /// A new string chunk of `len` bytes, zeroed: its number, its memory
+    /// and its meta, its cell count.
     ///
     /// # Errors
     ///
-    /// As `words`.
-    pub fn bytes(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u8>>), ArenaError> {
-        let chunk = self.room(len)?;
+    /// As `alloc_words`.
+    pub fn alloc_bytes(&mut self, len: u32) -> Result<NewChunk<u8>, ArenaError> {
+        let chunk = self.number(len)?;
         let mem = ChunkMem::zeroed(len as usize);
-        self.chunks.push(Some(BuiltChunk::Bytes(Arc::clone(&mem))));
-        Ok((chunk, mem))
+        let meta = ChunkMem::zeroed(count::CELLS_META_BYTES);
+        self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: Arc::clone(&mem), cells: Arc::clone(&meta) });
+        self.opened(1, chunk, len <= STRING_CHUNK_BYTES);
+        Ok(NewChunk { chunk, mem, meta })
     }
 
-    fn room(&self, len: u32) -> Result<u32, ArenaError> {
+    fn number(&mut self, len: u32) -> Result<u32, ArenaError> {
         if self.released {
             return Err(ARENA_RELEASED);
         }
         if len == 0 || len > MOST_CHUNK_UNITS {
             return Err(ArenaError::Full);
         }
-        u32::try_from(self.chunks.len()).ok().filter(|&n| n < MAX_BUILT_CHUNKS).ok_or(ArenaError::Full)
+        match u32::try_from(self.chunks.len()).ok().filter(|&n| n < MAX_BUILT_CHUNKS) {
+            Some(chunk) => {
+                self.chunks.push(None);
+                Ok(chunk)
+            }
+            None => self.free.pop_front().ok_or(ArenaError::Full),
+        }
+    }
+
+    fn opened(&mut self, form: usize, chunk: u32, shared: bool) {
+        if !shared {
+            return;
+        }
+        if let Some(sealed) = self.open[form].replace(chunk) {
+            self.seal_check(sealed);
+        }
+    }
+
+    /// The numbers of the chunks freed since the last call, whose buffers
+    /// are to be detached.
+    pub fn take_freed(&mut self) -> Vec<u32> {
+        std::mem::take(&mut self.freed)
+    }
+
+    /// The tree of each link record and side record released since the
+    /// last call, once per record.
+    pub fn take_trees(&mut self) -> Vec<TreeId> {
+        std::mem::take(&mut self.trees)
     }
 
     /// Lets go of every chunk, and answers the bytes they took: a record of
     /// the arena renders no more. A buffer over a chunk keeps its memory
     /// until it is collected.
-    pub fn release(&mut self) -> usize {
+    pub fn release_all(&mut self) -> usize {
         self.released = true;
         let bytes = self.allocated_bytes();
         self.chunks.clear();
+        self.overflow.clear();
         bytes
     }
 
-    /// The bytes every chunk takes.
+    /// The bytes every chunk takes, its counts included.
     #[must_use]
     pub fn allocated_bytes(&self) -> usize {
         self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
+    }
+
+    /// The bytes the chunks' counts take: their meta and count segments.
+    #[must_use]
+    pub fn count_bytes(&self) -> usize {
+        self.chunks
+            .iter()
+            .flatten()
+            .map(|chunk| match chunk {
+                BuiltChunk::Words { counts, .. } => counts.byte_len(),
+                BuiltChunk::Bytes { cells, .. } => cells.byte_len(),
+            })
+            .sum()
     }
 
     /// The chunks, for one call to read.
@@ -529,7 +608,7 @@ impl ArenaRead for BuiltChunks {
             // SAFETY: the store's shared borrow is held for the slice's life,
             // no native code writes a built chunk, and a native call runs no
             // JavaScript.
-            Some(BuiltChunk::Words(mem)) => Some(unsafe { mem.slice() }),
+            Some(BuiltChunk::Words { mem, .. }) => Some(unsafe { mem.slice() }),
             _ => None,
         }
     }
@@ -537,13 +616,24 @@ impl ArenaRead for BuiltChunks {
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
         match self.chunks.get(n as usize)? {
             // SAFETY: as `chunk`.
-            Some(BuiltChunk::Bytes(mem)) => Some(unsafe { mem.slice() }),
+            Some(BuiltChunk::Bytes { mem, .. }) => Some(unsafe { mem.slice() }),
             _ => None,
         }
     }
 
     fn kind_bits(&self) -> u32 {
         self.kind_bits
+    }
+
+    fn released(&self, at: Address) -> bool {
+        match self.chunks.get(at.chunk() as usize) {
+            Some(Some(BuiltChunk::Words { counts, .. })) => counts.peek(at.word()).is_ok_and(|byte| byte == 0),
+            _ => false,
+        }
+    }
+
+    fn freed(&self, n: u32) -> bool {
+        n != 0 && matches!(self.chunks.get(n as usize), Some(None))
     }
 }
 

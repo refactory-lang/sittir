@@ -166,6 +166,12 @@ fn record(word: u32) -> Result<Address, ArenaError> {
     if word == Address::NONE.0 { Err(malformed("cell record address", word)) } else { Ok(Address(word)) }
 }
 
+/// One cell of a built record, as its one word holds it
+/// (`Cell::decode_built`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(transparent)]
+pub struct CellWord(pub u32);
+
 impl Cell {
     /// Decodes a stamped scalar slot, resolving an embedded record relative
     /// to the slot's address. Ordinary pointer cells retain their wire form.
@@ -302,7 +308,7 @@ impl Cell {
     /// `ArenaError::OutOfBounds` for an address in no chunk, or words or
     /// bytes past what the arena wrote; `ArenaError::Malformed` for any word
     /// no writer writes.
-    pub fn decode_built(word: u32, arena: &dyn ArenaRead) -> Result<Cell, ArenaError> {
+    pub fn decode_built(CellWord(word): CellWord, arena: &dyn ArenaRead) -> Result<Cell, ArenaError> {
         if word == 0 {
             return Ok(Cell::Absent);
         }
@@ -399,7 +405,7 @@ impl ListCell {
     /// What reading the run's length refuses, and `ArenaError::Malformed` for
     /// changed edges on a list cell, a run of no items, or one that names no
     /// word after its length.
-    pub fn decode_built(word: u32, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
+    pub fn decode_built(CellWord(word): CellWord, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
         if word == 0 {
             return Ok(ListCell::EMPTY);
         }
@@ -610,11 +616,11 @@ mod tests {
             }
         }
         for entry in built["cells"].as_array().expect("cells") {
-            assert_eq!(Cell::decode_built(fixture_number(entry, "word"), &image), Ok(built_fixture_cell(entry)), "{entry}");
+            assert_eq!(Cell::decode_built(CellWord(fixture_number(entry, "word")), &image), Ok(built_fixture_cell(entry)), "{entry}");
         }
         for entry in built["lists"].as_array().expect("lists") {
             let list = ListCell { run: Address(fixture_number(entry, "run")), len: fixture_number(entry, "len") };
-            assert_eq!(ListCell::decode_built(fixture_number(entry, "word"), &image), Ok(list), "{entry}");
+            assert_eq!(ListCell::decode_built(CellWord(fixture_number(entry, "word")), &image), Ok(list), "{entry}");
         }
     }
 

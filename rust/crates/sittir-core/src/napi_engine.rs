@@ -170,9 +170,10 @@ macro_rules! napi_engine {
                     None => $defaults(),
                 };
                 Ok(Self {
-                    engine: $crate::engine::Engine::new(
+                    engine: $crate::engine::Engine::with_store(
                         <$grammar as ::std::default::Default>::default(),
                         table,
+                        $crate::napi_engine::engine_store::<$grammar>(),
                     )
                     .map_err(::napi::Error::from_reason)?,
                     buffers: ::std::default::Default::default(),
@@ -339,10 +340,8 @@ macro_rules! napi_engine {
                 entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
             ) -> ::napi::Result<()> {
                 let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                with_live_node(tree_id, index, |parsed, index| {
-                    parsed.write_trivia_side(index, side, entries);
-                    Ok(())
-                })
+                with_live_node(tree_id, index, |parsed, index| parsed.write_trivia_side(index, side, entries).map_err(::napi::Error::from_reason))?;
+                $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
             }
 
             /// Whether a write replaced a side of a node under the node at
@@ -636,6 +635,28 @@ macro_rules! napi_engine {
             /// The words of a link record (`arena::cell::LINK_WORDS`).
             #[::napi_derive::napi]
             pub const LINK_RECORD_WORDS: u32 = $crate::arena::cell::LINK_WORDS;
+            /// The flag of a built entry's count byte the handle its
+            /// builder returned holds (`count::OWNED`).
+            #[::napi_derive::napi]
+            pub const COUNT_OWNED: u32 = $crate::arena::count::OWNED as u32;
+            /// The count a built entry's count byte saturates at
+            /// (`count::SATURATED`).
+            #[::napi_derive::napi]
+            pub const COUNT_SATURATED: u32 = $crate::arena::count::SATURATED as u32;
+            /// The counts one segment of a word chunk's counts holds
+            /// (`count::COUNT_SEGMENT`).
+            #[::napi_derive::napi]
+            pub const COUNT_SEGMENT: u32 = $crate::arena::count::COUNT_SEGMENT;
+            /// The tags `releaseBuilt` reads (`count::held`): a record, a
+            /// run, a side record, a leaf entry.
+            #[::napi_derive::napi]
+            pub const HELD_RECORD: u32 = $crate::arena::count::held::RECORD;
+            #[::napi_derive::napi]
+            pub const HELD_RUN: u32 = $crate::arena::count::held::RUN;
+            #[::napi_derive::napi]
+            pub const HELD_SIDE: u32 = $crate::arena::count::held::SIDE;
+            #[::napi_derive::napi]
+            pub const HELD_TEXT: u32 = $crate::arena::count::held::TEXT;
             /// The tag word of an embedded bounded child's record.
             #[::napi_derive::napi]
             pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::tag::INLINE;
@@ -886,13 +907,15 @@ macro_rules! napi_engine {
                 }
 
                 /// A new chunk of `length` words of the built arena this
-                /// engine's builders write, zeroed: `{ chunk, data }`, its
-                /// number and a `Uint32Array` over its native memory, which
-                /// the builders write records into. A trivia entry this
+                /// engine's builders write, zeroed: `{ chunk, data, meta,
+                /// freed }`, its number, a `Uint32Array` over its native
+                /// memory, which the builders write records into, a
+                /// `Uint8Array` over its counts' meta (`count`), and the
+                /// chunks freed since the last chunk was made. A trivia entry this
                 /// engine's store answers renders from it. Refuses an empty
                 /// chunk, an engine already disposed, and a runtime that does
                 /// not allow external array buffers.
-                #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint32Array }")]
+                #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }")]
                 pub fn built_words(&self, env: ::napi::Env, length: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                     let length: u32 = $crate::napi_engine::checked_whole(length, "length")?;
                     $crate::napi_engine::built_chunk(&env, &mut self.buffers.borrow_mut(), self.engine.written(), false, length)
@@ -901,10 +924,55 @@ macro_rules! napi_engine {
                 /// A new chunk of `length` bytes of the built arena's strings,
                 /// as `builtWords` answers one of words, its `data` a
                 /// `Uint8Array`.
-                #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint8Array }")]
+                #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }")]
                 pub fn built_bytes(&self, env: ::napi::Env, length: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                     let length: u32 = $crate::napi_engine::checked_whole(length, "length")?;
                     $crate::napi_engine::built_chunk(&env, &mut self.buffers.borrow_mut(), self.engine.written(), true, length)
+                }
+
+                /// The `segment`th segment of the counts of the entries the
+                /// built arena's word chunk `chunk` holds, which is the next
+                /// one: a `Uint8Array` over native memory the builders write
+                /// each entry's count into. Refuses a chunk that holds no
+                /// records and a segment that is not the next.
+                #[::napi_derive::napi(ts_return_type = "Uint8Array")]
+                pub fn built_counts(&self, env: ::napi::Env, chunk: u32, segment: u32) -> ::napi::Result<$crate::napi_engine::Made> {
+                    $crate::napi_engine::built_counts(&env, &mut self.buffers.borrow_mut(), self.engine.written(), chunk, segment)
+                }
+
+                /// Takes one more count of the built entry at `address`, whose
+                /// count saturated. Refuses an address no entry starts at and
+                /// a count that has not saturated.
+                #[::napi_derive::napi]
+                pub fn built_bump(&self, address: f64) -> ::napi::Result<()> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    self.engine.written().built_mut().bump(address).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// Releases a count of the built entry at `address`, a record
+                /// (`held` 0), a run (1) or a side record (2): with `owned`,
+                /// the count its builder's handle holds, a no-op when it holds
+                /// none. An entry whose count reaches zero releases what it
+                /// holds, and a chunk left holding nothing live is freed and
+                /// its buffers detached. Answers the tree of each link record
+                /// and side record released since the last call. Refuses a
+                /// count below zero, an address no entry starts at, and an
+                /// engine already disposed.
+                #[::napi_derive::napi]
+                pub fn release_built(&self, env: ::napi::Env, address: f64, held: u32, owned: bool) -> ::napi::Result<Vec<u32>> {
+                    let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    let held = $crate::arena::count::Held::of(held, address).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    let released = self.engine.written().release(held, owned).map_err(|e| ::napi::Error::from_reason(e.to_string()));
+                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())?;
+                    released?;
+                    Ok(self.engine.written().built_mut().take_trees().into_iter().map(|tree| tree.0).collect())
+                }
+
+                /// The bytes the built arena's chunks take, and of them the
+                /// bytes their counts take: `{ chunks, counts }`. A diagnostic.
+                #[::napi_derive::napi(ts_return_type = "{ chunks: number; counts: number }")]
+                pub fn built_memory(&self, env: ::napi::Env) -> ::napi::Result<$crate::napi_engine::Made> {
+                    $crate::napi_engine::built_memory(&env, self.engine.written())
                 }
 
                 /// Refuses, by name, a runtime that does not allow external
@@ -957,6 +1025,7 @@ macro_rules! napi_engine {
                 #[::napi_derive::napi(ts_args_type = "sites: number[], side: string, entries: object[]")]
                 pub fn write_built_leaf_side(
                     &self,
+                    env: ::napi::Env,
                     sites: Vec<u32>,
                     side: String,
                     entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
@@ -966,7 +1035,8 @@ macro_rules! napi_engine {
                     }
                     let sites: Vec<_> = sites.chunks_exact(3).map(|site| $crate::trivia_store::Site { holder: $crate::arena::Address(site[0]), word: site[1], item: $crate::types::ItemIndex(site[2]) }).collect();
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                    self.engine.write_built_leaf_side(&sites, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    self.engine.write_built_leaf_side(&sites, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
                 }
 
                 /// The sides writes gave each unit the record at `address` in
@@ -991,13 +1061,13 @@ macro_rules! napi_engine {
                 #[::napi_derive::napi(ts_args_type = "address: number, units: object[]")]
                 pub fn write_built_unit_sides(
                     &self,
+                    env: ::napi::Env,
                     address: f64,
                     units: Vec<$crate::layout::UnitSides<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
                 ) -> ::napi::Result<()> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                    let chunks = self.engine.written().built();
-                    let arena = chunks.readable().map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    self.engine.write_built_unit_sides(arena, address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    self.engine.write_built_unit_sides(address, units).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
                 }
 
                 /// Replace `side` of the built record at `address` with
@@ -1014,7 +1084,8 @@ macro_rules! napi_engine {
                 ) -> ::napi::Result<()> {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
-                    self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                    self.engine.write_built_trivia_side(address, side, entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                    $crate::napi_engine::settle(&env, &mut self.buffers.borrow_mut(), self.engine.written())
                 }
 
                 /// Renders the parsed candidate at row `index` without exporting
@@ -1304,13 +1375,15 @@ pub fn check_external_buffers(env: &napi::Env) -> napi::Result<()> {
 }
 
 /// The buffers JavaScript reads one arena's chunks through, by chunk, each
-/// held weakly so a freed chunk can detach it, and the bytes of the arena's
-/// memory reported to V8.
+/// held weakly so a freed chunk can detach it, the bytes of the arena's
+/// memory reported to V8, and the chunks freed since JavaScript was last told.
 #[cfg(feature = "arena")]
 #[derive(Default)]
 pub struct Buffers {
     held: std::collections::HashMap<(bool, u32), WeakValue>,
+    counts: std::collections::HashMap<u32, Vec<WeakValue>>,
     reported: i64,
+    unreported: Vec<u32>,
 }
 
 // SAFETY: as `WeakValue`: every reference is read and deleted only on the
@@ -1359,6 +1432,29 @@ impl Buffers {
         Ok(())
     }
 
+    /// Holds `array`, a buffer over the meta or a count segment of chunk
+    /// `chunk`, weakly, so freeing the chunk detaches it.
+    ///
+    /// # Errors
+    ///
+    /// A reference napi refuses to make.
+    pub fn hold_counts(&mut self, env: &napi::Env, chunk: u32, array: napi::sys::napi_value) -> napi::Result<()> {
+        self.counts.entry(chunk).or_default().push(WeakValue::new(env, array)?);
+        Ok(())
+    }
+
+    /// Detaches every buffer over chunk `chunk` that lives, its meta and
+    /// counts' included, and lets go of each reference.
+    ///
+    /// # Errors
+    ///
+    /// A status napi refuses with.
+    pub fn detach_chunk(&mut self, env: &napi::Env, chunk: u32) -> napi::Result<()> {
+        let held = [false, true].into_iter().filter_map(|bytes| self.held.remove(&(bytes, chunk)));
+        let counts = self.counts.remove(&chunk).unwrap_or_default();
+        held.chain(counts).try_for_each(|weak| detach_weak(env, weak))
+    }
+
     /// Detaches every buffer that lives, so it reads as empty, lets go of
     /// each reference, and reports the arena's memory as gone.
     ///
@@ -1366,18 +1462,24 @@ impl Buffers {
     ///
     /// A status napi refuses with.
     pub fn detach(&mut self, env: &napi::Env) -> napi::Result<()> {
-        for (_, weak) in self.held.drain() {
-            if let Some(array) = weak.get(env)? {
-                let (mut kind, mut len, mut data, mut buffer, mut offset) = (0, 0, std::ptr::null_mut(), std::ptr::null_mut(), 0);
-                // SAFETY: `array` is a live typed array this addon made.
-                napi::check_status!(unsafe { napi::sys::napi_get_typedarray_info(env.raw(), array, &raw mut kind, &raw mut len, &raw mut data, &raw mut buffer, &raw mut offset) })?;
-                // SAFETY: `buffer` is the external buffer `external_view` made.
-                napi::check_status!(unsafe { napi::sys::napi_detach_arraybuffer(env.raw(), buffer) })?;
-            }
-            weak.delete(env)?;
-        }
+        let held: Vec<WeakValue> = self.held.drain().map(|(_, weak)| weak).chain(self.counts.drain().flat_map(|(_, weak)| weak)).collect();
+        held.into_iter().try_for_each(|weak| detach_weak(env, weak))?;
         self.report(env, 0)
     }
+}
+
+/// Detaches the buffer under `weak`'s typed array when it lives, and lets go
+/// of the reference.
+#[cfg(feature = "arena")]
+fn detach_weak(env: &napi::Env, weak: WeakValue) -> napi::Result<()> {
+    if let Some(array) = weak.get(env)? {
+        let (mut kind, mut len, mut data, mut buffer, mut offset) = (0, 0, std::ptr::null_mut(), std::ptr::null_mut(), 0);
+        // SAFETY: `array` is a live typed array this addon made.
+        napi::check_status!(unsafe { napi::sys::napi_get_typedarray_info(env.raw(), array, &raw mut kind, &raw mut len, &raw mut data, &raw mut buffer, &raw mut offset) })?;
+        // SAFETY: `buffer` is the external buffer `external_view` made.
+        napi::check_status!(unsafe { napi::sys::napi_detach_arraybuffer(env.raw(), buffer) })?;
+    }
+    weak.delete(env)
 }
 
 /// Without the arena no buffer is made over a chunk.
@@ -1417,8 +1519,9 @@ impl napi::bindgen_prelude::TypeName for Made {
 }
 
 /// A new chunk of the built arena `store` holds, of `length` bytes when
-/// `bytes`, else of `length` words: `{ chunk, data }`, its number and the
-/// typed array over it, held weakly in `buffers` and reported to V8.
+/// `bytes`, else of `length` words: `{ chunk, data, meta, freed }`, its
+/// number, the typed arrays over it and its meta, held weakly in `buffers`
+/// and reported to V8, and the chunks freed since `buffers` last told.
 ///
 /// # Errors
 ///
@@ -1426,27 +1529,106 @@ impl napi::bindgen_prelude::TypeName for Made {
 #[cfg(feature = "arena")]
 pub fn built_chunk<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>, bytes: bool, length: u32) -> napi::Result<Made> {
     use napi::JsValue;
-    let mut built = store.built_mut();
     let refused = |e: crate::arena::ArenaError| napi::Error::from_reason(e.to_string());
-    let (chunk, data) = if bytes {
-        let (chunk, mem) = built.bytes(length).map_err(refused)?;
-        (chunk, buffers.view::<u8>(env, true, chunk, || Some(mem))?)
-    } else {
-        let (chunk, mem) = built.words(length).map_err(refused)?;
-        (chunk, buffers.view::<u32>(env, false, chunk, || Some(mem))?)
+    let (chunk, data, meta) = {
+        let mut built = store.built_mut();
+        if bytes {
+            let made = built.alloc_bytes(length).map_err(refused)?;
+            (made.chunk, buffers.view::<u8>(env, true, made.chunk, || Some(made.mem))?, made.meta)
+        } else {
+            let made = built.alloc_words(length).map_err(refused)?;
+            (made.chunk, buffers.view::<u32>(env, false, made.chunk, || Some(made.mem))?, made.meta)
+        }
     };
-    buffers.report(env, built.allocated_bytes())?;
     let data = data.ok_or_else(|| napi::Error::from_reason("a built chunk made no buffer"))?;
+    let meta = external_view::<u8>(env, meta)?;
+    buffers.hold_counts(env, chunk, meta)?;
+    settle(env, buffers, store)?;
     let mut object = napi::bindgen_prelude::Object::new(env)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "chunk", chunk)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "freed", std::mem::take(&mut buffers.unreported))?;
     Ok(Made(object.raw()))
 }
 
-/// Frees the built arena chunks `store` holds (`BuiltChunks::release`).
+/// The `segment`th segment of the counts of the built arena `store` holds'
+/// word chunk `chunk` (`BuiltChunks::counts`): a `Uint8Array` over it, held
+/// weakly in `buffers` and reported to V8.
+///
+/// # Errors
+///
+/// What `BuiltChunks::counts` refuses, and what making the buffer does.
+#[cfg(feature = "arena")]
+pub fn built_counts<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>, chunk: u32, segment: u32) -> napi::Result<Made> {
+    let mem = store.built_mut().counts(chunk, segment).map_err(|e| napi::Error::from_reason(e.to_string()))?;
+    let array = external_view::<u8>(env, mem)?;
+    buffers.hold_counts(env, chunk, array)?;
+    buffers.report(env, store.built().allocated_bytes())?;
+    Ok(Made(array))
+}
+
+/// `{ chunks, counts }`: the bytes the built arena `store` holds takes, and
+/// of them the bytes its counts take.
+///
+/// # Errors
+///
+/// What making the object refuses.
+#[cfg(feature = "arena")]
+pub fn built_memory<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<Made> {
+    use napi::JsValue;
+    let built = store.built();
+    let mut object = napi::bindgen_prelude::Object::new(env)?;
+    #[allow(clippy::cast_precision_loss, reason = "a byte count well below 2^53")]
+    let (chunks, counts) = (built.allocated_bytes() as f64, built.count_bytes() as f64);
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "chunks", chunks)?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "counts", counts)?;
+    Ok(Made(object.raw()))
+}
+
+/// Detaches the buffers over each chunk the built arena `store` holds freed
+/// since the last call, and reports its memory now to V8.
+///
+/// # Errors
+///
+/// A status napi refuses with.
+#[cfg(feature = "arena")]
+pub fn settle<T>(env: &napi::Env, buffers: &mut Buffers, store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    let freed = store.built_mut().take_freed();
+    freed.iter().try_for_each(|&chunk| buffers.detach_chunk(env, chunk))?;
+    buffers.unreported.extend(freed);
+    buffers.report(env, store.built().allocated_bytes())
+}
+
+/// Without the arena no chunk is freed.
+///
+/// # Errors
+///
+/// None.
+#[cfg(not(feature = "arena"))]
+pub fn settle<T>(_env: &napi::Env, _buffers: &mut Buffers, _store: &crate::trivia_store::TriviaStore<T>) -> napi::Result<()> {
+    Ok(())
+}
+
+/// The store an engine of grammar `G` writes sides into, whose built arena
+/// takes the grammar's kind width and record shapes.
+#[cfg(feature = "arena")]
+#[must_use]
+pub fn engine_store<G: crate::arena::RecordGrammar>() -> crate::trivia_store::TriviaStore<G::Trivia> {
+    crate::trivia_store::TriviaStore::for_records(G::KIND_BITS, G::shape)
+}
+
+/// The store an engine of grammar `G` writes sides into.
+#[cfg(not(feature = "arena"))]
+#[must_use]
+pub fn engine_store<G: crate::engine::EngineGrammar>() -> crate::trivia_store::TriviaStore<G::Trivia> {
+    crate::trivia_store::TriviaStore::with_kind_bits(G::KIND_BITS)
+}
+
+/// Frees the built arena chunks `store` holds (`BuiltChunks::release_all`).
 #[cfg(feature = "arena")]
 pub fn release_built<T>(store: &crate::trivia_store::TriviaStore<T>) {
-    store.built_mut().release();
+    store.built_mut().release_all();
 }
 
 /// Without the arena a store holds no built arena chunks.

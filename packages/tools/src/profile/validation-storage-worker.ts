@@ -27,7 +27,7 @@ export interface ValidationStorageOptions {
 export async function sampleValidationStorage(options: ValidationStorageOptions): Promise<ValidationStorageRun> {
 	useValidationNodeStorage(options.storage);
 	useValidationConstruction(options.construction);
-	await loadNativeEngine(options.grammar);
+	const engine = await loadNativeEngine(options.grammar);
 	const corpus = corpusFingerprint(loadCorpusEntries(options.grammar));
 	await collectGarbage();
 	const baseline = process.memoryUsage();
@@ -77,7 +77,13 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 		buckets.push(first!);
 	}
 	await collectGarbage();
-	const memory = { baseline, after: process.memoryUsage(), peakRssBytes: process.resourceUsage().maxRSS * 1024 };
+	const built = engine.diagnostics.builtMemory?.();
+	const memory = {
+		baseline,
+		after: process.memoryUsage(),
+		peakRssBytes: process.resourceUsage().maxRSS * 1024,
+		...(built === undefined ? {} : { built: { chunks: built.chunks, counts: built.counts } })
+	};
 	return { grammar: options.grammar, storage: options.storage, construction: options.construction, pid: process.pid, corpus, buckets, memory };
 }
 

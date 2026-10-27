@@ -272,6 +272,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		types: undefined as unknown as API['types'],
 		diagnostics: {
 			buildProfile: native.buildProfile,
+			builtMemory: native.builtMemory,
 			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
@@ -330,6 +331,9 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		},
 		write(): Pending {
 			throw unimplementedVerb('write');
+		},
+		release(node) {
+			native.release(node);
 		},
 		dispose() {
 			handle.current = identity;

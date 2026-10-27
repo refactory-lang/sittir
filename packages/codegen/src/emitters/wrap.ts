@@ -419,7 +419,6 @@ function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: r
 		'    $at: data.$at,',
 		'    $words: positionWords(data),',
 		'    $cache: undefined as Record<number, unknown> | undefined,',
-		'    $owned: false,',
 		'    $_layout: data.$_layout,',
 		...fields,
 		...list.fields,

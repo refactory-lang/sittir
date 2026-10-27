@@ -199,10 +199,18 @@ export interface NativeEngineLike<TNode = unknown> {
 	recordCandidates?(treeId: number, index: number): string;
 	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
 	chunk?(treeId: number, n: number): ChunkWords;
-	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, and its number. Present when the addon carries the record codec. */
-	builtWords?(length: number): { chunk: number; data: WritableWords };
-	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, and its number. Present when the addon carries the record codec. */
-	builtBytes?(length: number): { chunk: number; data: Uint8Array };
+	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept. Present when the addon carries the record codec. */
+	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[] };
+	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
+	builtBytes?(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
+	/** The next segment of the counts of word chunk `chunk`'s entries, over native memory. Present when the addon carries the record codec. */
+	builtCounts?(chunk: number, segment: number): Uint8Array;
+	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
+	builtBump?(address: number): void;
+	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
+	releaseBuilt?(address: number, held: number, owned: boolean): number[];
+	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
+	builtMemory?(): { chunks: number; counts: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
 	externalBuffers?(): void;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
@@ -340,6 +348,14 @@ export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntyp
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
 	render<const I extends string = string>(node: AnyUntypedNode | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
+	/**
+	 * Releases `node`, as its `[Symbol.dispose]` does: the record of a node this engine's builders returned and has not
+	 * been placed since, and with it each record only it held. Any other node is left as it is.
+	 *
+	 * @param node - A node this engine built, read, or neither.
+	 * @throws For a node another engine built.
+	 */
+	release(node: object): void;
 	dispose(): void;
 }
 
@@ -537,12 +553,20 @@ export function createNativeEngine<
 					return renderNativeNode(node, opts);
 				},
 
+				release(node) {
+					const built = builtRefOf(node);
+					if (built?.at === undefined) return;
+					if (built.arena.owner !== engine) throw new Error('an engine releases only the nodes its own builders returned');
+					built.arena.release(built.at);
+				},
+
 				dispose() {
 					engine.dispose();
 				},
 
 				diagnostics: {
 					buildProfile: engine.buildProfile,
+					builtMemory: () => (cellFormat === undefined ? undefined : engine.builtMemory?.()),
 					parseAndRead(source: string, parseOptions?: ParseOptions) {
 						const parsed = JSON.parse(engine.parse(source)) as NativeParseResult;
 						const liveToken = mintTreeToken(parsed.treeId);
@@ -629,8 +653,11 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtCounts, builtBump, releaseBuilt } = engine;
 	if (
+		builtCounts === undefined ||
+		builtBump === undefined ||
+		releaseBuilt === undefined ||
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
@@ -648,6 +675,9 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 		kinds,
 		words: (length) => builtWords.call(engine, length),
 		bytes: (length) => builtBytes.call(engine, length),
+		counts: (chunk, segment) => builtCounts.call(engine, chunk, segment),
+		bump: (at) => builtBump.call(engine, at),
+		release: (at, held, owned) => releaseBuilt.call(engine, at, held, owned),
 		trivia: {
 			triviaSide: (at, side) => builtTriviaSide.call(engine, at, side) ?? undefined,
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
@@ -671,6 +701,10 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 			return engine.diagnostics.parseAndRead(source, options);
 		},
 		buildProfile: engine.diagnostics.buildProfile,
+		builtMemory: engine.diagnostics.builtMemory,
+		release(node) {
+			engine.release(node);
+		},
 		dispose() {
 			engine.dispose();
 		}

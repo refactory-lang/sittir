@@ -269,6 +269,8 @@ export interface NativeLanguageEngine<API extends LanguageAPI> {
 	render(node: AnyUntypedNode | number, options?: API['options']): Rendered;
 	parseAndRead: EngineDiagnostics<AnyUntypedNode>['parseAndRead'];
 	readonly buildProfile?: EngineDiagnostics['buildProfile'];
+	readonly builtMemory?: EngineDiagnostics['builtMemory'];
+	release(node: object): void;
 	dispose(): void;
 }
 
@@ -285,6 +287,12 @@ export interface ParsedRoot {
 
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
+	/**
+	 * The bytes the engine's built arena takes now: `chunks`, every chunk with its counts, and
+	 * `counts`, the part of them the counts take. `undefined` when the engine does not build into
+	 * an arena.
+	 */
+	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number } | undefined;
 	/** Parses and retains a tree; accessing `root` performs its first read. Keeping only `tree` exports no root data. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
@@ -393,6 +401,16 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
+	/**
+	 * Releases what a builder result holds, as its `[Symbol.dispose]` does. Under record
+	 * construction a result holds its record until it is placed into a parent or a side; a node
+	 * already placed, read, parsed or released, and any node of object construction, holds nothing,
+	 * so its release does nothing. A record nothing holds any more is freed with every child only it
+	 * held, and a read through a node whose memory was freed throws.
+	 *
+	 * @throws When `node` was built by another engine.
+	 */
+	readonly release: (node: API['node']) => void;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
 }
