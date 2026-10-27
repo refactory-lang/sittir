@@ -86,11 +86,12 @@
 | --- | --- | --- |
 | (a) | 1, 2 | the path list, the flags file, each bound grammar's `portable.ts` |
 | (b) | 3 | adds each bound grammar's `portable-build.ts` |
-| (c) | 4, 5 | nothing new: runtime only |
+| (c) | 4 | each bound grammar's `portable-build.ts`, `node-model-portable.json5` and `node-model.json5` (seats and mount calls) |
+| (c2) | 5 | nothing new: runtime only |
 | (d) | 6 | the lane's baseline row |
 | (e) | 7 | adds each bound grammar's `.sittir/portable.typed.ts` |
 
-(e) is split from (d), since promoting the probe's generator is its own review. Each PR stacks on the one before it.
+(e) is split from (d), since promoting the probe's generator is its own review, and (c2) from (c), since the seats and mounts Task 4 needed made (c) a review of its own. Each PR stacks on the one before it.
 
 ---
 
@@ -255,11 +256,16 @@
   ```
 
   A member value is a structure, an array of them, a string (its slot's default leaf), a scalar, a kind id, or a node carried unchanged.
-- Create: `packages/common/src/portable/build.ts`, with `buildPortable(table: PortableBuildTable, strict: object, structure: PortableStructure, at?: readonly [holder: number, key: string]): unknown`:
-  1. Pick the path's arm. A `$value` takes the arm whose `scalar` is its type (Task 5). Otherwise, with `at`, only arms whose `holders` include `at`, or that have no holders, are candidates, and the `when` tests decide among them.
-  2. Build each member through its steps, recursing with `at` set to the member's last step.
-  3. Apply presets and flag steps.
-  4. Call the arm's strict builder once.
+- Modify: `packages/types/src/portable.ts` and the emitter, so the table says where each value sits and how each builder is called (landed in (c)):
+  - `PortableMemberStep` gains `seats` and loses `leaf`. A `PortableSeat` is `{ at, kinds?, leaf?, within?, many? }`: the holder kind and key the value is picked at, the kinds a value there has (only where the member has more than one seat), the leaf builder text goes through, and the containers the build wraps the value in, outermost first. A container (`PortableContainer { builder?, key, optional?, mounted? }`) is a kind with no read entry that the reader unwraps (`routes.containers`, which gains the element `slot`). A member's kinds for the pick are its seats' kinds, so step 6 of the pick reads through containers.
+  - A form's builder path is its holder's mount: the sub-factory that builds the holder with the form seated in its slot. A step, container, preset or arm whose builder is a mount carries `mounted: PortableMount`, the mount's call: `none`, `holder`, `child`, `merge`, `keyed` or `keyedArgs`. `keyed` and `keyedArgs` (a `PortableKeyedMount`) also carry the `key` that takes the seated kind's input and that kind's call shape (`seats`). The call comes from `mountCallOf`, the classifier `polymorphs.ts` emits the combinator from; the node model's seat stamps it (`call`), with its nested sub-factories' calls (`nested`).
+  - A nested combinator under a keyed mount (`exportStatementDefaultDeclaration.defaultKw.value`) takes its holder's input, so its record carries that call as `outer`, nearest holder first.
+  - Each builder key is registered with one call shape. Codegen refuses a second.
+- Create: `packages/common/src/portable/build.ts`, with `portableBuilder(context: PortableBuildContext): (structure: PortableStructure) => unknown`, where `PortableBuildContext` is `{ language, table, builders, kindName, readsAs }`:
+  1. Pick the path's arm. A `$value` takes the arm whose `scalar` is its type (Task 5). Otherwise, under a holder, only arms with a seat there (`holders` include it, and the seat's `kinds` include the arm's kind) are candidates. At the root, only arms with no holders are, and the `when` tests decide among them.
+  2. Apply presets and flag steps, then place each member along its steps. A member with several routes takes the one that reaches furthest into what the presets and earlier members built, then the one its value's shape fits. A value is wrapped in its seat's containers. An empty list leaves out the first optional step, then the first optional container.
+  3. Mounts: a step's mount builds its frame's holder. A `keyed` mount's seated input is a sub-frame shaped by `seats`, and `outer` walks up to the frame that is built.
+  4. Call each frame's builder once, from the innermost out.
   - A template arm builds its member's text from its holes. A claim's fixed text is already a preset.
   - A built node must pass the path's read tests, which carry the claim's other predicates (a pattern, a kind test). The build reads the node back through the path's guard and refuses a node that doesn't read as its path.
   - **Whole-text tests (brainstorm, 2026-10-27):** a test on a built composite's whole text (rust's `b"…"` for `literal.string.bytes`) reads the node's rendered text. That's one native render call, made only for those tests. The round-trip lane (Task 6) checks it against the parsed read.
@@ -272,11 +278,11 @@
   It throws for a language with no bindings, as `assemblePortableEngine` does.
 - **Constraint (brainstorm, 2026-10-27):** the portable build builds through a storage and construction the caller chose (shared arena, ruling 15), never ones locked to the defaults. It builds through the caller's engine. When `build` is exported on the portable engine, that engine either takes `NodeStorageOptions` itself or builds through a language engine the caller made.
 - Modify: `packages/common/src/engine-boundary.ts` (export `portableRuntime`, `PortableRuntime`).
-- Test: `packages/rust/tests/portable-build.test.ts`, `packages/python/tests/portable-build.test.ts`.
+- Test: `packages/rust/tests/portable-build.test.ts`, `packages/python/tests/portable-build.test.ts`, `packages/typescript/tests/portable-build.test.ts`; the seats and mounts in `packages/common/tests/portable-build-table.test.ts`.
 
 **Interfaces:**
 - Consumes: `PortableBuildTable`, `hooks.portableBuild`, the strict table.
-- Produces: `portableRuntime`, `PortableRuntime { engine; is; build(structure: PortableStructure): unknown }`, `buildPortable`.
+- Produces: `portableRuntime`, `PortableRuntime { engine; is; build(structure: PortableStructure): unknown }`, `portableBuilder`.
 
 - [ ] **Step 1:** Write the failing tests. Each renders through `runtime.engine.render`:
   - `{ $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } }` renders `fn f() {}`;
@@ -287,11 +293,16 @@
   - `{ $path: 'identifier.qualified', ... }` at the root throws an error naming `identifier.qualified` and its holders; the same structure in a type slot builds `scoped_type_identifier` (Review Focus 2);
   - `{ $path: 'declaration.class', ... }` on rust throws naming the path and `rust` (Review Focus 1);
   - `$flags: ['static']` on `declaration.function` throws naming the flag and `function_item`;
-  - python: `{ $path: 'declaration.function', name: 'f', parameters: [], body: [...] }` renders `def f():` and its body.
+  - python: `{ $path: 'declaration.function', name: 'f', parameters: [], body: [...] }` renders `def f():` and its body;
+  - one build per mount call the grammars use:
+    - `merge`: rust's `a..=b`;
+    - `keyed`: typescript's `a => x` and `a in b`, and python's `except E as e: pass`;
+    - `child`: rust's `pub(crate) fn f() {}`;
+    - nested under `keyed`: `export default x` and python's `except E, F: pass`.
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement.
-- [ ] **Step 4:** Rerun the tests, then the suite. Expected: PASS, with nothing regenerated.
-- [ ] **Step 5:** Pathspec commit.
+- [ ] **Step 4:** Regenerate. The combinators stay byte-identical, and the node models gain only the seat fields. Rerun the tests, then the suite. Expected: PASS.
+- [ ] **Step 5:** Pathspec commits: the table, then the runtime. Open PR (c).
 
 ### Task 5: The scalar adaptation
 
@@ -329,7 +340,7 @@ The rules:
 - [ ] **Step 2:** Run them. Expected: FAIL.
 - [ ] **Step 3:** Implement.
 - [ ] **Step 4:** Rerun the tests, then the suite. Expected: PASS.
-- [ ] **Step 5:** Pathspec commit. Open PR (c).
+- [ ] **Step 5:** Pathspec commit. Open PR (c2), stacked on (c).
 
 ### Task 6: The member reader and the round-trip lane
 
