@@ -252,14 +252,14 @@ impl RecordKey {
                 };
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
                 let place = place_of(view, record, &side)?;
-                Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: if at.site.is_some() { changed } else { side.changed } })
+                Ok(Self { tree: view.tree(), at: Some(record), side_at: Address(words[1]), place, changed: super::held_changed(at.site.is_some(), changed, &side) })
             }
             Cell::BuiltLeaf { kind, changed, .. } if claims(kind) => {
                 Ok(Self { tree: None, at: None, side_at: Address::NONE, place: super::built_leaf_place(at.site)?, changed })
             }
             Cell::CopiedLeaf { kind, record, .. } if claims(kind) => {
                 let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                Ok(Self { tree: None, at: Some(record), side_at: Address(words[1]), place: Place::Record(record).into(), changed: side.changed })
+                Ok(Self { tree: None, at: Some(record), side_at: Address(words[1]), place: super::copied_leaf_place(view, record, &side, at.site)?, changed: side.changed })
             }
             Cell::ParsedLeaf { kind, row: leaf, .. } if claims(kind) => {
                 let place = super::leaf_place(view, leaf, at.site)?;

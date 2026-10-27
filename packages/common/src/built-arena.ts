@@ -131,6 +131,7 @@ export type BuiltRow = {
 
 export interface BuiltViews {
 	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
+	readonly words: Readonly<Record<number, number>>;
 }
 
 export class BuiltArena {
@@ -194,7 +195,11 @@ export class BuiltArena {
 		return { data, base: word, at: addressOf(chunk, word, this.format), words: size };
 	}
 
-	record(kind: number, words: number): BuiltDraft {
+	record(kind: number): BuiltDraft {
+		return this.draft(kind, this.#widthOf(kind));
+	}
+
+	draft(kind: number, words: number): BuiltDraft {
 		if (this.#drafted + words > this.#drafts.length) {
 			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
 			this.#drafted = 0;
@@ -334,6 +339,56 @@ export class BuiltArena {
 		const stub = recordStub(held.tree, at);
 		holdReadTree(stub, held.token);
 		return wrapRegistered(stub, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, decodeIndex(stub.$_layout.at.$treeHandle), at));
+	}
+
+	#widthOf(kind: number): number {
+		const words = this.#views.words[kind];
+		if (words === undefined) throw new Error(`no builder writes records of kind ${kind}, so the arena has no width for one`);
+		return words;
+	}
+
+	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }): object {
+		const at = builtRecordOf(node, this);
+		if (at === undefined) throw new Error('only a record this arena built is rebuilt from a parsed node');
+		this.hold(tree, token);
+		const head = wordOf(at, this.format);
+		const header = this.words(at, 2);
+		const words = this.#widthOf(header[head]!);
+		const side = this.#sidesNaming(header[head + 1]!, [tree.id, index, end, span.start, span.end]);
+		const place = this.#place(words);
+		place.data.set(this.words(at, words).subarray(head, head + words), place.base);
+		place.data[place.base + 1] = side;
+		const seeds = (node as { readonly [SEEDS]?: SeededSlots })[SEEDS];
+		for (const [word, seed] of Object.entries(seeds ?? {})) {
+			const items: readonly unknown[] = Array.isArray(seed) ? seed : [seed];
+			for (let item = 0; item < items.length; item++) {
+				const leaf = items[item];
+				if (typeof leaf === 'object' && leaf !== null && builtRefOf(leaf)?.text !== undefined) this.#site(leaf, place.at, Number(word), item);
+			}
+		}
+		return this.#view(place.at, seeds);
+	}
+
+	#sidesNaming(side: number, sides: readonly number[]): number {
+		const { sideBeforeDelimiter, sideSides, sideDelimiter, sideSeparatorKind } = this.format;
+		if (side === 0) return this.push([sideSides.bit, ...sides]);
+		const start = wordOf(side, this.format);
+		const mask = this.words(side, 1)[start]!;
+		const known = sideBeforeDelimiter.reduce((bits, field) => bits | field.bit, sideDelimiter | sideSeparatorKind);
+		if ((mask & ~known) !== 0) throw new Error(`a built record's side record holds fields ${mask & ~known} no builder writes`);
+		let length = 1 + ((mask & sideDelimiter) === 0 ? 0 : 1) + ((mask & sideSeparatorKind) === 0 ? 0 : 1);
+		let offset = 1;
+		let before = true;
+		for (const field of sideBeforeDelimiter) {
+			if (field.bit === sideSides.bit) before = false;
+			if ((mask & field.bit) === 0) continue;
+			length += field.words;
+			if (before) offset += field.words;
+		}
+		const words = Array.from(this.words(side, length).subarray(start, start + length));
+		words.splice(offset, (mask & sideSides.bit) === 0 ? 0 : sideSides.words, ...sides);
+		words[0] = mask | sideSides.bit;
+		return this.push(words);
 	}
 
 	parsedLeaf(kind: number, tree: number, index: number, end: number, span: { readonly start: number; readonly end: number }): number {

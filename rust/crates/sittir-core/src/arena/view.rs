@@ -479,6 +479,33 @@ pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<Pr
     }
 }
 
+/// The place of the copied leaf whose record is `record`, of side record
+/// `side`, held at `site`: its holder's content when the holder was rebuilt
+/// from the row the leaf names, since an envelope and its content share one
+/// row and the row's sides are the envelope's; else its record.
+///
+/// # Errors
+///
+/// What reading the holder's header and side record refuses.
+pub fn copied_leaf_place<T>(ctx: RecordCtx<'_, T>, record: Address, side: &super::SideRecord, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
+    let own: PrepPlace = Place::Record(record).into();
+    let (Some(leaf), Some(Site { holder: PrepPlace::Stored(holder @ Place::Record(at)), word, item })) = (side.sides, site) else { return Ok(own) };
+    let header = ctx.words(at, crate::record::HEADER_WORDS)?;
+    let rebuilt_from = if header[1] == Address::NONE.0 { None } else { super::SideRecord::read(ctx.arena, Address(header[1]))?.sides };
+    Ok(match rebuilt_from {
+        Some(from) if from.tree == leaf.tree && from.index == leaf.index => PrepPlace::Content(Site { holder, word, item }),
+        _ => own,
+    })
+}
+
+/// The edges whose neighbour changed for a record a cell holds: the ones
+/// its holder's cell marks, at a site; as a render root, the ones the render
+/// call marks with the ones its side record keeps.
+#[must_use]
+pub fn held_changed(site: bool, cell: ChangedEdges, side: &super::SideRecord) -> ChangedEdges {
+    if site { cell } else { cell.or(side.changed) }
+}
+
 /// The place of a built leaf held at `site`: its site in its holder's
 /// record, or, for a root, which has no site, `Place::ROOT_LEAF`, whose sides
 /// the render is given.

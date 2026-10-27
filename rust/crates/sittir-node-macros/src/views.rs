@@ -243,7 +243,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     }
                     ::sittir_core::arena::Cell::CopiedLeaf { kind, text, record } if #claims => {
                         let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;
-                        let place = ::sittir_core::arena::place_of(ctx, record, &side)?;
+                        let place = ::sittir_core::arena::copied_leaf_place(ctx, record, &side, site)?;
                         ::core::result::Result::Ok(Self {
                             __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), side.changed, side.sides),
                             #text: ctx.string(text)?,
@@ -277,7 +277,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                 };
                 let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, kind)?;
                 let place = ::sittir_core::arena::place_of(ctx, at, &side)?;
-                let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), if site.is_some() { held } else { side.changed }, side.sides);
+                let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);
                 ::core::result::Result::Ok(Self {
                     __layout: layout,
                     #words_init
@@ -509,7 +509,7 @@ mod tests {
         assert!(has(&out, "fn claims(kind: ::sittir_core::types::KindId) -> bool { (kind == kind::BLOCK) }"));
         assert!(has(&out, "let (words, side) = ::sittir_core::arena::record_of(ctx, at, 12u32, kind)?;"));
         assert!(has(&out, "match link { ::core::option::Option::Some(tree) => ctx.linked(tree)?, ::core::option::Option::None => ctx, }, at, changed,"));
-        assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), if site.is_some() { held } else { side.changed }, side.sides);"));
+        assert!(has(&out, "let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);"));
         assert!(has(&out, "__layout: layout, __words: words,"));
         assert!(has(&out, "r#async: (words[2usize] >> 3u32) & 1 != 0,"));
         assert!(has(&out, "statements: ::sittir_core::arena::RecordItems::of(ctx, place, 8u32, 5u32, &words[8usize..10usize])?,"));

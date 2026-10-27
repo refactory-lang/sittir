@@ -255,7 +255,9 @@ renderRecord(treeId: number, address: number, leading: boolean, trailing: boolea
  * r" The built record at `address` of the built arena `owner`
  * r" holds (`holdBuiltArena`) rendered as a render root whose
  * r" `leading` and `trailing` edges have no neighbour, under
- * r" `options` over this engine's, with the sides `owner` holds:
+ * r" `options` over the layer of the tree `treeId` names, the
+ * r" tree the root was rebuilt from, over this engine's, with
+ * r" the sides `owner` holds:
  * r" the engine that built the arena, which its records' side
  * r" writes went to. The arena's chunks are borrowed for this
  * r" call; the records the root reaches are admitted, and the
@@ -265,7 +267,7 @@ renderRecord(treeId: number, address: number, leading: boolean, trailing: boolea
  * r" a linked tree that is not live, and a record whose render
  * r" refuses.
  */
-renderBuilt(owner: SittirEngine, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+renderBuilt(owner: SittirEngine, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null): string
 /**
  * r" The lone built leaf of `kind` whose text the built arena
  * r" `owner` holds at `text`, rendered as a render root whose
