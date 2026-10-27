@@ -39,6 +39,7 @@ export const hooks: LanguageHooks<TypescriptAPI> = Object.freeze<LanguageHooks<T
 		default: () => import('./ir.js').then((m) => m.ir),
 		strict: () => import('./ir-strict.js').then((m) => m.ir)
 	}),
+	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({
 		...triviaFacts,
 		comment: coerceToCommentLine,

@@ -1,13 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { useRecordConstruction } from '@sittir/common/engine';
 import typescript from '../src/index.ts';
 
 const object = await createEngine(typescript, { nodeStorage: 'object' });
-const arenaObjects = await createEngine(typescript, { nodeStorage: 'arena' });
-const arenaRecords = await createEngine(typescript, { nodeStorage: 'arena' });
+const arenaObjects = await createEngine(typescript, { nodeConstruction: 'object' });
+const arenaRecords = await createEngine(typescript);
 type Engine = typeof object;
-useRecordConstruction(arenaRecords, await import('../src/factories/records.ts'));
 
 const engines: readonly (readonly [string, Engine])[] = [
 	['object storage', object],

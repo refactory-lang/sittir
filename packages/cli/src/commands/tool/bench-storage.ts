@@ -14,8 +14,8 @@ export const benchStorage: CommandModule = {
 			.option('--validation', 'Profile deep read, factory and IR render/parse validators with object and arena storage')
 			.option(
 				'--construction <construction>',
-				"How the arena arm's builders construct nodes in validation profiles: as objects (objects), or as records (records)",
-				'objects'
+				"How the arena arm's builders construct nodes in validation profiles: as objects (object), or as records (record)",
+				'object'
 			)
 			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
 			.option('--output <path>', 'Write the complete JSON report to this file')

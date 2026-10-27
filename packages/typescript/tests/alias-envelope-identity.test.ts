@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { writeUnitSides } from '@sittir/common/utils';
 import { structureOf } from '../../../examples/helpers.ts';
-import arena from '../src/arena.ts';
 import typescript from '../src/index.ts';
 
-const ts = await createEngine(typescript);
+const ts = await createEngine(typescript, { nodeStorage: 'object' });
 
 type Node = { readonly $type: number; readonly _content?: unknown };
 type Pair = Node & { key(): Node };
@@ -85,8 +83,7 @@ describe('edits on a flat alias display', () => {
 	});
 
 	it.each(['objects', 'arena objects', 'records'] as const)('%s: a built display keeps the sides written on its unit', async (construction) => {
-		const engine = construction === 'objects' ? await createEngine(typescript) : await arena.createEngine();
-		if (construction === 'records') useRecordConstruction(engine, await import('../src/factories/records.ts'));
+		const engine = await createEngine(typescript, construction === 'objects' ? { nodeStorage: 'object' } : construction === 'arena objects' ? { nodeConstruction: 'object' } : {});
 		try {
 			const declaration = engine.parse('interface A { x: number }\n').statements()[0];
 			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))

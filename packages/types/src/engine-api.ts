@@ -190,13 +190,35 @@ export interface Language<API extends LanguageAPI> {
 	): Promise<Engine<API, M>>;
 }
 
-/** How a parsed tree's nodes cross from the native engine: as objects, or as records read in place (`EngineOptions.nodeStorage`). */
-export type NodeStorage = 'object' | 'arena';
+/** Where a parsed tree's nodes live: as records read in place in the tree's native arena, or as objects (`EngineOptions.nodeStorage`). */
+export type NodeStorage = 'arena' | 'object';
 
-export interface NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> {
-	readonly options?: O;
+/** How an engine's builders store a built node: as an immutable record in the engine's built arena, or as an object (`EngineOptions.nodeConstruction`). */
+export type NodeConstruction = 'record' | 'object';
+
+interface NodeStorageKeys {
+	/**
+	 * Where a parsed tree's nodes live. `'arena'` (the default) reads each node as a view over its record in the tree's
+	 * native arena: its accessors read the record's cells, and a node's text is one native call when read. `'object'` reads
+	 * each node as an object. Both give the same nodes, kinds and text.
+	 *
+	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
+	 */
 	readonly nodeStorage?: NodeStorage;
+	/**
+	 * How the engine's builders store a built node. `'record'`, the default under arena storage, writes an immutable record
+	 * into the engine's built arena; `'object'` keeps the node's fields on its object. `'record'` needs `nodeStorage: 'arena'`,
+	 * and the engine throws when it is given with `nodeStorage: 'object'`.
+	 */
+	readonly nodeConstruction?: NodeConstruction;
 }
+
+/** An engine's node storage and construction. Records live in the arena, so object storage with record construction does not compile. */
+export type NodeStorageOptions =
+	| (NodeStorageKeys & { readonly nodeStorage?: 'arena' })
+	| (NodeStorageKeys & { readonly nodeStorage: 'object'; readonly nodeConstruction?: 'object' });
+
+export type NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> = { readonly options?: O } & NodeStorageOptions;
 
 /** The structure facts the generated types prove for one kind's built nodes, by slot storage key. An engine constructed with `verifyStructure: 'runtime'` checks them when a node is built or rebuilt. */
 export interface StructureRow {
@@ -229,6 +251,8 @@ export interface LanguageHooks<API extends LanguageAPI> {
 	readonly renderModuleHash: string;
 	/** Loads each builder table, by the engine mode that builds with it, so an engine loads only its own. */
 	readonly tables: { readonly [M in BuilderMode]: () => Promise<API['build'][M]> };
+	/** Loads the record builders, which an engine with record construction builds through. */
+	readonly records: () => Promise<object>;
 	readonly trivia: TriviaFacts<API['kindId']>;
 	readonly querySlots: QuerySlots;
 	readonly queryFlags?: QueryFlags;
@@ -438,7 +462,7 @@ export interface PortableEngine<API extends PortableLanguageAPI> extends EngineI
 export type ApiSelection<M extends ApiSurface> = { readonly api?: M | undefined } & (M extends 'default' ? unknown : { readonly api: NoInfer<M> });
 
 /** An engine's options. `api` picks the engine's mode, and options of a mode other than the default carry it. */
-export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> & EngineSettings<API>;
+export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> & EngineSettings<API> & NodeStorageOptions;
 
 /** The options every engine mode takes alike. */
 export interface EngineSettings<API extends LanguageAPI> {
@@ -451,14 +475,6 @@ export interface EngineSettings<API extends LanguageAPI> {
 	 * checks and read checks run in both modes.
 	 */
 	readonly verifyStructure?: 'compileTimeOnly' | 'runtime';
-	/**
-	 * How a parsed tree's nodes cross from the native engine. `'object'` (the default) reads each node as an object.
-	 * `'arena'` reads each node as a view over its record in the tree's native arena: its accessors read the record's
-	 * cells, and a node's text is one native call when read. Both give the same nodes, kinds and text.
-	 *
-	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
-	 */
-	readonly nodeStorage?: NodeStorage;
 }
 
 export interface Interceptor<API extends LanguageAPI> {

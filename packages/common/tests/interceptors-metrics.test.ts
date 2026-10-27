@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import rust, { type RustAPI } from '@sittir/rust';
-import type { Engine, Interceptor, Language } from '@sittir/types';
+import type { BuilderMode, CreateEngineOptions, Engine, Interceptor, Language } from '@sittir/types';
 import { createEngine } from '../src/create-engine.ts';
 
 const { recordFfi } = vi.hoisted(() => ({ recordFfi: vi.fn() }));
@@ -21,7 +21,7 @@ async function measuredEngine(render: NonNullable<Interceptor<RustAPI>['render']
 	const counts = { captured: 0, materialized: 0, released: 0 };
 	const language: Language<RustAPI> = {
 		...rust,
-		createEngine: (options) => createEngine(language, options),
+		createEngine: <const R extends RustAPI['options'], const M extends BuilderMode>(options?: CreateEngineOptions<RustAPI, R, M>) => createEngine<RustAPI, R, M>(language, options),
 		load: async () => ({
 			...hooks,
 			createNative(options) {
@@ -48,7 +48,7 @@ async function measuredEngine(render: NonNullable<Interceptor<RustAPI>['render']
 			}
 		})
 	};
-	const engine = await createEngine(language, { intercept: [{ render }] });
+	const engine = await createEngine(language, { nodeStorage: 'object', intercept: [{ render }] });
 	engines.push(engine);
 	return { engine, counts };
 }

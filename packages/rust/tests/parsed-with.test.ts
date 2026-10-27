@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { useRecordConstruction } from '@sittir/common/engine';
 import rust from '../src/index.ts';
 
 type Node = Record<string, unknown> & {
@@ -10,10 +9,9 @@ type Node = Record<string, unknown> & {
 };
 
 const object = await createEngine(rust, { nodeStorage: 'object' });
-const arenaObjects = await createEngine(rust, { nodeStorage: 'arena' });
-const arenaRecords = await createEngine(rust, { nodeStorage: 'arena' });
+const arenaObjects = await createEngine(rust, { nodeConstruction: 'object' });
+const arenaRecords = await createEngine(rust);
 type Engine = typeof object;
-useRecordConstruction(arenaRecords, await import('../src/factories/records.ts'));
 
 const constructions: readonly (readonly [string, Engine])[] = [
 	['object construction', arenaObjects],

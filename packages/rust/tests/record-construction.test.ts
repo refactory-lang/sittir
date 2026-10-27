@@ -1,12 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { recordOf } from '@sittir/common/utils';
-import arena from '../src/arena.ts';
 import rust from '../src/index.ts';
 
-const objects = await arena.createEngine();
-const records = await arena.createEngine();
-useRecordConstruction(records, await import('../src/factories/records.ts'));
+const objects = await rust.createEngine({ nodeConstruction: 'object' });
+const records = await rust.createEngine();
 
 type Built = Record<string, unknown> & { readonly $type: number };
 
@@ -245,7 +242,7 @@ describe('record construction', () => {
 	});
 
 	it('refuses a child of an engine that stores its nodes differently', async () => {
-		const plain = await rust.createEngine();
+		const plain = await rust.createEngine({ nodeStorage: 'object' });
 		expect(() => objects.build.expressionStatement(plain.build.identifier('x') as never)).toThrow(/storing nodes as object .* stores them as arena/);
 		expect(() => plain.build.expressionStatement(objects.build.identifier('x') as never)).toThrow(/storing nodes as arena .* stores them as object/);
 	});

@@ -1,10 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { useRecordConstruction } from '@sittir/common/engine';
-import arena from '../src/arena.ts';
+import typescript from '../src/index.ts';
 
-const objects = await arena.createEngine();
-const records = await arena.createEngine();
-useRecordConstruction(records, await import('../src/factories/records.ts'));
+const objects = await typescript.createEngine({ nodeConstruction: 'object' });
+const records = await typescript.createEngine();
 
 type List = Iterable<unknown> & { readonly separator?: number; readonly $with: { items(...items: unknown[]): List } };
 

@@ -1,12 +1,11 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
-import arena from '../src/arena.ts';
+import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
 
 function addon() {
@@ -42,11 +41,7 @@ const words = (...values: number[]) => new Uint32Array([0, ...values]);
 
 const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
 
-const recordEngine = async () => {
-	const engine = await arena.createEngine();
-	useRecordConstruction(engine, await import('../src/factories/records.ts'));
-	return engine;
-};
+const recordEngine = () => rust.createEngine();
 
 describe('a built arena rendered natively', () => {
 	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer, each when the render first reads it', () => {
@@ -131,7 +126,7 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it.each([
-		['objects', async () => arena.createEngine()],
+		['objects', async () => rust.createEngine({ nodeConstruction: 'object' })],
 		['records', recordEngine]
 	])('refuses at the render, as its trivia type names it, a node of a kind no side holds: %s', async (_, make) => {
 		const engine = await make();
@@ -145,7 +140,7 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it.each([
-		['objects', async () => arena.createEngine()],
+		['objects', async () => rust.createEngine({ nodeConstruction: 'object' })],
 		['records', recordEngine]
 	])('renders a node another engine of its language built with the sides that engine wrote, under its own options: %s', async (_, make) => {
 		const noted = (engine: Awaited<ReturnType<typeof make>>, name: string, note: string) => {
@@ -183,7 +178,7 @@ describe('a built arena rendered natively', () => {
 		};
 
 		it('renders where the side renders, on records as on objects', async () => {
-			const objects = await rendered(async () => arena.createEngine());
+			const objects = await rendered(async () => rust.createEngine({ nodeConstruction: 'object' }));
 			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* c */\n}\n', built: 'x; /* c */' });
 			expect(await rendered(recordEngine)).toEqual(objects);
 		});
@@ -204,7 +199,7 @@ describe('a built arena rendered natively', () => {
 
 		it('refuses in a side of an object node, whose engine builds no records', async () => {
 			const comment = (await recordEngine()).build.blockComment(' c ');
-			const objects = await arena.createEngine();
+			const objects = await rust.createEngine({ nodeConstruction: 'object' });
 			const statement = objects.build.expressionStatement(objects.build.identifier('x'));
 			expect(() => statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
 			expect(() => statementOf(objects).statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
@@ -240,8 +235,7 @@ describe('a built arena rendered natively', () => {
 	}, 60_000);
 
 	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
-		const records = await arena.createEngine();
-		useRecordConstruction(records, await import('../src/factories/records.ts'));
+		const records = await rust.createEngine();
 		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as { body(): unknown };
 		const b = records.build;
 		const fn = b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: parsed.body() as never });

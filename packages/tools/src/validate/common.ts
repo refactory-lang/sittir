@@ -22,7 +22,7 @@ import {
 	writtenSides,
 	type RefusedSlot
 } from '@sittir/common/utils';
-import { scopeBuilders, useRecordConstruction } from '@sittir/common/engine';
+import { nodeStorageOf, scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
@@ -50,7 +50,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeConstruction, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -208,32 +208,28 @@ export function validationStorage(): NodeStorage {
 	return validationNodeStorage;
 }
 
-export type Construction = 'objects' | 'records';
+const CONSTRUCTIONS: readonly NodeConstruction[] = ['object', 'record'];
 
-const CONSTRUCTIONS: readonly Construction[] = ['objects', 'records'];
-
-export function parseConstruction(value: string): Construction {
+export function parseConstruction(value: string): NodeConstruction {
 	const construction = CONSTRUCTIONS.find((known) => known === value);
 	if (construction === undefined) throw new Error(`construction '${value}' is none of ${CONSTRUCTIONS.join(', ')}`);
 	return construction;
 }
 
-let validationConstruction: Construction = 'objects';
+let validationConstruction: NodeConstruction = 'object';
 
-export function useValidationConstruction(construction: Construction): void {
+export function useValidationConstruction(construction: NodeConstruction): void {
 	if (construction === validationConstruction) return;
 	if (cachedNativeEngines.size > 0) {
 		throw new Error(`validation builds nodes as '${validationConstruction}' already; choose '${construction}' before the first engine loads`);
 	}
-	if (construction === 'records' && validationNodeStorage !== 'arena') {
-		throw new Error("record construction needs an engine reading trees as records: choose 'arena' node storage first");
-	}
+	nodeStorageOf({ nodeStorage: validationNodeStorage, nodeConstruction: construction });
 	validationConstruction = construction;
 }
 
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage });
-	if (validationConstruction === 'records') useRecordConstruction(engine, await requireGrammarModule(grammar, 'factories/records.ts'));
+	const storage = nodeStorageOf({ nodeStorage: validationNodeStorage, nodeConstruction: validationConstruction });
+	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', ...storage });
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
@@ -820,11 +816,11 @@ export function materializeBuildInput(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const data = materialize(root, accessorOf, onAccessorThrow);
-	return validationConstruction === 'records' ? holdingTreeOf(root, data) : data;
+	return validationConstruction === 'record' ? holdingTreeOf(root, data) : data;
 }
 
 export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
-	return validationConstruction === 'records' ? materialize(node, accessorOf) : node;
+	return validationConstruction === 'record' ? materialize(node, accessorOf) : node;
 }
 
 export function materializeDetached(

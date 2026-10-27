@@ -12,7 +12,7 @@ import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 import { structureOf } from '../../../examples/helpers.ts';
 
 useValidationNodeStorage('arena');
-useValidationConstruction('records');
+useValidationConstruction('record');
 
 type Setters = Readonly<Record<string, (...args: unknown[]) => unknown>>;
 

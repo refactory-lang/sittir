@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { sidesOf, treeOf } from '@sittir/common/utils';
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
 import python from '../../python/src/index.ts';
@@ -45,7 +44,6 @@ describe('a candidate rendered alone is its own span', () => {
 
 	it('is a built record itself, the outer sides a write gave it emptied, so it renders as its own span', async () => {
 		const arena = await createEngine(python, { nodeStorage: 'arena' });
-		useRecordConstruction(arena, await import('../../python/src/factories/records.ts'));
 		const b = arena.build;
 		const statement = b.expressionStatement(b.call({ function: b.identifier('foo'), arguments: b.argumentList() }));
 		statement.$trivia.leading(b.comment(' lead'));

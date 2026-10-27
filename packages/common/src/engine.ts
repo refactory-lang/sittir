@@ -21,6 +21,7 @@ import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts
 import { recordOf, recordStub } from './record-view.ts';
 import { readEntries, readUnits, type BuiltRecords, type BuiltText } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
+import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
 
 /** The options object a grammar package types as its `Options`. */
@@ -476,8 +477,9 @@ export function createNativeEngine<
 		return { engine: null, reason: status.reason ?? `active backend is '${status.name}', not 'native'` };
 	}
 
-	const cellFormat = options?.nodeStorage === 'arena' ? cellFormatOf(status.native) : undefined;
-	if (options?.nodeStorage === 'arena' && cellFormat === undefined) {
+	const { nodeStorage } = nodeStorageOf(options);
+	const cellFormat = nodeStorage === 'arena' ? cellFormatOf(status.native) : undefined;
+	if (nodeStorage === 'arena' && cellFormat === undefined) {
 		return { engine: null, reason: 'arena node storage needs an addon built with the `arena` feature' };
 	}
 

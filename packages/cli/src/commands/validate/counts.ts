@@ -19,8 +19,8 @@ export const counts: CommandModule = {
 				)
 			)
 			.addOption(
-				new Option('--construction <construction>', 'How builders construct nodes: as objects (objects), or as records (records, with --node-storage arena)').default(
-					'objects'
+				new Option('--construction <construction>', 'How builders construct nodes: as objects (object), or as records (record, with --node-storage arena)').default(
+					'object'
 				)
 			)
 			.addOption(

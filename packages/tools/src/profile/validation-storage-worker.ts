@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import type { GrammarName } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadNativeEngine, useValidationConstruction, useValidationNodeStorage, type Construction } from '../validate/common.ts';
+import { loadCorpusEntries, loadNativeEngine, useValidationConstruction, useValidationNodeStorage } from '../validate/common.ts';
+import type { NodeConstruction } from '@sittir/types';
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { RoundtripProfile } from '../validate/roundtrip-profile.ts';
@@ -18,7 +19,7 @@ import {
 export interface ValidationStorageOptions {
 	grammar: GrammarName;
 	storage: StorageMode;
-	construction: Construction;
+	construction: NodeConstruction;
 	warmup: number;
 	iterations: number;
 }

@@ -10,12 +10,10 @@
 // row, is kept: its kind and text, and the call's render.
 // A child process, because a collection can only be forced under `--expose-gc`.
 import { createEngine } from '../../src/index.ts';
-import { useRecordConstruction } from '../../src/engine-boundary.ts';
 import { builtRefOf } from '../../src/built-ref.ts';
 import { isNode, isParsedNode, nodeText, snapshotOf } from '../../src/utils.ts';
 import { structureOf } from '../../../../examples/helpers.ts';
-import arena, { type Engine } from '../../../rust/src/arena.ts';
-import rust from '../../../rust/src/index.ts';
+import rust, { type Engine } from '../../../rust/src/index.ts';
 
 if (typeof globalThis.gc !== 'function') throw new Error('run with --expose-gc');
 const collect = globalThis.gc;
@@ -28,11 +26,10 @@ async function settle(): Promise<void> {
 }
 
 async function engineOf(construction: string): Promise<Engine> {
-	if (construction === 'objects') return (await createEngine(rust)) as unknown as Engine;
-	const engine = await arena.createEngine();
-	if (construction === 'records') useRecordConstruction(engine, await import('../../../rust/src/factories/records.ts'));
-	else if (construction !== 'arena objects') throw new Error('name the construction: objects, arena objects or records');
-	return engine;
+	if (construction === 'objects') return (await createEngine(rust, { nodeStorage: 'object' })) as unknown as Engine;
+	if (construction === 'arena objects') return rust.createEngine({ nodeConstruction: 'object' });
+	if (construction === 'records') return rust.createEngine();
+	throw new Error('name the construction: objects, arena objects or records');
 }
 
 type Call = { function(): unknown; $with: { function(value: unknown): object }; $trivia: { trailing(...items: unknown[]): unknown } };
