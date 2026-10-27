@@ -4,6 +4,8 @@ The wiring plan's runtime bindings generator stage (`docs/superpowers/plans/2026
 
 Measured at `84097cd38` (master). `run.sh [checkout]` reruns it; `results/summary.txt` and `results/detail.txt` hold the output. It reads each grammar's generated rows (`packages/<g>/src/portable.ts`: `rows`, `queryFlags`, `querySlotFlags`), its routes (`node-model-portable.json5`), its low-level model (`node-model.json5`, for `variantOf`, model types and fixed text), the vocabulary through codegen's own reader (`readVocabulary`, `readVocabularySource`), `compositions.ts` and the shared path list.
 
+Rerun at `801aa76b7`, after the renames and the closure-parameter envelope; `results/` holds that run. Placed read entries are 0. The renames' merges raised the pick groups no member name tells apart (rust 19 → 22, python 3 → 10, typescript 11), most of them told apart by the slot that holds them (`identifier.qualified`, python's `pattern.rest` and `pattern.tuple.bare`, rust's `clause.case.match`). Python's `pattern.list` and `pattern.tuple` rows name the hidden `_simple_pattern`, the base of the `case_list_pattern` and `case_tuple_pattern` forms that the script counts by their base. The tables below are the first run's.
+
 ## 1. What has shipped
 
 | piece | state |

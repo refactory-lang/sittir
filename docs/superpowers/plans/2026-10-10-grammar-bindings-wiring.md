@@ -155,6 +155,7 @@ The runtime bindings are what the portable engine runs, generated per grammar fr
 - no exclusions: the steps ship unnarrowed. Exclusions are each grammar's authored `exclusions:` block, never derived from its rule ([builder exclusions](../specs/2026-10-19-builder-exclusions-design.md)). When that primitive lands, the step types read its `exclusionGroups` stamps, and the runtime check is the grammar builder's own `excludedBy`, which the portable build reaches by building through the grammar's builders;
 - the flags runtime object, `Flags`, which `bindings-inventory --write` writes into `packages/common/src/portable/flags.ts`, beside the vocabulary path list, so `@sittir/types` stays type-only. It is never emitted here; its member names are spelled through `tsname`, so the two agree by construction.
 
+- **Tasks:** `docs/superpowers/plans/2026-10-27-runtime-bindings.md`, five PRs.
 - **Census:** taken (`docs/superpowers/probes/2026-10-25-runtime-bindings-census/`): per grammar, the build, `is` and `kinds` entries and the flags each guard tests, compared with the routes.
 - **Gate:** the vocabulary-typed module's type-check ratchet (per-grammar error count) only falls, every generated guard agrees with the routes' read tests on the existing `is` tests, and the portable round-trip lane's row is recorded as its baseline.
 
