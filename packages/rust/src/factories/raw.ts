@@ -5437,7 +5437,7 @@ export function buildClosureParameters(
 	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
 		[
 			[
-				332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
 				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 			],
 			(v: unknown) => buildClosureParameter(v as never)

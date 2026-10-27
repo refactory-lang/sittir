@@ -580,13 +580,20 @@ function containerFact(
 	};
 }
 
-function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
+function directivesOf(predicates: readonly Predicate.Parsed[]): ReadonlyMap<string, string | true> {
+	const out = new Map<string, string | true>();
 	for (const predicate of predicates) {
 		if (leafText(predicate.name()) !== 'set' || predicate.type() !== K.Bang) continue;
 		const [key, value] = predicate.parameters()?.elements() ?? [];
-		if (key?.$type === K.Identifier && leafText(key) === 'reason' && value?.$type === K.String) return stringValue(value);
+		if (key?.$type !== K.Identifier || out.has(leafText(key))) continue;
+		out.set(leafText(key), value?.$type === K.String ? stringValue(value) : value?.$type === K.Identifier ? leafText(value) : true);
 	}
-	return null;
+	return out;
+}
+
+function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
+	const reason = directivesOf(predicates).get('reason');
+	return typeof reason === 'string' ? reason : null;
 }
 
 function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin: PatternOrigin): void {
@@ -625,7 +632,10 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			if (!inClaimPosition(name, v === top) || !isClaim(name, v === top)) continue;
 			refuseAnchoredPlacement(v, name, origin);
 			(claimed.get(v) ?? claimed.set(v, []).get(v))?.push(facts.claims.length);
-			facts.claims.push(claimFact(v, name, top, nodes, claimPredicates, origin));
+			const claim = claimFact(v, name, top, nodes, claimPredicates, origin);
+			const declared = atTop(v, top) ? directivesOf(predicates).get('default') : undefined;
+			const named = declared === true ? claim.kind : declared;
+			facts.claims.push(named === undefined || named === null ? claim : { ...claim, default: named });
 		}
 	}
 	for (const v of nodes) {

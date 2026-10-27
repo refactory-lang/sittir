@@ -6231,6 +6231,16 @@
           }
         ]
       },
+      "static": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "static",
+            "named": false
+          }
+        ]
+      },
       "type": {
         "multiple": false,
         "required": true,

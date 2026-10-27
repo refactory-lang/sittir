@@ -342,7 +342,7 @@
 (yield_expression) @expression.yield
 (yield_expression_delegate (_) @expression) @expression.yield.delegate
 (template_substitution) @expression.interpolation
-(parenthesized_expression (_) @expression) @expression.parenthesized
+((parenthesized_expression (_) @expression) @expression.parenthesized (#set! default parenthesized_expression_sequence))
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.array
@@ -415,7 +415,7 @@
 (string_fragment) @literal.string.text
 (template_string) @literal.string.template
 (regex) @literal.regex
-(number) @literal.number
+((number) @literal.number (#set! default number_float_point))
 (literal_type_negative_number argument: (_) @value) @literal.number.negative
 (number_decimal) @literal.number.integer
 (number_hex) @literal.number.integer.hex

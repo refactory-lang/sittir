@@ -42,6 +42,76 @@ export interface PortableRows {
 	readonly flags: QueryFlags;
 }
 
+/** How a strict builder takes its input: a config object (`config`), one value (`direct`, `forwarded`), its elements as arguments (`spread`, `elements`), its text (`text`, `placed`), or nothing (`constant`). */
+export type PortableCallShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded' | 'placed';
+
+/** One step from a holder toward a member's slot: the config key it fills, and the builder of the kind the next step sits in, absent when that kind has no builder and its config fills the key as is. */
+export interface PortableSlotStep {
+	readonly key: string;
+	readonly builder?: string;
+}
+
+/** A member of a build arm: the steps to its slot, whether the slot holds a list, and the builder a member given as text builds through. */
+export interface PortableMemberStep {
+	readonly name: string;
+	readonly steps: readonly PortableSlotStep[];
+	readonly multiple: boolean;
+	readonly leaf?: string;
+}
+
+/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
+export interface PortablePreset {
+	readonly steps: readonly PortableSlotStep[];
+	readonly kind?: number;
+	readonly text?: string;
+	readonly builder?: string;
+}
+
+/** What setting a flag adds to a build. */
+export interface PortableFlagStep {
+	readonly presets: readonly PortablePreset[];
+}
+
+/** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
+export type PortablePickTest =
+	| { readonly absent: readonly string[]; readonly required: readonly string[] }
+	| { readonly flag: string; readonly set: boolean }
+	| { readonly member: string; readonly kinds: readonly number[] }
+	| { readonly text: string }
+	| { readonly variant: string; readonly value: number; readonly default?: true };
+
+/**
+ * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
+ * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
+ * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type. A `template`
+ * spells its member from the named holes. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
+ * holds) are the path's read tests, which a built node must pass.
+ */
+export interface PortableBuildArm {
+	readonly kind: number;
+	readonly builder?: string;
+	readonly seated?: PortableCallShape;
+	readonly scalar?: 'integer' | 'float';
+	readonly when: readonly PortablePickTest[];
+	readonly holders?: readonly (readonly [holder: number, key: string])[];
+	readonly members: readonly PortableMemberStep[];
+	readonly presets: readonly PortablePreset[];
+	readonly flags: Readonly<Record<string, PortableFlagStep>>;
+	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
+}
+
+/** A vocabulary path's build arms, tried in order; a path with `root` false builds only inside a holder slot its arms name. */
+export interface PortableBuildPath {
+	readonly root: boolean;
+	readonly arms: readonly PortableBuildArm[];
+}
+
+/** A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, and each vocabulary path's arms. */
+export interface PortableBuildTable {
+	readonly builders: Readonly<Record<string, PortableCallShape>>;
+	readonly paths: Readonly<Record<string, PortableBuildPath>>;
+}
+
 /**
  * Whether `value` reads as a vocabulary path or one under it, narrowing it to the grammar kinds read there.
  *

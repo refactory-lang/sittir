@@ -6,6 +6,7 @@ import { grammarNodeTypeName } from '../../../grammars.ts';
 import { valueParseKindsOf } from '../../../compiler/model/node-map.ts';
 import { isSlotBearingCompound } from '../../shared.ts';
 import { membershipKindsOf } from '../../membership.ts';
+import { emitPortableBuild, type PickDiagnostic } from './build.ts';
 import { flagPlansOf, slotFlagsOf } from './flags.ts';
 import { emitPortableNodeModel } from './node-model.ts';
 import { presenceKeywordOf, readTestOf, slotSubjectOf } from './read-tests.ts';
@@ -14,6 +15,8 @@ import { emitPortableSurface } from './surface.ts';
 export interface PortableOutputs {
 	readonly nodeModel: string;
 	readonly surface: string;
+	readonly build: string;
+	readonly pickDiagnostics: readonly PickDiagnostic[];
 }
 
 export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): PortableOutputs {
@@ -61,7 +64,10 @@ export function emitPortable(input: GrammarInput, nodeMap: NodeMap, kindEntries:
 		});
 		return isSlotBearingCompound(node) && readable.length > 0 ? [[node.typeName, readable] as const] : [];
 	});
+	const build = emitPortableBuild({ routes, model: input.model, nodeMap, kindEntries, flagPlans: plansByKind });
 	return {
+		build: build.source,
+		pickDiagnostics: build.diagnostics,
 		nodeModel: emitPortableNodeModel(routes, readTest),
 		surface: emitPortableSurface({
 			nodeType: grammarNodeTypeName(nodeMap.name),

@@ -6543,7 +6543,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "static_keyword_before"
+			"field": "static_before"
 		},
 		{
 			"kind": "text",
@@ -6551,7 +6551,7 @@
 		},
 		{
 			"kind": "seam",
-			"field": "static_keyword_after"
+			"field": "static_after"
 		},
 		{
 			"kind": "if",

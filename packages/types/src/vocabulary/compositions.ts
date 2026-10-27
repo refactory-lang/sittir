@@ -65,6 +65,7 @@ import type {
 	ScopedVisibility,
 	SingleInheritance,
 	SliceExpressions,
+	StaticStorage,
 	StringInterpolation,
 	StructuralConformance,
 	Structs,
@@ -173,6 +174,7 @@ export interface RustFeatures
 		ForeignFunctionInterface,
 		UnsafeCode,
 		CompileTimeEvaluation,
+		StaticStorage,
 		Tuples,
 		RangeExpressions {}
 

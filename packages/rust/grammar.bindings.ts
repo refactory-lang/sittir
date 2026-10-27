@@ -3,7 +3,7 @@
 import sittir from './grammar.sittir.ts';
 import { alias, enrich, field, lead, match, wire } from '../codegen/src/dsl/dsl-authoring.ts';
 
-export const hash = "92f0f3e20d651954640c7ea4f58fa285a0a42093180754f5dbf10029c13e1601";
+export const hash = "70fea70feae6cb7d168ec7df84be9a02b336595feea346159f00d3f14c9fe498";
 
 export const renames = {
 	source_file: "file",
@@ -25,6 +25,9 @@ export const renames = {
 	const_item: "constant_declaration",
 	let_declaration: "variable_declaration",
 	macro_definition: "macro_declaration",
+	macro_definition_paren: "paren_macro_declaration",
+	macro_definition_bracket: "bracket_macro_declaration",
+	macro_definition_brace: "brace_macro_declaration",
 	parameter: "parameter_declaration",
 	self_parameter: "receiver_parameter_declaration",
 	variadic_parameter: "variadic_parameter_declaration",
@@ -58,8 +61,17 @@ export const renames = {
 	base_field_initializer: "base_struct_element",
 	type_binding: "type_binding_element",
 	token_tree: "token_tree_macro_element",
+	token_tree_paren: "paren_token_tree_macro_element",
+	token_tree_bracket: "bracket_token_tree_macro_element",
+	token_tree_brace: "brace_token_tree_macro_element",
 	delim_token_tree: "delimited_token_tree_macro_element",
+	delim_token_tree_paren: "paren_delimited_token_tree_macro_element",
+	delim_token_tree_bracket: "bracket_delimited_token_tree_macro_element",
+	delim_token_tree_brace: "brace_delimited_token_tree_macro_element",
 	token_tree_pattern: "pattern_token_tree_macro_element",
+	token_tree_pattern_paren: "paren_pattern_token_tree_macro_element",
+	token_tree_pattern_bracket: "bracket_pattern_token_tree_macro_element",
+	token_tree_pattern_brace: "brace_pattern_token_tree_macro_element",
 	token_binding_pattern: "token_binding_macro_element",
 	token_repetition: "token_repetition_macro_element",
 	token_repetition_pattern: "pattern_token_repetition_macro_element",
@@ -156,7 +168,7 @@ export default grammar(
 			scoped_type_identifier_in_expression_position: { "0": field("qualifier") },
 			shorthand_field_initializer: { "1": field("field") },
 			slice_pattern: { "1/0": field("elements") },
-			static_item: { "2/0": field("by_reference") },
+			static_item: { "1": field("static"), "2/0": field("by_reference") },
 			struct_expression: { "0/0/1": alias("qualified_identifier") },
 			struct_item_brace: { "4/0/0": field("where_clause") },
 			struct_item_tuple: { "4/1/0": field("where_clause") },

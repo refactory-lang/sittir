@@ -1610,13 +1610,13 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	263, 481, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
-	66, 67, 68, 69, 70, 71, 72, 73, 74, 75
+	263, 481, 255, 252, 127, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 58, 59, 60, 61, 62, 63, 64,
+	65, 66, 67, 68, 69, 70, 71, 72, 73, 74
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
 const _supertype_expression_ids = new Set<number>([
-	263, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 117,
-	118, 141, 142, 143, 144, 162, 1, 125, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 128, 369, 370, 279, 282,
+	263, 267, 371, 372, 373, 374, 268, 270, 271, 272, 273, 276, 274, 275, 332, 333, 147, 148, 149, 150, 145, 146, 116,
+	117, 141, 142, 143, 144, 162, 1, 124, 245, 307, 308, 366, 367, 280, 259, 281, 304, 305, 306, 127, 369, 370, 279, 282,
 	309, 310, 311, 312, 313, 287, 292, 297, 298, 299, 300, 390, 391, 392, 393
 ]);
 const _supertype_delimTokenTree_ids = new Set<number>([411, 412, 413]);
@@ -1626,17 +1626,17 @@ const _supertype_arrayExpression_ids = new Set<number>([366, 367]);
 const _supertype_matchArm_ids = new Set<number>([397, 398]);
 const _supertype_closureExpression_ids = new Set<number>([369, 370]);
 const _supertype_pattern_ids = new Set<number>([
-	263, 332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 315, 316, 318, 319, 324, 317,
+	263, 332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330, 1, 315, 316, 318, 319, 324, 317,
 	325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
 ]);
 const _supertype_fieldPattern_ids = new Set<number>([414, 415]);
 const _supertype_rangePattern_ids = new Set<number>([422, 419]);
 const _supertype_orPattern_ids = new Set<number>([386, 387]);
 const _supertype_literal_ids = new Set<number>([
-	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162
+	332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162
 ]);
 const _supertype_literalPattern_ids = new Set<number>([
-	332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330
+	332, 333, 147, 148, 149, 150, 145, 146, 116, 117, 141, 142, 143, 144, 162, 330
 ]);
 const _supertype_integerLiteral_ids = new Set<number>([141, 142, 143, 144]);
 const _supertype_charLiteral_ids = new Set<number>([147, 148, 149, 150, 145, 146]);
@@ -1682,20 +1682,20 @@ const _members = new Map<number, ReadonlySet<number>>([
 	[TSKindId.EscapeSequence, _supertype_escapeSequence_ids],
 	[TSKindId.CharLiteralEscaped, _supertype_charLiteralEscaped_ids],
 	[TSKindId.FragmentSpecifier, new Set<number>([11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25])],
-	[TSKindId.BooleanLiteral, new Set<number>([117, 118])],
-	[TSKindId.PrimitiveType, new Set<number>([59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75])],
+	[TSKindId.BooleanLiteral, new Set<number>([116, 117])],
+	[TSKindId.PrimitiveType, new Set<number>([58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74])],
 	[
 		TSKindId.TokenTreePunctuation,
 		new Set<number>([
-			8, 76, 9, 87, 88, 80, 29, 55, 79, 77, 78, 85, 86, 89, 90, 91, 92, 93, 96, 94, 95, 97, 98, 38, 81, 82, 44, 43, 84,
-			83, 116, 136, 110, 101, 49, 137, 130, 2, 4, 47, 131, 3, 26, 10
+			8, 75, 9, 86, 87, 79, 29, 54, 78, 76, 77, 84, 85, 88, 89, 90, 91, 92, 95, 93, 94, 96, 97, 37, 80, 81, 43, 42, 83,
+			82, 115, 136, 109, 100, 48, 137, 130, 2, 4, 46, 131, 3, 26, 10
 		])
 	],
 	[
 		TSKindId.TokenKeywords,
 		new Set<number>([
-			50, 48, 113, 111, 108, 35, 109, 51, 33, 39, 42, 52, 102, 56, 45, 106, 104, 138, 139, 99, 36, 140, 41, 37, 32, 112,
-			46, 40, 105
+			49, 47, 112, 110, 107, 35, 108, 50, 33, 38, 41, 51, 101, 55, 44, 105, 103, 138, 139, 98, 128, 140, 40, 36, 32,
+			111, 45, 39, 104
 		])
 	]
 ]);

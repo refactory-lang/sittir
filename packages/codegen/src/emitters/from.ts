@@ -954,8 +954,7 @@ function defaultArmKindOf(
 	}
 	const supertypeDefaults = field.values.flatMap((v) => {
 		const node = isNodeRef(v) ? nodeMap.nodes.get(storageKindOfRef(v.node)) : undefined;
-		if (!(node instanceof AssembledSupertype) || node.optionDefaultArm === undefined) return [];
-		const chosen = node.variantSubtypes?.find((ref) => ref.variant === node.optionDefaultArm);
+		const chosen = node instanceof AssembledSupertype ? node.optionDefaultSubtype : undefined;
 		return chosen === undefined ? [] : [storageKindOfRef(chosen.node)];
 	});
 	if (supertypeDefaults.length === 1) return supertypeDefaults[0];
