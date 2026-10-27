@@ -148,16 +148,13 @@ export class BuiltArena {
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
 	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
-	readonly #escaped = new Map<number, WeakRef<object>>();
+	readonly #escaped = new Map<number, object>();
 	readonly #trees = new Map<number, { readonly tree: TreeHandle; readonly token: TreeToken }>();
 	readonly #sided = new Map<number, number>();
 	readonly #unitSided = new Set<number>();
 	readonly #leafSided = new Set<number>();
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
-	readonly #released = new FinalizationRegistry<number>((at) => {
-		if (this.#escaped.get(at)?.deref() === undefined) this.#escaped.delete(at);
-	});
 
 	constructor({ format, owner, hold, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
@@ -310,16 +307,20 @@ export class BuiltArena {
 		for (let n = 0; n < sites.length; n += 3) this.#leafSided.add(sites[n]!);
 	}
 
-	/** The node of the compound record at `at`: the one written into a side there while it lives (`escape`), else a fresh view of the record. */
+	/**
+	 * The node of the compound record at `at`, which a side holds by address: the one written into a side there (`escape`).
+	 *
+	 * @throws For an address no side has held a node at.
+	 */
 	node(at: number): object {
-		return this.#escaped.get(at)?.deref() ?? this.#view(at, undefined);
+		const node = this.#escaped.get(at);
+		if (node === undefined) throw new Error(`the built record at ${at} is held by no side, so it has no node by address`);
+		return node;
 	}
 
-	/** Registers `node`, the built node at `at`, as the node its address names while it lives, for a side that holds it by address. */
+	/** Holds `node`, the built node at `at`, as the node its address names, for a side that holds it by address. */
 	escape(node: object, at: number): void {
-		if (this.#escaped.get(at)?.deref() === node) return;
-		this.#escaped.set(at, new WeakRef(node));
-		this.#released.register(node, at);
+		this.#escaped.set(at, node);
 	}
 
 	row(node: object): Record<string, unknown> {

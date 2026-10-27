@@ -137,14 +137,14 @@ export function seatedSetters(setters: readonly SetterEntry[], plan: SeatPlan): 
 export function groupSeatParts(
 	plan: SeatPlan,
 	readOf: (hint: GroupSeatHint) => string,
-	storedOf: (stored: string) => string = (stored) => stored
+	absentOf: (stored: string) => string = (stored) => `${stored} === undefined`
 ): { readonly prelude: string[]; readonly members: string[] } {
 	if (plan.groups.length === 0) return { prelude: [], members: [] };
 	const prelude = plan.groups.map(({ hint }) => `  const ${readGroupName(hint.slot)} = ${readOf(hint)};`);
 	const members = plan.groups.flatMap(({ hint }) =>
 		hint.keys.map(
 			(key) =>
-				`    ${key.name}: ${storedOf(hint.stored)} === undefined ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
+				`    ${key.name}: ${absentOf(hint.stored)} ? undefined : () => groupField(${readGroupName(hint.slot)}.call(node), ${JSON.stringify(key.field ?? key.name)}),`
 		)
 	);
 	return { prelude, members };

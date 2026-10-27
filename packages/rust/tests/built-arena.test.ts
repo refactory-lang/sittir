@@ -219,6 +219,15 @@ describe('a built arena', () => {
 		expect(triviaOf(arena.leaf(cell, 9, 2, 1))).toBeUndefined();
 	});
 
+	it('answers the node a side holds by its address, and refuses an address no side holds', () => {
+		const arena = arenaOf();
+		const node = arena.view(arena.record(4, 2));
+		const at = builtRecordOf(node, arena)!;
+		expect(() => arena.node(at)).toThrow(/held by no side/);
+		arena.escape(node, at);
+		expect(arena.node(at)).toBe(node);
+	});
+
 	it('refuses a child no builder of the arena made', () => {
 		const arena = arenaOf();
 		const record = arena.record(9, 7);

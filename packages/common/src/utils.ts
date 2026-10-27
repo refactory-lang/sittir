@@ -673,10 +673,11 @@ export function hydrateWith(value: unknown, tree: TreeHandle, wrap: WrapNode, de
 
 
 /** The role an envelope's content is reached in: `aliasContent` when it shares the envelope's parser node (both stamp one index), else `node`. */
-export function contentRole(envelope: object, content: unknown): Role {
-	if (content === null || typeof content !== 'object') return 'node';
+export function contentRole(envelope: object, content: () => unknown): Role {
 	const own = indexOf(envelope);
-	return own !== undefined && own === indexOf(content) ? 'aliasContent' : 'node';
+	if (own === undefined) return 'node';
+	const value = content();
+	return value !== null && typeof value === 'object' && own === indexOf(value) ? 'aliasContent' : 'node';
 }
 
 /** How one stored value becomes what an accessor returns: `hydrateWith` bound to a parsed node's tree, or `hydrateStored` for a built node. */
@@ -798,6 +799,7 @@ export {
 	recordFlag,
 	recordLength,
 	recordOf,
+	recordPresent,
 	recordSlot,
 	recordSlots,
 	rowData,

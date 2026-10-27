@@ -213,18 +213,20 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell, at: number
 
 /** The value of the one-cell slot at the generated `word` offset of the record `holder` views, as read data. */
 export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): unknown {
+	const { cell, at } = slotCell(holder, tree, word, width, inline);
+	return cellData(holder, tree, cell, at, word, 0);
+}
+
+export function recordPresent(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): boolean {
+	return slotCell(holder, tree, word, width, inline).cell.form !== 'absent';
+}
+
+function slotCell(holder: object, tree: TreeHandle, word: number, width: number, inline: number): { readonly cell: RecordCell; readonly at: number } {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
 	const { words, start } = wordsAt(records, at, word + width);
-	return cellData(
-		holder,
-		tree,
-		decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word),
-		at,
-		word,
-		0
-	);
+	return { cell: decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word), at };
 }
 
 /** The items of the list slot at the generated `word` offset of the record `holder` views, each as read data. */
@@ -258,11 +260,10 @@ export function recordLength(
 	run?: number,
 	inline = 0
 ): number {
+	if (run === undefined) return recordPresent(holder, tree, word, width, inline) ? 1 : 0;
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
-	const records = recordsOf(tree);
-	if (run === undefined) return recordSlot(holder, tree, word, width, inline) === undefined ? 0 : 1;
-	const { words, start } = wordsAt(records, at, word + width);
+	const { words, start } = wordsAt(recordsOf(tree), at, word + width);
 	return decodeListCell(words, start + word).len;
 }
 
