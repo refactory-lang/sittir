@@ -41,7 +41,7 @@ See [AGENTS.md § Wave-style decomposition before commits](../../AGENTS.md).
  */
 ```
 
-### `packages/codegen/src/types/rule.ts::isEnumChoiceRule`
+### `packages/codegen/src/dsl/rule-patterns.ts::isEnumChoiceRule`
 
 ```text
 /**
@@ -568,20 +568,6 @@ every phase from link on; both are set by the token-interior pass, not by the DS
  */
 ```
 
-### `packages/codegen/src/types/rule.ts::kind`
-
-```text
-/** Reference-splice provenance: the name of the SYMBOL/subtype reference
- *  whose target content now occupies this position, stamped by link where it
- *  substitutes a reference for its target (`canonicalizeRuleLiterals`'s
- *  SYMBOL/SUPERTYPE cases inlining an `inline===true` reference to an
- *  alias-bodied hidden rule; `resolveSymbolRoleOrPass`'s external-role
- *  substitution; `dereferenceTopLevelAliasBody`). Flatten/normalize carry it
- *  from the pre-flatten rule onto the flattened root
- *  (`dsl/rule-attrs.ts::withKindFacts`). Absent when the rule was never the
- *  product of such a substitution. */
-```
-
 ### `packages/codegen/src/types/rule.ts::metadata`
 
 ```text
@@ -649,20 +635,6 @@ every phase from link on; both are set by the token-interior pass, not by the DS
 	 * replacing a destroyed-then-reconstructed read) — see that field's doc
 	 * comment above.
 	 */
-```
-
-### `packages/codegen/src/types/rule.ts::separator`
-
-```text
-/** Single canonical separator fact (widened from the former 3-way
-			 *  `string | Rule[] | {rules, trailing?, leading?}` union). `value`
-			 *  is a StringRule for the common literal case; ChoiceRule/SeqRule
-			 *  for a rule-shaped separator. `trailing`/ `leading` are nested HERE
-			 *  (not top-level siblings) so an orphan
-			 *  trailing/leading-without-a-separator state is structurally
-			 *  impossible. The shape is `RuleSeparator<Rule<Phase>>` — the same
-			 *  declaration RepeatRule<'link'> uses; `flatten` rebuilds `value`
-			 *  through the builders like any rule position. */
 ```
 
 ### `packages/codegen/src/types/rule.ts::Rule`
@@ -775,40 +747,6 @@ tree-sitter's end-of-input rule, in every phase's union. It matches no text, tak
  */
 ```
 
-### `packages/codegen/src/types/rule.ts::separator`
-
-```text
-/** `RuleSeparator<Rule<'link'>>` — the one separator shape, one
-			 *  phase earlier; `flatten` rebuilds its `value` and keeps the
-			 *  placement flags. */
-```
-
-### `packages/codegen/src/types/rule.ts::separator`
-
-```text
-/** Evaluate-phase separators are always literal strings,
-				 *  reconstructed fresh by link's lift — not carried through, so
-				 *  this stays the original sibling shape (unchanged by that
-				 *  change). */
-```
-
-### `packages/codegen/src/types/rule.ts::separator`
-
-```text
-/** `RuleSeparator<Rule<'link'>>` — the one separator shape, one
-			 *  phase earlier; `flatten` rebuilds its `value` and keeps the
-			 *  placement flags. */
-```
-
-### `packages/codegen/src/types/rule.ts::separator`
-
-```text
-/** Evaluate-phase separators are always literal strings,
-				 *  reconstructed fresh by link's lift — not carried through, so
-				 *  this stays the original sibling shape (unchanged by that
-				 *  change). */
-```
-
 ### `packages/codegen/src/types/rule.ts::RuleSeparator`
 
 ```text
@@ -836,17 +774,6 @@ tree-sitter's end-of-input rule, in every phase's union. It matches no text, tak
 // ---------------------------------------------------------------------------
 // Named patterns
 // ---------------------------------------------------------------------------
-```
-
-### `packages/codegen/src/types/rule.ts::_needsContent`
-
-```text
-/**
-			 * Internal marker used by Evaluate's `transform()` DSL: a `field()`
-			 * call with no content is a placeholder patch that takes its content
-			 * from the original rule at patch-resolve time. Never survives past
-			 * `resolvePatch` — if this shows up anywhere else, it's a bug.
-			 */
 ```
 
 ### `packages/codegen/src/types/rule.ts::EnumRule`
@@ -901,26 +828,6 @@ tree-sitter's end-of-input rule, in every phase's union. It matches no text, tak
  * callers (compiler/link.ts, dsl/enrich.ts) already import from
  * `dsl/`, so they import `normalizeEnumMembers` from its new home directly.
  */
-```
-
-### `packages/codegen/src/types/rule.ts::subtypeParseNames`
-
-```text
-/**
-	 * Storage→parse name pairs for the aliased arms of the flattened CHOICE,
-	 * stamped by `classifyHiddenChoiceRule` (compiler/link.ts) at the moment
-	 * the flatten erases them — the same declared-fact pattern as
-	 * `RuleBase.variantArms`. Keys are `subtypes` entries (the STORAGE kind —
-	 * `SymbolRule.name`, the rule whose body/slots/template model the
-	 * arm); values are the PARSE names (`SymbolRule.aliasedTo`, the visible label tree-sitter emits at
-	 * that arm's position, carrying its own `alias_sym_*` runtime symbol id).
-	 * Consumed by node-map's supertype value derivation (`parseKindId` stamps)
-	 * and the supertype node-enum emitter (accepted dispatch ids) so
-	 * runtime nodes arriving under the alias occurrence's id — enrich-minted
-	 * arms like `alias($._expression_except_range, $.expression_group1)` —
-	 * route to the storage kind's variant instead of failing as unknown.
-	 * Absent when no arm is aliased (the common case).
-	 */
 ```
 
 ### `packages/codegen/src/types/rule.ts::TransitiveSubtypeRef`
