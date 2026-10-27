@@ -428,8 +428,8 @@ none either (ruling 14).
 - **Sides by site.** A leaf's sides are on its object, as object construction holds them, and the
   written-sides store holds them at each site the leaf is placed at, keyed as a unit's are: its
   holder, its slot's word and its item (§ Trivia). Placing a leaf records the site on its object,
-  in a field the leaf's literal declares so that placing changes no object's shape, and writes the
-  sides the object holds to that site; a leaf that holds none writes nothing. A side written on a
+  adding the field at its first placement, so a leaf maker's literal holds no computed key and V8
+  clones it from its template, and writes the sides the object holds to that site; a leaf that holds none writes nothing. A side written on a
   leaf after it is placed is written to every site recorded on it. One leaf at two sites renders its
   sides at both, and a leaf placed nowhere keeps them on its object alone.
 - **A rebuild places its leaves again.** A `$with` writes a new holder, and each leaf it holds is
@@ -462,12 +462,14 @@ counted or weakly held per node.
   String chunks have life objects too, held the same way.
 - **What holds a chunk.** Each of these holds the life object of the chunk it reaches, strongly:
   - a record view, in a field its literal declares, so holding it changes no shape;
-  - a built leaf object, which holds its text's string chunk;
   - a chunk whose cells name a record or a text in another chunk;
   - the arena, while the chunk is the open one it allocates into;
   - a snapshot or a view that names a record.
 
-  A detached snapshot is plain data and holds nothing. Records are written after their children, so
+  A detached snapshot is plain data and holds nothing. A built leaf holds no chunk: an unplaced leaf
+  keeps its text as a string, and its text is interned when it is first placed, so the holder's chunk
+  names the string chunk as any text reference does. A leaf maker's literal therefore stays
+  clonable. Records are written after their children, so
   holding a chunk's life object is all it takes for everything a record reaches to stay alive.
 - **Edges are recorded at write.** When a record is placed, each cell naming another chunk adds that
   chunk's life object to the writing chunk's set, once per pair of chunks, and so does a text
