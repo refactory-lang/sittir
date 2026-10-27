@@ -1,6 +1,7 @@
 import type {
 	ApiOf,
 	Engine,
+	EngineOptions,
 	ErrorNode,
 	ErrorRegion,
 	Interceptor,
@@ -86,6 +87,20 @@ declare const strictEngine: Engine<API, 'strict'>;
 export const strictLeaf: StrictNode = strictEngine.build.leaf('a');
 export const strictVariant: StrictNode = strictEngine.build.number.bigint(1n);
 export const strictRendered: string = strictEngine.render((b) => b.leaf('a')).toString();
+export const strictSelected: Promise<Engine<API, 'strict'>> = descriptor.createEngine({ api: 'strict' });
+export const defaultUnselected: Promise<Engine<API>> = descriptor.createEngine({ verifyStructure: 'runtime' });
+// @ts-expect-error options without `api` build with the default engine's loose builders
+export const strictUnselected: Promise<Engine<API, 'strict'>> = descriptor.createEngine({ verifyStructure: 'runtime' });
+// @ts-expect-error strict options name their mode
+export const strictOptions: EngineOptions<API, 'strict'> = { verifyStructure: 'runtime' };
+declare const optionalStrict: { readonly api?: 'strict'; readonly verifyStructure: 'runtime' };
+// @ts-expect-error strict options whose `api` may be absent are refused
+export const maybeStrict = descriptor.createEngine(optionalStrict);
+declare const eitherMode: { readonly api?: 'default' | 'strict' };
+export const eitherEngineOf: Promise<Engine<API, 'default' | 'strict'>> = descriptor.createEngine(eitherMode);
+declare const eitherEngine: Engine<API, 'default' | 'strict'>;
+// @ts-expect-error an engine that may build loose is not a strict engine
+export const eitherAsStrict: Engine<API, 'strict'> = eitherEngine;
 // @ts-expect-error render options are the language's options
 engine.render(leaf, { indnet: '\t' });
 

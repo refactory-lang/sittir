@@ -1229,6 +1229,8 @@ export type {
 	PortableEngineOptions,
 	PortableLanguageAPI,
 	EngineOptions,
+	EngineSettings,
+	ApiSelection,
 	FileChange,
 	GrammarInnerTrivia,
 	HoldsTrivia,

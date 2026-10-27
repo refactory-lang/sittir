@@ -367,7 +367,7 @@ export type EmptyFormOf<Entries, N> = N extends unknown
 		: ExactEmptyForm<Entries, N>
 	: never;
 
-export interface Engine<API extends LanguageAPI, M extends ApiSurface = 'default'>
+export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = 'default'>
 	extends EngineIdentity<API>, Disposable {
 	readonly build: BuildSurface<API, M>;
 	readonly is: API['is'];
@@ -488,8 +488,14 @@ export interface PortableEngine<API extends PortableLanguageAPI> extends EngineI
 	readonly is: API['portable']['is'];
 }
 
-export interface EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> {
-	readonly api?: M;
+/** How options name an engine's mode: the default engine may leave `api` out, and every other mode names itself. */
+export type ApiSelection<M extends ApiSurface> = { readonly api?: M | undefined } & (M extends 'default' ? unknown : { readonly api: NoInfer<M> });
+
+/** An engine's options. `api` picks the engine's mode, and options of a mode other than the default carry it. */
+export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> & EngineSettings<API>;
+
+/** The options every engine mode takes alike. */
+export interface EngineSettings<API extends LanguageAPI> {
 	readonly render?: API['options'];
 	readonly intercept?: readonly Interceptor<API>[];
 	/**
@@ -538,5 +544,5 @@ export type NodeOfNamespaces<NsMap extends object> = Extract<
 	object
 >;
 
-export type Types<E> = E extends Engine<infer API, ApiSurface> ? API['types'] : never;
+export type Types<E> = E extends Engine<infer API, infer _M> ? API['types'] : never;
 export type ApiOf<L> = L extends LanguageIdentity<infer API> ? API : never;
