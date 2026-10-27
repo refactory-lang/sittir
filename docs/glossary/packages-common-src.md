@@ -1039,3 +1039,11 @@ Resolves one coordinate entry against the table.
 ### `packages/common/src/side-entries.ts::readUnits`
 
 Reads unit side entries from a table.
+
+### `packages/common/src/runtime.ts::delegate`
+
+Wraps a shared builder that also carries members, so the result keeps the builder's type.
+
+### `packages/common/src/runtime.ts::withEmptyForm`
+
+Wraps a builder with its empty form, typed `EmptyForm<Empty, F>`.
