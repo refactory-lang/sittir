@@ -2933,7 +2933,7 @@ function emitTextFactory(
 		body.push('  const node = {', ...members, '  };', `  return stampBuilt(node) as unknown as T.${node.typeName}.Bound;`, '}');
 		return body.join('\n');
 	}
-	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, members);
+	const leaf = viewTable(views).leaf({ kind: node.kind, kindId: nodeMap.nodes.get(node.kind)?.kindId, typeName: node.typeName }, typeExpr, triviaPositionsOf(node.kind, nodeMap));
 	body.push(...leafAdoptLines(leaf.name, textExpr, `T.${node.typeName}.Bound`), '}');
 	return [...body, ...(leaf.lines.length === 0 ? [] : ['', ...leaf.lines])].join('\n');
 }

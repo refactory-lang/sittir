@@ -1,9 +1,9 @@
 import type { AnyUntypedNode, EngineIdentity, ErrorNode, NodeTrivia, NodeCoordinate, TriviaEntry, TriviaFacts } from '@sittir/types';
 import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
-import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
+import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, type EngineHandle } from './engine-scope.ts';
+import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -11,8 +11,9 @@ import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, SEEDS, SLOTS, type KeptSlots, type SeededSlots } from './record-view.ts';
-import { builtLeafOf, builtRefOf, leafSitesOf } from './built-ref.ts';
+import { chosenSeparatorOf, recordOf, recordSlot, recordSlots } from './record-view.ts';
+import type { LeafHandle, RecordHandle } from './handle.ts';
+import { builtLeafOf, builtRefOf, leafSitesOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -55,6 +56,49 @@ export function renderText(handle: EngineHandle | undefined, node: object): stri
 export function queryOf(handle: EngineHandle, node: object): object {
 	if (!isLive(handle.current)) throw new Error('query: engine disposed; parse the source again with a live engine');
 	return handle.current.query(node);
+}
+
+type Positioned = { readonly $tree: TreeHandle };
+
+export function handleOf(node: Positioned): EngineHandle | undefined {
+	return treeEngineHandle(node.$tree);
+}
+
+export function handleQuery(node: Positioned, row: object): object {
+	const handle = handleOf(node);
+	if (handle === undefined) throw new Error(NO_ENGINE);
+	return queryOf(handle, row);
+}
+
+export function handleRender(this: Positioned): string {
+	return renderText(handleOf(this), this);
+}
+
+export function handleToString(this: { $render(): string }): string {
+	return this.$render();
+}
+
+export function handleEngine(this: Positioned): EngineHandle['current'] | undefined {
+	return handleOf(this)?.current;
+}
+
+
+export function leafText(this: LeafHandle): string {
+	const arena = this.$tree.built;
+	if (arena === undefined) throw new Error('a leaf handle names no built arena');
+	return arena.textOf(this.$entry.at, this.$entry.len);
+}
+
+export function leafLeading(this: { readonly node: LeafHandle }, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	return triviaSide(this.node, handleOf(this.node), 'leading', items);
+}
+
+export function leafTrailing(this: { readonly node: LeafHandle }, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	return triviaSide(this.node, handleOf(this.node), 'trailing', items);
+}
+
+export function leafInner(this: { readonly node: LeafHandle }, ...items: unknown[]): AnyUntypedNode | readonly TriviaEntry[] {
+	return triviaInner(this.node, handleOf(this.node), items);
 }
 
 export function rebuilt<R>(source: object, handle: EngineHandle | undefined, build: () => R): R {
@@ -106,8 +150,10 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const leaf = builtLeafOf(node);
 	if (leaf !== undefined) {
 		const wired = wireSides(node, trivia);
-		const sites = leafSitesOf(node);
+		const sited = sitedLeaf(node);
+		const sites = sited === undefined ? leafSitesOf(node) : siteOf(sited.$site);
 		if (sites !== undefined) writeSites(leaf.arena, sites, trivia, wired);
+		if (sited !== undefined) return;
 		const own = triviaOf(node);
 		setTriviaOf(node, own === undefined ? trivia : { ...own, ...trivia });
 		return;
@@ -131,7 +177,7 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 
 export function writeLeafSites(leaf: object, sites: readonly number[]): void {
 	const ref = builtLeafOf(leaf);
-	const own = triviaOf(leaf);
+	const own = writtenSides(leaf);
 	if (ref !== undefined && own !== undefined) writeSites(ref.arena, sites, own, wireSides(leaf, own));
 }
 
@@ -399,15 +445,15 @@ export function listItemsOf(node: ListItemsHolder): readonly unknown[] {
 	return (node[LIST_ITEMS] ??= node[LIST_READ]!());
 }
 
-/** The `ReadonlyArray` methods of a list node, written once; each reads the items the node holds under `LIST_ITEMS`. */
+/** The `ReadonlyArray` methods of a list node but `toString`, written once; each reads the items the node holds under `LIST_ITEMS`. */
 export const LIST_METHODS = Object.fromEntries(
-	READONLY_ARRAY_METHODS.map((name) => [
+	READONLY_ARRAY_METHODS.filter((name) => name !== 'toString').map((name) => [
 		name,
 		function (this: ListItemsHolder, ...args: unknown[]): unknown {
 			return (listItemsOf(this) as unknown as Members)[name]!(...args);
 		}
 	])
-) as Readonly<Record<(typeof READONLY_ARRAY_METHODS)[number], (this: ListItemsHolder, ...args: unknown[]) => unknown>>;
+) as Readonly<Record<Exclude<(typeof READONLY_ARRAY_METHODS)[number], 'toString'>, (this: ListItemsHolder, ...args: unknown[]) => unknown>>;
 
 /** The iterator member of a list node. */
 export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
@@ -725,37 +771,22 @@ export function hydrateSlotWith(node: object, key: string, tree: TreeHandle, wra
 	return hydrateSlotBy(node, key, (value) => hydrateWith(value, tree, wrap, undefined, role));
 }
 
-function keptOf(view: object): KeptSlots {
-	const holder = view as { [SLOTS]?: KeptSlots };
-	return (holder[SLOTS] ??= {});
+function cacheOf(node: RecordHandle): Record<number, unknown> {
+	return (node.$cache ??= {});
 }
 
-function seedsOf(view: object): SeededSlots | undefined {
-	return (view as { readonly [SEEDS]?: SeededSlots })[SEEDS];
+export function childSlot(node: RecordHandle, word: number, width: number, inline = 0, wrap?: WrapNode, role: Role = 'node'): unknown {
+	const cache = cacheOf(node);
+	if (word in cache) return cache[word];
+	const value = recordSlot(node, word, width, inline);
+	return (cache[word] = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role));
 }
 
-function seededItems(seed: unknown): unknown[] {
-	return seed == null ? [] : Array.isArray(seed) ? seed.map((item) => hydrateStored(item)) : [hydrateStored(seed)];
-}
-
-export function keptSlot(view: object, tree: TreeHandle, word: number, width: number, inline = 0, wrap?: WrapNode, role: Role = 'node'): unknown {
-	const kept = keptOf(view);
-	if (word in kept) return kept[word];
-	const seeds = seedsOf(view);
-	if (seeds !== undefined && word in seeds) return (kept[word] = hydrateStored(seeds[word]) ?? undefined);
-	const value = recordSlot(view, tree, word, width, inline);
-	return (kept[word] = wrap === undefined ? value : hydrateWith(value, tree, wrap, undefined, role));
-}
-
-export function keptItems(view: object, tree: TreeHandle, word: number, width: number, run?: number, inline = 0, wrap?: WrapNode): readonly unknown[] {
-	const kept = keptOf(view);
-	if (word in kept) return kept[word] as readonly unknown[];
-	const seeds = seedsOf(view);
-	const items =
-		seeds !== undefined && word in seeds
-			? seededItems(seeds[word])
-			: recordSlots(view, tree, word, width, run, inline).map((item) => (wrap === undefined ? item : hydrateWith(item, tree, wrap)));
-	return (kept[word] = Object.freeze(items)) as readonly unknown[];
+export function childItems(node: RecordHandle, word: number, width: number, run?: number, inline = 0, wrap?: WrapNode): readonly unknown[] {
+	const cache = cacheOf(node);
+	if (word in cache) return cache[word] as readonly unknown[];
+	const items = recordSlots(node, word, width, run, inline).map((item) => (wrap === undefined ? item : hydrateWith(item, node.$tree, wrap)));
+	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }
 
 /** `hydrateSlotWith` for a list slot. */
@@ -807,7 +838,7 @@ export {
 export { mapTriviaEntries, wrapRegistered };
 export * from './runtime.ts';
 export {
-	RECORD,
+	positionWords,
 	recordDelimiter,
 	recordSeparator,
 	recordFlag,
@@ -824,9 +855,9 @@ export {
 	chosenSeparatorOf,
 	slotValuesOf,
 	storedSlotValues,
-	type RecordStub,
 	type RefusedSlot
 } from './record-view.ts';
+export { handleDispose, isLeafHandle, isRecordPosition, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
 
 export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltRow, type BuiltText, type BuiltViews } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

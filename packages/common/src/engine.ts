@@ -15,7 +15,8 @@ import type {
 } from '@sittir/types';
 import { decodeTree, readObject, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
-import { mintTreeToken, registerTree, treeOf } from './tree-token.ts';
+import { mintTreeToken, registerTree } from './tree-token.ts';
+import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
@@ -223,6 +224,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	builtUnitSides?(address: number): unknown[];
 	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
+	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
+	copyBuiltSites?(from: number, to: number, skip: readonly number[]): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
 	renderCandidate?(treeId: number, index: number, options?: object): string;
 	/**
@@ -497,9 +500,9 @@ export function createNativeEngine<
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
 				const changed = rootEdges(node as object);
-				const tree = treeOf(node as object);
-				const treeId = tree?.id;
-				if (tree?.records === undefined || treeId === undefined)
+				const tree = (node as RecordPosition).$tree;
+				const treeId = tree.id;
+				if (tree.records === undefined || treeId === undefined)
 					throw new Error('a record view renders through the tree it was read from, which is gone');
 				const renderRecord = engine.renderRecord;
 				if (renderRecord === undefined)
@@ -556,13 +559,12 @@ export function createNativeEngine<
 						const readAt = (index: number, depth: number): TNode => {
 							const at = records?.record(index, depth);
 							if (at === undefined) return readObjectAt(index, depth);
-							const stub = recordStub(tree, at);
-							holdReadTree(stub, liveToken);
-							return stub as TNode;
+							return recordStub(tree, at) as TNode;
 						};
 						const roots = new Map<number, unknown>();
 						const tree: TreeHandle = {
 							id: parsed.treeId,
+							token: liveToken,
 							text: (span) => engine.text(parsed.treeId, span),
 							...(records === undefined ? {} : { records }),
 							read: (index, depth = 1) => {
@@ -625,13 +627,15 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtWords, builtBytes } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes } = engine;
 	if (
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
 		writeBuiltUnitSides === undefined ||
 		writeBuiltLeafSide === undefined ||
+		builtLeafSide === undefined ||
+		copyBuiltSites === undefined ||
 		builtWords === undefined ||
 		builtBytes === undefined
 	)
@@ -647,7 +651,9 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: Kin
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
 			unitSides: (at) => builtUnitSides.call(engine, at),
 			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units),
-			writeLeafSide: (sites, side, entries) => writeBuiltLeafSide.call(engine, sites, side, entries)
+			writeLeafSide: (sites, side, entries) => writeBuiltLeafSide.call(engine, sites, side, entries),
+			leafSide: (holder, word, item, side) => builtLeafSide.call(engine, holder, word, item, side) ?? undefined,
+			copySites: (from, to, skip) => copyBuiltSites.call(engine, from, to, skip)
 		}
 	};
 }

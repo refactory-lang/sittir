@@ -211,6 +211,36 @@ impl<T: Clone> TriviaStore<T> {
         }
     }
 
+    /// The sides of every unit and leaf site of `from`'s record, written at
+    /// the same site of `to`'s, except a site at a word `skip` names: what a
+    /// copy of a record keeps of its children's sides.
+    #[cfg(feature = "arena")]
+    pub fn copy_sites(&self, from: crate::arena::Address, to: crate::arena::Address, skip: &[u32]) {
+        let copied: Vec<(Place, TriviaSide, Vec<TriviaEntry<T>>)> = {
+            let sides = self.read();
+            let first = Site { holder: from, word: 0, item: crate::types::ItemIndex(0) };
+            [Place::Unit(first), Place::Leaf(first)]
+                .into_iter()
+                .flat_map(|start| {
+                    sides
+                        .range((start, TriviaSide::Leading)..)
+                        .map_while(move |(&(place, side), entries)| match (place, start) {
+                            (Place::Unit(site), Place::Unit(_)) if site.holder == from => Some((Place::Unit(Site { holder: to, ..site }), site.word, side, entries)),
+                            (Place::Leaf(site), Place::Leaf(_)) if site.holder == from => Some((Place::Leaf(Site { holder: to, ..site }), site.word, side, entries)),
+                            _ => None,
+                        })
+                        .filter(|&(_, word, _, _)| !skip.contains(&word))
+                        .map(|(place, _, side, entries)| (place, side, entries.clone()))
+                        .collect::<Vec<_>>()
+                })
+                .collect()
+        };
+        let mut sides = self.write();
+        for (place, side, entries) in copied {
+            sides.insert((place, side), entries);
+        }
+    }
+
     /// `side` of the node at `place` holds `entries`, in place of what it held.
     /// A built record is a record of this store's arena: it is kept with no
     /// store, and this store answers it.
@@ -351,6 +381,25 @@ mod tests {
         assert_eq!(store.side(record, TriviaSide::Leading), Some(vec![entry("// r")]));
         assert_eq!(store.side(unit, TriviaSide::Trailing), Some(vec![entry("// u")]));
         assert_eq!(store.len(), 2);
+    }
+
+    #[cfg(feature = "arena")]
+    #[test]
+    fn a_copy_keeps_the_unit_and_leaf_sides_of_its_kept_sites_and_nothing_else() {
+        let site = |holder: u32, word: u32, item: u32| Site { holder: Address(holder), word, item: crate::types::ItemIndex(item) };
+        let store = TriviaStore::<TriviaText>::new();
+        store.write_side(Place::Record(Address(5)), TriviaSide::Leading, vec![entry("// own")]);
+        store.write_side(Place::Unit(site(5, 2, 0)), TriviaSide::Trailing, vec![entry("// unit")]);
+        store.write_side(Place::Leaf(site(5, 2, 1)), TriviaSide::Leading, vec![entry("// leaf")]);
+        store.write_side(Place::Leaf(site(5, 7, 0)), TriviaSide::Leading, vec![entry("// patched")]);
+        store.write_side(Place::Leaf(site(6, 2, 0)), TriviaSide::Leading, vec![entry("// other holder")]);
+        store.copy_sites(Address(5), Address(9), &[7]);
+        assert_eq!(store.side(Place::Unit(site(9, 2, 0)), TriviaSide::Trailing), Some(vec![entry("// unit")]));
+        assert_eq!(store.side(Place::Leaf(site(9, 2, 1)), TriviaSide::Leading), Some(vec![entry("// leaf")]));
+        assert_eq!(store.side(Place::Leaf(site(9, 7, 0)), TriviaSide::Leading), None, "a skipped word keeps none");
+        assert_eq!(store.side(Place::Record(Address(9)), TriviaSide::Leading), None, "a record's own sides are not its sites'");
+        assert_eq!(store.side(Place::Leaf(site(9, 2, 0)), TriviaSide::Leading), None, "another holder's sites stay its own");
+        assert_eq!(store.side(Place::Leaf(site(5, 2, 1)), TriviaSide::Leading), Some(vec![entry("// leaf")]), "the source keeps its sides");
     }
 
     #[cfg(feature = "arena")]

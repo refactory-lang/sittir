@@ -5,9 +5,24 @@ import { rustFieldIdent } from './node-common.ts';
 import type { RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
 
-export const RECORD_CONSTRUCTION_IMPORTS = ['builtArenaOf', 'builtInputs', 'storeCell', 'storeFlag', 'storeList', 'storeListOptions'] as const;
+export const RECORD_CONSTRUCTION_IMPORTS = [
+	'builtArenaOf',
+	'builtInputs',
+	'storeCell',
+	'storeFlag',
+	'storeList',
+	'storeListOptions',
+	'leafText',
+	'leafLeading',
+	'leafTrailing',
+	'leafInner',
+	'handleRender',
+	'handleToString',
+	'handleEngine',
+	'handleDispose'
+] as const;
 
-export const RECORD_VIEW_TYPES = ['BuiltRow', 'BuiltViews', 'EngineHandle'] as const;
+export const RECORD_VIEW_TYPES = ['BuiltRow', 'BuiltText', 'BuiltViews', 'EngineHandle', 'LeafSite', 'TreeHandle'] as const;
 
 export function recordPlacesOf(
 	node: AuthoredCompound | AssembledList,
@@ -59,7 +74,6 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		return { place, local: slot.storageKey };
 	});
 	const stores = placed.map(({ place, local }) => slotStore(place, local));
-	const kept = placed.flatMap(({ place, local }) => ('bit' in place ? [] : [`${place.word}: ${local}`]));
 	const options = spec.listOptions;
 	const tail = [
 		'  const arena = builtArenaOf(handle);',
@@ -69,7 +83,7 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 		...(options === undefined
 			? []
 			: [`  storeListOptions(arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'});`]),
-		`  const node = arena.view(record${kept.length === 0 ? '' : `, { ${kept.join(', ')} }`});`,
+		'  const node = arena.view(record);',
 		...spec.checks,
 		`  return node as unknown as ${spec.result};`
 	];
@@ -85,7 +99,31 @@ export function recordRefusalLines(node: { readonly kind: string }): string[] {
 }
 
 export function leafAdoptLines(maker: string, textExpr: string, result: string): string[] {
-	return [`  return builtArenaOf(handle).adoptLeaf(${maker}(${textExpr}, handle), ${textExpr}) as unknown as ${result};`];
+	return [`  return builtArenaOf(handle).leaf(${maker}, ${textExpr}) as unknown as ${result};`];
+}
+
+function leafMakerLines(name: string, typeExpr: string, trivia: TriviaPositions | undefined): string[] {
+	return [
+		`function ${name}(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {`,
+		'  const node = {',
+		`    $type: ${typeExpr},`,
+		'    $named: true as const,',
+		'    $tree: tree,',
+		'    $entry: entry,',
+		'    $site: site,',
+		'    $owned: site === undefined,',
+		'    $text: leafText,',
+		'    $render: handleRender,',
+		'    toString: handleToString,',
+		'    toJSON: refuseJSON,',
+		...(trivia === undefined ? [] : ['    $trivia: undefined as unknown as object,']),
+		'    $engine: handleEngine,',
+		'    [Symbol.dispose]: handleDispose',
+		'  };',
+		...(trivia === undefined ? [] : [`  node.$trivia = { node, leading: leafLeading, trailing: leafTrailing${trivia.inner ? ', inner: leafInner' : ''} };`]),
+		'  return node;',
+		'}'
+	];
 }
 
 interface ViewKind {
@@ -119,9 +157,10 @@ export class BuiltViewTable {
 		this.#required.set(viewKindId(node), node.kind);
 	}
 
-	leaf(node: ViewKind, members: readonly string[]): { readonly name: string; readonly lines: readonly string[] } {
+	leaf(node: ViewKind, typeExpr: string, trivia: TriviaPositions | undefined): { readonly name: string; readonly lines: readonly string[] } {
 		const kindId = viewKindId(node);
-		const body = members.join('\n');
+		const lines = leafMakerLines(`leaf${node.typeName}`, typeExpr, trivia);
+		const body = lines.join('\n');
 		const known = this.#leaves.get(kindId);
 		if (known !== undefined) {
 			if (known.body !== body) throw new Error(`record views: ${node.kind} has two leaf builders whose nodes differ`);
@@ -129,7 +168,7 @@ export class BuiltViewTable {
 		}
 		const name = `leaf${node.typeName}`;
 		this.#leaves.set(kindId, { name, body });
-		return { name, lines: [`function ${name}(text: string, handle: EngineHandle | undefined): object {`, '  const node = {', ...members, '  };', '  return node;', '}'] };
+		return { name, lines };
 	}
 
 	tableLines(): string[] {
@@ -140,7 +179,8 @@ export class BuiltViewTable {
 		return [
 			'export const builtViews: BuiltViews = Object.freeze({',
 			`  rows: Object.freeze({${entries(this.#rows)} }),`,
-			`  words: Object.freeze({${entries(this.#widths)} })`,
+			`  words: Object.freeze({${entries(this.#widths)} }),`,
+			`  leaves: Object.freeze({${entries(new Map([...this.#leaves].map(([kindId, { name }]) => [kindId, name])))} })`,
 			'});'
 		];
 	}

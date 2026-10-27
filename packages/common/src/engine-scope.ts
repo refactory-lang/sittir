@@ -43,7 +43,7 @@ export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
 export function engineOf(value: unknown): EngineHandle['current'] | undefined {
 	if (typeof value !== 'object' || value === null) return undefined;
 	const bound = (value as { readonly $engine?: unknown }).$engine;
-	if (typeof bound === 'function') return bound();
+	if (typeof bound === 'function') return (bound as (this: unknown) => EngineHandle['current'] | undefined).call(value);
 	const tree = treeOf(value);
 	return tree === undefined ? undefined : treeHandles.get(tree)?.current;
 }
@@ -149,6 +149,10 @@ const treeHandles = new WeakMap<object, TreeEngineHandle>();
 
 export function bindTree(tree: object, handle: TreeEngineHandle): void {
 	treeHandles.set(tree, handle);
+}
+
+export function treeEngineHandle(tree: object): TreeEngineHandle | undefined {
+	return treeHandles.get(tree);
 }
 
 export function hydrateStored(value: unknown): unknown {

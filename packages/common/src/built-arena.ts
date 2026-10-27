@@ -1,14 +1,14 @@
 import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
-import { stampBuilt } from './source-stamp.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
-import { adoptBuilt, builtRefOf, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
-import { leafData, RECORD, recordOf, recordStub, SEEDS, SLOTS, type RecordStub, type SeededSlots } from './record-view.ts';
+import { builtRefOf, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
+import { leafData, recordOf, recordStub } from './record-view.ts';
+import type { LeafMaker, RecordPosition } from './handle.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
@@ -55,6 +55,8 @@ export interface BuiltRecords {
 		unitSides(at: number): unknown[];
 		writeUnitSides(at: number, units: readonly unknown[]): void;
 		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
+		leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined;
+		copySites(from: number, to: number, skip: readonly number[]): void;
 	};
 }
 
@@ -137,6 +139,7 @@ export type BuiltRow = {
 export interface BuiltViews {
 	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
 	readonly words: Readonly<Record<number, number>>;
+	readonly leaves: Readonly<Record<number, LeafMaker>>;
 }
 
 export class BuiltArena {
@@ -153,10 +156,10 @@ export class BuiltArena {
 	readonly #bytes: Chunks<Uint8Array>;
 	readonly #textByValue = new Map<string, BuiltText>();
 	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
-	readonly #escaped = new Map<number, object>();
 	readonly #trees = new Map<number, { readonly tree: TreeHandle; readonly token: TreeToken }>();
 	readonly #sided = new Map<number, number>();
 	readonly #unitSided = new Set<number>();
+	readonly #leafSited = new Set<number>();
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 
@@ -278,55 +281,72 @@ export class BuiltArena {
 		return { words: cut(this.#words), bytes: cut(this.#bytes) };
 	}
 
-	#adopt<T extends object>(node: T, ref: BuiltRef): T {
-		adoptBuilt(node, ref);
-		return stampBuilt(node);
+	#view(at: number): object {
+		const position: RecordPosition = { $type: this.words(at, 1)[wordOf(at, this.format)]!, $tree: this.tree, $at: at, $_layout: undefined };
+		return this.#wrap(position, this.tree) as object;
 	}
 
-	#view(at: number, seeds: SeededSlots | undefined): object {
-		const head = this.words(at, 1);
-		const stub = { $type: head[wordOf(at, this.format)]!, [RECORD]: at, [SEEDS]: seeds, [SLOTS]: undefined } as RecordStub;
-		return this.#adopt(this.#wrap(stub, this.tree) as object, { arena: this, at });
-	}
-
-	/** The view of the drafted `record`, placed past every record its cells name; `seeds` gives its slot values by word, the children its builder was given. Each built leaf it holds is placed at its site there. */
-	view(record: BuiltDraft, seeds?: SeededSlots): object {
+	/** The handle of the drafted `record`, placed past every record its cells name. Each built leaf it holds is placed at its site there. */
+	view(record: BuiltDraft): object {
 		const place = this.#place(record.words);
 		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, place.at, placed[n + 1] as number, placed[n + 2] as number);
-		return this.#view(place.at, seeds);
+		return this.#view(place.at);
 	}
 
-	/** `node`, a leaf of text `text`, as a built leaf of this arena: it has no record. */
-	adoptLeaf<T extends object>(node: T, text: string): T {
-		return this.#adopt(node, { arena: this, text: this.text(text) });
+	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record. */
+	leaf(maker: LeafMaker, text: string): object {
+		return maker(this.tree, this.text(text), undefined);
+	}
+
+	/**
+	 * The handle of the built leaf of `kind` whose text is `entry`, at its site in the record at `holder`.
+	 *
+	 * @throws For a kind no builder writes leaves of.
+	 */
+	leafAt(kind: number, entry: BuiltText, holder: number, word: number, item: number): object {
+		const maker = this.#views.leaves[kind];
+		if (maker === undefined) throw new Error(`no builder writes leaves of kind ${kind}, so the arena has no leaf handle for one`);
+		return maker(this.tree, entry, packSite(holder, word, item));
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
 		placeLeaf(leaf, holder, word, item);
-		if (triviaOf(leaf) !== undefined) this.#writeLeafSites(leaf, [holder, word, item]);
+		this.#writeLeafSites(leaf, [holder, word, item]);
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
 	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void {
 		this.#trivia.writeLeafSide(sites, side, entries);
+		for (let n = 0; n < sites.length; n += 3) this.#leafSited.add(sites[n]!);
 	}
 
-	/**
-	 * The node of the compound record at `at`, which a side holds by address: the one written into a side there (`escape`).
-	 *
-	 * @throws For an address no side has held a node at.
-	 */
+	/** The entries a write gave `side` of the built leaf at the site `holder`, `word`, `item`, `undefined` for none. */
+	leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined {
+		if (!this.#leafSited.has(holder)) return undefined;
+		const entries = this.#trivia.leafSide(holder, word, item, side);
+		return entries === undefined ? undefined : readEntries(this.tree, entries);
+	}
+
+	#copySites(from: number, to: number, skip: readonly number[]): void {
+		const units = this.#unitSided.has(from);
+		const leaves = this.#leafSited.has(from);
+		if (!units && !leaves) return;
+		this.#trivia.copySites(from, to, skip);
+		if (units) this.#unitSided.add(to);
+		if (leaves) this.#leafSited.add(to);
+	}
+
+	/** The handle of the compound record at `at`. */
 	node(at: number): object {
-		const node = this.#escaped.get(at);
-		if (node === undefined) throw new Error(`the built record at ${at} is held by no side, so it has no node by address`);
-		return node;
+		return this.#view(at);
 	}
 
-	/** Holds `node`, the built node at `at`, as the node its address names, for a side that holds it by address. */
-	escape(node: object, at: number): void {
-		this.#escaped.set(at, node);
+	/** Whether the record at `at` was rebuilt from a parsed node, which its side record names. */
+	rebuiltFromRead(at: number): boolean {
+		const side = this.words(at, 2)[wordOf(at, this.format) + 1]!;
+		return side !== 0 && (this.words(side, 1)[wordOf(side, this.format)]! & this.format.sideSides.bit) !== 0;
 	}
 
 	row(node: object): Record<string, unknown> {
@@ -342,9 +362,8 @@ export class BuiltArena {
 	linked(tree: number, at: number): object {
 		const held = this.#trees.get(tree);
 		if (held === undefined) throw new Error(`a built record links parsed tree ${tree}, which its arena does not hold`);
-		const stub = recordStub(held.tree, at);
-		holdReadTree(stub, held.token);
-		return wrapRegistered(stub, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, decodeIndex(stub.$_layout.at.$treeHandle), at));
+		const position = recordStub(held.tree, at);
+		return wrapRegistered(position, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, decodeIndex(position.$_layout!.at.$treeHandle), at));
 	}
 
 	#widthOf(kind: number): number {
@@ -364,15 +383,8 @@ export class BuiltArena {
 		const place = this.#place(words);
 		place.data.set(this.words(at, words).subarray(head, head + words), place.base);
 		place.data[place.base + 1] = side;
-		const seeds = (node as { readonly [SEEDS]?: SeededSlots })[SEEDS];
-		for (const [word, seed] of Object.entries(seeds ?? {})) {
-			const items: readonly unknown[] = Array.isArray(seed) ? seed : [seed];
-			for (let item = 0; item < items.length; item++) {
-				const leaf = items[item];
-				if (typeof leaf === 'object' && leaf !== null && builtRefOf(leaf)?.text !== undefined) this.#site(leaf, place.at, Number(word), item);
-			}
-		}
-		return this.#view(place.at, seeds);
+		this.#copySites(at, place.at, []);
+		return this.#view(place.at);
 	}
 
 	#sidesNaming(side: number, sides: readonly number[]): number {
@@ -482,7 +494,6 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	const built = recordRefOf(entry);
 	if (built === undefined) return readCoordinateOf(entry);
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
-	arena.escape(entry, built.at);
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 

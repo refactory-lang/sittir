@@ -38,6 +38,32 @@ impl<G: EngineGrammar> Engine<G> {
         Ok(())
     }
 
+    /// The entries a write gave `side` of the built leaf at `site`, or `None`
+    /// when no write did.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a site whose holder is address 0.
+    pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
+        site.holder.record()?;
+        Ok(self.written().side(Place::Leaf(site), side))
+    }
+
+    /// The sides of every unit and leaf site of the built record at `from`,
+    /// written at the same site of the record at `to`, except a site at a
+    /// word `skip` names.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for address 0 as either record, before any
+    /// side is copied.
+    pub fn copy_built_sites(&self, from: Address, to: Address, skip: &[u32]) -> Result<(), ArenaError> {
+        from.record()?;
+        to.record()?;
+        self.written().copy_sites(from, to, skip);
+        Ok(())
+    }
+
     /// Replace `side` of the built leaf at each of `sites` with `entries`,
     /// which a render of its holder then writes.
     ///

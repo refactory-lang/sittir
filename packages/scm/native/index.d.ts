@@ -319,6 +319,20 @@ export declare class SittirEngine {
    */
   builtTriviaSide(address: number, side: string): object[] | null
   /**
+   * r" The entries a write gave `side` (`leading`, `trailing` or
+   * r" `inner`) of the built leaf at the site `holder`, `word`,
+   * r" `item`, or `null` when no write did. Refuses holder 0 and
+   * r" any other side.
+   */
+  builtLeafSide(holder: number, word: number, item: number, side: string): object[] | null
+  /**
+   * r" Writes the sides of every unit and leaf site of the built
+   * r" record at `from` at the same site of the record at `to`,
+   * r" except a site at a word `skip` names. Refuses address 0
+   * r" as either record.
+   */
+  copyBuiltSites(from: number, to: number, skip: Array<number>): void
+  /**
    * r" Replace `side` of the built leaf at each site `sites` names,
    * r" `[holder, word, item]` after another, with `entries`, which
    * r" `renderBuilt` then writes; a built record among them

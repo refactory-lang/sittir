@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { listSeparatorOf, nodeText, placeOf, spanOf } from '@sittir/common/utils';
+import { isNode, listSeparatorOf, nodeText, placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -37,6 +37,7 @@ import {
 	materializeBuildInput,
 	builtStorageOf,
 	loadSlotAccessorOf,
+	storedSlotValues,
 	type SlotAccessorOf,
 	readNodeOf,
 	emitValidatorMetrics,
@@ -315,11 +316,12 @@ function rebuildChildren(
 }
 
 /** Whether `value` or any node under it carries the identity of a parsed source node. */
-function carriesSource(value: unknown): boolean {
-	if (Array.isArray(value)) return value.some(carriesSource);
+function carriesSource(value: unknown, accessorOf: SlotAccessorOf): boolean {
+	if (Array.isArray(value)) return value.some((item) => carriesSource(item, accessorOf));
 	if (typeof value !== 'object' || value === null) return false;
 	if (placeOf(value) !== undefined) return true;
-	return Object.values(value).some(carriesSource);
+	const under = isNode(value) ? [...storedSlotValues(value, accessorOf).map(([, child]) => child), (value as { readonly $_layout?: unknown }).$_layout] : Object.values(value);
+	return under.some((child) => carriesSource(child, accessorOf));
 }
 
 interface FactoryArtifacts {
@@ -634,7 +636,7 @@ export async function validateFactoryStorage(
 					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
-				} else if (carriesSource(builtTree)) {
+				} else if (carriesSource(builtTree, accessorOf)) {
 					render.errors.push(renderFailure('built node carries source identity'));
 				} else {
 					try {

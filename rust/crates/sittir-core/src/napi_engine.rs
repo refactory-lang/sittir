@@ -919,6 +919,29 @@ macro_rules! napi_engine {
                     self.engine.built_trivia_side(address, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
+                /// The entries a write gave `side` (`leading`, `trailing` or
+                /// `inner`) of the built leaf at the site `holder`, `word`,
+                /// `item`, or `null` when no write did. Refuses holder 0 and
+                /// any other side.
+                #[::napi_derive::napi(ts_return_type = "object[] | null")]
+                pub fn built_leaf_side(&self, holder: f64, word: u32, item: u32, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
+                    let holder = $crate::arena::Address($crate::napi_engine::checked_whole(holder, "holder")?);
+                    let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    let site = $crate::trivia_store::Site { holder, word, item: $crate::types::ItemIndex(item) };
+                    self.engine.built_leaf_side(site, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// Writes the sides of every unit and leaf site of the built
+                /// record at `from` at the same site of the record at `to`,
+                /// except a site at a word `skip` names. Refuses address 0
+                /// as either record.
+                #[::napi_derive::napi]
+                pub fn copy_built_sites(&self, from: f64, to: f64, skip: Vec<u32>) -> ::napi::Result<()> {
+                    let from = $crate::arena::Address($crate::napi_engine::checked_whole(from, "from")?);
+                    let to = $crate::arena::Address($crate::napi_engine::checked_whole(to, "to")?);
+                    self.engine.copy_built_sites(from, to, &skip).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
                 /// Replace `side` of the built leaf at each site `sites` names,
                 /// `[holder, word, item]` after another, with `entries`, which
                 /// `renderBuilt` then writes; a built record among them

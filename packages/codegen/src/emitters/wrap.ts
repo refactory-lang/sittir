@@ -6,7 +6,7 @@ import { AbstractAssembledCompound, AssembledAlias, AssembledList, AssembledNont
 import type { AssembledNode } from '../compiler/model/node-map.ts';
 import { storedTextKinds } from './built-from-text.ts';
 import type { GeneratedIdTables } from '../dsl/symbol-table.ts';
-import { groupSeatParts, triviaPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry, type TriviaPositions } from './node-members.ts';
+import { groupSeatParts, LIST_SURFACE_LINES, triviaPositionsOf, listSelfViewParts, nodeMemberLines, ownerViewParts, seatedSetters, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import {
 	DELIMITER_IMPORT,
 	collectAliasTargetToSourceMap,
@@ -23,7 +23,7 @@ import {
 	pruneUnusedImports,
 	blankFromInput
 } from './shared.ts';
-import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType } from './factories.ts';
+import { builtTypeSurfaceOf, fieldElementType, listOptionKeys, listSelfViewPlan, seatPlanOf, separatedListSurface, splicedEnvelopeAdmission, splicedEnvelopeType, type ListViewPlan, type SeatPlan } from './factories.ts';
 import { collectKindEntries, findKindEntry, type KindEnumEntry } from './kind-discriminant.ts';
 import type { CodegenEmitter } from './emitter.ts';
 import { recordPlacesOf } from './record-construction.ts';
@@ -128,7 +128,7 @@ export namespace wrap {
 		nodeMap: NodeMap
 	): void {
 		if (!node.rawFactoryName) return;
-		output.push(renameUnusedTreeParam(emitFieldCarryingWrap(node, kindEntries, nodeMap, OBJECT)));
+		output.push(renameUnusedTreeParam(emitFieldCarryingWrap(node, kindEntries, nodeMap)));
 	}
 
 	export function separatedList(
@@ -137,34 +137,29 @@ export namespace wrap {
 		kindEntries: readonly KindEnumEntry[],
 		nodeMap: NodeMap
 	): void {
-		const result = emitSeparatedListWrap(node, kindEntries, nodeMap, OBJECT);
+		const result = emitSeparatedListWrap(node, kindEntries, nodeMap);
 		if (result !== undefined) output.push(renameUnusedTreeParam(result));
 	}
 
-	export function view(output: string[], node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): boolean {
+	export function view(
+		output: string[],
+		node: AuthoredCompound | AssembledList,
+		kindEntries: readonly KindEnumEntry[],
+		nodeMap: NodeMap,
+		shared: HandleShared
+	): boolean {
 		if (!node.rawFactoryName) return false;
-		const storage = recordStorageOf(node, nodeMap);
-		if (storage === undefined) return false;
-		const source = node instanceof AssembledList ? emitSeparatedListWrap(node, kindEntries, nodeMap, storage) : emitFieldCarryingWrap(node, kindEntries, nodeMap, storage);
-		if (source === undefined) return false;
-		output.push(source);
+		const places = recordPlacesOf(node, nodeMap);
+		if (places === undefined) return false;
+		output.push(emitRecordHandle(node, kindEntries, nodeMap, places, shared));
 		return true;
 	}
 }
 
-type WrapStorage =
-	| { readonly mode: 'object' }
-	| { readonly mode: 'record'; readonly places: ReadonlyMap<string, RecordPlace> };
+type RecordPlaces = ReadonlyMap<string, RecordPlace>;
 
-const OBJECT: WrapStorage = { mode: 'object' };
-
-function recordStorageOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap): WrapStorage | undefined {
-	const places = recordPlacesOf(node, nodeMap);
-	return places === undefined ? undefined : { mode: 'record', places };
-}
-
-function placeOf(storage: WrapStorage & { readonly mode: 'record' }, storageKey: string): RecordPlace {
-	const place = storage.places.get(storageKey);
+function placeIn(places: RecordPlaces, storageKey: string): RecordPlace {
+	const place = places.get(storageKey);
 	if (place === undefined) throw new Error(`emitWrap: slot '${storageKey}' has no record place`);
 	return place;
 }
@@ -174,12 +169,6 @@ function cellArgs(place: RecordPlace, list = false): string {
 	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ${place.inline ?? 0}` : (place.run ?? place.inline ?? 0)}`;
 }
 
-function wrapHeader(node: { readonly typeName: string }, storage: WrapStorage, parsedType: string | undefined): string {
-	return storage.mode === 'object'
-		? `export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`
-		: `function view${node.typeName}(data: RecordStub, tree: TreeHandle)${returnAnnotation(parsedType)} {`;
-}
-
 interface SlotAccessorConfig {
 	readonly elemType: string;
 	readonly required: boolean;
@@ -187,18 +176,8 @@ interface SlotAccessorConfig {
 	readonly aliasContent?: boolean;
 }
 
-function slotAccessorBody(slot: SlotModel, config: SlotAccessorConfig, storage: WrapStorage): string {
+function slotAccessorBody(slot: SlotModel, config: SlotAccessorConfig): string {
 	const one = config.required ? config.elemType : `${config.elemType} | undefined`;
-	if (storage.mode === 'record') {
-		const place = placeOf(storage, slot.storageKey);
-		if ('bit' in place) return `return recordFlag(this, tree, ${place.word}, ${place.bit})`;
-		const args = cellArgs(place);
-		if (!storesNodes(config.storageInfo))
-			return place.run === undefined ? `return keptSlot(this, tree, ${args})` : `return keptItems(this, tree, ${cellArgs(place, true)})`;
-		if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, tree, ${cellArgs(place, true)})`;
-		const role = config.aliasContent === true ? `, contentRole(this, () => recordSlot(this, tree, ${args}))` : '';
-		return `return viewSlot<${one}>(this, tree, ${args}${role})`;
-	}
 	if (!storesNodes(config.storageInfo)) return `return this.${slot.storageKey}`;
 	const key = JSON.stringify(slot.storageKey);
 	if (slot.arity === 'many') return `return hydrateSlots<${config.elemType}>(this, ${key}, tree)`;
@@ -222,131 +201,270 @@ export function buildSeparatedListContentSlot(node: AssembledList): AssembledNon
 	});
 }
 
-function emitSeparatedListWrap(
-	node: AssembledList,
+interface AccessorSlot {
+	readonly slot: SlotModel;
+	readonly config: SlotAccessorConfig;
+}
+
+function fieldAccessorSlots(
+	slots: readonly AssembledNonterminal[],
 	kindEntries: readonly KindEnumEntry[],
 	nodeMap: NodeMap,
-	storage: WrapStorage
-): string | undefined {
+	aliasContent = false
+): AccessorSlot[] {
+	return slots.map((slot) => ({
+		slot,
+		config: { elemType: fieldElementType(slot, nodeMap, kindEntries), required: isRequired(slot), storageInfo: resolveFieldStorageInfo(slot, nodeMap), aliasContent }
+	}));
+}
+
+function listAccessorSlots(node: AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {
+	if (node.slots.length > 1) return fieldAccessorSlots(node.slots, kindEntries, nodeMap);
+	const content = buildSeparatedListContentSlot(node);
+	const canonical = canonicalSeparatedListField(node);
+	return [
+		{
+			slot: { name: canonical.name, propertyName: canonical.propertyName, storageKey: canonical.storageKey, arity: 'many' },
+			config: { elemType: fieldElementType(content, nodeMap, kindEntries), required: node.nonEmpty, storageInfo: resolveFieldStorageInfo(content, nodeMap) }
+		}
+	];
+}
+
+function accessorSlotsOf(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): AccessorSlot[] {
+	return node instanceof AssembledList ? listAccessorSlots(node, kindEntries, nodeMap) : fieldAccessorSlots(node.slots, kindEntries, nodeMap, node instanceof AssembledAlias);
+}
+
+function settersOf(node: AuthoredCompound | AssembledList, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[], plan: SeatPlan): SetterEntry[] {
+	const own = node instanceof AssembledList ? [...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)] : inlineSetters(node, nodeMap, kindEntries);
+	return seatedSetters(own, plan);
+}
+
+function objectAccessorLines(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string[] {
+	return accessorSlotsOf(node, kindEntries, nodeMap).map(({ slot, config }) => `    ${slot.propertyName}() { ${slotAccessorBody(slot, config)}; },`);
+}
+
+function emitSeparatedListWrap(node: AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string | undefined {
 	if (!node.rawFactoryName) return undefined;
-	const contentSlot = buildSeparatedListContentSlot(node);
 	const canonical = canonicalSeparatedListField(node);
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
-	const view = listSelfViewParts(
-		listSelfViewPlan(node, nodeMap, kindEntries),
-		storage.mode === 'object'
-			? { elements: dataAccessExpr('data', canonical.storageKey) }
-			: { length: `recordLength(data, tree, ${cellArgs(placeOf(storage, canonical.storageKey), true)})` },
-		canonical.propertyName,
-		storage.mode === 'object' ? 'wrap' : 'view'
-	);
-	const lines = [
-		wrapHeader(node, storage, parsedType),
+	const view = listSelfViewParts(listSelfViewPlan(node, nodeMap, kindEntries), { elements: dataAccessExpr('data', canonical.storageKey) }, canonical.propertyName, 'wrap');
+	return [
+		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
 		...view.prelude,
 		'  const node = {',
 		'    ...data,',
-		...typeStampLines(node, kindEntries)
-	];
-	if (node.slots.length > 1) {
-		lines.push(...fieldAccessorLines(node.slots, kindEntries, nodeMap, storage));
-	} else {
-		const body = slotAccessorBody(
-			{ name: canonical.name, propertyName: canonical.propertyName, storageKey: canonical.storageKey, arity: 'many' },
-			{
-				elemType: fieldElementType(contentSlot, nodeMap, kindEntries),
-				required: node.nonEmpty,
-				storageInfo: resolveFieldStorageInfo(contentSlot, nodeMap)
-			},
-			storage
-		);
-		lines.push(`    ${canonical.propertyName}() { ${body}; },`);
-	}
-	lines.push(
-		...nodeMemberLines({
-			setters: seatedSetters([...inlineSetters(node, nodeMap, kindEntries), ...listOptionSetters(node, nodeMap, kindEntries)], plan),
-			accessors: [],
-			extra: view.members,
-			trivia: triviaPositionsOf(node.kind, nodeMap),
-			parsed: true,
-			...(storage.mode === 'record' ? { row: true as const } : {})
-		}),
+		...typeStampLines(node, kindEntries),
+		...objectAccessorLines(node, kindEntries, nodeMap),
+		...nodeMemberLines({ setters: settersOf(node, nodeMap, kindEntries, plan), accessors: [], extra: view.members, trivia: triviaPositionsOf(node.kind, nodeMap), parsed: true }),
 		'  };',
 		...view.postlude,
 		`  return ${castToParsed('node', parsedType)};`,
 		'}'
-	);
-	return lines.join('\n');
+	].join('\n');
 }
 
-function fieldAccessorLines(
-	slots: readonly AssembledNonterminal[],
-	kindEntries: readonly KindEnumEntry[],
-	nodeMap: NodeMap,
-	storage: WrapStorage,
-	aliasContent = false
-): string[] {
-	return slots.map((f) => {
-		const body = slotAccessorBody(f, {
-			elemType: fieldElementType(f, nodeMap, kindEntries),
-			required: isRequired(f),
-			storageInfo: resolveFieldStorageInfo(f, nodeMap),
-			aliasContent
-		}, storage);
-		return `    ${f.propertyName}() { ${body}; },`;
-	});
-}
-
-function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap, storage: WrapStorage): string {
+function emitFieldCarryingWrap(node: AuthoredCompound, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap): string {
 	const parsedType = declaredParsedType(node, kindEntries);
 	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
 	const owner = plan.viewPlan?.owner;
-	const view =
-		plan.viewPlan !== undefined && owner !== undefined
-			? storage.mode === 'object'
-				? ownerViewParts(plan.viewPlan, dataAccessExpr('data', owner.storage), owner.accessor, 'wrap')
-				: ownerViewParts(
-						plan.viewPlan,
-						`keptSlot(data, tree, ${cellArgs(placeOf(storage, owner.storage))}, _wrap)`,
-						owner.accessor,
-						'view'
-					)
-			: undefined;
-	const groups =
-		storage.mode === 'object'
-			? groupSeatParts(
-					plan,
-					({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
-					(stored) => `${dataAccessExpr('data', stored)} === undefined`
-				)
-			: groupSeatParts(
-					plan,
-					({ stored, group }) => `() => viewSlot<T.${group} | undefined>(node, tree, ${cellArgs(placeOf(storage, stored))})`,
-					(stored) => `!recordPresent(data, tree, ${cellArgs(placeOf(storage, stored))})`
-				);
+	const view = plan.viewPlan !== undefined && owner !== undefined ? ownerViewParts(plan.viewPlan, dataAccessExpr('data', owner.storage), owner.accessor, 'wrap') : undefined;
+	const groups = groupSeatParts(
+		plan,
+		({ stored, group }) => `() => hydrateSlot<T.${group} | undefined>(node, ${JSON.stringify(stored)}, tree)`,
+		(stored) => `${dataAccessExpr('data', stored)} === undefined`
+	);
 	return [
-		wrapHeader(node, storage, parsedType),
+		`export function wrap${node.typeName}(data: T.${node.typeName}, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
 		'  const handle = currentHandle();',
 		...(view?.prelude ?? []),
 		...groups.prelude,
 		'  const node = {',
 		'    ...data,',
 		...typeStampLines(node, kindEntries),
-		...fieldAccessorLines(node.slots, kindEntries, nodeMap, storage, node instanceof AssembledAlias),
+		...objectAccessorLines(node, kindEntries, nodeMap),
 		...nodeMemberLines({
-			setters: seatedSetters(inlineSetters(node, nodeMap, kindEntries), plan),
+			setters: settersOf(node, nodeMap, kindEntries, plan),
 			accessors: [],
 			extra: [...(view?.members ?? []), ...groups.members],
 			trivia: triviaPositionsOf(node.kind, nodeMap),
-			parsed: true,
-			...(storage.mode === 'record' ? { row: true as const } : {})
+			parsed: true
 		}),
 		'  };',
 		...(view?.postlude ?? []),
 		`  return ${castToParsed('node', parsedType)};`,
 		'}'
 	].join('\n');
+}
+
+export interface HandleShared {
+	readonly setters: Set<string>;
+	inner: boolean;
+}
+
+function handleAccessorBody({ slot, config }: AccessorSlot, places: RecordPlaces): string {
+	const one = config.required ? config.elemType : `${config.elemType} | undefined`;
+	const place = placeIn(places, slot.storageKey);
+	if ('bit' in place) return `return recordFlag(this, ${place.word}, ${place.bit})`;
+	const args = cellArgs(place);
+	if (!storesNodes(config.storageInfo)) return place.run === undefined ? `return childSlot(this, ${args})` : `return childItems(this, ${cellArgs(place, true)})`;
+	if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, ${cellArgs(place, true)})`;
+	const role = config.aliasContent === true ? `, contentRole(this, () => recordSlot(this, ${args}))` : '';
+	return `return viewSlot<${one}>(this, ${args}${role})`;
+}
+
+interface HandleListParts {
+	readonly functions: readonly string[];
+	readonly fields: readonly string[];
+	readonly tail: readonly string[];
+	readonly after: readonly string[];
+}
+
+const NO_LIST: HandleListParts = { functions: [], fields: [], tail: [], after: [] };
+
+function listSurface(view: ListViewPlan, prefix: string, read: readonly string[], optionValue: (key: string) => string, after: readonly string[], separator: string): HandleListParts {
+	const wrapper = view.wrapper === undefined ? [] : [`const ${prefix}$wrapper = ${view.wrapper};`];
+	const options = view.options.filter((option) => option.key !== 'separator');
+	return {
+		functions: [...wrapper, ...read],
+		fields: ['    length: 0,', ...options.map((option) => `    ${option.key}: undefined as unknown,`)],
+		tail: ['    [LIST_ITEMS]: undefined,', `    [LIST_READ]: ${prefix}$listRead,`, ...LIST_SURFACE_LINES],
+		after: [
+			...after,
+			...options.map((option) => `  node.${option.key} = ${optionValue(option.key)} ?? ${option.default};`),
+			'  defineListIndices(node, node.length);',
+			...(view.options.some((option) => option.key === 'separator') ? [separator] : [])
+		]
+	};
+}
+
+function listWrapperOf(view: ListViewPlan, prefix: string): string {
+	return view.wrapper === undefined ? 'undefined' : `${prefix}$wrapper`;
+}
+
+function selfListParts(node: AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap, places: RecordPlaces, prefix: string): HandleListParts {
+	const self = canonicalSeparatedListField(node);
+	const view = listSelfViewPlan(node, nodeMap, kindEntries);
+	return listSurface(
+		view,
+		prefix,
+		[`function ${prefix}$listRead(this: object): readonly unknown[] {`, `  return listItems(ownerElements(this, ${JSON.stringify(self.propertyName)}), ${listWrapperOf(view, prefix)});`, '}'],
+		(key) => {
+			if (key === 'delimiter') return 'recordDelimiter(node)';
+			throw new Error(`a record handle's list option '${key}' is its shared getter (defineListSeparator), not a member: a parsed list's separator is its tree's`);
+		},
+		[`  node.length = recordLength(node, ${cellArgs(placeIn(places, self.storageKey), true)});`],
+		'  defineListSeparator(node);'
+	);
+}
+
+function ownerListParts(view: ListViewPlan, owner: NonNullable<ListViewPlan['owner']>, places: RecordPlaces, prefix: string): HandleListParts {
+	return listSurface(
+		view,
+		prefix,
+		[
+			`function ${prefix}$listRead(this: { readonly ${owner.accessor}: () => unknown }): readonly unknown[] {`,
+			`  return listItems(ownerElements(this.${owner.accessor}(), ${JSON.stringify(view.elements)}), ${listWrapperOf(view, prefix)});`,
+			'}'
+		],
+		(key) => `listOption(listView.list, ${JSON.stringify(key)}, undefined)`,
+		[
+			`  const listView = ownerView(childSlot(node, ${cellArgs(placeIn(places, owner.storage))}, _wrap), ${JSON.stringify(view.count)}, (list) => hydrate(list, tree));`,
+			'  node.length = listView.length ?? 0;'
+		],
+		`  defineListSeparator(node, ${JSON.stringify(owner.accessor)});`
+	);
+}
+
+function handleListParts(node: AuthoredCompound | AssembledList, plan: SeatPlan, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap, places: RecordPlaces, prefix: string): HandleListParts {
+	if (node instanceof AssembledList) return selfListParts(node, kindEntries, nodeMap, places, prefix);
+	const owner = plan.viewPlan?.owner;
+	return plan.viewPlan === undefined || owner === undefined ? NO_LIST : ownerListParts(plan.viewPlan, owner, places, prefix);
+}
+
+function emitRecordHandle(node: AuthoredCompound | AssembledList, kindEntries: readonly KindEnumEntry[], nodeMap: NodeMap, places: RecordPlaces, shared: HandleShared): string {
+	const parsedType = declaredParsedType(node, kindEntries);
+	const plan = seatPlanOf(node, nodeMap, kindEntries, 'RAW.');
+	const prefix = `view${node.typeName}`;
+	const functions: string[] = [];
+	const member = (name: string, body: string): string => {
+		const fn = `${prefix}$${name}`;
+		functions.push(`function ${fn}(this: RecordHandle) {`, `  ${body};`, '}');
+		return fn;
+	};
+	const fields = accessorSlotsOf(node, kindEntries, nodeMap).map((accessor) => `    ${accessor.slot.propertyName}: ${member(accessor.slot.propertyName, handleAccessorBody(accessor, places))},`);
+	const presence: string[] = [];
+	for (const { hint } of plan.groups) {
+		const args = cellArgs(placeIn(places, hint.stored));
+		for (const key of hint.keys) {
+			const fn = member(key.name, `return groupField(viewSlot<T.${hint.group} | undefined>(this, ${args}), ${JSON.stringify(key.field ?? key.name)})`);
+			fields.push(`    ${key.name}: undefined as typeof ${fn} | undefined,`);
+			presence.push(`  node.${key.name} = recordPresent(node, ${args}) ? ${fn} : undefined;`);
+		}
+	}
+	const list = handleListParts(node, plan, kindEntries, nodeMap, places, prefix);
+	const setters = settersOf(node, nodeMap, kindEntries, plan).map((setter) => setter.name);
+	for (const name of setters) shared.setters.add(name);
+	const trivia = triviaPositionsOf(node.kind, nodeMap);
+	if (trivia?.inner === true) shared.inner = true;
+	const stamp = typeStampLines(node, kindEntries);
+	return [
+		...functions,
+		...list.functions,
+		`function ${prefix}(data: RecordPosition, tree: TreeHandle)${returnAnnotation(parsedType)} {`,
+		'  const node = {',
+		...(stamp.length === 0 ? ['    $type: data.$type,'] : stamp),
+		'    $tree: tree,',
+		'    $at: data.$at,',
+		'    $words: positionWords(data),',
+		'    $cache: undefined as Record<number, unknown> | undefined,',
+		'    $owned: false,',
+		'    $_layout: data.$_layout,',
+		...fields,
+		...list.fields,
+		...(setters.length === 0 ? [] : ['    $with: undefined as unknown as object,']),
+		'    $render: handleRender,',
+		'    toString: handleToString,',
+		'    toJSON: refuseJSON,',
+		...(trivia === undefined ? [] : ['    $trivia: undefined as unknown as object,']),
+		'    $query: data.$_layout === undefined ? undefined : $handleQuery,',
+		'    $snapshot: data.$_layout === undefined ? undefined : $handleSnapshot,',
+		'    $engine: handleEngine,',
+		...list.tail,
+		'    [Symbol.dispose]: handleDispose',
+		'  };',
+		...(setters.length === 0 ? [] : [`  node.$with = { node, ${setters.map((name) => `${name}: $with$${name}`).join(', ')} };`]),
+		...(trivia === undefined ? [] : [`  node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing${trivia.inner ? ', inner: $trivia$inner' : ''} };`]),
+		...presence,
+		...list.after,
+		`  return ${castToParsed('node', parsedType)};`,
+		'}'
+	].join('\n');
+}
+
+function handleSharedLines(shared: HandleShared): string[] {
+	const trivia = (side: string): string[] => [
+		`function $trivia$${side}(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {`,
+		`  return rowTrivia(this.node, _wrap, '${side}', items);`,
+		'}'
+	];
+	return [
+		'function $handleQuery(this: RecordPosition): object {',
+		'  return handleQuery(this, rowOf(this, _wrap));',
+		'}',
+		'function $handleSnapshot(this: RecordPosition): unknown {',
+		'  return snapshotOf(rowOf(this, _wrap));',
+		'}',
+		...trivia('leading'),
+		...trivia('trailing'),
+		...(shared.inner ? trivia('inner') : []),
+		...[...shared.setters].sort().flatMap((name) => [
+			`function $with$${name}(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {`,
+			`  return rowWith(this.node, _wrap, ${JSON.stringify(name)}, args);`,
+			'}'
+		])
+	];
 }
 
 function admittedSlot(kind: string, slot: string, value: string): string {
@@ -406,6 +524,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	readonly #emittedStructuralKinds = new Set<string>();
 	readonly #viewKinds = new Set<string>();
 	readonly #leafWraps = new Set<keyof typeof LEAF_WRAPS>();
+	readonly #shared: HandleShared = { setters: new Set(), inner: false };
 	#rootTreeTypeName: string | undefined;
 	#rootMember: string | undefined;
 
@@ -436,7 +555,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 	}
 
 	#emitView(node: AuthoredCompound | AssembledList): void {
-		if (wrap.view(this.#views, node, this.#kindEntries, this.#nodeMap)) this.#viewKinds.add(node.kind);
+		if (wrap.view(this.#views, node, this.#kindEntries, this.#nodeMap, this.#shared)) this.#viewKinds.add(node.kind);
 	}
 
 	dispatchNode(kind: string, node: AssembledNode): void {
@@ -536,8 +655,8 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		const lines: string[] = [
 			'// Auto-generated by @sittir/codegen — do not edit',
 			'',
-			"import { restItems, admitSplicedEnvelope, admitSlot, markEdited as $edited, asTextNode, carryReadTree, treeHandleOf, hydrateWith, hydrateSlotWith, hydrateSlotsWith, contentRole, inTreeEngine, currentHandle, listSlotWith, elementsWith, seatWith, groupField, LIST_ITEMS, LIST_READ, LIST_METHODS, listIterator, listItems, storedElements, ownerView, ownerElements, listOption, defineListIndices, defineListSeparator, rebuilt, renderText, refuseJSON, queryOf, snapshotOf, triviaSide, triviaInner, textOf, recordOf, recordSlot, recordPresent, recordSlots, recordFlag, keptSlot, keptItems, recordLength, recordDelimiter, rowData, rowOf, rowWith, rowTrivia } from '@sittir/common/utils';",
-			"import type { RecordStub, Role, TreeHandle } from '@sittir/common/utils';",
+			"import { restItems, admitSplicedEnvelope, admitSlot, markEdited as $edited, asTextNode, carryReadTree, treeHandleOf, hydrateWith, hydrateSlotWith, hydrateSlotsWith, contentRole, inTreeEngine, currentHandle, listSlotWith, elementsWith, seatWith, groupField, LIST_ITEMS, LIST_READ, LIST_METHODS, listIterator, listItems, storedElements, ownerView, ownerElements, listOption, defineListIndices, defineListSeparator, rebuilt, renderText, refuseJSON, queryOf, snapshotOf, triviaSide, triviaInner, textOf, isRecordPosition, positionWords, recordSlot, recordPresent, recordFlag, childSlot, childItems, recordLength, recordDelimiter, rowData, rowOf, rowWith, rowTrivia, handleRender, handleToString, handleEngine, handleDispose, handleQuery } from '@sittir/common/utils';",
+			"import type { RecordHandle, RecordPosition, Role, TreeHandle } from '@sittir/common/utils';",
 			"import type { ParsedRoot } from '@sittir/common/engine';",
 			"import type { Admit, AnyUntypedNode as _UntypedNode, NonEmptyArray } from '@sittir/types';",
 			"import { TSKindId } from './kinds.js';",
@@ -562,16 +681,17 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {',
 			'  return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
-			'function viewSlot<T>(view: object, tree: TreeHandle, word: number, width: number, inline = 0, role?: Role): ParsedOfData<T> {',
-			'  return keptSlot(view, tree, word, width, inline, _wrap, role) as ParsedOfData<T>;',
+			'function viewSlot<T>(view: RecordHandle, word: number, width: number, inline = 0, role?: Role): ParsedOfData<T> {',
+			'  return childSlot(view, word, width, inline, _wrap, role) as ParsedOfData<T>;',
 			'}',
-			'function viewSlots<T>(view: object, tree: TreeHandle, word: number, width: number, run?: number, inline = 0): readonly ParsedOfData<T>[] {',
-			'  return keptItems(view, tree, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];',
+			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run?: number, inline = 0): readonly ParsedOfData<T>[] {',
+			'  return childItems(view, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
 			''
 		];
 		for (const source of this.#output) lines.push(source, '');
 		for (const source of this.#views) lines.push(source, '');
+		if (this.#views.length > 0) lines.push(...handleSharedLines(this.#shared), '');
 		for (const [leaf, trivia] of Object.entries(LEAF_WRAPS) as [keyof typeof LEAF_WRAPS, TriviaPositions | undefined][]) {
 			if (!this.#leafWraps.has(leaf)) continue;
 			lines.push(
@@ -591,7 +711,7 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			...rows.values(),
 			'};',
 			'',
-			'const _viewTable: Record<number, (data: RecordStub, tree: TreeHandle) => object> = {',
+			'const _viewTable: Record<number, (data: RecordPosition, tree: TreeHandle) => object> = {',
 			...views.values(),
 			'};',
 			'',
@@ -612,10 +732,10 @@ export class WrapEmitter implements CodegenEmitter<string> {
 		);
 		lines.push(
 			'export function wrapNode(data: _UntypedNode, tree: TreeHandle): unknown {',
-			'  if (recordOf(data) !== undefined) {',
-			'    const view = _viewTable[data.$type as unknown as number];',
-			'    if (view === undefined) return wrapNode(rowData(data, tree) as _UntypedNode, tree);',
-			'    return carryReadTree(data, inTreeEngine(tree, () => view(data as unknown as RecordStub, tree)));',
+			'  if (isRecordPosition(data)) {',
+			'    const view = _viewTable[data.$type];',
+			'    if (view === undefined) return wrapNode(rowData(data) as _UntypedNode, tree);',
+			'    return inTreeEngine(tree, () => view(data, tree));',
 			'  }',
 			'  const fn = _wrapTable[data.$type as unknown as number];',
 			'  return fn === undefined ? asTextNode(data) : carryReadTree(data, inTreeEngine(tree, () => fn(data, tree)));',
@@ -645,15 +765,22 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'triviaInner',
 			'recordSlot',
 			'recordPresent',
-			'keptSlot',
-			'keptItems',
+			'childSlot',
+			'childItems',
 			'recordLength',
-			'recordSlots',
 			'recordFlag',
 			'recordDelimiter',
 			'rowOf',
 			'rowWith',
 			'rowTrivia',
+			'positionWords',
+			'handleRender',
+			'handleToString',
+			'handleEngine',
+			'handleDispose',
+			'handleQuery',
+			'RecordHandle',
+			'RecordPosition',
 			'admitSplicedEnvelope',
 			'Admit',
 			'NonEmptyArray',

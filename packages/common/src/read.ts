@@ -2,6 +2,7 @@ import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat } from './record-cell.ts';
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
+import type { TreeToken } from './tree-token.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
 export type TriviaSideName = 'leading' | 'trailing' | 'inner';
@@ -43,6 +44,7 @@ export interface TreeHandle {
 	records?: RecordReader;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
 	built?: BuiltArena;
+	token?: TreeToken;
 }
 
 /** What any record view reads its records' words through. */

@@ -1,5 +1,6 @@
 import type { TreeMember, TreeToken } from '@sittir/types';
 import type { TreeHandle } from './read.ts';
+import { isHandle } from './handle.ts';
 
 export type { TreeToken };
 
@@ -28,7 +29,10 @@ export function holdTreeOn(node: object, token: TreeToken): void {
 
 /** The token `node` holds, or `undefined` when it holds no tree. */
 export function treeTokenOf(node: object): TreeToken | undefined {
-	return (node as Holder)[TREE];
+	const own = (node as Holder)[TREE];
+	if (own !== undefined) return own;
+	const tree = (node as { readonly $tree?: TreeHandle }).$tree;
+	return tree !== undefined && tree.built === undefined && isHandle(node) ? tree.token : undefined;
 }
 
 /**

@@ -8,7 +8,6 @@ import {
 	admitChildren,
 	elementsWith,
 	rebuilt,
-	renderText,
 	refuseJSON,
 	triviaSide,
 	triviaInner,
@@ -22,9 +21,16 @@ import {
 	builtInputs,
 	storeCell,
 	storeFlag,
-	storeList
+	storeList,
+	leafText,
+	leafLeading,
+	leafTrailing,
+	handleRender,
+	handleToString,
+	handleEngine,
+	handleDispose
 } from '@sittir/common/utils';
-import type { BuiltRow, BuiltViews, EngineHandle } from '@sittir/common/utils';
+import type { BuiltRow, BuiltText, BuiltViews, EngineHandle, LeafSite, TreeHandle } from '@sittir/common/utils';
 
 import {
 	_leafRe_buildIdentifier,
@@ -45,7 +51,7 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	handle?.verifyStored?.(TSKindId.Program as const, { _definitions });
 	const record = arena.record(TSKindId.Program as const);
 	storeList(arena, record, 2, _definitions, 5);
-	const node = arena.view(record, { 2: _definitions });
+	const node = arena.view(record);
 	return node as unknown as T.Program.Bound;
 }
 
@@ -83,7 +89,7 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	handle?.verifyStored?.(TSKindId.EscapeSequence as const, { _content });
 	const record = arena.record(TSKindId.EscapeSequence as const);
 	storeCell(arena, record, 2, _content);
-	const node = arena.view(record, { 2: _content });
+	const node = arena.view(record);
 	return node as unknown as T.EscapeSequence.Bound;
 }
 
@@ -105,23 +111,26 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 	if (!_leafRe_buildIdentifier.test(text))
 		throw new Error(`identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafIdentifier(text, handle), text) as unknown as T.Identifier.Bound;
+	return builtArenaOf(handle).leaf(leafIdentifier, text) as unknown as T.Identifier.Bound;
 }
 
-function leafIdentifier(text: string, handle: EngineHandle | undefined): object {
+function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.Identifier as const,
 		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$owned: site === undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -131,26 +140,26 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 	if (!_leafRe_buildImmediateIdentifier.test(text))
 		throw new Error(`_immediate_identifier: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafImmediateIdentifier(text, handle),
-		text
-	) as unknown as T.ImmediateIdentifier.Bound;
+	return builtArenaOf(handle).leaf(leafImmediateIdentifier, text) as unknown as T.ImmediateIdentifier.Bound;
 }
 
-function leafImmediateIdentifier(text: string, handle: EngineHandle | undefined): object {
+function leafImmediateIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ImmediateIdentifier as const,
 		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$owned: site === undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -163,7 +172,7 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 	handle?.verifyStored?.(TSKindId.Capture as const, { _name });
 	const record = arena.record(TSKindId.Capture as const);
 	storeCell(arena, record, 2, _name);
-	const node = arena.view(record, { 2: _name });
+	const node = arena.view(record);
 	return node as unknown as T.Capture.Bound;
 }
 
@@ -206,7 +215,7 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	handle?.verifyStored?.(TSKindId.String as const, { _string_content });
 	const record = arena.record(TSKindId.String as const);
 	storeCell(arena, record, 2, _string_content);
-	const node = arena.view(record, { 2: _string_content });
+	const node = arena.view(record);
 	return node as unknown as T.String.Bound;
 }
 
@@ -251,7 +260,7 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	handle?.verifyStored?.(TSKindId.ImmediateString as const, { _string_content });
 	const record = arena.record(TSKindId.ImmediateString as const);
 	storeCell(arena, record, 2, _string_content);
-	const node = arena.view(record, { 2: _string_content });
+	const node = arena.view(record);
 	return node as unknown as T.ImmediateString.Bound;
 }
 
@@ -281,7 +290,7 @@ export function buildStringContent(
 	handle?.verifyStored?.(TSKindId.StringContent as const, { _content });
 	const record = arena.record(TSKindId.StringContent as const);
 	storeList(arena, record, 2, _content, 5);
-	const node = arena.view(record, { 2: _content });
+	const node = arena.view(record);
 	return node as unknown as T.StringContent.Bound;
 }
 
@@ -312,7 +321,7 @@ export function buildParameters(
 	handle?.verifyStored?.(TSKindId.Parameters as const, { _elements });
 	const record = arena.record(TSKindId.Parameters as const);
 	storeList(arena, record, 2, _elements, 5);
-	const node = arena.view(record, { 2: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.Parameters.Bound;
 }
 
@@ -348,7 +357,7 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	handle?.verifyStored?.(TSKindId.Comment as const, { _content });
 	const record = arena.record(TSKindId.Comment as const);
 	storeCell(arena, record, 2, _content);
-	const node = arena.view(record, { 2: _content });
+	const node = arena.view(record);
 	return node as unknown as T.Comment.Bound;
 }
 
@@ -375,7 +384,7 @@ export function buildList(config: T.List.Config): T.List.Bound {
 	const record = arena.record(TSKindId.List as const);
 	storeList(arena, record, 2, _definitions, 5);
 	storeList(arena, record, 4, _elements, 5);
-	const node = arena.view(record, { 2: _definitions, 4: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.List.Bound;
 }
 
@@ -413,7 +422,7 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	const record = arena.record(TSKindId.Grouping as const);
 	storeList(arena, record, 2, _grouping_group, 5);
 	storeList(arena, record, 4, _elements, 5);
-	const node = arena.view(record, { 2: _grouping_group, 4: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.Grouping.Bound;
 }
 
@@ -459,7 +468,7 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	const record = arena.record(TSKindId.MissingNode as const);
 	storeCell(arena, record, 2, _name);
 	storeList(arena, record, 12, _elements, 5);
-	const node = arena.view(record, { 2: _name, 12: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.MissingNode.Bound;
 }
 
@@ -496,7 +505,7 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	const record = arena.record(TSKindId.AnonymousNode as const);
 	storeCell(arena, record, 2, _name);
 	storeList(arena, record, 12, _elements, 5);
-	const node = arena.view(record, { 2: _name, 12: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.AnonymousNode.Bound;
 }
 
@@ -534,7 +543,7 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	const record = arena.record(TSKindId.FieldDefinition as const);
 	storeCell(arena, record, 2, _name);
 	storeCell(arena, record, 7, _definition);
-	const node = arena.view(record, { 2: _name, 7: _definition });
+	const node = arena.view(record);
 	return node as unknown as T.FieldDefinition.Bound;
 }
 
@@ -564,7 +573,7 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 	handle?.verifyStored?.(TSKindId.NegatedField as const, { _identifier });
 	const record = arena.record(TSKindId.NegatedField as const);
 	storeCell(arena, record, 2, _identifier);
-	const node = arena.view(record, { 2: _identifier });
+	const node = arena.view(record);
 	return node as unknown as T.NegatedField.Bound;
 }
 
@@ -600,7 +609,7 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	storeCell(arena, record, 7, _name);
 	storeCell(arena, record, 12, _type);
 	storeCell(arena, record, 17, _parameters);
-	const node = arena.view(record, { 2: _prefix, 7: _name, 12: _type, 17: _parameters });
+	const node = arena.view(record);
 	return node as unknown as T.Predicate.Bound;
 }
 
@@ -638,7 +647,7 @@ export function buildListElementQuantifier(
 	handle?.verifyStored?.(TSKindId.ListElementQuantifier as const, { _quantifier });
 	const record = arena.record(TSKindId.ListElementQuantifier as const);
 	storeCell(arena, record, 2, _quantifier);
-	const node = arena.view(record, { 2: _quantifier });
+	const node = arena.view(record);
 	return node as unknown as T.ListElementQuantifier.Bound;
 }
 
@@ -672,7 +681,7 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 	const record = arena.record(TSKindId.GroupExpressionArm as const);
 	storeCell(arena, record, 2, _left);
 	storeCell(arena, record, 7, _right);
-	const node = arena.view(record, { 2: _left, 7: _right });
+	const node = arena.view(record);
 	return node as unknown as T.GroupExpressionArm.Bound;
 }
 
@@ -710,7 +719,7 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	const record = arena.record(TSKindId.NamedNodeExpressionArm as const);
 	storeCell(arena, record, 2, _left);
 	storeCell(arena, record, 7, _right);
-	const node = arena.view(record, { 2: _left, 7: _right });
+	const node = arena.view(record);
 	return node as unknown as T.NamedNodeExpressionArm.Bound;
 }
 
@@ -746,7 +755,7 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 	const record = arena.record(TSKindId.GroupingGroup as const);
 	storeCell(arena, record, 3, _group_expression);
 	if (_anchor) storeFlag(record.data, record.base + 2, 1);
-	const node = arena.view(record, { 3: _group_expression });
+	const node = arena.view(record);
 	return node as unknown as T.GroupingGroup.Bound;
 }
 
@@ -773,26 +782,26 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 	if (!_leafRe_buildStringContentText.test(text))
 		throw new Error(`string_content_text: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafStringContentText(text, handle),
-		text
-	) as unknown as T.StringContentText.Bound;
+	return builtArenaOf(handle).leaf(leafStringContentText, text) as unknown as T.StringContentText.Bound;
 }
 
-function leafStringContentText(text: string, handle: EngineHandle | undefined): object {
+function leafStringContentText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.StringContentText as const,
 		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$owned: site === undefined,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -822,7 +831,7 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 	storeCell(arena, record, 2, _name);
 	storeCell(arena, record, 7, _named_node_group);
 	storeList(arena, record, 12, _elements, 5);
-	const node = arena.view(record, { 2: _name, 7: _named_node_group, 12: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.NamedNodePlain.Bound;
 }
 
@@ -877,7 +886,7 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	storeCell(arena, record, 7, _name);
 	storeCell(arena, record, 17, _named_node_group);
 	storeList(arena, record, 22, _elements, 5);
-	const node = arena.view(record, { 2: _supertype, 7: _name, 17: _named_node_group, 22: _elements });
+	const node = arena.view(record);
 	return node as unknown as T.NamedNodeSupertyped.Bound;
 }
 
@@ -924,7 +933,7 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 	const record = arena.record(TSKindId.NamedNodeGroupChildren as const);
 	if (_anchor) storeFlag(record.data, record.base + 2, 1);
 	storeList(arena, record, 3, _named_node_expressions, 5);
-	const node = arena.view(record, { 3: _named_node_expressions });
+	const node = arena.view(record);
 	return node as unknown as T.NamedNodeGroupChildren.Bound;
 }
 
@@ -986,7 +995,7 @@ export function buildNamedNodeGroupAnchoredLast(
 	if (_anchor) storeFlag(record.data, record.base + 2, 1);
 	storeList(arena, record, 3, _named_node_expressions, 5);
 	storeCell(arena, record, 5, _last);
-	const node = arena.view(record, { 3: _named_node_expressions, 5: _last });
+	const node = arena.view(record);
 	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
 }
 
@@ -1162,5 +1171,6 @@ export const builtViews: BuiltViews = Object.freeze({
 		62: 24,
 		63: 5,
 		64: 10
-	})
+	}),
+	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 23: leafStringContentText })
 });
