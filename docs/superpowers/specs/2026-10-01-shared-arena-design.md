@@ -403,8 +403,10 @@ none either (ruling 14).
   is never a record and has no address, so a leaf with no sides takes no storage beyond its cell.
 - **The holder keeps the leaf object.** A holder keeps each leaf object its builder was given, and a
   read of that slot returns it, as it does for every child a builder is given (ruling 11). A slot
-  given a leaf's text has no object: a read makes a leaf for that site on first access, and the
-  holder keeps it.
+  given a leaf's text holds the leaf object its builder makes from that text when it builds the
+  holder, and a read returns that object; a text slot (a token interior's capture) holds the text
+  itself, a built-text cell on records, and a read returns the string. Records and objects match on
+  both.
 - **Sides by site.** A leaf's sides are on its object, as object construction holds them, and the
   written-sides store holds them at each site the leaf is placed at, keyed as a unit's are: its
   holder, its slot's word and its item (§ Trivia). Placing a leaf records the site on its object,
