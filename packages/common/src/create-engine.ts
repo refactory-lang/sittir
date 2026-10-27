@@ -33,7 +33,7 @@ import { queryFacet, type QueryHooks } from './query.ts';
 import { refuseReviver } from './json-refusal.ts';
 import { createRenderHandle, nativeBuiltRecords } from './engine.ts';
 import { portable, portableGuardsOf, registerPortableRows } from './portable/index.ts';
-import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered } from './utils.ts';
+import { isEmptyNode as isEmptyUntypedNode, isErrorNode, isFactoryNode, isNode, isParsedNode, wrapRegistered, writeLeafSites } from './utils.ts';
 
 type Middleware<Call, Result> = (call: Call, next: () => Result) => Result;
 
@@ -345,7 +345,7 @@ function assembleEngine<API extends LanguageAPI>(
 		recordConstruction.set(frozen, (records) => {
 			const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
 			if (views === undefined) throw new Error('useRecordConstruction: the records module exports no builtViews');
-			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views);
+			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
 			handle.records = records;
 		});
 	}

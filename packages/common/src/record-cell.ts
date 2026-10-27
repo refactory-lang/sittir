@@ -81,7 +81,7 @@ export type RecordCell =
 			readonly kind: number;
 			readonly offset: number;
 			readonly len: number;
-			readonly record: number;
+			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  }
 	| { readonly form: 'builtText'; readonly offset: number; readonly len: number }
 	| {
@@ -227,14 +227,7 @@ export function decodeCell(
 				: { form: 'parsedLeaf', kind: kind(), span: spanAt(words, at, tag), row: field(words, at, 4, tag) };
 		case format.child: {
 			const tree = field(words, at, 3, tag);
-			const changed = field(words, at, 4, tag);
-			return {
-				form: 'child',
-				kind: kind(),
-				at: field(words, at, 2, tag),
-				link: tree === 0 ? undefined : tree - 1,
-				changed: { leading: (changed & 1) !== 0, trailing: (changed & 2) !== 0 }
-			};
+			return { form: 'child', kind: kind(), at: field(words, at, 2, tag), link: tree === 0 ? undefined : tree - 1, changed: changedAt(words, at, tag) };
 		}
 		case format.unit: {
 			const row = field(words, at, 2, tag);
@@ -245,13 +238,18 @@ export function decodeCell(
 			const len = field(words, at, 3, tag);
 			return kind() === 0
 				? { form: 'builtText', offset, len }
-				: { form: 'builtLeaf', kind: kind(), offset, len, record: field(words, at, 4, tag) };
+				: { form: 'builtLeaf', kind: kind(), offset, len, changed: changedAt(words, at, tag) };
 		}
 		case format.copiedLeaf:
 			return { form: 'copiedLeaf', kind: kind(), offset: field(words, at, 2, tag), len: field(words, at, 3, tag), record: field(words, at, 4, tag) };
 		default:
 			throw new Error(`word ${at} holds cell tag ${tag}, which no record writer writes`);
 	}
+}
+
+function changedAt(words: ArrayLike<number>, at: number, tag: number): { readonly leading: boolean; readonly trailing: boolean } {
+	const changed = field(words, at, 4, tag);
+	return { leading: (changed & 1) !== 0, trailing: (changed & 2) !== 0 };
 }
 
 /** The list cell whose two words start at `at` in `words`. */

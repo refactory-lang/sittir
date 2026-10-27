@@ -479,6 +479,21 @@ pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<Pr
     }
 }
 
+/// The place of a built leaf held at `site`: its site in its holder's
+/// record, or, for a root, which has no site, `Place::ROOT_LEAF`, whose sides
+/// the render is given.
+///
+/// # Errors
+///
+/// `ArenaError::Malformed` for a site whose holder is no built record.
+pub fn built_leaf_place(site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
+    match site {
+        None => Ok(Place::ROOT_LEAF.into()),
+        Some(Site { holder: PrepPlace::Stored(Place::Record(holder)), word, item }) => Ok(Place::Leaf(Site { holder, word, item }).into()),
+        Some(_) => Err(malformed("built leaf holder", 0)),
+    }
+}
+
 /// Text that is a slot's content with no kind of its own, or an `ERROR`
 /// node's text with its kind, as a record holds it (`VerbatimNode`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

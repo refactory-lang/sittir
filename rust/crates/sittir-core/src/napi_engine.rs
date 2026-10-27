@@ -667,6 +667,35 @@ macro_rules! napi_engine {
                     .map_err(::napi::Error::from_reason)
             }
 
+            /// What `render` answers for the built arena `owner` holds,
+            /// borrowed for this call, under `options` over `engine`'s, with
+            /// every live tree held, its line endings spelled.
+            fn render_built_with(
+                engine: &SittirEngine,
+                env: &::napi::Env,
+                owner: &SittirEngine,
+                options: Option<$options>,
+                render: impl FnOnce(
+                    &dyn $crate::arena::ArenaRead,
+                    &::std::collections::HashMap<$crate::types::TreeId, $crate::ParsedTree<$grammar>>,
+                    &$crate::prepare::RenderContext<'_>,
+                ) -> Result<String, $crate::render::RenderError>,
+            ) -> ::napi::Result<String> {
+                let chunks = owner.engine.written().built();
+                let arena = chunks.visit(env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
+                let table = engine.render_options(None, options)?;
+                LIVE_TREES.with(|trees| {
+                    let trees = trees.borrow();
+                    let canonical = $crate::napi_engine::entry_sources(env, engine.engine.grammar(), &*trees, |sources| {
+                        let ctx = $crate::prepare::RenderContext { options: &table, sources };
+                        ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| render(&arena, &*trees, &ctx).map_err(|e| arena.refused_or(e, $crate::render::RenderError::Record))))
+                    })
+                        .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
+                        .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
+                    Ok($crate::line_endings::spell(canonical, &table.newline))
+                })
+            }
+
             /// The record wire: a node's record named by its tree and its
             /// address together, so an address reads nothing once its tree is
             /// gone.
@@ -772,43 +801,48 @@ macro_rules! napi_engine {
                     })
                 }
 
-                /// The built node at `address` of the built arena `owner`
+                /// The built record at `address` of the built arena `owner`
                 /// holds (`holdBuiltArena`) rendered as a render root whose
                 /// `leading` and `trailing` edges have no neighbour, under
                 /// `options` over this engine's, with the sides `owner` holds:
                 /// the engine that built the arena, which its records' side
-                /// writes went to. A leaf passes the `text` its cells hold; a
-                /// compound record passes none. The arena's chunks are
-                /// borrowed for this call; the records the root reaches are
-                /// admitted, and the parsed trees they link held for the
-                /// render (`Engine::render_built`). Refuses an arena `owner`
-                /// no longer holds, an address naming no record its words
-                /// admit, a linked tree that is not live, and a record whose
-                /// render refuses.
+                /// writes went to. The arena's chunks are borrowed for this
+                /// call; the records the root reaches are admitted, and the
+                /// parsed trees they link held for the render
+                /// (`Engine::render_built`). Refuses an arena `owner` no
+                /// longer holds, an address naming no record its words admit,
+                /// a linked tree that is not live, and a record whose render
+                /// refuses.
+                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, address: f64, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
+                    let at = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
+                    render_built_with(self, &env, owner, options, |arena, trees, ctx| owner.engine.render_built(arena, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
+                }
+
+                /// The lone built leaf of `kind` whose text the built arena
+                /// `owner` holds at `text`, rendered as a render root whose
+                /// `leading` and `trailing` edges have no neighbour, under
+                /// `options` over this engine's, with `sides`, the sides the
+                /// leaf holds (`{ leading?, trailing?, inner? }`): a root has
+                /// no site in the store. Refuses a kind no node of the grammar
+                /// is written as, text outside the arena's strings, and a leaf
+                /// whose render refuses.
                 #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, address: number, text: BuiltText | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null")]
-                pub fn render_built(&self, env: ::napi::Env, owner: &SittirEngine, address: f64, text: Option<$crate::napi_engine::BuiltText>, leading: bool, trailing: bool, options: Option<$options>) -> ::napi::Result<String> {
-                    let record = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
-                    let root = match text {
-                        Some(text) => $crate::arena::BuiltRoot::Leaf { record, text: $crate::arena::StringRef::from_offset(text.at, text.len) },
-                        None => $crate::arena::BuiltRoot::Record(record),
-                    };
-                    let chunks = owner.engine.written().built();
-                    let arena = chunks.visit(&env).map_err(|e| ::napi::Error::from_reason(e.to_string()))?;
-                    let table = self.render_options(None, options)?;
-                    LIVE_TREES.with(|trees| {
-                        let trees = trees.borrow();
-                        let changed = $crate::slot::ChangedEdges { leading, trailing };
-                        let canonical = $crate::napi_engine::entry_sources(&env, self.engine.grammar(), &*trees, |sources| {
-                            let ctx = $crate::prepare::RenderContext { options: &table, sources };
-                            ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| {
-                                owner.engine.render_built(&arena, root, changed, &*trees, &ctx).map_err(|e| arena.refused_or(e, $crate::render::RenderError::Record))
-                            }))
-                        })
-                            .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_built panicked")))?
-                            .map_err(|e| ::napi::Error::from_reason(format!("render_built failed: {e}")))?;
-                        Ok($crate::line_endings::spell(canonical, &table.newline))
-                    })
+                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, kind: number, text: BuiltText, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                pub fn render_built_leaf(
+                    &self,
+                    env: ::napi::Env,
+                    owner: &SittirEngine,
+                    kind: u32,
+                    text: $crate::napi_engine::BuiltText,
+                    sides: Option<$crate::trivia::NodeTrivia<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                    leading: bool,
+                    trailing: bool,
+                    options: Option<$options>,
+                ) -> ::napi::Result<String> {
+                    let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
+                    let text = $crate::arena::StringRef::from_offset(text.at, text.len);
+                    render_built_with(self, &env, owner, options, |arena, _, ctx| owner.engine.render_built_leaf(arena, kind, text, sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
                 }
 
                 /// Holds the chunks of the built arena whose records this
@@ -831,6 +865,38 @@ macro_rules! napi_engine {
                     let address = $crate::arena::Address($crate::napi_engine::checked_whole(address, "address")?);
                     let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
                     self.engine.built_trivia_side(address, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// The entries a write gave `side` (`leading`, `trailing` or
+                /// `inner`) of the built leaf at the site `holder`, `word`,
+                /// `item`, or `null` when no write did. Refuses holder 0 and
+                /// any other side.
+                #[::napi_derive::napi(ts_return_type = "object[] | null")]
+                pub fn built_leaf_side(&self, holder: f64, word: u32, item: u32, side: String) -> ::napi::Result<Option<Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>>> {
+                    let site = $crate::trivia_store::Site { holder: $crate::arena::Address($crate::napi_engine::checked_whole(holder, "holder")?), word, item: $crate::types::ItemIndex(item) };
+                    let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    self.engine.built_leaf_side(site, side).map_err(|e| ::napi::Error::from_reason(e.to_string()))
+                }
+
+                /// Replace `side` of the built leaf at each site `sites` names,
+                /// `[holder, word, item]` after another, with `entries`, which
+                /// `renderBuilt` then writes; a built record among them
+                /// renders as `writeTriviaSide` says. Refuses a list whose
+                /// length is not a multiple of three, holder 0 and any other
+                /// side, before writing any site.
+                #[::napi_derive::napi(ts_args_type = "sites: number[], side: string, entries: object[]")]
+                pub fn write_built_leaf_side(
+                    &self,
+                    sites: Vec<u32>,
+                    side: String,
+                    entries: Vec<$crate::trivia::TriviaEntry<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
+                ) -> ::napi::Result<()> {
+                    if sites.len() % 3 != 0 {
+                        return Err(::napi::Error::from_reason(format!("a leaf's sites are holder, word and item triples, not {} numbers", sites.len())));
+                    }
+                    let sites: Vec<_> = sites.chunks_exact(3).map(|site| $crate::trivia_store::Site { holder: $crate::arena::Address(site[0]), word: site[1], item: $crate::types::ItemIndex(site[2]) }).collect();
+                    let side = $crate::napi_engine::trivia_side_from_wire(&side)?;
+                    self.engine.write_built_leaf_side(&sites, side, &entries).map_err(|e| ::napi::Error::from_reason(e.to_string()))
                 }
 
                 /// The sides writes gave each unit the record at `address` in

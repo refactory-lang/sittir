@@ -62,7 +62,7 @@ function expected(entry: Entry): RecordCell {
 				kind: entry.kind as number,
 				offset: entry.offset as number,
 				len: entry.len as number,
-				record: entry.record as number
+				changed: { leading: entry.leading as boolean, trailing: entry.trailing as boolean }
 			};
 		case 'builtText':
 			return { form: 'builtText', offset: entry.offset as number, len: entry.len as number };

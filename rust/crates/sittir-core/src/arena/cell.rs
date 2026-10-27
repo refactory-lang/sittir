@@ -46,9 +46,10 @@ pub enum Cell {
     /// parsed unit names its row, which keys its sides as any parsed node's
     /// row does; a built unit has none.
     Unit { kind: KindId, row: Option<NodeIndex> },
-    /// A built leaf: its text in the string table, and its own header-only
-    /// record, the key its sides take in the built trivia table.
-    BuiltLeaf { kind: KindId, text: StringRef, record: Address },
+    /// A built leaf, which has no record: its text in the string table, and
+    /// the edges whose neighbour this holder changed, a fact of this site as
+    /// a child's are. Its sides are keyed by its site in the store.
+    BuiltLeaf { kind: KindId, text: StringRef, changed: ChangedEdges },
     /// A parsed leaf a built record holds: its text in the string table, and
     /// a header record of its own in the built arena whose side record names
     /// the parsed leaf (its tree, row and byte span) and the edges its one
@@ -76,14 +77,19 @@ fn span(start: u32, end: u32) -> Result<Span, ArenaError> {
     if start <= end { Ok(Span { start, end }) } else { Err(malformed("cell span end", end)) }
 }
 
+/// A site's changed edges as one word: leading 1 and trailing 2.
+fn changed_word(changed: ChangedEdges) -> u32 {
+    u32::from(changed.leading) | u32::from(changed.trailing) << 1
+}
+
 /// A child's link and changed edges as two words: the tree plus one, or 0
-/// for the cell's own arena, then the edges, leading 1 and trailing 2.
+/// for the cell's own arena, then the edges (`changed_word`).
 fn link_words(link: Option<TreeId>, changed: ChangedEdges) -> Result<[u32; 2], ArenaError> {
     let tree = match link {
         Some(tree) => tree.0.checked_add(1).ok_or(malformed("child record tree", tree.0))?,
         None => 0,
     };
-    Ok([tree, u32::from(changed.leading) | u32::from(changed.trailing) << 1])
+    Ok([tree, changed_word(changed)])
 }
 
 fn read_link(tree: u32) -> Option<TreeId> {
@@ -145,7 +151,7 @@ impl Cell {
     /// is not below `holder`.
     pub fn below(self, holder: Address) -> Result<Cell, ArenaError> {
         match self {
-            Cell::Child { at, link: None, .. } | Cell::BuiltLeaf { record: at, .. } | Cell::CopiedLeaf { record: at, .. } if at >= holder => Err(malformed("child record address", at.0)),
+            Cell::Child { at, link: None, .. } | Cell::CopiedLeaf { record: at, .. } if at >= holder => Err(malformed("child record address", at.0)),
             cell => Ok(cell),
         }
     }
@@ -195,9 +201,9 @@ impl Cell {
                 unit(kind, row)?;
                 [tag::UNIT, u32::from(kind.0), row, 0, 0]
             }
-            Cell::BuiltLeaf { kind, text, record: at } => {
+            Cell::BuiltLeaf { kind, text, changed } => {
                 let [offset, len] = text_words(text)?;
-                [tag::BUILT_LEAF, named(kind)?, offset, len, record(at.0)?.0]
+                [tag::BUILT_LEAF, named(kind)?, offset, len, changed_word(changed)]
             }
             Cell::BuiltText { text } => {
                 let [offset, len] = text_words(text)?;
@@ -234,7 +240,7 @@ impl Cell {
                 let text = StringRef::from_offset(field(2)?, field(3)?);
                 match kind(field(1)?)? {
                     KindId::BLANK => Ok(Cell::BuiltText { text }),
-                    kind => Ok(Cell::BuiltLeaf { kind, text, record: record(field(4)?)? }),
+                    kind => Ok(Cell::BuiltLeaf { kind, text, changed: read_changed(field(4)?)? }),
                 }
             }
             tag::COPIED_LEAF => Ok(Cell::CopiedLeaf { kind: named_kind(field(1)?)?, text: StringRef::from_offset(field(2)?, field(3)?), record: record(field(4)?)? }),
@@ -333,8 +339,9 @@ mod tests {
             Cell::Unit { kind: KindId(15), row: Some(NodeIndex(0)) },
             Cell::Unit { kind: KindId(15), row: Some(NodeIndex(42)) },
             Cell::Unit { kind: KindId::BLANK, row: None },
-            Cell::BuiltLeaf { kind: KindId(16), text, record },
-            Cell::BuiltLeaf { kind: KindId::ERROR, text, record },
+            Cell::BuiltLeaf { kind: KindId(16), text, changed: ChangedEdges::default() },
+            Cell::BuiltLeaf { kind: KindId(16), text, changed: ChangedEdges { leading: true, trailing: false } },
+            Cell::BuiltLeaf { kind: KindId::ERROR, text, changed: ChangedEdges::default() },
             Cell::BuiltText { text },
             Cell::CopiedLeaf { kind: KindId(16), text, record },
         ]
@@ -360,7 +367,11 @@ mod tests {
                 changed: ChangedEdges { leading: entry["leading"].as_bool().expect("leading"), trailing: entry["trailing"].as_bool().expect("trailing") },
             },
             "unit" => Cell::Unit { kind: kind(), row: row() },
-            "builtLeaf" => Cell::BuiltLeaf { kind: kind(), text: text(), record: Address(n("record")) },
+            "builtLeaf" => Cell::BuiltLeaf {
+                kind: kind(),
+                text: text(),
+                changed: ChangedEdges { leading: entry["leading"].as_bool().expect("leading"), trailing: entry["trailing"].as_bool().expect("trailing") },
+            },
             "builtText" => Cell::BuiltText { text: text() },
             "copiedLeaf" => Cell::CopiedLeaf { kind: kind(), text: text(), record: Address(n("record")) },
             other => panic!("no cell form {other}"),
@@ -543,9 +554,11 @@ mod tests {
             assert_eq!(child(at, None).below(holder), Err(ArenaError::Malformed { what: "child record address", word: at }), "a record at or past its holder was not written before it");
         }
         assert_eq!(child(40, Some(TreeId(2))).below(holder), Ok(child(40, Some(TreeId(2)))), "a linked child is in another arena");
-        let leaf = |record: u32| Cell::BuiltLeaf { kind: KindId(9), text: StringRef { chunk: 0, byte: 0, len: 1 }, record: Address(record) };
+        let leaf = |record: u32| Cell::CopiedLeaf { kind: KindId(9), text: StringRef { chunk: 0, byte: 0, len: 1 }, record: Address(record) };
         assert!(leaf(3).below(holder).is_ok());
         assert!(leaf(12).below(holder).is_err());
+        let built = Cell::BuiltLeaf { kind: KindId(9), text: StringRef { chunk: 0, byte: 0, len: 1 }, changed: ChangedEdges::default() };
+        assert_eq!(built.below(holder), Ok(built), "a built leaf names no record");
         assert_eq!(Cell::Absent.below(holder), Ok(Cell::Absent));
     }
 }

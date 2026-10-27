@@ -17,17 +17,28 @@ function addon() {
 
 function arenaEngine() {
 	const native = new (addon().SittirEngine)();
-	const { renderBuilt, builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = native;
-	if (renderBuilt === undefined || builtTriviaSide === undefined || writeBuiltTriviaSide === undefined || holdBuiltArena === undefined)
+	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, builtLeafSide, writeBuiltLeafSide, holdBuiltArena } = native;
+	if (
+		renderBuilt === undefined ||
+		renderBuiltLeaf === undefined ||
+		builtTriviaSide === undefined ||
+		writeBuiltTriviaSide === undefined ||
+		builtLeafSide === undefined ||
+		writeBuiltLeafSide === undefined ||
+		holdBuiltArena === undefined
+	)
 		throw new Error('the native addon was built without the arena feature');
 	const written = (chunks: readonly { readonly length: number }[]) => new Uint32Array(chunks.map((chunk) => chunk.length));
 	return {
 		hold: (words: readonly Uint32Array[], bytes: readonly Uint8Array[] = [], writtenWords = written(words)) =>
 			holdBuiltArena.call(native, words, bytes, writtenWords, written(bytes)),
-		renderBuilt: (address: number, text: { readonly at: number; readonly len: number } | null = null) => renderBuilt.call(native, native, address, text, false, false),
+		renderBuilt: (address: number) => renderBuilt.call(native, native, address, false, false),
+		renderBuiltLeaf: (kind: number, text: { readonly at: number; readonly len: number }) => renderBuiltLeaf.call(native, native, kind, text, null, false, false),
 		dispose: () => native.dispose(),
 		builtTriviaSide: builtTriviaSide.bind(native),
-		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native)
+		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native),
+		builtLeafSide: builtLeafSide.bind(native),
+		writeBuiltLeafSide: writeBuiltLeafSide.bind(native)
 	};
 }
 
@@ -51,7 +62,7 @@ describe('a built arena rendered natively', () => {
 		native.hold([[0, 1] as never]);
 		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
 		native.hold([words(TSKindId.Identifier, 0)], [new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(() => native.renderBuilt(1, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
+		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
 		native.hold([words(1, 0)], [], [3] as never);
 		expect(() => native.renderBuilt(1)).toThrow(/written table/);
 	});
@@ -59,7 +70,14 @@ describe('a built arena rendered natively', () => {
 	it('borrows no chunk the render does not read', () => {
 		const native = arenaEngine();
 		native.hold([words(TSKindId.Identifier, 0), new Uint32Array(new SharedArrayBuffer(16))], [new TextEncoder().encode('x'), new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(native.renderBuilt(1, { at: 0, len: 1 })).toBe('x');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toBe('x');
+	});
+
+	it('admits a lone leaf by its kind and its text', () => {
+		const native = arenaEngine();
+		native.hold([words(1, 0)], [new TextEncoder().encode('x')]);
+		expect(() => native.renderBuiltLeaf(60000, { at: 0, len: 1 })).toThrow(/built leaf kind 60000/);
+		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 9 })).toThrow();
 	});
 
 	it('refuses words that are no record it admits', () => {
@@ -99,6 +117,18 @@ describe('a built arena rendered natively', () => {
 		expect(() => native.builtTriviaSide(0, 'leading')).toThrow(/record address 0/);
 		expect(() => native.writeBuiltTriviaSide(0, 'leading', [])).toThrow(/record address 0/);
 		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
+	});
+
+	it('reads and writes the sides of a built leaf by its site, refusing holder 0', () => {
+		const native = arenaEngine();
+		expect(native.builtLeafSide(5, 2, 0, 'leading')).toBeNull();
+		native.writeBuiltLeafSide([5, 2, 0, 7, 11, 1], 'leading', []);
+		expect([native.builtLeafSide(5, 2, 0, 'leading'), native.builtLeafSide(7, 11, 1, 'leading')]).toEqual([[], []]);
+		expect(native.builtLeafSide(5, 2, 1, 'leading')).toBeNull();
+		expect(() => native.builtLeafSide(0, 2, 0, 'leading')).toThrow(/record address 0/);
+		expect(() => native.writeBuiltLeafSide([5, 2, 0, 0, 2, 0], 'trailing', [])).toThrow(/record address 0/);
+		expect(native.builtLeafSide(5, 2, 0, 'trailing')).toBeNull();
+		expect(() => native.writeBuiltLeafSide([5, 2], 'leading', [])).toThrow(/triples/);
 	});
 
 	it.each([

@@ -1,18 +1,29 @@
 import { describe, expect, it } from 'vitest';
 import { BuiltArena, cellFormatOf, chunkOf, decodeCell, wordOf } from '@sittir/common/engine';
-import { builtRecordOf, storeCell, storeList } from '@sittir/common/utils';
+import { builtRecordOf, LEAF_SITES, storeCell, storeList } from '@sittir/common/utils';
+import { leafSitesOf } from '../../common/src/built-ref.ts';
+import { triviaOf } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
 const format = backend.name === 'native' ? cellFormatOf(backend.native) : undefined;
 type SideStore = ConstructorParameters<typeof BuiltArena>[0]['trivia'];
-const NO_SIDES: SideStore = { triviaSide: () => undefined, writeTriviaSide: () => undefined, unitSides: () => [], writeUnitSides: () => undefined };
-const arenaOf = (trivia: SideStore = NO_SIDES): BuiltArena =>
+const NO_SIDES: SideStore = {
+	triviaSide: () => undefined,
+	writeTriviaSide: () => undefined,
+	unitSides: () => [],
+	writeUnitSides: () => undefined,
+	leafSide: () => undefined,
+	writeLeafSide: () => undefined
+};
+type Views = ConstructorParameters<typeof BuiltArena>[3];
+const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {}, leaves: {} }): BuiltArena =>
 	new BuiltArena(
 		{ format: format!, owner: {}, hold: () => undefined, trivia },
 		() => ({}),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
-		{ rows: {}, leaves: {} }
+		views,
+		() => undefined
 	);
 
 const placed = (arena: BuiltArena, node: object, words: number): number[] => {
@@ -35,12 +46,12 @@ describe('a built arena', () => {
 	it('places a record when it is viewed, past every record its cells name', () => {
 		const arena = arenaOf();
 		const record = arena.record(9, 7);
-		const leaf = arena.adoptLeaf({ $type: 4 }, 4, 2, 'late');
-		storeCell(arena, record.data, record.base + 2, leaf);
+		const child = arena.view(arena.record(4, 2));
+		storeCell(arena, record, 2, child);
 		const at = builtRecordOf(arena.view(record), arena)!;
 		const cell = decodeCell(arena.words(at, 7), wordOf(at, format!) + 2, format!);
-		expect(cell.form === 'builtLeaf' && cell.record).toBe(builtRecordOf(leaf, arena));
-		expect(at).toBeGreaterThan(builtRecordOf(leaf, arena)!);
+		expect(cell.form === 'child' && cell.at).toBe(builtRecordOf(child, arena));
+		expect(at).toBeGreaterThan(builtRecordOf(child, arena)!);
 	});
 
 	it('gives each draft words of its own, which no later draft shares', () => {
@@ -66,6 +77,7 @@ describe('a built arena', () => {
 		const asked: string[] = [];
 		const stored = new Map<string, readonly unknown[]>();
 		const arena = arenaOf({
+			...NO_SIDES,
 			triviaSide: (at, side) => (asked.push(`${side} of ${at}`), stored.get(`${at} ${side}`) as unknown[] | undefined),
 			writeTriviaSide: (at, side, entries) => void stored.set(`${at} ${side}`, entries),
 			unitSides: (at) => (asked.push(`units of ${at}`), [...(stored.get(`${at} units`) ?? [])]),
@@ -144,9 +156,9 @@ describe('a built arena', () => {
 	it('writes units, captured text and lists of them as the cell decoder reads them', () => {
 		const arena = arenaOf();
 		const record = arena.record(9, 2 + 5 + 4 + 2);
-		storeCell(arena, record.data, record.base + 2, 12);
-		storeCell(arena, record.data, record.base + 7, 'x');
-		storeList(arena, record.data, record.base + 11, ['a', 'b'], 4);
+		storeCell(arena, record, 2, 12);
+		storeCell(arena, record, 7, 'x');
+		storeList(arena, record, 11, ['a', 'b'], 4);
 		const words = record.data;
 		expect(decodeCell(words, record.base + 2, format!)).toEqual({ form: 'unit', kind: 12, row: undefined });
 		const text = decodeCell(words, record.base + 7, format!);
@@ -158,24 +170,61 @@ describe('a built arena', () => {
 		expect(second.form === 'builtText' && arena.textOf(second.offset, second.len)).toBe('b');
 	});
 
-	it('names a built leaf by its kind, its interned text and its own record', () => {
+	it('names a built leaf by its kind and its interned text, and writes it no record', () => {
 		const arena = arenaOf();
-		const leaf = arena.adoptLeaf({ $type: 4 }, 4, 2, 'name');
+		const before = arena.chunks().words.map((chunk) => chunk.length);
+		const leaf = arena.adoptLeaf({ $type: 4 }, 'name');
+		expect(arena.chunks().words.map((chunk) => chunk.length)).toEqual(before);
+		expect(builtRecordOf(leaf, arena)).toBeUndefined();
 		const record = arena.record(9, 7);
-		storeCell(arena, record.data, record.base + 2, leaf);
+		storeCell(arena, record, 2, leaf);
 		const cell = decodeCell(record.data, record.base + 2, format!);
 		expect(cell.form).toBe('builtLeaf');
 		if (cell.form !== 'builtLeaf') return;
-		expect([cell.kind, arena.textOf(cell.offset, cell.len)]).toEqual([4, 'name']);
-		expect(cell.record).toBe(builtRecordOf(leaf, arena));
+		expect([cell.kind, arena.textOf(cell.offset, cell.len), cell.changed]).toEqual([4, 'name', { leading: false, trailing: false }]);
+	});
+
+	it('records each site a built leaf is placed at, in the field its literal declares', () => {
+		const arena = arenaOf();
+		const leaf = arena.adoptLeaf({ $type: 4, [LEAF_SITES]: undefined }, 'name');
+		const one = arena.record(9, 7);
+		storeCell(arena, one, 2, leaf);
+		const first = builtRecordOf(arena.view(one), arena)!;
+		const two = arena.record(9, 13);
+		storeList(arena, two, 11, ['a', leaf], 5);
+		const second = builtRecordOf(arena.view(two), arena)!;
+		expect(leafSitesOf(leaf)).toEqual([first, 2, 0, second, 11, 1]);
+	});
+
+	it('makes a leaf for a site from the sides the store holds there, and records the site', () => {
+		const stored = new Map<string, readonly unknown[]>();
+		const asked: number[] = [];
+		const key = (holder: number, word: number, item: number, side: string) => `${holder}.${word}.${item}:${side}`;
+		const sides: SideStore = {
+			...NO_SIDES,
+			leafSide: (holder, word, item, side) => (asked.push(holder), stored.get(key(holder, word, item, side)) as unknown[] | undefined),
+			writeLeafSide: (sites, side, entries) => {
+				for (let n = 0; n < sites.length; n += 3) stored.set(key(sites[n]!, sites[n + 1]!, sites[n + 2]!, side), entries);
+			}
+		};
+		const arena = arenaOf(sides, { rows: {}, leaves: { 4: (text) => ({ $type: 4, text }) } });
+		const text = arena.text('x');
+		const cell = { kind: 4, offset: text.at, len: text.len };
+		expect(triviaOf(arena.leaf(cell, 9, 2, 0))).toBeUndefined();
+		expect(asked).toEqual([]);
+		arena.writeLeafSide([9, 2, 0], 'leading', [3]);
+		const sided = arena.leaf(cell, 9, 2, 0);
+		expect(triviaOf(sided)).toEqual({ leading: [3] });
+		expect(leafSitesOf(sided)).toEqual([9, 2, 0]);
+		expect(triviaOf(arena.leaf(cell, 9, 2, 1))).toBeUndefined();
 	});
 
 	it('refuses a child no builder of the arena made', () => {
 		const arena = arenaOf();
 		const record = arena.record(9, 7);
-		expect(() => storeCell(arena, record.data, record.base + 2, { $type: 3 })).toThrow(/its own engine built/);
+		expect(() => storeCell(arena, record, 2, { $type: 3 })).toThrow(/its own engine built/);
 		const other = arenaOf();
-		const child = other.adoptLeaf({ $type: 4 }, 4, 2, 'x');
-		expect(() => storeCell(arena, record.data, record.base + 2, child)).toThrow(/its own engine built/);
+		const child = other.adoptLeaf({ $type: 4 }, 'x');
+		expect(() => storeCell(arena, record, 2, child)).toThrow(/its own engine built/);
 	});
 });

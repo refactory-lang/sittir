@@ -10,28 +10,10 @@ use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
 use crate::slot::ChangedEdges;
-use crate::trivia::{BuiltEntry, TriviaEntry};
-use crate::trivia_store::{Place, TriviaStore};
+use crate::trivia::{BuiltEntry, NodeTrivia, TriviaEntry};
+use crate::trivia_store::{Place, Site, TriviaStore};
 use crate::trivia_table::TriviaSide;
-use crate::types::{NodeIndex, TreeId};
-
-/// What a built render starts from: a compound record, or a built leaf's
-/// header record and the text its cells hold, which its record does not.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum BuiltRoot {
-    Record(Address),
-    Leaf { record: Address, text: StringRef },
-}
-
-impl BuiltRoot {
-    /// The record the root names, which holds its kind and its sides.
-    #[must_use]
-    pub fn record(self) -> Address {
-        match self {
-            Self::Record(at) | Self::Leaf { record: at, .. } => at,
-        }
-    }
-}
+use crate::types::{KindId, NodeIndex, TreeId};
 
 impl<G: EngineGrammar> Engine<G> {
     /// The entries a write gave `side` of the built record at `at`, or
@@ -53,6 +35,33 @@ impl<G: EngineGrammar> Engine<G> {
     /// As `built_trivia_side`.
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
         self.written().write_side(Place::Record(at.record()?), side, entries);
+        Ok(())
+    }
+
+    /// The entries a write gave `side` of the built leaf at `site`, or `None`
+    /// when no write did.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a site whose holder is address 0.
+    pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
+        site.holder.record()?;
+        Ok(self.written().side(Place::Leaf(site), side))
+    }
+
+    /// Replace `side` of the built leaf at each of `sites` with `entries`,
+    /// which a render of its holder then writes.
+    ///
+    /// # Errors
+    ///
+    /// As `built_leaf_side`, before any site is written.
+    pub fn write_built_leaf_side(&self, sites: &[Site<Address>], side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
+        for site in sites {
+            site.holder.record()?;
+        }
+        for &site in sites {
+            self.written().write_side(Place::Leaf(site), side, entries.to_vec());
+        }
         Ok(())
     }
 }
@@ -98,12 +107,12 @@ impl<G: RecordGrammar> Engine<G> {
         Ok(())
     }
 
-    /// The built node `root` names, of the built arena `arena`, rendered as
-    /// a render root whose `changed` edges have no neighbour, under `ctx`,
-    /// its line endings unspelled. The records it reaches are admitted
-    /// first; each parsed tree a cell links is held from `trees` for the
-    /// render, and every tree's source and every trivia
-    /// entry's record are read through `ctx`'s table.
+    /// The built record at `at`, of the built arena `arena`, rendered as a
+    /// render root whose `changed` edges have no neighbour, under `ctx`, its
+    /// line endings unspelled. The records it reaches are admitted first;
+    /// each parsed tree a cell links is held from `trees` for the render,
+    /// and every tree's source and every trivia entry's record are read
+    /// through `ctx`'s table.
     ///
     /// # Errors
     ///
@@ -113,14 +122,48 @@ impl<G: RecordGrammar> Engine<G> {
     pub fn render_built<H: BuildHasher>(
         &self,
         arena: &dyn ArenaRead,
-        root: BuiltRoot,
+        at: Address,
         changed: ChangedEdges,
         trees: &HashMap<TreeId, ParsedTree<G>, H>,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
-        let (root, mut held) = admitted_root::<G, H>(arena, root, changed, trees)?;
+        let (root, mut held) = admitted_root::<G, H>(arena, at, changed, trees)?;
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx)
     }
+
+    /// The lone built leaf of `kind` whose text is `text` in `arena`,
+    /// rendered as a render root whose `changed` edges have no neighbour,
+    /// with the sides `sides`: a root has no site, so its sides come with the
+    /// call (`Place::ROOT_LEAF`).
+    ///
+    /// # Errors
+    ///
+    /// `RenderError::Record` for a kind no node of the grammar is written as
+    /// and for text outside the arena's strings, else what the leaf's render
+    /// refuses.
+    pub fn render_built_leaf(
+        &self,
+        arena: &dyn ArenaRead,
+        kind: KindId,
+        text: StringRef,
+        sides: Option<NodeTrivia<G::Trivia>>,
+        changed: ChangedEdges,
+        ctx: &RenderContext<'_>,
+    ) -> Result<String, RenderError> {
+        let cell = admitted_leaf::<G>(arena, kind, text, changed).map_err(RenderError::Record)?;
+        let store = self.written().root_leaf(sides);
+        let mut held = HeldArenas::of([]);
+        G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx)
+    }
+}
+
+/// The cell of a built leaf of `kind` whose text is `text` in `arena`, as
+/// admission admits it: by what it holds, a kind the grammar writes and text
+/// inside the arena's strings.
+fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, text: StringRef, changed: ChangedEdges) -> Result<Cell, ArenaError> {
+    G::shape(kind).ok_or(ArenaError::Malformed { what: "built leaf kind", word: u32::from(kind.0) })?;
+    arena.text(text)?;
+    Ok(Cell::BuiltLeaf { kind, text, changed })
 }
 
 /// The built record `record` of `arena` written into `w` as a trivia entry
@@ -144,17 +187,16 @@ pub fn render_record_entry<G: RecordGrammar, H: BuildHasher>(
     if arena.header_kind(record.at).map_err(RenderError::Record)? != record.kind {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
-    let (root, mut held) = admitted_root::<G, H>(arena, BuiltRoot::Record(record.at), ChangedEdges::default(), trees)?;
+    let (root, mut held) = admitted_root::<G, H>(arena, record.at, ChangedEdges::default(), trees)?;
     G::render_entry(grammar, root, &mut held, arena, store, ctx, w)
 }
 
 fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
     arena: &dyn ArenaRead,
-    root: BuiltRoot,
+    at: Address,
     changed: ChangedEdges,
     trees: &'t HashMap<TreeId, ParsedTree<G>, H>,
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
-    let at = root.record();
     let kind = arena.header_kind(at).map_err(RenderError::Record)?;
     let linked = admit(arena, at, G::shape).map_err(RenderError::Record)?;
     let held = linked
@@ -164,9 +206,5 @@ fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
             Ok((tree, parsed.tree_arena()))
         })
         .collect::<Result<Vec<_>, CoordinateError>>()?;
-    let cell = match root {
-        BuiltRoot::Record(at) => Cell::Child { kind, at, link: None, changed },
-        BuiltRoot::Leaf { record, text } => Cell::BuiltLeaf { kind, text, record },
-    };
-    Ok((CellAt { cell, tree: None, site: None }, HeldArenas::of(held)))
+    Ok((CellAt { cell: Cell::Child { kind, at, link: None, changed }, tree: None, site: None }, HeldArenas::of(held)))
 }

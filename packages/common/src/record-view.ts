@@ -182,7 +182,7 @@ export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: nu
 	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };
 }
 
-function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
+function cellData(holder: object, tree: TreeHandle, cell: RecordCell, at: number, word: number, item: number): unknown {
 	switch (cell.form) {
 		case 'absent':
 			return undefined;
@@ -201,7 +201,7 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 			return cell.kind;
 		case 'builtLeaf':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.leaf(cell);
+			return tree.built.leaf(cell, at, word, item);
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
 			return tree.built.textOf(cell.offset, cell.len);
@@ -220,7 +220,10 @@ export function recordSlot(holder: object, tree: TreeHandle, word: number, width
 	return cellData(
 		holder,
 		tree,
-		decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word)
+		decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word),
+		at,
+		word,
+		0
 	);
 }
 
@@ -242,7 +245,7 @@ export function recordSlots(
 	if (list.len === 0) return [];
 	const items = wordsAt(records, list.run, list.len * run);
 	return Array.from({ length: list.len }, (_, n) =>
-		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format))
+		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format), at, word, n)
 	);
 }
 

@@ -233,7 +233,15 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, record } | ::sittir_core::arena::Cell::CopiedLeaf { kind, text, record } if #claims => {
+                    ::sittir_core::arena::Cell::BuiltLeaf { kind, text, changed } if #claims => {
+                        let place = ::sittir_core::arena::built_leaf_place(site)?;
+                        ::core::result::Result::Ok(Self {
+                            __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), changed, ::core::option::Option::None),
+                            #text: ctx.string(text)?,
+                            #(#inits)*
+                        })
+                    }
+                    ::sittir_core::arena::Cell::CopiedLeaf { kind, text, record } if #claims => {
                         let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;
                         let place = ::sittir_core::arena::place_of(ctx, record, &side)?;
                         ::core::result::Result::Ok(Self {
@@ -578,6 +586,7 @@ mod tests {
         assert!(has(&out, "::sittir_core::arena::Cell::ParsedLeaf { kind, span, row } if (kind == kind::IDENTIFIER) =>"));
         assert!(has(&out, "let place = ::sittir_core::arena::leaf_place(ctx, row, site)?;"));
         assert!(has(&out, "text: ctx.source_text(span)?,"));
+        assert!(has(&out, "let place = ::sittir_core::arena::built_leaf_place(site)?;"));
         assert!(has(&out, "let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;"));
         assert!(has(&out, "text: ctx.string(text)?,"));
         assert!(has(&out, "fn text(&self) -> &str { self.text }"));

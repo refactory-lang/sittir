@@ -2,10 +2,10 @@ import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../c
 import type { NodeMap } from '../compiler/types.ts';
 import { builtRowLines, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
-import { RECORD_HEADER_WORDS, type RecordPlace } from './record-layout.ts';
+import type { RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
 
-export const RECORD_CONSTRUCTION_IMPORTS = ['builtArenaOf', 'builtInputs', 'storeCell', 'storeFlag', 'storeList', 'storeListOptions'] as const;
+export const RECORD_CONSTRUCTION_IMPORTS = ['builtArenaOf', 'builtInputs', 'LEAF_SITES', 'storeCell', 'storeFlag', 'storeList', 'storeListOptions'] as const;
 
 export const RECORD_VIEW_TYPES = ['BuiltRow', 'BuiltViews', 'EngineHandle'] as const;
 
@@ -43,10 +43,9 @@ export interface RecordParts {
 }
 
 function slotStore(place: RecordPlace, local: string): string {
-	const at = `record.base + ${place.word}`;
-	if ('bit' in place) return `  if (${local}) storeFlag(record.data, ${at}, ${2 ** place.bit});`;
-	if (place.run !== undefined) return `  storeList(arena, record.data, ${at}, ${local}, ${place.run});`;
-	return `  storeCell(arena, record.data, ${at}, ${local});`;
+	if ('bit' in place) return `  if (${local}) storeFlag(record.data, record.base + ${place.word}, ${2 ** place.bit});`;
+	if (place.run !== undefined) return `  storeList(arena, record, ${place.word}, ${local}, ${place.run});`;
+	return `  storeCell(arena, record, ${place.word}, ${local});`;
 }
 
 export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: BuiltViewTable): RecordParts {
@@ -84,8 +83,8 @@ export function recordRefusalLines(node: { readonly kind: string }): string[] {
 	return [`  throw new Error(${JSON.stringify(`${node.kind} has no record view, so a record engine cannot build it yet`)});`];
 }
 
-export function leafAdoptLines(maker: string, kind: string, textExpr: string, result: string): string[] {
-	return [`  return builtArenaOf(handle).adoptLeaf(${maker}(${textExpr}, handle), ${kind}, ${RECORD_HEADER_WORDS}, ${textExpr}) as unknown as ${result};`];
+export function leafAdoptLines(maker: string, textExpr: string, result: string): string[] {
+	return [`  return builtArenaOf(handle).adoptLeaf(${maker}(${textExpr}, handle), ${textExpr}) as unknown as ${result};`];
 }
 
 interface ViewKind {
@@ -121,7 +120,7 @@ export class BuiltViewTable {
 		}
 		const name = `leaf${node.typeName}`;
 		this.#leaves.set(kindId, { name, body });
-		return { name, lines: [`function ${name}(text: string, handle: EngineHandle | undefined): object {`, '  const node = {', ...members, '  };', '  return node;', '}'] };
+		return { name, lines: [`function ${name}(text: string, handle: EngineHandle | undefined): object {`, '  const node = {', '    [LEAF_SITES]: undefined,', ...members, '  };', '  return node;', '}'] };
 	}
 
 	tableLines(): string[] {
