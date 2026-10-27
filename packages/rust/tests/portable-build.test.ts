@@ -58,8 +58,18 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'pattern.range.inclusive', right: 'b' }))).toBe('..=b');
 	});
 
+	it('refuses a bare range, whose operator only a refinement presets, naming the path', () => {
+		expect(() => runtime.build({ $path: 'pattern.range', left: 'a', right: 'b' })).toThrow(/pattern\.range does not build in rust/);
+	});
+
 	it("builds a function type's trait form through the mount that seats the form's input at its holder's key", () => {
 		expect(render(runtime.build({ $path: 'type.function', trait: 'Fn', parameters: [] }))).toBe('Fn()');
+	});
+
+	it("builds a function type with no trait through the fn form, which its sibling arm presets", () => {
+		expect(render(runtime.build({ $path: 'type.function', parameters: [], returnType: rust.kinds.U8Keyword }))).toBe('fn() -> u8');
+		expect(render(runtime.build({ $path: 'type.function', $flags: ['unsafe'], parameters: [] }))).toBe('unsafe fn()');
+		expect(() => runtime.build({ $path: 'type.function', trait: 'Fn', extern: 'x', parameters: [] })).toThrow(/no rust form of type\.function/);
 	});
 
 	it("builds a restricted visibility's scope as given, a path through the scope's path form in place of the token the first claim fixes", () => {
@@ -73,6 +83,11 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'attribute.content', path: 'derive', input: { $path: 'element.macro.token_tree', tokens: [] } })).toThrow(
 			/element\.macro\.token_tree sits in attribute_input\.arguments, attribute_input\.value/
 		);
+	});
+
+	it('refuses text where no seat builds text, and a list where the slot holds one value', () => {
+		expect(() => runtime.build({ ...fn, body: 'x' })).toThrow(/declaration\.function's body has no route that seats the text "x"/);
+		expect(() => runtime.build({ ...fn, name: ['f'] })).toThrow(/declaration\.function's name holds one value, not a list/);
 	});
 
 	it('refuses a path the language does not build, naming the path and the language', () => {

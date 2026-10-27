@@ -105,12 +105,17 @@ export interface PortableSeat {
 	readonly many?: true;
 }
 
-/** A member of a build arm: the steps to its slot, whether the slot holds a list, and the seats a value finds in the slot, the slot's own first. */
+/**
+ * A member of a build arm: the steps to its slot, whether the slot holds a list, and the seats a value finds in the slot, the slot's own first.
+ * A route that enters a kind the arm does not make `requires` other members to fill that kind's required slots: each group names the members
+ * any one of which fills one slot, so the route is taken only when every group has a member present.
+ */
 export interface PortableMemberStep {
 	readonly name: string;
 	readonly steps: readonly PortableSlotStep[];
 	readonly multiple: boolean;
 	readonly seats: readonly PortableSeat[];
+	readonly requires?: readonly (readonly string[])[];
 }
 
 /** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */

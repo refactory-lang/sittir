@@ -174,6 +174,35 @@ describe('the portable build table', () => {
 		]);
 	});
 
+	it("splits a required form slot by the form that builds from nothing: its sibling arm presets the form's mount", () => {
+		const [fnForm, traitForm] = armsOf('rust', 'type.function');
+		expect([fnForm!.kind, traitForm!.kind]).toEqual([rust.kinds.FunctionType, rust.kinds.FunctionType]);
+		expect(fnForm!.presets).toEqual([{ steps: [{ key: 'content', builder: 'functionType.fnForm', mounted: { call: 'keyedArgs', key: 'content', seats: 'forwarded' } }] }]);
+		expect(fnForm!.when).toEqual([{ absent: ['trait'], required: [] }]);
+		expect(traitForm!.presets).toEqual([]);
+		expect(traitForm!.when).toEqual([{ absent: ['extern'], required: ['trait'] }]);
+	});
+
+	it('drops an arm with a required slot no member, flag or preset fills, so the bare path builds nothing', () => {
+		expect(armsOf('rust', 'pattern.range')).toEqual([]);
+		expect(armsOf('rust', 'expression.binary')).toEqual([]);
+		expect(armsOf('rust', 'pattern.range.inclusive').length).toBeGreaterThan(0);
+	});
+
+	it("requires the members that complete the kind a route enters: an except clause's name, its type", () => {
+		const names = armsOf('python', 'clause.catch')[0]!.members.filter((member) => member.name === 'name');
+		expect(names.map((route) => route.requires)).toEqual([[['type']]]);
+	});
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a route requires only members and flags of its own arm', (grammar) => {
+		for (const { arms } of Object.values(tables[grammar].table.paths))
+			for (const arm of arms) {
+				const names = new Set([...arm.members.map((member) => member.name), ...Object.keys(arm.flags)]);
+				for (const member of arm.members)
+					for (const group of member.requires ?? []) for (const name of group) expect(names.has(name), `${member.name} requires ${name}`).toBe(true);
+			}
+	});
+
 	it('never takes an arm for a structure stating a member the arm lacks', () => {
 		const [sequence, typed] = armsOf('typescript', 'expression.parenthesized');
 		expect(sequence!.when).toContainEqual({ absent: ['type'], required: [] });

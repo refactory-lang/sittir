@@ -122,7 +122,7 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (engine === undefined || !isLive(engine)) return undefined;
 		let text = rendered.get(node);
 		if (text === undefined) {
-			const output = engine.render(node as never);
+			const output = engine.render(node);
 			try {
 				rendered.set(node, (text = output.toString()));
 			} finally {

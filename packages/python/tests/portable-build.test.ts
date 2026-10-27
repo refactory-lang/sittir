@@ -19,6 +19,13 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F: pass\n');
 	});
 
+	it('takes a route only beside the members that complete the kind it enters', () => {
+		expect(() => runtime.build({ $path: 'clause.catch', name: 'e', body: [{ $path: 'statement.empty' }] })).toThrow(/clause\.catch: name builds only beside type/);
+		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a', name: 'b' }))).toBe('a as b');
+		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a' }))).toBe('a');
+		expect(() => runtime.build({ $path: 'clause.resource.item', name: 'b' })).toThrow(/clause\.resource\.item: name builds only beside value/);
+	});
+
 	it('builds a list given for a slot that holds one value through the container that holds the list', () => {
 		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: [{ $path: 'statement.empty' }] }))).toBe('def f(): pass\n');
 	});

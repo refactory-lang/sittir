@@ -1,4 +1,4 @@
-import type { Engine, LanguageAPI, PortableStructure } from '@sittir/types';
+import type { Engine, LanguageAPI, PortableStructure, TriviaFacts } from '@sittir/types';
 import { inLanguage } from '../language.ts';
 import { portableBuilder } from './build.ts';
 import { builtReadsAs, flagHolds, readsAs } from './classify.ts';
@@ -33,13 +33,14 @@ export interface PortableRuntime<API extends LanguageAPI> {
 
 export async function portableRuntime<API extends LanguageAPI>(engine: Engine<API, 'strict'>): Promise<PortableRuntime<API>> {
 	const { language, portable: rows } = engine;
+	const trivia: TriviaFacts = engine.trivia;
 	const hooks = await language.load();
 	if (rows === undefined || hooks.portableBuild === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
 	const build = portableBuilder({
 		language: language.name,
 		table: await hooks.portableBuild(),
-		builders: engine.build as object,
-		kindName: (kind) => engine.trivia.kindName(kind as never),
+		builders: engine.build,
+		kindName: (kind) => trivia.kindName(kind),
 		readsAs: (path, node) => builtReadsAs(rows, path, node)
 	});
 	return Object.freeze({ engine, is: portableRuntimeTree(language), build });

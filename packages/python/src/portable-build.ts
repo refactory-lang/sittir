@@ -518,7 +518,8 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier'
 								}
-							]
+							],
+							requires: [['type']]
 						},
 						{
 							name: 'type',
@@ -1184,7 +1185,8 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier'
 								}
-							]
+							],
+							requires: [['name']]
 						},
 						{
 							name: 'name',
@@ -1218,7 +1220,8 @@ export const build: PortableBuildTable = {
 										}
 									]
 								}
-							]
+							],
+							requires: [['value']]
 						}
 					],
 					presets: [],
@@ -3019,37 +3022,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'element.comparator': {
-			root: true,
-			arms: [
-				{
-					kind: 300,
-					seated: 'config',
-					members: [
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'primaryExpression'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [300, 'primaryExpression'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
-									],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'element.comparator.comparison.equal': {
 			root: true,
@@ -3673,54 +3647,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.assignment.compound': {
-			root: true,
-			arms: [
-				{
-					kind: 217,
-					builder: 'augmentedAssignment',
-					members: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [217, 'left'],
-									kinds: [1, 196, 197, 198, 201, 218, 221, 222],
-									leaf: 'identifier'
-								}
-							]
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [217, 'right'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 181, 201, 203, 205, 206, 207, 208, 209,
-										210, 213, 214, 216, 217, 218, 220, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246,
-										247, 248, 255, 256, 257, 283, 289, 290, 291
-									],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.assignment.compound.add': {
 			root: true,
@@ -4523,157 +4451,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.binary': {
-			root: true,
-			arms: [
-				{
-					kind: 213,
-					builder: 'comparisonOperator',
-					members: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [213, 'left'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
-									],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: ['right'],
-							required: ['left']
-						}
-					],
-					holders: [
-						[140, 'expression'],
-						[141, 'expressions'],
-						[142, 'content'],
-						[143, 'right'],
-						[145, 'expressions'],
-						[146, 'expressions'],
-						[147, 'expressions'],
-						[147, 'cause'],
-						[151, 'condition'],
-						[152, 'condition'],
-						[157, 'right'],
-						[158, 'condition'],
-						[164, 'value'],
-						[168, 'expression'],
-						[169, 'expression'],
-						[172, 'inClauses'],
-						[179, 'expression'],
-						[181, 'items'],
-						[199, 'default'],
-						[200, 'default'],
-						[203, 'expression'],
-						[207, 'argument'],
-						[208, 'left'],
-						[208, 'right'],
-						[214, 'body'],
-						[215, 'body'],
-						[217, 'right'],
-						[220, 'content'],
-						[223, 'start'],
-						[223, 'stop'],
-						[226, 'content'],
-						[232, 'value'],
-						[237, 'key'],
-						[237, 'value'],
-						[238, 'body'],
-						[240, 'body'],
-						[241, 'body'],
-						[242, 'expression'],
-						[243, 'items'],
-						[244, 'rights'],
-						[245, 'condition'],
-						[246, 'consequence'],
-						[246, 'condition'],
-						[246, 'alternative'],
-						[250, 'expression'],
-						[261, 'subjects'],
-						[264, 'items'],
-						[267, 'subscripts'],
-						[269, 'expression'],
-						[272, 'items'],
-						[273, 'value'],
-						[273, 'alias'],
-						[276, 'items'],
-						[277, 'items'],
-						[285, 'values'],
-						[289, 'value'],
-						[291, 'value'],
-						[292, 'items'],
-						[301, 'expression'],
-						[343, 'content'],
-						[344, 'expression']
-					]
-				},
-				{
-					kind: 209,
-					builder: 'binaryOperator',
-					members: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [209, 'left'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
-									],
-									leaf: 'identifier'
-								}
-							]
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [209, 'right'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
-									],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: [
-						{
-							absent: [],
-							required: ['left', 'right']
-						}
-					]
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.binary.arithmetic.add': {
 			root: true,
@@ -5871,58 +5650,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.binary.logical': {
-			root: true,
-			arms: [
-				{
-					kind: 208,
-					builder: 'booleanOperator',
-					members: [
-						{
-							name: 'left',
-							steps: [
-								{
-									key: 'left'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [208, 'left'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210,
-										213, 214, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248, 255, 256, 257,
-										283
-									],
-									leaf: 'identifier'
-								}
-							]
-						},
-						{
-							name: 'right',
-							steps: [
-								{
-									key: 'right'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [208, 'right'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 143, 201, 203, 205, 206, 207, 208, 209, 210,
-										213, 214, 221, 222, 224, 233, 234, 235, 236, 238, 239, 240, 241, 242, 246, 247, 248, 255, 256, 257,
-										283
-									],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.binary.logical.and': {
 			root: true,
@@ -6693,17 +6422,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.collection.tuple.bare': {
-			root: true,
-			arms: [
-				{
-					kind: 181,
-					builder: 'expressionList',
-					members: [],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.comprehension.generator': {
 			root: true,
@@ -7458,37 +7178,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'expression.unary': {
-			root: true,
-			arms: [
-				{
-					kind: 210,
-					builder: 'unaryOperator',
-					members: [
-						{
-							name: 'argument',
-							steps: [
-								{
-									key: 'argument'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [210, 'argument'],
-									kinds: [
-										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
-										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
-									],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'expression.unary.bitwise_not': {
 			root: true,
@@ -8472,214 +8163,24 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'literal.string': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.bytes': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.bytes.multiline': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.bytes.raw': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.bytes.raw.multiline': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.concatenated': {
 			root: true,
@@ -8962,298 +8463,32 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'literal.string.interpolated': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.interpolated.multiline': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.interpolated.raw': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.interpolated.raw.multiline': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.multiline': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.raw': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.raw.multiline': {
-			root: true,
-			arms: [
-				{
-					kind: 248,
-					builder: 'string',
-					members: [
-						{
-							name: 'elements',
-							steps: [
-								{
-									key: 'contents',
-									optional: true
-								}
-							],
-							multiple: true,
-							seats: [
-								{
-									at: [248, 'contents'],
-									kinds: [250],
-									many: true
-								},
-								{
-									at: [249, 'elements'],
-									kinds: [99, 100, 101, 102, 103, 104, 105, 120, 121, 252, 253],
-									within: [
-										{
-											builder: 'stringContent',
-											key: 'elements'
-										}
-									],
-									many: true
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'literal.string.text': {
 			root: true,
@@ -9341,64 +8576,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'pattern.complex': {
-			root: true,
-			arms: [
-				{
-					kind: 192,
-					builder: 'complexPattern',
-					members: [
-						{
-							name: 'sign',
-							steps: [
-								{
-									key: 'sign',
-									optional: true
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [192, 'sign'],
-									kinds: [49]
-								}
-							]
-						},
-						{
-							name: 'real',
-							steps: [
-								{
-									key: 'real'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [192, 'real'],
-									kinds: [90, 91, 92, 93, 94, 95, 96, 97, 98, 255, 256, 283]
-								}
-							]
-						},
-						{
-							name: 'imaginary',
-							steps: [
-								{
-									key: 'imaginary'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [192, 'imaginary'],
-									kinds: [90, 91, 92, 93, 94, 95, 96, 97, 98, 255, 256, 283]
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'pattern.complex.add': {
 			root: true,
@@ -10273,38 +9452,7 @@ export const build: PortableBuildTable = {
 		},
 		'pattern.tuple.bare': {
 			root: false,
-			arms: [
-				{
-					kind: 271,
-					builder: 'casePatternList',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [[156, 'pattern']]
-				},
-				{
-					kind: 218,
-					builder: 'patternList',
-					members: [],
-					presets: [],
-					flags: {},
-					when: [],
-					holders: [
-						[157, 'left'],
-						[217, 'left'],
-						[217, 'right'],
-						[244, 'left'],
-						[250, 'expression'],
-						[289, 'name'],
-						[289, 'value'],
-						[290, 'name'],
-						[291, 'name'],
-						[291, 'value'],
-						[344, 'expression']
-					]
-				}
-			]
+			arms: []
 		},
 		'statement.assert': {
 			root: true,
@@ -11804,34 +10952,8 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'type.rest': {
-			root: true,
-			arms: [
-				{
-					kind: 227,
-					builder: 'splatType',
-					members: [
-						{
-							name: 'type',
-							steps: [
-								{
-									key: 'type'
-								}
-							],
-							multiple: false,
-							seats: [
-								{
-									at: [227, 'type'],
-									kinds: [1],
-									leaf: 'identifier'
-								}
-							]
-						}
-					],
-					presets: [],
-					flags: {},
-					when: []
-				}
-			]
+			root: false,
+			arms: []
 		},
 		'type.rest.map': {
 			root: true,
