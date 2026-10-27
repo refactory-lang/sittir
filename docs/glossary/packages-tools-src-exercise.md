@@ -54,7 +54,7 @@ The identical count, the file count and each file's outcome.
 
 The source text a `$span` names. A span counts UTF-8 bytes, so it is sliced from the source's bytes, not from the string.
 
-### `packages/tools/src/exercise/codemod-corpus.ts::spanOf`
+### `packages/common/src/node-data.ts::spanOf`
 
 A node's `$span`, when it carries one.
 
