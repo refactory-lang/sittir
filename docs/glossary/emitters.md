@@ -1863,7 +1863,7 @@ through untouched and only the elements resolve.
 
 `_listElements` dispatches a tagged bag on its tag first, whether or not the element slot is resolvable: the tag names the kind, so it needs no slot knowledge. It reads the tag against `tagKinds` (the wrapper and the element slot's leaf and branch kinds). A list that seats a wrapper also passes `bagKinds`, the wrapper and the element slot's branch kinds: an untagged bag with several of them throws naming them, and an untagged bag with one is that kind's.
 
-### `packages/codegen/src/emitters/from.ts::expandAndDedupeContentTypes`
+### `packages/codegen/src/emitters/shared.ts::expandAndDedupeContentTypes`
 
 ```text
 /**
@@ -2113,7 +2113,7 @@ keeps its whole-text pattern row, and a visible external scanner token authors i
 factory-bearing pattern leaf has one; a leaf with a factory and no pattern is an emitter error, never a last resort.
 ```
 
-### `packages/codegen/src/emitters/from.ts::aliasPatternLeaf`
+### `packages/codegen/src/emitters/shared.ts::aliasPatternLeaf`
 
 The pattern leaf an AssembledAlias wraps when its single slot holds exactly one kind and that kind is a pattern leaf with a raw factory. `buildLeafRegistryEntries` gives such an alias a registry row with the leaf's anchored pattern and a factory that builds the leaf and then the alias, so a bare string resolves to the alias in the leaf pass exactly as it would to the leaf.
 
@@ -2688,7 +2688,7 @@ Surface`
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::classifySlotForEmit`
+### `packages/codegen/src/emitters/node-common.ts::classifySlotForEmit`
 
 ```text
 /**
@@ -6702,12 +6702,6 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 	 */
 ```
 
-### `packages/codegen/src/emitters/from.ts::enumValues`
-
-```text
-/** Enum value list when the underlying node is an enum. */
-```
-
 ### `packages/codegen/src/emitters/from.ts::KindInterner`
 
 ```text
@@ -6731,16 +6725,6 @@ enrich-stamped (`VariantChild.definedBy`); one hand-declared arm (a
 	 * unit-test callers), guards compare string kind-names only.
 	 */
 ```
-
-### `packages/codegen/src/emitters/is.ts::member`
-
-```text
-/** TSKindId enum member name (e.g. 'FunctionItem'); present when kindEntries available. */
-```
-
-### `packages/codegen/src/emitters/is.ts::memberIds`
-
-The kind ids a supertype's or an enum kind's guard admits, its row in `_members` and, as kind-id types, its entry in `KindMembers`: the kinds `membershipKindsOf` gives for it, each by its kind id, once. Empty on the legacy path without id tables, whose guards compare names.
 
 ### `packages/codegen/src/emitters/kind-discriminant.ts::KindEnumEntry::member`
 
@@ -7301,18 +7285,6 @@ seat the child into a config or tuple take the value arguments only.
 	 */
 ```
 
-### `packages/codegen/src/emitters/wrap.ts::rawFactoryName`
-
-```text
-/** rawFactoryName for $with — null when the kind has no factory. */
-```
-
-### `packages/codegen/src/emitters/wrap.ts::childSurface`
-
-```text
-/** Child-factory surface when the node exposes positional child factories. */
-```
-
 ### `packages/codegen/src/emitters/consts.ts::PUNCT_MNEMONIC`
 
 ```text
@@ -7342,7 +7314,7 @@ seat the child into a config or tuple take the value arguments only.
 /** Methods on the `is` namespace beyond per-kind entries. */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RESERVED_SUPERTYPE_ENUM_NAMES`
+### `packages/codegen/src/emitters/node-common.ts::RESERVED_SUPERTYPE_ENUM_NAMES`
 
 ```text
 /**
@@ -7372,13 +7344,6 @@ seat the child into a config or tuple take the value arguments only.
  * since a kind's own per-kind struct can't be omitted without losing its
  * data.
  */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::collectFromSlots`
-
-```text
-/** Accumulate supertype names from a single node's slots — named and
-	 *  unnamed flow through one path (cleanup-rules §E1). */
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::LAYOUT_FIELD`
@@ -11860,10 +11825,6 @@ The one cast a wrap makes at each return: the object literal it builds carries t
 
 The `: T.<Kind>.Parsed` annotation on a wrap's signature, or an empty string when the kind has no catalog entry. A transparent supertype wrap is annotated with the supertype's own `.Parsed` union, since it returns whichever member it dispatches to.
 
-### `packages/codegen/src/emitters/wrap.ts::ParsedOfData`
-
-The wrap header's type from a wrapped datum to its declared `Parsed` node: a datum whose `$type` is a kind id in the parsed-by-kind-id map becomes that map's row, anything else stays as it is. `hydrateChild` and `hydrateChildren` return through it, so an accessor's return type is the child's declared surface and never an inference through the tree's recursion.
-
 ### `packages/codegen/src/emitters/wrap.ts::renameUnusedTreeParam`
 
 ```text
@@ -12053,7 +12014,7 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 // (shared.ts).
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::RUST_KEYWORDS`
+### `packages/codegen/src/emitters/node-common.ts::RUST_KEYWORDS`
 
 ```text
 // ----------------------------------------------------------------------
@@ -12067,12 +12028,6 @@ The sorted kind ids of the unit kinds (keyword or punctuation model type, with a
 /** A Rust keyword cannot itself be a field identifier (`pub`, `type`,
  *  `crate`, …); a trailing `_` is the escape (`pub_`, `type_`, `crate_`).
  *  Every non-keyword id passes through unchanged. */
-```
-
-### `packages/codegen/src/emitters/render-module.ts::pascal`
-
-```text
-// strip leading underscores (hidden-kind marker)
 ```
 
 ### `packages/codegen/src/emitters/render-module.ts::EmittedField`
@@ -12750,7 +12705,7 @@ treats `false` as not present.
  */
 ```
 
-### `packages/codegen/src/emitters/render-module.ts::supertypeKindByTypeNameCache`
+### `packages/codegen/src/emitters/node-common.ts::supertypeKindByTypeNameCache`
 
 ```text
 // Memoized lookup: supertype typeName → supertype kind. Used by back-edge
@@ -14179,17 +14134,9 @@ The anchored pattern constant a text leaf's factory declares: its `_leafRe_<fact
 
 `childElementType` for a construction parameter: the read-side element union, widened by the children's alias content types (`aliasContentTypes`). The read side (`wrap.ts`, `from.ts`) keeps `childElementType`, because a node read from a tree holds no alias content.
 
-### `packages/codegen/src/emitters/factories.ts::slotAliases`
+### `packages/codegen/src/emitters/shared.ts::slotAliases`
 
 The AssembledAlias kinds a slot holds, after supertype expansion, that have a raw factory. Each is a transparent wrapper the slot's builder applies itself, so the slot's input admits the alias's content (`T.<Alias>.Types`) alongside the built alias.
-
-### `packages/codegen/src/emitters/factories.ts::aliasContentTypes`
-
-The `T.<Alias>.Types` names of every alias the given slots hold, deduplicated — the one list the construction element types widen by.
-
-### `packages/codegen/src/emitters/factories.ts::withAliasContentTypes`
-
-A slot's element type widened by its aliases' content types (`aliasContentTypes`).
 
 ### `packages/codegen/src/emitters/factories.ts::kindIdsOf`
 
@@ -14343,10 +14290,6 @@ A sample that satisfies the slot pattern, so the generated construction tests pa
 
 The text parameter of a pattern leaf's builder: `string | number` when its pattern has a numeric shape, where the builder converts a number to the leaf's text before its guards run, else `string`.
 
-### `packages/codegen/src/emitters/interior.ts::widenNumericSlots`
-
-Wraps a config type in `WidenNumeric` for the numeric text slots of a node, each key widened by its own `numberInputType`, so the namespace `Config` and `LooseConfig` and the builder's config parameter accept the JavaScript values the builder converts. The one widening both the types and the factories emitters write.
-
 ### `packages/codegen/src/emitters/factory-map.ts::FactorySlotMeta.registered`
 
 ```text
@@ -14455,10 +14398,6 @@ The options parameter type of a generated list builder, a forwarding constructor
 
 Whether a type text has ` | ` outside every bracket pair, the test `parenthesizeUnion` applies.
 
-### `packages/codegen/src/emitters/from.ts::keywordOr`
-
-The emitted `_keywordOr(input, keywords, () => resolved)` that replaces `_keywordOf(input, keywords) ?? resolved` for a single slot. Its declared result is `number | R`, so the checker forms the union without reducing it, which a `??` expression does and which exceeds the depth on a union that holds a node's `.Bound`.
-
 ### `packages/codegen/src/emitters/from.ts::RAW_IMPORT`
 
 The coerce module's import of the strict builders, under a name of its own so that `F` can be their plain view (`PlainBuilders`).
@@ -14478,10 +14417,6 @@ The facts of each slot `listSlotTargets` names: the slot's accessor name, the ki
 ### `packages/codegen/src/emitters/factories.ts::ListViewFacts`
 
 The facts `listViewHint` returns: the item type, the options type, the list's raw factory and the names the view must not collide with.
-
-### `packages/codegen/src/emitters/factories.ts::SeatRuntime`
-
-One runtime helper call a node's builder and wrap add: the helper's name and its spec literal.
 
 ### `packages/codegen/src/emitters/factories.ts::listViewOwners`
 
@@ -14523,10 +14458,6 @@ The text nodes of a template body, descending into the arms of its conditionals.
 
 The one place a pattern guard's refusal is worded: `<label>: text does not match pattern: <value>`, with the value written through `describeValue`. It refuses a string the pattern rejects; a non-string has already been refused by the type guard (`textTypeMismatchThrow`). The leaf-text guard and the per-slot interior guard both emit it, so the message cannot differ between them.
 
-### `packages/codegen/src/emitters/factories.ts::requiredUnfilled`
-
-A text slot's pattern guard in the raw builder skips `undefined` only where `undefined` is legal. A slot that is required, carried by no registered option and not filled when omitted is tested directly, so an untyped `undefined` fails the guard instead of building an empty node; the skip stays on every other guarded slot. A pattern that accepts the text `undefined` (a free-text comment, a shebang) still accepts it: the guard tests the value as text and adds no required-slot check of its own.
-
 ### `packages/codegen/src/emitters/node-members.ts::SetterEntry`
 
 One `$with` setter of a node literal: its name, its parameter list and the rebuild expression it runs. The factory and wrap emitters collect these, and `seatedSetters` wraps the ones a seat changes.
@@ -14546,10 +14477,6 @@ The expression a slot reader returns: the storage key as it is, or `hydrateStore
 ### `packages/codegen/src/emitters/factories.ts::storedAccessor`
 
 A builder's reader for one slot: it hydrates when the slot's storage holds nodes (`storesNodes` over `resolveFieldStorageInfo`, the classification `slotAccessorBody` reads), a list when the slot is multiple; a scalar slot reads its storage as it is. Every builder literal's readers come from it: field-carrying factories, form factories and a list's content.
-
-### `packages/codegen/src/emitters/node-members.ts::innerPositionsOf`
-
-Whether a kind's `$trivia` carries `inner`: exactly for the kinds in `emptyForms` (the kinds with an inner side, which the type surface offers `inner` on as their empty form). The types and the literal read the same fact, so they cannot drift.
 
 ### `packages/codegen/src/emitters/node-members.ts::triviaInnerImports`
 
@@ -14862,10 +14789,6 @@ The literal of one dummy node in a generated test: its `$type`, `$text` and `$na
 ### `packages/codegen/src/emitters/reparse-hosts.ts::emitReparseHosts`
 
 Writes the grammar's `reparseHosts` block as the generated `reparse-hosts.ts`: the host templates, the priority list and the gated kinds. A python expression host is written `_ = (…)`, because python allows a line break inside an expression only within brackets: a fragment read inside brackets, such as a `concatenated_string` whose strings sit on separate lines, is valid only in a bracketed context, and the parentheses supply it while the reparsed node at the fragment's offset is still the fragment.
-
-### `packages/codegen/src/emitters/__tests__/self-containing-list-types.test.ts::selfContainingList`
-
-Builds an isolated assembled list whose repeated element choice includes the list itself. The emitted modules are compiled with TypeScript 6 and 7 to pin own-kind built and parsed inputs, recursive loose configurations, setters, and namespace argument-row resolution without changing a language grammar.
 
 ### `packages/codegen/src/emitters/node-model.ts::printNodeModel`
 
@@ -15200,3 +15123,299 @@ Whether a supertype was authored, not synthesized.
 ### `packages/codegen/src/emitters/types.ts::EmitTypesConfig`
 
 The options the types emitter takes.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySide`
+
+Which side of a kind a boundary arm applies to: before or after the kind's own text.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMark`
+
+A mark on a boundary arm: a site, a flank of a site, or a seam between kinds.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMark::at`
+
+The mark's form: `site`, `flank` or `seam`.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMark::site`
+
+The site number a `site` or `flank` mark refers to.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMark::kinds`
+
+The kinds a `seam` mark is between, as the seam records them.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryArm`
+
+One boundary arm: the state it leads to, the field it is for, and the marks it requires.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryArm::next`
+
+The successor state the arm leads to.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryArm::field`
+
+The field index the arm belongs to, when the arm is field-scoped.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryArm::marks`
+
+The marks that must hold for the arm to apply.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::KindBoundary`
+
+The boundary arms of one kind, before and after its text.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::KindBoundary::kind`
+
+The kind id the boundary belongs to.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::KindBoundary::before`
+
+The arms applied before the kind's text.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::KindBoundary::after`
+
+The arms applied after the kind's text.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryDelimiting`
+
+How a list delimiter may appear: mandatory, optional or none.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryToken`
+
+A token in a boundary: its text and its kind id, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryToken::text`
+
+The token's text.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryToken::id`
+
+The token's kind id, or undefined when it has none.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryList`
+
+A list slot's boundary facts: head and tail states, leading and trailing delimiting, and separator tokens.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryList::head`
+
+The head state index of the list, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryList::tail`
+
+The tail state index of the list, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryList::leading`
+
+Whether a leading delimiter is mandatory, optional or absent.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryList::trailing`
+
+Whether a trailing delimiter is mandatory, optional or absent.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryList::separators`
+
+The separator tokens the list accepts.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryElement`
+
+One element of a slot: its kind, id, hidden flag and text.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryElement::kind`
+
+The element's kind name, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryElement::id`
+
+The element's kind id, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryElement::hidden`
+
+Whether the element is hidden (not a visible node).
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryElement::text`
+
+The element's literal text, when it is a token.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot`
+
+A slot's boundary facts: presence, prefix and suffix text, list facts, elements and field indices.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot::presence`
+
+Whether the slot is required, optional or never present.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot::prefix`
+
+The text the slot is preceded by.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot::suffix`
+
+The text the slot is followed by.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot::list`
+
+The slot's list facts, when the slot is a list.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot::elements`
+
+The slot's elements.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundarySlot::fields`
+
+The field indices the slot occupies.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTemplate`
+
+A kind's template as the boundary walk reads it: its body and accessors for seams, optionality and slots.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTemplate::body`
+
+The template's body node.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTemplate::ownEdge`
+
+Whether a seam is the template's own edge.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTemplate::site`
+
+The site number of a seam.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTemplate::optional`
+
+Whether a slot is optional in the template.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTemplate::slot`
+
+The slot facts for a named slot.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMember`
+
+A boundary member: a token with the state indices before and after it.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMember::before`
+
+The state index before the member, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryMember::after`
+
+The state index after the member, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryKind`
+
+A kind's id and hidden flag, as the boundary walk reads them.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryKind::id`
+
+The kind's id, or undefined.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryKind::hidden`
+
+Whether the kind is hidden.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryInputs`
+
+The inputs the boundary walk needs: templates, members, kind lookup, token ids and concrete-kind expansion.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryInputs::templates`
+
+The templates, by kind name.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryInputs::members`
+
+The members, by kind name.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryInputs::kindOf`
+
+Looks up a kind's id and hidden flag by name.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryInputs::tokenIdOf`
+
+The id of a token by its text, or undefined.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryInputs::concrete`
+
+Expands kind names to the concrete kinds they cover.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryDrop`
+
+Why a boundary arm was dropped: ambiguous, unmodeled or unknown.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::DroppedBoundaryArm`
+
+A boundary arm the walk dropped, with its reason and the variants it covered.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::DroppedBoundaryArm::kind`
+
+The kind name whose arm was dropped.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::DroppedBoundaryArm::side`
+
+The side (before or after) of the dropped arm.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::DroppedBoundaryArm::drop`
+
+The reason the arm was dropped.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::DroppedBoundaryArm::next`
+
+The successor state of the dropped arm, when it has one.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::DroppedBoundaryArm::variants`
+
+The variant names the arm covered.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTable`
+
+The boundary table: one row per kind, and the arms that were dropped.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTable::rows`
+
+One row per kind.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::BoundaryTable::dropped`
+
+The dropped arms, with their reasons.
+
+### `packages/codegen/src/emitters/boundary-arms.ts::boundaryTableOf`
+
+Builds the boundary table from the inputs, recording each dropped arm.
+
+### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeAdmission`
+
+The admission expression for a spliced envelope slot: the kinds it accepts.
+
+### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeKindExprs`
+
+The kind expressions a spliced envelope admits.
+
+### `packages/codegen/src/emitters/factories.ts::splicedEnvelopeType`
+
+The type a spliced envelope slot takes, or undefined when it has no envelope.
+
+### `packages/codegen/src/emitters/factories.ts::widenSlotInputs`
+
+Widens a slot's input type to admit its spliced envelope, where the slot has one.
+
+### `packages/codegen/src/emitters/interior.ts::numericSlotInputs`
+
+The numeric slots of a node, each with its input type.
+
+### `packages/codegen/src/emitters/node-members.ts::TriviaPositions`
+
+Where a node's trivia may sit: inside the node or outside it.
+
+### `packages/codegen/src/emitters/node-members.ts::TriviaPositions::inner`
+
+Whether trivia sits inside the node.
+
+### `packages/codegen/src/emitters/node-members.ts::NodeMemberSpec::trivia`
+
+The node's trivia positions, when it has any.
+
+### `packages/codegen/src/emitters/node-members.ts::triviaPositionsOf`
+
+The trivia positions of a kind, or undefined.
+
+### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite::kindId`
+
+The kind id of the delimiter site, when it has one.
