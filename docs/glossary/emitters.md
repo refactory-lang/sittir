@@ -1233,14 +1233,15 @@ so no kind-to-text table is needed here.
 
 ```text
 /**
- * Emits the `_fromMap` runtime dispatch table and `_FromMap` type alias into
- * generated from.ts.
+ * Emits the `_fromMap` runtime dispatch table and the `_FromMap` interface into
+ * generated from.ts. The interface follows the coercers it names.
  *
  * @remarks
  * Same pattern as `_factoryMap` in factories.ts: declared as a plain `as const`
  * object so every entry's type is inferred from the per-kind `fromX` signature.
- * `_FromMap = typeof _fromMap` gives consumers the precise per-slot type without
- * duplicating the kind→function mapping.
+ * `_FromMap` is an interface of `typeof coerceToX` rows, one per kind, rather than
+ * `typeof _fromMap`: the inferred object type of the const coercers would name
+ * `T.X.Loose`, which TypeScript cannot serialize (TS7056).
  *
  * Declared BEFORE the resolver helpers so `_resolveByKind<K>` can reference
  * `_FromMap[K]` / `_fromMap[kind]` in its signature — the per-kind function
@@ -1481,13 +1482,13 @@ A delimiter that is a spelling choice goes through `spelledForm` instead, and th
 
 The coercer's signature carries the same facts as types. With a spelled delimiter it is generic over the input and options (`<const I, const O>`) and returns `spelledReturnType`, so `integer.hex('0XFF').prefix()` is `'0X'`. With sibling leads its input is `I & SiblingLeadRefusal<…>` (`siblingLeadRefusalType`), so `blockComment('/*! x */')` fails to compile, naming `ir.blockCommentDocInner`. A plain `string` input keeps today's types and is checked at runtime. Delimiters with no slot and no siblings leave the signature as it was.
 
-A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
+A kind with an empty form gets a zero-argument form annotated `EmptyForm<…>`, returning the empty type, ahead of its signature (`withEmptyOverload`), whichever of the three signatures it takes.
 
 A direct-value coercer whose kind has a `listSpreadTarget` also takes the list's spread: beside its single-value signature it declares `(...input: T.<Target>.LooseArgs)`, and a call with more than one argument hands every argument to the target's own coercer and wraps the result. `parameters(a, b, c)` is `parameters([a, b, c])`, each element resolved as the list resolves it. A spelled or sibling-refusing signature cannot also spread, and the emitter throws if one would.
 
 #### input refusal
 
-Every coercer declares its public signature as one overload over its implementation: generic over the whole input and refusing an untyped node or an undeclared key anywhere in it (`RefuseUndeclared`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
+A coercer whose public signature is a row call is a `const` typed `Seat<…>`, or `ConfigSeat` / `OptionalConfigSeat` when its only signature is a config. The four other shapes (spelled delimiter, numeric refusal, sibling lead and options-taking) still declare it as one overload over its implementation, generic over the whole input and refusing an untyped node or an undeclared key anywhere in it (`RefuseUndeclared`, with the input type as its declared input), beside the sibling-lead and numeric refusals. An optional input is the rest tuple `refusingParam` writes, with the spelling options inside it. The spread form refuses the same way over its `LooseArgs`.
 
 
 #### interior passthrough
@@ -1625,7 +1626,7 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 A separated list's rest parameter is its `LooseArgs` row, which `listBuiltTypeSurface` spells with `listRestParamType` from the list's own cardinality (`AssembledList.nonEmpty`, the same fact the raw builder's non-empty guard reads) and its options. The options object is a spelling only as the first argument, so a later one is a type error. Runtime is unchanged because the list builder already sniffs an options-shaped first argument.
 
-A kind with an empty form gets the zero-argument overload returning `T.Empty<TypeName>` ahead of the rest-parameter signature (`withEmptyOverload`).
+A kind with an empty form gets a zero-argument form annotated `EmptyForm<…>` ahead of the rest-parameter signature (`withEmptyOverload`).
 
 With leading options (`leadingOptionsOf`), the coercer first splits a leading options object off `input` (`leadingOptionsSplit`) and resolves the rest. Rebuilding from a node of its own kind, it starts from the registered values that node holds (its storage keys) and lets a passed options object override them, so a coerced node keeps its spelling.
 
@@ -14404,7 +14405,7 @@ A parameter list with no type parameters, for a signature none of whose paramete
 
 ### `packages/codegen/src/emitters/shared.ts::functionTypeOf`
 
-A refusing signature as a function type, for a declared type rather than a declaration (`declaredOverload`): a polymorph form builder's type is declared on the bundle it is seated in.
+A refusing signature as a function type, printed from the shape `refusingParam` recorded, for a declared type rather than a declaration (`declaredOverload`): a polymorph form builder's type is declared on the bundle it is seated in.
 
 ### `packages/codegen/src/emitters/node-projection.ts::SCALAR_STORAGE`
 
@@ -15251,3 +15252,259 @@ The trivia positions of a kind, or undefined.
 ### `packages/codegen/src/emitters/render-options-rs.ts::DelimiterSite::kindId`
 
 The kind id of the delimiter site, when it has one.
+
+### `packages/codegen/src/emitters/emit.ts::EmitAllResult::tableFiles`
+
+The builder table files the emit run wrote, by path.
+
+### `packages/codegen/src/emitters/ir.ts::irNamespaceOf`
+
+The namespace reference the IR module exposes for a node map, given how each member is referenced.
+
+### `packages/codegen/src/emitters/ir.ts::emitIrModule`
+
+Emits the IR module source for one builder surface.
+
+### `packages/codegen/src/emitters/ir.ts::irModulePath`
+
+The path of the IR module for a builder surface.
+
+### `packages/codegen/src/emitters/overlays/build-table.ts::BuilderTables`
+
+The two generated builder tables of one grammar: the files they produce and the row each entry takes.
+
+### `packages/codegen/src/emitters/overlays/build-table.ts::BuilderTables::files`
+
+The generated files, by path.
+
+### `packages/codegen/src/emitters/overlays/build-table.ts::BuilderTables::entryRows`
+
+The table row each entry is emitted as, by entry name.
+
+### `packages/codegen/src/emitters/overlays/build-table.ts::builderTables`
+
+Builds both builder tables for a node map, given the polymorph wires.
+
+### `packages/codegen/src/emitters/overlays/module.ts::BUILDER_SURFACES`
+
+The builder surfaces an engine can load: `loose` and `strict`.
+
+### `packages/codegen/src/emitters/overlays/module.ts::BuilderSurface`
+
+One of the builder surfaces, `loose` or `strict`.
+
+### `packages/codegen/src/emitters/overlays/module.ts::BUILDER_TABLES`
+
+The generated table modules, one per builder surface, in emit order.
+
+### `packages/codegen/src/emitters/overlays/module.ts::irModuleOf`
+
+The IR module source file for a builder surface.
+
+### `packages/codegen/src/emitters/overlays/module.ts::GENERATED_HEADER`
+
+The header line every generated builder module starts with.
+
+### `packages/codegen/src/emitters/overlays/module.ts::usedImports`
+
+The import lines the body uses, from the given import list.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Ref`
+
+A reference to a value in a generated module: its value and type expressions, and its local name or members.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Ref::value`
+
+The value expression of the reference.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Ref::type`
+
+The type expression of the reference.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Ref::local`
+
+The local binding name, when the reference is a local.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Ref::members`
+
+The members the reference carries, by key.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Ref::spreads`
+
+The spread references the reference includes.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Member`
+
+A member of an object literal: a keyed reference, or a spread.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Member::key`
+
+The key of a keyed member.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Member::ref`
+
+The reference a keyed member holds.
+
+### `packages/codegen/src/emitters/overlays/module.ts::Member::spread`
+
+The reference a spread member spreads.
+
+### `packages/codegen/src/emitters/overlays/module.ts::TABLE_PARAM`
+
+The name of the table parameter in generated builder code (`$table`).
+
+### `packages/codegen/src/emitters/overlays/module.ts::TABLE_TYPE`
+
+The name of the table type in generated code (`Table`).
+
+### `packages/codegen/src/emitters/overlays/module.ts::TABLE_ACCESS`
+
+The name of the table access helper in generated code (`$at`).
+
+### `packages/codegen/src/emitters/overlays/module.ts::ROUTES_TYPE`
+
+The name of the routes type in generated code (`Routes`).
+
+### `packages/codegen/src/emitters/overlays/module.ts::IR_TYPE`
+
+The name of the IR type in generated code (`Ir`).
+
+### `packages/codegen/src/emitters/overlays/module.ts::ANY_TABLE_TYPE`
+
+The name of the any-table type in generated code (`AnyTable`).
+
+### `packages/codegen/src/emitters/overlays/module.ts::tableRef`
+
+A reference to the table entry for a key.
+
+### `packages/codegen/src/emitters/overlays/module.ts::moduleRef`
+
+A reference to a named export of a module namespace.
+
+### `packages/codegen/src/emitters/overlays/module.ts::routesType`
+
+The routes type for a path of steps.
+
+### `packages/codegen/src/emitters/overlays/module.ts::localRef`
+
+A reference to a local binding by name.
+
+### `packages/codegen/src/emitters/overlays/module.ts::memberAt`
+
+The reference reached by following steps through a locals map, or undefined when a step is missing.
+
+### `packages/codegen/src/emitters/overlays/module.ts::objectOf`
+
+An object literal reference with the given members.
+
+### `packages/codegen/src/emitters/overlays/module.ts::withMembers`
+
+A callable reference with the given members attached; `owned` says whether it owns them.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::tableKeyOf`
+
+The table key a node's builder is stored under.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::tableRefOf`
+
+A reference to a node's builder in the table.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::Decl`
+
+A generated declaration: its name, type and value reference.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::Decl::name`
+
+The declared name.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::Decl::type`
+
+The declared type expression.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::Decl::value`
+
+The declaration's value reference.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::ERASED_HELPERS`
+
+Helper names erased from the generated output.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::WiringChunk`
+
+One chunk of polymorph wiring: a name, its declarations, the combinators it uses and the kinds it seats.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::WiringChunk::name`
+
+The chunk's name.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::WiringChunk::decls`
+
+The declarations the chunk emits.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::WiringChunk::combinators`
+
+The combinator names the chunk uses.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::WiringChunk::seated`
+
+The seated kinds the chunk covers.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::PolymorphsOverlay::chunks`
+
+The wiring chunks the overlay emits.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::REFERENCE`
+
+The regular expression that finds identifier references in generated code.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::declOf`
+
+A declaration of a name bound to a reference.
+
+### `packages/codegen/src/emitters/overlays/polymorphs.ts::sittirTypesImport`
+
+The import lines for the sittir types the generated code uses.
+
+### `packages/codegen/src/emitters/overlays/refines.ts::RefinedEntry`
+
+A refined entry: the node it refines and the members it adds.
+
+### `packages/codegen/src/emitters/overlays/refines.ts::RefinedEntry::node`
+
+The refined node.
+
+### `packages/codegen/src/emitters/overlays/refines.ts::RefinedEntry::members`
+
+The members the refinement adds.
+
+### `packages/codegen/src/emitters/overlays/refines.ts::refinedEntries`
+
+The refined entries of a node map, keyed by kind.
+
+### `packages/codegen/src/emitters/shared.ts::SeatGeneric`
+
+The generic a seat is spelled with: `Seat`, `ConfigSeat` or `OptionalConfigSeat`.
+
+### `packages/codegen/src/emitters/shared.ts::RefusingParams::seat`
+
+The seat spelling of a refusing parameter list, when it has one: its generic and its declared type.
+
+### `packages/codegen/src/emitters/shared.ts::ArrowBody`
+
+An arrow function's parts: its parameters, return type and body.
+
+### `packages/codegen/src/emitters/shared.ts::ArrowBody::params`
+
+The parameter list text.
+
+### `packages/codegen/src/emitters/shared.ts::ArrowBody::returnType`
+
+The return type text.
+
+### `packages/codegen/src/emitters/shared.ts::ArrowBody::body`
+
+The body text.
+
+### `packages/codegen/src/emitters/shared.ts::seatDeclaration`
+
+Prints a seat's const declaration. It is the one place a seat const is written.
