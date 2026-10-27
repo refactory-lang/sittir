@@ -111,12 +111,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
         Some(content) => {
             let field = fields.iter().find(|field| field.ident == content).ok_or_else(|| syn::Error::new_spanned(content, format!("`{ident}` seats through `{content}`, which is none of its fields")))?;
             let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, format!("`{content}` seats `{ident}`, so it is a slot"))) };
-            let (Some(word), Some(width), None) = (slot.cell.word, slot.cell.width, slot.cell.run) else {
+            let (Some(_), Some(_), None) = (slot.cell.word, slot.cell.width, slot.cell.run) else {
                 return Err(syn::Error::new_spanned(content, format!("`{content}` seats `{ident}`, so it is a single slot with its record cell")));
             };
             let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a wrapper's content holds a `SlotValue<…>`"))?;
-            let inline = slot.cell.inline.unwrap_or(0);
-            quote!(.or_else(|| ::sittir_core::arena::seat_through::<#trivia, #node>(prep, at, #claims, ::sittir_core::arena::CellShape { word: #word, width: #width, run: ::core::option::Option::None, inline: #inline }, table, ctx)))
+            let shape = crate::views::cell_shape(content, &slot.cell)?;
+            quote!(.or_else(|| ::sittir_core::arena::seat_through::<#trivia, #node>(prep, at, #claims, #shape, table, ctx)))
         }
         None => TokenStream::new(),
     };

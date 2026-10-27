@@ -357,6 +357,9 @@ pub const _NAMES: KindId = KindId(346);
 pub const ERROR: KindId = KindId(65535);
 pub const SIMPLE_STATEMENTS: KindId = KindId(348);
 pub const SIMPLE_PATTERN: KindId = KindId(347);
+
+/// The bits a packed kind field takes: the least that holds every kind id below all-ones, which is `ERROR`.
+pub const KIND_BITS: u32 = 9;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.

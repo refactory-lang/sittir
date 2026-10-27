@@ -10,12 +10,13 @@ describe('recordLayoutOf', () => {
 			{ field: 'text', form: { tag: 'cell', width: CELL_WORDS.text } }
 		]);
 		expect(layout.places).toEqual([
-			{ field: 'pattern', word: RECORD_HEADER_WORDS + 1, width: 5 },
+			{ field: 'pattern', word: RECORD_HEADER_WORDS + 1, width: 5, built: RECORD_HEADER_WORDS + 1 },
 			{ field: 'mutable', word: RECORD_HEADER_WORDS, bit: 0 },
-			{ field: 'items', word: RECORD_HEADER_WORDS + 6, width: 2, run: 5 },
-			{ field: 'text', word: RECORD_HEADER_WORDS + 8, width: 4 }
+			{ field: 'items', word: RECORD_HEADER_WORDS + 6, width: 2, run: 5, built: RECORD_HEADER_WORDS + 2 },
+			{ field: 'text', word: RECORD_HEADER_WORDS + 8, width: 4, built: RECORD_HEADER_WORDS + 3 }
 		]);
 		expect(layout.words).toBe(RECORD_HEADER_WORDS + 12);
+		expect(layout.builtWords).toBe(RECORD_HEADER_WORDS + 4);
 	});
 
 	it('opens a new presence word every 32 bits', () => {
@@ -24,24 +25,25 @@ describe('recordLayoutOf', () => {
 		expect(layout.places.at(31)).toEqual({ field: 'k31', word: RECORD_HEADER_WORDS, bit: 31 });
 		expect(layout.places.at(32)).toEqual({ field: 'k32', word: RECORD_HEADER_WORDS + 1, bit: 0 });
 		expect(layout.words).toBe(RECORD_HEADER_WORDS + 2);
+		expect(layout.builtWords).toBe(RECORD_HEADER_WORDS + 2);
 	});
 
 	it('gives a record with no fields its header alone', () => {
-		expect(recordLayoutOf([])).toEqual({ words: RECORD_HEADER_WORDS, places: [] });
+		expect(recordLayoutOf([])).toEqual({ words: RECORD_HEADER_WORDS, builtWords: RECORD_HEADER_WORDS, places: [] });
 	});
 
 	it('reserves the bounded child image and preserves its capacity in the native stamp', () => {
 		const layout = recordLayoutOf([{ field: 'child', form: slotRecordForm({ tag: 'any' }, false, 7) }]);
-		expect(layout).toEqual({ words: 11, places: [{ field: 'child', word: 2, width: 9, inline: 7 }] });
-		expect(recordArgs(layout.places[0]!)).toBe('word = 2, width = 9, inline = 7');
+		expect(layout).toEqual({ words: 11, builtWords: 3, places: [{ field: 'child', word: 2, width: 9, inline: 7, built: 2 }] });
+		expect(recordArgs(layout.places[0]!)).toBe('word = 2, width = 9, inline = 7, built = 2');
 		expect(slotRecordForm({ tag: 'any' }, true, 7)).toEqual({ tag: 'cell', width: 2, run: 5 });
 	});
 });
 
 describe('recordArgs', () => {
 	it('spells a cell, a list cell and a bit as the derive reads them on a slot', () => {
-		expect(recordArgs({ field: 'a', word: 3, width: 5 })).toBe('word = 3, width = 5');
-		expect(recordArgs({ field: 'a', word: 8, width: 2, run: 5 })).toBe('word = 8, width = 2, run = 5');
+		expect(recordArgs({ field: 'a', word: 3, width: 5, built: 2 })).toBe('word = 3, width = 5, built = 2');
+		expect(recordArgs({ field: 'a', word: 8, width: 2, run: 5, built: 3 })).toBe('word = 8, width = 2, run = 5, built = 3');
 		expect(recordArgs({ field: 'a', word: 2, bit: 7 })).toBe('word = 2, bit = 7');
 	});
 });

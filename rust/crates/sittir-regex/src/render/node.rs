@@ -2012,13 +2012,13 @@ impl ::sittir_core::render::Render for TermGroupContentNodeSlotRecord<'_> {
 
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERN, words = 8, fields = PatternFields, prepare = PatternPrepare, view = PatternNodeRecord, prepare_fn = prepare_pattern)]
+#[node(kind = kind::PATTERN, words = 8, built_words = 3, fields = PatternFields, prepare = PatternPrepare, view = PatternNodeRecord, prepare_fn = prepare_pattern)]
 pub struct PatternNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 6, inline = 4)]
+    #[slot(word = 2, width = 6, inline = 4, built = 2)]
     pub content: ::sittir_core::SlotValue<PatternContentNodeSlot>,
 }
 
@@ -2091,13 +2091,13 @@ fn prepare_pattern<N: PatternPrepare + ?Sized>(node: &mut N, overlay: &mut N::Ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ALTERNATION, words = 4, fields = AlternationFields, prepare = AlternationPrepare, view = AlternationNodeRecord, prepare_fn = prepare_alternation)]
+#[node(kind = kind::ALTERNATION, words = 4, built_words = 3, fields = AlternationFields, prepare = AlternationPrepare, view = AlternationNodeRecord, prepare_fn = prepare_alternation)]
 pub struct AlternationNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_terms")]
-    #[slot(field = field::TERMS, separator = kind::PIPE, word = 2, width = 2, run = 5)]
+    #[slot(field = field::TERMS, separator = kind::PIPE, word = 2, width = 2, run = 5, built = 2)]
     pub terms: ::sittir_core::NonEmptyVec<Option<::sittir_core::SlotValue<TermNode>>>,
     #[wire(key = "_terms_separator_space_before")]
     #[space(slot = 2, side = before, site = options::SITE_ALTERNATION_TERMS_SEPARATOR_SPACE_BEFORE)]
@@ -2172,13 +2172,13 @@ fn prepare_alternation<N: AlternationPrepare + ?Sized>(node: &mut N, overlay: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TERM, words = 4, fields = TermFields, prepare = TermPrepare, view = TermNodeRecord, prepare_fn = prepare_term)]
+#[node(kind = kind::TERM, words = 4, built_words = 3, fields = TermFields, prepare = TermPrepare, view = TermNodeRecord, prepare_fn = prepare_term)]
 pub struct TermNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_term_group")]
-    #[slot(word = 2, width = 2, run = 5, seated)]
+    #[slot(word = 2, width = 2, run = 5, built = 2, seated)]
     pub term_group: ::sittir_core::NonEmptyVec<::sittir_core::SlotValue<TermGroupNode>>,
     #[wire(key = "_term_group_separator_space")]
     #[space(slot = 2, side = after, site = options::SITE_TERM_TERM_GROUP_SEPARATOR_SPACE)]
@@ -2390,13 +2390,13 @@ impl ::sittir_core::render::Render for NonBoundaryAssertionNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::LOOKAROUND_ASSERTION, words = 21, fields = LookaroundAssertionFields, prepare = LookaroundAssertionPrepare, view = LookaroundAssertionNodeRecord, prepare_fn = prepare_lookaround_assertion)]
+#[node(kind = kind::LOOKAROUND_ASSERTION, words = 21, built_words = 3, fields = LookaroundAssertionFields, prepare = LookaroundAssertionPrepare, view = LookaroundAssertionNodeRecord, prepare_fn = prepare_lookaround_assertion)]
 pub struct LookaroundAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 19, inline = 17)]
+    #[slot(word = 2, width = 19, inline = 17, built = 2)]
     pub content: ::sittir_core::SlotValue<LookaroundAssertionContentNodeSlot>,
 }
 
@@ -2462,16 +2462,16 @@ fn prepare_lookaround_assertion<N: LookaroundAssertionPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN], words = 17, fields = LookaheadAssertionFields, prepare = LookaheadAssertionPrepare, view = LookaheadAssertionNodeRecord, prepare_fn = prepare_lookahead_assertion)]
+#[node(kind = kind::_LOOKAHEAD_ASSERTION, layout = [kind::LPAREN_QMARK, kind::EQ, kind::BANG, kind::RPAREN], words = 17, built_words = 4, fields = LookaheadAssertionFields, prepare = LookaheadAssertionPrepare, view = LookaheadAssertionNodeRecord, prepare_fn = prepare_lookahead_assertion)]
 pub struct LookaheadAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub content: ::sittir_core::SlotValue<LookaheadAssertionContentNodeSlot>,
     #[wire(key = "_pattern")]
-    #[slot(word = 7, width = 10, inline = 8)]
+    #[slot(word = 7, width = 10, inline = 8, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -2539,16 +2539,16 @@ fn prepare_lookahead_assertion<N: LookaheadAssertionPrepare + ?Sized>(node: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN], words = 17, fields = LookbehindAssertionFields, prepare = LookbehindAssertionPrepare, view = LookbehindAssertionNodeRecord, prepare_fn = prepare_lookbehind_assertion)]
+#[node(kind = kind::_LOOKBEHIND_ASSERTION, layout = [kind::LPAREN_QMARK_LT, kind::EQ, kind::BANG, kind::RPAREN], words = 17, built_words = 4, fields = LookbehindAssertionFields, prepare = LookbehindAssertionPrepare, view = LookbehindAssertionNodeRecord, prepare_fn = prepare_lookbehind_assertion)]
 pub struct LookbehindAssertionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub content: ::sittir_core::SlotValue<LookbehindAssertionContentNodeSlot>,
     #[wire(key = "_pattern")]
-    #[slot(word = 7, width = 10, inline = 8)]
+    #[slot(word = 7, width = 10, inline = 8, built = 3)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -2616,7 +2616,7 @@ fn prepare_lookbehind_assertion<N: LookbehindAssertionPrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::PATTERN_CHARACTER, text, words = 2, fields = PatternCharacterFields, prepare = PatternCharacterPrepare, view = PatternCharacterNodeRecord, prepare_fn = prepare_pattern_character)]
+#[node(kind = kind::PATTERN_CHARACTER, text, words = 2, built_words = 2, fields = PatternCharacterFields, prepare = PatternCharacterPrepare, view = PatternCharacterNodeRecord, prepare_fn = prepare_pattern_character)]
 pub struct PatternCharacterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2687,7 +2687,7 @@ fn prepare_pattern_character<N: PatternCharacterPrepare + ?Sized>(node: &mut N, 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], words = 5, fields = CharacterClassFields, prepare = CharacterClassPrepare, view = CharacterClassNodeRecord, prepare_fn = prepare_character_class)]
+#[node(kind = kind::CHARACTER_CLASS, layout = [kind::LBRACK, kind::RBRACK], words = 5, built_words = 4, fields = CharacterClassFields, prepare = CharacterClassPrepare, view = CharacterClassNodeRecord, prepare_fn = prepare_character_class)]
 pub struct CharacterClassNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2699,7 +2699,7 @@ pub struct CharacterClassNode {
     #[slot(field = field::LEADING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 1)]
     pub leading: bool,
     #[wire(key = "_class_atoms")]
-    #[slot(field = field::CLASS_ATOMS, word = 3, width = 2, run = 5)]
+    #[slot(field = field::CLASS_ATOMS, word = 3, width = 2, run = 5, built = 3)]
     pub class_atoms: Vec<::sittir_core::SlotValue<CharacterClassClassAtomsNodeSlot>>,
     #[wire(key = "_trailing")]
     #[slot(field = field::TRAILING, presence = display(kind::CLASS_CHARACTER), word = 2, bit = 2)]
@@ -2770,13 +2770,13 @@ fn prepare_character_class<N: CharacterClassPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK], words = 7, fields = PosixCharacterClassFields, prepare = PosixCharacterClassPrepare, view = PosixCharacterClassNodeRecord, prepare_fn = prepare_posix_character_class)]
+#[node(kind = kind::POSIX_CHARACTER_CLASS, layout = [kind::LBRACK_COLON, kind::COLON_RBRACK], words = 7, built_words = 3, fields = PosixCharacterClassFields, prepare = PosixCharacterClassPrepare, view = PosixCharacterClassNodeRecord, prepare_fn = prepare_posix_character_class)]
 pub struct PosixCharacterClassNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_posix_class_name")]
-    #[slot(field = field::POSIX_CLASS_NAME, word = 2, width = 5)]
+    #[slot(field = field::POSIX_CLASS_NAME, word = 2, width = 5, built = 2)]
     pub posix_class_name: ::sittir_core::SlotValue<PosixClassNameNode>,
 }
 
@@ -2843,7 +2843,7 @@ fn prepare_posix_character_class<N: PosixCharacterClassPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::POSIX_CLASS_NAME, text, words = 2, fields = PosixClassNameFields, prepare = PosixClassNamePrepare, view = PosixClassNameNodeRecord, prepare_fn = prepare_posix_class_name)]
+#[node(kind = kind::POSIX_CLASS_NAME, text, words = 2, built_words = 2, fields = PosixClassNameFields, prepare = PosixClassNamePrepare, view = PosixClassNameNodeRecord, prepare_fn = prepare_posix_class_name)]
 pub struct PosixClassNameNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -2914,16 +2914,16 @@ fn prepare_posix_class_name<N: PosixClassNamePrepare + ?Sized>(node: &mut N, ove
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 64, fields = ClassRangeFields, prepare = ClassRangePrepare, view = ClassRangeNodeRecord, prepare_fn = prepare_class_range)]
+#[node(kind = kind::CLASS_RANGE, layout = [kind::DASH], words = 64, built_words = 4, fields = ClassRangeFields, prepare = ClassRangePrepare, view = ClassRangeNodeRecord, prepare_fn = prepare_class_range)]
 pub struct ClassRangeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_start")]
-    #[slot(field = field::START, word = 2, width = 31, inline = 29)]
+    #[slot(field = field::START, word = 2, width = 31, inline = 29, built = 2)]
     pub start: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
     #[wire(key = "_end")]
-    #[slot(field = field::END, word = 33, width = 31, inline = 29)]
+    #[slot(field = field::END, word = 33, width = 31, inline = 29, built = 3)]
     pub end: ::sittir_core::SlotValue<ClassRangeStartNodeSlot>,
 }
 
@@ -2991,7 +2991,7 @@ fn prepare_class_range<N: ClassRangePrepare + ?Sized>(node: &mut N, overlay: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CLASS_CHARACTER, text, words = 2, fields = ClassCharacterFields, prepare = ClassCharacterPrepare, view = ClassCharacterNodeRecord, prepare_fn = prepare_class_character)]
+#[node(kind = kind::CLASS_CHARACTER, text, words = 2, built_words = 2, fields = ClassCharacterFields, prepare = ClassCharacterPrepare, view = ClassCharacterNodeRecord, prepare_fn = prepare_class_character)]
 pub struct ClassCharacterNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3062,13 +3062,13 @@ fn prepare_class_character<N: ClassCharacterPrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 12, fields = AnonymousCapturingGroupFields, prepare = AnonymousCapturingGroupPrepare, view = AnonymousCapturingGroupNodeRecord, prepare_fn = prepare_anonymous_capturing_group)]
+#[node(kind = kind::ANONYMOUS_CAPTURING_GROUP, layout = [kind::LPAREN, kind::RPAREN], words = 12, built_words = 3, fields = AnonymousCapturingGroupFields, prepare = AnonymousCapturingGroupPrepare, view = AnonymousCapturingGroupNodeRecord, prepare_fn = prepare_anonymous_capturing_group)]
 pub struct AnonymousCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 2, width = 10, inline = 8)]
+    #[slot(field = field::PATTERN, word = 2, width = 10, inline = 8, built = 2)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -3135,19 +3135,19 @@ fn prepare_anonymous_capturing_group<N: AnonymousCapturingGroupPrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN], words = 22, fields = NamedCapturingGroupFields, prepare = NamedCapturingGroupPrepare, view = NamedCapturingGroupNodeRecord, prepare_fn = prepare_named_capturing_group)]
+#[node(kind = kind::NAMED_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_LT, kind::LPAREN_QMARK_P_LT, kind::GT, kind::RPAREN], words = 22, built_words = 5, fields = NamedCapturingGroupFields, prepare = NamedCapturingGroupPrepare, view = NamedCapturingGroupNodeRecord, prepare_fn = prepare_named_capturing_group)]
 pub struct NamedCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub content: ::sittir_core::SlotValue<NamedCapturingGroupContentNodeSlot>,
     #[wire(key = "_group_name")]
-    #[slot(field = field::GROUP_NAME, word = 7, width = 5)]
+    #[slot(field = field::GROUP_NAME, word = 7, width = 5, built = 3)]
     pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 12, width = 10, inline = 8)]
+    #[slot(field = field::PATTERN, word = 12, width = 10, inline = 8, built = 4)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -3216,13 +3216,13 @@ fn prepare_named_capturing_group<N: NamedCapturingGroupPrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN], words = 12, fields = NonCapturingGroupFields, prepare = NonCapturingGroupPrepare, view = NonCapturingGroupNodeRecord, prepare_fn = prepare_non_capturing_group)]
+#[node(kind = kind::NON_CAPTURING_GROUP, layout = [kind::LPAREN_QMARK_COLON, kind::RPAREN], words = 12, built_words = 3, fields = NonCapturingGroupFields, prepare = NonCapturingGroupPrepare, view = NonCapturingGroupNodeRecord, prepare_fn = prepare_non_capturing_group)]
 pub struct NonCapturingGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 2, width = 10, inline = 8)]
+    #[slot(field = field::PATTERN, word = 2, width = 10, inline = 8, built = 2)]
     pub pattern: ::sittir_core::SlotValue<PatternNode>,
 }
 
@@ -3289,7 +3289,7 @@ fn prepare_non_capturing_group<N: NonCapturingGroupPrepare + ?Sized>(node: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::FLAGS, text, words = 2, fields = FlagsFields, prepare = FlagsPrepare, view = FlagsNodeRecord, prepare_fn = prepare_flags)]
+#[node(kind = kind::FLAGS, text, words = 2, built_words = 2, fields = FlagsFields, prepare = FlagsPrepare, view = FlagsNodeRecord, prepare_fn = prepare_flags)]
 pub struct FlagsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3360,7 +3360,7 @@ fn prepare_flags<N: FlagsPrepare + ?Sized>(node: &mut N, overlay: &mut N::Overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ZERO_OR_MORE, layout = [kind::STAR, kind::QMARK], words = 3, fields = ZeroOrMoreFields, prepare = ZeroOrMorePrepare, view = ZeroOrMoreNodeRecord, prepare_fn = prepare_zero_or_more)]
+#[node(kind = kind::ZERO_OR_MORE, layout = [kind::STAR, kind::QMARK], words = 3, built_words = 3, fields = ZeroOrMoreFields, prepare = ZeroOrMorePrepare, view = ZeroOrMoreNodeRecord, prepare_fn = prepare_zero_or_more)]
 pub struct ZeroOrMoreNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3432,7 +3432,7 @@ fn prepare_zero_or_more<N: ZeroOrMorePrepare + ?Sized>(node: &mut N, overlay: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::ONE_OR_MORE, layout = [kind::PLUS, kind::QMARK], words = 3, fields = OneOrMoreFields, prepare = OneOrMorePrepare, view = OneOrMoreNodeRecord, prepare_fn = prepare_one_or_more)]
+#[node(kind = kind::ONE_OR_MORE, layout = [kind::PLUS, kind::QMARK], words = 3, built_words = 3, fields = OneOrMoreFields, prepare = OneOrMorePrepare, view = OneOrMoreNodeRecord, prepare_fn = prepare_one_or_more)]
 pub struct OneOrMoreNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3504,7 +3504,7 @@ fn prepare_one_or_more<N: OneOrMorePrepare + ?Sized>(node: &mut N, overlay: &mut
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::OPTIONAL, layout = [kind::QMARK], words = 3, fields = OptionalFields, prepare = OptionalPrepare, view = OptionalNodeRecord, prepare_fn = prepare_optional)]
+#[node(kind = kind::OPTIONAL, layout = [kind::QMARK], words = 3, built_words = 3, fields = OptionalFields, prepare = OptionalPrepare, view = OptionalNodeRecord, prepare_fn = prepare_optional)]
 pub struct OptionalNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3576,13 +3576,13 @@ fn prepare_optional<N: OptionalPrepare + ?Sized>(node: &mut N, overlay: &mut N::
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::QMARK], words = 21, fields = CountQuantifierFields, prepare = CountQuantifierPrepare, view = CountQuantifierNodeRecord, prepare_fn = prepare_count_quantifier)]
+#[node(kind = kind::COUNT_QUANTIFIER, layout = [kind::LBRACE, kind::RBRACE, kind::QMARK], words = 21, built_words = 4, fields = CountQuantifierFields, prepare = CountQuantifierPrepare, view = CountQuantifierNodeRecord, prepare_fn = prepare_count_quantifier)]
 pub struct CountQuantifierNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 3, width = 18, inline = 16)]
+    #[slot(word = 3, width = 18, inline = 16, built = 3)]
     pub content: ::sittir_core::SlotValue<CountQuantifierContentNodeSlot>,
     #[wire(key = "_lazy")]
     #[slot(presence = display(kind::_LAZY), word = 2, bit = 0)]
@@ -3652,13 +3652,13 @@ fn prepare_count_quantifier<N: CountQuantifierPrepare + ?Sized>(node: &mut N, ov
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT], words = 7, fields = BackreferenceEscapeFields, prepare = BackreferenceEscapePrepare, view = BackreferenceEscapeNodeRecord, prepare_fn = prepare_backreference_escape)]
+#[node(kind = kind::BACKREFERENCE_ESCAPE, layout = [kind::BSLASHK, kind::LT, kind::GT], words = 7, built_words = 3, fields = BackreferenceEscapeFields, prepare = BackreferenceEscapePrepare, view = BackreferenceEscapeNodeRecord, prepare_fn = prepare_backreference_escape)]
 pub struct BackreferenceEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_group_name")]
-    #[slot(field = field::GROUP_NAME, word = 2, width = 5)]
+    #[slot(field = field::GROUP_NAME, word = 2, width = 5, built = 2)]
     pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
 }
 
@@ -3725,13 +3725,13 @@ fn prepare_backreference_escape<N: BackreferenceEscapePrepare + ?Sized>(node: &m
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN], words = 7, fields = NamedGroupBackreferenceFields, prepare = NamedGroupBackreferencePrepare, view = NamedGroupBackreferenceNodeRecord, prepare_fn = prepare_named_group_backreference)]
+#[node(kind = kind::NAMED_GROUP_BACKREFERENCE, layout = [kind::LPAREN_QMARK_P_EQ, kind::RPAREN], words = 7, built_words = 3, fields = NamedGroupBackreferenceFields, prepare = NamedGroupBackreferencePrepare, view = NamedGroupBackreferenceNodeRecord, prepare_fn = prepare_named_group_backreference)]
 pub struct NamedGroupBackreferenceNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_group_name")]
-    #[slot(field = field::GROUP_NAME, word = 2, width = 5)]
+    #[slot(field = field::GROUP_NAME, word = 2, width = 5, built = 2)]
     pub group_name: ::sittir_core::SlotValue<GroupNameNode>,
 }
 
@@ -3798,7 +3798,7 @@ fn prepare_named_group_backreference<N: NamedGroupBackreferencePrepare + ?Sized>
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECIMAL_ESCAPE, text, words = 2, fields = DecimalEscapeFields, prepare = DecimalEscapePrepare, view = DecimalEscapeNodeRecord, prepare_fn = prepare_decimal_escape)]
+#[node(kind = kind::DECIMAL_ESCAPE, text, words = 2, built_words = 2, fields = DecimalEscapeFields, prepare = DecimalEscapePrepare, view = DecimalEscapeNodeRecord, prepare_fn = prepare_decimal_escape)]
 pub struct DecimalEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -3869,13 +3869,13 @@ fn prepare_decimal_escape<N: DecimalEscapePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 29, fields = CharacterClassEscapeFields, prepare = CharacterClassEscapePrepare, view = CharacterClassEscapeNodeRecord, prepare_fn = prepare_character_class_escape)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE, words = 29, built_words = 3, fields = CharacterClassEscapeFields, prepare = CharacterClassEscapePrepare, view = CharacterClassEscapeNodeRecord, prepare_fn = prepare_character_class_escape)]
 pub struct CharacterClassEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 27, inline = 25)]
+    #[slot(word = 2, width = 27, inline = 25, built = 2)]
     pub content: ::sittir_core::SlotValue<CharacterClassEscapeContentNodeSlot>,
 }
 
@@ -3941,7 +3941,7 @@ fn prepare_character_class_escape<N: CharacterClassEscapePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_CHARACTER_ESCAPE, text, words = 2, fields = UnicodeCharacterEscapeFields, prepare = UnicodeCharacterEscapePrepare, view = UnicodeCharacterEscapeNodeRecord, prepare_fn = prepare_unicode_character_escape)]
+#[node(kind = kind::UNICODE_CHARACTER_ESCAPE, text, words = 2, built_words = 2, fields = UnicodeCharacterEscapeFields, prepare = UnicodeCharacterEscapePrepare, view = UnicodeCharacterEscapeNodeRecord, prepare_fn = prepare_unicode_character_escape)]
 pub struct UnicodeCharacterEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4012,16 +4012,16 @@ fn prepare_unicode_character_escape<N: UnicodeCharacterEscapePrepare + ?Sized>(n
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 16, fields = UnicodePropertyValueExpressionFields, prepare = UnicodePropertyValueExpressionPrepare, view = UnicodePropertyValueExpressionNodeRecord, prepare_fn = prepare_unicode_property_value_expression)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION, words = 16, built_words = 4, fields = UnicodePropertyValueExpressionFields, prepare = UnicodePropertyValueExpressionPrepare, view = UnicodePropertyValueExpressionNodeRecord, prepare_fn = prepare_unicode_property_value_expression)]
 pub struct UnicodePropertyValueExpressionNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_unicode_property_value_expression_group")]
-    #[slot(word = 2, width = 9, inline = 7)]
+    #[slot(word = 2, width = 9, inline = 7, built = 2)]
     pub unicode_property_value_expression_group: Option<::sittir_core::SlotValue<UnicodePropertyValueExpressionGroupNode>>,
     #[wire(key = "_unicode_property_value")]
-    #[slot(word = 11, width = 5)]
+    #[slot(word = 11, width = 5, built = 3)]
     pub unicode_property_value: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
@@ -4089,7 +4089,7 @@ fn prepare_unicode_property_value_expression<N: UnicodePropertyValueExpressionPr
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE, displays = [kind::_UNICODE_PROPERTY_NAME], text, words = 2, fields = UnicodePropertyValueFields, prepare = UnicodePropertyValuePrepare, view = UnicodePropertyValueNodeRecord, prepare_fn = prepare_unicode_property_value)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE, displays = [kind::_UNICODE_PROPERTY_NAME], text, words = 2, built_words = 2, fields = UnicodePropertyValueFields, prepare = UnicodePropertyValuePrepare, view = UnicodePropertyValueNodeRecord, prepare_fn = prepare_unicode_property_value)]
 pub struct UnicodePropertyValueNode {
     #[wire(key = "$type")]
     pub kind: KindId,
@@ -4162,7 +4162,7 @@ fn prepare_unicode_property_value<N: UnicodePropertyValuePrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONTROL_ESCAPE, text, words = 2, fields = ControlEscapeFields, prepare = ControlEscapePrepare, view = ControlEscapeNodeRecord, prepare_fn = prepare_control_escape)]
+#[node(kind = kind::CONTROL_ESCAPE, text, words = 2, built_words = 2, fields = ControlEscapeFields, prepare = ControlEscapePrepare, view = ControlEscapeNodeRecord, prepare_fn = prepare_control_escape)]
 pub struct ControlEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4233,7 +4233,7 @@ fn prepare_control_escape<N: ControlEscapePrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CONTROL_LETTER_ESCAPE, text, words = 2, fields = ControlLetterEscapeFields, prepare = ControlLetterEscapePrepare, view = ControlLetterEscapeNodeRecord, prepare_fn = prepare_control_letter_escape)]
+#[node(kind = kind::CONTROL_LETTER_ESCAPE, text, words = 2, built_words = 2, fields = ControlLetterEscapeFields, prepare = ControlLetterEscapePrepare, view = ControlLetterEscapeNodeRecord, prepare_fn = prepare_control_letter_escape)]
 pub struct ControlLetterEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4304,13 +4304,13 @@ fn prepare_control_letter_escape<N: ControlLetterEscapePrepare + ?Sized>(node: &
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$", words = 6, fields = IdentityEscapeFields, prepare = IdentityEscapePrepare, view = IdentityEscapeNodeRecord, prepare_fn = prepare_identity_escape)]
+#[node(kind = kind::IDENTITY_ESCAPE, folded = [kind::BSLASH_DASH], interior = "^\\\\(?<content>(?:[^kdDsSpPwWbfnrtv0-9]))$", words = 6, built_words = 3, fields = IdentityEscapeFields, prepare = IdentityEscapePrepare, view = IdentityEscapeNodeRecord, prepare_fn = prepare_identity_escape)]
 pub struct IdentityEscapeNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(capture = "content", word = 2, width = 4)]
+    #[slot(capture = "content", word = 2, width = 4, built = 2)]
     pub content: String,
 }
 
@@ -4375,7 +4375,7 @@ fn prepare_identity_escape<N: IdentityEscapePrepare + ?Sized>(node: &mut N, over
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::GROUP_NAME, text, words = 2, fields = GroupNameFields, prepare = GroupNamePrepare, view = GroupNameNodeRecord, prepare_fn = prepare_group_name)]
+#[node(kind = kind::GROUP_NAME, text, words = 2, built_words = 2, fields = GroupNameFields, prepare = GroupNamePrepare, view = GroupNameNodeRecord, prepare_fn = prepare_group_name)]
 pub struct GroupNameNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4446,7 +4446,7 @@ fn prepare_group_name<N: GroupNamePrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::DECIMAL_DIGITS, text, words = 2, fields = DecimalDigitsFields, prepare = DecimalDigitsPrepare, view = DecimalDigitsNodeRecord, prepare_fn = prepare_decimal_digits)]
+#[node(kind = kind::DECIMAL_DIGITS, text, words = 2, built_words = 2, fields = DecimalDigitsFields, prepare = DecimalDigitsPrepare, view = DecimalDigitsNodeRecord, prepare_fn = prepare_decimal_digits)]
 pub struct DecimalDigitsNode {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4517,16 +4517,16 @@ fn prepare_decimal_digits<N: DecimalDigitsPrepare + ?Sized>(node: &mut N, overla
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::TERM_GROUP, words = 56, fields = TermGroupFields, prepare = TermGroupPrepare, view = TermGroupNodeRecord, prepare_fn = prepare_term_group)]
+#[node(kind = kind::TERM_GROUP, words = 56, built_words = 4, fields = TermGroupFields, prepare = TermGroupPrepare, view = TermGroupNodeRecord, prepare_fn = prepare_term_group)]
 pub struct TermGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
-    #[slot(word = 2, width = 31, inline = 29)]
+    #[slot(word = 2, width = 31, inline = 29, built = 2)]
     pub content: ::sittir_core::SlotValue<TermGroupContentNodeSlot>,
     #[wire(key = "_quantifier")]
-    #[slot(field = field::QUANTIFIER, word = 33, width = 23, inline = 21)]
+    #[slot(field = field::QUANTIFIER, word = 33, width = 23, inline = 21, built = 3)]
     pub quantifier: Option<::sittir_core::SlotValue<TermGroupQuantifierNodeSlot>>,
 }
 
@@ -4594,13 +4594,13 @@ fn prepare_term_group<N: TermGroupPrepare + ?Sized>(node: &mut N, overlay: &mut 
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA], words = 7, fields = CountQuantifierGroupFields, prepare = CountQuantifierGroupPrepare, view = CountQuantifierGroupNodeRecord, prepare_fn = prepare_count_quantifier_group)]
+#[node(kind = kind::COUNT_QUANTIFIER_GROUP, layout = [kind::COMMA], words = 7, built_words = 3, fields = CountQuantifierGroupFields, prepare = CountQuantifierGroupPrepare, view = CountQuantifierGroupNodeRecord, prepare_fn = prepare_count_quantifier_group)]
 pub struct CountQuantifierGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_decimal_digits")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub decimal_digits: Option<::sittir_core::SlotValue<DecimalDigitsNode>>,
 }
 
@@ -4667,16 +4667,16 @@ fn prepare_count_quantifier_group<N: CountQuantifierGroupPrepare + ?Sized>(node:
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::COUNT_QUANTIFIER_ARM, words = 16, fields = CountQuantifierArmFields, prepare = CountQuantifierArmPrepare, view = CountQuantifierArmNodeRecord, prepare_fn = prepare_count_quantifier_arm)]
+#[node(kind = kind::COUNT_QUANTIFIER_ARM, words = 16, built_words = 4, fields = CountQuantifierArmFields, prepare = CountQuantifierArmPrepare, view = CountQuantifierArmNodeRecord, prepare_fn = prepare_count_quantifier_arm)]
 pub struct CountQuantifierArmNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_decimal_digits")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub decimal_digits: ::sittir_core::SlotValue<DecimalDigitsNode>,
     #[wire(key = "_count_quantifier_group")]
-    #[slot(word = 7, width = 9, inline = 7)]
+    #[slot(word = 7, width = 9, inline = 7, built = 3)]
     pub count_quantifier_group: Option<::sittir_core::SlotValue<CountQuantifierGroupNode>>,
 }
 
@@ -4744,16 +4744,16 @@ fn prepare_count_quantifier_arm<N: CountQuantifierArmPrepare + ?Sized>(node: &mu
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 25, fields = CharacterClassEscapeArmFields, prepare = CharacterClassEscapeArmPrepare, view = CharacterClassEscapeArmNodeRecord, prepare_fn = prepare_character_class_escape_arm)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_ARM, layout = [kind::LBRACE, kind::RBRACE], words = 25, built_words = 4, fields = CharacterClassEscapeArmFields, prepare = CharacterClassEscapeArmPrepare, view = CharacterClassEscapeArmNodeRecord, prepare_fn = prepare_character_class_escape_arm)]
 pub struct CharacterClassEscapeArmNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_character_class_escape_text2")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub character_class_escape_text2: ::sittir_core::SlotValue<CharacterClassEscapeText2Node>,
     #[wire(key = "_unicode_property_value_expression")]
-    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 7, width = 18, inline = 16)]
+    #[slot(field = field::UNICODE_PROPERTY_VALUE_EXPRESSION, word = 7, width = 18, inline = 16, built = 3)]
     pub unicode_property_value_expression: ::sittir_core::SlotValue<UnicodePropertyValueExpressionNode>,
 }
 
@@ -4821,13 +4821,13 @@ fn prepare_character_class_escape_arm<N: CharacterClassEscapeArmPrepare + ?Sized
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 7, fields = UnicodePropertyValueExpressionGroupFields, prepare = UnicodePropertyValueExpressionGroupPrepare, view = UnicodePropertyValueExpressionGroupNodeRecord, prepare_fn = prepare_unicode_property_value_expression_group)]
+#[node(kind = kind::UNICODE_PROPERTY_VALUE_EXPRESSION_GROUP, layout = [kind::EQ], words = 7, built_words = 3, fields = UnicodePropertyValueExpressionGroupFields, prepare = UnicodePropertyValueExpressionGroupPrepare, view = UnicodePropertyValueExpressionGroupNodeRecord, prepare_fn = prepare_unicode_property_value_expression_group)]
 pub struct UnicodePropertyValueExpressionGroupNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_unicode_property_name")]
-    #[slot(word = 2, width = 5)]
+    #[slot(word = 2, width = 5, built = 2)]
     pub unicode_property_name: ::sittir_core::SlotValue<UnicodePropertyValueNode>,
 }
 
@@ -4894,7 +4894,7 @@ fn prepare_unicode_property_value_expression_group<N: UnicodePropertyValueExpres
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT1, text, words = 2, fields = CharacterClassEscapeText1Fields, prepare = CharacterClassEscapeText1Prepare, view = CharacterClassEscapeText1NodeRecord, prepare_fn = prepare_character_class_escape_text1)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT1, text, words = 2, built_words = 2, fields = CharacterClassEscapeText1Fields, prepare = CharacterClassEscapeText1Prepare, view = CharacterClassEscapeText1NodeRecord, prepare_fn = prepare_character_class_escape_text1)]
 pub struct CharacterClassEscapeText1Node {
     #[wire(key = "$_layout")]
     #[layout]
@@ -4965,7 +4965,7 @@ fn prepare_character_class_escape_text1<N: CharacterClassEscapeText1Prepare + ?S
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT2, text, words = 2, fields = CharacterClassEscapeText2Fields, prepare = CharacterClassEscapeText2Prepare, view = CharacterClassEscapeText2NodeRecord, prepare_fn = prepare_character_class_escape_text2)]
+#[node(kind = kind::CHARACTER_CLASS_ESCAPE_TEXT2, text, words = 2, built_words = 2, fields = CharacterClassEscapeText2Fields, prepare = CharacterClassEscapeText2Prepare, view = CharacterClassEscapeText2NodeRecord, prepare_fn = prepare_character_class_escape_text2)]
 pub struct CharacterClassEscapeText2Node {
     #[wire(key = "$_layout")]
     #[layout]
@@ -5064,16 +5064,16 @@ impl ::sittir_core::render::Render for NegationNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN], words = 17, fields = InlineFlagsGroupEnableFields, prepare = InlineFlagsGroupEnablePrepare, view = InlineFlagsGroupEnableNodeRecord, prepare_fn = prepare_inline_flags_group_enable)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_ENABLE, layout = [kind::LPAREN_QMARK, kind::COLON, kind::RPAREN], words = 17, built_words = 4, fields = InlineFlagsGroupEnableFields, prepare = InlineFlagsGroupEnablePrepare, view = InlineFlagsGroupEnableNodeRecord, prepare_fn = prepare_inline_flags_group_enable)]
 pub struct InlineFlagsGroupEnableNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_enabled")]
-    #[slot(field = field::ENABLED, word = 2, width = 5)]
+    #[slot(field = field::ENABLED, word = 2, width = 5, built = 2)]
     pub enabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 7, width = 10, inline = 8)]
+    #[slot(field = field::PATTERN, word = 7, width = 10, inline = 8, built = 3)]
     pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
@@ -5141,19 +5141,19 @@ fn prepare_inline_flags_group_enable<N: InlineFlagsGroupEnablePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 22, fields = InlineFlagsGroupToggleFields, prepare = InlineFlagsGroupTogglePrepare, view = InlineFlagsGroupToggleNodeRecord, prepare_fn = prepare_inline_flags_group_toggle)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_TOGGLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 22, built_words = 5, fields = InlineFlagsGroupToggleFields, prepare = InlineFlagsGroupTogglePrepare, view = InlineFlagsGroupToggleNodeRecord, prepare_fn = prepare_inline_flags_group_toggle)]
 pub struct InlineFlagsGroupToggleNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_enabled")]
-    #[slot(field = field::ENABLED, word = 2, width = 5)]
+    #[slot(field = field::ENABLED, word = 2, width = 5, built = 2)]
     pub enabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_disabled")]
-    #[slot(field = field::DISABLED, word = 7, width = 5)]
+    #[slot(field = field::DISABLED, word = 7, width = 5, built = 3)]
     pub disabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 12, width = 10, inline = 8)]
+    #[slot(field = field::PATTERN, word = 12, width = 10, inline = 8, built = 4)]
     pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 
@@ -5222,16 +5222,16 @@ fn prepare_inline_flags_group_toggle<N: InlineFlagsGroupTogglePrepare + ?Sized>(
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
-#[node(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 17, fields = InlineFlagsGroupDisableFields, prepare = InlineFlagsGroupDisablePrepare, view = InlineFlagsGroupDisableNodeRecord, prepare_fn = prepare_inline_flags_group_disable)]
+#[node(kind = kind::INLINE_FLAGS_GROUP_DISABLE, layout = [kind::LPAREN_QMARK, kind::DASH, kind::COLON, kind::RPAREN], words = 17, built_words = 4, fields = InlineFlagsGroupDisableFields, prepare = InlineFlagsGroupDisablePrepare, view = InlineFlagsGroupDisableNodeRecord, prepare_fn = prepare_inline_flags_group_disable)]
 pub struct InlineFlagsGroupDisableNode {
     #[wire(key = "$_layout")]
     #[layout]
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_disabled")]
-    #[slot(field = field::DISABLED, word = 2, width = 5)]
+    #[slot(field = field::DISABLED, word = 2, width = 5, built = 2)]
     pub disabled: ::sittir_core::SlotValue<FlagsNode>,
     #[wire(key = "_pattern")]
-    #[slot(field = field::PATTERN, word = 7, width = 10, inline = 8)]
+    #[slot(field = field::PATTERN, word = 7, width = 10, inline = 8, built = 3)]
     pub pattern: Option<::sittir_core::SlotValue<PatternNode>>,
 }
 

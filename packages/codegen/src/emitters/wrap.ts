@@ -166,7 +166,7 @@ function placeIn(places: RecordPlaces, storageKey: string): RecordPlace {
 
 function cellArgs(place: RecordPlace, list = false): string {
 	if ('bit' in place) throw new Error(`emitWrap: presence word ${place.word} bit ${place.bit} is not a cell`);
-	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ${place.inline ?? 0}` : (place.run ?? place.inline ?? 0)}`;
+	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ${place.inline ?? 0}` : (place.run ?? place.inline ?? 0)}, ${place.built}`;
 }
 
 interface SlotAccessorConfig {
@@ -681,11 +681,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {',
 			'  return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
-			'function viewSlot<T>(view: RecordHandle, word: number, width: number, inline = 0, role?: Role): ParsedOfData<T> {',
-			'  return childSlot(view, word, width, inline, _wrap, role) as ParsedOfData<T>;',
+			'function viewSlot<T>(view: RecordHandle, word: number, width: number, inline: number, built: number, role?: Role): ParsedOfData<T> {',
+			'  return childSlot(view, word, width, inline, built, _wrap, role) as ParsedOfData<T>;',
 			'}',
-			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run?: number, inline = 0): readonly ParsedOfData<T>[] {',
-			'  return childItems(view, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];',
+			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run: number | undefined, inline: number, built: number): readonly ParsedOfData<T>[] {',
+			'  return childItems(view, word, width, run, inline, built, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
 			''
 		];

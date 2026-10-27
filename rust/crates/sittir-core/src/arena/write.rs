@@ -186,11 +186,6 @@ impl<'a, T: Clone> RecordSink<'a, T> {
         if at.tree == tree { Ok(at.index) } else { Err(ArenaError::Unwritable("a node of another tree in a parsed record")) }
     }
 
-    /// A header-only record: `kind` and the side record `side`.
-    fn header(&mut self, kind: KindId, side: &SideRecord) -> Result<Address, ArenaError> {
-        let side = if side.is_empty() { Address::NONE } else { side.write(self.arena())? };
-        self.push_record(&[u32::from(kind.0), side.0])
-    }
 
     /// Moves a built record's trivia, its units' and its leaves' into the
     /// store, at the record's place and at each unit's and leaf's site, by
@@ -324,11 +319,7 @@ pub fn coordinate_cell<T: Clone>(sink: &mut RecordSink<'_, T>, coord: &NodeCoord
     let changed = coord.changed();
     match linked {
         Linked::Record(at) => Ok(Cell::Child { kind, at, link: Some(coord.tree), changed }),
-        Linked::Leaf(text) => {
-            let sides = Some(Sides { tree: coord.tree, index: coord.index, end: coord.end, span: coord.span });
-            let record = sink.header(kind, &SideRecord { sides, changed, ..SideRecord::default() })?;
-            Ok(Cell::CopiedLeaf { kind, text: sink.arena().intern(&text)?, record })
-        }
+        Linked::Leaf(_) => Err(ArenaError::Unwritable("a parsed leaf in a built record, which a link record names and only a builder writes")),
     }
 }
 
@@ -1012,22 +1003,18 @@ mod tests {
     }
 
     #[test]
-    fn a_built_record_links_an_untouched_node_and_copies_an_untouched_leaf() {
+    fn a_built_record_links_an_untouched_node_and_refuses_an_untouched_leaf() {
         let (mut arena, store) = (Arena::new(), TriviaStore::new());
         let linked = Address::new(0, 1).expect("an address");
         let mut link = |coord: &NodeCoordinate| Ok(if coord.index == NodeIndex(5) { Linked::Record(linked) } else { Linked::Leaf("y".to_owned()) });
         let changed = ChangedEdges { leading: true, trailing: false };
         let moved = |index| NodeCoordinate { writes: Some(Box::new(CoordinateWrites { changed })), ..at(index, index + 1) };
-        let node = pair(None, SlotValue::Coord(moved(5)), vec![SlotValue::Coord(moved(6))]);
+        let node = pair(None, SlotValue::Coord(moved(5)), Vec::new());
         let cell = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).expect("written");
-        let (_, _, _, left, items) = pair_record(&arena, cell);
+        let (_, _, _, left, _) = pair_record(&arena, cell);
         assert_eq!(left, Cell::Child { kind: NAME, at: linked, link: Some(TREE), changed });
-        let [Cell::CopiedLeaf { kind: NAME, text, record }] = items[..] else { panic!("a copied leaf, not {items:?}") };
-        assert_eq!(arena.text(text), Ok("y"));
-        let header = arena.words(record, 2).expect("its header");
-        let side = SideRecord::read(&arena, Address(header[1])).expect("its side record");
-        assert_eq!(side.sides, Some(Sides { tree: TREE, index: NodeIndex(6), end: NodeIndex(7), span: Span { start: 60, end: 63 } }));
-        assert_eq!(side.changed, changed);
+        let node = pair(None, SlotValue::Coord(moved(5)), vec![SlotValue::Coord(moved(6))]);
+        assert!(matches!(node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)), Err(ArenaError::Unwritable(_))));
     }
 
     #[test]

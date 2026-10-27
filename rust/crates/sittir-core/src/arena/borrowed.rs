@@ -10,6 +10,9 @@ pub trait ArenaRead {
     /// The written UTF-8 bytes in string chunk `n`.
     fn string_chunk(&self, n: u32) -> Option<&[u8]>;
 
+    /// The bits a record header's or a leaf entry's kind field takes here.
+    fn kind_bits(&self) -> u32;
+
     /// The `len` written words at `at`, within one chunk.
     fn words(&self, at: Address, len: u32) -> Result<&[u32], ArenaError> {
         let words = self.chunk(at.chunk()).ok_or(ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len })?;
@@ -22,11 +25,14 @@ pub trait ArenaRead {
     }
 
     /// The kind the header of the record at `at` names. Refuses address 0,
-    /// which names no record, a header past the written words, and a kind
-    /// word wider than a kind.
+    /// which names no record, a header past the written words, and a header
+    /// with flags, a link record's, which names a node of another tree.
     fn header_kind(&self, at: Address) -> Result<KindId, ArenaError> {
         let word = self.words(at.record()?, HEADER_WORDS)?[0];
-        u16::try_from(word).map(KindId).map_err(|_| ArenaError::Malformed { what: "record kind", word })
+        match super::cell::header_of(word, self.kind_bits()) {
+            (kind, 0) => Ok(kind),
+            _ => Err(ArenaError::Malformed { what: "record kind", word }),
+        }
     }
 
     /// A string reference checked for bounds and UTF-8 on this read.
@@ -45,6 +51,7 @@ pub trait ArenaRead {
 pub struct BorrowedArena<'a> {
     chunks: &'a [&'a [u32]],
     strings: &'a [&'a [u8]],
+    kind_bits: u32,
 }
 
 impl<'a> BorrowedArena<'a> {
@@ -53,7 +60,7 @@ impl<'a> BorrowedArena<'a> {
         if chunks.len() > MAX_CHUNKS as usize || strings.len() > MAX_CHUNKS as usize {
             return Err(ArenaError::Full);
         }
-        Ok(Self { chunks, strings })
+        Ok(Self { chunks, strings, kind_bits: super::PARSED_KIND_BITS })
     }
 }
 
@@ -64,5 +71,9 @@ impl ArenaRead for BorrowedArena<'_> {
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
         self.strings.get(n as usize).copied()
+    }
+
+    fn kind_bits(&self) -> u32 {
+        self.kind_bits
     }
 }

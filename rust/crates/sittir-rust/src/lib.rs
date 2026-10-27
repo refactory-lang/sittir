@@ -39,6 +39,8 @@ const NATIVE_RENDER_NODE_ABI: u32 = 26;
 pub struct RustGrammar;
 
 impl EngineGrammar for RustGrammar {
+    const KIND_BITS: u32 = render::KIND_BITS;
+
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
         let language = crate::language();
         parser

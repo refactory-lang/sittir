@@ -1,4 +1,5 @@
 import type { ByteSpan } from '@sittir/types';
+import { ERROR_KIND_ID } from './error-kind.ts';
 
 /** The record codec's constants as an addon built with the `arena` feature exports them. */
 export interface RecordCodecConstants {
@@ -8,8 +9,10 @@ export interface RecordCodecConstants {
 	readonly CELL_TAG_CHILD: number;
 	readonly CELL_TAG_UNIT: number;
 	readonly CELL_TAG_BUILT_LEAF: number;
-	readonly CELL_TAG_COPIED_LEAF: number;
 	readonly CELL_TAG_INLINE: number;
+	readonly KIND_BITS: number;
+	readonly RECORD_FLAG_LINK: number;
+	readonly LINK_RECORD_WORDS: number;
 	readonly CELL_INLINE_HEADER_WORDS: number;
 	readonly ARENA_CHUNK_SHIFT: number;
 	readonly SIDE_FIELD_AT: number;
@@ -42,8 +45,12 @@ export interface CellFormat {
 	readonly child: number;
 	readonly unit: number;
 	readonly builtLeaf: number;
-	readonly copiedLeaf: number;
 	readonly inline: number;
+	/** The bits a record header's or a leaf entry's kind field takes in the built arena. */
+	readonly kindBits: number;
+	/** The flag above a link record's kind field. */
+	readonly linkFlag: number;
+	readonly linkWords: number;
 	readonly inlineHeaderWords: number;
 	readonly chunkShift: number;
 	/** The side record's `at`, its first field: a parsed node's row, its subtree's end and its byte span. */
@@ -88,11 +95,14 @@ export type RecordCell =
 	  }
 	| { readonly form: 'builtText'; readonly offset: number; readonly len: number }
 	| {
-			readonly form: 'copiedLeaf';
+			readonly form: 'linkedLeaf';
 			readonly kind: number;
-			readonly offset: number;
-			readonly len: number;
-			readonly record: number;
+			readonly at: number;
+			readonly tree: number;
+			readonly row: number;
+			readonly end: number;
+			readonly span: ByteSpan;
+			readonly changed: { readonly leading: boolean; readonly trailing: boolean };
 	  };
 
 /** A list slot's cell: its run's address and the items in it. */
@@ -108,8 +118,10 @@ const CODEC_KEYS = [
 	'CELL_TAG_CHILD',
 	'CELL_TAG_UNIT',
 	'CELL_TAG_BUILT_LEAF',
-	'CELL_TAG_COPIED_LEAF',
 	'CELL_TAG_INLINE',
+	'KIND_BITS',
+	'RECORD_FLAG_LINK',
+	'LINK_RECORD_WORDS',
 	'CELL_INLINE_HEADER_WORDS',
 	'ARENA_CHUNK_SHIFT',
 	'SIDE_FIELD_AT',
@@ -140,8 +152,10 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		child: codec.CELL_TAG_CHILD,
 		unit: codec.CELL_TAG_UNIT,
 		builtLeaf: codec.CELL_TAG_BUILT_LEAF,
-		copiedLeaf: codec.CELL_TAG_COPIED_LEAF,
 		inline: codec.CELL_TAG_INLINE,
+		kindBits: codec.KIND_BITS,
+		linkFlag: codec.RECORD_FLAG_LINK,
+		linkWords: codec.LINK_RECORD_WORDS,
 		inlineHeaderWords: codec.CELL_INLINE_HEADER_WORDS,
 		chunkShift: codec.ARENA_CHUNK_SHIFT,
 		sideAt: { bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },
@@ -157,6 +171,27 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		sideChanged: { leading: codec.SIDE_FIELD_CHANGED_LEADING, trailing: codec.SIDE_FIELD_CHANGED_TRAILING },
 		sideSeparatorKind: codec.SIDE_FIELD_SEPARATOR_KIND
 	};
+}
+
+/** The kind a packed kind field of `bits` bits in `word` holds: all-ones is `ERROR`. */
+export function kindField(word: number, bits: number): number {
+	const mask = 2 ** bits - 1;
+	const kind = word & mask;
+	return kind === mask ? ERROR_KIND_ID : kind;
+}
+
+/** `kind` as a kind field of `bits` bits. */
+export function withKind(kind: number, bits: number): number {
+	const mask = 2 ** bits - 1;
+	if (kind === ERROR_KIND_ID) return mask;
+	if (!Number.isInteger(kind) || kind < 0 || kind >= mask) throw new Error(`kind ${kind} does not fit a ${bits}-bit kind field`);
+	return kind;
+}
+
+/** The kind a record header word names, refusing a header with flags: a link record's, which names a node of another tree. */
+export function headerKind(word: number, bits: number): number {
+	if (word >>> bits !== 0) throw new Error(`a record header holds flags ${word >>> bits}: a link record is no record of its own arena`);
+	return kindField(word, bits);
 }
 
 /** The chunk a packed address names. */
@@ -246,8 +281,6 @@ export function decodeCell(
 				? { form: 'builtText', offset, len }
 				: { form: 'builtLeaf', kind: kind(), offset, len, changed: changedAt(words, at, tag) };
 		}
-		case format.copiedLeaf:
-			return { form: 'copiedLeaf', kind: kind(), offset: field(words, at, 2, tag), len: field(words, at, 3, tag), record: field(words, at, 4, tag) };
 		default:
 			throw new Error(`word ${at} holds cell tag ${tag}, which no record writer writes`);
 	}

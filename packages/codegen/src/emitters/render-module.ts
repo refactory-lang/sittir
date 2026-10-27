@@ -1335,10 +1335,10 @@ function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>
 			const at =
 				'bit' in place
 					? `word: ${place.word}, bit: ${place.bit}`
-					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}${place.inline === undefined ? '' : `, inline: ${place.inline}`}`;
+					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}${place.inline === undefined ? '' : `, inline: ${place.inline}`}, built: ${place.built}`;
 			return ` ${place.field}: { ${at} },`;
 		});
-		return `\t${name}: {${[` words: ${layout.words},`, ...places].join('')} },`;
+		return `\t${name}: {${[` words: ${layout.words}, builtWords: ${layout.builtWords},`, ...places].join('')} },`;
 	});
 	return `${generatedHeader(lang)}
 //
@@ -3583,7 +3583,7 @@ function renderNodeDataStruct(
 		seated: seated.some(({ ident }) => ident === field),
 		defaulted: defaulted.some(({ ident }) => ident === field)
 	});
-	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}`, 'struct', structName));
+	lines.push(...nodeDeclaration(read, NODE_DERIVE, `${nodeArgs(node, ownId, read.ctx, printedSlots.map(({ slot }) => slot))}, words = ${layout.words}, built_words = ${layout.builtWords}, fields = ${rustNodeFieldsTraitName(node)}, prepare = ${rustNodePrepareTraitName(node)}, ${viewArg(structName)}, prepare_fn = ${rustTypedPrepareFnName(node.typeName)}${seatThroughArg(node, nodeMap, plan)}`, 'struct', structName));
 	if (displayIds.length > 0) lines.push(...renderKindField());
 	if (isCompoundOf(node)) {
 		lines.push(...renderLayoutField());

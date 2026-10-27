@@ -59,17 +59,25 @@ function hydrateSlot<T>(node: object, key: string, tree: TreeHandle, role?: Role
 function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {
 	return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];
 }
-function viewSlot<T>(view: RecordHandle, word: number, width: number, inline = 0, role?: Role): ParsedOfData<T> {
-	return childSlot(view, word, width, inline, _wrap, role) as ParsedOfData<T>;
+function viewSlot<T>(
+	view: RecordHandle,
+	word: number,
+	width: number,
+	inline: number,
+	built: number,
+	role?: Role
+): ParsedOfData<T> {
+	return childSlot(view, word, width, inline, built, _wrap, role) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
 	word: number,
 	width: number,
-	run?: number,
-	inline = 0
+	run: number | undefined,
+	inline: number,
+	built: number
 ): readonly ParsedOfData<T>[] {
-	return childItems(view, word, width, run, inline, _wrap) as readonly ParsedOfData<T>[];
+	return childItems(view, word, width, run, inline, built, _wrap) as readonly ParsedOfData<T>[];
 }
 
 export function wrapPattern(data: T.Pattern, tree: TreeHandle): T.Pattern.Parsed {
@@ -1231,7 +1239,7 @@ export function wrapInlineFlagsGroupDisable(
 }
 
 function viewPattern$content(this: RecordHandle) {
-	return viewSlot<T.Alternation | T.Term>(this, 2, 6, 4);
+	return viewSlot<T.Alternation | T.Term>(this, 2, 6, 4, 2);
 }
 function viewPattern(data: RecordPosition, tree: TreeHandle): T.Pattern.Parsed {
 	const node = {
@@ -1259,7 +1267,7 @@ function viewPattern(data: RecordPosition, tree: TreeHandle): T.Pattern.Parsed {
 }
 
 function viewAlternation$terms(this: RecordHandle) {
-	return viewSlots<T.Term>(this, 2, 2, 5, 0);
+	return viewSlots<T.Term>(this, 2, 2, 5, 0, 2);
 }
 function viewAlternation(data: RecordPosition, tree: TreeHandle): T.Alternation.Parsed {
 	const node = {
@@ -1287,7 +1295,7 @@ function viewAlternation(data: RecordPosition, tree: TreeHandle): T.Alternation.
 }
 
 function viewTerm$termGroups(this: RecordHandle) {
-	return viewSlots<T.TermGroup>(this, 2, 2, 5, 0);
+	return viewSlots<T.TermGroup>(this, 2, 2, 5, 0, 2);
 }
 function viewTerm(data: RecordPosition, tree: TreeHandle): T.Term.Parsed {
 	const node = {
@@ -1315,7 +1323,7 @@ function viewTerm(data: RecordPosition, tree: TreeHandle): T.Term.Parsed {
 }
 
 function viewLookaroundAssertion$content(this: RecordHandle) {
-	return viewSlot<T.LookaheadAssertion | T.LookbehindAssertion>(this, 2, 19, 17);
+	return viewSlot<T.LookaheadAssertion | T.LookbehindAssertion>(this, 2, 19, 17, 2);
 }
 function viewLookaroundAssertion(data: RecordPosition, tree: TreeHandle): T.LookaroundAssertion.Parsed {
 	const node = {
@@ -1343,10 +1351,10 @@ function viewLookaroundAssertion(data: RecordPosition, tree: TreeHandle): T.Look
 }
 
 function viewLookaheadAssertion$content(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0);
+	return childSlot(this, 2, 5, 0, 2);
 }
 function viewLookaheadAssertion$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 7, 10, 8);
+	return viewSlot<T.Pattern>(this, 7, 10, 8, 3);
 }
 function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.LookaheadAssertion.Parsed {
 	const node = {
@@ -1375,10 +1383,10 @@ function viewLookaheadAssertion(data: RecordPosition, tree: TreeHandle): T.Looka
 }
 
 function viewLookbehindAssertion$content(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0);
+	return childSlot(this, 2, 5, 0, 2);
 }
 function viewLookbehindAssertion$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 7, 10, 8);
+	return viewSlot<T.Pattern>(this, 7, 10, 8, 3);
 }
 function viewLookbehindAssertion(data: RecordPosition, tree: TreeHandle): T.LookbehindAssertion.Parsed {
 	const node = {
@@ -1422,7 +1430,7 @@ function viewCharacterClass$classAtoms(this: RecordHandle) {
 		| T.IdentityEscape
 		| T.PosixCharacterClass
 		| T.ClassRange
-	>(this, 3, 2, 5, 0);
+	>(this, 3, 2, 5, 0, 3);
 }
 function viewCharacterClass$trailing(this: RecordHandle) {
 	return recordFlag(this, 2, 2);
@@ -1462,7 +1470,7 @@ function viewCharacterClass(data: RecordPosition, tree: TreeHandle): T.Character
 }
 
 function viewPosixCharacterClass$posixClassName(this: RecordHandle) {
-	return viewSlot<T.PosixClassName>(this, 2, 5, 0);
+	return viewSlot<T.PosixClassName>(this, 2, 5, 0, 2);
 }
 function viewPosixCharacterClass(data: RecordPosition, tree: TreeHandle): T.PosixCharacterClass.Parsed {
 	const node = {
@@ -1490,10 +1498,10 @@ function viewPosixCharacterClass(data: RecordPosition, tree: TreeHandle): T.Posi
 }
 
 function viewClassRange$start(this: RecordHandle) {
-	return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(this, 2, 31, 29);
+	return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(this, 2, 31, 29, 2);
 }
 function viewClassRange$end(this: RecordHandle) {
-	return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(this, 33, 31, 29);
+	return viewSlot<T.ClassCharacter | T.CharacterClassEscape | T.ControlEscape | TSKindId.Dash>(this, 33, 31, 29, 3);
 }
 function viewClassRange(data: RecordPosition, tree: TreeHandle): T.ClassRange.Parsed {
 	const node = {
@@ -1522,7 +1530,7 @@ function viewClassRange(data: RecordPosition, tree: TreeHandle): T.ClassRange.Pa
 }
 
 function viewAnonymousCapturingGroup$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 2, 10, 8);
+	return viewSlot<T.Pattern>(this, 2, 10, 8, 2);
 }
 function viewAnonymousCapturingGroup(data: RecordPosition, tree: TreeHandle): T.AnonymousCapturingGroup.Parsed {
 	const node = {
@@ -1550,13 +1558,13 @@ function viewAnonymousCapturingGroup(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewNamedCapturingGroup$content(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0);
+	return childSlot(this, 2, 5, 0, 2);
 }
 function viewNamedCapturingGroup$groupName(this: RecordHandle) {
-	return viewSlot<T.GroupName>(this, 7, 5, 0);
+	return viewSlot<T.GroupName>(this, 7, 5, 0, 3);
 }
 function viewNamedCapturingGroup$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 12, 10, 8);
+	return viewSlot<T.Pattern>(this, 12, 10, 8, 4);
 }
 function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NamedCapturingGroup.Parsed {
 	const node = {
@@ -1586,7 +1594,7 @@ function viewNamedCapturingGroup(data: RecordPosition, tree: TreeHandle): T.Name
 }
 
 function viewNonCapturingGroup$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern>(this, 2, 10, 8);
+	return viewSlot<T.Pattern>(this, 2, 10, 8, 2);
 }
 function viewNonCapturingGroup(data: RecordPosition, tree: TreeHandle): T.NonCapturingGroup.Parsed {
 	const node = {
@@ -1698,7 +1706,7 @@ function viewOptional(data: RecordPosition, tree: TreeHandle): T.Optional.Parsed
 }
 
 function viewCountQuantifier$content(this: RecordHandle) {
-	return viewSlot<T.CountQuantifierArm | T.DecimalDigits>(this, 3, 18, 16);
+	return viewSlot<T.CountQuantifierArm | T.DecimalDigits>(this, 3, 18, 16, 3);
 }
 function viewCountQuantifier$lazy(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
@@ -1730,7 +1738,7 @@ function viewCountQuantifier(data: RecordPosition, tree: TreeHandle): T.CountQua
 }
 
 function viewBackreferenceEscape$groupName(this: RecordHandle) {
-	return viewSlot<T.GroupName>(this, 2, 5, 0);
+	return viewSlot<T.GroupName>(this, 2, 5, 0, 2);
 }
 function viewBackreferenceEscape(data: RecordPosition, tree: TreeHandle): T.BackreferenceEscape.Parsed {
 	const node = {
@@ -1758,7 +1766,7 @@ function viewBackreferenceEscape(data: RecordPosition, tree: TreeHandle): T.Back
 }
 
 function viewNamedGroupBackreference$groupName(this: RecordHandle) {
-	return viewSlot<T.GroupName>(this, 2, 5, 0);
+	return viewSlot<T.GroupName>(this, 2, 5, 0, 2);
 }
 function viewNamedGroupBackreference(data: RecordPosition, tree: TreeHandle): T.NamedGroupBackreference.Parsed {
 	const node = {
@@ -1786,7 +1794,13 @@ function viewNamedGroupBackreference(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewCharacterClassEscape$content(this: RecordHandle) {
-	return viewSlot<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(this, 2, 27, 25);
+	return viewSlot<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
+		this,
+		2,
+		27,
+		25,
+		2
+	);
 }
 function viewCharacterClassEscape(data: RecordPosition, tree: TreeHandle): T.CharacterClassEscape.Parsed {
 	const node = {
@@ -1814,10 +1828,10 @@ function viewCharacterClassEscape(data: RecordPosition, tree: TreeHandle): T.Cha
 }
 
 function viewUnicodePropertyValueExpression$unicodePropertyValueExpressionGroup(this: RecordHandle) {
-	return viewSlot<T.UnicodePropertyValueExpressionGroup | undefined>(this, 2, 9, 7);
+	return viewSlot<T.UnicodePropertyValueExpressionGroup | undefined>(this, 2, 9, 7, 2);
 }
 function viewUnicodePropertyValueExpression$unicodePropertyValue(this: RecordHandle) {
-	return viewSlot<T.UnicodePropertyValue>(this, 11, 5, 0);
+	return viewSlot<T.UnicodePropertyValue>(this, 11, 5, 0, 3);
 }
 function viewUnicodePropertyValueExpression(
 	data: RecordPosition,
@@ -1853,7 +1867,7 @@ function viewUnicodePropertyValueExpression(
 }
 
 function viewIdentityEscape$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0);
+	return viewSlot<string>(this, 2, 4, 0, 2);
 }
 function viewIdentityEscape(data: RecordPosition, tree: TreeHandle): T.IdentityEscape.Parsed {
 	const node = {
@@ -1902,10 +1916,10 @@ function viewTermGroup$content(this: RecordHandle) {
 		| T.NamedCapturingGroup
 		| T.NonCapturingGroup
 		| T.InlineFlagsGroup
-	>(this, 2, 31, 29);
+	>(this, 2, 31, 29, 2);
 }
 function viewTermGroup$quantifier(this: RecordHandle) {
-	return viewSlot<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier | undefined>(this, 33, 23, 21);
+	return viewSlot<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier | undefined>(this, 33, 23, 21, 3);
 }
 function viewTermGroup(data: RecordPosition, tree: TreeHandle): T.TermGroup.Parsed {
 	const node = {
@@ -1934,7 +1948,7 @@ function viewTermGroup(data: RecordPosition, tree: TreeHandle): T.TermGroup.Pars
 }
 
 function viewCountQuantifierGroup$decimalDigits(this: RecordHandle) {
-	return viewSlot<T.DecimalDigits | undefined>(this, 2, 5, 0);
+	return viewSlot<T.DecimalDigits | undefined>(this, 2, 5, 0, 2);
 }
 function viewCountQuantifierGroup(data: RecordPosition, tree: TreeHandle): T.CountQuantifierGroup.Parsed {
 	const node = {
@@ -1962,10 +1976,10 @@ function viewCountQuantifierGroup(data: RecordPosition, tree: TreeHandle): T.Cou
 }
 
 function viewCountQuantifierArm$decimalDigits(this: RecordHandle) {
-	return viewSlot<T.DecimalDigits>(this, 2, 5, 0);
+	return viewSlot<T.DecimalDigits>(this, 2, 5, 0, 2);
 }
 function viewCountQuantifierArm$countQuantifierGroup(this: RecordHandle) {
-	return viewSlot<T.CountQuantifierGroup | undefined>(this, 7, 9, 7);
+	return viewSlot<T.CountQuantifierGroup | undefined>(this, 7, 9, 7, 3);
 }
 function viewCountQuantifierArm(data: RecordPosition, tree: TreeHandle): T.CountQuantifierArm.Parsed {
 	const node = {
@@ -1994,10 +2008,10 @@ function viewCountQuantifierArm(data: RecordPosition, tree: TreeHandle): T.Count
 }
 
 function viewCharacterClassEscapeArm$characterClassEscapeText2(this: RecordHandle) {
-	return viewSlot<T.CharacterClassEscapeText2>(this, 2, 5, 0);
+	return viewSlot<T.CharacterClassEscapeText2>(this, 2, 5, 0, 2);
 }
 function viewCharacterClassEscapeArm$unicodePropertyValueExpression(this: RecordHandle) {
-	return viewSlot<T.UnicodePropertyValueExpression>(this, 7, 18, 16);
+	return viewSlot<T.UnicodePropertyValueExpression>(this, 7, 18, 16, 3);
 }
 function viewCharacterClassEscapeArm(data: RecordPosition, tree: TreeHandle): T.CharacterClassEscapeArm.Parsed {
 	const node = {
@@ -2030,7 +2044,7 @@ function viewCharacterClassEscapeArm(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewUnicodePropertyValueExpressionGroup$unicodePropertyName(this: RecordHandle) {
-	return viewSlot<T.UnicodePropertyName>(this, 2, 5, 0);
+	return viewSlot<T.UnicodePropertyName>(this, 2, 5, 0, 2);
 }
 function viewUnicodePropertyValueExpressionGroup(
 	data: RecordPosition,
@@ -2061,10 +2075,10 @@ function viewUnicodePropertyValueExpressionGroup(
 }
 
 function viewInlineFlagsGroupEnable$enabled(this: RecordHandle) {
-	return viewSlot<T.Flags>(this, 2, 5, 0);
+	return viewSlot<T.Flags>(this, 2, 5, 0, 2);
 }
 function viewInlineFlagsGroupEnable$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern | undefined>(this, 7, 10, 8);
+	return viewSlot<T.Pattern | undefined>(this, 7, 10, 8, 3);
 }
 function viewInlineFlagsGroupEnable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupEnable.Parsed {
 	const node = {
@@ -2093,13 +2107,13 @@ function viewInlineFlagsGroupEnable(data: RecordPosition, tree: TreeHandle): T.I
 }
 
 function viewInlineFlagsGroupToggle$enabled(this: RecordHandle) {
-	return viewSlot<T.Flags>(this, 2, 5, 0);
+	return viewSlot<T.Flags>(this, 2, 5, 0, 2);
 }
 function viewInlineFlagsGroupToggle$disabled(this: RecordHandle) {
-	return viewSlot<T.Flags>(this, 7, 5, 0);
+	return viewSlot<T.Flags>(this, 7, 5, 0, 3);
 }
 function viewInlineFlagsGroupToggle$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern | undefined>(this, 12, 10, 8);
+	return viewSlot<T.Pattern | undefined>(this, 12, 10, 8, 4);
 }
 function viewInlineFlagsGroupToggle(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupToggle.Parsed {
 	const node = {
@@ -2129,10 +2143,10 @@ function viewInlineFlagsGroupToggle(data: RecordPosition, tree: TreeHandle): T.I
 }
 
 function viewInlineFlagsGroupDisable$disabled(this: RecordHandle) {
-	return viewSlot<T.Flags>(this, 2, 5, 0);
+	return viewSlot<T.Flags>(this, 2, 5, 0, 2);
 }
 function viewInlineFlagsGroupDisable$pattern(this: RecordHandle) {
-	return viewSlot<T.Pattern | undefined>(this, 7, 10, 8);
+	return viewSlot<T.Pattern | undefined>(this, 7, 10, 8, 3);
 }
 function viewInlineFlagsGroupDisable(data: RecordPosition, tree: TreeHandle): T.InlineFlagsGroupDisable.Parsed {
 	const node = {

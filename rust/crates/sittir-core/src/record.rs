@@ -57,6 +57,10 @@ use crate::{NonEmptyVec, SlotValue};
 /// The kind id and side-record address preceding every record's slots.
 pub const HEADER_WORDS: u32 = 2;
 
+/// The bits a parsed record's header gives its kind: a whole `KindId`, with
+/// no flags above it.
+pub const PARSED_KIND_BITS: u32 = 16;
+
 /// The cell a field type needs in a record.
 pub trait RecordCell {
     /// The words of the narrowest cell that holds every value of the type.

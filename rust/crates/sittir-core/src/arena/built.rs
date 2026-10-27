@@ -5,7 +5,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasher;
 
-use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, HeldArenas, RecordGrammar, StringRef};
+use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, HeldArenas, RecordGrammar};
 use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
@@ -147,39 +147,45 @@ impl<G: RecordGrammar> Engine<G> {
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx)
     }
 
-    /// The lone built leaf of `kind` whose text is `text` in `arena`,
-    /// rendered as a render root whose `changed` edges have no neighbour,
+    /// The lone built leaf of `kind` whose leaf entry is at `entry` in
+    /// `arena`, rendered as a render root whose `changed` edges have no neighbour,
     /// with the sides `sides`: a root has no site, so its sides come with the
     /// call (`Place::ROOT_LEAF`).
     ///
     /// # Errors
     ///
     /// `RenderError::Record` for a kind no node of the grammar is written as
-    /// and for text outside the arena's strings, else what the leaf's render
-    /// refuses.
+    /// and for an entry of another kind or outside the arena's strings, else
+    /// what the leaf's render refuses.
     pub fn render_built_leaf(
         &self,
         arena: &dyn ArenaRead,
         kind: KindId,
-        text: StringRef,
+        entry: Address,
         sides: Option<NodeTrivia<G::Trivia>>,
         changed: ChangedEdges,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
-        let cell = admitted_leaf::<G>(arena, kind, text, changed).map_err(RenderError::Record)?;
+        let cell = admitted_leaf::<G>(arena, kind, entry, changed).map_err(RenderError::Record)?;
         let store = self.written().root_leaf(sides);
         let mut held = HeldArenas::of([]);
         G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx)
     }
 }
 
-/// The cell of a built leaf of `kind` whose text is `text` in `arena`, as
-/// admission admits it: by what it holds, a kind the grammar writes and text
-/// inside the arena's strings.
-fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, text: StringRef, changed: ChangedEdges) -> Result<Cell, ArenaError> {
+/// The cell of a built leaf of `kind` whose leaf entry is at `entry` in
+/// `arena`, as admission admits it: by what it holds, an entry of that kind,
+/// a kind the grammar writes, and text inside the arena's strings.
+fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: Address, changed: ChangedEdges) -> Result<Cell, ArenaError> {
     G::shape(kind).ok_or(ArenaError::Malformed { what: "built leaf kind", word: u32::from(kind.0) })?;
-    arena.text(text)?;
-    Ok(Cell::BuiltLeaf { kind, text, changed })
+    let word = entry.0.checked_mul(4).filter(|_| entry.0 < 1 << 30).ok_or(ArenaError::Malformed { what: "leaf entry address", word: entry.0 })?;
+    match Cell::decode_built(word, arena)? {
+        Cell::BuiltLeaf { kind: found, text, .. } if found == kind => {
+            arena.text(text)?;
+            Ok(Cell::BuiltLeaf { kind, text, changed })
+        }
+        _ => Err(ArenaError::Malformed { what: "built leaf entry", word: entry.0 }),
+    }
 }
 
 /// The built record `record` of `arena` written into `w` as a trivia entry

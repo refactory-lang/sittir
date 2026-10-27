@@ -65,21 +65,21 @@ export interface RecordParts {
 
 function slotStore(place: RecordPlace, local: string): string {
 	if ('bit' in place) return `  if (${local}) storeFlag(record.data, record.base + ${place.word}, ${2 ** place.bit});`;
-	if (place.run !== undefined) return `  storeList(arena, record, ${place.word}, ${local}, ${place.run});`;
-	return `  storeCell(arena, record, ${place.word}, ${local});`;
+	if (place.run !== undefined) return `  storeList(arena, record, ${place.built}, ${place.word}, ${local});`;
+	return `  storeCell(arena, record, ${place.built}, ${place.word}, ${local});`;
 }
 
 function slotPatch(place: RecordPlace, local: string): string {
 	if ('bit' in place) return `  patchFlag(record, ${place.word}, ${2 ** place.bit}, ${local});`;
-	if (place.run !== undefined) return `  patchList(arena, record, ${place.word}, ${local}, ${place.run});`;
-	return `  patchCell(arena, record, ${place.word}, ${place.width}, ${local});`;
+	if (place.run !== undefined) return `  patchList(arena, record, ${place.built}, ${place.word}, ${local});`;
+	return `  patchCell(arena, record, ${place.built}, ${place.word}, ${local});`;
 }
 
 export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: BuiltViewTable): RecordParts {
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), after: [] };
-	views.width(spec.node, layout.words);
+	views.width(spec.node, layout.builtWords);
 	const placed = spec.slots.map((slot) => {
 		const place = places.get(slot.storageKey);
 		if (place === undefined) throw new Error(`recordTailLines: ${spec.node.kind}.${slot.name} has no record place`);

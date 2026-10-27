@@ -11,22 +11,25 @@ use super::Arena;
 use crate::record::HEADER_WORDS;
 use crate::types::{KindId, TreeId};
 
-/// Where a record of one kind keeps its cells: its width in words, and each
-/// slot's cell, by the stamps its node type carries.
+/// Where a record of one kind keeps its cells: its width in words, parsed
+/// and built, and each slot's cell, by the stamps its node type carries.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct RecordShape {
     pub words: u32,
+    pub built_words: u32,
     pub cells: &'static [CellShape],
 }
 
-/// One slot's cell in a record: its first word and width, and for a list
-/// the width of each item's cell in its run.
+/// One slot's cell in a record: in a parsed record, its first word and
+/// width, and for a list the width of each item's cell in its run; in a
+/// built record, its one word.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CellShape {
     pub word: u32,
     pub width: u32,
     pub run: Option<u32>,
     pub inline: u32,
+    pub built: u32,
 }
 
 /// The record shapes a node type is written as, by the kind a record's
@@ -45,7 +48,7 @@ impl<N: RecordCells + ?Sized> RecordCells for Box<N> {
 /// An `ERROR` node a built record holds is a leaf with a header-only record.
 impl RecordCells for crate::verbatim::VerbatimNode {
     fn shape(kind: KindId) -> Option<RecordShape> {
-        (kind == KindId::ERROR).then_some(RecordShape { words: HEADER_WORDS, cells: &[] })
+        (kind == KindId::ERROR).then_some(RecordShape { words: HEADER_WORDS, built_words: HEADER_WORDS, cells: &[] })
     }
 }
 
@@ -53,7 +56,10 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
-pub(super) fn for_each_cell(
+/// Visits each cell of the parsed record at `at`, of shape `record`, with
+/// the capacity of an embedded child: a list slot's each item. Every record
+/// a cell names outside an embedded child lies below `floor`.
+pub(super) fn for_each_parsed_cell(
     arena: &dyn ArenaRead,
     at: Address,
     record: RecordShape,
@@ -65,9 +71,7 @@ pub(super) fn for_each_cell(
         let start = cell.word as usize;
         match cell.run {
             None => {
-                let words = words
-                    .get(start..start + cell.width as usize)
-                    .ok_or(malformed("cell word", cell.word))?;
+                let words = words.get(start..start + cell.width as usize).ok_or(malformed("cell word", cell.word))?;
                 let slot = at.offset(cell.word).ok_or(malformed("cell word", cell.word))?;
                 let decoded = Cell::decode_slot(words, slot, cell.inline)?;
                 if words.first() == Some(&super::cell::tag::INLINE) {
@@ -77,11 +81,7 @@ pub(super) fn for_each_cell(
                 }
             }
             Some(run) => {
-                let list = ListCell::decode(
-                    words
-                        .get(start..start + ListCell::WIDTH as usize)
-                        .ok_or(malformed("cell word", cell.word))?,
-                )?;
+                let list = ListCell::decode(words.get(start..start + ListCell::WIDTH as usize).ok_or(malformed("cell word", cell.word))?)?;
                 for item in list.items(arena, run)? {
                     visit(Cell::decode(item)?.below(floor)?, 0)?;
                 }
@@ -91,62 +91,77 @@ pub(super) fn for_each_cell(
     Ok(())
 }
 
-/// Admits the records of `arena` the record at `root` reaches, their shapes
-/// by `shape`: each is read once, its header naming a kind `shape` knows and
-/// its cell's, its side record and every cell decoding, and every record a
-/// cell names in the arena lying below the record that names it
-/// (`Cell::below`), so no chain of cells cycles. A cell linking another
-/// arena's record is left to that arena, which only a native writer writes;
-/// the trees those cells link are answered, each once, in order: the
-/// parsed arenas a render of the root reaches.
+/// Visits each cell of the built record at `at`, of shape `record`: a list
+/// slot's each item. Every record a cell names, and every list's run, lies
+/// below `floor`.
+pub(super) fn for_each_built_cell(
+    arena: &dyn ArenaRead,
+    at: Address,
+    record: RecordShape,
+    floor: Address,
+    mut visit: impl FnMut(Cell) -> Result<(), ArenaError>,
+) -> Result<(), ArenaError> {
+    let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
+    for cell in record.cells {
+        let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
+        if cell.run.is_none() {
+            visit(Cell::decode_built(word, arena)?.below(floor)?)?;
+            continue;
+        }
+        let list = ListCell::decode_built(word, arena)?;
+        if list.len != 0 && list.run >= floor {
+            return Err(malformed("list run address", list.run.0));
+        }
+        for item in list.items(arena, 1)? {
+            visit(Cell::decode_built(item[0], arena)?.below(floor)?)?;
+        }
+    }
+    Ok(())
+}
+
+/// Admits the built records of `arena` the record at `root` reaches, their
+/// shapes by `shape`: each is read once, its header naming a kind `shape`
+/// knows and its cell's, its side record and every cell decoding, and every
+/// record a cell names in the arena lying below the record that names it
+/// (`Cell::below`), so no chain of cells cycles. A cell linking a parsed
+/// node is left to its tree's arena, which only a native writer writes; the
+/// trees those cells link are answered, each once, in order: the parsed
+/// arenas a render of the root reaches.
 ///
 /// # Errors
 ///
 /// The first word that breaks one of these: `ArenaError::OutOfBounds` for
 /// words the arena never wrote, `ArenaError::Malformed` for any other.
 pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>) -> Result<Vec<TreeId>, ArenaError> {
-    let kind_of = |word: u32| u16::try_from(word).map(KindId).map_err(|_| malformed("record kind", word));
-    let root_kind = kind_of(arena.word(root)?)?;
     let mut seen = SmallMap::<(Address, Address), Option<KindId>>::new();
     let mut pending = SmallStack::new();
     let mut linked = Vec::new();
-    pending.push((root, root_kind, 0, root));
-    while let Some((at, named, inline, floor)) = pending.pop() {
+    pending.push((root, arena.header_kind(root)?));
+    while let Some((at, named)) = pending.pop() {
         let record = shape(named).ok_or(malformed("record kind", u32::from(named.0)))?;
-        if inline != 0 && record.words > inline {
-            return Err(malformed("inline record width", record.words));
-        }
-        let verified = seen.entry((at, floor)).or_default();
+        let verified = seen.entry((at, at)).or_default();
         if let Some(kind) = verified {
             if *kind != named {
                 return Err(malformed("record kind", u32::from(kind.0)));
             }
             continue;
         }
-        let header = arena.words(at, HEADER_WORDS)?;
-        let kind = kind_of(header[0])?;
+        let kind = arena.header_kind(at)?;
         if kind != named {
-            return Err(malformed("record kind", header[0]));
+            return Err(malformed("record kind", u32::from(kind.0)));
         }
         *verified = Some(kind);
-        let words = arena.words(at, record.words.max(HEADER_WORDS))?;
+        let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
         SideRecord::read(arena, Address(words[1]))?;
-        for_each_cell(arena, at, record, floor, |cell, inline| {
+        for_each_built_cell(arena, at, record, at, |cell| {
             match cell {
-                Cell::Child {
-                    kind,
-                    at: child,
-                    link: None,
-                    ..
-                }
-                | Cell::CopiedLeaf {
-                    kind,
-                    record: child,
-                    ..
-                  } => pending.push((child, kind, inline, if inline == 0 { child } else { floor })),
-                Cell::Child { link: Some(tree), .. } => linked.push(tree),
+                Cell::Child { kind, at: child, link: None, .. } => pending.push((child, kind)),
+                Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),
                 Cell::BuiltLeaf { kind, text, .. } => {
                     shape(kind).ok_or(malformed("built leaf kind", u32::from(kind.0)))?;
+                    arena.text(text)?;
+                }
+                Cell::BuiltText { text } => {
                     arena.text(text)?;
                 }
                 _ => {}
@@ -170,10 +185,10 @@ mod tests {
 
     /// A pair record holds one child cell at word 2; a leaf is its header.
     fn shape(kind: KindId) -> Option<RecordShape> {
-        const CELLS: &[CellShape] = &[CellShape { word: 2, width: 5, run: None, inline: 0 }];
+        const CELLS: &[CellShape] = &[CellShape { word: 2, width: 5, run: None, inline: 0, built: 2 }];
         match kind {
-            PAIR => Some(RecordShape { words: 7, cells: CELLS }),
-            LEAF => Some(RecordShape { words: HEADER_WORDS, cells: &[] }),
+            PAIR => Some(RecordShape { words: 7, built_words: 3, cells: CELLS }),
+            LEAF => Some(RecordShape { words: HEADER_WORDS, built_words: HEADER_WORDS, cells: &[] }),
             _ => None,
         }
     }
@@ -218,10 +233,10 @@ mod tests {
         const FORK: KindId = KindId(9);
         fn fork_shape(kind: KindId) -> Option<RecordShape> {
             const CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 5, run: None, inline: 0 },
-            CellShape { word: 7, width: 5, run: None, inline: 0 },
+            CellShape { word: 2, width: 5, run: None, inline: 0, built: 2 },
+            CellShape { word: 7, width: 5, run: None, inline: 0, built: 3 },
             ];
-            if kind == FORK { Some(RecordShape { words: 12, cells: CELLS }) } else { shape(kind) }
+            if kind == FORK { Some(RecordShape { words: 12, built_words: 4, cells: CELLS }) } else { shape(kind) }
         }
         let mut arena = Arena::new();
         let leaf = arena.push(&[u32::from(LEAF.0), 0]).expect("room");
@@ -241,10 +256,10 @@ mod tests {
         const FORK: KindId = KindId(9);
         fn fork_shape(kind: KindId) -> Option<RecordShape> {
             const CELLS: &[CellShape] = &[
-            CellShape { word: 2, width: 5, run: None, inline: 0 },
-            CellShape { word: 7, width: 5, run: None, inline: 0 },
+            CellShape { word: 2, width: 5, run: None, inline: 0, built: 2 },
+            CellShape { word: 7, width: 5, run: None, inline: 0, built: 3 },
             ];
-            if kind == FORK { Some(RecordShape { words: 12, cells: CELLS }) } else { shape(kind) }
+            if kind == FORK { Some(RecordShape { words: 12, built_words: 4, cells: CELLS }) } else { shape(kind) }
         }
         let linked = |tree| Cell::Child { kind: PAIR, at: Address(6), link: Some(TreeId(tree)), changed: ChangedEdges::default() };
         let fork = |arena: &mut Arena, first: Cell, second: Cell| {
@@ -275,7 +290,7 @@ mod tests {
     fn an_embedded_child_cannot_point_back_to_its_enclosing_allocation() {
         fn inline_shape(kind: KindId) -> Option<RecordShape> {
             if kind == KindId(9) {
-                Some(RecordShape { words: 11, cells: &[CellShape { word: 2, width: 9, run: None, inline: 7 }] })
+                Some(RecordShape { words: 11, built_words: 3, cells: &[CellShape { word: 2, width: 9, run: None, inline: 7, built: 2 }] })
             } else { shape(kind) }
         }
         let mut arena = Arena::new();
@@ -287,7 +302,7 @@ mod tests {
     #[test]
     fn an_embedded_variant_cannot_read_past_the_stamped_child_capacity() {
         fn narrow_shape(kind: KindId) -> Option<RecordShape> {
-            if kind == KindId(9) { Some(RecordShape { words: 7, cells: &[CellShape { word: 2, width: 5, run: None, inline: 2 }] }) }
+            if kind == KindId(9) { Some(RecordShape { words: 7, built_words: 3, cells: &[CellShape { word: 2, width: 5, run: None, inline: 2, built: 2 }] }) }
             else { shape(kind) }
         }
         let mut arena = Arena::new();

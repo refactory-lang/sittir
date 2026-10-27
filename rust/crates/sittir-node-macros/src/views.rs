@@ -53,6 +53,16 @@ pub(crate) fn held(ty: &Type) -> Option<(&Type, TokenStream)> {
     slot_parts(inner_of(item, "Option").unwrap_or(item))
 }
 
+/// A slot's stamped cell, parsed and built, as `CellShape` spells it.
+pub(crate) fn cell_shape(name: &Ident, cell: &crate::attrs::CellStamp) -> syn::Result<TokenStream> {
+    let word = cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its record cell (`word = …`)")))?;
+    let built = cell.built.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its built cell (`built = …`)")))?;
+    let width = cell.width.unwrap_or(1);
+    let inline = cell.inline.unwrap_or(0);
+    let run = cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
+    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, inline: #inline, built: #built }))
+}
+
 fn view_of(node: &Type) -> TokenStream {
     quote!(<#node as ::sittir_core::arena::HasRecord>::Record<'a>)
 }
@@ -74,6 +84,10 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
         let width = slot.cell.width.unwrap_or(1);
         Ok((word, word as usize, (word + width) as usize))
     };
+    let shape_of = |slot: &crate::attrs::SlotAttrs| -> syn::Result<(u32, TokenStream)> {
+        let (word, _, _) = cell_at(slot)?;
+        Ok((word, cell_shape(name, &slot.cell)?))
+    };
     let shape = shape(field)?;
     Ok(match (&field.role, shape) {
         (Role::Layout, Shape::Layout(_)) => ViewField {
@@ -86,14 +100,10 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
             ..ViewField::default()
         },
         (Role::Slot(slot), Shape::Child | Shape::OptionalChild) => {
-            let (word, start, end) = cell_at(slot)?;
+            let (word, shape) = shape_of(slot)?;
             let (node, adjacent) = held(ty).ok_or_else(|| syn::Error::new_spanned(ty, "a child slot holds a `SlotValue<…>`"))?;
             let view = view_of(node);
-              let read = if let Some(inline) = slot.cell.inline {
-                  quote!(::sittir_core::arena::RecordSlot::of_inline(self.__layout.context(), site, &self.__words[#start..#end], self.__at.offset(#word).unwrap_or(::sittir_core::arena::Address::NONE), #inline))
-              } else {
-                  quote!(::sittir_core::arena::RecordSlot::of(self.__layout.context(), site, &self.__words[#start..#end]))
-              };
+            let read = quote!(::sittir_core::arena::RecordSlot::of_shape(self.__layout.context(), site, self.__words, self.__at, #shape));
             ViewField {
                 accessor: quote! {
                     type #assoc<'b> = ::sittir_core::arena::RecordSlot<'a, #trivia, #view, #adjacent> where Self: 'b;
@@ -106,14 +116,14 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
             }
         }
         (Role::Slot(slot), Shape::Items) => {
-            let (word, start, end) = cell_at(slot)?;
-            let run = slot.cell.run.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a list without its run (`run = …`)")))?;
+            let (_, shape) = shape_of(slot)?;
+            slot.cell.run.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a list without its run (`run = …`)")))?;
             let (node, adjacent) = held(ty).ok_or_else(|| syn::Error::new_spanned(ty, "a list slot holds `SlotValue<…>` items"))?;
             let view = view_of(node);
             let items = quote!(::sittir_core::arena::RecordItems<'a, #trivia, #view, #adjacent>);
             ViewField {
                 member: quote!(#name: #items,),
-                init: quote!(#name: ::sittir_core::arena::RecordItems::of(ctx, place, #word, #run, &words[#start..#end])?,),
+                init: quote!(#name: ::sittir_core::arena::RecordItems::of_shape(ctx, place, words, #shape)?,),
                 accessor: quote! {
                     type #assoc<'b> = #items where Self: 'b;
                     fn #name(&self) -> Self::#assoc<'_> {
@@ -123,19 +133,19 @@ fn view_field(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<ViewField>
             }
         }
         (Role::Slot(slot), Shape::Text) => {
-            let (_, start, end) = cell_at(slot)?;
+            let (_, shape) = shape_of(slot)?;
             ViewField {
                 member: quote!(#name: &'a str,),
-                init: quote!(#name: ctx.cell_text(::sittir_core::arena::Cell::decode(&words[#start..#end])?)?,),
+                init: quote!(#name: ctx.cell_text(ctx.slot_cell(words, at, #shape)?)?,),
                 accessor: quote!(fn #name(&self) -> &str { self.#name }),
             }
         }
         (Role::Slot(slot), Shape::OptionalText) => {
-            let (_, start, end) = cell_at(slot)?;
+            let (_, shape) = shape_of(slot)?;
             ViewField {
                 member: quote!(#name: ::core::option::Option<&'a str>,),
                 init: quote! {
-                    #name: match ::sittir_core::arena::Cell::decode(&words[#start..#end])? {
+                    #name: match ctx.slot_cell(words, at, #shape)? {
                         ::sittir_core::arena::Cell::Absent => ::core::option::Option::None,
                         cell => ::core::option::Option::Some(ctx.cell_text(cell)?),
                     },
@@ -194,8 +204,8 @@ pub(crate) fn record_trivia(ident: &Ident, fields: &[Field<'_>]) -> syn::Result<
 /// over it; none for a struct with no stamped record or no fields trait.
 pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
     let Some(view) = &attrs.view else { return Ok(TokenStream::new()) };
-    let (Some(words), Some(fields_trait), Some(kind)) = (attrs.words, &attrs.fields, &attrs.kind) else {
-        return Err(syn::Error::new_spanned(view, format!("`{ident}` names a record view, so it has a record, a kind and a fields trait")));
+    let (Some(words), Some(built_words), Some(fields_trait), Some(kind)) = (attrs.words, attrs.built_words, &attrs.fields, &attrs.kind) else {
+        return Err(syn::Error::new_spanned(view, format!("`{ident}` names a record view, so it has a record, built and parsed, a kind and a fields trait")));
     };
     let trivia = record_trivia(ident, fields)?;
     let displays = &attrs.displays;
@@ -241,12 +251,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                             #(#inits)*
                         })
                     }
-                    ::sittir_core::arena::Cell::CopiedLeaf { kind, text, record } if #claims => {
-                        let (_, side) = ::sittir_core::arena::record_of(ctx, record, ::sittir_core::record::HEADER_WORDS, kind)?;
-                        let place = ::sittir_core::arena::copied_leaf_place(ctx, record, &side, site)?;
+                    ::sittir_core::arena::Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if #claims => {
+                        let leaf = ::sittir_core::arena::Sides { tree, index: row, end, span };
+                        let place = ::sittir_core::arena::linked_leaf_place(ctx, record, leaf, site)?;
                         ::core::result::Result::Ok(Self {
-                            __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), side.changed, side.sides),
-                            #text: ctx.string(text)?,
+                            __layout: ::sittir_core::arena::RecordLayout::new(ctx, place, site, ::sittir_core::options::Edges::default(), changed, ::core::option::Option::Some(leaf)),
+                            #text: ctx.linked(tree)?.source_text(span)?,
                             #(#inits)*
                         })
                     }
@@ -256,10 +266,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         )
     } else {
         let refused = malformed("child cell");
-        let reads_inline = fields.iter().any(|field| matches!(&field.role, Role::Slot(slot) if slot.cell.inline.is_some()));
-        let at_member = reads_inline.then(|| quote!(__at: ::sittir_core::arena::Address,));
-        let at_init = reads_inline.then(|| quote!(__at: at,));
-        let (words_member, words_init) = if reads_words { (quote!(__words: &'a [u32], #at_member), quote!(__words: words, #at_init)) } else { (TokenStream::new(), TokenStream::new()) };
+        let (words_member, words_init) = if reads_words { (quote!(__words: &'a [u32], __at: ::sittir_core::arena::Address,), quote!(__words: words, __at: at,)) } else { (TokenStream::new(), TokenStream::new()) };
         (
             quote!(#common #words_member #(#members)*),
             quote! {
@@ -275,7 +282,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     ),
                     _ => return ::core::result::Result::Err(#refused),
                 };
-                let (words, side) = ::sittir_core::arena::record_of(ctx, at, #words, kind)?;
+                let (words, side) = ::sittir_core::arena::record_of(ctx, at, if ctx.tree().is_none() { #built_words } else { #words }, kind)?;
                 let place = ::sittir_core::arena::place_of(ctx, at, &side)?;
                 let layout = ::sittir_core::arena::RecordLayout::new(ctx, place, site, side.edges.unwrap_or_default(), ::sittir_core::arena::held_changed(site.is_some(), held, &side), side.sides);
                 ::core::result::Result::Ok(Self {
@@ -286,15 +293,13 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             },
         )
     };
-    let cells = fields.iter().filter_map(|field| match (&field.role, shape(field)) {
-        (Role::Slot(slot), Ok(Shape::Child | Shape::OptionalChild | Shape::Items | Shape::Text | Shape::OptionalText)) => slot.cell.word.map(|word| {
-            let width = slot.cell.width.unwrap_or(1);
-              let inline = slot.cell.inline.unwrap_or(0);
-            let run = slot.cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-              quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, inline: #inline })
-        }),
-        _ => None,
-    });
+    let cells = fields
+        .iter()
+        .filter_map(|field| match (&field.role, shape(field)) {
+            (Role::Slot(slot), Ok(Shape::Child | Shape::OptionalChild | Shape::Items | Shape::Text | Shape::OptionalText)) if slot.cell.word.is_some() => Some(cell_shape(field.ident, &slot.cell)),
+            _ => None,
+        })
+        .collect::<syn::Result<Vec<_>>>()?;
     Ok(gated(&quote! {
         #[doc = #doc]
         #[derive(Clone, Copy)]
@@ -306,7 +311,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         }
         impl ::sittir_core::arena::RecordCells for #ident {
             fn shape(kind: ::sittir_core::types::KindId) -> ::core::option::Option<::sittir_core::arena::RecordShape> {
-                #claims.then_some(::sittir_core::arena::RecordShape { words: #words, cells: &[#(#cells),*] })
+                #claims.then_some(::sittir_core::arena::RecordShape { words: #words, built_words: #built_words, cells: &[#(#cells),*] })
             }
         }
         impl<'a> ::sittir_core::arena::RecordView<'a, #trivia> for #view<'a> {

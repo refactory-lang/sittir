@@ -80,16 +80,81 @@
 			"trailing": false,
 			"words": [5, 65535, 1048581, 4, 1]
 		},
-		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] },
-		{
-			"form": "copiedLeaf",
-			"kind": 16,
-			"offset": 1048581,
-			"len": 4,
-			"record": 3145737,
-			"words": [7, 16, 1048581, 4, 3145737]
-		}
+		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] }
 	],
+	"built": {
+		"kindBits": 9,
+		"linkFlag": 1,
+		"linkWords": 8,
+		"chunks": [
+			{
+				"chunk": 1,
+				"bytes": [16, 8, 0, 0, 110, 97, 109, 101, 0, 4, 0, 0, 97, 98, 0, 0, 255, 3, 0, 0, 63, 0, 0, 0]
+			},
+			{
+				"chunk": 2,
+				"words": [14, 0, 65537, 526, 0, 3, 7, 9, 5000, 2, 9, 528, 0, 3, 8, 9, 0, 4, 8, 2, 131072, 65568]
+			}
+		],
+		"cells": [
+			{ "form": "absent", "word": 0 },
+			{ "form": "unit", "kind": 15, "word": 60 },
+			{
+				"form": "child",
+				"kind": 14,
+				"at": 32768,
+				"link": null,
+				"leading": false,
+				"trailing": true,
+				"word": 131074
+			},
+			{
+				"form": "child",
+				"kind": 14,
+				"at": 5000,
+				"link": 3,
+				"leading": true,
+				"trailing": false,
+				"word": 131085
+			},
+			{
+				"form": "linkedLeaf",
+				"kind": 16,
+				"at": 32779,
+				"tree": 3,
+				"row": 8,
+				"end": 9,
+				"start": 4,
+				"spanEnd": 8,
+				"leading": false,
+				"trailing": false,
+				"word": 131116
+			},
+			{
+				"form": "builtLeaf",
+				"kind": 16,
+				"offset": 16384,
+				"len": 4,
+				"leading": true,
+				"trailing": true,
+				"word": 65539
+			},
+			{
+				"form": "builtLeaf",
+				"kind": 65535,
+				"offset": 16400,
+				"len": 1,
+				"leading": false,
+				"trailing": false,
+				"word": 65600
+			},
+			{ "form": "builtText", "offset": 16392, "len": 2, "word": 65568 }
+		],
+		"lists": [
+			{ "word": 131148, "run": 32788, "len": 2 },
+			{ "word": 0, "run": 0, "len": 0 }
+		]
+	},
 	"inlineHeaderWords": 2,
 	"inlines": [
 		{

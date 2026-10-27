@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, ListCell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
+use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
 use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::prepare::{
@@ -257,9 +257,9 @@ impl RecordKey {
             Cell::BuiltLeaf { kind, changed, .. } if claims(kind) => {
                 Ok(Self { tree: None, at: None, side_at: Address::NONE, place: super::built_leaf_place(at.site)?, changed })
             }
-            Cell::CopiedLeaf { kind, record, .. } if claims(kind) => {
-                let (words, side) = record_of(view, record, HEADER_WORDS, kind)?;
-                Ok(Self { tree: None, at: Some(record), side_at: Address(words[1]), place: super::copied_leaf_place(view, record, &side, at.site)?, changed: side.changed })
+            Cell::LinkedLeaf { kind, at: record, tree, row, end, span, changed } if claims(kind) => {
+                let leaf = super::Sides { tree, index: row, end, span };
+                Ok(Self { tree: None, at: Some(record), side_at: Address::NONE, place: super::linked_leaf_place(view, record, leaf, at.site)?, changed })
             }
             Cell::ParsedLeaf { kind, row: leaf, .. } if claims(kind) => {
                 let place = super::leaf_place(view, leaf, at.site)?;
@@ -280,7 +280,7 @@ impl RecordKey {
 /// fill at its site starts from; none for a unit or a parsed node.
 fn stored_edges<T>(prep: &RecordPrep<'_, T>, at: CellAt) -> Edges {
     let record = match at.cell {
-        Cell::Child { kind, .. } | Cell::CopiedLeaf { kind, .. } => RecordKey::of(prep, at, |named| named == kind).ok(),
+        Cell::Child { kind, .. } | Cell::LinkedLeaf { kind, .. } => RecordKey::of(prep, at, |named| named == kind).ok(),
         _ => None,
     };
     record.and_then(|key| key.side(prep).ok()).and_then(|side| side.edges).unwrap_or_default()
@@ -313,12 +313,12 @@ impl<'r, T> RecordAt<'r, T> {
         LayoutAt { key: self.key, keys: self.keys, overlay: PhantomData }
     }
 
-    /// The handle of the slot of node type `N` whose cell is at `word`,
-    /// `width` words wide, or a list of `run`-word item cells when `run` is
-    /// some.
+    /// The handle of the slot of node type `N` whose parsed cell is at
+    /// `word`, `width` words wide, or a list of `run`-word item cells when
+    /// `run` is some, and whose built cell is the one word `built`.
     #[must_use]
-    pub fn slot<N>(&self, word: u32, width: u32, run: Option<u32>) -> SlotAt<'r, T, N> {
-        SlotAt { key: self.key, word, width, run, inline: 0, node: PhantomData }
+    pub fn slot<N>(&self, word: u32, width: u32, run: Option<u32>, built: u32) -> SlotAt<'r, T, N> {
+        SlotAt { key: self.key, shape: super::CellShape { word, width, run, inline: 0, built }, node: PhantomData }
     }
 
     /// The handle of one of the record's print settings.
@@ -479,21 +479,18 @@ impl<'r, T: Prepare + TriviaSeam + Clone + 'static> LayoutTarget<RecordPrep<'r, 
 }
 
 
-/// One slot of a record, as its prepare body prepares it: the record's key,
-/// the slot's stamped word and width, and its items' width for a list.
+/// One slot of a record, as its prepare body prepares it: the record's key
+/// and the slot's stamped cell.
 pub struct SlotAt<'r, T, N> {
     key: RecordKey,
-    word: u32,
-    width: u32,
-    run: Option<u32>,
-    inline: u32,
+    shape: super::CellShape,
     node: Marker<'r, (T, N)>,
 }
 
 impl<T, N> SlotAt<'_, T, N> {
     #[must_use]
     pub fn inlined(mut self, capacity: u32) -> Self {
-        self.inline = capacity;
+        self.shape.inline = capacity;
         self
     }
 }
@@ -545,13 +542,16 @@ impl<T, N> SlotAt<'_, T, N> {
     /// holds the unit its prepare defaulted it to, when it took one.
     fn items(&self, prep: &RecordPrep<'_, T>) -> Result<Items<Option<Item>>, ArenaError> {
         let view = prep.view(self.key.tree)?;
-        let at = self.key.at.and_then(|at| at.offset(self.word)).ok_or(malformed("slot word", self.word))?;
+        let word = self.shape.word;
+        let record = self.key.at.ok_or(malformed("slot word", word))?;
+        let reach = if view.tree().is_none() { self.shape.built + 1 } else { word + self.shape.width };
+        let words = view.words(record, reach)?;
         let place = self.key.place;
         let item = |cell: Cell, item: u32| -> Result<Option<Item>, ArenaError> {
-            let site = Site { holder: place, word: self.word, item: ItemIndex(item) };
+            let site = Site { holder: place, word, item: ItemIndex(item) };
             let cell = match cell {
-                Cell::Absent => match prep.prepared.node(place).and_then(|node| node.slot(self.word)).and_then(|slot| slot.unit) {
-                    Some(kind) if self.run.is_none() => Cell::Unit { kind, row: None },
+                Cell::Absent => match prep.prepared.node(place).and_then(|node| node.slot(word)).and_then(|slot| slot.unit) {
+                    Some(kind) if self.shape.run.is_none() => Cell::Unit { kind, row: None },
                     _ => return Ok(None),
                 },
                 cell => cell,
@@ -559,13 +559,11 @@ impl<T, N> SlotAt<'_, T, N> {
             let at = CellAt { cell, tree: self.key.tree, site: Some(site) };
             Ok(Some(Item { at, site, row: view.parsed_row(cell)? }))
         };
-        match self.run {
-            None => Ok(Items::One([item(Cell::decode_slot(view.words(at, self.width)?, at, self.inline)?, 0)?])),
-            Some(run) => {
-                let list = ListCell::decode(view.words(at, ListCell::WIDTH)?)?;
-                list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(Cell::decode(words)?, at)).collect::<Result<_, _>>().map(Items::Many)
-            }
+        if self.shape.run.is_none() {
+            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0)?]));
         }
+        let (list, run) = view.slot_list(words, self.shape)?;
+        list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(view.item_cell(words)?, at)).collect::<Result<_, _>>().map(Items::Many)
     }
 
     fn present(&self, prep: &RecordPrep<'_, T>) -> Items<Item> {
@@ -730,7 +728,7 @@ impl<'r, T, N: FromKindId> UnitSlot<RecordPrep<'r, T>> for SlotAt<'r, T, N> {
     fn fill_unit(&mut self, prep: &mut RecordPrep<'r, T>, kind: KindId) {
         let unset = self.items(prep).is_ok_and(|items| items.iter().all(Option::is_none));
         if unset && N::from_kind_id(kind).is_some() {
-            prep.prepared.node_mut(self.key.place).slot_mut(self.word).unit = Some(kind);
+            prep.prepared.node_mut(self.key.place).slot_mut(self.shape.word).unit = Some(kind);
         }
     }
 }
@@ -801,7 +799,7 @@ pub fn own_seat<T>(prep: &RecordPrep<'_, T>, at: CellAt, kind: KindId, table: &[
 pub fn seat_through<T, C: PrepareRecord<T>>(prep: &RecordPrep<'_, T>, at: CellAt, claims: fn(KindId) -> bool, cell: super::CellShape, table: &[Option<SiteId>], ctx: &RenderContext<'_>) -> Option<(Site<PrepPlace>, Edges, SiteId)> {
     if cell.run.is_some() { return None; }
     let key = RecordKey::of(prep, at, claims).ok()?;
-    let slot = SlotAt::<T, C> { key, word: cell.word, width: cell.width, run: None, inline: cell.inline, node: PhantomData };
+    let slot = SlotAt::<T, C> { key, shape: cell, node: PhantomData };
     let content = *slot.present(prep).first()?;
     match content.row {
         Some(row) => {
@@ -863,6 +861,10 @@ mod tests {
 
         fn string_chunk(&self, index: u32) -> Option<&[u8]> {
             self.arena.string_chunk(index)
+        }
+
+        fn kind_bits(&self) -> u32 {
+            self.arena.kind_bits()
         }
     }
 

@@ -27,6 +27,9 @@ use std::sync::Arc;
 
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
+    /// The bits a packed kind field takes: the least that holds every kind
+    /// id of the grammar below all-ones, which is `ERROR`.
+    const KIND_BITS: u32;
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
@@ -1532,7 +1535,7 @@ impl<G: EngineGrammar> Engine<G> {
             grammar,
             parser,
             options,
-            written: TriviaStore::new(),
+            written: TriviaStore::with_kind_bits(G::KIND_BITS),
         })
     }
 
@@ -2008,6 +2011,8 @@ mod tests {
     struct TestGrammar;
 
     impl EngineGrammar for TestGrammar {
+        const KIND_BITS: u32 = 9;
+
         fn configure_parser(
             self,
             parser: &mut tree_sitter::Parser,

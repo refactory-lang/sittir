@@ -3,6 +3,7 @@ import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type Rec
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
+import { decodeBuiltCell, decodeBuiltList } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
 	decodeCell,
@@ -177,33 +178,46 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 			return cell.kind;
 		case 'builtLeaf':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.leafAt(cell.kind, { at: cell.offset, len: cell.len }, holder.$at, word, item);
+			return tree.built.leafAt(cell.kind, cell.offset, holder.$at, word, item);
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.textOf(cell.offset, cell.len);
-		case 'copiedLeaf':
+			return tree.built.entryText(tree.built.entryAt(cell.offset).entry);
+		case 'linkedLeaf':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.copiedLeaf(cell);
+			return tree.built.linkedLeaf(cell);
 	}
 }
 
-/** The value of the one-cell slot at the generated `word` offset of the record `holder` is at, as read data. */
-export function recordSlot(holder: RecordPosition, word: number, width: number, inline = 0): unknown {
-	return cellData(holder, slotCell(holder, word, width, inline), word, 0);
+/** The value of the one-cell slot whose parsed cell is at `word`, `width` words, and whose built cell is `built`, of the record `holder` is at, as read data. */
+export function recordSlot(holder: RecordPosition, word: number, width: number, inline: number, built: number): unknown {
+	return cellData(holder, slotCell(holder, word, width, inline, built), word, 0);
 }
 
-export function recordPresent(holder: RecordPosition, word: number, width: number, inline = 0): boolean {
-	return slotCell(holder, word, width, inline).form !== 'absent';
+export function recordPresent(holder: RecordPosition, word: number, width: number, inline: number, built: number): boolean {
+	return slotCell(holder, word, width, inline, built).form !== 'absent';
 }
 
-function slotCell(holder: RecordPosition, word: number, width: number, inline: number): RecordCell {
+function slotCell(holder: RecordPosition, word: number, width: number, inline: number, built: number): RecordCell {
+	const arena = holder.$tree.built;
+	if (arena !== undefined) {
+		const { words, start } = holderWords(holder, built + 1);
+		return decodeBuiltCell(arena, words[start + built]!);
+	}
 	const { words, start, records } = holderWords(holder, word + width);
 	return decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, holder.$at + word);
 }
 
-/** The items of the list slot at the generated `word` offset of the record `holder` is at, each as read data. */
-export function recordSlots(holder: RecordPosition, word: number, width: number, run?: number, inline = 0): readonly unknown[] {
-	if (run === undefined) return [recordSlot(holder, word, width, inline)].filter((item) => item !== undefined);
+/** The items of the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at, each as read data. */
+export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, inline: number, built: number): readonly unknown[] {
+	if (run === undefined) return [recordSlot(holder, word, width, inline, built)].filter((item) => item !== undefined);
+	const arena = holder.$tree.built;
+	if (arena !== undefined) {
+		const { words, start } = holderWords(holder, built + 1);
+		const list = decodeBuiltList(arena, words[start + built]!);
+		if (list.len === 0) return [];
+		const items = wordsAt(arena, list.run, list.len);
+		return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n));
+	}
 	const { words, start, records } = holderWords(holder, word + width);
 	const list = decodeListCell(words, start + word);
 	if (list.len === 0) return [];
@@ -211,9 +225,14 @@ export function recordSlots(holder: RecordPosition, word: number, width: number,
 	return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeCell(items.words, items.start + n * run, records.format), word, n));
 }
 
-/** The number of items the list slot at the generated `word` offset of the record `holder` is at holds. */
-export function recordLength(holder: RecordPosition, word: number, width: number, run?: number, inline = 0): number {
-	if (run === undefined) return recordPresent(holder, word, width, inline) ? 1 : 0;
+/** The number of items the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at holds. */
+export function recordLength(holder: RecordPosition, word: number, width: number, run: number | undefined, inline: number, built: number): number {
+	if (run === undefined) return recordPresent(holder, word, width, inline, built) ? 1 : 0;
+	const arena = holder.$tree.built;
+	if (arena !== undefined) {
+		const { words, start } = holderWords(holder, built + 1);
+		return decodeBuiltList(arena, words[start + built]!).len;
+	}
 	const { words, start } = holderWords(holder, word + width);
 	return decodeListCell(words, start + word).len;
 }

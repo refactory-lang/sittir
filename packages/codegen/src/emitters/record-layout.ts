@@ -25,10 +25,12 @@ export type RecordPlace =
 			readonly width: number;
 			readonly run?: number;
 			readonly inline?: number;
+			readonly built: number;
 	  };
 
 export interface RecordLayout {
 	readonly words: number;
+	readonly builtWords: number;
 	readonly places: readonly RecordPlace[];
 }
 
@@ -45,6 +47,7 @@ export function recordLayoutOf(fields: readonly RecordField[]): RecordLayout {
 	const bits = fields.filter(({ form }) => form.tag === 'bit').length;
 	let nextBit = 0;
 	let nextWord = RECORD_HEADER_WORDS + Math.ceil(bits / PRESENCE_BITS_PER_WORD);
+	let nextBuilt = nextWord;
 	const places = fields.map(({ field, form }): RecordPlace => {
 		if (form.tag === 'bit') {
 			const at = nextBit++;
@@ -61,15 +64,16 @@ export function recordLayoutOf(fields: readonly RecordField[]): RecordLayout {
 			word,
 			width: form.width,
 			...(form.run === undefined ? {} : { run: form.run }),
-			...(form.inline === undefined ? {} : { inline: form.inline })
+			...(form.inline === undefined ? {} : { inline: form.inline }),
+			built: nextBuilt++
 		};
 	});
-	return { words: nextWord, places };
+	return { words: nextWord, builtWords: nextBuilt, places };
 }
 
 export function recordArgs(place: RecordPlace): string {
 	if ('bit' in place) return `word = ${place.word}, bit = ${place.bit}`;
 	const run = place.run === undefined ? '' : `, run = ${place.run}`;
 	const inline = place.inline === undefined ? '' : `, inline = ${place.inline}`;
-	return `word = ${place.word}, width = ${place.width}${run}${inline}`;
+	return `word = ${place.word}, width = ${place.width}${run}${inline}, built = ${place.built}`;
 }

@@ -143,7 +143,7 @@ for (const node of nodeMap.nodes.values()) {
   if (layout !== undefined)
     assert.deepEqual(
       layouts.get(rustNodeStructName(node)),
-      { words: layout.words, ...Object.fromEntries(layout.places.map(({ field, ...place }) => [field, place])) },
+      { words: layout.words, builtWords: layout.builtWords, ...Object.fromEntries(layout.places.map(({ field, ...place }) => [field, place])) },
       node.kind
     );
   seen.add(kind);

@@ -17,6 +17,8 @@
 mod admit;
 mod borrowed;
 mod built;
+#[cfg(test)]
+mod built_image;
 pub mod cell;
 pub mod memory;
 mod parsed;
@@ -35,12 +37,12 @@ use std::sync::Arc;
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
-pub use cell::{Cell, ListCell};
+pub use cell::{flag, header_of, kind_field, with_kind, Cell, ListCell, LINK_WORDS};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
-pub use view::{built_leaf_place, copied_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
+pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
 pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot, write_inline_slot};
 pub use rows::TreeArena;
 pub use side::{Row, SideRecord, SideSlot, Sides};
@@ -79,6 +81,7 @@ fn entry_by_word<S>(entries: &mut Vec<S>, word: u32, word_of: impl Fn(&S) -> u32
 
 /// The bits of a packed address or string offset below its chunk.
 pub const CHUNK_SHIFT: u32 = 14;
+pub use crate::record::PARSED_KIND_BITS;
 /// The words a shared chunk holds at most, and the bound on a word's index
 /// within a packed address.
 pub const CHUNK_WORDS: u32 = 1 << CHUNK_SHIFT;
@@ -408,34 +411,67 @@ impl ArenaRead for Arena {
         self.chunk(n)
     }
 
+    fn kind_bits(&self) -> u32 {
+        PARSED_KIND_BITS
+    }
+
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
         self.strings.get(n as usize).map(Chunk::written)
     }
 }
 
+/// One chunk of an engine's built arena: words or UTF-8 bytes.
+#[derive(Debug)]
+enum BuiltChunk {
+    Words(Arc<ChunkMem<u32>>),
+    Bytes(Arc<ChunkMem<u8>>),
+}
+
+impl BuiltChunk {
+    fn byte_len(&self) -> usize {
+        match self {
+            BuiltChunk::Words(mem) => mem.byte_len(),
+            BuiltChunk::Bytes(mem) => mem.byte_len(),
+        }
+    }
+}
+
+/// The most chunks a built arena holds: a built cell keeps 16 bits for its
+/// chunk.
+pub const MAX_BUILT_CHUNKS: u32 = 1 << 16;
+
 /// The chunks of an engine's built arena: native memory JavaScript's
-/// builders ask for one chunk at a time and write records into through
-/// external array buffers. Native code reads every element of a chunk, so an
-/// element no builder wrote reads as zero, and every word is untrusted.
-#[derive(Debug, Default)]
+/// builders ask for one chunk at a time and write records and leaf entries
+/// into through external array buffers. Word and string chunks take their
+/// numbers from one count, so a built cell's chunk tells its form; chunk 0 is
+/// none, since a cell in it is a unit. Native code reads every element of a
+/// chunk, so an element no builder wrote reads as zero, and every word is
+/// untrusted.
+#[derive(Debug)]
 pub struct BuiltChunks {
-    words: Vec<Arc<ChunkMem<u32>>>,
-    bytes: Vec<Arc<ChunkMem<u8>>>,
+    chunks: Vec<Option<BuiltChunk>>,
+    kind_bits: u32,
     released: bool,
 }
 
 impl BuiltChunks {
+    /// An arena whose kind fields take `kind_bits` bits, the grammar's stamp.
+    #[must_use]
+    pub fn new(kind_bits: u32) -> Self {
+        Self { chunks: vec![None], kind_bits, released: false }
+    }
+
     /// A new words chunk of `len` words, zeroed, and its number.
     ///
     /// # Errors
     ///
     /// `ARENA_RELEASED` once released, and `ArenaError::Full` for an empty
-    /// chunk, one past `MOST_CHUNK_UNITS` words, or more chunks than an
-    /// address names.
+    /// chunk, one past `MOST_CHUNK_UNITS` words, or more chunks than a built
+    /// cell names.
     pub fn words(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u32>>), ArenaError> {
-        let chunk = self.room(&self.words, len)?;
+        let chunk = self.room(len)?;
         let mem = ChunkMem::zeroed(len as usize);
-        self.words.push(Arc::clone(&mem));
+        self.chunks.push(Some(BuiltChunk::Words(Arc::clone(&mem))));
         Ok((chunk, mem))
     }
 
@@ -445,20 +481,20 @@ impl BuiltChunks {
     ///
     /// As `words`.
     pub fn bytes(&mut self, len: u32) -> Result<(u32, Arc<ChunkMem<u8>>), ArenaError> {
-        let chunk = self.room(&self.bytes, len)?;
+        let chunk = self.room(len)?;
         let mem = ChunkMem::zeroed(len as usize);
-        self.bytes.push(Arc::clone(&mem));
+        self.chunks.push(Some(BuiltChunk::Bytes(Arc::clone(&mem))));
         Ok((chunk, mem))
     }
 
-    fn room<T>(&self, chunks: &[T], len: u32) -> Result<u32, ArenaError> {
+    fn room(&self, len: u32) -> Result<u32, ArenaError> {
         if self.released {
             return Err(ARENA_RELEASED);
         }
         if len == 0 || len > MOST_CHUNK_UNITS {
             return Err(ArenaError::Full);
         }
-        next_chunk(chunks)
+        u32::try_from(self.chunks.len()).ok().filter(|&n| n < MAX_BUILT_CHUNKS).ok_or(ArenaError::Full)
     }
 
     /// Lets go of every chunk, and answers the bytes they took: a record of
@@ -467,15 +503,14 @@ impl BuiltChunks {
     pub fn release(&mut self) -> usize {
         self.released = true;
         let bytes = self.allocated_bytes();
-        self.words.clear();
-        self.bytes.clear();
+        self.chunks.clear();
         bytes
     }
 
     /// The bytes every chunk takes.
     #[must_use]
     pub fn allocated_bytes(&self) -> usize {
-        self.words.iter().map(|chunk| chunk.byte_len()).chain(self.bytes.iter().map(|chunk| chunk.byte_len())).sum()
+        self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
     }
 
     /// The chunks, for one call to read.
@@ -490,15 +525,25 @@ impl BuiltChunks {
 
 impl ArenaRead for BuiltChunks {
     fn chunk(&self, n: u32) -> Option<&[u32]> {
-        // SAFETY: the store's shared borrow is held for the slice's life, no
-        // native code writes a built chunk, and a native call runs no
-        // JavaScript.
-        self.words.get(n as usize).map(|chunk| unsafe { chunk.slice() })
+        match self.chunks.get(n as usize)? {
+            // SAFETY: the store's shared borrow is held for the slice's life,
+            // no native code writes a built chunk, and a native call runs no
+            // JavaScript.
+            Some(BuiltChunk::Words(mem)) => Some(unsafe { mem.slice() }),
+            _ => None,
+        }
     }
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
-        // SAFETY: as `chunk`.
-        self.bytes.get(n as usize).map(|chunk| unsafe { chunk.slice() })
+        match self.chunks.get(n as usize)? {
+            // SAFETY: as `chunk`.
+            Some(BuiltChunk::Bytes(mem)) => Some(unsafe { mem.slice() }),
+            _ => None,
+        }
+    }
+
+    fn kind_bits(&self) -> u32 {
+        self.kind_bits
     }
 }
 

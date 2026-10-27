@@ -626,9 +626,16 @@ macro_rules! napi_engine {
             /// The tag word of a built leaf's cell, and of a built captured string's.
             #[::napi_derive::napi]
             pub const CELL_TAG_BUILT_LEAF: u32 = $crate::arena::cell::tag::BUILT_LEAF;
-            /// The tag word of a parsed leaf's cell in a built record.
+            /// The bits a record header's or a leaf entry's kind field takes
+            /// in the built arena (`EngineGrammar::KIND_BITS`).
             #[::napi_derive::napi]
-            pub const CELL_TAG_COPIED_LEAF: u32 = $crate::arena::cell::tag::COPIED_LEAF;
+            pub const KIND_BITS: u32 = <$grammar as $crate::engine::EngineGrammar>::KIND_BITS;
+            /// The flag above a link record's kind field (`arena::cell::flag`).
+            #[::napi_derive::napi]
+            pub const RECORD_FLAG_LINK: u32 = $crate::arena::cell::flag::LINK;
+            /// The words of a link record (`arena::cell::LINK_WORDS`).
+            #[::napi_derive::napi]
+            pub const LINK_RECORD_WORDS: u32 = $crate::arena::cell::LINK_WORDS;
             /// The tag word of an embedded bounded child's record.
             #[::napi_derive::napi]
             pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::tag::INLINE;
@@ -853,30 +860,29 @@ macro_rules! napi_engine {
                     render_built_with(self, &env, owner, tree_id, options, |arena, trees, ctx| owner.engine.render_built(arena, at, $crate::slot::ChangedEdges { leading, trailing }, trees, ctx))
                 }
 
-                /// The lone built leaf of `kind` whose text the built arena
-                /// `owner` holds at `text`, rendered as a render root whose
+                /// The lone built leaf of `kind` whose leaf entry the built
+                /// arena `owner` holds at `entry`, rendered as a render root whose
                 /// `leading` and `trailing` edges have no neighbour, under
                 /// `options` over this engine's, with `sides`, the sides the
                 /// leaf holds (`{ leading?, trailing?, inner? }`): a root has
                 /// no site in the store. Refuses a kind no node of the grammar
-                /// is written as, text outside the arena's strings, and a leaf
-                /// whose render refuses.
+                /// is written as, an entry of another kind or outside the
+                /// arena's strings, and a leaf whose render refuses.
                 #[allow(clippy::too_many_arguments, reason = "each parameter is one of the JavaScript call's arguments")]
-                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, kind: number, text: BuiltText, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null")]
+                #[::napi_derive::napi(ts_args_type = "owner: SittirEngine, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null")]
                 pub fn render_built_leaf(
                     &self,
                     env: ::napi::Env,
                     owner: &SittirEngine,
                     kind: u32,
-                    text: $crate::napi_engine::BuiltText,
+                    entry: u32,
                     sides: Option<$crate::trivia::NodeTrivia<<$grammar as $crate::engine::EngineGrammar>::Trivia>>,
                     leading: bool,
                     trailing: bool,
                     options: Option<$options>,
                 ) -> ::napi::Result<String> {
                     let kind = $crate::types::KindId(u16::try_from(kind).map_err(|_| ::napi::Error::from_reason(format!("kind {kind} is wider than a kind")))?);
-                    let text = $crate::arena::StringRef::from_offset(text.at, text.len);
-                    render_built_with(self, &env, owner, None, options, |arena, _, ctx| owner.engine.render_built_leaf(arena, kind, text, sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
+                    render_built_with(self, &env, owner, None, options, |arena, _, ctx| owner.engine.render_built_leaf(arena, kind, $crate::arena::Address(entry), sides, $crate::slot::ChangedEdges { leading, trailing }, ctx))
                 }
 
                 /// A new chunk of `length` words of the built arena this
@@ -1127,16 +1133,6 @@ pub fn depth_from_wire(depth: Option<f64>) -> napi::Result<crate::read::Depth> {
         .and_then(std::num::NonZeroU32::new)
         .map(crate::read::Depth::Levels)
         .ok_or_else(|| napi::Error::from_reason(format!("depth {levels} is not a whole number of levels (at least 1) or Infinity")))
-}
-
-/// The text a built leaf's cells hold, as its builder interned it: the
-/// chunk and byte packed as a cell stores them (`StringRef::offset`), and
-/// its length in bytes.
-#[cfg(feature = "arena")]
-#[napi_derive::napi(object)]
-pub struct BuiltText {
-    pub at: u32,
-    pub len: u32,
 }
 
 /// A run of whitespace a side takes, with the line breaks, spaces and tabs

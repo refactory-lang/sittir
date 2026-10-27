@@ -194,6 +194,8 @@ const NATIVE_RENDER_NODE_ABI: u32 = ${NATIVE_RENDER_NODE_ABI};
 pub struct ${v.Name}Grammar;
 
 impl EngineGrammar for ${v.Name}Grammar {
+    const KIND_BITS: u32 = render::KIND_BITS;
+
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
         let language = crate::language();
         parser

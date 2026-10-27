@@ -24,16 +24,6 @@ export interface BaselineRun {
   tabs?: number
 }
 
-/**
- * The text a built leaf's cells hold, as its builder interned it: the
- * chunk and byte packed as a cell stores them (`StringRef::offset`), and
- * its length in bytes.
- */
-export interface BuiltText {
-  at: number
-  len: number
-}
-
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
   get renderModuleHash(): string
@@ -280,16 +270,16 @@ export declare class SittirEngine {
    */
   renderBuilt(owner: SittirEngine, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null): string
   /**
-   * r" The lone built leaf of `kind` whose text the built arena
-   * r" `owner` holds at `text`, rendered as a render root whose
+   * r" The lone built leaf of `kind` whose leaf entry the built
+   * r" arena `owner` holds at `entry`, rendered as a render root whose
    * r" `leading` and `trailing` edges have no neighbour, under
    * r" `options` over this engine's, with `sides`, the sides the
    * r" leaf holds (`{ leading?, trailing?, inner? }`): a root has
    * r" no site in the store. Refuses a kind no node of the grammar
-   * r" is written as, text outside the arena's strings, and a leaf
-   * r" whose render refuses.
+   * r" is written as, an entry of another kind or outside the
+   * r" arena's strings, and a leaf whose render refuses.
    */
-  renderBuiltLeaf(owner: SittirEngine, kind: number, text: BuiltText, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+  renderBuiltLeaf(owner: SittirEngine, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
   /**
    * r" A new chunk of `length` words of the built arena this
    * r" engine's builders write, zeroed: `{ chunk, data }`, its
@@ -412,9 +402,6 @@ export declare const CELL_TAG_CHILD: number
 /** r" The tag word of a coordinate cell. */
 export declare const CELL_TAG_COORDINATE: number
 
-/** r" The tag word of a parsed leaf's cell in a built record. */
-export declare const CELL_TAG_COPIED_LEAF: number
-
 /** r" The tag word of an embedded bounded child's record. */
 export declare const CELL_TAG_INLINE: number
 
@@ -447,6 +434,15 @@ export interface EngineOptions {
 }
 
 /**
+ * r" The bits a record header's or a leaf entry's kind field takes
+ * r" in the built arena (`EngineGrammar::KIND_BITS`).
+ */
+export declare const KIND_BITS: number
+
+/** r" The words of a link record (`arena::cell::LINK_WORDS`). */
+export declare const LINK_RECORD_WORDS: number
+
+/**
  * Number of trees still held on this thread. Diagnostics only — the
  * boundary's disposal is driven by GC, so this is the way a test can
  * observe that trees are actually being released.
@@ -455,6 +451,9 @@ export declare function liveTreeCount(): number
 
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
+
+/** r" The flag above a link record's kind field (`arena::cell::flag`). */
+export declare const RECORD_FLAG_LINK: number
 
 /**
  * r" A side record's fields before a list's delimiters setting, each

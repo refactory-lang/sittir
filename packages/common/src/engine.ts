@@ -20,7 +20,7 @@ import type { RecordPosition } from './handle.ts';
 import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
-import { readEntries, readUnits, type BuiltRecords, type BuiltText, type WritableWords } from './built-arena.ts';
+import { readEntries, readUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
 import { builtRefOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
@@ -213,7 +213,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	renderBuiltLeaf?(
 		owner: object,
 		kind: number,
-		text: BuiltText,
+		entry: number,
 		sides: object | null,
 		leading: boolean,
 		trailing: boolean,
@@ -495,7 +495,7 @@ export function createNativeEngine<
 				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
 				if (built.at !== undefined) return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, changed.leading, changed.trailing, renderTreeOf(node as object), perCall));
 				const kind = (node as AnyUntypedNode).$type as number;
-				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.text, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
+				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.arena.placeEntry(node as object, kind, built.text).at, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {

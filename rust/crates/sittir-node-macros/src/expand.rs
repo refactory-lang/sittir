@@ -557,7 +557,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             _ => None,
         })
         .collect();
-    let record = crate::record::checks(ident, attrs.words, &stamped)?;
+    let record = crate::record::checks(ident, attrs.words, attrs.built_words, &stamped)?;
     let fields_trait = match &attrs.fields {
         Some(name) => crate::fields::fields_trait(ident, name, &fields)?,
         None => TokenStream::new(),

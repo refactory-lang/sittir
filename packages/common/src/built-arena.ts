@@ -5,16 +5,16 @@ import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, 
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
-import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
+import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
 import type { LeafMaker, RecordPosition } from './handle.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
-/** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
+/** A leaf entry of a built arena: its packed address in a string chunk, 0 before its leaf is first placed, and its text. */
 export interface BuiltText {
 	readonly at: number;
-	readonly len: number;
+	readonly text: string | undefined;
 }
 
 export type WritableWords = Uint32Array;
@@ -70,7 +70,7 @@ export type WriteLeafSites = (leaf: object, sites: readonly number[]) => void;
 const FIRST_CHUNK_WORDS = 1 << 10;
 const FIRST_STRING_BYTES = 1 << 10;
 const DRAFT_WORDS = 1 << 12;
-const EMPTY_RUN: BuiltPlace = Object.freeze({ data: new Uint32Array(0), base: 0, at: 0, words: 0 });
+const ENTRY_HEAD_BYTES = 4;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
 
@@ -82,7 +82,6 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	readonly #make: (length: number) => BuiltChunk<A>;
 	readonly #first: number;
 	readonly #limit: number;
-	readonly #most: number;
 	readonly chunks: A[] = [];
 	readonly used: number[] = [];
 	#open = -1;
@@ -90,7 +89,6 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	constructor(make: (length: number) => BuiltChunk<A>, first: number, format: CellFormat) {
 		this.#make = make;
 		this.#limit = 2 ** format.chunkShift;
-		this.#most = 2 ** (32 - format.chunkShift);
 		this.#first = Math.min(first, this.#limit);
 	}
 
@@ -113,21 +111,19 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	}
 
 	#push(length: number): number {
-		if (this.chunks.length >= this.#most) throw new Error('a built arena holds as many chunks as an address can name');
 		const { chunk, data } = this.#make(length);
-		if (chunk !== this.chunks.length) throw new Error(`a built arena's chunk ${this.chunks.length} came back as chunk ${chunk}`);
-		this.chunks.push(data);
-		this.used.push(0);
+		if (chunk === 0 || this.chunks[chunk] !== undefined) throw new Error(`a built arena's new chunk came back as chunk ${chunk}, which it already holds or names none`);
+		this.chunks[chunk] = data;
+		this.used[chunk] = 0;
 		return chunk;
 	}
 
-	/** Gives back the unwritten tail of the last allocation in `chunk`, so `used` units of it stay written. */
-	trim(chunk: number, used: number): void {
-		this.used[chunk] = used;
+	has(chunk: number): boolean {
+		return this.chunks[chunk] !== undefined;
 	}
 
 	holds(chunk: number, unit: number, length: number): boolean {
-		return chunk < this.chunks.length && unit + length <= this.used[chunk]!;
+		return this.chunks[chunk] !== undefined && unit + length <= this.used[chunk]!;
 	}
 }
 
@@ -156,8 +152,10 @@ export class BuiltArena {
 	#drafts = new Uint32Array(DRAFT_WORDS);
 	#drafted = 0;
 	readonly #bytes: Chunks<Uint8Array>;
-	readonly #textByValue = new Map<string, BuiltText>();
-	readonly #textByAt = new Map<number, { readonly value: string; readonly len: number }>();
+	readonly #heads: Uint32Array[] = [];
+	readonly #entries = new Map<string, BuiltText>();
+	readonly #entryAt = new Map<number, BuiltText>();
+	readonly #links = new Map<string, number>();
 	readonly #trees = new Map<number, { readonly tree: TreeHandle; readonly token: TreeToken }>();
 	readonly #sided = new Map<number, number>();
 	readonly #unitSided = new Set<number>();
@@ -194,7 +192,6 @@ export class BuiltArena {
 		bindTree(this.tree, handle);
 		this.#words = new Chunks(words, FIRST_CHUNK_WORDS, format);
 		this.#bytes = new Chunks(bytes, FIRST_STRING_BYTES, format);
-		this.#words.alloc(1);
 	}
 
 	get engine(): EngineIdentity {
@@ -204,6 +201,16 @@ export class BuiltArena {
 	#place(size: number): BuiltPlace {
 		const { chunk, word, data } = this.#words.alloc(size);
 		return { data, base: word, at: addressOf(chunk, word, this.format), words: size };
+	}
+
+	/** The header word of a record of `kind`, its flags `flags`. */
+	header(kind: number, flags = 0): number {
+		return (withKind(kind, this.format.kindBits) | (flags << this.format.kindBits)) >>> 0;
+	}
+
+	/** The kind the header of the record at `at` names. */
+	kindAt(at: number): number {
+		return headerKind(this.words(at, 1)[wordOf(at, this.format)]!, this.format.kindBits);
 	}
 
 	record(kind: number): BuiltDraft {
@@ -216,7 +223,7 @@ export class BuiltArena {
 			this.#drafted = 0;
 		}
 		const draft: BuiltDraft = { data: this.#drafts, base: this.#drafted, words, placed: undefined, copyOf, kept, patched: undefined };
-		this.#drafts[draft.base] = kind;
+		this.#drafts[draft.base] = this.header(kind);
 		this.#drafted += words;
 		return draft;
 	}
@@ -226,22 +233,18 @@ export class BuiltArena {
 		if (at === undefined) return this.record(kind);
 		const head = wordOf(at, this.format);
 		const words = this.#widthOf(kind);
-		const found = this.words(at, 1)[head]!;
+		const found = this.kindAt(at);
 		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
 		const draft = this.draft(kind, words, at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
 		draft.data.set(this.#chunk(at, words).subarray(head, head + words), draft.base);
 		return draft;
 	}
 
-	#header(kind: number, words: number): BuiltPlace {
-		const place = this.#place(words);
-		place.data[place.base] = kind;
-		return place;
-	}
-
-	/** The words of a run of `length` cells, `stride` words each, zeroed; address 0 for an empty run. */
-	run(length: number, stride: number): BuiltPlace {
-		return length === 0 ? EMPTY_RUN : this.#place(length * stride);
+	/** The words of a run of `length` one-word cells after its length word, which it holds. */
+	run(length: number): BuiltPlace {
+		const run = this.#place(length + 1);
+		run.data[run.base] = length;
+		return run;
 	}
 
 	/** `words` written at a fresh address: a side record. */
@@ -251,33 +254,65 @@ export class BuiltArena {
 		return place.at;
 	}
 
-	/** `value` interned: every call with equal text returns the same reference, and empty text takes no bytes. */
-	text(value: string): BuiltText {
-		const known = this.#textByValue.get(value);
+	/** The leaf entry of `kind` holding `text`, interned: each call with equal kind and text answers the same entry. */
+	entry(kind: number, text: string): BuiltText {
+		const key = `${kind}:${text}`;
+		const known = this.#entries.get(key);
 		if (known !== undefined) return known;
-		let text: BuiltText = { at: 0, len: 0 };
-		if (value.length > 0) {
-			const target = this.#bytes.alloc(value.length * 3);
-			const { written } = encoder.encodeInto(value, target.data.subarray(target.word));
-			this.#bytes.trim(target.chunk, target.word + written);
-			text = { at: addressOf(target.chunk, target.word, this.format), len: written };
-			this.#textByAt.set(text.at, { value, len: written });
-		}
-		this.#textByValue.set(value, text);
-		return text;
+		const bytes = encoder.encode(text);
+		const { kindBits } = this.format;
+		if (bytes.length >= 2 ** (32 - kindBits)) throw new Error(`a built leaf's text of ${bytes.length} bytes is past what a leaf entry's length holds`);
+		const size = (ENTRY_HEAD_BYTES + bytes.length + 3) & ~3;
+		const target = this.#bytes.alloc(size);
+		const heads = (this.#heads[target.chunk] ??= new Uint32Array(target.data.buffer, target.data.byteOffset, target.data.byteLength >>> 2));
+		heads[target.word >>> 2] = (withKind(kind, kindBits) | (bytes.length * 2 ** kindBits)) >>> 0;
+		target.data.set(bytes, target.word + ENTRY_HEAD_BYTES);
+		const entry: BuiltText = { at: addressOf(target.chunk, target.word, this.format), text };
+		this.#entries.set(key, entry);
+		this.#entryAt.set(entry.at, entry);
+		return entry;
 	}
 
-	/** The text a cell's offset and length name: the string interned there, else its bytes decoded. */
-	textOf(at: number, len: number): string {
-		if (len === 0) return '';
-		const known = this.#textByAt.get(at);
-		if (known?.len === len) return known.value;
+	/** The entry of `leaf`, of kind `kind`, interned at its first placement: a leaf placed before keeps its entry. */
+	placeEntry(leaf: object, kind: number, entry: BuiltText): BuiltText {
+		if (entry.at !== 0) return entry;
+		const placed = this.entry(kind, entry.text ?? '');
+		(leaf as { $entry: BuiltText }).$entry = placed;
+		return placed;
+	}
+
+	/** The leaf entry at `at`: its kind, its text's length in bytes, and the entry. */
+	entryAt(at: number): { readonly kind: number; readonly len: number; readonly entry: BuiltText } {
 		const chunk = chunkOf(at, this.format);
-		const start = wordOf(at, this.format);
-		if (!this.#bytes.holds(chunk, start, len)) {
-			throw new Error(`a built cell names text past its arena's bytes (offset ${at}, ${len} bytes)`);
-		}
-		return decoder.decode(this.#bytes.chunks[chunk]!.subarray(start, start + len));
+		const byte = wordOf(at, this.format);
+		if (byte % ENTRY_HEAD_BYTES !== 0 || !this.#bytes.holds(chunk, byte, ENTRY_HEAD_BYTES)) throw new Error(`a built cell names no leaf entry at ${at}`);
+		const head = this.#heads[chunk]![byte >>> 2]!;
+		const { kindBits } = this.format;
+		const kind = kindField(head, kindBits);
+		const len = Math.floor(head / 2 ** kindBits);
+		const known = this.#entryAt.get(at);
+		if (known !== undefined) return { kind, len, entry: known };
+		if (!this.#bytes.holds(chunk, byte + ENTRY_HEAD_BYTES, len)) throw new Error(`a built leaf entry at ${at} runs past its arena's bytes (${len} bytes)`);
+		const entry: BuiltText = { at, text: decoder.decode(this.#bytes.chunks[chunk]!.subarray(byte + ENTRY_HEAD_BYTES, byte + ENTRY_HEAD_BYTES + len)) };
+		this.#entryAt.set(at, entry);
+		return { kind, len, entry };
+	}
+
+	/** The text of the leaf entry `entry`. */
+	entryText(entry: BuiltText): string {
+		return entry.text ?? this.entryAt(entry.at).entry.text ?? '';
+	}
+
+	/** The link record naming the parsed node of `kind` at `row` of tree `tree`, interned: its subtree's end, its record there (0 for none) and its byte span. */
+	link(kind: number, tree: number, row: number, end: number, record: number, span: { readonly start: number; readonly end: number }): number {
+		const key = `${tree}:${row}:${kind}`;
+		const known = this.#links.get(key);
+		if (known !== undefined) return known;
+		const words = [this.header(kind, this.format.linkFlag), 0, tree, row, end, record, span.start, span.end];
+		if (words.length !== this.format.linkWords) throw new Error(`a link record takes ${this.format.linkWords} words, not ${words.length}`);
+		const at = this.push(words);
+		this.#links.set(key, at);
+		return at;
 	}
 
 	/** The chunk `at` lies in, `length` words from `at` of it written. */
@@ -293,6 +328,11 @@ export class BuiltArena {
 		return this.#words.chunks[chunk]!;
 	}
 
+	/** Whether chunk `chunk` holds records, as against leaf entries. */
+	holdsRecords(chunk: number): boolean {
+		return this.#words.has(chunk);
+	}
+
 	chunks(): BuiltChunks {
 		const cut = <A extends WritableWords | Uint8Array>(table: Chunks<A>): A[] =>
 			table.chunks.map((chunk, n) => chunk.subarray(0, table.used[n]) as A);
@@ -300,7 +340,7 @@ export class BuiltArena {
 	}
 
 	#view(at: number): object {
-		const position: RecordPosition = { $type: this.words(at, 1)[wordOf(at, this.format)]!, $tree: this.tree, $at: at, $_layout: undefined };
+		const position: RecordPosition = { $type: this.kindAt(at), $tree: this.tree, $at: at, $_layout: undefined };
 		return this.#wrap(position, this.tree) as object;
 	}
 
@@ -314,20 +354,20 @@ export class BuiltArena {
 		return this.#view(place.at);
 	}
 
-	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record. */
+	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record, and its entry is interned when it is first placed. */
 	leaf(maker: LeafMaker, text: string): object {
-		return maker(this.tree, this.text(text), undefined);
+		return maker(this.tree, { at: 0, text }, undefined);
 	}
 
 	/**
-	 * The handle of the built leaf of `kind` whose text is `entry`, at its site in the record at `holder`.
+	 * The handle of the built leaf of `kind` whose entry is at `at`, at its site in the record at `holder`.
 	 *
 	 * @throws For a kind no builder writes leaves of.
 	 */
-	leafAt(kind: number, entry: BuiltText, holder: number, word: number, item: number): object {
+	leafAt(kind: number, at: number, holder: number, word: number, item: number): object {
 		const maker = this.#views.leaves[kind];
 		if (maker === undefined) throw new Error(`no builder writes leaves of kind ${kind}, so the arena has no leaf handle for one`);
-		return maker(this.tree, entry, packSite(holder, word, item));
+		return maker(this.tree, this.entryAt(at).entry, packSite(holder, word, item));
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
@@ -397,7 +437,7 @@ export class BuiltArena {
 		this.hold(tree, token);
 		const head = wordOf(at, this.format);
 		const header = this.words(at, 2);
-		const words = this.#widthOf(header[head]!);
+		const words = this.#widthOf(this.kindAt(at));
 		const side = this.#sidesNaming(header[head + 1]!, [tree.id, index, end, span.start, span.end]);
 		const place = this.#place(words);
 		place.data.set(this.#chunk(at, words).subarray(head, head + words), place.base);
@@ -428,24 +468,11 @@ export class BuiltArena {
 		return this.push(words);
 	}
 
-	parsedLeaf(kind: number, tree: number, index: number, end: number, span: { readonly start: number; readonly end: number }, changed: ChangedEdges): number {
-		const record = this.#header(kind, 2);
-		const { sideSides, sideChanged } = this.format;
-		const mask = sideSides.bit | (changed.leading ? sideChanged.leading : 0) | (changed.trailing ? sideChanged.trailing : 0);
-		record.data[record.base + 1] = this.push([mask, tree, index, end, span.start, span.end]);
-		return record.at;
-	}
-
-	/** The parsed leaf a copied leaf's record names, as its tree's own view of it. */
-	copiedLeaf({ kind, record }: { readonly kind: number; readonly record: number }): object {
-		const side = this.words(record, 2)[wordOf(record, this.format) + 1]!;
-		const words = side === 0 ? undefined : this.words(side, 1 + this.format.sideSides.words);
-		const at = side === 0 ? 0 : wordOf(side, this.format);
-		if (words === undefined || words[at] !== this.format.sideSides.bit) throw new Error(`a copied leaf's record ${record} names no parsed leaf`);
-		const held = this.#trees.get(words[at + 1]!);
-		if (held === undefined) throw new Error(`a built record holds a leaf of parsed tree ${words[at + 1]}, which its arena does not hold`);
-		const row = words[at + 2]!;
-		const data = leafData(held.tree, kind, { start: words[at + 4]!, end: words[at + 5]! }, row);
+	/** The parsed node a linked leaf's cell names, as its tree's own view of it. */
+	linkedLeaf({ kind, tree, row, span }: { readonly kind: number; readonly tree: number; readonly row: number; readonly span: { readonly start: number; readonly end: number } }): object {
+		const held = this.#trees.get(tree);
+		if (held === undefined) throw new Error(`a built record holds a node of parsed tree ${tree}, which its arena does not hold`);
+		const data = leafData(held.tree, kind, span, row);
 		holdReadTree(data, held.token);
 		return wrapRegistered(data, held.tree, this.#wrap as (data: object, tree: TreeHandle) => object, rowRole(held.tree, row, undefined));
 	}
@@ -558,94 +585,85 @@ export function builtRecordOf(value: object, arena: BuiltArena): number | undefi
 	return ref?.arena === arena ? ref.at : undefined;
 }
 
-function writeChild(words: WritableWords | number[], at: number, format: CellFormat, kind: number, address: number, link: number, changed: number): void {
-	words[at] = format.child;
-	words[at + 1] = kind;
-	words[at + 2] = address;
-	words[at + 3] = link;
-	words[at + 4] = changed;
-}
-
-function writeUnit(words: WritableWords | number[], at: number, format: CellFormat, kind: number, row: number): void {
-	words[at] = format.unit;
-	words[at + 1] = kind;
-	words[at + 2] = row;
-}
-
-function writeBuiltLeaf(words: WritableWords | number[], at: number, format: CellFormat, kind: number, text: BuiltText, changed: number): void {
-	words[at] = format.builtLeaf;
-	words[at + 1] = kind;
-	words[at + 2] = text.at;
-	words[at + 3] = text.len;
-	words[at + 4] = changed;
-}
-
-function writeCopiedLeaf(words: WritableWords | number[], at: number, format: CellFormat, kind: number, text: BuiltText, record: number): void {
-	words[at] = format.copiedLeaf;
-	words[at + 1] = kind;
-	words[at + 2] = text.at;
-	words[at + 3] = text.len;
-	words[at + 4] = record;
-}
-
-function writeBuiltText(words: WritableWords | number[], at: number, format: CellFormat, text: BuiltText): void {
-	words[at] = format.builtLeaf;
-	words[at + 1] = 0;
-	words[at + 2] = text.at;
-	words[at + 3] = text.len;
-}
-
-/**
- * Writes `cell` into `words` at `at` as the native codec does, the inverse of `decodeCell`. A writer writes into a
- * fresh record, so the words it leaves are already zero.
- *
- * @throws For a form only a parsed tree's reader writes.
- */
-export function encodeCell(words: WritableWords | number[], at: number, format: CellFormat, cell: RecordCell): void {
-	switch (cell.form) {
-		case 'absent':
-			words[at] = format.absent;
-			return;
-		case 'child':
-			writeChild(words, at, format, cell.kind, cell.at, cell.link === undefined ? 0 : cell.link + 1, changedWord(cell.changed));
-			return;
-		case 'unit':
-			writeUnit(words, at, format, cell.kind, cell.row === undefined ? 0 : cell.row + 1);
-			return;
-		case 'builtLeaf':
-			writeBuiltLeaf(words, at, format, cell.kind, { at: cell.offset, len: cell.len }, changedWord(cell.changed));
-			return;
-		case 'builtText':
-			writeBuiltText(words, at, format, { at: cell.offset, len: cell.len });
-			return;
-		case 'copiedLeaf':
-			writeCopiedLeaf(words, at, format, cell.kind, { at: cell.offset, len: cell.len }, cell.record);
-			return;
-		default:
-			throw new Error(`a built record never writes a ${cell.form} cell`);
-	}
-}
-
 function changedWord(changed: ChangedEdges): number {
 	return (changed.leading ? 1 : 0) | (changed.trailing ? 2 : 0);
 }
 
-/** Writes the cell of the slot whose cell is at `word` of the drafted `record`, holding `value`. */
-export function storeCell(arena: BuiltArena, record: BuiltDraft, word: number, value: unknown): void {
-	storeAt(arena, record.data, record.base + word, value, record, word, 0, NO_EDGES);
+/** The built cell naming `at`, a record or a leaf entry, with the edges `changed` its site marks. */
+export function builtCell(at: number, changed = 0): number {
+	if (at >= 2 ** 30) throw new Error(`a built cell holds addresses below 2^30, not ${at}`);
+	return at * 4 + changed;
 }
 
-function storeAt(arena: BuiltArena, data: WritableWords, at: number, value: unknown, record: BuiltDraft, word: number, item: number, changed: ChangedEdges): void {
-	if (value === undefined || value === null) return;
-	if (typeof value === 'number') return writeUnit(data, at, arena.format, value, 0);
-	if (typeof value === 'string') return writeBuiltText(data, at, arena.format, arena.text(value));
+/** The built cell of a unit of `kind`: an address in chunk 0, whose word is the kind. */
+export function unitCell(kind: number, format: CellFormat): number {
+	if (kind >= 2 ** format.chunkShift) throw new Error(`a unit cell holds kinds below ${2 ** format.chunkShift}, not ${kind}`);
+	return kind * 4;
+}
+
+/**
+ * The built cell `word` decoded: absent for 0; a unit for an address in chunk 0; in a word chunk, a record, or through a
+ * link record a parsed node's record or, with none, the parsed node itself; in a string chunk, a leaf entry, captured
+ * text for the blank kind.
+ *
+ * @throws For words no builder writes.
+ */
+export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
+	if (word === 0) return { form: 'absent' };
+	const edges = word & 3;
+	const changed = { leading: (edges & 1) !== 0, trailing: (edges & 2) !== 0 };
+	const at = word >>> 2;
+	const chunk = chunkOf(at, arena.format);
+	if (chunk === 0) {
+		if (edges !== 0) throw new Error(`a unit cell ${word} marks changed edges`);
+		return { form: 'unit', kind: wordOf(at, arena.format), row: undefined };
+	}
+	const { kindBits, linkFlag, linkWords } = arena.format;
+	if (arena.holdsRecords(chunk)) {
+		const words = arena.words(at, 1);
+		const start = wordOf(at, arena.format);
+		const head = words[start]!;
+		const kind = kindField(head, kindBits);
+		const flags = head >>> kindBits;
+		if (flags === 0) return { form: 'child', kind, at, link: undefined, changed };
+		if (flags !== linkFlag) throw new Error(`a built record header holds flags ${flags}, which no builder writes`);
+		const link = arena.words(at, linkWords);
+		const record = link[start + 5]!;
+		const tree = link[start + 2]!;
+		if (record !== 0) return { form: 'child', kind, at: record, link: tree, changed };
+		return { form: 'linkedLeaf', kind, at, tree, row: link[start + 3]!, end: link[start + 4]!, span: { start: link[start + 6]!, end: link[start + 7]! }, changed };
+	}
+	const { kind, len } = arena.entryAt(at);
+	if (kind === 0) return { form: 'builtText', offset: at, len };
+	return { form: 'builtLeaf', kind, offset: at, len, changed };
+}
+
+/** The list a built list cell `word` names: its items' first word and their number; none for an empty list. */
+export function decodeBuiltList(arena: BuiltArena, word: number): { readonly run: number; readonly len: number } {
+	if (word === 0) return { run: 0, len: 0 };
+	if ((word & 3) !== 0) throw new Error(`a built list cell ${word} marks changed edges`);
+	const at = word >>> 2;
+	const len = arena.words(at, 1)[wordOf(at, arena.format)]!;
+	if (len === 0) throw new Error('a built list cell names a run of no items');
+	return { run: at + 1, len };
+}
+
+/** Writes the cell at `cell` of the drafted `record`, its slot `word`, holding `value`. */
+export function storeCell(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, value: unknown): void {
+	record.data[record.base + cell] = cellOf(arena, value, record, word, 0, NO_EDGES);
+}
+
+function cellOf(arena: BuiltArena, value: unknown, record: BuiltDraft, word: number, item: number, changed: ChangedEdges): number {
+	if (value === undefined || value === null) return 0;
+	if (typeof value === 'number') return unitCell(value, arena.format);
+	if (typeof value === 'string') return builtCell(arena.entry(0, value).at);
 	const ref = builtRefOf(value);
-	if (ref === undefined && typeof value === 'object') return storeParsed(arena, data, at, value, changed);
+	if (ref === undefined && typeof value === 'object') return parsedCell(arena, value, changed);
 	if (ref === undefined || ref.arena !== arena) throw new Error(`a built record holds only nodes its own engine built, not ${foreignValue(value, ref)}`);
-	const kind = (value as { readonly $type: number }).$type;
-	if (ref.at !== undefined) return writeChild(data, at, arena.format, kind, ref.at, 0, changedWord(changed));
-	writeBuiltLeaf(data, at, arena.format, kind, ref.text, changedWord(changed));
+	if (ref.at !== undefined) return builtCell(ref.at, changedWord(changed));
+	const entry = arena.placeEntry(value as object, (value as { readonly $type: number }).$type, ref.text);
 	(record.placed ??= []).push(value, word, item);
+	return builtCell(entry.at, changedWord(changed));
 }
 
 /** Sets the presence bits `mask` of the word at `at` of a fresh record. */
@@ -654,13 +672,12 @@ export function storeFlag(data: WritableWords, at: number, mask: number): void {
 }
 
 /**
- * Writes the cell of a slot holding the untouched parsed node `value`: a child linking the record its tree's reader
- * writes for it, or, for a parsed leaf, which has no record, a copied leaf whose header names the parsed one. The
- * arena holds the tree from then on.
+ * The cell of a slot holding the untouched parsed node `value`: its link record, which names its tree, its row and
+ * span, and its record there when it has one. The arena holds the tree from then on.
  *
  * @throws For a node no read produced, or one read through an engine that does not read trees as records.
  */
-function storeParsed(arena: BuiltArena, data: WritableWords, at: number, value: object, changed: ChangedEdges): void {
+function parsedCell(arena: BuiltArena, value: object, changed: ChangedEdges): number {
 	const coordinate = isCoordinate(value) ? value : coordinateOf(value);
 	const token = treeTokenOf(value);
 	const tree = coordinate === undefined ? undefined : treeOf(value);
@@ -672,11 +689,8 @@ function storeParsed(arena: BuiltArena, data: WritableWords, at: number, value: 
 	if (kind === undefined) throw new Error('a built record cannot name a parsed node whose coordinate stamps no kind');
 	arena.hold(tree as TreeHandle & { readonly id: number }, token);
 	const index = decodeIndex(coordinate.$treeHandle);
-	const record = recordOf(value) ?? rowRecordOf(tree.records, index, kind);
-	if (record !== undefined) return writeChild(data, at, arena.format, kind, record, tree.id + 1, changedWord(changed));
-	const text = tree.text?.(coordinate.$span);
-	if (text === undefined) throw new Error(`the parsed leaf of kind ${kind} has a tree that answers no text`);
-	writeCopiedLeaf(data, at, arena.format, kind, arena.text(text), arena.parsedLeaf(kind, tree.id, index, coordinate.$end, coordinate.$span, changed));
+	const record = recordOf(value) ?? rowRecordOf(tree.records, index, kind) ?? 0;
+	return builtCell(arena.link(kind, tree.id, index, coordinate.$end, record, coordinate.$span), changedWord(changed));
 }
 
 function rowRecordOf(records: RecordReader, index: number, kind: number): number | undefined {
@@ -693,13 +707,12 @@ function foreignValue(value: unknown, ref: BuiltRef | undefined): string {
 	return `an object node of kind ${kind}`;
 }
 
-/** Writes the cell of the list slot at `word` of the drafted `record`: a run of `items.length` cells, `stride` words each. */
-export function storeList(arena: BuiltArena, record: BuiltDraft, word: number, items: readonly unknown[], stride: number): void {
+/** Writes the list cell at `cell` of the drafted `record`, its slot `word`: a run of `items.length` one-word cells after their number. */
+export function storeList(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, items: readonly unknown[]): void {
 	if (items.length === 0) return;
-	const run = arena.run(items.length, stride);
-	for (let n = 0; n < items.length; n++) storeAt(arena, run.data, run.base + n * stride, items[n], record, word, n, changedEdges(items, n, arena.kinds));
-	record.data[record.base + word] = run.at;
-	record.data[record.base + word + 1] = items.length;
+	const run = arena.run(items.length);
+	for (let n = 0; n < items.length; n++) run.data[run.base + 1 + n] = cellOf(arena, items[n], record, word, n, changedEdges(items, n, arena.kinds));
+	record.data[record.base + cell] = builtCell(run.at);
 }
 
 export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {
@@ -721,22 +734,22 @@ function keptAt(record: BuiltDraft, word: number, value: unknown): boolean {
 	return kept !== undefined && word in kept && kept[word] === value;
 }
 
-function patchedAt(record: BuiltDraft, word: number, width: number): void {
-	record.data.fill(0, record.base + word, record.base + word + width);
+function patchedAt(record: BuiltDraft, cell: number, word: number): void {
+	record.data[record.base + cell] = 0;
 	(record.patched ??= []).push(word);
 }
 
-export function patchCell(arena: BuiltArena, record: BuiltDraft, word: number, width: number, value: unknown): void {
+export function patchCell(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, value: unknown): void {
 	if (keptAt(record, word, value)) return;
-	patchedAt(record, word, width);
-	storeCell(arena, record, word, value);
+	patchedAt(record, cell, word);
+	storeCell(arena, record, cell, word, value);
 }
 
-export function patchList(arena: BuiltArena, record: BuiltDraft, word: number, items: readonly unknown[], stride: number): void {
+export function patchList(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, items: readonly unknown[]): void {
 	const kept = record.kept?.[word];
 	if (Array.isArray(kept) && kept.length === items.length && items.every((item, n) => item === kept[n])) return;
-	patchedAt(record, word, 2);
-	storeList(arena, record, word, items, stride);
+	patchedAt(record, cell, word);
+	storeList(arena, record, cell, word, items);
 }
 
 export function patchFlag(record: BuiltDraft, word: number, mask: number, on: unknown): void {
@@ -746,7 +759,7 @@ export function patchFlag(record: BuiltDraft, word: number, mask: number, on: un
 
 export function patchListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {
 	if (record.copyOf !== undefined) {
-		const source: RecordPosition = { $type: record.data[record.base]!, $tree: arena.tree, $at: record.copyOf, $_layout: undefined };
+		const source: RecordPosition = { $type: arena.kindAt(record.copyOf), $tree: arena.tree, $at: record.copyOf, $_layout: undefined };
 		if (delimiter === recordDelimiter(source) && separator === recordSeparator(source)) return;
 	}
 	record.data[record.base + 1] = 0;

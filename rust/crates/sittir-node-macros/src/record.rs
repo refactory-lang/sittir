@@ -28,9 +28,25 @@ impl Place {
 
 /// The checks for `owner`'s stamped slots: each slot with a stamp, its type
 /// and the stamp, against the struct's `words`.
-pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellStamp)]) -> syn::Result<TokenStream> {
+pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots: &[(&Ident, &Type, &CellStamp)]) -> syn::Result<TokenStream> {
     let mut placed: Vec<(&Ident, Place)> = Vec::new();
+    let mut built: Vec<(&Ident, u32)> = Vec::new();
     let mut asserts = Vec::new();
+    for &(ident, _, stamp) in slots {
+        let Some(word) = stamp.built else { continue };
+        let Some(built_words) = built_words.filter(|_| stamp.width.is_some()) else {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}` has a built cell, so it is a cell and `{owner}` states its built words: `#[node(built_words = …)]`")));
+        };
+        if word >= built_words {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s built cell {word} is past `{owner}`'s {built_words} built words")));
+        }
+        let message = format!("{owner}.{ident}: its built cell overlaps the header");
+        asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
+        if let Some((other, _)) = built.iter().find(|(_, earlier)| *earlier == word) {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s built cell is `{other}`'s")));
+        }
+        built.push((ident, word));
+    }
     if let Some(words) = words {
         let message = format!("{owner}: its record must hold its header");
         asserts.push(quote!(const _: () = assert!(#words >= ::sittir_core::record::HEADER_WORDS, #message);));
@@ -101,7 +117,7 @@ mod tests {
             .map(|field| Ok(crate::attrs::slot_attrs(&field.attrs)?.map(|slot| (field.ident.clone().expect("named"), field.ty.clone(), slot.cell))))
             .collect::<syn::Result<Vec<_>>>()?;
         let stamped: Vec<_> = slots.iter().flatten().map(|(ident, ty, cell)| (ident, ty, cell)).collect();
-        super::checks(&input.ident, words, &stamped).map(|out| out.to_string().split_whitespace().collect())
+        super::checks(&input.ident, words, crate::attrs::kind_attrs(&input.attrs)?.built_words, &stamped).map(|out| out.to_string().split_whitespace().collect())
     }
 
     fn has(out: &str, part: &str) -> bool {

@@ -87,10 +87,19 @@ impl<T> PartialEq for TriviaStore<T> {
 
 impl<T> Default for TriviaStore<T> {
     fn default() -> Self {
+        Self::with_kind_bits(crate::record::PARSED_KIND_BITS)
+    }
+}
+
+impl<T> TriviaStore<T> {
+    /// A store whose built arena's kind fields take `kind_bits` bits.
+    #[must_use]
+    #[cfg_attr(not(feature = "arena"), allow(unused_variables, reason = "only the arena build has a built arena"))]
+    pub fn with_kind_bits(kind_bits: u32) -> Self {
         Self {
             sides: Arc::new(RwLock::new(BTreeMap::new())),
             #[cfg(feature = "arena")]
-            built: Arc::default(),
+            built: Arc::new(RwLock::new(crate::arena::BuiltChunks::new(kind_bits))),
         }
     }
 }

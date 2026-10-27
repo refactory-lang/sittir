@@ -39,6 +39,8 @@ pub struct KindAttrs {
     pub edged: bool,
     /// On a struct: the words of its record, which codegen stamps.
     pub words: Option<u32>,
+    /// On a struct: the words of its built record, one per cell.
+    pub built_words: Option<u32>,
     /// On a struct: the name of its fields trait, which codegen stamps and
     /// its render body is generic over.
     pub fields: Option<Ident>,
@@ -71,6 +73,8 @@ pub struct CellStamp {
     pub run: Option<u32>,
     pub bit: Option<u32>,
     pub inline: Option<u32>,
+    /// The cell's one word in a built record.
+    pub built: Option<u32>,
 }
 
 /// `#[slot]` or `#[slot(…)]` on a field.
@@ -206,6 +210,7 @@ pub fn kind_attrs(attrs: &[Attribute]) -> syn::Result<KindAttrs> {
                 "codec_only" => out.codec_only = true,
                 "edged" => out.edged = true,
                 "words" => out.words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+                "built_words" => out.built_words = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
                 "fields" => out.fields = Some(meta.value()?.parse()?),
                 "prepare" => out.prepare = Some(meta.value()?.parse()?),
                 "view" => out.view = Some(meta.value()?.parse()?),
@@ -239,6 +244,7 @@ pub fn slot_attrs(attrs: &[Attribute]) -> syn::Result<Option<SlotAttrs>> {
             "run" => out.cell.run = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "bit" => out.cell.bit = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "inline" => out.cell.inline = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
+            "built" => out.cell.built = Some(meta.value()?.parse::<LitInt>()?.base10_parse()?),
             "seated" => out.seated = true,
             "defaulted" => out.defaulted = true,
             _ => return Err(meta.error("unknown `slot` attribute")),
