@@ -47,3 +47,15 @@ describe('the portable runtime tree', () => {
 		expect(Object.keys(portable.is.declaration.function)).not.toContain('async');
 	});
 });
+
+describe('a flag a presence keyword sets', () => {
+	const firstOf = (source: string, kind: number): Node => first(rs, source, kind);
+	it.each([
+		['type.reference.exclusive', 'fn f(r: &mut u8) {}', 'fn f(r: &u8) {}', rust.kinds.ReferenceType],
+		['declaration.parameter.mutable', 'fn f(mut x: u8) {}', 'fn f(x: u8) {}', rust.kinds.Parameter],
+		['declaration.parameter.receiver.mutable', 'impl S { fn f(&mut self) {} }', 'impl S { fn f(&self) {} }', rust.kinds.SelfParameter]
+	])('%s tells the keyword from its absence', (path, set, unset, kind) => {
+		expect(guard(rustTree, path)(firstOf(set, kind))).toBe(true);
+		expect(guard(rustTree, path)(firstOf(unset, kind))).toBe(false);
+	});
+});

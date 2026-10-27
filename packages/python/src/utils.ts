@@ -149,7 +149,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['body', 2, undefined, '_body']
 	],
 	157: [
-		['async', 0, 'async', '_async'],
+		['async', 0, 'async', '_async', 67],
 		['left', 1, undefined, '_left'],
 		['right', 2, undefined, '_right'],
 		['body', 3, undefined, '_body'],
@@ -167,19 +167,19 @@ export const querySlots: QuerySlots = Object.freeze({
 		['finalizer', 3, undefined, '_finalizer']
 	],
 	160: [
-		['group', 0, '*', '_group'],
+		['group', 0, '*', '_group', 8],
 		['exception', 1, undefined, '_exception'],
 		['body', 2, undefined, '_body']
 	],
 	161: [['body', 0, undefined, '_body']],
 	162: [
-		['async', 0, 'async', '_async'],
+		['async', 0, 'async', '_async', 67],
 		['withClause', 1, undefined, '_with_clause'],
 		['body', 2, undefined, '_body']
 	],
 	164: [['value', 0, undefined, '_value']],
 	165: [
-		['async', 0, 'async', '_async'],
+		['async', 0, 'async', '_async', 67],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
 		['parameters', 3, undefined, '_parameters'],
@@ -244,7 +244,7 @@ export const querySlots: QuerySlots = Object.freeze({
 		['fields', 1, undefined, '_fields']
 	],
 	192: [
-		['sign', 0, '-', '_sign'],
+		['sign', 0, '-', '_sign', 49],
 		['real', 1, undefined, '_real'],
 		['operator', 2, undefined, '_operator'],
 		['imaginary', 3, undefined, '_imaginary']
@@ -375,7 +375,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	242: [['expression', 0, undefined, '_expression']],
 	243: [['items', 0, undefined, '_item']],
 	244: [
-		['async', 0, 'async', '_async'],
+		['async', 0, 'async', '_async', 67],
 		['left', 1, undefined, '_left'],
 		['rights', 2, undefined, '_right'],
 		['trailingComma', 3, undefined, '_trailing_comma']
@@ -395,7 +395,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	249: [['elements', 0, undefined, '_elements']],
 	250: [
 		['expression', 0, undefined, '_expression'],
-		['debug', 1, '=', '_debug'],
+		['debug', 1, '=', '_debug', 40],
 		['typeConversion', 2, undefined, '_type_conversion'],
 		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
@@ -461,7 +461,7 @@ export const querySlots: QuerySlots = Object.freeze({
 	],
 	301: [['expression', 0, undefined, '_expression']],
 	302: [
-		['async', 0, 'async', '_async'],
+		['async', 0, 'async', '_async', 67],
 		['typeParameters', 1, undefined, '_type_parameters'],
 		['parameters', 2, undefined, '_parameters'],
 		['returnType', 3, undefined, '_return_type'],
@@ -476,12 +476,12 @@ export const querySlots: QuerySlots = Object.freeze({
 	343: [['content', 0, undefined, '_content']],
 	344: [
 		['expression', 0, undefined, '_expression'],
-		['debug', 1, '=', '_debug'],
+		['debug', 1, '=', '_debug', 40],
 		['typeConversion', 2, undefined, '_type_conversion'],
 		['formatSpecifier', 3, undefined, '_format_specifier']
 	],
 	345: [
-		['async', 0, 'async', '_async'],
+		['async', 0, 'async', '_async', 67],
 		['name', 1, undefined, '_name'],
 		['typeParameters', 2, undefined, '_type_parameters'],
 		['parameters', 3, undefined, '_parameters'],

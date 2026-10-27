@@ -7,6 +7,13 @@ import { portablePathHasFacts } from './facts.ts';
 
 type Node = { readonly $type: number };
 
+class Keyword {
+	constructor(
+		readonly text: string,
+		readonly kind: number | undefined
+	) {}
+}
+
 /** Reads a node or a bare kind id of a bound grammar as the vocabulary path of its kind's first read entry that holds and that no other holding entry refines, if any. */
 export type PortableClassifier = <T extends Node>(value: T | number) => string | undefined;
 
@@ -87,9 +94,11 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const number = subject.slots[node.$type];
 		const slot = number === undefined ? undefined : querySlots[node.$type]?.find(([, n]) => n === number);
 		if (slot === undefined) return [];
-		const [accessor, , keyword] = slot;
+		const [accessor, , keyword, , keywordKind] = slot;
 		const items = slotItems(node, accessor);
-		return keyword === undefined ? items : items.flatMap((item) => (item === true ? [keyword] : []));
+		if (keyword === undefined) return items;
+		const present = new Keyword(keyword, keywordKind);
+		return items.flatMap((item) => (item === true ? [present] : []));
 	};
 	const slicers = new WeakMap<object, (span: ByteSpan) => string>();
 	const sliceOf = (node: Node): string | undefined => {
@@ -100,16 +109,13 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (slice === undefined) slicers.set(tree, (slice = spanSlicer(tree.source)));
 		return slice(span);
 	};
-	const textOf = (item: unknown): string | undefined =>
-		typeof item === 'string'
-			? item
-			: typeof item === 'number'
-				? table.fixedText[item]
-				: hasKind(item)
-					? (nodeText(item) ?? sliceOf(item))
-					: undefined;
+	const textOf = (item: unknown): string | undefined => {
+		if (item instanceof Keyword || typeof item === 'string') return typeof item === 'string' ? item : item.text;
+		if (typeof item === 'number') return table.fixedText[item];
+		return hasKind(item) ? (nodeText(item) ?? sliceOf(item)) : undefined;
+	};
 	const typeOf = (item: unknown): readonly number[] =>
-		typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
+		item instanceof Keyword ? (item.kind === undefined ? [] : [item.kind]) : typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
 	const subjectsOf = (reached: readonly unknown[]): PlanSubjects => {
 		const subjects = (subject: QuerySubject): readonly unknown[] =>
 			reached.flatMap((item) => ('self' in subject ? [item] : hasKind(item) ? itemsIn(item, subject) : []));
