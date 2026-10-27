@@ -22,8 +22,8 @@ import { describe, it, expect } from 'vitest';
 import rust from '../src/index.ts';
 import { createEngine, Source, sourceOf } from '@sittir/common';
 
-const rs = await createEngine(rust);
-const verifying = await createEngine(rust, { verifyStructure: 'runtime' });
+const rs = await createEngine(rust, { nodeStorage: 'object' });
+const verifying = await createEngine(rust, { verifyStructure: 'runtime', nodeStorage: 'object' });
 
 // ---------- helpers ----------
 

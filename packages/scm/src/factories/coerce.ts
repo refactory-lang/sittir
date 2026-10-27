@@ -542,8 +542,12 @@ export const coerceToEscapeSequence: ConfigSeat<T.EscapeSequence.Loose, ReturnTy
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildEscapeSequence>;
 	return F.buildEscapeSequence(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildEscapeSequence_content) : input,
+				TSKindId.EscapeSequence
 			),
 			_K0,
 			_K0
@@ -576,7 +580,12 @@ export const coerceToCapture: ConfigSeat<T.Capture.Loose, ReturnType<typeof F.bu
 	if (isNodeOfKind(input, TSKindId.Capture)) return input as unknown as ReturnType<typeof F.buildCapture>;
 	return F.buildCapture(
 		_resolveOneLeaf<T.ImmediateIdentifier>(
-			configFieldOr(input, 'name', () => (typeof input === 'string' ? spelledInterior(input, '@', '') : input)),
+			configFieldOr(
+				input,
+				'name',
+				() => (typeof input === 'string' ? spelledInterior(input, '@', '') : input),
+				TSKindId.Capture
+			),
 			'_immediate_identifier'
 		)
 	);
@@ -599,7 +608,7 @@ export const coerceToString: Seat<T.StringContent.LooseArgs, ReturnType<typeof F
 		return input as unknown as ReturnType<typeof F.buildString>;
 	return F.buildString(
 		_resolveOneBranch<T.StringContent>(
-			configFieldOr(input, 'stringContent', () => input),
+			configFieldOr(input, 'stringContent', () => input, TSKindId.String),
 			'string_content',
 			undefined,
 			true
@@ -624,7 +633,7 @@ export const coerceToImmediateString: Seat<T.StringContent.LooseArgs, ReturnType
 		return input as unknown as ReturnType<typeof F.buildImmediateString>;
 	return F.buildImmediateString(
 		_resolveOneBranch<T.StringContent>(
-			configFieldOr(input, 'stringContent', () => input),
+			configFieldOr(input, 'stringContent', () => input, TSKindId.ImmediateString),
 			'string_content',
 			undefined,
 			true
@@ -684,8 +693,11 @@ export const coerceToComment: ConfigSeat<T.Comment.Loose, ReturnType<typeof F.bu
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildComment>;
 	return F.buildComment(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() => (typeof input === 'string' ? spelledInterior(input, ';', '', F._slotRe_buildComment_content) : input),
+				TSKindId.Comment
 			),
 			_K0,
 			_K0
@@ -821,7 +833,12 @@ export const coerceToNegatedField: ConfigSeat<T.NegatedField.Loose, ReturnType<t
 	if (isNodeOfKind(input, TSKindId.NegatedField)) return input as unknown as ReturnType<typeof F.buildNegatedField>;
 	return F.buildNegatedField(
 		_resolveOneLeaf<T.Identifier>(
-			configFieldOr(input, 'identifier', () => (typeof input === 'string' ? spelledInterior(input, '!', '') : input)),
+			configFieldOr(
+				input,
+				'identifier',
+				() => (typeof input === 'string' ? spelledInterior(input, '!', '') : input),
+				TSKindId.NegatedField
+			),
 			'identifier'
 		)
 	);
@@ -884,10 +901,10 @@ export const coerceToListElementQuantifier: ConfigSeat<
 	return F.buildListElementQuantifier(
 		coerceKindEnumStorage(
 			_resolveKindEnumScalar(
-				configFieldOr(input, 'quantifier', () => input),
+				configFieldOr(input, 'quantifier', () => input, TSKindId.ListElementQuantifier),
 				() =>
 					_resolveOneLeaf<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>(
-						configFieldOr(input, 'quantifier', () => input),
+						configFieldOr(input, 'quantifier', () => input, TSKindId.ListElementQuantifier),
 						'quantifier'
 					)
 			),

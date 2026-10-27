@@ -8,7 +8,7 @@ describe('a bare string never names an affixed leaf', () => {
 	it('is the text of an unaffixed leaf: identifier and integer', () => {
 		const node = rs.build.binaryExpression({ left: 'x', operator: '+', right: '1' });
 		expect(node.$render!()).toBe('x + 1');
-		expect(node._right).toMatchObject({ $type: rs.build.integerLiteral('1').$type });
+		expect(node.right()).toMatchObject({ $type: rs.build.integerLiteral('1').$type });
 	});
 
 	it('is not sniffed into a char literal by its quotes: no unaffixed pattern accepts it, so it throws', () => {

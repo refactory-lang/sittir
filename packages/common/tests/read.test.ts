@@ -3,7 +3,7 @@ import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 import { decodeIndex, decodeTree, isCoordinate, readNode } from '../src/read.ts';
 
-const rs = await createEngine(rust);
+const rs = await createEngine(rust, { nodeStorage: 'object' });
 
 describe('the JavaScript read', () => {
 	it('reads a coordinate past the depth into the node it names', () => {

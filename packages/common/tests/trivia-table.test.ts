@@ -3,7 +3,7 @@ import rust from '@sittir/rust';
 import { createEngine } from '@sittir/common';
 import { decodeIndex, isCoordinate, type TreeHandle } from '../src/read.ts';
 
-const rs = await createEngine(rust);
+const rs = await createEngine(rust, { nodeStorage: 'object' });
 
 type Sides = Required<Pick<TreeHandle, 'triviaSide' | 'writeTriviaSide' | 'editedWithin'>>;
 

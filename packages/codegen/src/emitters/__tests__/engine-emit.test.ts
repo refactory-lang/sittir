@@ -110,7 +110,9 @@ describe('emitDescriptor', () => {
 		expect(output).toContain('export const kinds = TSKindId;');
 		expect(output).toContain('export const is = languageGuards(guardsWith, rust);');
 		expect(output).toContain("export const load: Language<RustAPI>['load'] = () => import('./api.js').then((m) => m.hooks);");
-		expect(output).toContain("export const createEngine: Language<RustAPI>['createEngine'] = (options) => import('@sittir/common').then((m) => m.createEngine(rust, options));");
+		expect(output).toContain(
+			"export const createEngine: Language<RustAPI>['createEngine'] = <const R extends RustAPI['options'], const M extends BuilderMode>(options?: CreateEngineOptions<RustAPI, R, M>) =>\n\timport('@sittir/common').then((m) => m.createEngine<RustAPI, R, M>(rust, options));"
+		);
 		expect(output).toContain('void (rust satisfies Language<RustAPI>);');
 	});
 

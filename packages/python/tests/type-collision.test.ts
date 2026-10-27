@@ -12,7 +12,7 @@ import { describe, it, expect } from 'vitest';
 import python from '../src/index.ts';
 import { createEngine, Source, sourceOf } from '@sittir/common';
 
-const py = await createEngine(python);
+const py = await createEngine(python, { nodeStorage: 'object' });
 
 const typeNode = (text: string) => py.build.type(py.build.identifier(text));
 const keysOf = (n: unknown) => Object.keys(n as Record<string, unknown>);

@@ -46,13 +46,13 @@ describe('engine', () => {
 			})
 		}));
 
-		const engine = await createEngine(await descriptor());
+		const engine = await createEngine(await descriptor(), { nodeStorage: 'object' });
 
 		// The engine exposes parse, render, edit and dispose; the native engine exposes the read path
 		expect(typeof engine.parse).toBe('function');
 		expect(typeof engine.render).toBe('function');
 		expect(typeof engine.dispose).toBe('function');
-		const native = (await (await descriptor()).load()).createNative();
+		const native = (await (await descriptor()).load()).createNative({ nodeStorage: 'object' });
 		expect(typeof native.parseAndRead).toBe('function');
 	});
 
@@ -88,7 +88,7 @@ describe('engine', () => {
 			})
 		}));
 
-		const native = (await (await descriptor()).load()).createNative();
+		const native = (await (await descriptor()).load()).createNative({ nodeStorage: 'object' });
 		const parsed = native.parseAndRead('pub fn main');
 		expect(reads).toEqual([]);
 		expect(parsed.root).toMatchObject({ _name: coordinate(1, 7, 11, TSKindId.Identifier), $errors: [] });
@@ -125,7 +125,7 @@ describe('engine', () => {
 			})
 		}));
 
-		const engine = await createEngine(await descriptor());
+		const engine = await createEngine(await descriptor(), { nodeStorage: 'object' });
 		const rendered = engine.render(engine.build.identifier('x'));
 
 		rendered.save('/tmp/sittir-rust-render.txt');

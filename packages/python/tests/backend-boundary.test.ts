@@ -47,7 +47,7 @@ describe('engine render boundary', () => {
 	async function mockedEngine() {
 		const { createEngine } = await import('@sittir/common');
 		const descriptor = (await import('../src/index.ts')).default;
-		return createEngine(descriptor);
+		return createEngine(descriptor, { nodeStorage: 'object' });
 	}
 
 	it('surfaces native render failures instead of silently retrying on TS', async () => {

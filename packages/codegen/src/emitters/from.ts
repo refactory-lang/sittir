@@ -511,7 +511,7 @@ function emitBranchFrom(
 				spelled.length === 0
 					? optionsArg
 					: `, _spelled === undefined ? options : { ${spelled.map(([side, slot]) => `${slot.propertyName}: _spelled.${side}`).join(', ')}, ...options }`;
-			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare})`;
+			const inputExpr = `configFieldOr(input, ${JSON.stringify(soleField.propertyName)}, () => ${bare}, ${kindDiscriminantCheck(node.kind, kindEntries, nodeMap)})`;
 			const soleShape = numericSlotShape(soleField);
 			const numeric = soleShape !== undefined;
 			if (numeric) body.push(`  const _value = ${inputExpr};`);

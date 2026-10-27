@@ -11,12 +11,12 @@ const tsStrict = await createEngine(typescript, { api: 'strict' });
 const letX = (value: string) =>
 	tsStrict.build.lexicalDeclaration({
 		kind: ts.kinds.LetKeyword,
-		declarators: [tsStrict.build.variableDeclarator.plain({ name: ts.build.identifier('x'), value: ts.build.number(value) })]
+		declarators: [tsStrict.build.variableDeclarator.plain({ name: tsStrict.build.identifier('x'), value: tsStrict.build.number(value) })]
 	});
 
 describe('hash_bang_line', () => {
 	it('breaks the line after a built hash-bang, and the text reparses to the same program', () => {
-		const text = tsStrict.build.program({ hashBangLine: ts.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
+		const text = tsStrict.build.program({ hashBangLine: tsStrict.build.hashBangLine('/usr/bin/env node'), statements: [letX('1')] }).$render();
 		expect(text).toBe('#!/usr/bin/env node\nlet x = 1;\n');
 		const reparsed = ts.parse(text);
 		expect(reparsed.hashBangLine()?.$render()).toBe('#!/usr/bin/env node\n');
@@ -24,7 +24,7 @@ describe('hash_bang_line', () => {
 	});
 
 	it('breaks the line after a read hash-bang when the statement after it is rebuilt', () => {
-		const program = ts.parse('#!/usr/bin/env node\nlet x = 1;\n');
+		const program = tsStrict.parse('#!/usr/bin/env node\nlet x = 1;\n');
 		const rebuilt = program.$with.statements(letX('2'));
 		expect(rebuilt.$render()).toBe('#!/usr/bin/env node\nlet x = 2;\n');
 		expect(ts.render(rebuilt).toString()).toBe(rebuilt.$render());

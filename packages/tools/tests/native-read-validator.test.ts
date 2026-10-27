@@ -14,7 +14,7 @@ const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as N
 afterEach(() => vi.restoreAllMocks());
 
 it('defers the diagnostic root read and keeps its error stamp and cached identity', async () => {
-	const engine = await createEngine(await languageByName('scm'));
+	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'object' });
 	const read = vi.spyOn(native.SittirEngine.prototype, 'read');
 	try {
 		const parsed = engine.diagnostics.parseAndRead('(identifier)');

@@ -9,7 +9,7 @@ it('constructs absent, comma-only and populated receiver rest groups without a p
 	const content = rsStrict.build.selfParameter({ reference: true });
 	const plain = rsStrict.build.parametersElementsReceiver({ content });
 	const comma = rsStrict.build.parametersElementsReceiver({ content, parametersElementsReceiverGroup: [undefined] });
-	const rest = rsStrict.build.parametersElements(rsStrict.build.parameter({ name: rs.build.identifier('x'), type: rs.kinds.U8Keyword }));
+	const rest = rsStrict.build.parametersElements(rsStrict.build.parameter({ name: rsStrict.build.identifier('x'), type: rs.kinds.U8Keyword }));
 	const populated = rsStrict.build.parametersElementsReceiver({ content, parametersElementsReceiverGroup: [rest] });
 	expect(rsStrict.build.parameters(plain).$render()).toBe('(&self)');
 	expect(rsStrict.build.parameters(comma).$render()).toBe('(&self,)');

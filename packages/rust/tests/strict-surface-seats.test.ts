@@ -5,18 +5,17 @@ import { describe, expect, it } from 'vitest';
 import rust from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const rs = await createEngine(rust);
 const rsStrict = await createEngine(rust, { api: 'strict' });
 
 const arm = () =>
 	rsStrict.build.matchArm.blockEnding({
-		match: rsStrict.build.matchPattern({ pattern: rs.build.identifier('x') }),
+		match: rsStrict.build.matchPattern({ pattern: rsStrict.build.identifier('x') }),
 		body: rsStrict.build.block({})
 	});
 const last = () =>
 	rsStrict.build.lastMatchArm({
-		match: rsStrict.build.matchPattern({ pattern: rs.build.identifier('y') }),
-		body: rs.build.identifier('z')
+		match: rsStrict.build.matchPattern({ pattern: rsStrict.build.identifier('y') }),
+		body: rsStrict.build.identifier('z')
 	});
 
 describe('a group flattened into the parent config', () => {

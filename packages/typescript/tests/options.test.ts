@@ -69,11 +69,11 @@ it('an unknown key, an address naming no site, and a value a site does not admit
 it('an omitted registered choice option renders the arm the options resolve, and a set one renders as set', async () => {
 	const semi = await createEngine(typescript);
 	const automatic = await createEngine(typescript, { render: { statements: { terminator: ts.kinds.AutomaticSemicolon } } });
-	const omitted = tsStrict.build.returnStatement(ts.build.identifier('r'));
+	const omitted = tsStrict.build.returnStatement(tsStrict.build.identifier('r'));
 	expect(semi.render(omitted).toString()).toBe('return r;');
 	expect(automatic.render(omitted).toString()).toBe('return r\n');
 	expect(automatic.render(omitted, { statements: { terminator: ts.kinds.Semi } }).toString()).toBe('return r;');
-	const set = tsStrict.build.returnStatement(ts.build.identifier('r'), { terminator: ts.kinds.Semi });
+	const set = tsStrict.build.returnStatement(tsStrict.build.identifier('r'), { terminator: ts.kinds.Semi });
 	expect(semi.render(set).toString()).toBe('return r;');
 	expect(automatic.render(set).toString()).toBe('return r;');
 });

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { languageByName } from '../src/languages.ts';
-import { loadSlotAccessorOf } from '../src/validate/common.ts';
+import { loadSlotAccessorOf, walkWrappedTree } from '../src/validate/common.ts';
 
 const rust = await createEngine(await languageByName('rust'));
 const typescript = await createEngine(await languageByName('typescript'));
@@ -168,26 +168,12 @@ describe('a rebuilt list gives each parsed item the gap its seat declares', () =
 
 /** The first node in a rust `root` a guard accepts, reached through each slot's reader. */
 function firstWhere<T>(root: unknown, accepts: (value: unknown) => value is T): T {
-	const seen = new Set<object>();
-	const queue: unknown[] = [root];
-	while (queue.length > 0) {
-		const node = queue.shift();
-		if (node === null || typeof node !== 'object' || seen.has(node)) continue;
-		seen.add(node);
-		if (accepts(node)) return node;
-		if (Array.isArray(node)) {
-			queue.push(...node);
-			continue;
-		}
-		const record = node as Record<string, unknown>;
-		const slots = typeof record.$type === 'number' ? rustSlots(record.$type).accessors : {};
-		for (const key of Object.keys(record)) {
-			if (!key.startsWith('_') || record[key] == null) continue;
-			const reader = slots[key] === undefined ? undefined : record[slots[key]];
-			queue.push(typeof reader === 'function' ? (reader as () => unknown).call(node) : record[key]);
-		}
-	}
-	throw new Error('no node the guard accepts');
+	let found: T | undefined;
+	walkWrappedTree(root, rustSlots, (node) => {
+		if (found === undefined && accepts(node)) found = node;
+	});
+	if (found === undefined) throw new Error('no node the guard accepts');
+	return found;
 }
 
 describe('a rebuilt list keeps the layout of the list it replaces', () => {

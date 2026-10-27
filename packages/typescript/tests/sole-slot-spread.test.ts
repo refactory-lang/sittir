@@ -6,8 +6,8 @@ import typescript from '../src/index.ts';
 import type * as T from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
-const ts = await createEngine(typescript);
-const tsStrict = await createEngine(typescript, { api: 'strict' });
+const ts = await createEngine(typescript, { nodeStorage: 'object' });
+const tsStrict = await createEngine(typescript, { api: 'strict', nodeStorage: 'object' });
 
 const declarator = (name: string, value: string) =>
 	tsStrict.build.variableDeclarator.plain({ name: ts.build.identifier(name), value: ts.build.number(value) });
@@ -57,7 +57,7 @@ describe('statement_block takes its statements positionally and its terminator a
 });
 
 describe('the terminator preference fills only an unset slot', () => {
-	const asiEngine = createEngine(typescript, { render: { statementBlock: { terminator: ts.kinds.AutomaticSemicolon } } } as never);
+	const asiEngine = createEngine(typescript, { nodeStorage: 'object', render: { statementBlock: { terminator: ts.kinds.AutomaticSemicolon } } } as never);
 
 	it('an engine option fills an unset terminator, and a per-call null picks the blank', async () => {
 		const asi = await asiEngine;

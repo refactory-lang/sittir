@@ -638,8 +638,13 @@ export function orDefault<V>(value: V | undefined, make: () => NoInfer<V>): V {
 	return value ?? make();
 }
 
-export function configFieldOr(input: unknown, key: string, orElse: () => unknown): unknown {
-	return input !== null && typeof input === 'object' && !Array.isArray(input) && !isNodeValue(input) && (key in input || Object.keys(input).length === 0)
+export function configFieldOr(input: unknown, key: string, orElse: () => unknown, own: unknown): unknown {
+	return input !== null &&
+		typeof input === 'object' &&
+		!Array.isArray(input) &&
+		!isNodeValue(input) &&
+		(!('$type' in input) || input.$type === own) &&
+		(key in input || Object.keys(input).length === 0)
 		? (input as Record<string, unknown>)[key]
 		: orElse();
 }

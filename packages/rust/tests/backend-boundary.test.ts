@@ -48,7 +48,7 @@ describe('engine render boundary', () => {
 	async function mockedEngine() {
 		const { createEngine } = await import('@sittir/common');
 		const descriptor = (await import('../src/index.ts')).default;
-		return createEngine(descriptor);
+		return createEngine(descriptor, { nodeStorage: 'object' });
 	}
 
 	it('surfaces native render failures instead of silently retrying on TS', async () => {
@@ -184,14 +184,14 @@ describe('engine render boundary', () => {
 		const { createEngine } = await import('@sittir/common');
 		const { treeTokenOf } = await import('@sittir/common/utils');
 		const descriptor = (await import('../src/index.ts')).default;
-		const engine = await createEngine(descriptor);
+		const engine = await createEngine(descriptor, { nodeStorage: 'object' });
 		// engine.render() returns a RenderHandle ({ save, print, toString }),
 		// not a raw string, so the text is its toString().
 		expect(engine.render(engine.build.identifier('x')).toString()).toBe('x');
 		expect(renderSpy).toHaveBeenCalledTimes(1);
 
 		// The native engine behind the descriptor reads raw node data
-		const { root } = (await descriptor.load()).createNative().parseAndRead('x');
+		const { root } = (await descriptor.load()).createNative({ nodeStorage: 'object' }).parseAndRead('x');
 		// and nothing else under a string key but the parse's error regions:
 		// the token that keeps the root's tree live is no data key.
 		const read = root as object;

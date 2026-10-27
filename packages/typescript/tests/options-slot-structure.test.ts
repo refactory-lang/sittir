@@ -8,10 +8,10 @@ describe('a runtime engine holds an options slot to what its storage takes', () 
 	it('refuses a statement passed where the static block takes its options, naming the slot', async () => {
 		const ts = await createEngine(typescript, { verifyStructure: 'runtime' });
 		const tsStrict = await createEngine(typescript, { verifyStructure: 'runtime', api: 'strict' });
-		const statement = tsStrict.build.expressionStatement(ts.build.identifier('x'));
+		const statement = tsStrict.build.expressionStatement(tsStrict.build.identifier('x'));
 		const misordered = tsStrict.build.classStaticBlock as (...args: unknown[]) => unknown;
 		expect(() => misordered({ terminator: ts.kinds.AutomaticSemicolon }, statement)).toThrow('ClassStaticBlock.terminator: takes a kind id of');
-		expect(ts.render(tsStrict.build.classStaticBlock(tsStrict.build.statementBlock(statement))).toString().replace(/\s+/g, ' ')).toContain('static { x; }');
+		expect(tsStrict.render(tsStrict.build.classStaticBlock(tsStrict.build.statementBlock(statement))).toString().replace(/\s+/g, ' ')).toContain('static { x; }');
 	});
 });
 

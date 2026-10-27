@@ -5,7 +5,7 @@ import { createEngine } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
 import scm from '../src/index.ts';
 
-const query = await createEngine(scm);
+const query = await createEngine(scm, { nodeStorage: 'object' });
 
 type Definitions = { readonly _definitions: readonly unknown[] };
 

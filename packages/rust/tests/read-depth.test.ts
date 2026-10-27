@@ -36,19 +36,19 @@ const coordinatesOf = (value: object): NodeCoordinate[] => slotValues(value).fil
 
 describe('read depth', () => {
 	it('leaves children unread by default', async () => {
-		const native = (await rust.load()).createNative();
+		const native = (await rust.load()).createNative({ nodeStorage: 'object' });
 		const { root } = native.parseAndRead(SOURCE);
 		expect(countCoordinates(root)).toBeGreaterThan(0);
 	});
 
 	it('reads every child under { depth: Infinity }', async () => {
-		const native = (await rust.load()).createNative();
+		const native = (await rust.load()).createNative({ nodeStorage: 'object' });
 		const { root } = native.parseAndRead(SOURCE, { depth: Infinity });
 		expect(countCoordinates(root)).toBe(0);
 	});
 
 	it('reads a counted number of levels, each child past them a coordinate that reads again', async () => {
-		const native = (await rust.load()).createNative();
+		const native = (await rust.load()).createNative({ nodeStorage: 'object' });
 		const { root, tree } = native.parseAndRead(SOURCE);
 		const [item] = coordinatesOf(root);
 		const two = readNode(tree as TreeHandle, item!, 2) as AnyUntypedNode;
@@ -63,7 +63,7 @@ describe('read depth', () => {
 	});
 
 	it('reads the root again at the depth asked for, not the depth the parse read it at', async () => {
-		const native = (await rust.load()).createNative();
+		const native = (await rust.load()).createNative({ nodeStorage: 'object' });
 		const { root, tree } = native.parseAndRead(SOURCE);
 		const read = (tree as TreeHandle).read!;
 		expect(read(0)).toBe(root);
@@ -73,7 +73,7 @@ describe('read depth', () => {
 	});
 
 	it('refuses a depth that is not a whole number of levels', async () => {
-		const native = (await rust.load()).createNative();
+		const native = (await rust.load()).createNative({ nodeStorage: 'object' });
 		const { root, tree } = native.parseAndRead(SOURCE);
 		const [item] = coordinatesOf(root);
 		expect(() => readNode(tree as TreeHandle, item!, 0)).toThrow(/whole number of levels/);

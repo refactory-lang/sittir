@@ -6,6 +6,8 @@ const trusting = await createEngine(python);
 const trustingStrict = await createEngine(python, { api: 'strict' });
 const verifying = await createEngine(python, { verifyStructure: 'runtime' });
 const verifyingStrict = await createEngine(python, { verifyStructure: 'runtime', api: 'strict' });
+const trustingObjects = await createEngine(python, { nodeStorage: 'object' });
+const verifyingObjects = await createEngine(python, { verifyStructure: 'runtime', nodeStorage: 'object' });
 
 type Rebuildable = { $render(): string; $with: { decorators(...items: never[]): { $render(): string } } };
 const decorated = (engine: typeof trusting): Rebuildable =>
@@ -31,9 +33,9 @@ describe('verifyStructure', () => {
 	});
 
 	it("refuses a parent that holds a rebuild another engine let through, and trusts an untouched read, in 'runtime' mode", () => {
-		const module = verifying.build.module as unknown as (...statements: unknown[]) => unknown;
-		expect(() => module(decorated(trusting).$with.decorators())).toThrow('decorated_definition.decorators: requires at least one element');
-		expect(() => module(decorated(trusting))).not.toThrow();
+		const module = verifyingObjects.build.module as unknown as (...statements: unknown[]) => unknown;
+		expect(() => module(decorated(trustingObjects).$with.decorators())).toThrow('decorated_definition.decorators: requires at least one element');
+		expect(() => module(decorated(trustingObjects))).not.toThrow();
 	});
 
 	it('renders an untouched parse the same in either mode', () => {

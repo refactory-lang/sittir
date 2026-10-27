@@ -4,10 +4,11 @@ import { createEngine } from '@sittir/common';
 import { Delimiter } from '@sittir/common/utils';
 
 const rs = await createEngine(rust);
+const objects = await createEngine(rust, { nodeStorage: 'object' });
 const { kinds } = rs;
 
-const functionOf = (source: string) => {
-	const item = rs.parse(source).statements()[0]!;
+const functionOf = (source: string, engine: typeof rs = rs) => {
+	const item = engine.parse(source).statements()[0]!;
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
 	return item;
 };
@@ -58,7 +59,7 @@ describe('a parameter branch keeps its ordinary list as a ReadonlyArray of the i
 	});
 
 	it('arrives with its list node already read, so sizing the view reads nothing more', () => {
-		const list = listOf(functionOf('fn f(a: i32, b: i32) {}\n').parameters()) as unknown as Record<string, unknown>;
+		const list = listOf(functionOf('fn f(a: i32, b: i32) {}\n', objects).parameters()) as unknown as Record<string, unknown>;
 		expect(list).not.toHaveProperty('$parentHandle');
 		expect(list._item).toHaveLength(2);
 	});

@@ -17,9 +17,8 @@ const array = (engine: typeof trusting) => engine.build.array as unknown as Stri
 
 describe("verifyStructure: 'runtime' refuses what a builder was not given a place for", () => {
 	it('refuses a config key the kind does not declare, at the call', () => {
-		const value = verifying.build.identifier('a');
-		expect(() => switchCase(verifyingStrict)({ value, body: [] })).toThrow("switch_case: undeclared config key 'body'");
-		expect(() => coerceSwitchCase(verifying)({ value, body: [] })).toThrow("switch_case: undeclared config key 'body'");
+		expect(() => switchCase(verifyingStrict)({ value: verifyingStrict.build.identifier('a'), body: [] })).toThrow("switch_case: undeclared config key 'body'");
+		expect(() => coerceSwitchCase(verifying)({ value: verifying.build.identifier('a'), body: [] })).toThrow("switch_case: undeclared config key 'body'");
 	});
 
 	it('refuses an undeclared key in a config nested in a parent', () => {
@@ -30,18 +29,18 @@ describe("verifyStructure: 'runtime' refuses what a builder was not given a plac
 	});
 
 	it('refuses an absent item in a list the builder takes as rest arguments', () => {
-		const statement = verifyingStrict.build.expressionStatement(verifying.build.identifier('a'));
+		const statement = verifying.build.expressionStatement(verifying.build.identifier('a'));
 		expect(() => block(verifying)(statement, null)).toThrow('statement_block.statements: absent item at index 1');
 		expect(() => block(verifying)(undefined)).toThrow('statement_block.statements: absent item at index 0');
 	});
 
 	it('refuses an absent item in a list held by a config key', () => {
-		const value = verifying.build.identifier('a');
+		const value = verifyingStrict.build.identifier('a');
 		expect(() => switchCase(verifyingStrict)({ value, bodies: [null] })).toThrow('switch_case.bodies: absent item at index 0');
 	});
 
 	it('refuses an absent item behind a leading options argument', () => {
-		const statement = verifyingStrict.build.expressionStatement(verifying.build.identifier('a'));
+		const statement = verifying.build.expressionStatement(verifying.build.identifier('a'));
 		const coerceBlock = verifying.build.statementBlock as unknown as Strict;
 		expect(() => coerceBlock({}, [statement, null])).toThrow('statement_block.statements: absent item at index 1');
 		expect(() => coerceBlock({}, { statements: [statement, null] })).toThrow('statement_block.statements: absent item at index 1');
@@ -53,7 +52,7 @@ describe("verifyStructure: 'runtime' refuses what a builder was not given a plac
 	});
 
 	it('accepts the declared key and a list of built items', () => {
-		const value = verifying.build.identifier('a');
+		const value = verifyingStrict.build.identifier('a');
 		expect(switchCase(verifyingStrict)({ value, bodies: [] }).$render()).toBe('case a:');
 	});
 
@@ -67,7 +66,7 @@ describe("verifyStructure: 'compileTimeOnly' stays silent on the same input", ()
 	it('builds past an undeclared key and an absent item', () => {
 		const value = trusting.build.identifier('a');
 		expect(coerceSwitchCase(trusting)({ value, body: [] }).$render()).toBe('case a:');
-		expect(switchCase(trustingStrict)({ value, bodies: [null] }).$render()).toBe('case a:');
+		expect(switchCase(trustingStrict)({ value: trustingStrict.build.identifier('a'), bodies: [null] }).$render()).toBe('case a:');
 		expect(coerceSwitchBody(trusting)([{ $type: trusting.kinds.SwitchCase, value, body: [] }]).$render()).toBe('{\n  case a:\n}');
 	});
 });

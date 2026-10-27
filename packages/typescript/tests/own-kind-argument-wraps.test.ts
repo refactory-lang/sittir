@@ -26,10 +26,10 @@ describe('an argument of the builder\'s own kind', () => {
 	});
 
 	it('is one element of the child whose elements the builder takes', () => {
-		const inner = tsStrict.build.parenthesizedExpression.sequence(x, ts.build.identifier('y'));
-		expect(inner.$render()).toBe('(x, y)');
-		expect(ts.build.parenthesizedExpression.sequence(inner).$render()).toBe('((x, y))');
-		expect(tsStrict.build.parenthesizedExpression.sequence(inner).$render()).toBe('((x, y))');
+		const strictInner = tsStrict.build.parenthesizedExpression.sequence(tsStrict.build.identifier('x'), tsStrict.build.identifier('y'));
+		expect(strictInner.$render()).toBe('(x, y)');
+		expect(ts.build.parenthesizedExpression.sequence(ts.build.parenthesizedExpression.sequence(x, ts.build.identifier('y'))).$render()).toBe('((x, y))');
+		expect(tsStrict.build.parenthesizedExpression.sequence(strictInner).$render()).toBe('((x, y))');
 	});
 
 	it('is still the elements of a list that cannot hold itself', () => {

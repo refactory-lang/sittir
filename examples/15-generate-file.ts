@@ -2,7 +2,6 @@ import { writeFileSync } from 'node:fs';
 import rust from '@sittir/rust';
 
 const rs = await rust.createEngine();
-const rsStrict = await rust.createEngine({ api: 'strict' });
 
 export function generateCacheModule() {
 	const file = rs.build.sourceFile({
@@ -14,8 +13,8 @@ export function generateCacheModule() {
 			rs.build.statement.function({
 				visibilityModifier: 'pub',
 				name: 'new_cache',
-				parameters: rsStrict.build.parameters(),
-				body: rsStrict.build.block(),
+				parameters: rs.build.parameters(),
+				body: rs.build.block(),
 			}),
 		],
 	});
