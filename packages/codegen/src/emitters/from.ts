@@ -880,7 +880,7 @@ function emitKeywordFrom(node: LeafFromNode): string {
 type KindInterner = (kinds: readonly string[]) => string;
 
 export function transparentEnvelopeTextLeaves(node: AssembledNode, nodeMap: NodeMap): readonly string[] {
-	if (!(node instanceof AssembledEnvelope) || node.modelType !== 'envelope' || !node.surfaceHidden) return [];
+	if (!(node instanceof AssembledEnvelope) || !(node.modelType === 'alias' || (node.modelType === 'envelope' && node.surfaceHidden))) return [];
 	if (node.fromFunctionName === undefined || node.slots.length !== 1) return [];
 	return slotResolverKinds(node.slots[0]!, nodeMap).leafKinds;
 }

@@ -276,6 +276,7 @@ export {
 	buildTypeIdentifier,
 	buildFieldIdentifier,
 	buildCrateVisibilityModifier,
+	buildClosureParameter,
 	buildShorthandFieldIdentifier,
 	buildMethodDeclaration,
 	buildSignatureMethodDeclaration

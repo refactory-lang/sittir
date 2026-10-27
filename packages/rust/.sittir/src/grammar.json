@@ -10284,8 +10284,13 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "_pattern"
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_pattern"
+                },
+                "named": true,
+                "value": "closure_parameter"
               },
               {
                 "type": "SYMBOL",
@@ -10313,8 +10318,13 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "SYMBOL",
-                      "name": "_pattern"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_pattern"
+                      },
+                      "named": true,
+                      "value": "closure_parameter"
                     },
                     {
                       "type": "SYMBOL",

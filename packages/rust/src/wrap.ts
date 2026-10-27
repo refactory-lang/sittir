@@ -4197,7 +4197,7 @@ export function wrapClosureParameters(data: T.ClosureParameters, tree: TreeHandl
 		...data,
 		$type: TSKindId.ClosureParameters as const,
 		parameters() {
-			return hydrateSlots<T.Pattern | T.Parameter>(this, '_parameters', tree);
+			return hydrateSlots<T.ClosureParameter | T.Parameter>(this, '_parameters', tree);
 		},
 		$with: {
 			parameters: (...v: NonNullable<T.ClosureParameters['_parameters']>[number][]) =>
@@ -8977,6 +8977,32 @@ export function wrapFieldIdentifier(data: T.FieldIdentifier, tree: TreeHandle): 
 	return node as unknown as T.FieldIdentifier.Parsed;
 }
 
+export function wrapClosureParameter(data: T.ClosureParameter, tree: TreeHandle): T.ClosureParameter.Parsed {
+	const handle = currentHandle();
+	const node = {
+		...data,
+		$type: TSKindId.ClosureParameter as const,
+		content() {
+			return hydrateSlot<T.Pattern>(this, '_content', tree, contentRole(this, this._content));
+		},
+		$with: {
+			content: (v: NonNullable<T.ClosureParameter['_content']>) =>
+				rebuilt(node, handle, () => wrapClosureParameter({ ...$edited(data), _content: v }, tree))
+		},
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,
+		$snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,
+		$engine: handle && (() => handle.current)
+	};
+	return node as unknown as T.ClosureParameter.Parsed;
+}
+
 export function wrapShorthandFieldIdentifier(
 	data: T.ShorthandFieldIdentifier,
 	tree: TreeHandle
@@ -9462,6 +9488,7 @@ const _wrapTable: Record<number, (data: _UntypedNode, tree: TreeHandle) => unkno
 		wrapParametersElementsReceiverGroup(d as unknown as T.ParametersElementsReceiverGroup, t),
 	[TSKindId.TypeIdentifier]: (d, t) => wrapTypeIdentifier(d as unknown as T.TypeIdentifier, t),
 	[TSKindId.FieldIdentifier]: (d, t) => wrapFieldIdentifier(d as unknown as T.FieldIdentifier, t),
+	[TSKindId.ClosureParameter]: (d, t) => wrapClosureParameter(d as unknown as T.ClosureParameter, t),
 	[TSKindId.ShorthandFieldIdentifier]: (d, t) =>
 		wrapShorthandFieldIdentifier(d as unknown as T.ShorthandFieldIdentifier, t),
 	[TSKindId.MethodDeclaration]: (d, t) => wrapMethodDeclaration(d as unknown as T.MethodDeclaration, t),

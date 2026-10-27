@@ -2034,6 +2034,89 @@
     }
   },
   {
+    "type": "closure_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_literal_pattern",
+          "named": true
+        },
+        {
+          "type": "captured_pattern",
+          "named": true
+        },
+        {
+          "type": "const_block",
+          "named": true
+        },
+        {
+          "type": "generic_pattern",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "macro_invocation",
+          "named": true
+        },
+        {
+          "type": "mut_pattern",
+          "named": true
+        },
+        {
+          "type": "or_pattern",
+          "named": true
+        },
+        {
+          "type": "qualified_identifier",
+          "named": true
+        },
+        {
+          "type": "range_pattern",
+          "named": true
+        },
+        {
+          "type": "ref_pattern",
+          "named": true
+        },
+        {
+          "type": "reference_pattern",
+          "named": true
+        },
+        {
+          "type": "remaining_field_pattern",
+          "named": true
+        },
+        {
+          "type": "slice_pattern",
+          "named": true
+        },
+        {
+          "type": "struct_pattern",
+          "named": true
+        },
+        {
+          "type": "tuple_pattern",
+          "named": true
+        },
+        {
+          "type": "tuple_struct_pattern",
+          "named": true
+        },
+        {
+          "type": "wildcard_pattern",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "closure_parameters",
     "named": true,
     "fields": {
@@ -2042,7 +2125,7 @@
         "required": false,
         "types": [
           {
-            "type": "_pattern",
+            "type": "closure_parameter",
             "named": true
           },
           {

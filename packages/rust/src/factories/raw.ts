@@ -5427,19 +5427,29 @@ function _buildConstBlock(value: Admit<T.Block>): T.ConstBlock.Bound {
 }
 
 export function buildClosureParameters(): T.EmptyClosureParameters;
-export function buildClosureParameters<A extends Admit<(T.Pattern | T.Parameter)[]>>(
-	...children: A & RefuseUndeclared<A>
-): T.ClosureParameters.Bound;
-export function buildClosureParameters(...children: Admit<(T.Pattern | T.Parameter)[]>): T.ClosureParameters.Bound {
+export function buildClosureParameters<
+	A extends Admit<((T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types)[]>
+>(...children: A & RefuseUndeclared<A>): T.ClosureParameters.Bound;
+export function buildClosureParameters(
+	...children: Admit<((T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types)[]>
+): T.ClosureParameters.Bound {
 	currentHandle()?.admit(TSKindId.ClosureParameters, children);
-	const _parameters = children;
+	const _parameters = admitAliasContent<NonNullable<T.ClosureParameters['_parameters']>>(children, [
+		[
+			[
+				332, 333, 147, 148, 149, 150, 145, 146, 117, 118, 141, 142, 143, 144, 162, 330, 1, 263, 315, 316, 318, 319, 324,
+				317, 325, 326, 321, 322, 422, 419, 386, 387, 300, 259, 426
+			],
+			(v: unknown) => buildClosureParameter(v as never)
+		]
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClosureParameters as const,
 		$named: true as const,
 		_parameters,
 		$with: {
-			parameters: (...vs: Admit<T.Pattern | T.Parameter>[]) =>
+			parameters: (...vs: Admit<(T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types>[]) =>
 				rebuilt(node, handle, () => buildClosureParameters(...restItems('parameters', vs)))
 		},
 		parameters: () => hydrateStoredSlots(node, '_parameters'),
@@ -12055,6 +12065,32 @@ export function buildFieldIdentifier(value: Admit<T.Identifier>): T.FieldIdentif
 
 export const buildCrateVisibilityModifier: TSKindId.CrateVisibilityModifier = TSKindId.CrateVisibilityModifier;
 
+export function buildClosureParameter<V extends Admit<T.Pattern>>(
+	value: V & RefuseUndeclared<V>
+): T.ClosureParameter.Bound;
+export function buildClosureParameter(value: Admit<T.Pattern>): T.ClosureParameter.Bound {
+	const _content = kindIdStorage<NonNullable<T.ClosureParameter['_content']>>(value);
+	const handle = currentHandle();
+	const node = {
+		$type: TSKindId.ClosureParameter as const,
+		$named: true as const,
+		_content,
+		$with: {
+			content: (value: Admit<NonNullable<T.Pattern>>) => rebuilt(node, handle, () => buildClosureParameter(value))
+		},
+		content: () => hydrateStoredSlot(node, '_content'),
+		$render: () => renderText(handle, node),
+		toString: () => node.$render(),
+		toJSON: () => nodeJSON(node, jsonFacts),
+		$trivia: {
+			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
+			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
+		},
+		$engine: handle && (() => handle.current)
+	};
+	return stampBuilt(node) as unknown as T.ClosureParameter.Bound;
+}
+
 export function buildShorthandFieldIdentifier<V extends Admit<T.Identifier>>(
 	value: V & RefuseUndeclared<V>
 ): T.ShorthandFieldIdentifier.Bound;
@@ -12556,6 +12592,7 @@ export type FluentKindMap = {
 	type_identifier: T.TypeIdentifier.Bound;
 	field_identifier: T.FieldIdentifier.Bound;
 	crate_visibility_modifier: T.CrateVisibilityModifier;
+	closure_parameter: T.ClosureParameter.Bound;
 	shorthand_field_identifier: T.ShorthandFieldIdentifier.Bound;
 	method_declaration: T.MethodDeclaration.Bound;
 	signature_method_declaration: T.SignatureMethodDeclaration.Bound;
@@ -12834,6 +12871,7 @@ export const _factoryMap = {
 	type_identifier: buildTypeIdentifier,
 	field_identifier: buildFieldIdentifier,
 	crate_visibility_modifier: buildCrateVisibilityModifier,
+	closure_parameter: buildClosureParameter,
 	shorthand_field_identifier: buildShorthandFieldIdentifier,
 	method_declaration: buildMethodDeclaration,
 	signature_method_declaration: buildSignatureMethodDeclaration

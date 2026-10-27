@@ -530,6 +530,8 @@ pub enum AnyNode {
     TypeIdentifier(TypeIdentifierNode),
     #[kind(kind::_FIELD_IDENTIFIER, display)]
     FieldIdentifier(FieldIdentifierNode),
+    #[kind(kind::_CLOSURE_PARAMETER, display)]
+    ClosureParameter(ClosureParameterNode),
     #[kind(kind::_SHORTHAND_FIELD_IDENTIFIER, display)]
     ShorthandFieldIdentifier(ShorthandFieldIdentifierNode),
     #[kind(display(kind::_METHOD_DECLARATION))]
@@ -1112,6 +1114,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.prepare(ctx),
             AnyNode::TypeIdentifier(t) => t.prepare(ctx),
             AnyNode::FieldIdentifier(t) => t.prepare(ctx),
+            AnyNode::ClosureParameter(t) => t.prepare(ctx),
             AnyNode::ShorthandFieldIdentifier(t) => t.prepare(ctx),
             AnyNode::MethodDeclaration(t) => t.prepare(ctx),
             AnyNode::SignatureMethodDeclaration(t) => t.prepare(ctx),
@@ -1526,6 +1529,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.gap_edges(),
             AnyNode::TypeIdentifier(t) => t.gap_edges(),
             AnyNode::FieldIdentifier(t) => t.gap_edges(),
+            AnyNode::ClosureParameter(t) => t.gap_edges(),
             AnyNode::ShorthandFieldIdentifier(t) => t.gap_edges(),
             AnyNode::MethodDeclaration(t) => t.gap_edges(),
             AnyNode::SignatureMethodDeclaration(t) => t.gap_edges(),
@@ -1940,6 +1944,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.snapshot_edge(),
             AnyNode::TypeIdentifier(t) => t.snapshot_edge(),
             AnyNode::FieldIdentifier(t) => t.snapshot_edge(),
+            AnyNode::ClosureParameter(t) => t.snapshot_edge(),
             AnyNode::ShorthandFieldIdentifier(t) => t.snapshot_edge(),
             AnyNode::MethodDeclaration(t) => t.snapshot_edge(),
             AnyNode::SignatureMethodDeclaration(t) => t.snapshot_edge(),
@@ -2354,6 +2359,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.source_coordinate(),
             AnyNode::TypeIdentifier(t) => t.source_coordinate(),
             AnyNode::FieldIdentifier(t) => t.source_coordinate(),
+            AnyNode::ClosureParameter(t) => t.source_coordinate(),
             AnyNode::ShorthandFieldIdentifier(t) => t.source_coordinate(),
             AnyNode::MethodDeclaration(t) => t.source_coordinate(),
             AnyNode::SignatureMethodDeclaration(t) => t.source_coordinate(),
@@ -2768,6 +2774,7 @@ impl ::sittir_core::prepare::Prepare for AnyNode {
             AnyNode::ErrorSentinel(t) => t.source_separator(ctx),
             AnyNode::TypeIdentifier(t) => t.source_separator(ctx),
             AnyNode::FieldIdentifier(t) => t.source_separator(ctx),
+            AnyNode::ClosureParameter(t) => t.source_separator(ctx),
             AnyNode::ShorthandFieldIdentifier(t) => t.source_separator(ctx),
             AnyNode::MethodDeclaration(t) => t.source_separator(ctx),
             AnyNode::SignatureMethodDeclaration(t) => t.source_separator(ctx),
@@ -7105,7 +7112,7 @@ impl ::sittir_core::view::KindOf for AttributePathNodeSlot {
             Self::Metavariable(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
@@ -8050,7 +8057,7 @@ impl ::sittir_core::view::KindOf for UseDeclarationArgumentNodeSlot {
             Self::UseList(inner) => inner.kind_in(kinds),
             Self::ScopedUseList(inner) => inner.kind_in(kinds),
             Self::UseWildcard(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
@@ -8188,7 +8195,7 @@ impl ::sittir_core::view::KindOf for VisibilityModifierContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::VisibilityModifierPub(inner) => inner.kind_in(kinds),
-            Self::CrateVisibilityModifier => [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k)),
+            Self::CrateVisibilityModifier => [::sittir_core::types::KindId(474)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -9318,7 +9325,7 @@ impl ::sittir_core::view::KindOf for ScopedIdentifierQualifierNodeSlot {
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::BracketedType(inner) => inner.kind_in(kinds),
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
@@ -9511,7 +9518,7 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierInExpressionPositionQua
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
@@ -9646,7 +9653,7 @@ impl ::sittir_core::view::KindOf for ScopedTypeIdentifierQualifierNodeSlot {
             Self::GenericTypeWithTurbofish(inner) => inner.kind_in(kinds),
             Self::BracketedType(inner) => inner.kind_in(kinds),
             Self::GenericType(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1)].iter().any(|k| kinds.contains(k)),
@@ -12692,281 +12699,41 @@ impl ::sittir_core::render::Render for LastMatchArmTrailingCommaNodeSlot {
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(choice, stamp = stamp)]
 pub enum ClosureParametersParametersNodeSlot {
-    #[kind(kind::STRING_LITERAL)]
-    StringLiteral(StringLiteralNode),
-    #[kind(kind::RAW_STRING_LITERAL)]
-    RawStringLiteral(RawStringLiteralNode),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_SIMPLE)]
-    CharLiteralEscapedSimple(CharLiteralEscapedSimpleNode),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_FIXED)]
-    CharLiteralEscapedUnicodeFixed(CharLiteralEscapedUnicodeFixedNode),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_UNICODE_BRACED)]
-    CharLiteralEscapedUnicodeBraced(CharLiteralEscapedUnicodeBracedNode),
-    #[kind(kind::CHAR_LITERAL_ESCAPED_HEX)]
-    CharLiteralEscapedHex(CharLiteralEscapedHexNode),
-    #[kind(kind::CHAR_LITERAL_PLAIN)]
-    CharLiteralPlain(CharLiteralPlainNode),
-    #[kind(kind::CHAR_LITERAL_EMPTY)]
-    CharLiteralEmpty(CharLiteralEmptyNode),
-    #[kind(kind::BOOLEAN_LITERAL, kind::TRUE_KEYWORD, kind::FALSE_KEYWORD)]
-    BooleanLiteral(BooleanLiteralEnum),
-    #[kind(kind::INTEGER_LITERAL_DECIMAL)]
-    IntegerLiteralDecimal(IntegerLiteralDecimalNode),
-    #[kind(kind::INTEGER_LITERAL_HEX)]
-    IntegerLiteralHex(IntegerLiteralHexNode),
-    #[kind(kind::INTEGER_LITERAL_BINARY)]
-    IntegerLiteralBinary(IntegerLiteralBinaryNode),
-    #[kind(kind::INTEGER_LITERAL_OCTAL)]
-    IntegerLiteralOctal(IntegerLiteralOctalNode),
-    #[kind(kind::FLOAT_LITERAL)]
-    FloatLiteral(FloatLiteralNode),
-    #[kind(kind::NEGATIVE_LITERAL)]
-    NegativeLiteral(NegativeLiteralNode),
-    #[kind(kind::IDENTIFIER, folded(kind::DEFAULT_KEYWORD), folded(kind::UNION_KEYWORD), folded(kind::GEN_KEYWORD), folded(kind::RAW_KEYWORD), folded(kind::U8_KEYWORD), folded(kind::I8_KEYWORD), folded(kind::U16_KEYWORD), folded(kind::I16_KEYWORD), folded(kind::U32_KEYWORD), folded(kind::I32_KEYWORD), folded(kind::U64_KEYWORD), folded(kind::I64_KEYWORD), folded(kind::U128_KEYWORD), folded(kind::I128_KEYWORD), folded(kind::ISIZE_KEYWORD), folded(kind::USIZE_KEYWORD), folded(kind::F32_KEYWORD), folded(kind::F64_KEYWORD), folded(kind::BOOL_KEYWORD), folded(kind::STR_KEYWORD), folded(kind::CHAR_KEYWORD))]
-    Identifier(IdentifierNode),
-    #[kind(kind::SCOPED_IDENTIFIER)]
-    ScopedIdentifier(ScopedIdentifierNode),
-    #[kind(kind::GENERIC_PATTERN)]
-    GenericPattern(GenericPatternNode),
-    #[kind(kind::TUPLE_PATTERN)]
-    TuplePattern(TuplePatternNode),
-    #[kind(kind::TUPLE_STRUCT_PATTERN)]
-    TupleStructPattern(TupleStructPatternNode),
-    #[kind(kind::STRUCT_PATTERN)]
-    StructPattern(StructPatternNode),
-    #[kind(kind::REF_PATTERN)]
-    RefPattern(RefPatternNode),
-    #[kind(kind::SLICE_PATTERN)]
-    SlicePattern(SlicePatternNode),
-    #[kind(kind::CAPTURED_PATTERN)]
-    CapturedPattern(CapturedPatternNode),
-    #[kind(kind::REFERENCE_PATTERN)]
-    ReferencePattern(ReferencePatternNode),
-    #[kind(kind::MUT_PATTERN)]
-    MutPattern(MutPatternNode),
-    #[kind(kind::RANGE_PATTERN_WITH_LEFT)]
-    RangePatternWithLeft(RangePatternWithLeftNode),
-    #[kind(kind::RANGE_PATTERN_PREFIX)]
-    RangePatternPrefix(RangePatternPrefixNode),
-    #[kind(kind::OR_PATTERN_BINARY)]
-    OrPatternBinary(OrPatternBinaryNode),
-    #[kind(kind::OR_PATTERN_PREFIX)]
-    OrPatternPrefix(OrPatternPrefixNode),
-    #[kind(kind::CONST_BLOCK)]
-    ConstBlock(ConstBlockNode),
-    #[kind(kind::MACRO_INVOCATION)]
-    MacroInvocation(MacroInvocationNode),
+    #[kind(kind::_CLOSURE_PARAMETER, display)]
+    ClosureParameter(ClosureParameterNode),
     #[kind(kind::PARAMETER)]
     Parameter(Box<ParameterNode>),
-    #[kind(kind::REMAINING_FIELD_PATTERN)]
-    #[node(edged)]
-    RemainingFieldPattern(::sittir_core::options::Edges),
-    #[kind(kind::_WILDCARD_PATTERN)]
-    #[node(edged)]
-    WildcardPattern(::sittir_core::options::Edges),
-    #[node(verbatim)]
-    Verbatim(VerbatimNode),
 }
 
 impl ::sittir_core::prepare::Prepare for ClosureParametersParametersNodeSlot {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         match self {
-            ClosureParametersParametersNodeSlot::StringLiteral(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::RawStringLiteral(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralPlain(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEmpty(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::BooleanLiteral(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralHex(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::FloatLiteral(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::NegativeLiteral(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::Identifier(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::ScopedIdentifier(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::GenericPattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::TuplePattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::TupleStructPattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::StructPattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::RefPattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::SlicePattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::CapturedPattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::ReferencePattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::MutPattern(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::RangePatternWithLeft(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::RangePatternPrefix(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::OrPatternBinary(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::OrPatternPrefix(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::ConstBlock(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::MacroInvocation(t) => t.prepare(ctx),
+            ClosureParametersParametersNodeSlot::ClosureParameter(t) => t.prepare(ctx),
             ClosureParametersParametersNodeSlot::Parameter(t) => t.prepare(ctx),
-            ClosureParametersParametersNodeSlot::RemainingFieldPattern(_) => Ok(()),
-            ClosureParametersParametersNodeSlot::WildcardPattern(_) => Ok(()),
-            ClosureParametersParametersNodeSlot::Verbatim(t) => t.prepare(ctx),
         }
     }
     fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
         match self {
-            ClosureParametersParametersNodeSlot::StringLiteral(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::RawStringLiteral(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CharLiteralPlain(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CharLiteralEmpty(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::BooleanLiteral(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralHex(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::FloatLiteral(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::NegativeLiteral(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::Identifier(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::ScopedIdentifier(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::GenericPattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::TuplePattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::TupleStructPattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::StructPattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::RefPattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::SlicePattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::CapturedPattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::ReferencePattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::MutPattern(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::RangePatternWithLeft(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::RangePatternPrefix(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::OrPatternBinary(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::OrPatternPrefix(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::ConstBlock(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::MacroInvocation(t) => t.gap_edges(),
+            ClosureParametersParametersNodeSlot::ClosureParameter(t) => t.gap_edges(),
             ClosureParametersParametersNodeSlot::Parameter(t) => t.gap_edges(),
-            ClosureParametersParametersNodeSlot::RemainingFieldPattern(edges) => Some(edges),
-            ClosureParametersParametersNodeSlot::WildcardPattern(edges) => Some(edges),
-            ClosureParametersParametersNodeSlot::Verbatim(t) => t.gap_edges(),
         }
     }
     fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
         match self {
-            ClosureParametersParametersNodeSlot::StringLiteral(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::RawStringLiteral(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CharLiteralPlain(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CharLiteralEmpty(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::BooleanLiteral(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralHex(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::FloatLiteral(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::NegativeLiteral(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::Identifier(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::ScopedIdentifier(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::GenericPattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::TuplePattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::TupleStructPattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::StructPattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::RefPattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::SlicePattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::CapturedPattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::ReferencePattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::MutPattern(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::RangePatternWithLeft(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::RangePatternPrefix(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::OrPatternBinary(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::OrPatternPrefix(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::ConstBlock(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::MacroInvocation(t) => t.snapshot_edge(),
+            ClosureParametersParametersNodeSlot::ClosureParameter(t) => t.snapshot_edge(),
             ClosureParametersParametersNodeSlot::Parameter(t) => t.snapshot_edge(),
-            ClosureParametersParametersNodeSlot::RemainingFieldPattern(_) => None,
-            ClosureParametersParametersNodeSlot::WildcardPattern(_) => None,
-            ClosureParametersParametersNodeSlot::Verbatim(t) => t.snapshot_edge(),
         }
     }
     fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
         match self {
-            ClosureParametersParametersNodeSlot::StringLiteral(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::RawStringLiteral(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CharLiteralPlain(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CharLiteralEmpty(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::BooleanLiteral(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralHex(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::FloatLiteral(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::NegativeLiteral(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::Identifier(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::ScopedIdentifier(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::GenericPattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::TuplePattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::TupleStructPattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::StructPattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::RefPattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::SlicePattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::CapturedPattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::ReferencePattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::MutPattern(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::RangePatternWithLeft(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::RangePatternPrefix(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::OrPatternBinary(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::OrPatternPrefix(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::ConstBlock(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::MacroInvocation(t) => t.source_coordinate(),
+            ClosureParametersParametersNodeSlot::ClosureParameter(t) => t.source_coordinate(),
             ClosureParametersParametersNodeSlot::Parameter(t) => t.source_coordinate(),
-            ClosureParametersParametersNodeSlot::RemainingFieldPattern(_) => None,
-            ClosureParametersParametersNodeSlot::WildcardPattern(_) => None,
-            ClosureParametersParametersNodeSlot::Verbatim(t) => t.source_coordinate(),
         }
     }
     fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
         match self {
-            ClosureParametersParametersNodeSlot::StringLiteral(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::RawStringLiteral(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralPlain(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CharLiteralEmpty(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::BooleanLiteral(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralHex(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::FloatLiteral(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::NegativeLiteral(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::Identifier(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::ScopedIdentifier(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::GenericPattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::TuplePattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::TupleStructPattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::StructPattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::RefPattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::SlicePattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::CapturedPattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::ReferencePattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::MutPattern(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::RangePatternWithLeft(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::RangePatternPrefix(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::OrPatternBinary(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::OrPatternPrefix(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::ConstBlock(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::MacroInvocation(t) => t.source_separator(ctx),
+            ClosureParametersParametersNodeSlot::ClosureParameter(t) => t.source_separator(ctx),
             ClosureParametersParametersNodeSlot::Parameter(t) => t.source_separator(ctx),
-            ClosureParametersParametersNodeSlot::RemainingFieldPattern(_) => None,
-            ClosureParametersParametersNodeSlot::WildcardPattern(_) => None,
-            ClosureParametersParametersNodeSlot::Verbatim(t) => t.source_separator(ctx),
         }
     }
     fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
@@ -12977,42 +12744,8 @@ impl ::sittir_core::prepare::Prepare for ClosureParametersParametersNodeSlot {
 impl ::sittir_core::view::KindOf for ClosureParametersParametersNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
-            Self::StringLiteral(inner) => inner.kind_in(kinds),
-            Self::RawStringLiteral(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedSimple(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedUnicodeFixed(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedUnicodeBraced(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEscapedHex(inner) => inner.kind_in(kinds),
-            Self::CharLiteralPlain(inner) => inner.kind_in(kinds),
-            Self::CharLiteralEmpty(inner) => inner.kind_in(kinds),
-            Self::BooleanLiteral(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralDecimal(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralHex(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralBinary(inner) => inner.kind_in(kinds),
-            Self::IntegerLiteralOctal(inner) => inner.kind_in(kinds),
-            Self::FloatLiteral(inner) => inner.kind_in(kinds),
-            Self::NegativeLiteral(inner) => inner.kind_in(kinds),
-            Self::Identifier(inner) => inner.kind_in(kinds),
-            Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
-            Self::GenericPattern(inner) => inner.kind_in(kinds),
-            Self::TuplePattern(inner) => inner.kind_in(kinds),
-            Self::TupleStructPattern(inner) => inner.kind_in(kinds),
-            Self::StructPattern(inner) => inner.kind_in(kinds),
-            Self::RefPattern(inner) => inner.kind_in(kinds),
-            Self::SlicePattern(inner) => inner.kind_in(kinds),
-            Self::CapturedPattern(inner) => inner.kind_in(kinds),
-            Self::ReferencePattern(inner) => inner.kind_in(kinds),
-            Self::MutPattern(inner) => inner.kind_in(kinds),
-            Self::RangePatternWithLeft(inner) => inner.kind_in(kinds),
-            Self::RangePatternPrefix(inner) => inner.kind_in(kinds),
-            Self::OrPatternBinary(inner) => inner.kind_in(kinds),
-            Self::OrPatternPrefix(inner) => inner.kind_in(kinds),
-            Self::ConstBlock(inner) => inner.kind_in(kinds),
-            Self::MacroInvocation(inner) => inner.kind_in(kinds),
+            Self::ClosureParameter(inner) => inner.kind_in(kinds),
             Self::Parameter(inner) => inner.kind_in(kinds),
-            Self::RemainingFieldPattern(_) => [::sittir_core::types::KindId(321)].iter().any(|k| kinds.contains(k)),
-            Self::WildcardPattern(_) => [::sittir_core::types::KindId(426)].iter().any(|k| kinds.contains(k)),
-            Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
         }
     }
 }
@@ -13020,42 +12753,8 @@ impl ::sittir_core::view::KindOf for ClosureParametersParametersNodeSlot {
 impl ::sittir_core::render::Render for ClosureParametersParametersNodeSlot {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
         match self {
-            ClosureParametersParametersNodeSlot::StringLiteral(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::RawStringLiteral(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedSimple(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeFixed(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedUnicodeBraced(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CharLiteralEscapedHex(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CharLiteralPlain(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CharLiteralEmpty(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::BooleanLiteral(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::IntegerLiteralDecimal(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::IntegerLiteralHex(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::IntegerLiteralBinary(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::IntegerLiteralOctal(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::FloatLiteral(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::NegativeLiteral(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::Identifier(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::ScopedIdentifier(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::GenericPattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::TuplePattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::TupleStructPattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::StructPattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::RefPattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::SlicePattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::CapturedPattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::ReferencePattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::MutPattern(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::RangePatternWithLeft(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::RangePatternPrefix(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::OrPatternBinary(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::OrPatternPrefix(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::ConstBlock(inner) => inner.render(w),
-            ClosureParametersParametersNodeSlot::MacroInvocation(inner) => inner.render(w),
+            ClosureParametersParametersNodeSlot::ClosureParameter(inner) => inner.render(w),
             ClosureParametersParametersNodeSlot::Parameter(inner) => inner.as_ref().render(w),
-            ClosureParametersParametersNodeSlot::RemainingFieldPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(321), edges, w, render_remaining_field_pattern),
-            ClosureParametersParametersNodeSlot::WildcardPattern(edges) => ::sittir_core::render::render_edged(::sittir_core::types::KindId(426), edges, w, render_wildcard_pattern),
-            ClosureParametersParametersNodeSlot::Verbatim(inner) => inner.render(w),
         }
     }
 }
@@ -15052,7 +14751,7 @@ impl ::sittir_core::view::KindOf for VisibilityModifierPubScopeContentNodeSlot {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
         match self {
             Self::VisibilityModifierPubScopeInPath(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
         }
@@ -15556,7 +15255,7 @@ impl ::sittir_core::view::KindOf for RangePatternPrefixRightNodeSlot {
             Self::Metavariable(inner) => inner.kind_in(kinds),
             Self::Identifier(inner) => inner.kind_in(kinds),
             Self::ScopedIdentifier(inner) => inner.kind_in(kinds),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
             Self::Super(_) => [::sittir_core::types::KindId(126)].iter().any(|k| kinds.contains(k)),
             Self::Crate(_) => [::sittir_core::types::KindId(127)].iter().any(|k| kinds.contains(k)),
             Self::Verbatim(_) => [::sittir_core::types::KindId(1), ::sittir_core::types::KindId(146), ::sittir_core::types::KindId(162)].iter().any(|k| kinds.contains(k)),
@@ -31986,7 +31685,7 @@ pub enum SelfModuleNode {
 
 impl ::sittir_core::view::KindOf for SelfModuleNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32017,19 +31716,19 @@ pub struct TypeIdentifierNode {
 
 impl ::sittir_core::view::KindOf for TypeIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(480)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(481)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for TypeIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(480) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(481) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for TypeIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(480)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(481)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_type_identifier(self, w))
     }
 }
 
@@ -32068,19 +31767,19 @@ pub struct FieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for FieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(474)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(475)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for FieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(474) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(475) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for FieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(474)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(475)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_field_identifier(self, w))
     }
 }
 
@@ -32116,7 +31815,7 @@ pub enum CrateVisibilityModifierNode {
 
 impl ::sittir_core::view::KindOf for CrateVisibilityModifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(474)].iter().any(|k| kinds.contains(k))
     }
 }
 
@@ -32136,6 +31835,57 @@ impl ::sittir_core::render::Render for CrateVisibilityModifierNode {
 }
 
 #[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
+#[node(kind = kind::_CLOSURE_PARAMETER, display, content = content, wraps_hidden, words = 7)]
+pub struct ClosureParameterNode {
+    #[wire(key = "$_layout")]
+    pub layout: Option<Box<NodeLayout>>,
+    #[wire(key = "_content")]
+    #[slot(word = 2, width = 5)]
+    pub content: ::sittir_core::SlotValue<PatternNode>,
+}
+
+impl ::sittir_core::view::KindOf for ClosureParameterNode {
+    fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
+        [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k))
+    }
+}
+
+impl ::sittir_core::options::Edged for ClosureParameterNode {
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(473) }
+    fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
+    fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
+}
+
+impl ::sittir_core::render::Render for ClosureParameterNode {
+    fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_closure_parameter(self, w))
+    }
+}
+
+impl ::sittir_core::prepare::Prepare for ClosureParameterNode {
+    fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
+        self.layout.prepare(ctx)?;
+        self.content.prepare(ctx)?;
+        Ok(())
+    }
+    fn gap_edges(&mut self) -> Option<&mut ::sittir_core::options::Edges> {
+        Some(self.layout.edges_mut())
+    }
+    fn source_separator(&self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<::sittir_core::types::KindId> {
+        ::sittir_core::layout::source_separator(self.layout.as_deref(), ctx)
+    }
+    fn snapshot_edge(&self) -> Option<::sittir_core::prepare::SnapshotEdge> {
+        ::sittir_core::layout::Layout::snapshot_edge(&self.layout)
+    }
+    fn source_coordinate(&self) -> Option<&::sittir_core::slot::NodeCoordinate> {
+        ::sittir_core::layout::Layout::source_coordinate(&self.layout)
+    }
+    fn read_coordinate(tree: &::tree_sitter::Tree, ctx: &::sittir_core::read::ReadCtx<'_>, index: ::sittir_core::types::NodeIndex) -> Option<Result<Self, ::sittir_core::read::ReadError>> {
+        Some(::sittir_core::read::read_coordinate(tree, ctx, index))
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, ::sittir_core::Node)]
 #[node(kind = kind::_SHORTHAND_FIELD_IDENTIFIER, display, content = content, words = 7)]
 pub struct ShorthandFieldIdentifierNode {
     #[wire(key = "$_layout")]
@@ -32147,19 +31897,19 @@ pub struct ShorthandFieldIdentifierNode {
 
 impl ::sittir_core::view::KindOf for ShorthandFieldIdentifierNode {
     fn kind_in(&self, kinds: &[::sittir_core::types::KindId]) -> bool {
-        [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k))
+        [::sittir_core::types::KindId(479)].iter().any(|k| kinds.contains(k))
     }
 }
 
 impl ::sittir_core::options::Edged for ShorthandFieldIdentifierNode {
-    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(478) }
+    fn kind_id(&self) -> ::sittir_core::types::KindId { ::sittir_core::types::KindId(479) }
     fn edges(&self) -> &::sittir_core::options::Edges { self.layout.edges() }
     fn edges_mut(&mut self) -> &mut ::sittir_core::options::Edges { self.layout.edges_mut() }
 }
 
 impl ::sittir_core::render::Render for ShorthandFieldIdentifierNode {
     fn render(&self, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(478)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
+        NodeLayout::render(self.layout.as_deref(), Some(::sittir_core::types::KindId(479)), ::sittir_core::layout::TriviaRole::Owner, w, |w| render_shorthand_field_identifier(self, w))
     }
 }
 
@@ -38005,29 +37755,8 @@ impl ::sittir_core::prepare::SeatTarget for LastMatchArmAttributesNodeSlot {
 impl ::sittir_core::prepare::SeatTarget for ClosureParametersParametersNodeSlot {
     fn seat_target(&mut self, table: &[Option<::sittir_core::types::SiteId>], ctx: &::sittir_core::prepare::RenderContext<'_>) -> Option<(&mut ::sittir_core::options::Edges, ::sittir_core::types::SiteId)> {
         match self {
-            Self::StringLiteral(t) => t.seat_target(table, ctx),
-            Self::RawStringLiteral(t) => t.seat_target(table, ctx),
-            Self::NegativeLiteral(t) => t.seat_target(table, ctx),
-            Self::ScopedIdentifier(t) => t.seat_target(table, ctx),
-            Self::GenericPattern(t) => t.seat_target(table, ctx),
-            Self::TuplePattern(t) => t.seat_target(table, ctx),
-            Self::TupleStructPattern(t) => t.seat_target(table, ctx),
-            Self::StructPattern(t) => t.seat_target(table, ctx),
-            Self::RefPattern(t) => t.seat_target(table, ctx),
-            Self::SlicePattern(t) => t.seat_target(table, ctx),
-            Self::CapturedPattern(t) => t.seat_target(table, ctx),
-            Self::ReferencePattern(t) => t.seat_target(table, ctx),
-            Self::RemainingFieldPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(321)).map(|site| (edges, site)),
-            Self::MutPattern(t) => t.seat_target(table, ctx),
-            Self::RangePatternWithLeft(t) => t.seat_target(table, ctx),
-            Self::RangePatternPrefix(t) => t.seat_target(table, ctx),
-            Self::OrPatternBinary(t) => t.seat_target(table, ctx),
-            Self::OrPatternPrefix(t) => t.seat_target(table, ctx),
-            Self::ConstBlock(t) => t.seat_target(table, ctx),
-            Self::MacroInvocation(t) => t.seat_target(table, ctx),
-            Self::WildcardPattern(edges) => ::sittir_core::prepare::seat_site(table, ::sittir_core::types::KindId(426)).map(|site| (edges, site)),
             Self::Parameter(t) => t.seat_target(table, ctx),
-            Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::BooleanLiteral { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::FloatLiteral { .. } | Self::Identifier { .. } | Self::Verbatim { .. } => None,
+            Self::ClosureParameter { .. } => None,
         }
     }
 }
@@ -38440,7 +38169,7 @@ impl ::sittir_core::prepare::SeatTarget for AnyNode {
             Self::AttributedArgument(t) => t.seat_target(table, ctx),
             Self::AttributedOrderedField(t) => t.seat_target(table, ctx),
             Self::TypeArgument(t) => t.seat_target(table, ctx),
-            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::TraitInterfaceDeclarationBody { .. } | Self::ExtensionDeclarationBody { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MethodDeclaration { .. } | Self::SignatureMethodDeclaration { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::SelfModule { .. } | Self::CrateVisibilityModifier { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
+            Self::SourceFile { .. } | Self::FragmentSpecifier { .. } | Self::Attribute { .. } | Self::DeclarationList { .. } | Self::EnumVariantList { .. } | Self::EnumVariant { .. } | Self::FieldDeclarationList { .. } | Self::FieldDeclaration { .. } | Self::OrderedFieldDeclarationList { .. } | Self::FunctionModifiers { .. } | Self::WhereClause { .. } | Self::TraitBounds { .. } | Self::TypeParameters { .. } | Self::ConstParameter { .. } | Self::TypeParameter { .. } | Self::LifetimeParameter { .. } | Self::Parameters { .. } | Self::SelfParameter { .. } | Self::VariadicParameter { .. } | Self::VisibilityModifier { .. } | Self::BracketedType { .. } | Self::QualifiedType { .. } | Self::ForLifetimes { .. } | Self::GenericTypeWithTurbofish { .. } | Self::UseBounds { .. } | Self::TypeArguments { .. } | Self::TypeBinding { .. } | Self::ScopedTypeIdentifierInExpressionPosition { .. } | Self::Arguments { .. } | Self::FieldInitializerList { .. } | Self::LetChain { .. } | Self::ElseClause { .. } | Self::MatchBlock { .. } | Self::LastMatchArm { .. } | Self::MatchPattern { .. } | Self::ClosureParameters { .. } | Self::Label { .. } | Self::BooleanLiteral { .. } | Self::LineComment { .. } | Self::BlockComment { .. } | Self::Identifier { .. } | Self::Shebang { .. } | Self::Metavariable { .. } | Self::PrimitiveType { .. } | Self::MacroRules { .. } | Self::EnumVariantListElements { .. } | Self::FieldDeclarationListElements { .. } | Self::OrderedFieldDeclarationListElements { .. } | Self::WherePredicates { .. } | Self::TypeParametersElements { .. } | Self::UseClauses { .. } | Self::ParametersElements { .. } | Self::Lifetimes { .. } | Self::Types { .. } | Self::UseBoundsElements { .. } | Self::TypeArgumentsElements { .. } | Self::ArgumentsElements { .. } | Self::Expressions { .. } | Self::FieldInitializerListElements { .. } | Self::TuplePatternElements { .. } | Self::Patterns { .. } | Self::StructPatternElements { .. } | Self::UseWildcardGroup { .. } | Self::TokenRepetitionPatternText { .. } | Self::StringOpen { .. } | Self::TokenTreePunctuation { .. } | Self::TokenKeywords { .. } | Self::IntegerLiteralDecimal { .. } | Self::IntegerLiteralHex { .. } | Self::IntegerLiteralBinary { .. } | Self::IntegerLiteralOctal { .. } | Self::CharLiteralPlain { .. } | Self::CharLiteralEmpty { .. } | Self::CharLiteralEscapedSimple { .. } | Self::CharLiteralEscapedUnicodeFixed { .. } | Self::CharLiteralEscapedUnicodeBraced { .. } | Self::CharLiteralEscapedHex { .. } | Self::EscapeSequenceSimple { .. } | Self::EscapeSequenceUnicodeFixed { .. } | Self::EscapeSequenceUnicodeBraced { .. } | Self::EscapeSequenceHex { .. } | Self::ImplItemPositiveClause { .. } | Self::ImplItemNegativeClause { .. } | Self::VisibilityModifierPub { .. } | Self::FunctionTypeTraitForm { .. } | Self::FunctionTypeFnForm { .. } | Self::RangeExpressionBare { .. } | Self::LineCommentExtraSlashes { .. } | Self::LineCommentDocOuter { .. } | Self::LineCommentDocInner { .. } | Self::LineCommentRegular { .. } | Self::BlockCommentDocOuter { .. } | Self::BlockCommentDocInner { .. } | Self::BlockCommentRegular { .. } | Self::RangePatternWithLeftWithRight { .. } | Self::MatchBlockArms { .. } | Self::FloatLiteral { .. } | Self::StringContent { .. } | Self::RawStringLiteralContent { .. } | Self::RawStringLiteralStart { .. } | Self::RawStringLiteralEnd { .. } | Self::DocComment { .. } | Self::BlockCommentContent { .. } | Self::TraitInterfaceDeclarationBody { .. } | Self::ExtensionDeclarationBody { .. } | Self::ReceiverParameterDeclaration { .. } | Self::AttributedParameterReceiver { .. } | Self::ParametersElementsReceiver { .. } | Self::ParametersElementsReceiverGroup { .. } | Self::StringClose { .. } | Self::ErrorSentinel { .. } | Self::TypeIdentifier { .. } | Self::FieldIdentifier { .. } | Self::ClosureParameter { .. } | Self::ShorthandFieldIdentifier { .. } | Self::MethodDeclaration { .. } | Self::SignatureMethodDeclaration { .. } | Self::MutableSpecifier { .. } | Self::InnerLineDocCommentMarker { .. } | Self::OuterLineDocCommentMarker { .. } | Self::_RangeExpressionBare { .. } | Self::ImplItemUnsafeMarker { .. } | Self::RangePatternWithLeftBare { .. } | Self::OuterDocCommentMarker { .. } | Self::InnerDocCommentMarker { .. } | Self::Tight { .. } | Self::Space { .. } | Self::Tab { .. } | Self::Newline { .. } | Self::Blankline { .. } | Self::DoubleBlankline { .. } | Self::Indent { .. } | Self::Dedent { .. } | Self::SelfModule { .. } | Self::CrateVisibilityModifier { .. } | Self::Semi { .. } | Self::EqGt { .. } | Self::Colon { .. } | Self::Dollar { .. } | Self::Lparen { .. } | Self::Rparen { .. } | Self::Plus { .. } | Self::Star { .. } | Self::Qmark { .. } | Self::BlockKeyword { .. } | Self::ExprKeyword { .. } | Self::Expr2021Keyword { .. } | Self::IdentKeyword { .. } | Self::ItemKeyword { .. } | Self::LifetimeKeyword { .. } | Self::LiteralKeyword { .. } | Self::MetaKeyword { .. } | Self::PatKeyword { .. } | Self::PatParamKeyword { .. } | Self::PathKeyword { .. } | Self::StmtKeyword { .. } | Self::TtKeyword { .. } | Self::TyKeyword { .. } | Self::VisKeyword { .. } | Self::Pound { .. } | Self::Lbrack { .. } | Self::Rbrack { .. } | Self::Bang { .. } | Self::Lbrace { .. } | Self::Rbrace { .. } | Self::UnionKeyword { .. } | Self::EnumKeyword { .. } | Self::Eq { .. } | Self::ExternKeyword { .. } | Self::AsKeyword { .. } | Self::ConstKeyword { .. } | Self::StaticKeyword { .. } | Self::RefKeyword { .. } | Self::TypeKeyword { .. } | Self::FnKeyword { .. } | Self::DashGt { .. } | Self::AsyncKeyword { .. } | Self::DefaultKeyword { .. } | Self::UnsafeKeyword { .. } | Self::WhereKeyword { .. } | Self::TraitKeyword { .. } | Self::ForKeyword { .. } | Self::Lt { .. } | Self::Gt { .. } | Self::LetKeyword { .. } | Self::ElseKeyword { .. } | Self::UseKeyword { .. } | Self::ColonColon { .. } | Self::Amp { .. } | Self::DotDotDot { .. } | Self::Squote { .. } | Self::ImplKeyword { .. } | Self::DynKeyword { .. } | Self::Dash { .. } | Self::AmpAmp { .. } | Self::PipePipe { .. } | Self::Pipe { .. } | Self::Caret { .. } | Self::EqEq { .. } | Self::BangEq { .. } | Self::LtEq { .. } | Self::GtEq { .. } | Self::LtLt { .. } | Self::GtGt { .. } | Self::Slash { .. } | Self::Percent { .. } | Self::PlusEq { .. } | Self::DashEq { .. } | Self::StarEq { .. } | Self::SlashEq { .. } | Self::PercentEq { .. } | Self::AmpEq { .. } | Self::PipeEq { .. } | Self::CaretEq { .. } | Self::LtLtEq { .. } | Self::GtGtEq { .. } | Self::ReturnKeyword { .. } | Self::YieldKeyword { .. } | Self::DotDot { .. } | Self::IfKeyword { .. } | Self::MatchKeyword { .. } | Self::Comma { .. } | Self::WhileKeyword { .. } | Self::LoopKeyword { .. } | Self::InKeyword { .. } | Self::BreakKeyword { .. } | Self::ContinueKeyword { .. } | Self::Dot { .. } | Self::AwaitKeyword { .. } | Self::MoveKeyword { .. } | Self::GenKeyword { .. } | Self::TryKeyword { .. } | Self::At { .. } | Self::TrueKeyword { .. } | Self::FalseKeyword { .. } | Self::SlashSlash { .. } | Self::SlashStar { .. } | Self::StarSlash { .. } | Self::U8Keyword { .. } | Self::I8Keyword { .. } | Self::U16Keyword { .. } | Self::I16Keyword { .. } | Self::U32Keyword { .. } | Self::I32Keyword { .. } | Self::U64Keyword { .. } | Self::I64Keyword { .. } | Self::U128Keyword { .. } | Self::I128Keyword { .. } | Self::IsizeKeyword { .. } | Self::UsizeKeyword { .. } | Self::F32Keyword { .. } | Self::F64Keyword { .. } | Self::BoolKeyword { .. } | Self::StrKeyword { .. } | Self::CharKeyword { .. } | Self::Underscore { .. } | Self::DotDotEq { .. } | Self::ModKeyword { .. } | Self::PubKeyword { .. } | Self::StructKeyword { .. } | Self::RawKeyword { .. } | Self::MacroRulesBang { .. } | Self::Verbatim { .. } => None,
         }
     }
 }
@@ -42269,6 +41998,12 @@ fn render_field_identifier(node: &FieldIdentifierNode, w: &mut dyn ::sittir_core
     Ok(())
 }
 
+fn render_closure_parameter(node: &ClosureParameterNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
+    let content = &node.content;
+    ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
+    Ok(())
+}
+
 fn render_shorthand_field_identifier(node: &ShorthandFieldIdentifierNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let content = &node.content;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
@@ -42376,11 +42111,11 @@ fn render_dedent(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core
 }
 
 fn render_self_module(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(477)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("self"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(478)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("self"))
 }
 
 fn render_crate_visibility_modifier(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
-    NodeLayout::render(None, Some(::sittir_core::types::KindId(473)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("crate"))
+    NodeLayout::render(None, Some(::sittir_core::types::KindId(474)), ::sittir_core::layout::TriviaRole::Owner, w, |w| w.text("crate"))
 }
 
 fn render_semi(w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
@@ -43532,6 +43267,7 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::ErrorSentinel(inner) => inner.kind_in(kinds),
             Self::TypeIdentifier(inner) => inner.kind_in(kinds),
             Self::FieldIdentifier(inner) => inner.kind_in(kinds),
+            Self::ClosureParameter(inner) => inner.kind_in(kinds),
             Self::ShorthandFieldIdentifier(inner) => inner.kind_in(kinds),
             Self::MethodDeclaration(inner) => inner.kind_in(kinds),
             Self::SignatureMethodDeclaration(inner) => inner.kind_in(kinds),
@@ -43560,8 +43296,8 @@ impl ::sittir_core::view::KindOf for AnyNode {
             Self::DoubleBlankline => [::sittir_core::types::KindId(173)].iter().any(|k| kinds.contains(k)),
             Self::Indent => [::sittir_core::types::KindId(174)].iter().any(|k| kinds.contains(k)),
             Self::Dedent => [::sittir_core::types::KindId(175)].iter().any(|k| kinds.contains(k)),
-            Self::SelfModule => [::sittir_core::types::KindId(477)].iter().any(|k| kinds.contains(k)),
-            Self::CrateVisibilityModifier => [::sittir_core::types::KindId(473)].iter().any(|k| kinds.contains(k)),
+            Self::SelfModule => [::sittir_core::types::KindId(478)].iter().any(|k| kinds.contains(k)),
+            Self::CrateVisibilityModifier => [::sittir_core::types::KindId(474)].iter().any(|k| kinds.contains(k)),
             Self::Semi => [::sittir_core::types::KindId(2)].iter().any(|k| kinds.contains(k)),
             Self::EqGt => [::sittir_core::types::KindId(3)].iter().any(|k| kinds.contains(k)),
             Self::Colon => [::sittir_core::types::KindId(4)].iter().any(|k| kinds.contains(k)),
@@ -43949,6 +43685,7 @@ impl ::sittir_core::render::Render for AnyNode {
             AnyNode::ErrorSentinel(t) => t.render(w),
             AnyNode::TypeIdentifier(t) => t.render(w),
             AnyNode::FieldIdentifier(t) => t.render(w),
+            AnyNode::ClosureParameter(t) => t.render(w),
             AnyNode::ShorthandFieldIdentifier(t) => t.render(w),
             AnyNode::MethodDeclaration(t) => t.render(w),
             AnyNode::SignatureMethodDeclaration(t) => t.render(w),
@@ -44174,6 +43911,7 @@ const _: () = assert!(::core::mem::size_of::<CharLiteralPlainNode>() <= 256, "Ch
 const _: () = assert!(::core::mem::size_of::<ClosureExpressionBlockNode>() <= 256, "ClosureExpressionBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ClosureExpressionExprNode>() <= 256, "ClosureExpressionExprNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ClosureExpressionNode>() <= 256, "ClosureExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
+const _: () = assert!(::core::mem::size_of::<ClosureParameterNode>() <= 256, "ClosureParameterNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ClosureParametersNode>() <= 256, "ClosureParametersNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<CompoundAssignmentExprNode>() <= 256, "CompoundAssignmentExprNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<ConstBlockNode>() <= 256, "ConstBlockNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
@@ -44399,4 +44137,4 @@ const _: () = assert!(::core::mem::size_of::<WherePredicatesNode>() <= 256, "Whe
 const _: () = assert!(::core::mem::size_of::<WhileExpressionNode>() <= 256, "WhileExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 const _: () = assert!(::core::mem::size_of::<YieldExpressionNode>() <= 256, "YieldExpressionNode is over the 256-byte payload ceiling, but the byte rule in boxed-payloads.ts sizes it within");
 
-::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);
+::sittir_core::grammar_trivia!(TriviaNode; AnyNode, StatementNode, DeclarationStatementNode, MacroDefinitionNode, TokenTreePatternNode, TokenTreeNode, ModItemNode, ForeignModItemNode, StructItemNode, ImplItemNode, TypeNode, PointerTypeNode, ExpressionNode, DelimTokenTreeNode, RangeExpressionNode, ReferenceExpressionNode, ArrayExpressionNode, MatchArmNode, ClosureExpressionNode, PatternNode, RangePatternNode, OrPatternNode, LiteralPatternNode, IntegerLiteralNode, CharLiteralNode, CharLiteralEscapedNode, DeclarationStatementTraitItemNode, DeclarationStatementImplItemBodyNode, ExpressionStatementContentNodeSlot, TokenRepetitionPatternTokenPatternsNodeSlot, TokenRepetitionPatternOperatorNodeSlot, TokenRepetitionTokensNodeSlot, TokenRepetitionOperatorNodeSlot, NonSpecialTokenContentNodeSlot, AttributePathNodeSlot, EnumVariantBodyNodeSlot, FunctionItemNameNodeSlot, FunctionModifiersModifierNodeSlot, WherePredicateLeftNodeSlot, TraitBoundsBoundsNodeSlot, ConstParameterDefaultNodeSlot, UseDeclarationArgumentNodeSlot, ParametersElementsNodeSlot, VisibilityModifierContentNodeSlot, BracketedTypeTypeNodeSlot, FunctionTypeContentNodeSlot, GenericFunctionFunctionNodeSlot, GenericTypeTypeNodeSlot, GenericTypeWithTurbofishTypeNodeSlot, BoundedTypeLeftNodeSlot, AbstractTypeTraitNodeSlot, DynamicTypeTraitNodeSlot, MacroInvocationFunctionNodeSlot, ScopedIdentifierQualifierNodeSlot, ScopedIdentifierNameNodeSlot, ScopedTypeIdentifierInExpressionPositionQualifierNodeSlot, ScopedTypeIdentifierQualifierNodeSlot, UnaryExpressionOperatorNodeSlot, BinaryExpressionOperatorNodeSlot, CompoundAssignmentExprOperatorNodeSlot, CallExpressionFunctionNodeSlot, StructExpressionNameNodeSlot, FieldInitializerFieldNodeSlot, IfExpressionConditionNodeSlot, LetChainLeftNodeSlot, LetChainRightNodeSlot, ElseClauseBodyNodeSlot, LastMatchArmAttributesNodeSlot, LastMatchArmTrailingCommaNodeSlot, ClosureParametersParametersNodeSlot, GenericPatternNameNodeSlot, TupleStructPatternTypeNodeSlot, StructPatternTypeNodeSlot, NegativeLiteralValueNodeSlot, StringLiteralElementsNodeSlot, LineCommentContentNodeSlot, BlockCommentContentNodeSlot, UseBoundsElementsItemNodeSlot, FieldInitializerListElementsItemNodeSlot, TuplePatternElementsItemNodeSlot, StructPatternElementsItemNodeSlot, ClosureExpressionExprBodyNodeSlot, ImplItemPositiveClauseTraitNodeSlot, ImplItemBodyTraitClauseNodeSlot, VisibilityModifierPubScopeContentNodeSlot, RangeExpressionBinaryOperatorNodeSlot, MatchArmBlockEndingBodyNodeSlot, DelimTokenTreeParenDelimTokensNodeSlot, RangePatternPrefixRightNodeSlot, RangePatternPrefixContentNodeSlot, RangePatternWithLeftWithRightContentNodeSlot, RangePatternWithLeftContentNodeSlot, AttributedParameterContentNodeSlot, AttributedTypeParameterContentNodeSlot, TypeArgumentContentNodeSlot, AttributedParameterReceiverContentNodeSlot, SourceFileNode, EmptyStatementNode, ExpressionStatementNode, MacroRuleNode, TokenBindingPatternNode, TokenRepetitionPatternNode, FragmentSpecifierEnum, TokenRepetitionNode, NonSpecialTokenNode, AttributeItemNode, InnerAttributeItemNode, AttributeNode, DeclarationListNode, UnionItemNode, EnumItemNode, EnumVariantListNode, EnumVariantNode, FieldDeclarationListNode, FieldDeclarationNode, OrderedFieldDeclarationListNode, ExternCrateDeclarationNode, ConstItemNode, StaticItemNode, TypeItemNode, FunctionItemNode, FunctionSignatureItemNode, FunctionModifiersNode, WhereClauseNode, WherePredicateNode, TraitItemNode, AssociatedTypeNode, TraitBoundsNode, HigherRankedTraitBoundNode, RemovedTraitBoundNode, TypeParametersNode, ConstParameterNode, TypeParameterNode, LifetimeParameterNode, LetDeclarationNode, UseDeclarationNode, ScopedUseListNode, UseListNode, UseAsClauseNode, UseWildcardNode, ParametersNode, SelfParameterNode, VariadicParameterNode, ParameterNode, ExternModifierNode, VisibilityModifierNode, BracketedTypeNode, QualifiedTypeNode, LifetimeNode, ArrayTypeNode, ForLifetimesNode, FunctionTypeNode, TupleTypeNode, UnitTypeNode, GenericFunctionNode, GenericTypeNode, GenericTypeWithTurbofishNode, BoundedTypeNode, UseBoundsNode, TypeArgumentsNode, TypeBindingNode, ReferenceTypeNode, NeverTypeNode, AbstractTypeNode, DynamicTypeNode, MutableSpecifierNode, MacroInvocationNode, ScopedIdentifierNode, ScopedTypeIdentifierInExpressionPositionNode, ScopedTypeIdentifierNode, UnaryExpressionNode, TryExpressionNode, BinaryExpressionNode, AssignmentExpressionNode, CompoundAssignmentExprNode, TypeCastExpressionNode, ReturnExpressionNode, YieldExpressionNode, CallExpressionNode, ArgumentsNode, ParenthesizedExpressionNode, TupleExpressionNode, UnitExpressionNode, StructExpressionNode, FieldInitializerListNode, ShorthandFieldInitializerNode, FieldInitializerNode, BaseFieldInitializerNode, IfExpressionNode, LetConditionNode, LetChainNode, ElseClauseNode, MatchExpressionNode, MatchBlockNode, LastMatchArmNode, MatchPatternNode, WhileExpressionNode, LoopExpressionNode, ForExpressionNode, ConstBlockNode, ClosureParametersNode, LabelNode, BreakExpressionNode, ContinueExpressionNode, IndexExpressionNode, AwaitExpressionNode, FieldExpressionNode, UnsafeBlockNode, AsyncBlockNode, GenBlockNode, TryBlockNode, BlockNode, GenericPatternNode, TuplePatternNode, SlicePatternNode, TupleStructPatternNode, StructPatternNode, RemainingFieldPatternNode, MutPatternNode, RefPatternNode, CapturedPatternNode, ReferencePatternNode, NegativeLiteralNode, StringLiteralNode, RawStringLiteralNode, BooleanLiteralEnum, LineCommentNode, InnerLineDocCommentMarkerNode, OuterLineDocCommentMarkerNode, BlockCommentNode, IdentifierNode, ShebangNode, Self_Node, SuperNode, CrateNode, MetavariableNode, PrimitiveTypeEnum, MacroRulesNode, EnumVariantListElementsNode, FieldDeclarationListElementsNode, OrderedFieldDeclarationListElementsNode, WherePredicatesNode, TypeParametersElementsNode, UseClausesNode, ParametersElementsNode, LifetimesNode, TypesNode, UseBoundsElementsNode, TypeArgumentsElementsNode, ArgumentsElementsNode, ExpressionsNode, FieldInitializerListElementsNode, TuplePatternElementsNode, PatternsNode, StructPatternElementsNode, UseWildcardGroupNode, TokenRepetitionPatternTextNode, StringOpenNode, TokenTreePunctuationEnum, TokenKeywordsEnum, _RangeExpressionBareNode, ImplItemUnsafeMarkerNode, IntegerLiteralDecimalNode, IntegerLiteralHexNode, IntegerLiteralBinaryNode, IntegerLiteralOctalNode, CharLiteralPlainNode, CharLiteralEmptyNode, CharLiteralEscapedSimpleNode, CharLiteralEscapedUnicodeFixedNode, CharLiteralEscapedUnicodeBracedNode, CharLiteralEscapedHexNode, EscapeSequenceSimpleNode, EscapeSequenceUnicodeFixedNode, EscapeSequenceUnicodeBracedNode, EscapeSequenceHexNode, ArrayExpressionSemiNode, ArrayExpressionListNode, AttributeInputNode, ClosureExpressionBlockNode, ClosureExpressionExprNode, ReferenceExpressionRawConstNode, ReferenceExpressionRawMutNode, ReferenceExpressionMutNode, ReferenceExpressionBareNode, ImplItemPositiveClauseNode, ImplItemNegativeClauseNode, ImplItemBodyNode, ImplItemSemiNode, VisibilityModifierPubScopeInPathNode, VisibilityModifierPubScopeNode, VisibilityModifierPubNode, FunctionTypeTraitFormNode, FunctionTypeFnFormNode, ModItemExternalNode, ModItemInlineNode, OrPatternBinaryNode, OrPatternPrefixNode, PointerTypeConstNode, PointerTypeMutNode, RangeExpressionBinaryNode, RangeExpressionPostfixNode, RangeExpressionPrefixNode, RangeExpressionBareNode, ExpressionStatementWithSemiNode, ForeignModItemSemiNode, ForeignModItemBodyNode, MatchArmWithCommaNode, MatchArmBlockEndingNode, LineCommentExtraSlashesNode, LineCommentDocOuterNode, LineCommentDocInnerNode, LineCommentRegularNode, BlockCommentDocOuterNode, BlockCommentDocInnerNode, BlockCommentRegularNode, TokenTreePatternParenNode, TokenTreePatternBracketNode, TokenTreePatternBraceNode, TokenTreeParenNode, TokenTreeBracketNode, TokenTreeBraceNode, DelimTokenTreeParenNode, DelimTokenTreeBracketNode, DelimTokenTreeBraceNode, FieldPatternShorthandNode, FieldPatternNamedNode, MacroDefinitionParenNode, MacroDefinitionBracketNode, MacroDefinitionBraceNode, RangePatternPrefixNode, RangePatternWithLeftWithRightNode, RangePatternWithLeftBareNode, RangePatternWithLeftNode, StructItemBraceNode, StructItemTupleNode, StructItemUnitNode, WildcardPatternNode, AttributedFieldDeclarationNode, AttributedEnumVariantNode, AttributedParameterNode, AttributedTypeParameterNode, AttributedArgumentNode, AttributedOrderedFieldNode, TypeArgumentNode, MatchBlockArmsNode, FloatLiteralNode, StringContentNode, RawStringLiteralContentNode, OuterDocCommentMarkerNode, InnerDocCommentMarkerNode, RawStringLiteralStartNode, RawStringLiteralEndNode, DocCommentNode, BlockCommentContentNode, TightNode, SpaceNode, TabNode, NewlineNode, BlanklineNode, DoubleBlanklineNode, IndentNode, DedentNode, TraitInterfaceDeclarationBodyNode, ExtensionDeclarationBodyNode, ReceiverParameterDeclarationNode, AttributedParameterReceiverNode, ParametersElementsReceiverNode, ParametersElementsReceiverGroupNode, StringCloseNode, ErrorSentinelNode, SelfModuleNode, TypeIdentifierNode, FieldIdentifierNode, CrateVisibilityModifierNode, ClosureParameterNode, ShorthandFieldIdentifierNode, SemiNode, EqGtNode, ColonNode, DollarNode, LparenNode, RparenNode, PlusNode, StarNode, QmarkNode, BlockKeywordNode, ExprKeywordNode, Expr2021KeywordNode, IdentKeywordNode, ItemKeywordNode, LifetimeKeywordNode, LiteralKeywordNode, MetaKeywordNode, PatKeywordNode, PatParamKeywordNode, PathKeywordNode, StmtKeywordNode, TtKeywordNode, TyKeywordNode, VisKeywordNode, PoundNode, LbrackNode, RbrackNode, BangNode, LbraceNode, RbraceNode, UnionKeywordNode, EnumKeywordNode, EqNode, ExternKeywordNode, AsKeywordNode, ConstKeywordNode, StaticKeywordNode, RefKeywordNode, TypeKeywordNode, FnKeywordNode, DashGtNode, AsyncKeywordNode, DefaultKeywordNode, UnsafeKeywordNode, WhereKeywordNode, TraitKeywordNode, ForKeywordNode, LtNode, GtNode, LetKeywordNode, ElseKeywordNode, UseKeywordNode, ColonColonNode, AmpNode, DotDotDotNode, SquoteNode, ImplKeywordNode, DynKeywordNode, DashNode, AmpAmpNode, PipePipeNode, PipeNode, CaretNode, EqEqNode, BangEqNode, LtEqNode, GtEqNode, LtLtNode, GtGtNode, SlashNode, PercentNode, PlusEqNode, DashEqNode, StarEqNode, SlashEqNode, PercentEqNode, AmpEqNode, PipeEqNode, CaretEqNode, LtLtEqNode, GtGtEqNode, ReturnKeywordNode, YieldKeywordNode, DotDotNode, IfKeywordNode, MatchKeywordNode, CommaNode, WhileKeywordNode, LoopKeywordNode, InKeywordNode, BreakKeywordNode, ContinueKeywordNode, DotNode, AwaitKeywordNode, MoveKeywordNode, GenKeywordNode, TryKeywordNode, AtNode, TrueKeywordNode, FalseKeywordNode, SlashSlashNode, SlashStarNode, StarSlashNode, U8KeywordNode, I8KeywordNode, U16KeywordNode, I16KeywordNode, U32KeywordNode, I32KeywordNode, U64KeywordNode, I64KeywordNode, U128KeywordNode, I128KeywordNode, IsizeKeywordNode, UsizeKeywordNode, F32KeywordNode, F64KeywordNode, BoolKeywordNode, StrKeywordNode, CharKeywordNode, UnderscoreNode, DotDotEqNode, ModKeywordNode, PubKeywordNode, StructKeywordNode, RawKeywordNode, MacroRulesBangNode, TriviaNode);

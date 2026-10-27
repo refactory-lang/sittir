@@ -475,13 +475,14 @@ export enum TSKindId {
 	_MatchBlockArmsRepeat1 = 470,
 	_DeclarationListTraitItemRepeat1 = 471,
 	_DeclarationListImplItemBodyRepeat1 = 472,
-	CrateVisibilityModifier = 473,
-	FieldIdentifier = 474,
-	MethodDeclaration = 476,
-	SelfModule = 477,
-	ShorthandFieldIdentifier = 478,
-	SignatureMethodDeclaration = 479,
-	TypeIdentifier = 480,
+	ClosureParameter = 473,
+	CrateVisibilityModifier = 474,
+	FieldIdentifier = 475,
+	MethodDeclaration = 477,
+	SelfModule = 478,
+	ShorthandFieldIdentifier = 479,
+	SignatureMethodDeclaration = 480,
+	TypeIdentifier = 481,
 	Error = 65535
 }
 Object.freeze(TSKindId);

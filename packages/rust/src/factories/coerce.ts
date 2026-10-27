@@ -263,7 +263,19 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 	'block_comment_regular'
 ];
 
-const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {};
+const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
+	type_identifier: ['identifier'],
+	field_identifier: ['identifier'],
+	closure_parameter: [
+		'char_literal_empty',
+		'boolean_literal',
+		'float_literal',
+		'identifier',
+		'remaining_field_pattern',
+		'wildcard_pattern'
+	],
+	shorthand_field_identifier: ['identifier']
+};
 
 function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode | number | undefined {
 	for (const kind of _TEXT_KINDS_BY_RANK) {
@@ -409,7 +421,7 @@ const _KIND_ID_STORED: ReadonlySet<number> = new Set([
 	63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91,
 	92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116,
 	117, 118, 119, 122, 123, 125, 126, 127, 129, 130, 131, 136, 137, 138, 139, 140, 156, 163, 164, 168, 169, 170, 171,
-	172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426, 473, 477
+	172, 173, 174, 175, 178, 186, 244, 254, 281, 321, 336, 338, 339, 341, 361, 362, 363, 364, 421, 426, 474, 478
 ]);
 const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	expression_statement: new Set([
@@ -430,41 +442,41 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list: new Set([202, 344, 427]),
 	ordered_field_declaration_list: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 345, 351, 388, 389, 432, 480
+		252, 254, 255, 256, 259, 265, 341, 345, 351, 388, 389, 432, 481
 	]),
 	where_clause: new Set([212, 346]),
 	removed_trait_bound: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
 	type_parameters: new Set([128, 220, 221, 222, 347, 430]),
-	use_list: new Set([1, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360, 477]),
-	use_wildcard: new Set([1, 126, 127, 128, 263, 360, 477]),
+	use_list: new Set([1, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360, 478]),
+	use_wildcard: new Set([1, 126, 127, 128, 263, 360, 478]),
 	parameters: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 232, 233, 240, 242, 243, 244,
-		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 439, 480
+		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 439, 481
 	]),
 	extern_modifier: new Set([332]),
-	visibility_modifier: new Set([1, 126, 127, 128, 263, 379, 380, 381, 473, 477]),
+	visibility_modifier: new Set([1, 126, 127, 128, 263, 379, 380, 381, 474, 478]),
 	bracketed_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 238, 240, 242, 243, 244, 246,
-		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
 	lifetime: new Set([1]),
 	for_lifetimes: new Set([1, 239, 350]),
 	tuple_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
-	use_bounds: new Set([1, 239, 352, 480]),
+	use_bounds: new Set([1, 239, 352, 481]),
 	type_arguments: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
-		333, 336, 341, 351, 353, 388, 389, 433, 480
+		333, 336, 341, 351, 353, 388, 389, 433, 481
 	]),
 	dynamic_type: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
 	try_expression: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
@@ -537,25 +549,25 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	field_declaration_list_elements: new Set([202, 427]),
 	ordered_field_declaration_list_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 432, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 432, 481
 	]),
 	where_predicates: new Set([212]),
 	type_parameters_elements: new Set([128, 220, 221, 222, 430]),
-	use_clauses: new Set([1, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360, 477]),
+	use_clauses: new Set([1, 126, 127, 128, 226, 227, 228, 229, 263, 348, 360, 478]),
 	parameters_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 232, 233, 240, 242, 243, 244,
-		246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 480
+		246, 248, 252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 429, 481
 	]),
 	lifetimes: new Set([1, 239]),
 	types: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
-	use_bounds_elements: new Set([1, 239, 480]),
+	use_bounds_elements: new Set([1, 239, 481]),
 	type_arguments_elements: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 117, 118, 128, 141, 142, 143, 144, 145, 146,
 		147, 148, 149, 150, 162, 217, 218, 239, 240, 242, 243, 244, 246, 248, 251, 252, 254, 255, 256, 259, 265, 313, 332,
-		333, 336, 341, 351, 388, 389, 433, 480
+		333, 336, 341, 351, 388, 389, 433, 481
 	]),
 	arguments_elements: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
@@ -581,7 +593,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
 	]),
 	struct_pattern_elements: new Set([321, 414, 415]),
-	use_wildcard_group: new Set([1, 126, 127, 128, 263, 477]),
+	use_wildcard_group: new Set([1, 126, 127, 128, 263, 478]),
 	reference_expression_raw_const: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
@@ -602,12 +614,12 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		272, 273, 274, 275, 276, 279, 280, 281, 282, 287, 292, 297, 298, 299, 300, 303, 304, 305, 306, 307, 308, 309, 310,
 		311, 312, 313, 332, 333, 336, 363, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 	]),
-	impl_item_positive_clause: new Set([1, 246, 265, 480]),
-	impl_item_negative_clause: new Set([1, 246, 265, 480]),
-	visibility_modifier_pub_scope_in_path: new Set([1, 126, 127, 128, 263, 477]),
-	visibility_modifier_pub_scope: new Set([1, 126, 127, 128, 263, 379, 477]),
-	visibility_modifier_pub: new Set([1, 126, 127, 128, 263, 379, 380, 477]),
-	function_type_trait_form: new Set([1, 265, 480]),
+	impl_item_positive_clause: new Set([1, 246, 265, 481]),
+	impl_item_negative_clause: new Set([1, 246, 265, 481]),
+	visibility_modifier_pub_scope_in_path: new Set([1, 126, 127, 128, 263, 478]),
+	visibility_modifier_pub_scope: new Set([1, 126, 127, 128, 263, 379, 478]),
+	visibility_modifier_pub: new Set([1, 126, 127, 128, 263, 379, 380, 478]),
+	function_type_trait_form: new Set([1, 265, 481]),
 	function_type_fn_form: new Set([210]),
 	or_pattern_prefix: new Set([
 		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
@@ -615,11 +627,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	pointer_type_const: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
 	pointer_type_mut: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 240, 242, 243, 244, 246, 248,
-		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 480
+		252, 254, 255, 256, 259, 265, 341, 351, 388, 389, 481
 	]),
 	range_expression_postfix: new Set([
 		1, 117, 118, 125, 128, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 259, 263, 267, 268, 270, 271,
@@ -643,10 +655,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	block_comment_doc_inner: new Set([165]),
 	parameters_elements_receiver_group: new Set([
 		1, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 128, 217, 218, 232, 233, 240, 242, 243, 244,
-		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 480
+		246, 248, 252, 254, 255, 256, 259, 265, 341, 349, 351, 388, 389, 429, 481
 	]),
 	type_identifier: new Set([1]),
 	field_identifier: new Set([1]),
+	closure_parameter: new Set([
+		1, 117, 118, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 259, 263, 300, 313, 315, 316, 317, 318, 319,
+		321, 322, 324, 325, 326, 330, 332, 333, 336, 357, 358, 369, 370, 386, 387, 419, 422, 426
+	]),
 	shorthand_field_identifier: new Set([1])
 };
 const _ENUMS_OF_MEMBER: Record<number, readonly string[] | undefined> = {
@@ -1019,6 +1035,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	parameters_elements_receiver_group: TSKindId.ParametersElementsReceiverGroup,
 	type_identifier: TSKindId.TypeIdentifier,
 	field_identifier: TSKindId.FieldIdentifier,
+	closure_parameter: TSKindId.ClosureParameter,
 	shorthand_field_identifier: TSKindId.ShorthandFieldIdentifier
 };
 
@@ -1096,6 +1113,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	parameters_elements_receiver_group: 'parameters_elements',
 	type_identifier: 'identifier',
 	field_identifier: 'identifier',
+	closure_parameter: '_pattern',
 	shorthand_field_identifier: 'identifier'
 };
 
@@ -1170,6 +1188,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'parameters_elements_receiver_group',
 	'type_identifier',
 	'field_identifier',
+	'closure_parameter',
 	'shorthand_field_identifier'
 ]);
 
@@ -1418,6 +1437,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTypeIdentifier(children[0] as Parameters<typeof F.buildTypeIdentifier>[0]);
 		case 'field_identifier':
 			return F.buildFieldIdentifier(children[0] as Parameters<typeof F.buildFieldIdentifier>[0]);
+		case 'closure_parameter':
+			return F.buildClosureParameter(children[0] as Parameters<typeof F.buildClosureParameter>[0]);
 		case 'shorthand_field_identifier':
 			return F.buildShorthandFieldIdentifier(children[0] as Parameters<typeof F.buildShorthandFieldIdentifier>[0]);
 		default:
@@ -2168,37 +2189,7 @@ const _K47: readonly string[] = [
 ];
 const _K48: readonly string[] = ['block', 'if_expression'];
 const _K49: readonly string[] = ['attribute_item', 'inner_attribute_item'];
-const _K50: readonly string[] = [
-	'string_literal',
-	'raw_string_literal',
-	'char_literal_escaped_simple',
-	'char_literal_escaped_unicode_fixed',
-	'char_literal_escaped_unicode_braced',
-	'char_literal_escaped_hex',
-	'char_literal_plain',
-	'integer_literal_decimal',
-	'integer_literal_hex',
-	'integer_literal_binary',
-	'integer_literal_octal',
-	'negative_literal',
-	'scoped_identifier',
-	'generic_pattern',
-	'tuple_pattern',
-	'tuple_struct_pattern',
-	'struct_pattern',
-	'ref_pattern',
-	'slice_pattern',
-	'captured_pattern',
-	'reference_pattern',
-	'mut_pattern',
-	'range_pattern_with_left',
-	'range_pattern_prefix',
-	'or_pattern_binary',
-	'or_pattern_prefix',
-	'const_block',
-	'macro_invocation',
-	'parameter'
-];
+const _K50: readonly string[] = ['closure_parameter', 'parameter'];
 const _K51: readonly string[] = ['scoped_identifier', 'generic_type_with_turbofish'];
 const _K52: readonly string[] = ['float_literal'];
 const _K53: readonly string[] = ['string_content'];
@@ -6498,10 +6489,9 @@ export const coerceToClosureParameters: EmptyForm<
 		const stored = (data as unknown as { _parameters?: unknown })._parameters;
 		const children = stored === undefined ? [] : Array.isArray(stored) ? stored : [stored];
 		return F.buildClosureParameters(
-			...(listStorage(
-				_resolveKindEnumItems(children, [], (_v) => _resolveMany<T.Pattern | T.Parameter>(_v, _K23, _K50)),
-				(item) => coerceMixedEnumStorage(item, [])
-			) as unknown as Parameters<typeof F.buildClosureParameters>)
+			...(_resolveMany<T.ClosureParameter | T.Parameter>(children, _K2, _K50) as unknown as Parameters<
+				typeof F.buildClosureParameters
+			>)
 		);
 	}
 	const _elems: readonly unknown[] = (() => {
@@ -6513,10 +6503,9 @@ export const coerceToClosureParameters: EmptyForm<
 		return Array.isArray(v) ? v : [v];
 	})();
 	return F.buildClosureParameters(
-		...(listStorage(
-			_resolveKindEnumItems(_elems, [], (_v) => _resolveMany<T.Pattern | T.Parameter>(_v, _K23, _K50)),
-			(item) => coerceMixedEnumStorage(item, [])
-		) as unknown as Parameters<typeof F.buildClosureParameters>)
+		...(_resolveMany<T.ClosureParameter | T.Parameter>(_elems, _K2, _K50) as unknown as Parameters<
+			typeof F.buildClosureParameters
+		>)
 	);
 });
 
@@ -11164,6 +11153,38 @@ export function coerceToCrateVisibilityModifier(
 	return F.buildCrateVisibilityModifier;
 }
 
+export function resolveClosureParameter_content(
+	value: T.ClosureParameter.LooseConfig['content']
+): Admit<T.ClosureParameter['_content']> {
+	return coerceMixedEnumStorage(
+		_resolveKindEnum(value, [], () => _resolveOne<T.Pattern>(value, _K23, _K24)),
+		[]
+	);
+}
+
+export const coerceToClosureParameter: ConfigSeat<
+	T.ClosureParameter.Loose,
+	ReturnType<typeof F.buildClosureParameter>
+> = (input: T.ClosureParameter.Loose): ReturnType<typeof F.buildClosureParameter> => {
+	if (isNodeOfKind(input, TSKindId.ClosureParameter))
+		return input as unknown as ReturnType<typeof F.buildClosureParameter>;
+	return F.buildClosureParameter(
+		coerceMixedEnumStorage(
+			_resolveKindEnum(
+				configFieldOr(input, 'content', () => input),
+				[],
+				() =>
+					_resolveOne<T.Pattern>(
+						configFieldOr(input, 'content', () => input),
+						_K23,
+						_K24
+					)
+			),
+			[]
+		)
+	);
+};
+
 export function resolveShorthandFieldIdentifier_content(
 	value: T.ShorthandFieldIdentifier.LooseConfig['content']
 ): Admit<T.ShorthandFieldIdentifier['_content']> {
@@ -11588,6 +11609,7 @@ export interface _FromMap {
 	readonly type_identifier: typeof coerceToTypeIdentifier;
 	readonly field_identifier: typeof coerceToFieldIdentifier;
 	readonly crate_visibility_modifier: typeof coerceToCrateVisibilityModifier;
+	readonly closure_parameter: typeof coerceToClosureParameter;
 	readonly shorthand_field_identifier: typeof coerceToShorthandFieldIdentifier;
 	readonly method_declaration: typeof coerceToMethodDeclaration;
 	readonly signature_method_declaration: typeof coerceToSignatureMethodDeclaration;
@@ -11863,6 +11885,7 @@ export const _fromMap: _FromMap = {
 	type_identifier: coerceToTypeIdentifier,
 	field_identifier: coerceToFieldIdentifier,
 	crate_visibility_modifier: coerceToCrateVisibilityModifier,
+	closure_parameter: coerceToClosureParameter,
 	shorthand_field_identifier: coerceToShorthandFieldIdentifier,
 	method_declaration: coerceToMethodDeclaration,
 	signature_method_declaration: coerceToSignatureMethodDeclaration

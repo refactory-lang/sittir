@@ -276,6 +276,7 @@ export {
 	coerceToTypeIdentifier as buildTypeIdentifier,
 	coerceToFieldIdentifier as buildFieldIdentifier,
 	coerceToCrateVisibilityModifier as buildCrateVisibilityModifier,
+	coerceToClosureParameter as buildClosureParameter,
 	coerceToShorthandFieldIdentifier as buildShorthandFieldIdentifier,
 	coerceToMethodDeclaration as buildMethodDeclaration,
 	coerceToSignatureMethodDeclaration as buildSignatureMethodDeclaration

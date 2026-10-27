@@ -1444,6 +1444,12 @@
 			"field": "closure_expression_expr_after"
 		}
 	],
+	"closure_parameter": [
+		{
+			"kind": "slot",
+			"name": "content"
+		}
+	],
 	"closure_parameters": [
 		{
 			"kind": "seam",

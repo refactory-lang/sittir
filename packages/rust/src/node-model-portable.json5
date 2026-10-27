@@ -609,7 +609,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -852,7 +852,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -1880,15 +1880,6 @@
       "vocab": "pattern.as",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.as",
           "toplevel": true,
           "within": [],
@@ -1958,15 +1949,6 @@
       "vocab": "literal.character",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.character",
           "toplevel": true,
           "within": [],
@@ -1992,15 +1974,6 @@
     "char_literal_escaped_hex": {
       "vocab": "literal.character",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "literal.character",
           "toplevel": true,
@@ -2039,15 +2012,6 @@
       "vocab": "literal.character",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.character",
           "toplevel": true,
           "within": [],
@@ -2084,15 +2048,6 @@
     "char_literal_escaped_unicode_braced": {
       "vocab": "literal.character",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "literal.character",
           "toplevel": true,
@@ -2131,15 +2086,6 @@
       "vocab": "literal.character",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.character",
           "toplevel": true,
           "within": [],
@@ -2176,15 +2122,6 @@
     "char_literal_plain": {
       "vocab": "literal.character",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "literal.character",
           "toplevel": true,
@@ -2387,10 +2324,42 @@
         }
       ]
     },
+    "closure_parameter": {
+      "vocab": "declaration.parameter",
+      "read": [
+        {
+          "vocab": "declaration.parameter",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": []
+        }
+      ],
+      "members": [
+        {
+          "name": "name",
+          "route": "slot",
+          "slot": "content",
+          "path": [
+            {
+              "owner": "closure_parameter",
+              "slot": "content"
+            }
+          ]
+        }
+      ],
+      "container": {
+        "kinds": [
+          "_pattern"
+        ],
+        "terminals": [],
+        "list": false
+      }
+    },
     "closure_parameters": {
       "container": {
         "kinds": [
-          "_pattern",
+          "closure_parameter",
           "parameter"
         ],
         "terminals": [],
@@ -2687,15 +2656,6 @@
       "vocab": "expression.block.const",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "expression.block.const",
           "toplevel": true,
           "within": [],
@@ -2811,7 +2771,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -3054,7 +3014,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -3537,7 +3497,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -3780,7 +3740,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -3966,7 +3926,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -4261,7 +4221,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -4556,7 +4516,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -4812,7 +4772,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -4918,7 +4878,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -5011,7 +4971,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -5525,7 +5485,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -5768,7 +5728,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -5928,15 +5888,6 @@
           "test": []
         },
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.boolean",
           "toplevel": true,
           "within": [],
@@ -6033,7 +5984,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -6276,7 +6227,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -6622,15 +6573,6 @@
       "vocab": "literal.number.float",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.number.float",
           "toplevel": true,
           "within": [],
@@ -6941,7 +6883,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -7184,7 +7126,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -7676,7 +7618,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -7919,7 +7861,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -8495,15 +8437,6 @@
       "vocab": "pattern.generic",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.generic",
           "toplevel": true,
           "within": [],
@@ -8760,15 +8693,6 @@
     "identifier": {
       "vocab": "identifier",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "identifier",
           "toplevel": true,
@@ -9087,15 +9011,6 @@
       "vocab": "literal.number.integer.binary",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.number.integer.binary",
           "toplevel": true,
           "within": [],
@@ -9131,15 +9046,6 @@
     "integer_literal_decimal": {
       "vocab": "literal.number.integer",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "literal.number.integer",
           "toplevel": true,
@@ -9177,15 +9083,6 @@
       "vocab": "literal.number.integer.hex",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.number.integer.hex",
           "toplevel": true,
           "within": [],
@@ -9221,15 +9118,6 @@
     "integer_literal_octal": {
       "vocab": "literal.number.integer.octal",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "literal.number.integer.octal",
           "toplevel": true,
@@ -9955,15 +9843,6 @@
       "vocab": "expression.call.macro",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "expression.call.macro",
           "toplevel": true,
           "within": [],
@@ -10311,7 +10190,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 4
+                    "477": 4
                   }
                 }
               ],
@@ -10341,7 +10220,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 4
+                    "477": 4
                   }
                 }
               ],
@@ -10360,7 +10239,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 4
+                    "477": 4
                   }
                 },
                 {
@@ -10401,7 +10280,7 @@
                   235
                 ],
                 "slots": {
-                  "476": 0
+                  "477": 0
                 }
               }
             },
@@ -10410,7 +10289,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 }
               ],
@@ -10429,7 +10308,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 },
                 {
@@ -10453,7 +10332,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 },
                 {
@@ -10470,7 +10349,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -10494,7 +10373,7 @@
                   235
                 ],
                 "slots": {
-                  "476": 0
+                  "477": 0
                 }
               }
             },
@@ -10503,7 +10382,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 }
               ],
@@ -10522,7 +10401,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 },
                 {
@@ -10546,7 +10425,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 },
                 {
@@ -10587,7 +10466,7 @@
                   235
                 ],
                 "slots": {
-                  "476": 0
+                  "477": 0
                 }
               }
             },
@@ -10596,7 +10475,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 }
               ],
@@ -10615,7 +10494,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 },
                 {
@@ -10657,7 +10536,7 @@
                   235
                 ],
                 "slots": {
-                  "476": 0
+                  "477": 0
                 }
               }
             },
@@ -10666,7 +10545,7 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 }
               ],
@@ -10697,7 +10576,7 @@
                   235
                 ],
                 "slots": {
-                  "476": 0
+                  "477": 0
                 }
               }
             },
@@ -10706,14 +10585,14 @@
               "via": [
                 {
                   "slots": {
-                    "476": 0
+                    "477": 0
                   }
                 }
               ],
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -11239,7 +11118,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -11482,7 +11361,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -11635,7 +11514,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -11878,7 +11757,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -11959,15 +11838,6 @@
       "vocab": "pattern.mutable",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.mutable",
           "toplevel": true,
           "within": [],
@@ -11999,15 +11869,6 @@
     "negative_literal": {
       "vocab": "literal.number.negative",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "literal.number.negative",
           "toplevel": true,
@@ -12077,15 +11938,6 @@
       "vocab": "pattern.or",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.or",
           "toplevel": true,
           "within": [],
@@ -12121,15 +11973,6 @@
     "or_pattern_prefix": {
       "vocab": "pattern.or",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "pattern.or",
           "toplevel": true,
@@ -12731,15 +12574,6 @@
       "vocab": "pattern.range",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.range.inclusive",
           "toplevel": true,
           "within": [],
@@ -12814,15 +12648,6 @@
     "range_pattern_with_left": {
       "vocab": "pattern.range",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "pattern.range.inclusive",
           "toplevel": true,
@@ -13009,15 +12834,6 @@
       "vocab": "literal.string.raw",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string.raw",
           "toplevel": true,
           "within": [],
@@ -13099,15 +12915,6 @@
     "ref_pattern": {
       "vocab": "pattern.reference",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "pattern.reference",
           "toplevel": true,
@@ -13316,15 +13123,6 @@
       "vocab": "pattern.reference.value",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.reference.value",
           "toplevel": true,
           "within": [],
@@ -13410,15 +13208,6 @@
       "vocab": "pattern.struct.rest",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.struct.rest",
           "toplevel": true,
           "within": [],
@@ -13495,15 +13284,6 @@
     "scoped_identifier": {
       "vocab": "identifier.qualified",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "identifier.qualified",
           "toplevel": true,
@@ -13817,7 +13597,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 4
+                    "480": 4
                   }
                 }
               ],
@@ -13851,7 +13631,7 @@
                   235
                 ],
                 "slots": {
-                  "479": 0
+                  "480": 0
                 }
               }
             },
@@ -13860,7 +13640,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 }
               ],
@@ -13879,7 +13659,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 },
                 {
@@ -13903,7 +13683,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 },
                 {
@@ -13920,7 +13700,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -13944,7 +13724,7 @@
                   235
                 ],
                 "slots": {
-                  "479": 0
+                  "480": 0
                 }
               }
             },
@@ -13953,7 +13733,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 }
               ],
@@ -13972,7 +13752,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 },
                 {
@@ -13996,7 +13776,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 },
                 {
@@ -14037,7 +13817,7 @@
                   235
                 ],
                 "slots": {
-                  "479": 0
+                  "480": 0
                 }
               }
             },
@@ -14046,7 +13826,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 }
               ],
@@ -14065,7 +13845,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 },
                 {
@@ -14107,7 +13887,7 @@
                   235
                 ],
                 "slots": {
-                  "479": 0
+                  "480": 0
                 }
               }
             },
@@ -14116,7 +13896,7 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 }
               ],
@@ -14147,7 +13927,7 @@
                   235
                 ],
                 "slots": {
-                  "479": 0
+                  "480": 0
                 }
               }
             },
@@ -14156,14 +13936,14 @@
               "via": [
                 {
                   "slots": {
-                    "479": 0
+                    "480": 0
                   }
                 }
               ],
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -14437,15 +14217,6 @@
       "vocab": "pattern.list",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.list",
           "toplevel": true,
           "within": [],
@@ -14586,7 +14357,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -14829,7 +14600,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -15009,15 +14780,6 @@
           ]
         },
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.string",
           "toplevel": true,
           "within": [],
@@ -15175,7 +14937,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -15418,7 +15180,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -15604,7 +15366,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -15847,7 +15609,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -16040,7 +15802,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -16283,7 +16045,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -16370,15 +16132,6 @@
     "struct_pattern": {
       "vocab": "pattern.struct",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "pattern.struct",
           "toplevel": true,
@@ -16934,7 +16687,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -17177,7 +16930,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -17324,15 +17077,6 @@
           "test": []
         },
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "literal.boolean",
           "toplevel": true,
           "within": [],
@@ -17459,15 +17203,6 @@
       "vocab": "pattern.tuple",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.tuple",
           "toplevel": true,
           "within": [],
@@ -17509,15 +17244,6 @@
     "tuple_struct_pattern": {
       "vocab": "pattern.struct",
       "read": [
-        {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
         {
           "vocab": "pattern.struct",
           "toplevel": true,
@@ -17854,7 +17580,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -18097,7 +17823,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -18582,7 +18308,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -18825,7 +18551,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -19165,7 +18891,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -19408,7 +19134,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  473
+                  474
                 ],
                 "slots": {
                   "235": 0
@@ -19652,7 +19378,7 @@
               "plan": {
                 "op": "is",
                 "types": [
-                  477
+                  478
                 ],
                 "slots": {
                   "380": 0
@@ -20027,15 +19753,6 @@
       "vocab": "pattern.wildcard",
       "read": [
         {
-          "vocab": "declaration.parameter",
-          "toplevel": false,
-          "within": [
-            "closure_parameters"
-          ],
-          "pins": [],
-          "test": []
-        },
-        {
           "vocab": "pattern.wildcard",
           "toplevel": true,
           "within": [],
@@ -20089,7 +19806,7 @@
       {
         "depth": 2,
         "paths": 95,
-        "kinds": 156,
+        "kinds": 145,
         "refinements": 7
       },
       {

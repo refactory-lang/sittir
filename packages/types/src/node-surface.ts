@@ -159,10 +159,10 @@ type Accessors<N, ByKindId> = {
 type Storage<N> = Remap<N, MethodKeys<N> | '__slotHints__'>;
 
 export type Admit<V> = V extends unknown
-	? V extends readonly unknown[]
-		? { [I in keyof V]: Admit<V[I]> }
-		: V extends { readonly $type: infer Id extends number }
-			? { readonly $type: Id } & NodeMarker
+	? V extends { readonly $type: infer Id extends number }
+		? { readonly $type: Id } & NodeMarker
+		: V extends readonly unknown[]
+			? { [I in keyof V]: Admit<V[I]> }
 			: V
 	: never;
 

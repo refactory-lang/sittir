@@ -1117,6 +1117,9 @@ export interface IsGuards {
 	fieldIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.FieldIdentifier };
+	closureParameter<T extends { readonly $type: number } | number>(
+		v: T
+	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ClosureParameter };
 	shorthandFieldIdentifier<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ShorthandFieldIdentifier };
@@ -1607,7 +1610,7 @@ const _supertype_foreignModItem_ids = new Set<number>([395, 396]);
 const _supertype_structItem_ids = new Set<number>([423, 424, 425]);
 const _supertype_implItem_ids = new Set<number>([377, 378]);
 const _supertype_type_ids = new Set<number>([
-	263, 480, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
+	263, 481, 255, 252, 128, 388, 389, 246, 265, 243, 244, 240, 242, 259, 254, 256, 248, 218, 59, 60, 61, 62, 63, 64, 65,
 	66, 67, 68, 69, 70, 71, 72, 73, 74, 75
 ]);
 const _supertype_pointerType_ids = new Set<number>([388, 389]);
@@ -1642,11 +1645,11 @@ const _supertype_comment_ids = new Set<number>([337, 340]);
 const _supertype_charLiteralEscaped_ids = new Set<number>([147, 148, 149, 150]);
 const _supertype_layout_ids = new Set<number>([168, 169, 170, 171, 172, 173, 174, 175]);
 const _supertype_declarationStatementTraitItem_ids = new Set<number>([
-	476, 479, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
+	477, 480, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 const _supertype_declarationStatementImplItemBody_ids = new Set<number>([
-	476, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 209, 377, 378, 214,
+	477, 205, 259, 416, 417, 418, 178, 190, 191, 384, 385, 395, 396, 423, 424, 425, 197, 198, 207, 209, 377, 378, 214,
 	215, 223, 224, 204, 206
 ]);
 
@@ -1983,6 +1986,7 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_ParametersElementsReceiverGroup_guard = _g(TSKindId.ParametersElementsReceiverGroup);
 	const _kind_TypeIdentifier_guard = _g(TSKindId.TypeIdentifier);
 	const _kind_FieldIdentifier_guard = _g(TSKindId.FieldIdentifier);
+	const _kind_ClosureParameter_guard = _g(TSKindId.ClosureParameter);
 	const _kind_ShorthandFieldIdentifier_guard = _g(TSKindId.ShorthandFieldIdentifier);
 	const _kind_MethodDeclaration_guard = _g(TSKindId.MethodDeclaration);
 	const _kind_SignatureMethodDeclaration_guard = _g(TSKindId.SignatureMethodDeclaration);
@@ -2419,6 +2423,7 @@ export function guardsWith(test: KindTest): IsGuards {
 		parametersElementsReceiverGroup: _kind_ParametersElementsReceiverGroup_guard,
 		typeIdentifier: _kind_TypeIdentifier_guard,
 		fieldIdentifier: _kind_FieldIdentifier_guard,
+		closureParameter: _kind_ClosureParameter_guard,
 		shorthandFieldIdentifier: _kind_ShorthandFieldIdentifier_guard,
 		methodDeclaration: _kind_MethodDeclaration_guard,
 		signatureMethodDeclaration: _kind_SignatureMethodDeclaration_guard,
