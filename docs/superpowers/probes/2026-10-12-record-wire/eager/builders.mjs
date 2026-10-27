@@ -492,7 +492,7 @@ function build185(store, input = {}) {
 				ref.data[ref.word + 4 + 1] = v1.$type;
 				ref.data[ref.word + 4 + 2] = v1._offset;
 				ref.data[ref.word + 4 + 3] = v1._len;
-				ref.data[ref.word + 4 + 4] = v1._r;
+				ref.data[ref.word + 4 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -570,7 +570,7 @@ function node185(store, ref) {
 								next.data[next.word + 4 + 1] = value.$type;
 								next.data[next.word + 4 + 2] = value._offset;
 								next.data[next.word + 4 + 3] = value._len;
-								next.data[next.word + 4 + 4] = value._r;
+								next.data[next.word + 4 + 4] = 0;
 							}
 						}
 					} else {
@@ -644,7 +644,7 @@ function build188(store, input = {}) {
 				ref.data[ref.word + 4 + 1] = v1.$type;
 				ref.data[ref.word + 4 + 2] = v1._offset;
 				ref.data[ref.word + 4 + 3] = v1._len;
-				ref.data[ref.word + 4 + 4] = v1._r;
+				ref.data[ref.word + 4 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -722,7 +722,7 @@ function node188(store, ref) {
 								next.data[next.word + 4 + 1] = value.$type;
 								next.data[next.word + 4 + 2] = value._offset;
 								next.data[next.word + 4 + 3] = value._len;
-								next.data[next.word + 4 + 4] = value._r;
+								next.data[next.word + 4 + 4] = 0;
 							}
 						}
 					} else {
@@ -779,7 +779,7 @@ function build189(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
@@ -858,7 +858,7 @@ function node189(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
@@ -1059,7 +1059,7 @@ function build192(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -1113,7 +1113,7 @@ function node192(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -1882,7 +1882,7 @@ function build200(store, input = {}) {
 				ref.data[ref.word + 23 + 1] = v1.$type;
 				ref.data[ref.word + 23 + 2] = v1._offset;
 				ref.data[ref.word + 23 + 3] = v1._len;
-				ref.data[ref.word + 23 + 4] = v1._r;
+				ref.data[ref.word + 23 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -1910,7 +1910,7 @@ function build200(store, input = {}) {
 				ref.data[ref.word + 38 + 1] = v3.$type;
 				ref.data[ref.word + 38 + 2] = v3._offset;
 				ref.data[ref.word + 38 + 3] = v3._len;
-				ref.data[ref.word + 38 + 4] = v3._r;
+				ref.data[ref.word + 38 + 4] = 0;
 			} else {
 				ref.data[ref.word + 38] = 3;
 				ref.data[ref.word + 38 + 1] = v3.$type;
@@ -1988,7 +1988,7 @@ function node200(store, ref) {
 								next.data[next.word + 23 + 1] = value.$type;
 								next.data[next.word + 23 + 2] = value._offset;
 								next.data[next.word + 23 + 3] = value._len;
-								next.data[next.word + 23 + 4] = value._r;
+								next.data[next.word + 23 + 4] = 0;
 							}
 						}
 					} else {
@@ -2042,7 +2042,7 @@ function node200(store, ref) {
 								next.data[next.word + 38 + 1] = value.$type;
 								next.data[next.word + 38 + 2] = value._offset;
 								next.data[next.word + 38 + 3] = value._len;
-								next.data[next.word + 38 + 4] = value._r;
+								next.data[next.word + 38 + 4] = 0;
 							} else {
 								next.data[next.word + 38] = 3;
 								next.data[next.word + 38 + 1] = value.$type;
@@ -2410,7 +2410,7 @@ function build204(store, input = {}) {
 				ref.data[ref.word + 23 + 1] = v1.$type;
 				ref.data[ref.word + 23 + 2] = v1._offset;
 				ref.data[ref.word + 23 + 3] = v1._len;
-				ref.data[ref.word + 23 + 4] = v1._r;
+				ref.data[ref.word + 23 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -2419,7 +2419,7 @@ function build204(store, input = {}) {
 				ref.data[ref.word + 28 + 1] = v2.$type;
 				ref.data[ref.word + 28 + 2] = v2._offset;
 				ref.data[ref.word + 28 + 3] = v2._len;
-				ref.data[ref.word + 28 + 4] = v2._r;
+				ref.data[ref.word + 28 + 4] = 0;
 			}
 		}
 	} else {
@@ -2489,7 +2489,7 @@ function node204(store, ref) {
 								next.data[next.word + 23 + 1] = value.$type;
 								next.data[next.word + 23 + 2] = value._offset;
 								next.data[next.word + 23 + 3] = value._len;
-								next.data[next.word + 23 + 4] = value._r;
+								next.data[next.word + 23 + 4] = 0;
 							}
 						}
 					} else {
@@ -2511,7 +2511,7 @@ function node204(store, ref) {
 								next.data[next.word + 28 + 1] = value.$type;
 								next.data[next.word + 28 + 2] = value._offset;
 								next.data[next.word + 28 + 3] = value._len;
-								next.data[next.word + 28 + 4] = value._r;
+								next.data[next.word + 28 + 4] = 0;
 							}
 						}
 					} else {
@@ -2573,7 +2573,7 @@ function build205(store, input = {}) {
 				ref.data[ref.word + 23 + 1] = v1.$type;
 				ref.data[ref.word + 23 + 2] = v1._offset;
 				ref.data[ref.word + 23 + 3] = v1._len;
-				ref.data[ref.word + 23 + 4] = v1._r;
+				ref.data[ref.word + 23 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -2595,7 +2595,7 @@ function build205(store, input = {}) {
 				ref.data[ref.word + 33 + 1] = v3.$type;
 				ref.data[ref.word + 33 + 2] = v3._offset;
 				ref.data[ref.word + 33 + 3] = v3._len;
-				ref.data[ref.word + 33 + 4] = v3._r;
+				ref.data[ref.word + 33 + 4] = 0;
 			} else {
 				ref.data[ref.word + 33] = 3;
 				ref.data[ref.word + 33 + 1] = v3.$type;
@@ -2673,7 +2673,7 @@ function node205(store, ref) {
 								next.data[next.word + 23 + 1] = value.$type;
 								next.data[next.word + 23 + 2] = value._offset;
 								next.data[next.word + 23 + 3] = value._len;
-								next.data[next.word + 23 + 4] = value._r;
+								next.data[next.word + 23 + 4] = 0;
 							}
 						}
 					} else {
@@ -2721,7 +2721,7 @@ function node205(store, ref) {
 								next.data[next.word + 33 + 1] = value.$type;
 								next.data[next.word + 33 + 2] = value._offset;
 								next.data[next.word + 33 + 3] = value._len;
-								next.data[next.word + 33 + 4] = value._r;
+								next.data[next.word + 33 + 4] = 0;
 							} else {
 								next.data[next.word + 33] = 3;
 								next.data[next.word + 33 + 1] = value.$type;
@@ -2797,7 +2797,7 @@ function build206(store, input = {}) {
 				ref.data[ref.word + 24 + 1] = v3.$type;
 				ref.data[ref.word + 24 + 2] = v3._offset;
 				ref.data[ref.word + 24 + 3] = v3._len;
-				ref.data[ref.word + 24 + 4] = v3._r;
+				ref.data[ref.word + 24 + 4] = 0;
 			}
 		}
 		if (v4 !== undefined) {
@@ -2819,7 +2819,7 @@ function build206(store, input = {}) {
 				ref.data[ref.word + 34 + 1] = v5.$type;
 				ref.data[ref.word + 34 + 2] = v5._offset;
 				ref.data[ref.word + 34 + 3] = v5._len;
-				ref.data[ref.word + 34 + 4] = v5._r;
+				ref.data[ref.word + 34 + 4] = 0;
 			} else {
 				ref.data[ref.word + 34] = 3;
 				ref.data[ref.word + 34 + 1] = v5.$type;
@@ -2931,7 +2931,7 @@ function node206(store, ref) {
 								next.data[next.word + 24 + 1] = value.$type;
 								next.data[next.word + 24 + 2] = value._offset;
 								next.data[next.word + 24 + 3] = value._len;
-								next.data[next.word + 24 + 4] = value._r;
+								next.data[next.word + 24 + 4] = 0;
 							}
 						}
 					} else {
@@ -2979,7 +2979,7 @@ function node206(store, ref) {
 								next.data[next.word + 34 + 1] = value.$type;
 								next.data[next.word + 34 + 2] = value._offset;
 								next.data[next.word + 34 + 3] = value._len;
-								next.data[next.word + 34 + 4] = value._r;
+								next.data[next.word + 34 + 4] = 0;
 							} else {
 								next.data[next.word + 34] = 3;
 								next.data[next.word + 34 + 1] = value.$type;
@@ -3376,7 +3376,7 @@ function build208(store, input = {}) {
 				ref.data[ref.word + 29 + 1] = v2.$type;
 				ref.data[ref.word + 29 + 2] = v2._offset;
 				ref.data[ref.word + 29 + 3] = v2._len;
-				ref.data[ref.word + 29 + 4] = v2._r;
+				ref.data[ref.word + 29 + 4] = 0;
 			} else {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 29] = 6;
@@ -3552,7 +3552,7 @@ function node208(store, ref) {
 								next.data[next.word + 29 + 1] = value.$type;
 								next.data[next.word + 29 + 2] = value._offset;
 								next.data[next.word + 29 + 3] = value._len;
-								next.data[next.word + 29 + 4] = value._r;
+								next.data[next.word + 29 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 29] = 6;
@@ -3760,7 +3760,7 @@ function build209(store, input = {}) {
 				ref.data[ref.word + 29 + 1] = v2.$type;
 				ref.data[ref.word + 29 + 2] = v2._offset;
 				ref.data[ref.word + 29 + 3] = v2._len;
-				ref.data[ref.word + 29 + 4] = v2._r;
+				ref.data[ref.word + 29 + 4] = 0;
 			} else {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 29] = 6;
@@ -3925,7 +3925,7 @@ function node209(store, ref) {
 								next.data[next.word + 29 + 1] = value.$type;
 								next.data[next.word + 29 + 2] = value._offset;
 								next.data[next.word + 29 + 3] = value._len;
-								next.data[next.word + 29 + 4] = value._r;
+								next.data[next.word + 29 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 29] = 6;
@@ -5244,7 +5244,7 @@ function build220(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		if (v1 !== undefined) {
@@ -5266,7 +5266,7 @@ function build220(store, input = {}) {
 				ref.data[ref.word + 12 + 1] = v2.$type;
 				ref.data[ref.word + 12 + 2] = v2._offset;
 				ref.data[ref.word + 12 + 3] = v2._len;
-				ref.data[ref.word + 12 + 4] = v2._r;
+				ref.data[ref.word + 12 + 4] = 0;
 			} else {
 				ref.data[ref.word + 12] = 3;
 				ref.data[ref.word + 12 + 1] = v2.$type;
@@ -5314,7 +5314,7 @@ function node220(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -5362,7 +5362,7 @@ function node220(store, ref) {
 								next.data[next.word + 12 + 1] = value.$type;
 								next.data[next.word + 12 + 2] = value._offset;
 								next.data[next.word + 12 + 3] = value._len;
-								next.data[next.word + 12 + 4] = value._r;
+								next.data[next.word + 12 + 4] = 0;
 							} else {
 								next.data[next.word + 12] = 3;
 								next.data[next.word + 12 + 1] = value.$type;
@@ -5712,7 +5712,7 @@ function build223(store, input = {}) {
 				ref.data[ref.word + 3 + 1] = v1.$type;
 				ref.data[ref.word + 3 + 2] = v1._offset;
 				ref.data[ref.word + 3 + 3] = v1._len;
-				ref.data[ref.word + 3 + 4] = v1._r;
+				ref.data[ref.word + 3 + 4] = 0;
 			} else {
 				ref.data[ref.word + 3] = 3;
 				ref.data[ref.word + 3 + 1] = v1.$type;
@@ -5738,7 +5738,7 @@ function build223(store, input = {}) {
 				ref.data[ref.word + 13 + 1] = v3.$type;
 				ref.data[ref.word + 13 + 2] = v3._offset;
 				ref.data[ref.word + 13 + 3] = v3._len;
-				ref.data[ref.word + 13 + 4] = v3._r;
+				ref.data[ref.word + 13 + 4] = 0;
 			} else {
 				ref.data[ref.word + 13] = 3;
 				ref.data[ref.word + 13 + 1] = v3.$type;
@@ -5817,7 +5817,7 @@ function node223(store, ref) {
 								next.data[next.word + 3 + 1] = value.$type;
 								next.data[next.word + 3 + 2] = value._offset;
 								next.data[next.word + 3 + 3] = value._len;
-								next.data[next.word + 3 + 4] = value._r;
+								next.data[next.word + 3 + 4] = 0;
 							} else {
 								next.data[next.word + 3] = 3;
 								next.data[next.word + 3 + 1] = value.$type;
@@ -5869,7 +5869,7 @@ function node223(store, ref) {
 								next.data[next.word + 13 + 1] = value.$type;
 								next.data[next.word + 13 + 2] = value._offset;
 								next.data[next.word + 13 + 3] = value._len;
-								next.data[next.word + 13 + 4] = value._r;
+								next.data[next.word + 13 + 4] = 0;
 							} else {
 								next.data[next.word + 13] = 3;
 								next.data[next.word + 13 + 1] = value.$type;
@@ -5943,7 +5943,7 @@ function build224(store, input = {}) {
 				ref.data[ref.word + 23 + 1] = v1.$type;
 				ref.data[ref.word + 23 + 2] = v1._offset;
 				ref.data[ref.word + 23 + 3] = v1._len;
-				ref.data[ref.word + 23 + 4] = v1._r;
+				ref.data[ref.word + 23 + 4] = 0;
 			} else {
 				ref.data[ref.word + 23] = 3;
 				ref.data[ref.word + 23 + 1] = v1.$type;
@@ -6016,7 +6016,7 @@ function node224(store, ref) {
 								next.data[next.word + 23 + 1] = value.$type;
 								next.data[next.word + 23 + 2] = value._offset;
 								next.data[next.word + 23 + 3] = value._len;
-								next.data[next.word + 23 + 4] = value._r;
+								next.data[next.word + 23 + 4] = 0;
 							} else {
 								next.data[next.word + 23] = 3;
 								next.data[next.word + 23 + 1] = value.$type;
@@ -6057,7 +6057,7 @@ function build226(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -6117,7 +6117,7 @@ function node226(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -6258,7 +6258,7 @@ function build228(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -6271,7 +6271,7 @@ function build228(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			}
 		}
 	} else {
@@ -6314,7 +6314,7 @@ function node228(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -6340,7 +6340,7 @@ function node228(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							}
 						}
 					} else {
@@ -6635,7 +6635,7 @@ function build232(store, input = {}) {
 				ref.data[ref.word + 3 + 1] = v1.$type;
 				ref.data[ref.word + 3 + 2] = v1._offset;
 				ref.data[ref.word + 3 + 3] = v1._len;
-				ref.data[ref.word + 3 + 4] = v1._r;
+				ref.data[ref.word + 3 + 4] = 0;
 			} else {
 				ref.data[ref.word + 3] = 3;
 				ref.data[ref.word + 3 + 1] = v1.$type;
@@ -6695,7 +6695,7 @@ function node232(store, ref) {
 								next.data[next.word + 3 + 1] = value.$type;
 								next.data[next.word + 3 + 2] = value._offset;
 								next.data[next.word + 3 + 3] = value._len;
-								next.data[next.word + 3 + 4] = value._r;
+								next.data[next.word + 3 + 4] = 0;
 							} else {
 								next.data[next.word + 3] = 3;
 								next.data[next.word + 3 + 1] = value.$type;
@@ -6747,7 +6747,7 @@ function build233(store, input = {}) {
 				ref.data[ref.word + 3 + 1] = v1.$type;
 				ref.data[ref.word + 3 + 2] = v1._offset;
 				ref.data[ref.word + 3 + 3] = v1._len;
-				ref.data[ref.word + 3 + 4] = v1._r;
+				ref.data[ref.word + 3 + 4] = 0;
 			} else {
 				ref.data[ref.word + 3] = 3;
 				ref.data[ref.word + 3 + 1] = v1.$type;
@@ -6821,7 +6821,7 @@ function node233(store, ref) {
 								next.data[next.word + 3 + 1] = value.$type;
 								next.data[next.word + 3 + 2] = value._offset;
 								next.data[next.word + 3 + 3] = value._len;
-								next.data[next.word + 3 + 4] = value._r;
+								next.data[next.word + 3 + 4] = 0;
 							} else {
 								next.data[next.word + 3] = 3;
 								next.data[next.word + 3 + 1] = value.$type;
@@ -7218,7 +7218,7 @@ function build239(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -7254,7 +7254,7 @@ function node239(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -7308,7 +7308,7 @@ function build240(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -7378,7 +7378,7 @@ function node240(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -7752,7 +7752,7 @@ function build245(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -7809,7 +7809,7 @@ function node245(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -7873,7 +7873,7 @@ function build246(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -7930,7 +7930,7 @@ function node246(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -8842,7 +8842,7 @@ function build259(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -8905,7 +8905,7 @@ function node259(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -8978,7 +8978,7 @@ function build263(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -8994,7 +8994,7 @@ function build263(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			}
 		}
 	} else {
@@ -9037,7 +9037,7 @@ function node263(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -9066,7 +9066,7 @@ function node263(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							}
 						}
 					} else {
@@ -9103,7 +9103,7 @@ function build264(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -9163,7 +9163,7 @@ function node264(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -9230,7 +9230,7 @@ function build265(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -9290,7 +9290,7 @@ function node265(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -9367,7 +9367,7 @@ function build267(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -9433,7 +9433,7 @@ function node267(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -9474,7 +9474,7 @@ function build268(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -9517,7 +9517,7 @@ function node268(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -9570,7 +9570,7 @@ function build270(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -9592,7 +9592,7 @@ function build270(store, input = {}) {
 				ref.data[ref.word + 12 + 1] = v2.$type;
 				ref.data[ref.word + 12 + 2] = v2._offset;
 				ref.data[ref.word + 12 + 3] = v2._len;
-				ref.data[ref.word + 12 + 4] = v2._r;
+				ref.data[ref.word + 12 + 4] = 0;
 			} else {
 				ref.data[ref.word + 12] = 3;
 				ref.data[ref.word + 12 + 1] = v2.$type;
@@ -9643,7 +9643,7 @@ function node270(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -9691,7 +9691,7 @@ function node270(store, ref) {
 								next.data[next.word + 12 + 1] = value.$type;
 								next.data[next.word + 12 + 2] = value._offset;
 								next.data[next.word + 12 + 3] = value._len;
-								next.data[next.word + 12 + 4] = value._r;
+								next.data[next.word + 12 + 4] = 0;
 							} else {
 								next.data[next.word + 12] = 3;
 								next.data[next.word + 12 + 1] = value.$type;
@@ -9740,7 +9740,7 @@ function build271(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -9756,7 +9756,7 @@ function build271(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -9803,7 +9803,7 @@ function node271(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -9832,7 +9832,7 @@ function node271(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -9885,7 +9885,7 @@ function build272(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -9907,7 +9907,7 @@ function build272(store, input = {}) {
 				ref.data[ref.word + 12 + 1] = v2.$type;
 				ref.data[ref.word + 12 + 2] = v2._offset;
 				ref.data[ref.word + 12 + 3] = v2._len;
-				ref.data[ref.word + 12 + 4] = v2._r;
+				ref.data[ref.word + 12 + 4] = 0;
 			} else {
 				ref.data[ref.word + 12] = 3;
 				ref.data[ref.word + 12 + 1] = v2.$type;
@@ -9958,7 +9958,7 @@ function node272(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -10006,7 +10006,7 @@ function node272(store, ref) {
 								next.data[next.word + 12 + 1] = value.$type;
 								next.data[next.word + 12 + 2] = value._offset;
 								next.data[next.word + 12 + 3] = value._len;
-								next.data[next.word + 12 + 4] = value._r;
+								next.data[next.word + 12 + 4] = 0;
 							} else {
 								next.data[next.word + 12] = 3;
 								next.data[next.word + 12 + 1] = value.$type;
@@ -10054,7 +10054,7 @@ function build273(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -10111,7 +10111,7 @@ function node273(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -10175,7 +10175,7 @@ function build274(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -10218,7 +10218,7 @@ function node274(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -10259,7 +10259,7 @@ function build275(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -10302,7 +10302,7 @@ function node275(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -10347,7 +10347,7 @@ function build276(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -10407,7 +10407,7 @@ function node276(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -10548,7 +10548,7 @@ function build279(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -10591,7 +10591,7 @@ function node279(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -10956,7 +10956,7 @@ function build284(store, input = {}) {
 				ref.data[ref.word + 4 + 1] = v1.$type;
 				ref.data[ref.word + 4 + 2] = v1._offset;
 				ref.data[ref.word + 4 + 3] = v1._len;
-				ref.data[ref.word + 4 + 4] = v1._r;
+				ref.data[ref.word + 4 + 4] = 0;
 			}
 		}
 	} else {
@@ -11024,7 +11024,7 @@ function node284(store, ref) {
 								next.data[next.word + 4 + 1] = value.$type;
 								next.data[next.word + 4 + 2] = value._offset;
 								next.data[next.word + 4 + 3] = value._len;
-								next.data[next.word + 4 + 4] = value._r;
+								next.data[next.word + 4 + 4] = 0;
 							}
 						}
 					} else {
@@ -11111,7 +11111,7 @@ function build285(store, input = {}) {
 				ref.data[ref.word + 16 + 1] = v2.$type;
 				ref.data[ref.word + 16 + 2] = v2._offset;
 				ref.data[ref.word + 16 + 3] = v2._len;
-				ref.data[ref.word + 16 + 4] = v2._r;
+				ref.data[ref.word + 16 + 4] = 0;
 			} else {
 				ref.data[ref.word + 16] = 3;
 				ref.data[ref.word + 16 + 1] = v2.$type;
@@ -11228,7 +11228,7 @@ function node285(store, ref) {
 								next.data[next.word + 16 + 1] = value.$type;
 								next.data[next.word + 16 + 2] = value._offset;
 								next.data[next.word + 16 + 3] = value._len;
-								next.data[next.word + 16 + 4] = value._r;
+								next.data[next.word + 16 + 4] = 0;
 							} else {
 								next.data[next.word + 16] = 3;
 								next.data[next.word + 16 + 1] = value.$type;
@@ -11269,7 +11269,7 @@ function build286(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -11312,7 +11312,7 @@ function node286(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -11361,7 +11361,7 @@ function build287(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -11426,7 +11426,7 @@ function node287(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -11514,7 +11514,7 @@ function build288(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -11530,7 +11530,7 @@ function build288(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -11577,7 +11577,7 @@ function node288(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -11606,7 +11606,7 @@ function node288(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -11659,7 +11659,7 @@ function build289(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -11679,7 +11679,7 @@ function build289(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -11728,7 +11728,7 @@ function node289(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -11759,7 +11759,7 @@ function node289(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -11872,7 +11872,7 @@ function build292(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -11926,7 +11926,7 @@ function node292(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -12085,7 +12085,7 @@ function build295(store, input = {}) {
 				ref.data[ref.word + 9 + 1] = v2.$type;
 				ref.data[ref.word + 9 + 2] = v2._offset;
 				ref.data[ref.word + 9 + 3] = v2._len;
-				ref.data[ref.word + 9 + 4] = v2._r;
+				ref.data[ref.word + 9 + 4] = 0;
 			} else {
 				ref.data[ref.word + 9] = 3;
 				ref.data[ref.word + 9 + 1] = v2.$type;
@@ -12194,7 +12194,7 @@ function node295(store, ref) {
 								next.data[next.word + 9 + 1] = value.$type;
 								next.data[next.word + 9 + 2] = value._offset;
 								next.data[next.word + 9 + 3] = value._len;
-								next.data[next.word + 9 + 4] = value._r;
+								next.data[next.word + 9 + 4] = 0;
 							} else {
 								next.data[next.word + 9] = 3;
 								next.data[next.word + 9 + 1] = value.$type;
@@ -12261,7 +12261,7 @@ function build296(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -12277,7 +12277,7 @@ function build296(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -12324,7 +12324,7 @@ function node296(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -12353,7 +12353,7 @@ function node296(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -12415,7 +12415,7 @@ function build297(store, input = {}) {
 				ref.data[ref.word + 11 + 1] = v1.$type;
 				ref.data[ref.word + 11 + 2] = v1._offset;
 				ref.data[ref.word + 11 + 3] = v1._len;
-				ref.data[ref.word + 11 + 4] = v1._r;
+				ref.data[ref.word + 11 + 4] = 0;
 			} else {
 				ref.data[ref.word + 11] = 3;
 				ref.data[ref.word + 11 + 1] = v1.$type;
@@ -12499,7 +12499,7 @@ function node297(store, ref) {
 								next.data[next.word + 11 + 1] = value.$type;
 								next.data[next.word + 11 + 2] = value._offset;
 								next.data[next.word + 11 + 3] = value._len;
-								next.data[next.word + 11 + 4] = value._r;
+								next.data[next.word + 11 + 4] = 0;
 							} else {
 								next.data[next.word + 11] = 3;
 								next.data[next.word + 11 + 1] = value.$type;
@@ -12697,7 +12697,7 @@ function build299(store, input = {}) {
 				ref.data[ref.word + 11 + 1] = v1.$type;
 				ref.data[ref.word + 11 + 2] = v1._offset;
 				ref.data[ref.word + 11 + 3] = v1._len;
-				ref.data[ref.word + 11 + 4] = v1._r;
+				ref.data[ref.word + 11 + 4] = 0;
 			} else {
 				ref.data[ref.word + 11] = 3;
 				ref.data[ref.word + 11 + 1] = v1.$type;
@@ -12713,7 +12713,7 @@ function build299(store, input = {}) {
 				ref.data[ref.word + 16 + 1] = v2.$type;
 				ref.data[ref.word + 16 + 2] = v2._offset;
 				ref.data[ref.word + 16 + 3] = v2._len;
-				ref.data[ref.word + 16 + 4] = v2._r;
+				ref.data[ref.word + 16 + 4] = 0;
 			} else {
 				ref.data[ref.word + 16] = 3;
 				ref.data[ref.word + 16 + 1] = v2.$type;
@@ -12801,7 +12801,7 @@ function node299(store, ref) {
 								next.data[next.word + 11 + 1] = value.$type;
 								next.data[next.word + 11 + 2] = value._offset;
 								next.data[next.word + 11 + 3] = value._len;
-								next.data[next.word + 11 + 4] = value._r;
+								next.data[next.word + 11 + 4] = 0;
 							} else {
 								next.data[next.word + 11] = 3;
 								next.data[next.word + 11 + 1] = value.$type;
@@ -12830,7 +12830,7 @@ function node299(store, ref) {
 								next.data[next.word + 16 + 1] = value.$type;
 								next.data[next.word + 16 + 2] = value._offset;
 								next.data[next.word + 16 + 3] = value._len;
-								next.data[next.word + 16 + 4] = value._r;
+								next.data[next.word + 16 + 4] = 0;
 							} else {
 								next.data[next.word + 16] = 3;
 								next.data[next.word + 16 + 1] = value.$type;
@@ -12955,7 +12955,7 @@ function build302(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -13006,7 +13006,7 @@ function node302(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -13046,7 +13046,7 @@ function build303(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -13082,7 +13082,7 @@ function node303(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -13136,7 +13136,7 @@ function build304(store, input = {}) {
 				ref.data[ref.word + 11 + 1] = v1.$type;
 				ref.data[ref.word + 11 + 2] = v1._offset;
 				ref.data[ref.word + 11 + 3] = v1._len;
-				ref.data[ref.word + 11 + 4] = v1._r;
+				ref.data[ref.word + 11 + 4] = 0;
 			} else {
 				ref.data[ref.word + 11] = 3;
 				ref.data[ref.word + 11 + 1] = v1.$type;
@@ -13209,7 +13209,7 @@ function node304(store, ref) {
 								next.data[next.word + 11 + 1] = value.$type;
 								next.data[next.word + 11 + 2] = value._offset;
 								next.data[next.word + 11 + 3] = value._len;
-								next.data[next.word + 11 + 4] = value._r;
+								next.data[next.word + 11 + 4] = 0;
 							} else {
 								next.data[next.word + 11] = 3;
 								next.data[next.word + 11 + 1] = value.$type;
@@ -13332,7 +13332,7 @@ function build306(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -13348,7 +13348,7 @@ function build306(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -13395,7 +13395,7 @@ function node306(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -13424,7 +13424,7 @@ function node306(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -13465,7 +13465,7 @@ function build307(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -13508,7 +13508,7 @@ function node307(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -13553,7 +13553,7 @@ function build308(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -13625,7 +13625,7 @@ function node308(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -14041,7 +14041,7 @@ function build313(store, input = {}) {
 				ref.data[ref.word + 13 + 1] = v2.$type;
 				ref.data[ref.word + 13 + 2] = v2._offset;
 				ref.data[ref.word + 13 + 3] = v2._len;
-				ref.data[ref.word + 13 + 4] = v2._r;
+				ref.data[ref.word + 13 + 4] = 0;
 			} else {
 				ref.data[ref.word + 13] = 3;
 				ref.data[ref.word + 13 + 1] = v2.$type;
@@ -14149,7 +14149,7 @@ function node313(store, ref) {
 								next.data[next.word + 13 + 1] = value.$type;
 								next.data[next.word + 13 + 2] = value._offset;
 								next.data[next.word + 13 + 3] = value._len;
-								next.data[next.word + 13 + 4] = value._r;
+								next.data[next.word + 13 + 4] = 0;
 							} else {
 								next.data[next.word + 13] = 3;
 								next.data[next.word + 13 + 1] = value.$type;
@@ -14188,7 +14188,7 @@ function build315(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -14245,7 +14245,7 @@ function node315(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -14457,7 +14457,7 @@ function build318(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -14514,7 +14514,7 @@ function node318(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -14689,7 +14689,7 @@ function build322(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -14732,7 +14732,7 @@ function node322(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -14772,7 +14772,7 @@ function build324(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -14815,7 +14815,7 @@ function node324(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -14856,7 +14856,7 @@ function build325(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		if (v1 !== undefined) {
@@ -14868,7 +14868,7 @@ function build325(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -14912,7 +14912,7 @@ function node325(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -14937,7 +14937,7 @@ function node325(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -14982,7 +14982,7 @@ function build326(store, input = {}) {
 				ref.data[ref.word + 3 + 1] = v1.$type;
 				ref.data[ref.word + 3 + 2] = v1._offset;
 				ref.data[ref.word + 3 + 3] = v1._len;
-				ref.data[ref.word + 3 + 4] = v1._r;
+				ref.data[ref.word + 3 + 4] = 0;
 			} else {
 				ref.data[ref.word + 3] = 3;
 				ref.data[ref.word + 3 + 1] = v1.$type;
@@ -15042,7 +15042,7 @@ function node326(store, ref) {
 								next.data[next.word + 3 + 1] = value.$type;
 								next.data[next.word + 3 + 2] = value._offset;
 								next.data[next.word + 3 + 3] = value._len;
-								next.data[next.word + 3 + 4] = value._r;
+								next.data[next.word + 3 + 4] = 0;
 							} else {
 								next.data[next.word + 3] = 3;
 								next.data[next.word + 3 + 1] = value.$type;
@@ -15076,7 +15076,7 @@ function build330(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
@@ -15131,7 +15131,7 @@ function node330(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
@@ -15188,7 +15188,7 @@ function build332(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -15205,7 +15205,7 @@ function build332(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		ref.data[ref.word + 7] = v1run.at;
@@ -15247,7 +15247,7 @@ function node332(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -15271,7 +15271,7 @@ function node332(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -15319,7 +15319,7 @@ function build333(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		if (v1 !== undefined) {
@@ -15328,7 +15328,7 @@ function build333(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -15337,7 +15337,7 @@ function build333(store, input = {}) {
 				ref.data[ref.word + 12 + 1] = v2.$type;
 				ref.data[ref.word + 12 + 2] = v2._offset;
 				ref.data[ref.word + 12 + 3] = v2._len;
-				ref.data[ref.word + 12 + 4] = v2._r;
+				ref.data[ref.word + 12 + 4] = 0;
 			}
 		}
 	} else {
@@ -15381,7 +15381,7 @@ function node333(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -15403,7 +15403,7 @@ function node333(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							}
 						}
 					} else {
@@ -15425,7 +15425,7 @@ function node333(store, ref) {
 								next.data[next.word + 12 + 1] = value.$type;
 								next.data[next.word + 12 + 2] = value._offset;
 								next.data[next.word + 12 + 3] = value._len;
-								next.data[next.word + 12 + 4] = value._r;
+								next.data[next.word + 12 + 4] = 0;
 							}
 						}
 					} else {
@@ -15455,7 +15455,7 @@ function build337(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
@@ -15504,7 +15504,7 @@ function node337(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
@@ -15547,7 +15547,7 @@ function build340(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				const child = store.location(v0._r);
 				ref.data[ref.word + 2] = 6;
@@ -15596,7 +15596,7 @@ function node340(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 2] = 6;
@@ -16268,7 +16268,7 @@ function build348(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -16319,7 +16319,7 @@ function node348(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -16852,7 +16852,7 @@ function build355(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -16903,7 +16903,7 @@ function node355(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -17031,7 +17031,7 @@ function build357(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -17082,7 +17082,7 @@ function node357(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -17131,7 +17131,7 @@ function build358(store, input = {}) {
 					data[at + 1] = item.$type;
 					data[at + 2] = item._offset;
 					data[at + 3] = item._len;
-					data[at + 4] = item._r;
+					data[at + 4] = 0;
 				} else {
 					data[at] = 3;
 					data[at + 1] = item.$type;
@@ -17182,7 +17182,7 @@ function node358(store, ref) {
 									data[at + 1] = item.$type;
 									data[at + 2] = item._offset;
 									data[at + 3] = item._len;
-									data[at + 4] = item._r;
+									data[at + 4] = 0;
 								} else {
 									data[at] = 3;
 									data[at + 1] = item.$type;
@@ -17310,7 +17310,7 @@ function build360(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -17353,7 +17353,7 @@ function node360(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -18532,7 +18532,7 @@ function build366(store, input = {}) {
 				ref.data[ref.word + 4 + 1] = v1.$type;
 				ref.data[ref.word + 4 + 2] = v1._offset;
 				ref.data[ref.word + 4 + 3] = v1._len;
-				ref.data[ref.word + 4 + 4] = v1._r;
+				ref.data[ref.word + 4 + 4] = 0;
 			} else {
 				ref.data[ref.word + 4] = 3;
 				ref.data[ref.word + 4 + 1] = v1.$type;
@@ -18548,7 +18548,7 @@ function build366(store, input = {}) {
 				ref.data[ref.word + 9 + 1] = v2.$type;
 				ref.data[ref.word + 9 + 2] = v2._offset;
 				ref.data[ref.word + 9 + 3] = v2._len;
-				ref.data[ref.word + 9 + 4] = v2._r;
+				ref.data[ref.word + 9 + 4] = 0;
 			} else {
 				ref.data[ref.word + 9] = 3;
 				ref.data[ref.word + 9 + 1] = v2.$type;
@@ -18627,7 +18627,7 @@ function node366(store, ref) {
 								next.data[next.word + 4 + 1] = value.$type;
 								next.data[next.word + 4 + 2] = value._offset;
 								next.data[next.word + 4 + 3] = value._len;
-								next.data[next.word + 4 + 4] = value._r;
+								next.data[next.word + 4 + 4] = 0;
 							} else {
 								next.data[next.word + 4] = 3;
 								next.data[next.word + 4 + 1] = value.$type;
@@ -18656,7 +18656,7 @@ function node366(store, ref) {
 								next.data[next.word + 9 + 1] = value.$type;
 								next.data[next.word + 9 + 2] = value._offset;
 								next.data[next.word + 9 + 3] = value._len;
-								next.data[next.word + 9 + 4] = value._r;
+								next.data[next.word + 9 + 4] = 0;
 							} else {
 								next.data[next.word + 9] = 3;
 								next.data[next.word + 9 + 1] = value.$type;
@@ -18828,7 +18828,7 @@ function build368(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -18894,7 +18894,7 @@ function node368(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -19218,7 +19218,7 @@ function build370(store, input = {}) {
 				ref.data[ref.word + 9 + 1] = v4.$type;
 				ref.data[ref.word + 9 + 2] = v4._offset;
 				ref.data[ref.word + 9 + 3] = v4._len;
-				ref.data[ref.word + 9 + 4] = v4._r;
+				ref.data[ref.word + 9 + 4] = 0;
 			} else {
 				ref.data[ref.word + 9] = 3;
 				ref.data[ref.word + 9 + 1] = v4.$type;
@@ -19342,7 +19342,7 @@ function node370(store, ref) {
 								next.data[next.word + 9 + 1] = value.$type;
 								next.data[next.word + 9 + 2] = value._offset;
 								next.data[next.word + 9 + 3] = value._len;
-								next.data[next.word + 9 + 4] = value._r;
+								next.data[next.word + 9 + 4] = 0;
 							} else {
 								next.data[next.word + 9] = 3;
 								next.data[next.word + 9 + 1] = value.$type;
@@ -19383,7 +19383,7 @@ function build371(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -19426,7 +19426,7 @@ function node371(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -19467,7 +19467,7 @@ function build372(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -19510,7 +19510,7 @@ function node372(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -19551,7 +19551,7 @@ function build373(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -19594,7 +19594,7 @@ function node373(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -19635,7 +19635,7 @@ function build374(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -19678,7 +19678,7 @@ function node374(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -20366,7 +20366,7 @@ function build379(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -20409,7 +20409,7 @@ function node379(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -20750,7 +20750,7 @@ function build384(store, input = {}) {
 				ref.data[ref.word + 23 + 1] = v1.$type;
 				ref.data[ref.word + 23 + 2] = v1._offset;
 				ref.data[ref.word + 23 + 3] = v1._len;
-				ref.data[ref.word + 23 + 4] = v1._r;
+				ref.data[ref.word + 23 + 4] = 0;
 			}
 		}
 	} else {
@@ -20816,7 +20816,7 @@ function node384(store, ref) {
 								next.data[next.word + 23 + 1] = value.$type;
 								next.data[next.word + 23 + 2] = value._offset;
 								next.data[next.word + 23 + 3] = value._len;
-								next.data[next.word + 23 + 4] = value._r;
+								next.data[next.word + 23 + 4] = 0;
 							}
 						}
 					} else {
@@ -20867,7 +20867,7 @@ function build385(store, input = {}) {
 				ref.data[ref.word + 23 + 1] = v1.$type;
 				ref.data[ref.word + 23 + 2] = v1._offset;
 				ref.data[ref.word + 23 + 3] = v1._len;
-				ref.data[ref.word + 23 + 4] = v1._r;
+				ref.data[ref.word + 23 + 4] = 0;
 			}
 		}
 		if (v2 !== undefined) {
@@ -20950,7 +20950,7 @@ function node385(store, ref) {
 								next.data[next.word + 23 + 1] = value.$type;
 								next.data[next.word + 23 + 2] = value._offset;
 								next.data[next.word + 23 + 3] = value._len;
-								next.data[next.word + 23 + 4] = value._r;
+								next.data[next.word + 23 + 4] = 0;
 							}
 						}
 					} else {
@@ -21019,7 +21019,7 @@ function build386(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -21035,7 +21035,7 @@ function build386(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -21082,7 +21082,7 @@ function node386(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -21111,7 +21111,7 @@ function node386(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -21151,7 +21151,7 @@ function build387(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -21194,7 +21194,7 @@ function node387(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -21389,7 +21389,7 @@ function build390(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -21411,7 +21411,7 @@ function build390(store, input = {}) {
 				ref.data[ref.word + 12 + 1] = v2.$type;
 				ref.data[ref.word + 12 + 2] = v2._offset;
 				ref.data[ref.word + 12 + 3] = v2._len;
-				ref.data[ref.word + 12 + 4] = v2._r;
+				ref.data[ref.word + 12 + 4] = 0;
 			} else {
 				ref.data[ref.word + 12] = 3;
 				ref.data[ref.word + 12 + 1] = v2.$type;
@@ -21462,7 +21462,7 @@ function node390(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -21510,7 +21510,7 @@ function node390(store, ref) {
 								next.data[next.word + 12 + 1] = value.$type;
 								next.data[next.word + 12 + 2] = value._offset;
 								next.data[next.word + 12 + 3] = value._len;
-								next.data[next.word + 12 + 4] = value._r;
+								next.data[next.word + 12 + 4] = 0;
 							} else {
 								next.data[next.word + 12] = 3;
 								next.data[next.word + 12 + 1] = value.$type;
@@ -21551,7 +21551,7 @@ function build391(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -21594,7 +21594,7 @@ function node391(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -21635,7 +21635,7 @@ function build392(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -21678,7 +21678,7 @@ function node392(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -21779,7 +21779,7 @@ function build394(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -21822,7 +21822,7 @@ function node394(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -22134,7 +22134,7 @@ function build397(store, input = {}) {
 				ref.data[ref.word + 9 + 1] = v2.$type;
 				ref.data[ref.word + 9 + 2] = v2._offset;
 				ref.data[ref.word + 9 + 3] = v2._len;
-				ref.data[ref.word + 9 + 4] = v2._r;
+				ref.data[ref.word + 9 + 4] = 0;
 			} else {
 				ref.data[ref.word + 9] = 3;
 				ref.data[ref.word + 9 + 1] = v2.$type;
@@ -22233,7 +22233,7 @@ function node397(store, ref) {
 								next.data[next.word + 9 + 1] = value.$type;
 								next.data[next.word + 9 + 2] = value._offset;
 								next.data[next.word + 9 + 3] = value._len;
-								next.data[next.word + 9 + 4] = value._r;
+								next.data[next.word + 9 + 4] = 0;
 							} else {
 								next.data[next.word + 9] = 3;
 								next.data[next.word + 9 + 1] = value.$type;
@@ -22446,7 +22446,7 @@ function build400(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -22482,7 +22482,7 @@ function node400(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -22512,7 +22512,7 @@ function build401(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -22548,7 +22548,7 @@ function node401(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -22607,7 +22607,7 @@ function build402(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -22643,7 +22643,7 @@ function node402(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -22673,7 +22673,7 @@ function build403(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -22709,7 +22709,7 @@ function node403(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -23648,7 +23648,7 @@ function build415(store, input = {}) {
 				ref.data[ref.word + 12 + 1] = v3.$type;
 				ref.data[ref.word + 12 + 2] = v3._offset;
 				ref.data[ref.word + 12 + 3] = v3._len;
-				ref.data[ref.word + 12 + 4] = v3._r;
+				ref.data[ref.word + 12 + 4] = 0;
 			} else {
 				ref.data[ref.word + 12] = 3;
 				ref.data[ref.word + 12 + 1] = v3.$type;
@@ -23755,7 +23755,7 @@ function node415(store, ref) {
 								next.data[next.word + 12 + 1] = value.$type;
 								next.data[next.word + 12 + 2] = value._offset;
 								next.data[next.word + 12 + 3] = value._len;
-								next.data[next.word + 12 + 4] = value._r;
+								next.data[next.word + 12 + 4] = 0;
 							} else {
 								next.data[next.word + 12] = 3;
 								next.data[next.word + 12 + 1] = value.$type;
@@ -23793,7 +23793,7 @@ function build416(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		if (v1 !== undefined) {
@@ -23846,7 +23846,7 @@ function node416(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -23906,7 +23906,7 @@ function build417(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		if (v1 !== undefined) {
@@ -23959,7 +23959,7 @@ function node417(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -24019,7 +24019,7 @@ function build418(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 		if (v1 !== undefined) {
@@ -24072,7 +24072,7 @@ function node418(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -24143,7 +24143,7 @@ function build419(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -24209,7 +24209,7 @@ function node419(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -24258,7 +24258,7 @@ function build420(store, input = {}) {
 				ref.data[ref.word + 7 + 1] = v1.$type;
 				ref.data[ref.word + 7 + 2] = v1._offset;
 				ref.data[ref.word + 7 + 3] = v1._len;
-				ref.data[ref.word + 7 + 4] = v1._r;
+				ref.data[ref.word + 7 + 4] = 0;
 			} else {
 				ref.data[ref.word + 7] = 3;
 				ref.data[ref.word + 7 + 1] = v1.$type;
@@ -24324,7 +24324,7 @@ function node420(store, ref) {
 								next.data[next.word + 7 + 1] = value.$type;
 								next.data[next.word + 7 + 2] = value._offset;
 								next.data[next.word + 7 + 3] = value._len;
-								next.data[next.word + 7 + 4] = value._r;
+								next.data[next.word + 7 + 4] = 0;
 							} else {
 								next.data[next.word + 7] = 3;
 								next.data[next.word + 7 + 1] = value.$type;
@@ -24367,7 +24367,7 @@ function build422(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -24424,7 +24424,7 @@ function node422(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -25706,7 +25706,7 @@ function build431(store, input = {}) {
 				ref.data[ref.word + 4 + 1] = v1.$type;
 				ref.data[ref.word + 4 + 2] = v1._offset;
 				ref.data[ref.word + 4 + 3] = v1._len;
-				ref.data[ref.word + 4 + 4] = v1._r;
+				ref.data[ref.word + 4 + 4] = 0;
 			} else {
 				ref.data[ref.word + 4] = 3;
 				ref.data[ref.word + 4 + 1] = v1.$type;
@@ -25781,7 +25781,7 @@ function node431(store, ref) {
 								next.data[next.word + 4 + 1] = value.$type;
 								next.data[next.word + 4 + 2] = value._offset;
 								next.data[next.word + 4 + 3] = value._len;
-								next.data[next.word + 4 + 4] = value._r;
+								next.data[next.word + 4 + 4] = 0;
 							} else {
 								next.data[next.word + 4] = 3;
 								next.data[next.word + 4 + 1] = value.$type;
@@ -25997,7 +25997,7 @@ function build433(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			} else {
 				ref.data[ref.word + 2] = 3;
 				ref.data[ref.word + 2 + 1] = v0.$type;
@@ -26057,7 +26057,7 @@ function node433(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							} else {
 								next.data[next.word + 2] = 3;
 								next.data[next.word + 2 + 1] = value.$type;
@@ -27042,7 +27042,7 @@ function build479(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -27078,7 +27078,7 @@ function node479(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -27108,7 +27108,7 @@ function build474(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -27144,7 +27144,7 @@ function node474(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -27174,7 +27174,7 @@ function build477(store, input = {}) {
 				ref.data[ref.word + 2 + 1] = v0.$type;
 				ref.data[ref.word + 2 + 2] = v0._offset;
 				ref.data[ref.word + 2 + 3] = v0._len;
-				ref.data[ref.word + 2 + 4] = v0._r;
+				ref.data[ref.word + 2 + 4] = 0;
 			}
 		}
 	} else {
@@ -27210,7 +27210,7 @@ function node477(store, ref) {
 								next.data[next.word + 2 + 1] = value.$type;
 								next.data[next.word + 2 + 2] = value._offset;
 								next.data[next.word + 2 + 3] = value._len;
-								next.data[next.word + 2 + 4] = value._r;
+								next.data[next.word + 2 + 4] = 0;
 							}
 						}
 					} else {
@@ -27297,7 +27297,7 @@ function build476(store, input = {}) {
 				ref.data[ref.word + 29 + 1] = v2.$type;
 				ref.data[ref.word + 29 + 2] = v2._offset;
 				ref.data[ref.word + 29 + 3] = v2._len;
-				ref.data[ref.word + 29 + 4] = v2._r;
+				ref.data[ref.word + 29 + 4] = 0;
 			} else {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 29] = 6;
@@ -27473,7 +27473,7 @@ function node476(store, ref) {
 								next.data[next.word + 29 + 1] = value.$type;
 								next.data[next.word + 29 + 2] = value._offset;
 								next.data[next.word + 29 + 3] = value._len;
-								next.data[next.word + 29 + 4] = value._r;
+								next.data[next.word + 29 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 29] = 6;
@@ -27681,7 +27681,7 @@ function build478(store, input = {}) {
 				ref.data[ref.word + 29 + 1] = v2.$type;
 				ref.data[ref.word + 29 + 2] = v2._offset;
 				ref.data[ref.word + 29 + 3] = v2._len;
-				ref.data[ref.word + 29 + 4] = v2._r;
+				ref.data[ref.word + 29 + 4] = 0;
 			} else {
 				const child = store.location(v2._r);
 				ref.data[ref.word + 29] = 6;
@@ -27846,7 +27846,7 @@ function node478(store, ref) {
 								next.data[next.word + 29 + 1] = value.$type;
 								next.data[next.word + 29 + 2] = value._offset;
 								next.data[next.word + 29 + 3] = value._len;
-								next.data[next.word + 29 + 4] = value._r;
+								next.data[next.word + 29 + 4] = 0;
 							} else {
 								const child = store.location(value._r);
 								next.data[next.word + 29] = 6;
