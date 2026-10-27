@@ -163,19 +163,18 @@
   	| { readonly absent: readonly string[]; readonly required: readonly string[] }
   	| { readonly flag: string; readonly set: boolean }
   	| { readonly member: string; readonly kinds: readonly number[] }
-  	| { readonly scalar: 'integer' | 'float' | 'boolean' }
   	| { readonly text: string }
   	| { readonly variant: string; readonly value: number; readonly default?: true };
   export interface PortableBuildArm {
   	readonly kind: number;
   	readonly builder?: string;
   	readonly seated?: PortableCallShape;
+  	readonly scalar?: 'integer' | 'float';
   	readonly when: readonly PortablePickTest[];
   	readonly holders?: readonly (readonly [holder: number, key: string])[];
   	readonly members: readonly PortableMemberStep[];
   	readonly presets: readonly PortablePreset[];
   	readonly flags: Readonly<Record<string, PortableFlagStep>>;
-  	readonly predicate?: { readonly member: string; readonly op: 'eq' | 'match'; readonly text: string };
   	readonly template?: { readonly member: string; readonly pattern: string; readonly holes: readonly string[] };
   }
   export interface PortableBuildPath { readonly root: boolean; readonly arms: readonly PortableBuildArm[] }
@@ -188,11 +187,11 @@
 - Modify: `packages/codegen/src/bindings/pinned-reader.ts` and `facts.ts`. One `#set!` reader serves `reason` and `default`. A claim at the pattern's top, or directly under a top-level grouping, with `(#set! default)` carries `ClaimFact.default`, set to the kind as authored. Binding can map two kinds onto one parser kind, as python's `lambda` and `lambda_within_for_in_clause` both bind to `lambda_expression`, so the pick matches an arm to the authored kind, not to the bound claim. On a supertype's claim, `(#set! default <form>)` names the form instead, so a default for forms that reach their path through the supertype's claim adds no claim of its own and moves no read.
 - Create: `packages/codegen/src/emitters/overlays/portable/build.ts`, with `portableBuildTable(input)` and `emitPortableBuild(input)`. `input` is `{ routes, model, nodeMap, kindEntries, flagPlans }`, and the result is the table (or its source) and its `PickDiagnostic[]`.
   - Arms: one per (kind, path) entry with an own read entry. A kind with no parser id, a hidden kind and a supertype get none. A display kind's builder is its stored kind's.
-  - Presets: from the entry's pins, and from its single-kind child tests. A preset that another preset's steps extend is dropped.
+  - Presets: from the entry's pins, its single-kind child tests, and its claim's `eq` predicates on a slot (an `eq` on a fixed literal's own text is its text test). A preset that another preset's steps extend is dropped. A preset builder takes the member routed to its steps or those beneath them. A claim's template fills `template`; its other predicates stay the path's read tests.
   - Flag steps: a presence flag presets its token's kind id, and a kind flag presets its kind.
   - `when`, tried in order, with the first passing arm taken:
     1. fixed text;
-    2. scalar;
+    2. scalar type, which groups the arms: the one arm per scalar type that builds a number (the variant's or the bindings default) is marked by `scalar`, outside `when`;
     3. the variant default, which is the supertype's `optionDefaultSubtype ?? defaultVariantSubtype`, found by walking up `variantOf`;
     4. the flag the form implies (its plan is `ALWAYS`);
     5. presence, by `required`; arms one input could satisfy stay together;
