@@ -1,4 +1,5 @@
 import type { PortableCondition, PortablePath, PortableReadEntry, PortableRows, QueryPlan, QuerySubject, SlotSubject } from '@sittir/types';
+import { engineOf, isLive } from '../engine-scope.ts';
 import { anchored, holds, slotItems, type PlanSubjects } from '../query-holds.ts';
 import { spanSlicer, type ByteSpan } from '../span.ts';
 import { treeOf } from '../tree-token.ts';
@@ -47,6 +48,7 @@ const decidesKindId = (entry: PortableReadEntry): boolean =>
 interface RowsReader {
 	readonly classify: PortableClassifier;
 	readonly flagHolds: (value: Node | number, flag: string) => boolean;
+	readonly builtReadsAs: (path: string, node: Node) => boolean;
 }
 
 const readers = new WeakMap<PortableRows, RowsReader>();
@@ -89,6 +91,10 @@ export function flagHolds(rows: PortableRows, value: Node | number, flag: string
 	return readerOf(rows).flagHolds(value, flag);
 }
 
+export function builtReadsAs(rows: PortableRows, path: string, node: Node): boolean {
+	return readerOf(rows).builtReadsAs(path, node);
+}
+
 function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 	const itemsIn = (node: Node, subject: SlotSubject): readonly unknown[] => {
 		const number = subject.slots[node.$type];
@@ -109,10 +115,26 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (slice === undefined) slicers.set(tree, (slice = spanSlicer(tree.source)));
 		return slice(span);
 	};
+	const rendered = new WeakMap<object, string>();
+	const renderedText = (node: Node): string | undefined => {
+		if (treeOf(node) !== undefined) return undefined;
+		const engine = engineOf(node);
+		if (engine === undefined || !isLive(engine)) return undefined;
+		let text = rendered.get(node);
+		if (text === undefined) {
+			const output = engine.render(node as never);
+			try {
+				rendered.set(node, (text = output.toString()));
+			} finally {
+				output[Symbol.dispose]();
+			}
+		}
+		return text;
+	};
 	const textOf = (item: unknown): string | undefined => {
 		if (item instanceof Keyword || typeof item === 'string') return typeof item === 'string' ? item : item.text;
 		if (typeof item === 'number') return table.fixedText[item];
-		return hasKind(item) ? (nodeText(item) ?? sliceOf(item)) : undefined;
+		return hasKind(item) ? (nodeText(item) ?? sliceOf(item) ?? renderedText(item)) : undefined;
 	};
 	const typeOf = (item: unknown): readonly number[] =>
 		item instanceof Keyword ? (item.kind === undefined ? [] : [item.kind]) : typeof item === 'number' ? [item] : hasKind(item) ? [item.$type] : [];
@@ -145,5 +167,10 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		const plan = flags[typeof value === 'number' ? value : value.$type]?.[flag];
 		return plan !== undefined && plan !== null && holds(plan, subjectsOf([value]));
 	};
-	return { classify, flagHolds };
+	const builtReadsAs = (path: string, node: Node): boolean => {
+		const entries = (table.entries[node.$type] ?? []).filter((entry) => portablePathHasFacts(path, entry.path));
+		if (entries.length === 0 || !entries.every(unplaced)) return true;
+		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node)));
+	};
+	return { classify, flagHolds, builtReadsAs };
 }

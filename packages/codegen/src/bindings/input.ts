@@ -1,3 +1,4 @@
+import type { PortableMountCall } from '@sittir/types';
 import { existsSync, readFileSync } from 'node:fs';
 import { slotPropertyName } from '../compiler/model/node-map.ts';
 import { slotKindsOf } from '../emitters/node-model-read.ts';
@@ -5,7 +6,7 @@ import { boundNameAt, boundNameOf } from '../dsl/bind.ts';
 import { boundFieldNameOf, type BindingEffect } from '../dsl/verbs/effects.ts';
 import { parsePreferencePath } from '../dsl/primitives/preference-path.ts';
 import { type OptionsConfig, readOptionsBlock } from '../dsl/wire/options-block.ts';
-import { bindFacts, bindingsPath, type EnumMember, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
+import { bindFacts, bindingsPath, type EnumMember, type ModelMount, type ModelNode, type SlotModel, VOCABULARY_DIR } from './facts.ts';
 import { readBindings } from './read.ts';
 import { projectLeadFacts } from './lead-facts.ts';
 import type { GrammarInput, LayoutSlot } from './routes.ts';
@@ -17,6 +18,13 @@ export interface NodeModelValue {
 	readonly value?: string;
 	readonly name?: string;
 	readonly parseKind?: string;
+	readonly seat?: {
+		readonly kind: string;
+		readonly shape: string;
+		readonly mount?: string;
+		readonly call?: PortableMountCall;
+		readonly nested?: Readonly<Record<string, PortableMountCall>>;
+	};
 }
 
 export interface NodeModelSlot {
@@ -51,6 +59,15 @@ export interface NodeModelRecord {
 const nodesOf = (record: NodeModelRecord): readonly NodeModelNode[] =>
 	Array.isArray(record.nodes) ? record.nodes : Object.values(record.nodes);
 
+const mountsOf = (slot: NodeModelSlot): { readonly mounts?: Readonly<Record<string, ModelMount>> } => {
+	const mounts = (slot.values ?? []).flatMap(({ seat }) =>
+		seat?.shape === 'arm' && seat.mount !== undefined && seat.call !== undefined
+			? [[seat.kind, { mount: seat.mount, call: seat.call, ...(seat.nested === undefined ? {} : { nested: seat.nested }) }] as const]
+			: []
+	);
+	return mounts.length === 0 ? {} : { mounts: Object.fromEntries(mounts) };
+};
+
 export function slotModelOf(record: NodeModelRecord): SlotModel {
 	const out = new Map<string, ModelNode>();
 	for (const n of nodesOf(record)) {
@@ -65,7 +82,8 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 				multiple: s.multiple ?? false,
 				storage: s.storage ?? 'verbatim',
 				kinds: slotKindsOf(s),
-				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : []))
+				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : [])),
+				...mountsOf(s)
 			})),
 			subtypes: n.subtypes ?? [],
 			elementKinds: n.elementKinds ?? [],

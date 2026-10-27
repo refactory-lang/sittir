@@ -636,9 +636,9 @@ describe("keptKinds over a supertype the slot holds", () => {
 
 	it('unwraps a declared container through its element slot, a list through its elements, and a transparent kind through its one content slot', async () => {
 		const routes = resolveRoutes(await grammar('(list_of (identifier) @element)'));
-		expect(routes.containers.get('list_of')).toEqual({ kinds: ['identifier'], terminals: [], list: true });
-		expect(routes.containers.get('values')).toEqual({ kinds: ['identifier'], terminals: [], list: true });
-		expect(routes.containers.get('wrapper')).toEqual({ kinds: ['identifier'], terminals: [], list: false });
+		expect(routes.containers.get('list_of')).toEqual({ slot: 'items', kinds: ['identifier'], terminals: [], list: true });
+		expect(routes.containers.get('values')).toEqual({ slot: 'rest', kinds: ['identifier'], terminals: [], list: true });
+		expect(routes.containers.get('wrapper')).toEqual({ slot: 'inner', kinds: ['identifier'], terminals: [], list: false });
 		expect(routes.containers.has('binary')).toBe(false);
 	});
 

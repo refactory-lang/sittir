@@ -78,6 +78,7 @@ export type MemberRoute = (
 ) & { readonly flag?: true; readonly spelled?: true };
 
 export interface ContainerUnwrap {
+	readonly slot: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
 	readonly list: boolean;
@@ -195,7 +196,10 @@ const TRANSPARENT_MODEL_TYPES: ReadonlySet<string> = new Set(['envelope', 'alias
 function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | undefined {
 	const declared =
 		input.bindings.containers.find((c) => c.kind === node.kind) ?? input.bindings.containers.find((c) => formsOf(input.model, c.kind).includes(node.kind));
-	if (declared === undefined && node.modelType === 'list') return { kinds: node.elementKinds, terminals: [], list: true };
+	if (declared === undefined && node.modelType === 'list') {
+		const items = node.slots.find((slot) => slot.multiple);
+		return items === undefined ? undefined : { slot: items.name, kinds: node.elementKinds, terminals: [], list: true };
+	}
 	const content = node.slots.filter((slot) => !isLayout(input, node.kind, slot));
 	const element = declared
 		? slotFor(input.model, node.slots, declared.element)
@@ -203,7 +207,7 @@ function containerOf(input: GrammarInput, node: ModelNode): ContainerUnwrap | un
 			? content[0]
 			: undefined;
 	return element !== undefined && holdsNodes(element)
-		? { kinds: element.kinds, terminals: element.terminals, list: element.multiple }
+		? { slot: element.name, kinds: element.kinds, terminals: element.terminals, list: element.multiple }
 		: undefined;
 }
 

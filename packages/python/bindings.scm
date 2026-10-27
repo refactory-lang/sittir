@@ -80,7 +80,7 @@
 (aliased_import) @clause.import.alias
 (wildcard_import) @clause.import.wildcard
 (comprehension_clauses) @clause.comprehension
-((lambda_within_for_in_clause) @expression.lambda (#set! default))
+(lambda_within_for_in_clause) @expression.lambda
 
 ; ── argument (pieces of a call that are not expressions) ───────────────────────
 (keyword_argument) @argument.keyword

@@ -88,6 +88,7 @@
     },
     "arguments": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "arguments_elements"
         ],
@@ -97,6 +98,7 @@
     },
     "arguments_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "attributed_argument"
         ],
@@ -488,6 +490,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "attribute"
         ],
@@ -497,6 +500,7 @@
     },
     "attributed_argument": {
       "container": {
+        "slot": "expression",
         "kinds": [
           "_expression"
         ],
@@ -506,6 +510,7 @@
     },
     "attributed_enum_variant": {
       "container": {
+        "slot": "enum_variant",
         "kinds": [
           "enum_variant"
         ],
@@ -515,6 +520,7 @@
     },
     "attributed_field_declaration": {
       "container": {
+        "slot": "field_declaration",
         "kinds": [
           "field_declaration"
         ],
@@ -931,6 +937,7 @@
     },
     "attributed_parameter": {
       "container": {
+        "slot": "content",
         "kinds": [
           "parameter",
           "variadic_parameter",
@@ -944,6 +951,7 @@
     },
     "attributed_parameter_receiver": {
       "container": {
+        "slot": "content",
         "kinds": [
           "receiver_parameter_declaration",
           "self_parameter"
@@ -954,6 +962,7 @@
     },
     "attributed_type_parameter": {
       "container": {
+        "slot": "content",
         "kinds": [
           "metavariable",
           "type_parameter",
@@ -989,6 +998,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "_expression"
         ],
@@ -1021,6 +1031,7 @@
         }
       ],
       "container": {
+        "slot": "value",
         "kinds": [
           "_expression"
         ],
@@ -1628,6 +1639,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "block_comment_doc_outer",
           "block_comment_doc_inner",
@@ -1639,6 +1651,7 @@
     },
     "block_comment_doc_inner": {
       "container": {
+        "slot": "doc",
         "kinds": [
           "_block_comment_content"
         ],
@@ -1648,6 +1661,7 @@
     },
     "block_comment_doc_outer": {
       "container": {
+        "slot": "doc",
         "kinds": [
           "_block_comment_content"
         ],
@@ -2349,6 +2363,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "_pattern"
         ],
@@ -2358,6 +2373,7 @@
     },
     "closure_parameters": {
       "container": {
+        "slot": "parameters",
         "kinds": [
           "closure_parameter",
           "parameter"
@@ -2677,6 +2693,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "block"
         ],
@@ -3174,6 +3191,7 @@
         }
       ],
       "container": {
+        "slot": "label",
         "kinds": [
           "label"
         ],
@@ -3209,6 +3227,7 @@
     },
     "declaration_list": {
       "container": {
+        "slot": "declarations",
         "kinds": [
           "_declaration_statement"
         ],
@@ -3261,6 +3280,7 @@
         }
       ],
       "container": {
+        "slot": "delim_tokens",
         "kinds": [
           "non_special_token",
           "delim_token_tree"
@@ -3303,6 +3323,7 @@
         }
       ],
       "container": {
+        "slot": "delim_tokens",
         "kinds": [
           "non_special_token",
           "delim_token_tree"
@@ -3345,6 +3366,7 @@
         }
       ],
       "container": {
+        "slot": "delim_tokens",
         "kinds": [
           "non_special_token",
           "delim_token_tree"
@@ -5194,6 +5216,7 @@
     },
     "enum_variant_list": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "enum_variant_list_elements"
         ],
@@ -5203,6 +5226,7 @@
     },
     "enum_variant_list_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "attributed_enum_variant"
         ],
@@ -5374,6 +5398,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "expression_statement_with_semi",
           "unsafe_block",
@@ -5394,6 +5419,7 @@
     },
     "expression_statement_with_semi": {
       "container": {
+        "slot": "expression",
         "kinds": [
           "_expression"
         ],
@@ -5403,6 +5429,7 @@
     },
     "expressions": {
       "container": {
+        "slot": "item",
         "kinds": [
           "_expression"
         ],
@@ -5412,6 +5439,7 @@
     },
     "extension_declaration_body": {
       "container": {
+        "slot": "declarations",
         "kinds": [
           "_declaration_statement_impl_item_body"
         ],
@@ -5851,6 +5879,7 @@
         }
       ],
       "container": {
+        "slot": "abi",
         "kinds": [
           "string_literal"
         ],
@@ -6327,6 +6356,7 @@
     },
     "field_declaration_list": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "field_declaration_list_elements"
         ],
@@ -6336,6 +6366,7 @@
     },
     "field_declaration_list_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "attributed_field_declaration"
         ],
@@ -6392,6 +6423,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -6448,6 +6480,7 @@
     },
     "field_initializer_list": {
       "container": {
+        "slot": "initializers",
         "kinds": [
           "field_initializer_list_elements"
         ],
@@ -6457,6 +6490,7 @@
     },
     "field_initializer_list_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "shorthand_field_initializer",
           "field_initializer",
@@ -6686,6 +6720,7 @@
         }
       ],
       "container": {
+        "slot": "lifetimes",
         "kinds": [
           "lifetimes"
         ],
@@ -7540,6 +7575,7 @@
     },
     "function_modifiers": {
       "container": {
+        "slot": "modifier",
         "kinds": [
           "extern_modifier"
         ],
@@ -8374,6 +8410,7 @@
     },
     "function_type_fn_form": {
       "container": {
+        "slot": "function_modifiers",
         "kinds": [
           "function_modifiers"
         ],
@@ -9021,6 +9058,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "attribute"
         ],
@@ -9230,6 +9268,7 @@
         }
       ],
       "container": {
+        "slot": "name",
         "kinds": [
           "identifier"
         ],
@@ -9490,6 +9529,7 @@
         }
       ],
       "container": {
+        "slot": "name",
         "kinds": [
           "identifier"
         ],
@@ -9562,6 +9602,7 @@
     },
     "lifetimes": {
       "container": {
+        "slot": "item",
         "kinds": [
           "lifetime"
         ],
@@ -9636,6 +9677,7 @@
         }
       ],
       "container": {
+        "slot": "content",
         "kinds": [
           "line_comment_extra_slashes",
           "line_comment_doc_outer",
@@ -9648,6 +9690,7 @@
     },
     "line_comment_doc_inner": {
       "container": {
+        "slot": "doc",
         "kinds": [
           "doc_comment"
         ],
@@ -9657,6 +9700,7 @@
     },
     "line_comment_doc_outer": {
       "container": {
+        "slot": "doc",
         "kinds": [
           "doc_comment"
         ],
@@ -9955,6 +9999,7 @@
     },
     "macro_rules": {
       "container": {
+        "slot": "item",
         "kinds": [
           "macro_rule"
         ],
@@ -10149,6 +10194,7 @@
     },
     "match_block": {
       "container": {
+        "slot": "match_block_arms",
         "kinds": [
           "match_block_arms"
         ],
@@ -11901,6 +11947,7 @@
         }
       ],
       "container": {
+        "slot": "pattern",
         "kinds": [
           "_pattern"
         ],
@@ -11948,6 +11995,7 @@
     },
     "non_special_token": {
       "container": {
+        "slot": "content",
         "kinds": [
           "_literal",
           "identifier",
@@ -12037,6 +12085,7 @@
         }
       ],
       "container": {
+        "slot": "right",
         "kinds": [
           "_pattern"
         ],
@@ -12046,6 +12095,7 @@
     },
     "ordered_field_declaration_list": {
       "container": {
+        "slot": "attributes",
         "kinds": [
           "ordered_field_declaration_list_elements"
         ],
@@ -12055,6 +12105,7 @@
     },
     "ordered_field_declaration_list_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "attributed_ordered_field"
         ],
@@ -12133,6 +12184,7 @@
     },
     "parameters_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "attributed_parameter"
         ],
@@ -12142,6 +12194,7 @@
     },
     "parameters_elements_receiver_group": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "parameters_elements"
         ],
@@ -12174,6 +12227,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "_expression"
         ],
@@ -12222,6 +12276,7 @@
     },
     "patterns": {
       "container": {
+        "slot": "item",
         "kinds": [
           "_pattern"
         ],
@@ -12267,6 +12322,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "_type"
         ],
@@ -12307,6 +12363,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "_type"
         ],
@@ -12403,6 +12460,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "range_expression_bare",
         "kinds": [
           "_range_expression_bare"
         ],
@@ -12553,6 +12611,7 @@
         }
       ],
       "container": {
+        "slot": "start",
         "kinds": [
           "_expression"
         ],
@@ -12592,6 +12651,7 @@
         }
       ],
       "container": {
+        "slot": "end",
         "kinds": [
           "_expression"
         ],
@@ -12979,6 +13039,7 @@
         }
       ],
       "container": {
+        "slot": "pattern",
         "kinds": [
           "_pattern"
         ],
@@ -13024,6 +13085,7 @@
         }
       ],
       "container": {
+        "slot": "argument",
         "kinds": [
           "_expression"
         ],
@@ -13064,6 +13126,7 @@
         }
       ],
       "container": {
+        "slot": "argument",
         "kinds": [
           "_expression"
         ],
@@ -13105,6 +13168,7 @@
         }
       ],
       "container": {
+        "slot": "argument",
         "kinds": [
           "_expression"
         ],
@@ -13154,6 +13218,7 @@
         }
       ],
       "container": {
+        "slot": "argument",
         "kinds": [
           "_expression"
         ],
@@ -13284,6 +13349,7 @@
         }
       ],
       "container": {
+        "slot": "type",
         "kinds": [
           "_type"
         ],
@@ -13316,6 +13382,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "_expression"
         ],
@@ -13582,6 +13649,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -14280,6 +14348,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "patterns"
         ],
@@ -16218,6 +16287,7 @@
     },
     "struct_pattern_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "field_pattern",
           "remaining_field_pattern"
@@ -16414,6 +16484,7 @@
         }
       ],
       "container": {
+        "slot": "tokens",
         "kinds": [
           "token_tree",
           "token_repetition",
@@ -16456,6 +16527,7 @@
         }
       ],
       "container": {
+        "slot": "tokens",
         "kinds": [
           "token_tree",
           "token_repetition",
@@ -16498,6 +16570,7 @@
         }
       ],
       "container": {
+        "slot": "tokens",
         "kinds": [
           "token_tree",
           "token_repetition",
@@ -16553,6 +16626,7 @@
         }
       ],
       "container": {
+        "slot": "token_patterns",
         "kinds": [
           "token_tree_pattern",
           "token_repetition_pattern",
@@ -16596,6 +16670,7 @@
         }
       ],
       "container": {
+        "slot": "token_patterns",
         "kinds": [
           "token_tree_pattern",
           "token_repetition_pattern",
@@ -16639,6 +16714,7 @@
         }
       ],
       "container": {
+        "slot": "token_patterns",
         "kinds": [
           "token_tree_pattern",
           "token_repetition_pattern",
@@ -16675,6 +16751,7 @@
         }
       ],
       "container": {
+        "slot": "bounds",
         "kinds": [
           "_type",
           "lifetime",
@@ -16686,6 +16763,7 @@
     },
     "trait_interface_declaration_body": {
       "container": {
+        "slot": "declarations",
         "kinds": [
           "_declaration_statement_trait_item"
         ],
@@ -17204,6 +17282,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "block"
         ],
@@ -17236,6 +17315,7 @@
         }
       ],
       "container": {
+        "slot": "argument",
         "kinds": [
           "_expression"
         ],
@@ -17317,6 +17397,7 @@
         }
       ],
       "container": {
+        "slot": "elements",
         "kinds": [
           "tuple_pattern_elements"
         ],
@@ -17326,6 +17407,7 @@
     },
     "tuple_pattern_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "_pattern",
           "closure_expression"
@@ -17395,6 +17477,7 @@
         }
       ],
       "container": {
+        "slot": "types",
         "kinds": [
           "types"
         ],
@@ -17467,6 +17550,7 @@
     },
     "type_arguments": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "type_arguments_elements"
         ],
@@ -17476,6 +17560,7 @@
     },
     "type_arguments_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "type_argument"
         ],
@@ -17579,6 +17664,7 @@
       ],
       "members": [],
       "container": {
+        "slot": "content",
         "kinds": [
           "identifier"
         ],
@@ -18089,6 +18175,7 @@
     },
     "type_parameters": {
       "container": {
+        "slot": "elements",
         "kinds": [
           "type_parameters_elements"
         ],
@@ -18098,6 +18185,7 @@
     },
     "type_parameters_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "attributed_type_parameter"
         ],
@@ -18107,6 +18195,7 @@
     },
     "types": {
       "container": {
+        "slot": "item",
         "kinds": [
           "_type"
         ],
@@ -18794,6 +18883,7 @@
         }
       ],
       "container": {
+        "slot": "body",
         "kinds": [
           "block"
         ],
@@ -18862,6 +18952,7 @@
         }
       ],
       "container": {
+        "slot": "bounds",
         "kinds": [
           "use_bounds_elements"
         ],
@@ -18871,6 +18962,7 @@
     },
     "use_bounds_elements": {
       "container": {
+        "slot": "item",
         "kinds": [
           "lifetime",
           "type_identifier"
@@ -18881,6 +18973,7 @@
     },
     "use_clauses": {
       "container": {
+        "slot": "item",
         "kinds": [
           "self_module",
           "metavariable",
@@ -19318,6 +19411,7 @@
         }
       ],
       "container": {
+        "slot": "use_clauses",
         "kinds": [
           "use_clauses"
         ],
@@ -19350,6 +19444,7 @@
         }
       ],
       "container": {
+        "slot": "use_wildcard_group",
         "kinds": [
           "use_wildcard_group"
         ],
@@ -19429,6 +19524,7 @@
     },
     "visibility_modifier": {
       "container": {
+        "slot": "content",
         "kinds": [
           "crate_visibility_modifier",
           "visibility_modifier_pub"
@@ -19671,6 +19767,7 @@
         }
       ],
       "container": {
+        "slot": "visibility_modifier_pub_scope",
         "kinds": [
           "visibility_modifier_pub_scope"
         ],
@@ -19680,6 +19777,7 @@
     },
     "visibility_modifier_pub_scope": {
       "container": {
+        "slot": "content",
         "kinds": [
           "self_module",
           "super",
@@ -19692,6 +19790,7 @@
     },
     "visibility_modifier_pub_scope_in_path": {
       "container": {
+        "slot": "path",
         "kinds": [
           "self_module",
           "metavariable",
@@ -19729,6 +19828,7 @@
         }
       ],
       "container": {
+        "slot": "where_predicates",
         "kinds": [
           "where_predicates"
         ],
@@ -19788,6 +19888,7 @@
     },
     "where_predicates": {
       "container": {
+        "slot": "item",
         "kinds": [
           "where_predicate"
         ],
@@ -19880,6 +19981,7 @@
         }
       ],
       "container": {
+        "slot": "expression",
         "kinds": [
           "_expression"
         ],

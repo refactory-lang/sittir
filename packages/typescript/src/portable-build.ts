@@ -8,15 +8,19 @@ export const build: PortableBuildTable = {
 		abstractMethodSignatureGetter: 'config',
 		abstractMethodSignaturePlain: 'config',
 		abstractMethodSignatureSetter: 'config',
+		addingTypeAnnotation: 'direct',
 		ambientDeclaration: 'direct',
+		ambientDeclarationGlobal: 'forwarded',
 		ambientDeclarationModule: 'config',
+		arguments: 'spread',
 		array: 'spread',
 		arrayPattern: 'spread',
 		arrayType: 'direct',
 		arrowFunction: 'config',
-		'arrowFunction.parameter': 'forwarded',
+		'arrowFunction.parameter': 'config',
 		asExpression: 'config',
 		asserts: 'direct',
+		assertsAnnotation: 'forwarded',
 		assignmentExpression: 'config',
 		assignmentPattern: 'config',
 		augmentedAssignmentExpression: 'config',
@@ -30,6 +34,10 @@ export const build: PortableBuildTable = {
 		callSignature: 'config',
 		catchClause: 'config',
 		class: 'config',
+		classBody: 'spread',
+		classBodyMemberDeclaration: 'direct',
+		classBodyMemberMethod: 'config',
+		classBodyMemberMethodSig: 'config',
 		classDeclaration: 'config',
 		classHeritage: 'direct',
 		'classHeritage.extendsClause': 'config',
@@ -52,18 +60,21 @@ export const build: PortableBuildTable = {
 		doStatement: 'config',
 		elseClause: 'direct',
 		enumAssignment: 'config',
+		enumBody: 'forwarded',
 		enumBodyElementName: 'direct',
+		enumBodyElements: 'elements',
 		enumDeclaration: 'config',
 		escapeSequence: 'direct',
 		exportClause: 'forwarded',
 		exportSpecifier: 'config',
+		exportSpecifiers: 'elements',
 		exportStatementDefaultDeclaration: 'config',
-		'exportStatementDefaultDeclaration.defaultKw': 'direct',
-		'exportStatementDefaultDeclaration.defaultKw.value': 'direct',
+		'exportStatementDefaultDeclaration.defaultKw': 'config',
+		'exportStatementDefaultDeclaration.defaultKw.value': 'config',
 		exportStatementDefaultFrom: 'config',
 		'exportStatementDefaultFrom.clauseFrom': 'config',
 		'exportStatementDefaultFrom.nsFrom': 'config',
-		'exportStatementDefaultFrom.starFrom': 'direct',
+		'exportStatementDefaultFrom.starFrom': 'config',
 		exportStatementEqualsExport: 'direct',
 		exportStatementNamespaceExport: 'forwarded',
 		expressionStatement: 'direct',
@@ -76,6 +87,8 @@ export const build: PortableBuildTable = {
 		formalParameters: 'direct',
 		formalParametersElements: 'elements',
 		formalParametersElementsReceiver: 'config',
+		formalParametersSetAccessorSignature: 'forwarded',
+		'formalParametersSetAccessorSignature.elements': 'forwarded',
 		functionDeclaration: 'config',
 		functionExpression: 'config',
 		functionSignature: 'config',
@@ -91,10 +104,11 @@ export const build: PortableBuildTable = {
 		importAttribute: 'config',
 		importClause: 'direct',
 		'importClause.defaultImport': 'config',
-		'importClause.defaultImport.importClauseGroup': 'direct',
+		'importClause.defaultImport.importClauseGroup': 'config',
 		importRequireClause: 'config',
 		importSpecifierAs: 'config',
 		importSpecifierName: 'config',
+		importSpecifiers: 'elements',
 		importStatement: 'config',
 		'importStatement.clauseFrom': 'config',
 		indexSignatureColon: 'config',
@@ -107,6 +121,7 @@ export const build: PortableBuildTable = {
 		intersectionType: 'config',
 		labeledStatement: 'config',
 		lexicalDeclaration: 'config',
+		lhsExpression: 'direct',
 		literalType: 'direct',
 		'literalType.negativeNumber': 'direct',
 		lookupType: 'config',
@@ -119,6 +134,7 @@ export const build: PortableBuildTable = {
 		methodSignaturePlain: 'config',
 		methodSignatureSetter: 'config',
 		module: 'config',
+		namedImports: 'forwarded',
 		namespaceExport: 'direct',
 		namespaceImport: 'forwarded',
 		nestedIdentifier: 'config',
@@ -140,6 +156,9 @@ export const build: PortableBuildTable = {
 		objectAssignmentPattern: 'config',
 		objectPattern: 'spread',
 		objectType: 'config',
+		objectTypeContent: 'elements',
+		omittingTypeAnnotation: 'direct',
+		optingTypeAnnotation: 'direct',
 		optionalParameter: 'config',
 		optionalTupleParameter: 'config',
 		optionalType: 'direct',
@@ -170,6 +189,7 @@ export const build: PortableBuildTable = {
 		stringDouble: 'spread',
 		stringSingle: 'spread',
 		subscriptExpression: 'config',
+		switchBody: 'spread',
 		switchCase: 'config',
 		switchDefault: 'spread',
 		switchStatement: 'config',
@@ -183,12 +203,18 @@ export const build: PortableBuildTable = {
 		tryStatement: 'config',
 		tupleParameter: 'config',
 		tupleType: 'forwarded',
+		tupleTypeMembers: 'elements',
 		typeAliasDeclaration: 'config',
+		typeAnnotation: 'direct',
 		typeArguments: 'forwarded',
 		typeAssertion: 'config',
 		typeParameter: 'config',
+		typeParameters: 'forwarded',
+		typeParametersElements: 'elements',
 		typePredicate: 'config',
+		typePredicateAnnotation: 'forwarded',
 		typeQuery: 'direct',
+		types: 'elements',
 		unaryExpression: 'config',
 		unescapedDoubleStringFragment: 'text',
 		unescapedSingleStringFragment: 'text',
@@ -219,16 +245,47 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [286, 'function'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [286, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'arguments',
@@ -237,7 +294,31 @@ export const build: PortableBuildTable = {
 									key: 'arguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [286, 'arguments'],
+									kinds: []
+								},
+								{
+									at: [283, 'elements'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277,
+										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
+										426, 439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'arguments',
+											key: 'elements',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -261,7 +342,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [285, 'object'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'property',
@@ -270,7 +356,13 @@ export const build: PortableBuildTable = {
 									key: 'property'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [285, 'property'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -294,7 +386,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [303, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -318,7 +415,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [284, 'content'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -341,7 +443,13 @@ export const build: PortableBuildTable = {
 									key: 'bounds'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [374, 'bounds'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -361,10 +469,17 @@ export const build: PortableBuildTable = {
 							name: 'bodies',
 							steps: [
 								{
-									key: 'bodies'
+									key: 'bodies',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [230, 'bodies'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -388,16 +503,28 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [229, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'bodies',
 							steps: [
 								{
-									key: 'bodies'
+									key: 'bodies',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [229, 'bodies'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -420,32 +547,65 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [231, 'body']
+								}
+							]
 						},
 						{
 							name: 'name',
 							steps: [
 								{
-									key: 'catchClauseGroup'
+									key: 'catchClauseGroup',
+									optional: true
 								},
 								{
 									key: 'parameter'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [395, 'parameter'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'catchClauseGroup'
+									key: 'catchClauseGroup',
+									optional: true
 								},
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [395, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -468,7 +628,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [373, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -491,7 +657,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [211, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -511,10 +682,28 @@ export const build: PortableBuildTable = {
 							name: 'exportSpecifiers',
 							steps: [
 								{
-									key: 'exportSpecifiers'
+									key: 'exportSpecifiers',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [192, 'exportSpecifiers'],
+									kinds: []
+								},
+								{
+									at: [383, 'items'],
+									kinds: [193],
+									within: [
+										{
+											builder: 'exportSpecifiers',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -538,7 +727,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [191, 'moduleExportName'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -562,17 +756,28 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [193, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alias',
 							steps: [
 								{
-									key: 'alias'
+									key: 'alias',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [193, 'alias'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -582,7 +787,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -609,24 +815,36 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [193, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alias',
 							steps: [
 								{
-									key: 'alias'
+									key: 'alias',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [193, 'alias'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'typeOnly'
+									key: 'typeOnly',
+									optional: true
 								}
 							],
 							kind: 8
@@ -638,7 +856,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -664,7 +883,13 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [309, 'types'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -687,7 +912,14 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [320, 'types'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -710,7 +942,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [232, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -733,7 +970,14 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [311, 'types'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -756,7 +1000,12 @@ export const build: PortableBuildTable = {
 									key: 'attributeKind'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [203, 'attributeKind']
+								}
+							]
 						},
 						{
 							name: 'object',
@@ -765,7 +1014,12 @@ export const build: PortableBuildTable = {
 									key: 'object'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [203, 'object']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -788,38 +1042,99 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [198, 'content'],
+									kinds: [200, 429]
+								},
+								{
+									at: [384, 'items'],
+									kinds: [202, 416, 417],
+									within: [
+										{
+											builder: 'namedImports',
+											key: 'importSpecifiers',
+											optional: true
+										},
+										{
+											builder: 'importSpecifiers',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
 									key: 'content',
-									builder: 'importClause.defaultImport'
+									builder: 'importClause.defaultImport',
+									mounted: {
+										call: 'child'
+									}
 								},
 								{
 									key: 'identifier'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [429, 'identifier'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'content',
 							steps: [
 								{
 									key: 'content',
-									builder: 'importClause.defaultImport'
+									builder: 'importClause.defaultImport',
+									mounted: {
+										call: 'child'
+									}
 								},
 								{
 									key: 'importClauseGroup',
-									builder: 'importClause.defaultImport.importClauseGroup'
+									builder: 'importClause.defaultImport.importClauseGroup',
+									optional: true,
+									mounted: {
+										call: 'keyed',
+										key: 'importClauseGroup',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [393, 'content'],
+									kinds: [200]
+								},
+								{
+									at: [384, 'items'],
+									kinds: [202, 416, 417],
+									within: [
+										{
+											builder: 'namedImports',
+											key: 'importSpecifiers',
+											optional: true
+										},
+										{
+											builder: 'importSpecifiers',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -843,7 +1158,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [200, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -867,7 +1187,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [308, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'source',
@@ -876,7 +1201,12 @@ export const build: PortableBuildTable = {
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [308, 'source']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -900,7 +1230,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [416, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -910,7 +1245,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -937,7 +1273,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [417, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alias',
@@ -947,7 +1288,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [417, 'alias'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -957,7 +1303,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -989,14 +1336,20 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [416, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'typeOnly'
+									key: 'typeOnly',
+									optional: true
 								}
 							],
 							kind: 8
@@ -1008,7 +1361,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -1035,7 +1389,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [417, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alias',
@@ -1045,14 +1404,20 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [417, 'alias'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'typeOnly'
+									key: 'typeOnly',
+									optional: true
 								}
 							],
 							kind: 8
@@ -1064,7 +1429,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -1095,7 +1461,13 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [360, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -1104,16 +1476,29 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [360, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alias',
 							steps: [
 								{
-									key: 'alias'
+									key: 'alias',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [360, 'alias'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1136,7 +1521,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [154, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1159,7 +1549,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [154, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1195,7 +1590,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [153, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1218,7 +1618,23 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [312, 'content'],
+									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324, 399]
+								},
+								{
+									at: [398, 'body'],
+									kinds: [210],
+									within: [
+										{
+											builder: 'ambientDeclarationGlobal',
+											key: 'body'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1238,10 +1654,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [313, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -1250,16 +1673,44 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [313, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [313, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -1268,31 +1719,104 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [313, 'body'],
+									kinds: []
+								},
+								{
+									at: [287, 'members'],
+									kinds: [289, 385, 407],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [408, 'methodDefinition'],
+									kinds: [452, 453, 454, 463, 465],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethod',
+											key: 'methodDefinition'
+										}
+									]
+								},
+								{
+									at: [409, 'methodSignature'],
+									kinds: [300, 455, 456, 457],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethodSig',
+											key: 'methodSignature'
+										}
+									]
+								},
+								{
+									at: [410, 'member'],
+									kinds: [297, 300, 301, 376, 411, 412, 455, 456, 457, 458, 459, 460, 461, 462],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberDeclaration',
+											key: 'member'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'extends',
 							steps: [
 								{
 									key: 'heritage',
-									builder: 'classHeritage'
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
 									key: 'content',
-									builder: 'classHeritage.extendsClause'
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child'
+									}
 								},
 								{
 									key: 'extendsClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [428, 'extendsClause']
+								}
+							]
 						},
 						{
 							name: 'implements',
 							steps: [
 								{
 									key: 'heritage',
-									builder: 'classHeritage'
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
 									key: 'content',
@@ -1302,7 +1826,14 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [311, 'types'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1322,10 +1853,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [245, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -1334,16 +1872,44 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [245, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [245, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -1352,31 +1918,104 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [245, 'body'],
+									kinds: []
+								},
+								{
+									at: [287, 'members'],
+									kinds: [289, 385, 407],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [408, 'methodDefinition'],
+									kinds: [452, 453, 454, 463, 465],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethod',
+											key: 'methodDefinition'
+										}
+									]
+								},
+								{
+									at: [409, 'methodSignature'],
+									kinds: [300, 455, 456, 457],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethodSig',
+											key: 'methodSignature'
+										}
+									]
+								},
+								{
+									at: [410, 'member'],
+									kinds: [297, 300, 301, 376, 411, 412, 455, 456, 457, 458, 459, 460, 461, 462],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberDeclaration',
+											key: 'member'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'extends',
 							steps: [
 								{
 									key: 'heritage',
-									builder: 'classHeritage'
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
 									key: 'content',
-									builder: 'classHeritage.extendsClause'
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child'
+									}
 								},
 								{
 									key: 'extendsClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [428, 'extendsClause']
+								}
+							]
 						},
 						{
 							name: 'implements',
 							steps: [
 								{
 									key: 'heritage',
-									builder: 'classHeritage'
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
 									key: 'content',
@@ -1386,7 +2025,14 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [311, 'types'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1414,7 +2060,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [463, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1425,13 +2076,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1442,20 +2100,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1478,7 +2145,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [463, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1489,13 +2161,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1506,27 +2185,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -1551,7 +2240,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [463, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1562,13 +2256,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1579,27 +2280,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -1624,7 +2335,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [463, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1635,13 +2351,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -1652,27 +2375,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -1698,7 +2431,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [321, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -1707,7 +2445,29 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [321, 'body'],
+									kinds: []
+								},
+								{
+									at: [389, 'items'],
+									kinds: [323, 387, 388],
+									within: [
+										{
+											builder: 'enumBody',
+											key: 'elements',
+											optional: true
+										},
+										{
+											builder: 'enumBodyElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1730,7 +2490,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [387, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1753,7 +2536,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [323, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
@@ -1763,7 +2569,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [323, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1788,10 +2599,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [461, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -1800,35 +2618,91 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'optionality',
 							steps: [
 								{
-									key: 'optionality'
+									key: 'optionality',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'optionality']
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [461, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -1838,7 +2712,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 140
@@ -1850,7 +2725,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 117
@@ -1897,10 +2773,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [461, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -1909,42 +2792,99 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'optionality',
 							steps: [
 								{
-									key: 'optionality'
+									key: 'optionality',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'optionality']
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [461, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -1956,7 +2896,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 140
@@ -1968,7 +2909,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 117
@@ -2015,10 +2957,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [461, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -2027,42 +2976,99 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'optionality',
 							steps: [
 								{
-									key: 'optionality'
+									key: 'optionality',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'optionality']
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [461, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -2074,7 +3080,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 140
@@ -2086,7 +3093,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 117
@@ -2133,10 +3141,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [461, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -2145,42 +3160,99 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'optionality',
 							steps: [
 								{
-									key: 'optionality'
+									key: 'optionality',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'optionality']
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [461, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [461, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -2192,7 +3264,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 140
@@ -2204,7 +3277,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionality'
+											key: 'optionality',
+											optional: true
 										}
 									],
 									kind: 117
@@ -2254,16 +3328,60 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -2311,23 +3429,68 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -2377,23 +3540,68 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -2443,23 +3651,68 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [370, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -2510,25 +3763,93 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [250, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [250, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [250, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -2537,7 +3858,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [250, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2548,13 +3874,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2565,20 +3898,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -2589,13 +3931,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -2619,25 +3967,93 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [248, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [248, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [248, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -2646,7 +4062,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [248, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2657,13 +4078,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2674,20 +4102,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -2698,13 +4135,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -2733,25 +4176,93 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [302, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [302, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2762,13 +4273,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2779,20 +4297,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -2803,13 +4330,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -2832,16 +4365,44 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [319, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [319, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -2850,20 +4411,33 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [319, 'body']
+								}
+							]
 						},
 						{
 							name: 'extends',
 							steps: [
 								{
 									key: 'extendsTypeClause',
-									builder: 'extendsTypeClause'
+									builder: 'extendsTypeClause',
+									optional: true
 								},
 								{
 									key: 'types'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [320, 'types'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -2886,25 +4460,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -2913,7 +4573,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2924,13 +4589,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -2941,20 +4613,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -2965,13 +4646,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -2981,7 +4668,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -2993,7 +4681,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optional'
+											key: 'optional',
+											optional: true
 										}
 									],
 									kind: 140
@@ -3043,25 +4732,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -3070,7 +4845,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3081,13 +4861,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3098,20 +4885,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -3122,20 +4918,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -3147,7 +4950,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -3159,7 +4963,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optional'
+											key: 'optional',
+											optional: true
 										}
 									],
 									kind: 140
@@ -3209,25 +5014,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -3236,7 +5127,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3247,13 +5143,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3264,20 +5167,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -3288,20 +5200,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -3313,7 +5232,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -3325,7 +5245,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optional'
+											key: 'optional',
+											optional: true
 										}
 									],
 									kind: 140
@@ -3375,25 +5296,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -3402,7 +5409,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [452, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3413,13 +5425,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3430,20 +5449,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -3454,20 +5482,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -3479,7 +5514,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -3491,7 +5527,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optional'
+											key: 'optional',
+											optional: true
 										}
 									],
 									kind: 140
@@ -3541,25 +5578,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3570,13 +5693,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3587,20 +5717,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -3611,13 +5750,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -3627,7 +5772,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -3677,25 +5823,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3706,13 +5938,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3723,20 +5962,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -3747,13 +5995,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -3763,7 +6017,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -3813,25 +6068,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3842,13 +6183,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3859,20 +6207,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -3883,20 +6240,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -3908,7 +6272,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -3958,25 +6323,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -3987,13 +6438,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4004,20 +6462,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -4028,20 +6495,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -4053,7 +6527,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -4103,25 +6578,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [458, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4132,13 +6693,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4149,20 +6717,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -4173,20 +6750,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -4198,7 +6782,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -4248,25 +6833,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4277,13 +6948,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4294,20 +6972,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -4318,20 +7005,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -4343,7 +7037,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -4393,25 +7088,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4422,13 +7203,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4439,20 +7227,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -4463,20 +7260,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -4488,7 +7292,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -4538,25 +7343,111 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [455, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4567,13 +7458,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -4584,20 +7482,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -4608,20 +7515,27 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -4633,7 +7547,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'generator'
+											key: 'generator',
+											optional: true
 										}
 									],
 									kind: 3
@@ -4684,16 +7599,27 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [315, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [315, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4717,16 +7643,27 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [314, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'body',
 							steps: [
 								{
-									key: 'body'
+									key: 'body',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [314, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4749,7 +7686,13 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [399, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -4758,7 +7701,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [399, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4778,10 +7727,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [328, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -4790,26 +7746,71 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'name'],
+									kinds: [278, 290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [328, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4830,29 +7831,63 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [467, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4877,10 +7912,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [327, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -4889,26 +7931,71 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'name'],
+									kinds: [290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [327, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4933,10 +8020,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [449, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -4945,16 +8039,55 @@ export const build: PortableBuildTable = {
 									key: 'pattern'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'pattern'],
+									kinds: [278],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -4984,10 +8117,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [328, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -4996,33 +8136,79 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'name'],
+									kinds: [278, 290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [328, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -5045,36 +8231,71 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [467, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -5101,10 +8322,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [327, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5113,33 +8341,79 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'name'],
+									kinds: [290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [327, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -5166,10 +8440,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [449, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5178,23 +8459,63 @@ export const build: PortableBuildTable = {
 									key: 'pattern'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'pattern'],
+									kinds: [278],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -5226,10 +8547,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [328, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5238,33 +8566,79 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'name'],
+									kinds: [278, 290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [328, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -5287,36 +8661,71 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [467, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -5343,10 +8752,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [327, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5355,33 +8771,79 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'name'],
+									kinds: [290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [327, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -5408,10 +8870,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [449, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5420,23 +8889,63 @@ export const build: PortableBuildTable = {
 									key: 'pattern'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'pattern'],
+									kinds: [278],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -5468,10 +8977,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [328, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5480,33 +8996,79 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'name'],
+									kinds: [278, 290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [328, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [328, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -5529,36 +9091,71 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [467, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -5585,10 +9182,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [327, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5597,33 +9201,79 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'name'],
+									kinds: [290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [327, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -5650,10 +9300,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [449, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5662,23 +9319,63 @@ export const build: PortableBuildTable = {
 									key: 'pattern'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'pattern'],
+									kinds: [278],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [449, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -5710,29 +9407,63 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [467, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [467, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [467, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -5753,10 +9484,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [327, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5765,26 +9503,71 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'name'],
+									kinds: [290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [327, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [327, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -5819,10 +9602,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [462, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -5831,26 +9621,76 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [462, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -5898,16 +9738,80 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -5916,7 +9820,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -5964,16 +9873,80 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -5982,14 +9955,20 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'body']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -6039,16 +10018,80 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -6057,14 +10100,20 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'body']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -6114,16 +10163,80 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -6132,14 +10245,20 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [453, 'body']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -6186,10 +10305,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [462, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -6198,33 +10324,84 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [462, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -6271,10 +10448,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [462, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -6283,33 +10467,84 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [462, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -6356,10 +10591,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [462, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -6368,33 +10610,84 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [462, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -6444,7 +10737,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6453,7 +10769,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -6462,7 +10794,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6473,13 +10810,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6490,20 +10834,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -6551,7 +10904,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6560,7 +10936,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -6569,7 +10961,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6580,13 +10977,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6597,27 +11001,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -6667,7 +11081,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6676,7 +11113,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -6685,7 +11138,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6696,13 +11154,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6713,27 +11178,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -6783,7 +11258,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6792,7 +11290,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -6801,7 +11315,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [454, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6812,13 +11331,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -6829,27 +11355,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -6896,10 +11432,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [462, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -6908,33 +11451,84 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [462, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [462, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'abstract'
+									key: 'abstract',
+									optional: true
 								}
 							],
 							kind: 149
@@ -6984,16 +11578,80 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -7041,23 +11699,88 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -7107,23 +11830,88 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -7173,23 +11961,88 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [459, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -7239,7 +12092,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7248,7 +12124,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7259,13 +12151,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7276,20 +12175,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -7337,7 +12245,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7346,7 +12277,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7357,13 +12304,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7374,27 +12328,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -7444,7 +12408,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7453,7 +12440,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7464,13 +12467,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7481,27 +12491,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -7551,7 +12571,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7560,7 +12603,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [460, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7571,13 +12630,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7588,27 +12654,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -7658,16 +12734,80 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -7715,23 +12855,88 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -7781,23 +12986,88 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -7847,23 +13117,88 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [456, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -7913,7 +13248,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7922,7 +13280,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7933,13 +13307,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -7950,20 +13331,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8011,7 +13401,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8020,7 +13433,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8031,13 +13460,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8048,27 +13484,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 35
@@ -8118,7 +13564,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8127,7 +13596,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8138,13 +13623,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8155,27 +13647,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 36
@@ -8225,7 +13727,30 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'name'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8234,7 +13759,23 @@ export const build: PortableBuildTable = {
 									key: 'parameters'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [457, 'parameters'],
+									kinds: []
+								},
+								{
+									at: [448, 'item'],
+									kinds: [449],
+									within: [
+										{
+											builder: 'formalParametersSetAccessorSignature.elements',
+											key: 'item'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8245,13 +13786,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8262,27 +13810,37 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'accessibilityModifier'
+									key: 'accessibilityModifier',
+									optional: true
 								}
 							],
 							kind: 34
@@ -8329,19 +13887,82 @@ export const build: PortableBuildTable = {
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [369, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [369, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8352,13 +13973,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8369,20 +13997,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -8393,13 +14030,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8419,19 +14062,62 @@ export const build: PortableBuildTable = {
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [375, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [375, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8442,13 +14128,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -8459,20 +14152,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8492,10 +14194,16 @@ export const build: PortableBuildTable = {
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [412, 'sign']
+								}
+							]
 						},
 						{
 							name: 'mappedTypeClause',
@@ -8504,7 +14212,12 @@ export const build: PortableBuildTable = {
 									key: 'mappedTypeClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [412, 'mappedTypeClause']
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -8513,7 +14226,69 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [412, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [330, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'omittingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [331, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'addingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [332, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'optingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8533,10 +14308,16 @@ export const build: PortableBuildTable = {
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [411, 'sign']
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -8546,7 +14327,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [411, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'indexType',
@@ -8555,7 +14341,13 @@ export const build: PortableBuildTable = {
 									key: 'indexType'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [411, 'indexType'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -8564,7 +14356,69 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [411, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [330, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'omittingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [331, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'addingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [332, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'optingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8589,10 +14443,16 @@ export const build: PortableBuildTable = {
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [412, 'sign']
+								}
+							]
 						},
 						{
 							name: 'mappedTypeClause',
@@ -8601,7 +14461,12 @@ export const build: PortableBuildTable = {
 									key: 'mappedTypeClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [412, 'mappedTypeClause']
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -8610,7 +14475,69 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [412, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [330, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'omittingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [331, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'addingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [332, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'optingTypeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8633,16 +14560,44 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [324, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [324, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'value',
@@ -8651,7 +14606,13 @@ export const build: PortableBuildTable = {
 									key: 'value'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [324, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8674,29 +14635,48 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [372, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'default',
 							steps: [
 								{
-									key: 'default'
+									key: 'default',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [372, 'default']
+								}
+							]
 						},
 						{
 							name: 'bounds',
 							steps: [
 								{
 									key: 'constraint',
-									builder: 'constraint'
+									builder: 'constraint',
+									optional: true
 								},
 								{
 									key: 'bounds'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [374, 'bounds'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8720,7 +14700,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [438, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -8729,7 +14714,27 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [438, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8761,7 +14766,13 @@ export const build: PortableBuildTable = {
 									key: 'declarators'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [207, 'declarators'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8807,26 +14818,58 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [437, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [437, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [437, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8863,7 +14906,13 @@ export const build: PortableBuildTable = {
 									key: 'declarators'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [207, 'declarators'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
@@ -8896,26 +14945,58 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [437, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [437, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
-									key: 'value'
+									key: 'value',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [437, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8938,7 +15019,13 @@ export const build: PortableBuildTable = {
 									key: 'declarators'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [207, 'declarators'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
@@ -8970,7 +15057,13 @@ export const build: PortableBuildTable = {
 									key: 'declarators'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [206, 'declarators'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -8993,7 +15086,30 @@ export const build: PortableBuildTable = {
 									key: 'key'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [293, 'key'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
@@ -9003,7 +15119,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [293, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9040,7 +15161,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [266, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9063,7 +15189,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [346, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9087,7 +15219,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [339, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -9096,7 +15233,27 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [339, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9120,7 +15277,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [340, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -9129,7 +15291,27 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [340, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9152,7 +15334,25 @@ export const build: PortableBuildTable = {
 									key: 'left'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [261, 'left'],
+									kinds: [233, 418, 419],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9162,7 +15362,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [261, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9172,7 +15377,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'disposable'
+											key: 'disposable',
+											optional: true
 										}
 									],
 									kind: 16
@@ -9199,7 +15405,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9209,7 +15420,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9233,7 +15449,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9243,7 +15464,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9276,7 +15502,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9286,7 +15517,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9319,7 +15555,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9329,7 +15570,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9362,7 +15608,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9372,7 +15623,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9405,7 +15661,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9415,7 +15676,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9448,7 +15714,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9458,7 +15729,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9491,7 +15767,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9501,7 +15782,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9534,7 +15820,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9544,7 +15835,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9577,7 +15873,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9587,7 +15888,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9620,7 +15926,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9630,7 +15941,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9663,7 +15979,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9673,7 +15994,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9706,7 +16032,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9716,7 +16047,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9749,7 +16085,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9759,7 +16100,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9792,7 +16138,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9802,7 +16153,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9835,7 +16191,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -9845,7 +16206,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [263, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -9878,7 +16244,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [257, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9898,21 +16269,33 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -9932,28 +16315,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 103
@@ -9975,28 +16371,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 105
@@ -10018,28 +16427,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 107
@@ -10061,28 +16483,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 106
@@ -10104,28 +16539,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 3
@@ -10147,28 +16595,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 104
@@ -10190,28 +16651,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 100
@@ -10233,28 +16707,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 102
@@ -10276,28 +16763,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 101
@@ -10319,28 +16819,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 116
@@ -10362,28 +16875,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 111
@@ -10405,28 +16931,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 115
@@ -10448,28 +16987,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 114
@@ -10491,28 +17043,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 108
@@ -10534,28 +17099,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 109
@@ -10577,28 +17155,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 110
@@ -10620,28 +17211,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 112
@@ -10663,28 +17267,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 113
@@ -10706,28 +17323,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 95
@@ -10749,28 +17379,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 96
@@ -10792,59 +17435,99 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'left',
 							steps: [
 								{
 									key: 'binaryExpressionIn',
-									builder: 'binaryExpression.in'
+									builder: 'binaryExpression.in',
+									optional: true,
+									mounted: {
+										call: 'keyed',
+										key: 'binaryExpressionIn',
+										seats: 'config'
+									}
 								},
 								{
 									key: 'left'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [406, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
 									key: 'binaryExpressionIn',
-									builder: 'binaryExpression.in'
+									builder: 'binaryExpression.in',
+									optional: true,
+									mounted: {
+										call: 'keyed',
+										key: 'binaryExpressionIn',
+										seats: 'config'
+									}
 								},
 								{
 									key: 'right'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [406, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'binaryExpressionIn'
+									key: 'binaryExpressionIn',
+									optional: true,
+									builder: 'binaryExpression.in',
+									mounted: {
+										call: 'keyed',
+										key: 'binaryExpressionIn',
+										seats: 'config'
+									}
 								}
-							],
-							builder: 'binaryExpression.in'
+							]
 						}
 					],
 					flags: {},
@@ -10863,28 +17546,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 73
@@ -10906,28 +17602,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 99
@@ -10949,28 +17658,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 97
@@ -10992,28 +17714,41 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
 							steps: [
 								{
-									key: 'right'
+									key: 'right',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [268, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'operator'
+									key: 'operator',
+									optional: true
 								}
 							],
 							kind: 98
@@ -11039,16 +17774,47 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [422, 'function'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [422, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'arguments',
@@ -11057,7 +17823,31 @@ export const build: PortableBuildTable = {
 									key: 'arguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [422, 'arguments'],
+									kinds: []
+								},
+								{
+									at: [283, 'elements'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277,
+										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
+										426, 439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'arguments',
+											key: 'elements',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11081,16 +17871,47 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [420, 'function'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [420, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'arguments',
@@ -11099,7 +17920,31 @@ export const build: PortableBuildTable = {
 									key: 'arguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [420, 'arguments'],
+									kinds: []
+								},
+								{
+									at: [283, 'elements'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277,
+										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
+										426, 439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'arguments',
+											key: 'elements',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11128,25 +17973,81 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [256, 'function'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [256, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'arguments',
 							steps: [
 								{
-									key: 'arguments'
+									key: 'arguments',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [256, 'arguments'],
+									kinds: []
+								},
+								{
+									at: [283, 'elements'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277,
+										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
+										426, 439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'arguments',
+											key: 'elements',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11182,16 +18083,47 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [420, 'function'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
 							steps: [
 								{
-									key: 'typeArguments'
+									key: 'typeArguments',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [420, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'arguments',
@@ -11200,7 +18132,31 @@ export const build: PortableBuildTable = {
 									key: 'arguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [420, 'arguments'],
+									kinds: []
+								},
+								{
+									at: [283, 'elements'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 266, 267, 268, 269, 270, 272, 273, 275, 276, 277,
+										278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425,
+										426, 439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'arguments',
+											key: 'elements',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [
@@ -11233,7 +18189,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [421, 'function'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'arguments',
@@ -11242,7 +18203,12 @@ export const build: PortableBuildTable = {
 									key: 'arguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [421, 'arguments']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11266,7 +18232,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [305, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -11275,7 +18246,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [305, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11299,7 +18276,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [304, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -11312,7 +18294,28 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [367, 'types'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11336,7 +18339,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [299, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11360,7 +18368,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [306, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -11369,7 +18382,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [306, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11389,28 +18408,64 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [244, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'name',
 							steps: [
 								{
-									key: 'name'
+									key: 'name',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [244, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [244, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -11419,31 +18474,104 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [244, 'body'],
+									kinds: []
+								},
+								{
+									at: [287, 'members'],
+									kinds: [289, 385, 407],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										}
+									],
+									many: true
+								},
+								{
+									at: [408, 'methodDefinition'],
+									kinds: [452, 453, 454, 463, 465],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethod',
+											key: 'methodDefinition'
+										}
+									]
+								},
+								{
+									at: [409, 'methodSignature'],
+									kinds: [300, 455, 456, 457],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberMethodSig',
+											key: 'methodSignature'
+										}
+									]
+								},
+								{
+									at: [410, 'member'],
+									kinds: [297, 300, 301, 376, 411, 412, 455, 456, 457, 458, 459, 460, 461, 462],
+									within: [
+										{
+											builder: 'classBody',
+											key: 'members',
+											optional: true
+										},
+										{
+											builder: 'classBodyMemberDeclaration',
+											key: 'member'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'extends',
 							steps: [
 								{
 									key: 'heritage',
-									builder: 'classHeritage'
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
 									key: 'content',
-									builder: 'classHeritage.extendsClause'
+									builder: 'classHeritage.extendsClause',
+									mounted: {
+										call: 'child'
+									}
 								},
 								{
 									key: 'extendsClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [428, 'extendsClause']
+								}
+							]
 						},
 						{
 							name: 'implements',
 							steps: [
 								{
 									key: 'heritage',
-									builder: 'classHeritage'
+									builder: 'classHeritage',
+									optional: true
 								},
 								{
 									key: 'content',
@@ -11453,7 +18581,14 @@ export const build: PortableBuildTable = {
 									key: 'types'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [311, 'types'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11473,11 +18608,18 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									optional: true
 								}
 							],
 							multiple: true,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [241, 'elements'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11497,10 +18639,18 @@ export const build: PortableBuildTable = {
 							name: 'properties',
 							steps: [
 								{
-									key: 'properties'
+									key: 'properties',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [237, 'properties'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11524,7 +18674,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [267, 'condition'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'consequence',
@@ -11534,7 +18689,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [267, 'consequence'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alternative',
@@ -11544,7 +18704,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [267, 'alternative'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11564,29 +18729,98 @@ export const build: PortableBuildTable = {
 							name: 'name',
 							steps: [
 								{
-									key: 'name'
+									key: 'name',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [249, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [249, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [249, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -11595,7 +18829,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [249, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -11606,13 +18845,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -11623,20 +18869,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -11647,13 +18902,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11673,29 +18934,98 @@ export const build: PortableBuildTable = {
 							name: 'name',
 							steps: [
 								{
-									key: 'name'
+									key: 'name',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [247, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [247, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
 							steps: [
 								{
-									key: 'returnType'
+									key: 'returnType',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [247, 'returnType'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								},
+								{
+									at: [337, 'asserts'],
+									kinds: [336],
+									within: [
+										{
+											builder: 'assertsAnnotation',
+											key: 'asserts'
+										}
+									]
+								},
+								{
+									at: [352, 'typePredicate'],
+									kinds: [351],
+									within: [
+										{
+											builder: 'typePredicateAnnotation',
+											key: 'typePredicate'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -11704,7 +19034,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [247, 'body']
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -11715,13 +19050,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -11732,20 +19074,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -11756,13 +19107,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11791,7 +19148,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [307, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
@@ -11800,7 +19162,32 @@ export const build: PortableBuildTable = {
 									key: 'typeArguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [307, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11824,7 +19211,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [274, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11848,21 +19240,36 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [251, 'body'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'parameters',
 							steps: [
 								{
 									key: 'content',
-									builder: 'arrowFunction.parameter'
+									builder: 'arrowFunction.parameter',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'forwarded'
+									}
 								},
 								{
 									key: 'parameter'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [427, 'parameter'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -11877,13 +19284,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -11898,20 +19312,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -11935,7 +19358,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [258, 'object'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'property',
@@ -11944,7 +19372,13 @@ export const build: PortableBuildTable = {
 									key: 'property'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [258, 'property'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12019,12 +19453,21 @@ export const build: PortableBuildTable = {
 									key: 'sequenceExpression'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [419, 'sequenceExpression']
+								}
+							]
 						}
 					],
 					presets: [],
 					flags: {},
 					when: [
+						{
+							member: 'expression',
+							kinds: [271]
+						},
 						{
 							absent: ['type'],
 							required: []
@@ -12043,21 +19486,56 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [418, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [418, 'type'],
+									kinds: []
+								},
+								{
+									at: [333, 'type'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeAnnotation',
+											key: 'type'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							member: 'expression',
+							kinds: [
+								1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244, 247,
+								249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278, 279, 280,
+								281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426, 439, 440
+							]
+						}
+					]
 				}
 			]
 		},
@@ -12076,7 +19554,13 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: true,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [271, 'expressions'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12100,7 +19584,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [259, 'object'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'index',
@@ -12110,7 +19599,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [259, 'index'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12120,7 +19614,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'optionalChain'
+											key: 'optionalChain',
+											optional: true
 										}
 									],
 									kind: 254
@@ -12147,7 +19642,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12171,7 +19671,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12204,7 +19709,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12237,7 +19747,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12270,7 +19785,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12303,7 +19823,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12336,7 +19861,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12369,7 +19899,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [269, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12402,7 +19937,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [426, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12426,7 +19966,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [425, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12455,7 +20000,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [426, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12488,7 +20038,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [425, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12526,7 +20081,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [426, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12559,7 +20119,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [425, 'argument'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
@@ -12593,11 +20158,17 @@ export const build: PortableBuildTable = {
 							name: 'expression',
 							steps: [
 								{
-									key: 'expression'
+									key: 'expression',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [236, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12610,8 +20181,11 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 414,
+					kind: 236,
 					builder: 'yieldExpression.delegate',
+					mounted: {
+						call: 'child'
+					},
 					members: [
 						{
 							name: 'expression',
@@ -12621,7 +20195,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [414, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12641,10 +20220,17 @@ export const build: PortableBuildTable = {
 							name: 'statements',
 							steps: [
 								{
-									key: 'statements'
+									key: 'statements',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [189, 'statements'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12919,7 +20505,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [243, 'qualifier'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -12928,7 +20519,13 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [243, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -12954,7 +20551,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [318, 'qualifier'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'name',
@@ -12963,7 +20565,13 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [318, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13119,7 +20727,12 @@ export const build: PortableBuildTable = {
 									key: 'prefix'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [160, 'prefix']
+								}
+							]
 						},
 						{
 							name: 'content',
@@ -13128,7 +20741,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [160, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13155,7 +20773,12 @@ export const build: PortableBuildTable = {
 									key: 'prefix'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [155, 'prefix']
+								}
+							]
 						},
 						{
 							name: 'content',
@@ -13164,7 +20787,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [155, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13191,7 +20819,12 @@ export const build: PortableBuildTable = {
 									key: 'prefix'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [161, 'prefix']
+								}
+							]
 						},
 						{
 							name: 'content',
@@ -13200,7 +20833,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [161, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13227,34 +20865,57 @@ export const build: PortableBuildTable = {
 									key: 'fraction'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'fraction']
+								}
+							]
 						},
 						{
 							name: 'marker',
 							steps: [
 								{
-									key: 'marker'
+									key: 'marker',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'marker']
+								}
+							]
 						},
 						{
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'sign']
+								}
+							]
 						},
 						{
 							name: 'exponent',
 							steps: [
 								{
-									key: 'exponent'
+									key: 'exponent',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'exponent']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13277,43 +20938,72 @@ export const build: PortableBuildTable = {
 									key: 'integer'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'integer']
+								}
+							]
 						},
 						{
 							name: 'fraction',
 							steps: [
 								{
-									key: 'fraction'
+									key: 'fraction',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'fraction']
+								}
+							]
 						},
 						{
 							name: 'marker',
 							steps: [
 								{
-									key: 'marker'
+									key: 'marker',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'marker']
+								}
+							]
 						},
 						{
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'sign']
+								}
+							]
 						},
 						{
 							name: 'exponent',
 							steps: [
 								{
-									key: 'exponent'
+									key: 'exponent',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'exponent']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13337,7 +21027,12 @@ export const build: PortableBuildTable = {
 									key: 'integer'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'integer']
+								}
+							]
 						},
 						{
 							name: 'marker',
@@ -13346,16 +21041,27 @@ export const build: PortableBuildTable = {
 									key: 'marker'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'marker']
+								}
+							]
 						},
 						{
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'sign']
+								}
+							]
 						},
 						{
 							name: 'exponent',
@@ -13364,7 +21070,12 @@ export const build: PortableBuildTable = {
 									key: 'exponent'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'exponent']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13387,7 +21098,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [165, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13415,7 +21131,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [163, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13442,7 +21163,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [162, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13469,7 +21195,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [164, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13501,43 +21232,72 @@ export const build: PortableBuildTable = {
 									key: 'integer'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'integer']
+								}
+							]
 						},
 						{
 							name: 'fraction',
 							steps: [
 								{
-									key: 'fraction'
+									key: 'fraction',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'fraction']
+								}
+							]
 						},
 						{
 							name: 'marker',
 							steps: [
 								{
-									key: 'marker'
+									key: 'marker',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'marker']
+								}
+							]
 						},
 						{
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'sign']
+								}
+							]
 						},
 						{
 							name: 'exponent',
 							steps: [
 								{
-									key: 'exponent'
+									key: 'exponent',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [156, 'exponent']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13561,34 +21321,57 @@ export const build: PortableBuildTable = {
 									key: 'fraction'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'fraction']
+								}
+							]
 						},
 						{
 							name: 'marker',
 							steps: [
 								{
-									key: 'marker'
+									key: 'marker',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'marker']
+								}
+							]
 						},
 						{
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'sign']
+								}
+							]
 						},
 						{
 							name: 'exponent',
 							steps: [
 								{
-									key: 'exponent'
+									key: 'exponent',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [157, 'exponent']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13612,7 +21395,12 @@ export const build: PortableBuildTable = {
 									key: 'integer'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'integer']
+								}
+							]
 						},
 						{
 							name: 'marker',
@@ -13621,16 +21409,27 @@ export const build: PortableBuildTable = {
 									key: 'marker'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'marker']
+								}
+							]
 						},
 						{
 							name: 'sign',
 							steps: [
 								{
-									key: 'sign'
+									key: 'sign',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'sign']
+								}
+							]
 						},
 						{
 							name: 'exponent',
@@ -13639,7 +21438,12 @@ export const build: PortableBuildTable = {
 									key: 'exponent'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [158, 'exponent']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13677,7 +21481,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [165, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13700,7 +21509,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [163, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13723,7 +21537,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [162, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13746,7 +21565,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [164, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13769,7 +21593,12 @@ export const build: PortableBuildTable = {
 									key: 'prefix'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [160, 'prefix']
+								}
+							]
 						},
 						{
 							name: 'content',
@@ -13778,7 +21607,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [160, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13802,7 +21636,12 @@ export const build: PortableBuildTable = {
 									key: 'prefix'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [155, 'prefix']
+								}
+							]
 						},
 						{
 							name: 'content',
@@ -13811,7 +21650,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [155, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13835,7 +21679,12 @@ export const build: PortableBuildTable = {
 									key: 'prefix'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [161, 'prefix']
+								}
+							]
 						},
 						{
 							name: 'content',
@@ -13844,7 +21693,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [161, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13858,8 +21712,11 @@ export const build: PortableBuildTable = {
 			root: true,
 			arms: [
 				{
-					kind: 404,
+					kind: 361,
 					builder: 'literalType.negativeNumber',
+					mounted: {
+						call: 'child'
+					},
 					members: [
 						{
 							name: 'value',
@@ -13868,7 +21725,12 @@ export const build: PortableBuildTable = {
 									key: 'value'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [404, 'value']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13892,17 +21754,28 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'regexPattern'
+							seats: [
+								{
+									at: [275, 'pattern'],
+									leaf: 'regexPattern'
+								}
+							]
 						},
 						{
 							name: 'flags',
 							steps: [
 								{
-									key: 'flags'
+									key: 'flags',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'regexFlags'
+							seats: [
+								{
+									at: [275, 'flags'],
+									leaf: 'regexFlags'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13948,11 +21821,18 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									optional: true
 								}
 							],
 							multiple: true,
-							leaf: 'unescapedDoubleStringFragment'
+							seats: [
+								{
+									at: [423, 'elements'],
+									leaf: 'unescapedDoubleStringFragment',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -13973,11 +21853,18 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									optional: true
 								}
 							],
 							multiple: true,
-							leaf: 'unescapedSingleStringFragment'
+							seats: [
+								{
+									at: [424, 'elements'],
+									leaf: 'unescapedSingleStringFragment',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14005,7 +21892,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [121, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14025,11 +21917,18 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									optional: true
 								}
 							],
 							multiple: true,
-							leaf: 'templateChars'
+							seats: [
+								{
+									at: [273, 'elements'],
+									leaf: 'templateChars',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14149,7 +22048,25 @@ export const build: PortableBuildTable = {
 									key: 'left'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [239, 'left'],
+									kinds: [290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -14159,7 +22076,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [239, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14179,10 +22101,30 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [242, 'elements'],
+									kinds: [239, 290, 291],
+									leaf: 'identifier',
+									many: true
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14202,10 +22144,18 @@ export const build: PortableBuildTable = {
 							name: 'properties',
 							steps: [
 								{
-									key: 'properties'
+									key: 'properties',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [238, 'properties'],
+									leaf: 'identifier',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14228,7 +22178,13 @@ export const build: PortableBuildTable = {
 									key: 'left'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [240, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -14238,7 +22194,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [240, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14261,7 +22222,30 @@ export const build: PortableBuildTable = {
 									key: 'key'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [294, 'key'],
+									kinds: [128, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 272, 276, 405, 423, 424, 499],
+									leaf: 'identifier'
+								},
+								{
+									at: [296, 'expression'],
+									kinds: [
+										1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 233, 234, 235, 236, 237, 241, 244,
+										247, 249, 251, 255, 256, 257, 258, 259, 261, 263, 267, 268, 269, 270, 272, 273, 275, 276, 277, 278,
+										279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 405, 418, 419, 420, 421, 422, 423, 424, 425, 426,
+										439, 440
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'computedPropertyName',
+											key: 'expression'
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'value',
@@ -14270,7 +22254,25 @@ export const build: PortableBuildTable = {
 									key: 'value'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [294, 'value'],
+									kinds: [239, 290, 291],
+									leaf: 'identifier'
+								},
+								{
+									at: [260, 'content'],
+									kinds: [1, 129, 238, 242, 258, 259, 299],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'lhsExpression',
+											key: 'content'
+										}
+									]
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14307,7 +22309,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [291, 'lhsExpression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14327,10 +22334,17 @@ export const build: PortableBuildTable = {
 							name: 'statements',
 							steps: [
 								{
-									key: 'statements'
+									key: 'statements',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [210, 'statements'],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14353,7 +22367,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [289, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14373,10 +22392,17 @@ export const build: PortableBuildTable = {
 							name: 'label',
 							steps: [
 								{
-									key: 'label'
+									key: 'label',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [221, 'label'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14396,10 +22422,17 @@ export const build: PortableBuildTable = {
 							name: 'label',
 							steps: [
 								{
-									key: 'label'
+									key: 'label',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [222, 'label'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14448,7 +22481,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [403, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14472,7 +22510,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [402, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14493,65 +22536,108 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom'
+									builder: 'exportStatementDefaultFrom.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'exportClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [434, 'exportClause']
+								}
+							]
 						},
 						{
 							name: 'exportClause',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.nsFrom'
+									builder: 'exportStatementDefaultFrom.nsFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'namespaceExport'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [433, 'namespaceExport']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom'
+									builder: 'exportStatementDefaultFrom.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
-									key: 'source'
+									key: 'source',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [434, 'source']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.nsFrom'
+									builder: 'exportStatementDefaultFrom.nsFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [433, 'source']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.starFrom'
+									builder: 'exportStatementDefaultFrom.starFrom',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [432, 'source']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14561,7 +22647,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -14584,10 +22671,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [431, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'declaration',
@@ -14596,38 +22690,87 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [431, 'content'],
+									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
+								},
+								{
+									at: [435, 'content'],
+									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324, 436],
+									within: [
+										{
+											builder: 'exportStatementDefaultDeclaration.defaultKw',
+											key: 'content',
+											mounted: {
+												call: 'keyed',
+												key: 'content',
+												seats: 'direct'
+											}
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'declaration',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw'
+									builder: 'exportStatementDefaultDeclaration.defaultKw',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [435, 'content']
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw'
+									builder: 'exportStatementDefaultDeclaration.defaultKw',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw.value'
+									builder: 'exportStatementDefaultDeclaration.defaultKw.value',
+									mounted: {
+										call: 'child',
+										outer: {
+											call: 'keyedArgs',
+											key: 'content',
+											seats: 'direct'
+										}
+									}
 								},
 								{
 									key: 'value'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [436, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14653,75 +22796,123 @@ export const build: PortableBuildTable = {
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom'
+									builder: 'exportStatementDefaultFrom.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'exportClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [434, 'exportClause']
+								}
+							]
 						},
 						{
 							name: 'exportClause',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.nsFrom'
+									builder: 'exportStatementDefaultFrom.nsFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'namespaceExport'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [433, 'namespaceExport']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.clauseFrom'
+									builder: 'exportStatementDefaultFrom.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
-									key: 'source'
+									key: 'source',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [434, 'source']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.nsFrom'
+									builder: 'exportStatementDefaultFrom.nsFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [433, 'source']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultFrom.starFrom'
+									builder: 'exportStatementDefaultFrom.starFrom',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [432, 'source']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'content'
+									key: 'content',
+									builder: 'exportStatementDefaultFrom.starFrom',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								}
-							],
-							builder: 'exportStatementDefaultFrom.starFrom'
+							]
 						}
 					],
 					flags: {
@@ -14730,7 +22921,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -14753,10 +22945,17 @@ export const build: PortableBuildTable = {
 							name: 'decorators',
 							steps: [
 								{
-									key: 'decorators'
+									key: 'decorators',
+									optional: true
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [431, 'decorators'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'declaration',
@@ -14765,48 +22964,102 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [431, 'content'],
+									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324]
+								},
+								{
+									at: [435, 'content'],
+									kinds: [195, 206, 207, 208, 245, 248, 250, 302, 312, 313, 314, 315, 317, 319, 321, 324, 436],
+									within: [
+										{
+											builder: 'exportStatementDefaultDeclaration.defaultKw',
+											key: 'content',
+											mounted: {
+												call: 'keyed',
+												key: 'content',
+												seats: 'direct'
+											}
+										}
+									]
+								}
+							]
 						},
 						{
 							name: 'declaration',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw'
+									builder: 'exportStatementDefaultDeclaration.defaultKw',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [435, 'content']
+								}
+							]
 						},
 						{
 							name: 'value',
 							steps: [
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw'
+									builder: 'exportStatementDefaultDeclaration.defaultKw',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								},
 								{
 									key: 'content',
-									builder: 'exportStatementDefaultDeclaration.defaultKw.value'
+									builder: 'exportStatementDefaultDeclaration.defaultKw.value',
+									mounted: {
+										call: 'child',
+										outer: {
+											call: 'keyedArgs',
+											key: 'content',
+											seats: 'direct'
+										}
+									}
 								},
 								{
 									key: 'value'
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [436, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'content'
+									key: 'content',
+									builder: 'exportStatementDefaultDeclaration.defaultKw',
+									mounted: {
+										call: 'keyed',
+										key: 'content',
+										seats: 'direct'
+									}
 								}
-							],
-							builder: 'exportStatementDefaultDeclaration.defaultKw'
+							]
 						}
 					],
 					flags: {},
@@ -14829,7 +23082,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [205, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14852,7 +23110,12 @@ export const build: PortableBuildTable = {
 									key: 'condition'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [212, 'condition']
+								}
+							]
 						},
 						{
 							name: 'consequence',
@@ -14861,16 +23124,27 @@ export const build: PortableBuildTable = {
 									key: 'consequence'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [212, 'consequence']
+								}
+							]
 						},
 						{
 							name: 'alternative',
 							steps: [
 								{
-									key: 'alternative'
+									key: 'alternative',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [212, 'alternative']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14893,42 +23167,69 @@ export const build: PortableBuildTable = {
 									key: 'fromClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [197, 'fromClause']
+								}
+							]
 						},
 						{
 							name: 'importAttribute',
 							steps: [
 								{
-									key: 'importAttribute'
+									key: 'importAttribute',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [197, 'importAttribute']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'fromClause',
-									builder: 'importStatement.clauseFrom'
+									builder: 'importStatement.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [413, 'source']
+								}
+							]
 						},
 						{
 							name: 'importClause',
 							steps: [
 								{
 									key: 'fromClause',
-									builder: 'importStatement.clauseFrom'
+									builder: 'importStatement.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'importClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [413, 'importClause']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14938,7 +23239,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -14965,7 +23267,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [317, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'value',
@@ -14975,7 +23282,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [317, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -14998,49 +23310,77 @@ export const build: PortableBuildTable = {
 									key: 'fromClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [197, 'fromClause']
+								}
+							]
 						},
 						{
 							name: 'importAttribute',
 							steps: [
 								{
-									key: 'importAttribute'
+									key: 'importAttribute',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [197, 'importAttribute']
+								}
+							]
 						},
 						{
 							name: 'source',
 							steps: [
 								{
 									key: 'fromClause',
-									builder: 'importStatement.clauseFrom'
+									builder: 'importStatement.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'source'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [413, 'source']
+								}
+							]
 						},
 						{
 							name: 'importClause',
 							steps: [
 								{
 									key: 'fromClause',
-									builder: 'importStatement.clauseFrom'
+									builder: 'importStatement.clauseFrom',
+									mounted: {
+										call: 'merge'
+									}
 								},
 								{
 									key: 'importClause'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [413, 'importClause']
+								}
+							]
 						}
 					],
 					presets: [
 						{
 							steps: [
 								{
-									key: 'typeOnly'
+									key: 'typeOnly',
+									optional: true
 								}
 							],
 							kind: 8
@@ -15052,7 +23392,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'typeOnly'
+											key: 'typeOnly',
+											optional: true
 										}
 									],
 									kind: 7
@@ -15078,7 +23419,13 @@ export const build: PortableBuildTable = {
 									key: 'label'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [227, 'label'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -15087,7 +23434,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [227, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15111,7 +23463,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [214, 'initializer'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'condition',
@@ -15121,17 +23478,28 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [214, 'condition'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'increment',
 							steps: [
 								{
-									key: 'increment'
+									key: 'increment',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [214, 'increment'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -15140,7 +23508,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [214, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15163,7 +23536,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [218, 'body']
+								}
+							]
 						},
 						{
 							name: 'condition',
@@ -15172,7 +23550,12 @@ export const build: PortableBuildTable = {
 									key: 'condition'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [218, 'condition']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15195,7 +23578,12 @@ export const build: PortableBuildTable = {
 									key: 'header'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [215, 'header']
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -15204,7 +23592,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [215, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15214,7 +23607,8 @@ export const build: PortableBuildTable = {
 								{
 									steps: [
 										{
-											key: 'async'
+											key: 'async',
+											optional: true
 										}
 									],
 									kind: 51
@@ -15240,7 +23634,12 @@ export const build: PortableBuildTable = {
 									key: 'condition'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [217, 'condition']
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -15249,7 +23648,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [217, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15269,11 +23673,17 @@ export const build: PortableBuildTable = {
 							name: 'expression',
 							steps: [
 								{
-									key: 'expression'
+									key: 'expression',
+									optional: true
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [224, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15296,7 +23706,12 @@ export const build: PortableBuildTable = {
 									key: 'object'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [220, 'object']
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -15305,7 +23720,12 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [220, 'body']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15328,7 +23748,12 @@ export const build: PortableBuildTable = {
 									key: 'value'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [213, 'value']
+								}
+							]
 						},
 						{
 							name: 'body',
@@ -15337,7 +23762,25 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [213, 'body'],
+									kinds: []
+								},
+								{
+									at: [228, 'cases'],
+									kinds: [229, 230],
+									within: [
+										{
+											builder: 'switchBody',
+											key: 'cases',
+											optional: true
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15361,7 +23804,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [225, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15384,25 +23832,42 @@ export const build: PortableBuildTable = {
 									key: 'body'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [219, 'body']
+								}
+							]
 						},
 						{
 							name: 'handlers',
 							steps: [
 								{
-									key: 'handlers'
+									key: 'handlers',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [219, 'handlers']
+								}
+							]
 						},
 						{
 							name: 'finalizer',
 							steps: [
 								{
-									key: 'finalizer'
+									key: 'finalizer',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [219, 'finalizer']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15425,7 +23890,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [377, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15448,7 +23919,13 @@ export const build: PortableBuildTable = {
 									key: 'left'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [349, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -15457,7 +23934,13 @@ export const build: PortableBuildTable = {
 									key: 'right'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [349, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'consequence',
@@ -15466,7 +23949,13 @@ export const build: PortableBuildTable = {
 									key: 'consequence'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [349, 'consequence'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'alternative',
@@ -15475,7 +23964,13 @@ export const build: PortableBuildTable = {
 									key: 'alternative'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [349, 'alternative'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15507,10 +24002,32 @@ export const build: PortableBuildTable = {
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [382, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'returnType',
@@ -15519,7 +24036,13 @@ export const build: PortableBuildTable = {
 									key: 'returnType'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [382, 'returnType'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -15530,13 +24053,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -15547,20 +24077,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -15571,13 +24110,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15597,10 +24142,32 @@ export const build: PortableBuildTable = {
 							name: 'typeParameters',
 							steps: [
 								{
-									key: 'typeParameters'
+									key: 'typeParameters',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [344, 'typeParameters'],
+									kinds: []
+								},
+								{
+									at: [391, 'items'],
+									kinds: [372],
+									within: [
+										{
+											builder: 'typeParameters',
+											key: 'elements'
+										},
+										{
+											builder: 'typeParametersElements',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -15609,7 +24176,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [344, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -15620,13 +24193,20 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'parameters',
@@ -15637,20 +24217,29 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
-									key: 'formalParametersElementsReceiverGroup'
+									key: 'formalParametersElementsReceiverGroup',
+									optional: true
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElements'
+									builder: 'formalParametersElements',
+									optional: true
 								},
 								{
 									key: 'items'
 								}
 							],
-							multiple: true
+							multiple: true,
+							seats: [
+								{
+									at: [386, 'items'],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'receiver',
@@ -15661,13 +24250,19 @@ export const build: PortableBuildTable = {
 								},
 								{
 									key: 'elements',
-									builder: 'formalParametersElementsReceiver'
+									builder: 'formalParametersElementsReceiver',
+									optional: true
 								},
 								{
 									key: 'receiver'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [469, 'receiver']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15690,7 +24285,13 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [350, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'typeArguments',
@@ -15699,7 +24300,32 @@ export const build: PortableBuildTable = {
 									key: 'typeArguments'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [350, 'typeArguments'],
+									kinds: []
+								},
+								{
+									at: [390, 'items'],
+									kinds: [
+										318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364, 365, 366, 368, 377,
+										378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'typeArguments',
+											key: 'types'
+										},
+										{
+											builder: 'types',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15722,7 +24348,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [358, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15745,16 +24377,29 @@ export const build: PortableBuildTable = {
 									key: 'name'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [348, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
 							steps: [
 								{
-									key: 'type'
+									key: 'type',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [348, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15774,10 +24419,17 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [381, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -15786,7 +24438,13 @@ export const build: PortableBuildTable = {
 									key: 'right'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [381, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15809,7 +24467,12 @@ export const build: PortableBuildTable = {
 									key: 'content'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [361, 'content']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15832,7 +24495,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [359, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'indexType',
@@ -15841,7 +24510,13 @@ export const build: PortableBuildTable = {
 									key: 'indexType'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [359, 'indexType'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15864,7 +24539,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [364, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15887,16 +24568,39 @@ export const build: PortableBuildTable = {
 									key: 'opening'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [368, 'opening']
+								}
+							]
 						},
 						{
 							name: 'members',
 							steps: [
 								{
-									key: 'members'
+									key: 'members',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [368, 'members'],
+									kinds: []
+								},
+								{
+									at: [400, 'items'],
+									kinds: [190, 300, 369, 370, 375, 376, 401, 402, 403, 411, 412, 430, 431, 455, 456, 457],
+									within: [
+										{
+											builder: 'objectTypeContent',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						},
 						{
 							name: 'closing',
@@ -15905,7 +24609,12 @@ export const build: PortableBuildTable = {
 									key: 'closing'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [368, 'closing']
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15928,7 +24637,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [341, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15951,7 +24666,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [365, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -15975,7 +24696,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [351, 'name'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'type',
@@ -15984,7 +24710,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [351, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16008,7 +24740,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [336, 'value'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16270,7 +25007,12 @@ export const build: PortableBuildTable = {
 								}
 							],
 							multiple: false,
-							leaf: 'identifier'
+							seats: [
+								{
+									at: [357, 'expression'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16293,7 +25035,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [379, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16316,7 +25064,13 @@ export const build: PortableBuildTable = {
 									key: 'type'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [342, 'type'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16336,11 +25090,18 @@ export const build: PortableBuildTable = {
 							name: 'elements',
 							steps: [
 								{
-									key: 'elements'
+									key: 'elements',
+									optional: true
 								}
 							],
 							multiple: true,
-							leaf: 'templateChars'
+							seats: [
+								{
+									at: [347, 'elements'],
+									leaf: 'templateChars',
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16360,10 +25121,32 @@ export const build: PortableBuildTable = {
 							name: 'tupleTypeMembers',
 							steps: [
 								{
-									key: 'tupleTypeMembers'
+									key: 'tupleTypeMembers',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [378, 'tupleTypeMembers'],
+									kinds: []
+								},
+								{
+									at: [392, 'items'],
+									kinds: [
+										318, 334, 335, 338, 339, 340, 341, 342, 344, 345, 347, 348, 349, 350, 357, 358, 359, 361, 363, 364,
+										365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									within: [
+										{
+											builder: 'tupleTypeMembers',
+											key: 'items'
+										}
+									],
+									many: true
+								}
+							]
 						}
 					],
 					presets: [],
@@ -16383,10 +25166,17 @@ export const build: PortableBuildTable = {
 							name: 'left',
 							steps: [
 								{
-									key: 'left'
+									key: 'left',
+									optional: true
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [380, 'left'],
+									leaf: 'identifier'
+								}
+							]
 						},
 						{
 							name: 'right',
@@ -16395,7 +25185,13 @@ export const build: PortableBuildTable = {
 									key: 'right'
 								}
 							],
-							multiple: false
+							multiple: false,
+							seats: [
+								{
+									at: [380, 'right'],
+									leaf: 'identifier'
+								}
+							]
 						}
 					],
 					presets: [],

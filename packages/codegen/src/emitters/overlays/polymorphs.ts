@@ -1,3 +1,4 @@
+import type { PortableMountCall } from '@sittir/types';
 import type { NodeMap } from '../../compiler/types.ts';
 import { AbstractAssembledCompound, AssembledEnum, AssembledList, AssembledSupertype, isKindIdStored, isRequired, separatorRequired, type AssembledNode } from '../../compiler/model/node-map.ts';
 import {
@@ -26,7 +27,7 @@ import {
 import { kindDiscriminantExpr, type KindEnumEntry } from '../kind-discriminant.ts';
 import {
 	armConfigKeys,
-	seatsConfigChild,
+	mountCallOf,
 	configKeysOf,
 	emittedElementsSeats,
 	flattenSeatsOf,
@@ -543,11 +544,11 @@ function shape(
 	positional: boolean,
 	mergeKeys: readonly string[] | undefined,
 	m: string,
-	seatsConfig = false
+	call: PortableMountCall
 ): WireShape {
 	const registered = sub.slot.registeredOption !== undefined;
 	if (sub.arm.via === 'value') {
-		if (sub.residual.length === 0) {
+		if (call === 'none') {
 			return {
 				method: positional
 					? [
@@ -585,7 +586,7 @@ function shape(
 			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'>`, p)
 		};
 	}
-	if (sub.residual.length === 0) {
+	if (call === 'child') {
 		return {
 			method: positional
 				? [
@@ -599,7 +600,7 @@ function shape(
 			paramFor: (_p, c) => refusingParam('args', `ArgsOf<${c}>`, { rest: true, loose: true })
 		};
 	}
-	if (mergeKeys !== undefined) {
+	if (call === 'merge' && mergeKeys !== undefined) {
 		if (mergeKeys.length === 0) {
 			return {
 				method: [
@@ -627,7 +628,7 @@ function shape(
 			paramFor: (p, c) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'> & ArgsOf<${c}>[0]`, p)
 		};
 	}
-	if (sub.arm.child.parameterless) {
+	if (call === 'holder') {
 		const config = sub.residual.some(isRequired) ? 'config' : 'config?';
 		return {
 			method: [
@@ -637,7 +638,7 @@ function shape(
 			paramFor: (p) => refusingConfig(`OmitEach<ArgsOf<${p}>[0], '${k}'>`, p, config === 'config?')
 		};
 	}
-	if (seatsConfig) {
+	if (call === 'keyed') {
 		return {
 			method: [
 				`export const ${m} = <${PF}, ${CF}>(parent: PF, child: CF) =>`,
@@ -870,7 +871,7 @@ function emitSub(
 
 	if (sub.arm.via === 'value') {
 		const val = valueStorageExpr(sub.arm.storage, resolveFieldStorageInfo(sub.slot, nodeMap), wires.kindEntries);
-		const s = shape(sub, k, positional, undefined, m);
+		const s = shape(sub, k, positional, undefined, m, mountCallOf(sub, nodeMap));
 		const parent = p.coerce ?? p.strict;
 		const type = functionTypeOf(s.paramFor(parent.type, undefined), `ReturnType<${parent.type}>`);
 		return { name: m, method: s.method, apply: `K.${m}(${parent.value}, ${val})`, type, coercible: p.coerce !== undefined };
@@ -882,7 +883,7 @@ function emitSub(
 		sub.arm.path.length === 0 && sub.residual.length > 0 && sub.merges
 			? armConfigKeys(sub, nodeMap, { isEmitted: wires.isEmitted })
 			: undefined;
-	const s = shape(sub, k, positional, mergeKeys, m, seatsConfigChild(sub, nodeMap));
+	const s = shape(sub, k, positional, mergeKeys, m, mountCallOf(sub, nodeMap));
 	const wrap: FlavorRefs = positional ? { strict: p.strict, coerce: p.coerce && p.strict } : p;
 	const coercible = wrap.coerce !== undefined && c.coerce !== undefined;
 	const parentRef = coercible ? wrap.coerce! : wrap.strict;

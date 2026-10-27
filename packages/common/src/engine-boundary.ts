@@ -19,4 +19,4 @@ export type {
 	ParsedRoot
 } from './engine.ts';
 export { portablePathHasFacts } from './portable/facts.ts';
-export { portableRuntimeTree } from './portable/runtime.ts';
+export { portableRuntime, portableRuntimeTree, type PortableRuntime } from './portable/runtime.ts';

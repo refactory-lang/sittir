@@ -44,7 +44,7 @@ describe('emitPortableNodeModel', () => {
 			],
 			members: [{ name: 'lhs', route: 'slot', slot: 'left', path: [{ owner: 'alpha', slot: 'left' }] }]
 		});
-		expect(model.kinds.wrapper).toEqual({ container: { kinds: ['alpha'], terminals: [], list: false } });
+		expect(model.kinds.wrapper).toEqual({ container: { slot: 'inner', kinds: ['alpha'], terminals: [], list: false } });
 		expect(model.namespaces).toEqual({
 			levels: [
 				{ depth: 1, paths: 1, kinds: 0, refinements: 0 },

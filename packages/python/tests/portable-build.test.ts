@@ -1,0 +1,25 @@
+import { describe, expect, it } from 'vitest';
+import { createEngine } from '@sittir/common';
+import { portableRuntime } from '@sittir/common/engine';
+import python from '../src/index.ts';
+
+const runtime = await portableRuntime(await createEngine(python, { api: 'strict' }));
+const render = (node: unknown): string => String(runtime.engine.render(node as never));
+
+describe('the portable build through the strict table', () => {
+	it('builds a function whose block sits in the suite that holds it, and a simple statement in the list that holds it', () => {
+		const body = { $path: 'statement.block', statements: [{ $path: 'statement.empty' }] };
+		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body }))).toBe('def f():\n    pass\n');
+	});
+
+	it("builds an except clause's exception through the mount that seats it at the clause's key, and a list of exceptions through the nested mount", () => {
+		const body = [{ $path: 'statement.empty' }];
+		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', body }))).toBe('except E: pass\n');
+		expect(render(runtime.build({ $path: 'clause.catch', type: 'E', name: 'e', body }))).toBe('except E as e: pass\n');
+		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F: pass\n');
+	});
+
+	it('builds a list given for a slot that holds one value through the container that holds the list', () => {
+		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: [{ $path: 'statement.empty' }] }))).toBe('def f(): pass\n');
+	});
+});

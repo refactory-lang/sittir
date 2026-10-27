@@ -45,21 +45,73 @@ export interface PortableRows {
 /** How a strict builder takes its input: a config object (`config`), one value (`direct`, `forwarded`), its elements as arguments (`spread`, `elements`), its text (`text`, `placed`), or nothing (`constant`). */
 export type PortableCallShape = 'config' | 'spread' | 'text' | 'constant' | 'direct' | 'elements' | 'forwarded' | 'placed';
 
-/** One step from a holder toward a member's slot: the config key it fills, and the builder of the kind the next step sits in, absent when that kind has no builder and its config fills the key as is. */
+/**
+ * How a mount's builder takes its input: nothing (`none`), the holder's own input (`holder`), the seated kind's input (`child`), the holder's
+ * config merged with the seated kind's (`merge`), or the holder's config with the seated kind's input (`keyed`) or arguments (`keyedArgs`) at the
+ * mounted key.
+ */
+export type PortableMountCall = 'none' | 'holder' | 'child' | 'merge' | 'keyed' | 'keyedArgs';
+
+/** A `keyed` or `keyedArgs` mount: the key that takes the seated kind's input, and the call shape that input takes. */
+export interface PortableKeyedMount {
+	readonly call: 'keyed' | 'keyedArgs';
+	readonly key: string;
+	readonly seats: PortableCallShape;
+	readonly outer?: PortableKeyedMount;
+}
+
+/**
+ * A mount's call. Where the mount's holder is itself seated at a key of its own holder, `outer` says how the mount's builder takes the holder's
+ * input there, nearest holder first.
+ */
+export type PortableMount = PortableKeyedMount | { readonly call: Exclude<PortableMountCall, 'keyed' | 'keyedArgs'>; readonly outer?: PortableKeyedMount };
+
+/**
+ * One step from a holder toward a member's slot: the config key it fills, the builder of the kind the next step sits in (absent when that kind
+ * has no builder and its config fills the key as is), and `optional` where the slot at the key may be left out. An empty list leaves out the
+ * first optional slot on its way, through the steps and then the containers. A `mounted` step's builder is a mount: it builds the holder itself
+ * with the kind at the key seated in it, taking its input as the mount says, and a deeper mount on the same holder replaces it.
+ */
 export interface PortableSlotStep {
 	readonly key: string;
 	readonly builder?: string;
+	readonly optional?: true;
+	readonly mounted?: PortableMount;
 }
 
-/** A member of a build arm: the steps to its slot, whether the slot holds a list, and the builder a member given as text builds through. */
+/**
+ * A container a member's value sits in: its builder, absent when its holder builds it, the key of its element slot, and `optional` where that
+ * slot may be left out. A `mounted` container's builder is a mount on the holder of the member's slot, so that holder is built through it.
+ */
+export interface PortableContainer {
+	readonly builder?: string;
+	readonly key: string;
+	readonly optional?: true;
+	readonly mounted?: PortableMount;
+}
+
+/**
+ * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has where the
+ * member has more than one seat, the builder text given for the seat builds through (`leaf`), and the containers the build puts around it,
+ * outermost first. A seat that holds many (`many`) takes a list.
+ */
+export interface PortableSeat {
+	readonly at: readonly [holder: number, key: string];
+	readonly kinds?: readonly number[];
+	readonly leaf?: string;
+	readonly within?: readonly PortableContainer[];
+	readonly many?: true;
+}
+
+/** A member of a build arm: the steps to its slot, whether the slot holds a list, and the seats a value finds in the slot, the slot's own first. */
 export interface PortableMemberStep {
 	readonly name: string;
 	readonly steps: readonly PortableSlotStep[];
 	readonly multiple: boolean;
-	readonly leaf?: string;
+	readonly seats: readonly PortableSeat[];
 }
 
-/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
+/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
 export interface PortablePreset {
 	readonly steps: readonly PortableSlotStep[];
 	readonly kind?: number;
@@ -84,12 +136,14 @@ export type PortablePickTest =
  * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
  * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type. A `template`
- * spells its member from the named holes. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
+ * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder with the
+ * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass.
  */
 export interface PortableBuildArm {
 	readonly kind: number;
 	readonly builder?: string;
+	readonly mounted?: PortableMount;
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float';
 	readonly when: readonly PortablePickTest[];
@@ -104,6 +158,18 @@ export interface PortableBuildArm {
 export interface PortableBuildPath {
 	readonly root: boolean;
 	readonly arms: readonly PortableBuildArm[];
+}
+
+/**
+ * A structure the portable build builds: its vocabulary path, the flags it sets, the value of a scalar or a fixed literal, and its members by
+ * name. A member is a structure, a list of them, text (built through its slot's default leaf), a kind id, a scalar, or a node, which is placed
+ * as it is.
+ */
+export interface PortableStructure {
+	readonly $path: string;
+	readonly $flags?: readonly string[];
+	readonly $value?: string | number | bigint | boolean;
+	readonly [member: string]: unknown;
 }
 
 /** A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, and each vocabulary path's arms. */

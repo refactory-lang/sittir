@@ -1,3 +1,4 @@
+import type { PortableMountCall } from '@sittir/types';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import type { ErrorRegion, StepAnchor } from '@sittir/types';
@@ -164,6 +165,13 @@ export interface ModelSlot {
 	readonly storage: string;
 	readonly kinds: readonly string[];
 	readonly terminals: readonly string[];
+	readonly mounts?: Readonly<Record<string, ModelMount>>;
+}
+
+export interface ModelMount {
+	readonly mount: string;
+	readonly call: PortableMountCall;
+	readonly nested?: Readonly<Record<string, PortableMountCall>>;
 }
 
 export interface EnumMember {
