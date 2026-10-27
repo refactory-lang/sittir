@@ -142,7 +142,7 @@ The type of an engine's `build` for a surface: the builder table, its strict sur
 
 ### `packages/types/src/engine-api.ts::Engine`
 
-A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code.
+A language engine: the only value surface of a language. It carries its `EngineIdentity` (descriptor, render module hash, options, trivia facts), and builds, guards (the node guards narrow to this engine's language, by the language a node's engine carries), parses and renders. Its `read`, `create` and `write` file verbs remain unimplemented. The engine's `types` member is type-only, mapping each kind to its node type for generic code. Its mode parameter is invariant (`in out`), so an engine built for either mode is not assignable to one built for the strict mode.
 
 ### `packages/types/src/engine-api.ts::RenderInput`
 
@@ -174,7 +174,7 @@ Whether two types are identical, by comparing two generic signatures that differ
 
 ### `packages/types/src/engine-api.ts::EngineOptions`
 
-An engine's options, grouped by concern: the builder surface, the render options, and the interceptors.
+An engine's options, grouped by concern: the API selection (`ApiSelection`, which requires `api` for every mode except the default) and the other settings (`EngineSettings`). It is a type alias, not an interface.
 
 ### `packages/types/src/engine-api.ts::Interceptor`
 
@@ -925,3 +925,51 @@ The prefix flag bit (`1 << 19`).
 ### `packages/types/src/vocabulary/identifier.ts::Identifier::Qualified`
 
 The qualified identifier kind.
+
+### `packages/types/src/engine-api.ts::LanguageHooks::tables`
+
+The table loaders, one per builder mode: each loads the table that mode's `api` names.
+
+### `packages/types/src/engine-api.ts::BuilderMode`
+
+The builder mode an engine loads: `default` or `strict`.
+
+### `packages/types/src/engine-api.ts::ApiSelection`
+
+The `api` option. It is required for every mode except the default.
+
+### `packages/types/src/engine-api.ts::ApiSelection::api`
+
+The API mode the engine loads.
+
+### `packages/types/src/engine-api.ts::EngineSettings`
+
+The engine options that are not the builder mode: render, interceptors and verify-structure.
+
+### `packages/types/src/engine-api.ts::EngineSettings::render`
+
+The render options, checked against the API.
+
+### `packages/types/src/engine-api.ts::EngineSettings::intercept`
+
+The interceptors, in registration order.
+
+### `packages/types/src/engine-api.ts::EngineSettings::verifyStructure`
+
+Whether structure is verified at compile time only, or also at run time.
+
+### `packages/types/src/node-surface.ts::Seat`
+
+A row call's signature: generic over its arguments, refusing undeclared keys, and returning its result.
+
+### `packages/types/src/node-surface.ts::ConfigSeat`
+
+A config-only signature: one loose config argument, refusing undeclared keys, returning its result.
+
+### `packages/types/src/node-surface.ts::OptionalConfigSeat`
+
+A config-only signature whose argument may be left out.
+
+### `packages/types/src/node-surface.ts::EmptyForm`
+
+A builder's empty form: a zero-argument call returning the empty type, intersected with the builder.
