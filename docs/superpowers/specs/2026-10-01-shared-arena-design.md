@@ -495,7 +495,9 @@ it: nothing is registered, counted or weakly held per node.
   its children, ruling 11). A `$with` copies the unchanged cells and carries the views of the
   children they name into the new view's cache. So a record that a live record names has a live
   view, and the reachability of views, which the collector already traces, is the liveness of
-  records.
+  records. Prototype's probe found no record reached by a live cell that the live views did not
+  reach, under today's `$with`, which rebuilds from the seeded children. Copy-and-patch must carry
+  the views the same way (Verification 19).
 - **No chunk names another chunk's records.** Liveness never runs through cells. A chunk's cells
   include those of records that later died, and a path copy names siblings the previous edit wrote,
   usually in the previous chunk. So an edge per cell would make each chunk hold its predecessor, and
@@ -586,8 +588,9 @@ it: nothing is registered, counted or weakly held per node.
     2^16 and about 300× at 2^20;
   - about 50× at 2^14 and 92× at 2^16 for a hundred roots, plateauing after 50k–70k edits.
 
-  Build time showed no effect of the cap. The cap is 2^14 words, unless the render's per-call
-  borrow of chunks, which is not measured yet, shows a cost at that count.
+  Build time showed no effect of the cap. A render borrows only the chunks it visits, and holding
+  541 chunks instead of 18 cost about 15 ns a chunk per render (python, 100k edits). The cap is
+  2^14 words.
 - **Disposing an engine** frees its arena whole, as today.
 
 Retired: `holdBuiltArena` and the native chunk list it fills; the arena's address-keyed maps of
@@ -790,6 +793,8 @@ members in the builder's literal — changed all three, and the maintainer ruled
     - A side node of a dropped holder is freed with the holder.
     - Under `$with` churn on kept roots, held words plateau (the probe's view-carried figures),
       and no chunk is held only through a dead record's cells.
+    - Every record a live record's cell names is reached through the live views' slot caches, after
+      `$with` rebuilds and after copy-and-patch.
     - A leaf kept after its holder is freed writes no side into the record that later reuses the
       address.
     - Building is no slower than before reclamation, measured by the build profile.
