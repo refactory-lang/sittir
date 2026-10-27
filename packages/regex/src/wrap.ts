@@ -29,7 +29,7 @@ import {
 	rowData,
 	rowOf,
 	rowWith,
-	rowTrivia,
+	handleTrivia,
 	handleRender,
 	handleToString,
 	handleEngine,
@@ -2167,13 +2167,13 @@ function $handleSnapshot(this: RecordPosition): unknown {
 	return snapshotOf(rowOf(this, _wrap));
 }
 function $trivia$leading(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {
-	return rowTrivia(this.node, _wrap, 'leading', items);
+	return handleTrivia(this.node, _wrap, 'leading', items);
 }
 function $trivia$trailing(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {
-	return rowTrivia(this.node, _wrap, 'trailing', items);
+	return handleTrivia(this.node, _wrap, 'trailing', items);
 }
 function $trivia$inner(this: { readonly node: RecordPosition }, ...items: unknown[]): unknown {
-	return rowTrivia(this.node, _wrap, 'inner', items);
+	return handleTrivia(this.node, _wrap, 'inner', items);
 }
 function $with$characterClassEscapeText2(this: { readonly node: RecordPosition }, ...args: unknown[]): unknown {
 	return rowWith(this.node, _wrap, 'characterClassEscapeText2', args);

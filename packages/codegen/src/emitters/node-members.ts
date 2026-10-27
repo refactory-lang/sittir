@@ -45,14 +45,15 @@ export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
 
-export function builtRowLines(name: string, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, trivia: TriviaPositions | undefined): string[] {
+export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
 	return [
-		`function ${name}(node: object, handle: EngineHandle | undefined): BuiltRow {`,
+		`function ${name}(node: object, setter: string, args: readonly unknown[]): unknown {`,
+		'  const handle = handleOf(node as RecordHandle);',
 		...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
-		'  return {',
-		...withBlockLines(setters, withEntry),
-		...triviaBlockLines(trivia),
-		'  };',
+		'  switch (setter) {',
+		...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}));`]),
+		'  }',
+		`  throw new Error(\`${kind} has no $with.\${setter}\`);`,
 		'}'
 	];
 }

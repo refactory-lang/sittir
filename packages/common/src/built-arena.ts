@@ -1,5 +1,5 @@
 import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
-import { bindTree, engineOf, sameLanguage, treeBuiltArena, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
 import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
@@ -7,7 +7,7 @@ import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
-import { leafData, recordOf, recordStub } from './record-view.ts';
+import { leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
 import type { LeafMaker, RecordPosition } from './handle.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
@@ -29,6 +29,9 @@ export interface BuiltPlace extends BuiltWords {
 
 export interface BuiltDraft extends BuiltWords {
 	placed: unknown[] | undefined;
+	readonly copyOf: number | undefined;
+	readonly kept: Readonly<Record<number, unknown>> | undefined;
+	patched: number[] | undefined;
 }
 
 type Wrap = (data: object, tree: TreeHandle) => unknown;
@@ -131,13 +134,10 @@ const sideHolds = new WeakMap<object, Map<string, readonly TreeToken[]>>();
 const NO_RECORDS = 'a side names a built record, and its engine builds no records';
 const OTHER_ENGINE_RECORD = "cannot write another engine's record into a side: a side holds only records its holder's engine built";
 
-export type BuiltRow = {
-	readonly $with?: Readonly<Record<string, (...args: never[]) => unknown>>;
-	readonly $trivia?: Readonly<Record<string, (...items: unknown[]) => unknown>>;
-};
+export type BuiltWith = (node: object, name: string, args: readonly unknown[]) => unknown;
 
 export interface BuiltViews {
-	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
+	readonly withs: Readonly<Record<number, BuiltWith>>;
 	readonly words: Readonly<Record<number, number>>;
 	readonly leaves: Readonly<Record<number, LeafMaker>>;
 }
@@ -208,14 +208,26 @@ export class BuiltArena {
 		return this.draft(kind, this.#widthOf(kind));
 	}
 
-	draft(kind: number, words: number): BuiltDraft {
+	draft(kind: number, words: number, copyOf?: number, kept?: Readonly<Record<number, unknown>>): BuiltDraft {
 		if (this.#drafted + words > this.#drafts.length) {
 			this.#drafts = new Uint32Array(Math.max(words, DRAFT_WORDS));
 			this.#drafted = 0;
 		}
-		const draft: BuiltDraft = { data: this.#drafts, base: this.#drafted, words, placed: undefined };
+		const draft: BuiltDraft = { data: this.#drafts, base: this.#drafted, words, placed: undefined, copyOf, kept, patched: undefined };
 		this.#drafts[draft.base] = kind;
 		this.#drafted += words;
+		return draft;
+	}
+
+	copy(source: object, kind: number): BuiltDraft {
+		const at = builtRecordOf(source, this);
+		if (at === undefined) return this.record(kind);
+		const head = wordOf(at, this.format);
+		const words = this.#widthOf(kind);
+		const found = this.words(at, 1)[head]!;
+		if (found !== kind) throw new Error(`a $with of a kind ${kind} record was handed a record of kind ${found}`);
+		const draft = this.draft(kind, words, at, (source as { readonly $cache?: Readonly<Record<number, unknown>> }).$cache ?? {});
+		draft.data.set(this.words(at, words).subarray(head, head + words), draft.base);
 		return draft;
 	}
 
@@ -292,6 +304,7 @@ export class BuiltArena {
 		place.data.set(record.data.subarray(record.base, record.base + record.words), place.base);
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, place.at, placed[n + 1] as number, placed[n + 2] as number);
+		if (record.copyOf !== undefined) this.#copySites(record.copyOf, place.at, record.patched ?? []);
 		return this.#view(place.at);
 	}
 
@@ -349,8 +362,8 @@ export class BuiltArena {
 		return side !== 0 && (this.words(side, 1)[wordOf(side, this.format)]! & this.format.sideSides.bit) !== 0;
 	}
 
-	row(node: object): Record<string, unknown> {
-		return this.#views.rows[(node as { readonly $type: number }).$type]!(node, this.#handle);
+	withOf(kind: number): BuiltWith | undefined {
+		return this.#views.withs[kind];
 	}
 
 	/** Holds the parsed tree `tree`, which a record of this arena names, with its `token`, for as long as the arena lives. */
@@ -695,4 +708,41 @@ export function storeListOptions(arena: BuiltArena, record: BuiltDraft, delimite
 		side.push(separator);
 	}
 	record.data[record.base + 1] = arena.push(side);
+}
+
+function keptAt(record: BuiltDraft, word: number, value: unknown): boolean {
+	const kept = record.kept;
+	return kept !== undefined && word in kept && kept[word] === value;
+}
+
+function patchedAt(record: BuiltDraft, word: number, width: number): void {
+	record.data.fill(0, record.base + word, record.base + word + width);
+	(record.patched ??= []).push(word);
+}
+
+export function patchCell(arena: BuiltArena, record: BuiltDraft, word: number, width: number, value: unknown): void {
+	if (keptAt(record, word, value)) return;
+	patchedAt(record, word, width);
+	storeCell(arena, record, word, value);
+}
+
+export function patchList(arena: BuiltArena, record: BuiltDraft, word: number, items: readonly unknown[], stride: number): void {
+	const kept = record.kept?.[word];
+	if (Array.isArray(kept) && kept.length === items.length && items.every((item, n) => item === kept[n])) return;
+	patchedAt(record, word, 2);
+	storeList(arena, record, word, items, stride);
+}
+
+export function patchFlag(record: BuiltDraft, word: number, mask: number, on: unknown): void {
+	const at = record.base + word;
+	record.data[at] = on ? (record.data[at]! | mask) >>> 0 : (record.data[at]! & ~mask) >>> 0;
+}
+
+export function patchListOptions(arena: BuiltArena, record: BuiltDraft, delimiter: number | undefined, separator: number | undefined): void {
+	if (record.copyOf !== undefined) {
+		const source: RecordPosition = { $type: record.data[record.base]!, $tree: arena.tree, $at: record.copyOf, $_layout: undefined };
+		if (delimiter === recordDelimiter(source) && separator === recordSeparator(source)) return;
+	}
+	record.data[record.base + 1] = 0;
+	storeListOptions(arena, record, delimiter, separator);
 }

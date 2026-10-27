@@ -120,7 +120,7 @@ import {
 	type RefineFormInfo
 } from './refine-emit.ts';
 import { buildSeparatedListContentSlot } from './wrap.ts';
-import { BuiltViewTable, leafAdoptLines, RECORD_CONSTRUCTION_IMPORTS, RECORD_VIEW_TYPES, recordParts, recordRefusalLines } from './record-construction.ts';
+import { BuiltViewTable, leafAdoptLines, patchTwinLines, RECORD_CONSTRUCTION_IMPORTS, RECORD_VIEW_TYPES, recordParts, recordRefusalLines } from './record-construction.ts';
 import { configKeysOf, elementsSeatOf, emittedElementsSeats, flattenSeatsOf, prefixedKey } from '../compiler/model/sub-factories.ts';
 import { splicedEnvelopeOf } from '../compiler/model/spliced-envelopes.ts';
 import type { CodegenEmitter } from './emitter.ts';
@@ -1857,6 +1857,7 @@ function fieldCarryingFactoryText(
 	const registeredSet = new Set(registered);
 	const forwarded = forwardedConstruction(node, surface, nodeMap, kindEntries);
 	const forwardTarget = forwarded?.target ?? null;
+	const call = (callee: string, args: string): string => (backend === 'records' ? `${callee}$patch(node, ${args})` : `${callee}(${args})`);
 	const spellingWith = (rebuild: (patch: string) => string): SetterEntry[] =>
 		registered.map((f) => ({
 			name: f.propertyName,
@@ -1873,8 +1874,8 @@ function fieldCarryingFactoryText(
 		const optionsFirst = leadingOptions === undefined ? '' : 'options, ';
 		valueSourceFor = (f) => (f === spreadFacts.slot ? admittedSlotInput(f, 'children', nodeMap, kindEntries, node.typeName) : '');
 		setters = [
-			{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, admitNodes(elementType))}`, body: `${fn}(${optionsFirst}...restItems(${JSON.stringify(setter)}, vs))` },
-			...spellingWith((patch) => `${fn}(${patch}, ...children)`)
+			{ name: setter, params: `...vs: ${elementsTypeOf(spreadFacts.nonEmpty, admitNodes(elementType))}`, body: call(fn, `${optionsFirst}...restItems(${JSON.stringify(setter)}, vs)`) },
+			...spellingWith((patch) => call(fn, `${patch}, ...children`))
 		];
 	} else if (singleField) {
 		const elemType = surface.directParamType!;
@@ -1884,9 +1885,9 @@ function fieldCarryingFactoryText(
 		const setterSig = setterValueSignature(singleField, setterType);
 		valueType = isRequired(singleField) ? admitNodes(setterType) : `${admitNodes(setterType)} | undefined`;
 		const direct = forwardTarget === null ? fn : `_${fn}`;
-		const rebuildDirect = (options: string): string => `${direct}(value, ${options})`;
+		const rebuildDirect = (options: string): string => call(direct, `value, ${options}`);
 		setters = [
-			{ name: singleField.propertyName, params: setterSig, body: registered.length === 0 ? `${direct}(value)` : `${direct}(value, options)` },
+			{ name: singleField.propertyName, params: setterSig, body: registered.length === 0 ? call(direct, 'value') : call(direct, 'value, options') },
 			...spellingWith(rebuildDirect)
 		];
 	} else {
@@ -1902,15 +1903,15 @@ function fieldCarryingFactoryText(
 				setters.push({
 					name: method,
 					params: `...values: ${admitNodes(restType)}`,
-					body: `${fn}({ ...${configAccess}, ${f.propertyName}: restItems(${JSON.stringify(method)}, values) }${optionsArg})`
+					body: call(fn, `{ ...${configAccess}, ${f.propertyName}: restItems(${JSON.stringify(method)}, values) }${optionsArg}`)
 				});
 			} else {
 				const elemType = setterElemType(f, constructionFieldElementType(f, nodeMap, kindEntries), configType, nodeMap);
 				const setterSig = setterValueSignature(f, elemType);
-				setters.push({ name: method, params: setterSig, body: `${fn}({ ...${configAccess}, ${f.propertyName}: value }${optionsArg})` });
+				setters.push({ name: method, params: setterSig, body: call(fn, `{ ...${configAccess}, ${f.propertyName}: value }${optionsArg}`) });
 			}
 		}
-		setters.push(...spellingWith((patch) => `${fn}(${configAccess}, ${patch})`));
+		setters.push(...spellingWith((patch) => call(fn, `${configAccess}, ${patch}`)));
 	}
 
 	const ownText = ownTextLeaf(node);
@@ -1975,7 +1976,8 @@ function fieldCarryingFactoryText(
 			...(takesOptions ? [`  const options = inputs.options as ${optionsType};`] : []),
 			...groupSeatParts(plan, (hint) => `() => inputs.config[${JSON.stringify(hint.slot)}] as object | undefined`).prelude
 		];
-		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, trivia, checks, result: builtName }, nodeMap, viewTable(views));
+		const parts = recordParts({ node, kind: typeExpr, slots: slotsToEmit, setters: seated, inputs, checks, result: builtName }, nodeMap, viewTable(views));
+		after.push(renameUnusedConfigParam(patchTwinLines(lines, fn, forwardTarget === null ? fn : `_${fn}`, parts.patchTail)));
 		lines.push(...parts.tail);
 		after.push(...parts.after);
 	} else {
@@ -2114,7 +2116,7 @@ export function kindEnumTextExpr(text: string, kindEntries: readonly KindEnumEnt
 }
 
 function renameUnusedConfigParam(lines: string[]): string {
-	const idx = lines.findIndex((l) => /^(?:export )?function \w+\(config\??:/.test(l));
+	const idx = lines.findIndex((l) => /^(?:export )?function [\w$]+\((?:source: object, )?config\??:/.test(l));
 	if (idx === -1) return lines.join('\n');
 	if (!/\bconfig\b/.test(lines.slice(idx + 1).join('\n'))) {
 		lines[idx] = lines[idx]!.replace(/\bconfig(\??:)/, '_config$1');
@@ -2198,7 +2200,7 @@ function emitRefineFormFactory(
 	const typeExpr = factoryTypeDiscriminant(node.kind, nodeMap, kindEntries);
 	const trivia = triviaPositionsOf(node.kind, nodeMap);
 	if (backend === 'records') {
-		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', trivia, checks: [], result: formBuiltName }, nodeMap, viewTable(views)).tail);
+		lines.push(...recordParts({ node, kind: typeExpr, slots: allSlots, setters: formSetters, inputs: 'kind', checks: [], result: formBuiltName }, nodeMap, viewTable(views)).tail);
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
@@ -2822,12 +2824,16 @@ function emitSeparatedListFactory(
 	{
 		const view = listSelfViewParts(plan.viewPlan!, { elements: contentStorageKey }, contentAccessorName, 'factory');
 		const optionsArg = hasOptions ? 'options, ' : '';
-		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: `${fn}(${optionsArg}...vs)` }];
+		const impl = hasOptions ? `_${fn}` : fn;
+		const optionsSet = (option: string): string =>
+			backend === 'records' ? `${impl}$patch(node, elements, { ...options, ${option}: v })` : `${fn}({ ...options, ${option}: v }, ...elements)`;
+		const contentSet = backend !== 'records' ? `${fn}(${optionsArg}...vs)` : hasOptions ? `${impl}$patch(node, vs, options)` : `${impl}$patch(node, ...vs)`;
+		const setters: SetterEntry[] = [{ name: contentAccessorName, params: `...vs: ${elementsType}`, body: contentSet }];
 		if (hasSeparatorKindOption) {
-			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: `${fn}({ ...options, separator: v }, ...elements)` });
+			setters.push({ name: 'separator', params: `v: ${separatorKindUnion}`, body: optionsSet('separator') });
 		}
 		if (hasDelimiterOption) {
-			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: `${fn}({ ...options, delimiter: v }, ...elements)` });
+			setters.push({ name: 'delimiter', params: `v?: ${delimiterUnion}`, body: optionsSet('delimiter') });
 		}
 		if (backend === 'objects') lines.push(...view.prelude);
 		lines.push(...builderHandleLines(node.kind, [[contentAccessorName, contentStorageKey]]));
@@ -2849,13 +2855,13 @@ function emitSeparatedListFactory(
 						...(hasSeparatorKindOption || hasDelimiterOption ? [`  const elements = inputs.elements as ${elementsType};`] : []),
 						...(hasOptions ? [`  const options = inputs.options as ${optionsType};`] : [])
 					],
-					trivia,
 					checks: [],
 					result: listBuiltName
 				},
 				nodeMap,
 				viewTable(views)
 			);
+			after.push(...patchTwinLines(lines, impl, impl, parts.patchTail));
 			lines.push(...parts.tail);
 			after.push(...parts.after);
 		} else {

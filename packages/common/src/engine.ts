@@ -559,7 +559,9 @@ export function createNativeEngine<
 						const readAt = (index: number, depth: number): TNode => {
 							const at = records?.record(index, depth);
 							if (at === undefined) return readObjectAt(index, depth);
-							return recordStub(tree, at) as TNode;
+							const stub = recordStub(tree, at);
+							holdReadTree(stub, liveToken);
+							return stub as TNode;
 						};
 						const roots = new Map<number, unknown>();
 						const tree: TreeHandle = {

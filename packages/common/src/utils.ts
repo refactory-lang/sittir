@@ -11,8 +11,8 @@ import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, recordOf, recordSlot, recordSlots } from './record-view.ts';
-import type { LeafHandle, RecordHandle } from './handle.ts';
+import { chosenSeparatorOf, recordOf, recordSlot, recordSlots, rowTrivia } from './record-view.ts';
+import type { LeafHandle, RecordHandle, RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, leafSitesOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
@@ -325,6 +325,16 @@ export function triviaInner(
 	items: readonly unknown[]
 ): AnyUntypedNode | readonly TriviaEntry[] {
 	return triviaWriter(node, handle).inner(items);
+}
+
+export function applySetter(args: readonly unknown[], set: (...args: never[]) => unknown): unknown {
+	return (set as (...values: readonly unknown[]) => unknown)(...args);
+}
+
+export function handleTrivia(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown, side: string, items: readonly unknown[]): unknown {
+	if (node.$tree.built === undefined) return rowTrivia(node, wrap, side, items);
+	const handle = handleOf(node);
+	return side === 'inner' ? triviaInner(node, handle, items) : triviaSide(node, handle, side as 'leading' | 'trailing', items);
 }
 
 /** One trivia item as its entry: a trivia node, a parsed ERROR node or a whitespace kind id as it is, a string by `textEntryOf`. */
@@ -673,9 +683,10 @@ export function withOptions<N>(node: N, options: object): N {
 	let out: unknown = node;
 	for (const [key, value] of Object.entries(options)) {
 		if (value === undefined) continue;
-		const set = (out as { readonly $with?: Readonly<Record<string, ((v: unknown) => unknown) | undefined>> }).$with?.[key];
+		const setters = (out as { readonly $with?: Readonly<Record<string, ((v: unknown) => unknown) | undefined>> }).$with;
+		const set = setters?.[key];
 		if (set === undefined) throw new Error(`cannot set the option '${key}': the node has no $with setter for it`);
-		out = set(value);
+		out = set.call(setters, value);
 	}
 	return out as N;
 }
@@ -859,5 +870,5 @@ export {
 } from './record-view.ts';
 export { handleDispose, isLeafHandle, isRecordPosition, type LeafHandle, type LeafMaker, type LeafSite, type RecordHandle, type RecordPosition } from './handle.ts';
 
-export { BuiltArena, builtRecordOf, isBuiltNode, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltRow, type BuiltText, type BuiltViews } from './built-arena.ts';
+export { BuiltArena, builtRecordOf, isBuiltNode, patchCell, patchFlag, patchList, patchListOptions, storeCell, storeFlag, storeList, storeListOptions, type BuiltDraft, type BuiltPlace, type BuiltText, type BuiltViews, type BuiltWith } from './built-arena.ts';
 export { LEAF_SITES } from './built-ref.ts';

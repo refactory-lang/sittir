@@ -3,7 +3,6 @@ import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type Tr
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
-import type { BuiltArena } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
 	decodeCell,
@@ -117,8 +116,7 @@ const rows = new WeakMap<object, Record<string, unknown>>();
 export function rowOf(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown): Record<string, unknown> {
 	const known = rows.get(node);
 	if (known !== undefined) return known;
-	const tree = node.$tree;
-	const row = tree.built === undefined ? (wrap(rowData(node) as object, tree) as Record<string, unknown>) : tree.built.row(node);
+	const row = wrap(rowData(node) as object, node.$tree) as Record<string, unknown>;
 	rows.set(node, row);
 	return row;
 }
@@ -138,21 +136,13 @@ export function rowData(stub: RecordPosition): unknown {
 
 type Members = Readonly<Record<string, (...args: unknown[]) => unknown>>;
 
-/** A handle's setter `name` called with `args`, through its row's `$with`. */
+/** A handle's setter `name` called with `args`: its kind's record setter where its engine builds records, else its row's `$with`. */
 export function rowWith(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown, name: string, args: readonly unknown[]): unknown {
-	const tree = node.$tree;
-	const built = tree.built === undefined ? treeBuiltArena(tree) : undefined;
-	return ((built === undefined ? rowOf(node, wrap) : builtRowOf(node, built)).$with as Members)[name]!(...args);
-}
-
-const builtRows = new WeakMap<object, Record<string, unknown>>();
-
-function builtRowOf(node: object, arena: BuiltArena): Record<string, unknown> {
-	const known = builtRows.get(node);
-	if (known !== undefined) return known;
-	const row = arena.row(node);
-	builtRows.set(node, row);
-	return row;
+	const arena = node.$tree.built ?? treeBuiltArena(node.$tree);
+	if (arena === undefined) return (rowOf(node, wrap).$with as Members)[name]!(...args);
+	const set = arena.withOf(node.$type);
+	if (set === undefined) throw new Error(`no record builder writes kind ${node.$type}, so a node of that kind has no $with`);
+	return set(node, name, args);
 }
 
 /** A handle's trivia `side` read or written with `items`, through its row's `$trivia`. */

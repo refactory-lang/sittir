@@ -44,6 +44,9 @@ export function wrapRegistered<T>(value: object, tree: TreeHandle, wrap: (value:
 	const known = registered(tree, index, role);
 	if (known !== undefined) return known as T;
 	const wrapper = wrap(value, tree);
-	if (wrapper !== null && typeof wrapper === 'object') register(tree, index, role, wrapper);
+	if (wrapper === null || typeof wrapper !== 'object') return wrapper;
+	const errors = (value as { readonly $errors?: unknown }).$errors;
+	if (errors !== undefined && (wrapper as { readonly $errors?: unknown }).$errors === undefined) Object.assign(wrapper, { $errors: errors });
+	register(tree, index, role, wrapper);
 	return wrapper;
 }

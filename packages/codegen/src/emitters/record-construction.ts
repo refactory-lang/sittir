@@ -1,6 +1,6 @@
 import type { AssembledList, AssembledNonterminal, AuthoredCompound } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
-import { builtRowLines, type SetterEntry, type TriviaPositions } from './node-members.ts';
+import { builtWithLines, type SetterEntry, type TriviaPositions } from './node-members.ts';
 import { rustFieldIdent } from './node-common.ts';
 import type { RecordPlace } from './record-layout.ts';
 import { nodeRecordLayout } from './render-module.ts';
@@ -12,6 +12,12 @@ export const RECORD_CONSTRUCTION_IMPORTS = [
 	'storeFlag',
 	'storeList',
 	'storeListOptions',
+	'patchCell',
+	'patchFlag',
+	'patchList',
+	'patchListOptions',
+	'applySetter',
+	'handleOf',
 	'leafText',
 	'leafLeading',
 	'leafTrailing',
@@ -22,7 +28,7 @@ export const RECORD_CONSTRUCTION_IMPORTS = [
 	'handleDispose'
 ] as const;
 
-export const RECORD_VIEW_TYPES = ['BuiltRow', 'BuiltText', 'BuiltViews', 'EngineHandle', 'LeafSite', 'TreeHandle'] as const;
+export const RECORD_VIEW_TYPES = ['BuiltText', 'BuiltViews', 'LeafSite', 'RecordHandle', 'TreeHandle'] as const;
 
 export function recordPlacesOf(
 	node: AuthoredCompound | AssembledList,
@@ -47,13 +53,13 @@ export interface RecordConstruction {
 	readonly listOptions?: { readonly delimiter: boolean; readonly separator: boolean };
 	readonly setters: readonly SetterEntry[] | undefined;
 	readonly inputs: readonly string[] | 'kind';
-	readonly trivia: TriviaPositions | undefined;
 	readonly checks: readonly string[];
 	readonly result: string;
 }
 
 export interface RecordParts {
 	readonly tail: readonly string[];
+	readonly patchTail: readonly string[];
 	readonly after: readonly string[];
 }
 
@@ -63,35 +69,49 @@ function slotStore(place: RecordPlace, local: string): string {
 	return `  storeCell(arena, record, ${place.word}, ${local});`;
 }
 
+function slotPatch(place: RecordPlace, local: string): string {
+	if ('bit' in place) return `  patchFlag(record, ${place.word}, ${2 ** place.bit}, ${local});`;
+	if (place.run !== undefined) return `  patchList(arena, record, ${place.word}, ${local}, ${place.run});`;
+	return `  patchCell(arena, record, ${place.word}, ${place.width}, ${local});`;
+}
+
 export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: BuiltViewTable): RecordParts {
 	const places = recordPlacesOf(spec.node, nodeMap);
 	const layout = nodeRecordLayout(spec.node, nodeMap);
-	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), after: [] };
+	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), after: [] };
 	views.width(spec.node, layout.words);
 	const placed = spec.slots.map((slot) => {
 		const place = places.get(slot.storageKey);
 		if (place === undefined) throw new Error(`recordTailLines: ${spec.node.kind}.${slot.name} has no record place`);
 		return { place, local: slot.storageKey };
 	});
-	const stores = placed.map(({ place, local }) => slotStore(place, local));
 	const options = spec.listOptions;
-	const tail = [
+	const listOptions = options === undefined ? undefined : `arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'}`;
+	const tailOf = (record: string, store: (place: RecordPlace, local: string) => string, storeOptions: string): string[] => [
 		'  const arena = builtArenaOf(handle);',
 		`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`,
-		`  const record = arena.record(${spec.kind});`,
-		...stores,
-		...(options === undefined
-			? []
-			: [`  storeListOptions(arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'});`]),
+		`  const record = ${record};`,
+		...placed.map(({ place, local }) => store(place, local)),
+		...(listOptions === undefined ? [] : [`  ${storeOptions}(${listOptions});`]),
 		'  const node = arena.view(record);',
 		...spec.checks,
 		`  return node as unknown as ${spec.result};`
 	];
+	const tail = tailOf(`arena.record(${spec.kind})`, slotStore, 'storeListOptions');
+	const patchTail = tailOf(`arena.copy(source, ${spec.kind})`, slotPatch, 'patchListOptions');
 	if (spec.inputs === 'kind') {
-		views.requireRow(spec.node);
-		return { tail, after: [] };
+		views.requireWith(spec.node);
+		return { tail, patchTail, after: [] };
 	}
-	return { tail, after: views.row(spec.node, spec.inputs, spec.setters, spec.trivia) };
+	return { tail, patchTail, after: views.with(spec.node, spec.inputs, spec.setters ?? []) };
+}
+
+export function patchTwinLines(head: readonly string[], impl: string, twin: string, patchTail: readonly string[]): string[] {
+	const opening = new RegExp(`^(?:export )?function ${impl}\\(`);
+	const at = head.findIndex((line) => line.endsWith('{') && opening.test(line));
+	if (at < 0) throw new Error(`record views: ${impl} has no implementation signature to patch`);
+	const signature = head[at]!.replace(opening, () => `function ${twin}$patch(source: object, `).replace('(source: object, )', () => '(source: object)');
+	return [signature, ...head.slice(at + 1), ...patchTail, '}'];
 }
 
 export function recordRefusalLines(node: { readonly kind: string }): string[] {
@@ -133,17 +153,17 @@ interface ViewKind {
 }
 
 export class BuiltViewTable {
-	readonly #rows = new Map<number, string>();
+	readonly #withs = new Map<number, string>();
 	readonly #leaves = new Map<number, { readonly name: string; readonly body: string }>();
 	readonly #required = new Map<number, string>();
 	readonly #widths = new Map<number, number>();
 
-	row(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, trivia: TriviaPositions | undefined): string[] {
+	with(node: ViewKind, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
 		const kindId = viewKindId(node);
-		if (this.#rows.has(kindId)) throw new Error(`record views: ${node.kind} has two record builders that each make its row`);
-		const name = `row${node.typeName}`;
-		this.#rows.set(kindId, name);
-		return builtRowLines(name, inputs, setters, trivia);
+		if (this.#withs.has(kindId)) throw new Error(`record views: ${node.kind} has two record builders that each write its setters`);
+		const name = `with${node.typeName}`;
+		this.#withs.set(kindId, name);
+		return builtWithLines(name, node.kind, inputs, setters);
 	}
 
 	width(node: ViewKind, words: number): void {
@@ -153,7 +173,7 @@ export class BuiltViewTable {
 		this.#widths.set(kindId, words);
 	}
 
-	requireRow(node: ViewKind): void {
+	requireWith(node: ViewKind): void {
 		this.#required.set(viewKindId(node), node.kind);
 	}
 
@@ -173,12 +193,12 @@ export class BuiltViewTable {
 
 	tableLines(): string[] {
 		for (const [kindId, kind] of this.#required) {
-			if (!this.#rows.has(kindId)) throw new Error(`record views: a form builder writes ${kind} records, and ${kind} has no row`);
+			if (!this.#withs.has(kindId)) throw new Error(`record views: a form builder writes ${kind} records, and ${kind} has no setters`);
 		}
 		const entries = (table: ReadonlyMap<number, string | number>) => [...table].sort(([a], [b]) => a - b).map(([kindId, value]) => ` ${kindId}: ${value}`).join(',');
 		return [
 			'export const builtViews: BuiltViews = Object.freeze({',
-			`  rows: Object.freeze({${entries(this.#rows)} }),`,
+			`  withs: Object.freeze({${entries(this.#withs)} }),`,
 			`  words: Object.freeze({${entries(this.#widths)} }),`,
 			`  leaves: Object.freeze({${entries(new Map([...this.#leaves].map(([kindId, { name }]) => [kindId, name])))} })`,
 			'});'

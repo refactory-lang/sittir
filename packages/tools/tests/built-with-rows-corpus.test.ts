@@ -53,12 +53,13 @@ describe.each(['rust', 'typescript', 'python', 'regex', 'scm'])('the %s corpus r
 				onBuilt: (built, at) => {
 					for (const view of builtViews(built, new Set())) {
 						const members = view as Record<string, unknown> & { readonly $type: number; readonly $with?: Setters };
-						for (const [name, set] of Object.entries(members.$with ?? {})) {
+						const withs = members.$with ?? {};
+						for (const [name, set] of Object.entries(withs)) {
 							const read = members[name];
-							if (typeof read !== 'function' || read.length !== 0) continue;
+							if (typeof set !== 'function' || typeof read !== 'function' || read.length !== 0) continue;
 							setters.add(`${members.$type}.${name}`);
 							const own = (read as () => unknown).call(view);
-							const problem = sameStructure(view, () => set(...(items(own) ?? [own])));
+							const problem = sameStructure(view, () => set.apply(withs, [...(items(own) ?? [own])]));
 							if (problem !== undefined) failed.set(`kind ${members.$type}.${name}`, `${at.entry}: ${problem}`);
 						}
 					}

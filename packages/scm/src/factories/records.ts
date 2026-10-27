@@ -9,8 +9,6 @@ import {
 	elementsWith,
 	rebuilt,
 	refuseJSON,
-	triviaSide,
-	triviaInner,
 	describeValue,
 	restItems,
 	kindIdStorage,
@@ -22,6 +20,11 @@ import {
 	storeCell,
 	storeFlag,
 	storeList,
+	patchCell,
+	patchFlag,
+	patchList,
+	applySetter,
+	handleOf,
 	leafText,
 	leafLeading,
 	leafTrailing,
@@ -30,7 +33,7 @@ import {
 	handleEngine,
 	handleDispose
 } from '@sittir/common/utils';
-import type { BuiltRow, BuiltText, BuiltViews, EngineHandle, LeafSite, TreeHandle } from '@sittir/common/utils';
+import type { BuiltText, BuiltViews, LeafSite, RecordHandle, TreeHandle } from '@sittir/common/utils';
 
 import {
 	_leafRe_buildIdentifier,
@@ -55,18 +58,27 @@ export function buildProgram(...children: Admit<T.Definition[]>): T.Program.Boun
 	return node as unknown as T.Program.Bound;
 }
 
-function rowProgram(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			definitions: (...vs: Admit<T.Definition>[]) =>
-				rebuilt(node, handle, () => buildProgram(...restItems('definitions', vs)))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		}
-	};
+function buildProgram$patch(source: object, ...children: Admit<T.Definition[]>): T.Program.Bound {
+	currentHandle()?.admit(TSKindId.Program, children);
+	const _definitions = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'program', { definitions: _definitions });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Program as const, { _definitions });
+	const record = arena.copy(source, TSKindId.Program as const);
+	patchList(arena, record, 2, _definitions, 5);
+	const node = arena.view(record);
+	return node as unknown as T.Program.Bound;
+}
+function withProgram(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'definitions':
+			return applySetter(args, (...vs: Admit<T.Definition>[]) =>
+				rebuilt(node, handle, () => buildProgram$patch(node, ...restItems('definitions', vs)))
+			);
+	}
+	throw new Error(`program has no $with.${setter}`);
 }
 
 export function buildEscapeSequence(content: string, affix?: true): T.EscapeSequence.Bound;
@@ -93,16 +105,36 @@ export function buildEscapeSequence(input: string, affix: boolean = true): T.Esc
 	return node as unknown as T.EscapeSequence.Bound;
 }
 
-function rowEscapeSequence(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<string>) => rebuilt(node, handle, () => buildEscapeSequence(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildEscapeSequence$patch(source: object, input: string, affix: boolean = true): T.EscapeSequence.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`escape_sequence.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'escape_sequence');
+	}
+	const _content = value;
+	if (typeof _content !== 'string')
+		throw new Error(`escape_sequence.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildEscapeSequence_content.test(_content))
+		throw new Error(`escape_sequence.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'escape_sequence', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.EscapeSequence as const, { _content });
+	const record = arena.copy(source, TSKindId.EscapeSequence as const);
+	patchCell(arena, record, 2, 4, _content);
+	const node = arena.view(record);
+	return node as unknown as T.EscapeSequence.Bound;
+}
+function withEscapeSequence(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) =>
+				rebuilt(node, handle, () => buildEscapeSequence$patch(node, value))
+			);
+	}
+	throw new Error(`escape_sequence has no $with.${setter}`);
 }
 
 export function buildIdentifier(text: string): T.Identifier.Bound {
@@ -176,16 +208,26 @@ export function buildCapture(value: Admit<T.ImmediateIdentifier>): T.Capture.Bou
 	return node as unknown as T.Capture.Bound;
 }
 
-function rowCapture(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			name: (value: Admit<T.ImmediateIdentifier>) => rebuilt(node, handle, () => buildCapture(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildCapture$patch(source: object, value: Admit<T.ImmediateIdentifier>): T.Capture.Bound {
+	const _name = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'capture', { name: _name });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Capture as const, { _name });
+	const record = arena.copy(source, TSKindId.Capture as const);
+	patchCell(arena, record, 2, 5, _name);
+	const node = arena.view(record);
+	return node as unknown as T.Capture.Bound;
+}
+function withCapture(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
+				rebuilt(node, handle, () => buildCapture$patch(node, value))
+			);
+	}
+	throw new Error(`capture has no $with.${setter}`);
 }
 
 export function buildString<V extends Admit<T.StringContent>>(
@@ -219,16 +261,26 @@ function _buildString(value?: Admit<T.StringContent>): T.String.Bound {
 	return node as unknown as T.String.Bound;
 }
 
-function rowString(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			stringContent: (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildString(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function _buildString$patch(source: object, value?: Admit<T.StringContent>): T.String.Bound {
+	const _string_content = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'string', { stringContent: _string_content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.String as const, { _string_content });
+	const record = arena.copy(source, TSKindId.String as const);
+	patchCell(arena, record, 2, 6, _string_content);
+	const node = arena.view(record);
+	return node as unknown as T.String.Bound;
+}
+function withString(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'stringContent':
+			return applySetter(args, (value?: Admit<T.StringContent>) =>
+				rebuilt(node, handle, () => _buildString$patch(node, value))
+			);
+	}
+	throw new Error(`string has no $with.${setter}`);
 }
 
 export function buildImmediateString<V extends Admit<T.StringContent>>(
@@ -264,16 +316,26 @@ function _buildImmediateString(value?: Admit<T.StringContent>): T.ImmediateStrin
 	return node as unknown as T.ImmediateString.Bound;
 }
 
-function rowImmediateString(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			stringContent: (value?: Admit<T.StringContent>) => rebuilt(node, handle, () => _buildImmediateString(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function _buildImmediateString$patch(source: object, value?: Admit<T.StringContent>): T.ImmediateString.Bound {
+	const _string_content = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'immediate_string', { stringContent: _string_content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ImmediateString as const, { _string_content });
+	const record = arena.copy(source, TSKindId.ImmediateString as const);
+	patchCell(arena, record, 2, 6, _string_content);
+	const node = arena.view(record);
+	return node as unknown as T.ImmediateString.Bound;
+}
+function withImmediateString(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'stringContent':
+			return applySetter(args, (value?: Admit<T.StringContent>) =>
+				rebuilt(node, handle, () => _buildImmediateString$patch(node, value))
+			);
+	}
+	throw new Error(`immediate_string has no $with.${setter}`);
 }
 
 export function buildStringContent<A extends NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>>(
@@ -294,17 +356,30 @@ export function buildStringContent(
 	return node as unknown as T.StringContent.Bound;
 }
 
-function rowStringContent(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			contents: (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
-				rebuilt(node, handle, () => buildStringContent(...restItems('contents', vs)))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildStringContent$patch(
+	source: object,
+	...children: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>
+): T.StringContent.Bound {
+	currentHandle()?.admit(TSKindId.StringContent, children);
+	const _content = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'string_content', { contents: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.StringContent as const, { _content });
+	const record = arena.copy(source, TSKindId.StringContent as const);
+	patchList(arena, record, 2, _content, 5);
+	const node = arena.view(record);
+	return node as unknown as T.StringContent.Bound;
+}
+function withStringContent(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'contents':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.StringContentText | T.EscapeSequence>>) =>
+				rebuilt(node, handle, () => buildStringContent$patch(node, ...restItems('contents', vs)))
+			);
+	}
+	throw new Error(`string_content has no $with.${setter}`);
 }
 
 export function buildParameters<A extends NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>>(
@@ -325,17 +400,30 @@ export function buildParameters(
 	return node as unknown as T.Parameters.Bound;
 }
 
-function rowParameters(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			elements: (...vs: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>) =>
-				rebuilt(node, handle, () => buildParameters(...restItems('elements', vs)))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildParameters$patch(
+	source: object,
+	...children: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>
+): T.Parameters.Bound {
+	currentHandle()?.admit(TSKindId.Parameters, children);
+	const _elements = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'parameters', { elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Parameters as const, { _elements });
+	const record = arena.copy(source, TSKindId.Parameters as const);
+	patchList(arena, record, 2, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.Parameters.Bound;
+}
+function withParameters(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'elements':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Capture | T.String | T.Identifier>>) =>
+				rebuilt(node, handle, () => buildParameters$patch(node, ...restItems('elements', vs)))
+			);
+	}
+	throw new Error(`parameters has no $with.${setter}`);
 }
 
 export function buildComment(content: string, affix?: true): T.Comment.Bound;
@@ -361,12 +449,33 @@ export function buildComment(input: string, affix: boolean = true): T.Comment.Bo
 	return node as unknown as T.Comment.Bound;
 }
 
-function rowComment(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<string>) => rebuilt(node, handle, () => buildComment(value))
-		}
-	};
+function buildComment$patch(source: object, input: string, affix: boolean = true): T.Comment.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string') throw new Error(`comment.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, ';', '', 'comment');
+	}
+	const _content = value;
+	if (typeof _content !== 'string')
+		throw new Error(`comment.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildComment_content.test(_content))
+		throw new Error(`comment.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'comment', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Comment as const, { _content });
+	const record = arena.copy(source, TSKindId.Comment as const);
+	patchCell(arena, record, 2, 4, _content);
+	const node = arena.view(record);
+	return node as unknown as T.Comment.Bound;
+}
+function withComment(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) => rebuilt(node, handle, () => buildComment$patch(node, value)));
+	}
+	throw new Error(`comment has no $with.${setter}`);
 }
 
 export function buildList<
@@ -388,21 +497,35 @@ export function buildList(config: T.List.Config): T.List.Bound {
 	return node as unknown as T.List.Bound;
 }
 
-function rowList(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildList$patch(source: object, config: T.List.Config): T.List.Bound {
+	currentHandle()?.admit(TSKindId.List, [config]);
+	const _definitions = listStorage<NonNullable<T.List['_definitions']>>(config.definitions);
+	const _elements = listStorage<NonNullable<T.List['_elements']>>(config.elements ?? []);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'list', { definitions: _definitions, elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.List as const, { _definitions, _elements });
+	const record = arena.copy(source, TSKindId.List as const);
+	patchList(arena, record, 2, _definitions, 5);
+	patchList(arena, record, 4, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.List.Bound;
+}
+function withList(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.List.Config;
-	return {
-		$with: {
-			definitions: (...values: Admit<NonEmptyArray<T.Definition>>) =>
-				rebuilt(node, handle, () => buildList({ ...config, definitions: restItems('definitions', values) })),
-			elements: (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildList({ ...config, elements: restItems('elements', values) }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'definitions':
+			return applySetter(args, (...values: Admit<NonEmptyArray<T.Definition>>) =>
+				rebuilt(node, handle, () => buildList$patch(node, { ...config, definitions: restItems('definitions', values) }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildList$patch(node, { ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`list has no $with.${setter}`);
 }
 
 export function buildGrouping<
@@ -426,28 +549,42 @@ export function buildGrouping(config: T.Grouping.Config): T.Grouping.Bound {
 	return node as unknown as T.Grouping.Bound;
 }
 
-function rowGrouping(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildGrouping$patch(source: object, config: T.Grouping.Config): T.Grouping.Bound {
+	currentHandle()?.admit(TSKindId.Grouping, [config]);
+	const _grouping_group = listStorage<NonNullable<T.Grouping['_grouping_group']>>(config.groupingGroups);
+	const _elements = listStorage<NonNullable<T.Grouping['_elements']>>(config.elements ?? []);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'grouping', { groupingGroups: _grouping_group, elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Grouping as const, { _grouping_group, _elements });
+	const record = arena.copy(source, TSKindId.Grouping as const);
+	patchList(arena, record, 2, _grouping_group, 5);
+	patchList(arena, record, 4, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.Grouping.Bound;
+}
+function withGrouping(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.Grouping.Config;
-	return {
-		$with: {
-			groupingGroups: (...args: unknown[]) =>
+	switch (setter) {
+		case 'groupingGroups':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'groupingGroups', keys: ['groupExpression', 'anchor'], make: buildGroupingGroup },
 						(...values: Admit<NonEmptyArray<T.GroupingGroup>>) =>
-							buildGrouping({ ...config, groupingGroups: restItems('groupingGroups', values) })
+							buildGrouping$patch(node, { ...config, groupingGroups: restItems('groupingGroups', values) })
 					)
-				),
-			elements: (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildGrouping({ ...config, elements: restItems('elements', values) }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+				)
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () => buildGrouping$patch(node, { ...config, elements: restItems('elements', values) }))
+			);
+	}
+	throw new Error(`grouping has no $with.${setter}`);
 }
 
 export function buildMissingNode(): T.EmptyMissingNode;
@@ -472,22 +609,37 @@ export function buildMissingNode(config: Partial<T.MissingNode.Config> = {}): T.
 	return node as unknown as T.MissingNode.Bound;
 }
 
-function rowMissingNode(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildMissingNode$patch(source: object, config: Partial<T.MissingNode.Config> = {}): T.MissingNode.Bound {
+	currentHandle()?.admit(TSKindId.MissingNode, [config]);
+	const _name = config.name;
+	const _elements = listStorage<NonNullable<T.MissingNode['_elements']>>(config.elements ?? []);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'missing_node', { name: _name, elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.MissingNode as const, { _name, _elements });
+	const record = arena.copy(source, TSKindId.MissingNode as const);
+	patchCell(arena, record, 2, 10, _name);
+	patchList(arena, record, 12, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.MissingNode.Bound;
+}
+function withMissingNode(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.MissingNode.Config;
-	return {
-		$with: {
-			name: (value?: Admit<T.Identifier | T.String>) =>
-				rebuilt(node, handle, () => buildMissingNode({ ...config, name: value })),
-			elements: (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildMissingNode({ ...config, elements: restItems('elements', values) }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		}
-	};
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value?: Admit<T.Identifier | T.String>) =>
+				rebuilt(node, handle, () => buildMissingNode$patch(node, { ...config, name: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () =>
+					buildMissingNode$patch(node, { ...config, elements: restItems('elements', values) })
+				)
+			);
+	}
+	throw new Error(`missing_node has no $with.${setter}`);
 }
 
 export function buildAnonymousNode<
@@ -509,21 +661,37 @@ export function buildAnonymousNode(config: T.AnonymousNode.Config): T.AnonymousN
 	return node as unknown as T.AnonymousNode.Bound;
 }
 
-function rowAnonymousNode(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildAnonymousNode$patch(source: object, config: T.AnonymousNode.Config): T.AnonymousNode.Bound {
+	currentHandle()?.admit(TSKindId.AnonymousNode, [config]);
+	const _name = kindIdStorage<NonNullable<T.AnonymousNode['_name']>>(config.name);
+	const _elements = listStorage<NonNullable<T.AnonymousNode['_elements']>>(config.elements ?? []);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'anonymous_node', { name: _name, elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.AnonymousNode as const, { _name, _elements });
+	const record = arena.copy(source, TSKindId.AnonymousNode as const);
+	patchCell(arena, record, 2, 10, _name);
+	patchList(arena, record, 12, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.AnonymousNode.Bound;
+}
+function withAnonymousNode(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.AnonymousNode.Config;
-	return {
-		$with: {
-			name: (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
-				rebuilt(node, handle, () => buildAnonymousNode({ ...config, name: value })),
-			elements: (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildAnonymousNode({ ...config, elements: restItems('elements', values) }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.AnonymousNode.Config>['name']>) =>
+				rebuilt(node, handle, () => buildAnonymousNode$patch(node, { ...config, name: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () =>
+					buildAnonymousNode$patch(node, { ...config, elements: restItems('elements', values) })
+				)
+			);
+	}
+	throw new Error(`anonymous_node has no $with.${setter}`);
 }
 
 export function buildFieldDefinition<
@@ -547,21 +715,35 @@ export function buildFieldDefinition(config: T.FieldDefinition.Config): T.FieldD
 	return node as unknown as T.FieldDefinition.Bound;
 }
 
-function rowFieldDefinition(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildFieldDefinition$patch(source: object, config: T.FieldDefinition.Config): T.FieldDefinition.Bound {
+	currentHandle()?.admit(TSKindId.FieldDefinition, [config]);
+	const _name = config.name;
+	const _definition = config.definition;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'field_definition', { name: _name, definition: _definition });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.FieldDefinition as const, { _name, _definition });
+	const record = arena.copy(source, TSKindId.FieldDefinition as const);
+	patchCell(arena, record, 2, 5, _name);
+	patchCell(arena, record, 7, 5, _definition);
+	const node = arena.view(record);
+	return node as unknown as T.FieldDefinition.Bound;
+}
+function withFieldDefinition(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.FieldDefinition.Config;
-	return {
-		$with: {
-			name: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildFieldDefinition({ ...config, name: value })),
-			definition: (value: Admit<T.Definition>) =>
-				rebuilt(node, handle, () => buildFieldDefinition({ ...config, definition: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildFieldDefinition$patch(node, { ...config, name: value }))
+			);
+		case 'definition':
+			return applySetter(args, (value: Admit<T.Definition>) =>
+				rebuilt(node, handle, () => buildFieldDefinition$patch(node, { ...config, definition: value }))
+			);
+	}
+	throw new Error(`field_definition has no $with.${setter}`);
 }
 
 export function buildNegatedField<V extends Admit<T.Identifier>>(value: V & RefuseUndeclared<V>): T.NegatedField.Bound;
@@ -577,16 +759,26 @@ export function buildNegatedField(value: Admit<T.Identifier>): T.NegatedField.Bo
 	return node as unknown as T.NegatedField.Bound;
 }
 
-function rowNegatedField(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			identifier: (value: Admit<T.Identifier>) => rebuilt(node, handle, () => buildNegatedField(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildNegatedField$patch(source: object, value: Admit<T.Identifier>): T.NegatedField.Bound {
+	const _identifier = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'negated_field', { identifier: _identifier });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NegatedField as const, { _identifier });
+	const record = arena.copy(source, TSKindId.NegatedField as const);
+	patchCell(arena, record, 2, 5, _identifier);
+	const node = arena.view(record);
+	return node as unknown as T.NegatedField.Bound;
+}
+function withNegatedField(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'identifier':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNegatedField$patch(node, value))
+			);
+	}
+	throw new Error(`negated_field has no $with.${setter}`);
 }
 
 export function buildPredicate<
@@ -613,25 +805,48 @@ export function buildPredicate(config: T.Predicate.Config): T.Predicate.Bound {
 	return node as unknown as T.Predicate.Bound;
 }
 
-function rowPredicate(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildPredicate$patch(source: object, config: T.Predicate.Config): T.Predicate.Bound {
+	currentHandle()?.admit(TSKindId.Predicate, [config]);
+	const _prefix = kindIdStorage<NonNullable<T.Predicate['_prefix']>>(config.prefix);
+	const _name = config.name;
+	const _type = kindIdStorage<NonNullable<T.Predicate['_type']>>(config.type);
+	const _parameters = config.parameters;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'predicate', { prefix: _prefix, name: _name, type: _type, parameters: _parameters });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Predicate as const, { _prefix, _name, _type, _parameters });
+	const record = arena.copy(source, TSKindId.Predicate as const);
+	patchCell(arena, record, 2, 5, _prefix);
+	patchCell(arena, record, 7, 5, _name);
+	patchCell(arena, record, 12, 5, _type);
+	patchCell(arena, record, 17, 6, _parameters);
+	const node = arena.view(record);
+	return node as unknown as T.Predicate.Bound;
+}
+function withPredicate(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.Predicate.Config;
-	return {
-		$with: {
-			prefix: (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
-				rebuilt(node, handle, () => buildPredicate({ ...config, prefix: value })),
-			name: (value: Admit<T.ImmediateIdentifier>) =>
-				rebuilt(node, handle, () => buildPredicate({ ...config, name: value })),
-			type: (value: Admit<NonNullable<T.Predicate.Config>['type']>) =>
-				rebuilt(node, handle, () => buildPredicate({ ...config, type: value })),
-			parameters: (value?: Admit<T.Parameters>) =>
-				rebuilt(node, handle, () => buildPredicate({ ...config, parameters: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'prefix':
+			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['prefix']>) =>
+				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, prefix: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.ImmediateIdentifier>) =>
+				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, name: value }))
+			);
+		case 'type':
+			return applySetter(args, (value: Admit<NonNullable<T.Predicate.Config>['type']>) =>
+				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, type: value }))
+			);
+		case 'parameters':
+			return applySetter(args, (value?: Admit<T.Parameters>) =>
+				rebuilt(node, handle, () => buildPredicate$patch(node, { ...config, parameters: value }))
+			);
+	}
+	throw new Error(`predicate has no $with.${setter}`);
 }
 
 export function buildListElementQuantifier<V extends Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>(
@@ -651,17 +866,29 @@ export function buildListElementQuantifier(
 	return node as unknown as T.ListElementQuantifier.Bound;
 }
 
-function rowListElementQuantifier(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			quantifier: (value: Admit<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>) =>
-				rebuilt(node, handle, () => buildListElementQuantifier(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildListElementQuantifier$patch(
+	source: object,
+	value: Admit<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>
+): T.ListElementQuantifier.Bound {
+	const _quantifier = kindIdStorage<NonNullable<T.ListElementQuantifier['_quantifier']>>(value);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'list_element_quantifier', { quantifier: _quantifier });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ListElementQuantifier as const, { _quantifier });
+	const record = arena.copy(source, TSKindId.ListElementQuantifier as const);
+	patchCell(arena, record, 2, 5, _quantifier);
+	const node = arena.view(record);
+	return node as unknown as T.ListElementQuantifier.Bound;
+}
+function withListElementQuantifier(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'quantifier':
+			return applySetter(args, (value: Admit<NonNullable<TSKindId.Star | TSKindId.Plus | TSKindId.Qmark>>) =>
+				rebuilt(node, handle, () => buildListElementQuantifier$patch(node, value))
+			);
+	}
+	throw new Error(`list_element_quantifier has no $with.${setter}`);
 }
 
 export function buildGroupExpressionArm<
@@ -685,21 +912,38 @@ export function buildGroupExpressionArm(config: T.GroupExpressionArm.Config): T.
 	return node as unknown as T.GroupExpressionArm.Bound;
 }
 
-function rowGroupExpressionArm(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildGroupExpressionArm$patch(
+	source: object,
+	config: T.GroupExpressionArm.Config
+): T.GroupExpressionArm.Bound {
+	currentHandle()?.admit(TSKindId.GroupExpressionArm, [config]);
+	const _left = config.left;
+	const _right = config.right;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'group_expression_arm', { left: _left, right: _right });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.GroupExpressionArm as const, { _left, _right });
+	const record = arena.copy(source, TSKindId.GroupExpressionArm as const);
+	patchCell(arena, record, 2, 5, _left);
+	patchCell(arena, record, 7, 5, _right);
+	const node = arena.view(record);
+	return node as unknown as T.GroupExpressionArm.Bound;
+}
+function withGroupExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.GroupExpressionArm.Config;
-	return {
-		$with: {
-			left: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, left: value })),
-			right: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupExpressionArm({ ...config, right: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
+				rebuilt(node, handle, () => buildGroupExpressionArm$patch(node, { ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
+				rebuilt(node, handle, () => buildGroupExpressionArm$patch(node, { ...config, right: value }))
+			);
+	}
+	throw new Error(`group_expression_arm has no $with.${setter}`);
 }
 
 export function buildNamedNodeExpressionArm<
@@ -723,21 +967,38 @@ export function buildNamedNodeExpressionArm(config: T.NamedNodeExpressionArm.Con
 	return node as unknown as T.NamedNodeExpressionArm.Bound;
 }
 
-function rowNamedNodeExpressionArm(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildNamedNodeExpressionArm$patch(
+	source: object,
+	config: T.NamedNodeExpressionArm.Config
+): T.NamedNodeExpressionArm.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeExpressionArm, [config]);
+	const _left = config.left;
+	const _right = config.right;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'named_node_expression_arm', { left: _left, right: _right });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedNodeExpressionArm as const, { _left, _right });
+	const record = arena.copy(source, TSKindId.NamedNodeExpressionArm as const);
+	patchCell(arena, record, 2, 5, _left);
+	patchCell(arena, record, 7, 5, _right);
+	const node = arena.view(record);
+	return node as unknown as T.NamedNodeExpressionArm.Bound;
+}
+function withNamedNodeExpressionArm(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedNodeExpressionArm.Config;
-	return {
-		$with: {
-			left: (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, left: value })),
-			right: (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeExpressionArm({ ...config, right: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'left':
+			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm$patch(node, { ...config, left: value }))
+			);
+		case 'right':
+			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+				rebuilt(node, handle, () => buildNamedNodeExpressionArm$patch(node, { ...config, right: value }))
+			);
+	}
+	throw new Error(`named_node_expression_arm has no $with.${setter}`);
 }
 
 export function buildGroupingGroup<GroupExpressionSlot extends T.GroupingGroup.Config['groupExpression']>(
@@ -759,21 +1020,36 @@ export function buildGroupingGroup(config: T.GroupingGroup.Config): T.GroupingGr
 	return node as unknown as T.GroupingGroup.Bound;
 }
 
-function rowGroupingGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildGroupingGroup$patch(source: object, config: T.GroupingGroup.Config): T.GroupingGroup.Bound {
+	currentHandle()?.admit(TSKindId.GroupingGroup, [config]);
+	const _group_expression = config.groupExpression;
+	const _anchor = strictBooleanStorage(config.anchor);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'grouping_group', { groupExpression: _group_expression, anchor: _anchor });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.GroupingGroup as const, { _group_expression, _anchor });
+	const record = arena.copy(source, TSKindId.GroupingGroup as const);
+	patchCell(arena, record, 3, 5, _group_expression);
+	patchFlag(record, 2, 1, _anchor);
+	const node = arena.view(record);
+	return node as unknown as T.GroupingGroup.Bound;
+}
+function withGroupingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.GroupingGroup.Config;
-	return {
-		$with: {
-			groupExpression: (value: Admit<T.Definition | T.GroupExpressionArm>) =>
-				rebuilt(node, handle, () => buildGroupingGroup({ ...config, groupExpression: value })),
-			anchor: (value?: Admit<NonNullable<T.GroupingGroup.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildGroupingGroup({ ...config, anchor: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'groupExpression':
+			return applySetter(args, (value: Admit<T.Definition | T.GroupExpressionArm>) =>
+				rebuilt(node, handle, () => buildGroupingGroup$patch(node, { ...config, groupExpression: value }))
+			);
+		case 'anchor':
+			return applySetter(args, (value?: Admit<NonNullable<T.GroupingGroup.Config>['anchor']>) =>
+				rebuilt(node, handle, () => buildGroupingGroup$patch(node, { ...config, anchor: value }))
+			);
+	}
+	throw new Error(`grouping_group has no $with.${setter}`);
 }
 
 export function buildStringContentText(text: string): T.StringContentText.Bound {
@@ -835,23 +1111,44 @@ export function buildNamedNodePlain(config: T.NamedNodePlain.Config): T.NamedNod
 	return node as unknown as T.NamedNodePlain.Bound;
 }
 
-function rowNamedNodePlain(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildNamedNodePlain$patch(source: object, config: T.NamedNodePlain.Config): T.NamedNodePlain.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodePlain, [config]);
+	const _name = kindIdStorage<NonNullable<T.NamedNodePlain['_name']>>(config.name);
+	const _named_node_group = config.namedNodeGroup;
+	const _elements = listStorage<NonNullable<T.NamedNodePlain['_elements']>>(config.elements ?? []);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_plain', { name: _name, namedNodeGroup: _named_node_group, elements: _elements });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedNodePlain as const, { _name, _named_node_group, _elements });
+	const record = arena.copy(source, TSKindId.NamedNodePlain as const);
+	patchCell(arena, record, 2, 5, _name);
+	patchCell(arena, record, 7, 5, _named_node_group);
+	patchList(arena, record, 12, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.NamedNodePlain.Bound;
+}
+function withNamedNodePlain(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedNodePlain.Config;
-	return {
-		$with: {
-			name: (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, name: value })),
-			namedNodeGroup: (value?: Admit<T.NamedNodeGroup>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, namedNodeGroup: value })),
-			elements: (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildNamedNodePlain({ ...config, elements: restItems('elements', values) }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'name':
+			return applySetter(args, (value: Admit<NonNullable<T.NamedNodePlain.Config>['name']>) =>
+				rebuilt(node, handle, () => buildNamedNodePlain$patch(node, { ...config, name: value }))
+			);
+		case 'namedNodeGroup':
+			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
+				rebuilt(node, handle, () => buildNamedNodePlain$patch(node, { ...config, namedNodeGroup: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () =>
+					buildNamedNodePlain$patch(node, { ...config, elements: restItems('elements', values) })
+				)
+			);
+	}
+	throw new Error(`named_node_plain has no $with.${setter}`);
 }
 
 export function buildNamedNodeSupertyped<
@@ -890,25 +1187,58 @@ export function buildNamedNodeSupertyped(config: T.NamedNodeSupertyped.Config): 
 	return node as unknown as T.NamedNodeSupertyped.Bound;
 }
 
-function rowNamedNodeSupertyped(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildNamedNodeSupertyped$patch(
+	source: object,
+	config: T.NamedNodeSupertyped.Config
+): T.NamedNodeSupertyped.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeSupertyped, [config]);
+	const _supertype = config.supertype;
+	const _name = config.name;
+	const _named_node_group = config.namedNodeGroup;
+	const _elements = listStorage<NonNullable<T.NamedNodeSupertyped['_elements']>>(config.elements ?? []);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_supertyped', {
+			supertype: _supertype,
+			name: _name,
+			namedNodeGroup: _named_node_group,
+			elements: _elements
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedNodeSupertyped as const, { _supertype, _name, _named_node_group, _elements });
+	const record = arena.copy(source, TSKindId.NamedNodeSupertyped as const);
+	patchCell(arena, record, 2, 5, _supertype);
+	patchCell(arena, record, 7, 10, _name);
+	patchCell(arena, record, 17, 5, _named_node_group);
+	patchList(arena, record, 22, _elements, 5);
+	const node = arena.view(record);
+	return node as unknown as T.NamedNodeSupertyped.Bound;
+}
+function withNamedNodeSupertyped(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedNodeSupertyped.Config;
-	return {
-		$with: {
-			supertype: (value: Admit<T.Identifier>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, supertype: value })),
-			name: (value: Admit<T.ImmediateIdentifier | T.ImmediateString>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, name: value })),
-			namedNodeGroup: (value?: Admit<T.NamedNodeGroup>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, namedNodeGroup: value })),
-			elements: (...values: Admit<T.ListElement[]>) =>
-				rebuilt(node, handle, () => buildNamedNodeSupertyped({ ...config, elements: restItems('elements', values) }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'supertype':
+			return applySetter(args, (value: Admit<T.Identifier>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, supertype: value }))
+			);
+		case 'name':
+			return applySetter(args, (value: Admit<T.ImmediateIdentifier | T.ImmediateString>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, name: value }))
+			);
+		case 'namedNodeGroup':
+			return applySetter(args, (value?: Admit<T.NamedNodeGroup>) =>
+				rebuilt(node, handle, () => buildNamedNodeSupertyped$patch(node, { ...config, namedNodeGroup: value }))
+			);
+		case 'elements':
+			return applySetter(args, (...values: Admit<T.ListElement[]>) =>
+				rebuilt(node, handle, () =>
+					buildNamedNodeSupertyped$patch(node, { ...config, elements: restItems('elements', values) })
+				)
+			);
+	}
+	throw new Error(`named_node_supertyped has no $with.${setter}`);
 }
 
 export function buildNamedNodeGroupChildren<
@@ -937,31 +1267,54 @@ export function buildNamedNodeGroupChildren(config: T.NamedNodeGroupChildren.Con
 	return node as unknown as T.NamedNodeGroupChildren.Bound;
 }
 
-function rowNamedNodeGroupChildren(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildNamedNodeGroupChildren$patch(
+	source: object,
+	config: T.NamedNodeGroupChildren.Config
+): T.NamedNodeGroupChildren.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeGroupChildren, [config]);
+	const _anchor = strictBooleanStorage(config.anchor);
+	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupChildren['_named_node_expressions']>>(
+		config.namedNodeExpressions
+	);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_group_children', {
+			anchor: _anchor,
+			namedNodeExpressions: _named_node_expressions
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedNodeGroupChildren as const, { _anchor, _named_node_expressions });
+	const record = arena.copy(source, TSKindId.NamedNodeGroupChildren as const);
+	patchFlag(record, 2, 1, _anchor);
+	patchList(arena, record, 3, _named_node_expressions, 5);
+	const node = arena.view(record);
+	return node as unknown as T.NamedNodeGroupChildren.Bound;
+}
+function withNamedNodeGroupChildren(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedNodeGroupChildren.Config;
-	return {
-		$with: {
-			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupChildren({ ...config, anchor: value })),
-			namedNodeExpressions: (...args: unknown[]) =>
+	switch (setter) {
+		case 'anchor':
+			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupChildren.Config>['anchor']>) =>
+				rebuilt(node, handle, () => buildNamedNodeGroupChildren$patch(node, { ...config, anchor: value }))
+			);
+		case 'namedNodeExpressions':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
 						(...values: Admit<NonEmptyArray<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>>) =>
-							buildNamedNodeGroupChildren({
+							buildNamedNodeGroupChildren$patch(node, {
 								...config,
 								namedNodeExpressions: restItems('namedNodeExpressions', values)
 							})
 					)
 				)
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+			);
+	}
+	throw new Error(`named_node_group_children has no $with.${setter}`);
 }
 
 export function buildNamedNodeGroupAnchoredLast<
@@ -999,33 +1352,61 @@ export function buildNamedNodeGroupAnchoredLast(
 	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
 }
 
-function rowNamedNodeGroupAnchoredLast(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildNamedNodeGroupAnchoredLast$patch(
+	source: object,
+	config: T.NamedNodeGroupAnchoredLast.Config
+): T.NamedNodeGroupAnchoredLast.Bound {
+	currentHandle()?.admit(TSKindId.NamedNodeGroupAnchoredLast, [config]);
+	const _anchor = strictBooleanStorage(config.anchor);
+	const _named_node_expressions = listStorage<NonNullable<T.NamedNodeGroupAnchoredLast['_named_node_expressions']>>(
+		config.namedNodeExpressions ?? []
+	);
+	const _last = config.last;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_node_group_anchored_last', {
+			anchor: _anchor,
+			namedNodeExpressions: _named_node_expressions,
+			last: _last
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedNodeGroupAnchoredLast as const, { _anchor, _named_node_expressions, _last });
+	const record = arena.copy(source, TSKindId.NamedNodeGroupAnchoredLast as const);
+	patchFlag(record, 2, 1, _anchor);
+	patchList(arena, record, 3, _named_node_expressions, 5);
+	patchCell(arena, record, 5, 5, _last);
+	const node = arena.view(record);
+	return node as unknown as T.NamedNodeGroupAnchoredLast.Bound;
+}
+function withNamedNodeGroupAnchoredLast(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedNodeGroupAnchoredLast.Config;
-	return {
-		$with: {
-			anchor: (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, anchor: value })),
-			namedNodeExpressions: (...args: unknown[]) =>
+	switch (setter) {
+		case 'anchor':
+			return applySetter(args, (value?: Admit<NonNullable<T.NamedNodeGroupAnchoredLast.Config>['anchor']>) =>
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$patch(node, { ...config, anchor: value }))
+			);
+		case 'namedNodeExpressions':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'namedNodeExpressions', keys: ['left', 'right'], make: buildNamedNodeExpressionArm },
 						(...values: Admit<(T.Definition | T.NegatedField | T.NamedNodeExpressionArm)[]>) =>
-							buildNamedNodeGroupAnchoredLast({
+							buildNamedNodeGroupAnchoredLast$patch(node, {
 								...config,
 								namedNodeExpressions: restItems('namedNodeExpressions', values)
 							})
 					)
-				),
-			last: (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
-				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast({ ...config, last: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+				)
+			);
+		case 'last':
+			return applySetter(args, (value: Admit<T.Definition | T.NegatedField | T.NamedNodeExpressionArm>) =>
+				rebuilt(node, handle, () => buildNamedNodeGroupAnchoredLast$patch(node, { ...config, last: value }))
+			);
+	}
+	throw new Error(`named_node_group_anchored_last has no $with.${setter}`);
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -1122,30 +1503,30 @@ export const _factoryMap = {
 export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
-	rows: Object.freeze({
-		1: rowEscapeSequence,
-		11: rowComment,
-		33: rowProgram,
-		39: rowCapture,
-		40: rowString,
-		41: rowImmediateString,
-		42: rowStringContent,
-		43: rowParameters,
-		44: rowList,
-		45: rowGrouping,
-		46: rowMissingNode,
-		47: rowAnonymousNode,
-		50: rowFieldDefinition,
-		51: rowNegatedField,
-		52: rowPredicate,
-		54: rowListElementQuantifier,
-		56: rowGroupExpressionArm,
-		57: rowNamedNodeExpressionArm,
-		58: rowGroupingGroup,
-		61: rowNamedNodePlain,
-		62: rowNamedNodeSupertyped,
-		63: rowNamedNodeGroupChildren,
-		64: rowNamedNodeGroupAnchoredLast
+	withs: Object.freeze({
+		1: withEscapeSequence,
+		11: withComment,
+		33: withProgram,
+		39: withCapture,
+		40: withString,
+		41: withImmediateString,
+		42: withStringContent,
+		43: withParameters,
+		44: withList,
+		45: withGrouping,
+		46: withMissingNode,
+		47: withAnonymousNode,
+		50: withFieldDefinition,
+		51: withNegatedField,
+		52: withPredicate,
+		54: withListElementQuantifier,
+		56: withGroupExpressionArm,
+		57: withNamedNodeExpressionArm,
+		58: withGroupingGroup,
+		61: withNamedNodePlain,
+		62: withNamedNodeSupertyped,
+		63: withNamedNodeGroupChildren,
+		64: withNamedNodeGroupAnchoredLast
 	}),
 	words: Object.freeze({
 		1: 6,
