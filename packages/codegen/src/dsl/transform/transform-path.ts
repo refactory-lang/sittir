@@ -483,7 +483,13 @@ function applyKindMatchToShownAlias(
 	return { rule: typeof patch === 'function' ? patch(rule, enclosing) : patch, matched: true };
 }
 
-function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | undefined, insideNamedField: boolean, leaf: WalkLeaf): WalkResult {
+function walkMatches(
+	rule: RuntimeRule,
+	enclosing: readonly RuntimeRule[] | undefined,
+	insideNamedField: boolean,
+	leaf: WalkLeaf,
+	lifts: Map<string, boolean> = new Map()
+): WalkResult {
 	if (!isWalkableNode(rule)) {
 		return { rule, matched: false };
 	}
@@ -491,20 +497,20 @@ function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | unde
 
 	if (isPrecWrapperShape(rule)) {
 		const stack = enclosing ? [...enclosing, rule] : [rule];
-		const inner = walkMatches(contentOf(rule), stack, insideNamedField, leaf);
+		const inner = walkMatches(contentOf(rule), stack, insideNamedField, leaf, lifts);
 		return {
 			rule: inner.matched ? reconstructPrec(rule, inner.rule) : rule,
 			matched: inner.matched
 		};
 	}
 
-	if (isEnrichGroupLiftSymbol(rule)) return editGroupLift(rule, (body) => walkMatches(body, enclosing, insideNamedField, leaf));
+	if (isEnrichGroupLiftSymbol(rule)) return walkGroupLift(rule, enclosing, insideNamedField, leaf, lifts);
 
 	const own = leaf(rule, enclosing, insideNamedField);
 	if (own !== undefined) return own;
 
 	if (t === 'FIELD') {
-		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField || !isEnrichedField(rule), leaf);
+		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField || !isEnrichedField(rule), leaf, lifts);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -512,7 +518,7 @@ function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | unde
 	}
 
 	if (isWrapperType(t)) {
-		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField, leaf);
+		const inner = walkMatches(contentOf(rule), enclosing, insideNamedField, leaf, lifts);
 		return {
 			rule: inner.matched ? reconstructWrapper(rule, inner.rule) : rule,
 			matched: inner.matched
@@ -523,7 +529,7 @@ function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | unde
 		const members = [...membersOf(rule)];
 		let anyMatched = false;
 		for (let i = 0; i < members.length; i++) {
-			const inner = walkMatches(members[i]!, enclosing, insideNamedField, leaf);
+			const inner = walkMatches(members[i]!, enclosing, insideNamedField, leaf, lifts);
 			if (inner.matched) {
 				members[i] = inner.rule;
 				anyMatched = true;
@@ -538,6 +544,22 @@ function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | unde
 	return { rule, matched: false };
 }
 
+
+function walkGroupLift(
+	rule: RuntimeRule,
+	enclosing: readonly RuntimeRule[] | undefined,
+	insideNamedField: boolean,
+	leaf: WalkLeaf,
+	lifts: Map<string, boolean>
+): WalkResult {
+	const name = (rule as unknown as { name?: string }).name ?? '';
+	const walked = lifts.get(name);
+	if (walked !== undefined) return { rule, matched: walked };
+	lifts.set(name, false);
+	const result = editGroupLift(rule, (body) => walkMatches(body, enclosing, insideNamedField, leaf, lifts));
+	lifts.set(name, result.matched);
+	return result;
+}
 function isWalkableNode(rule: unknown): rule is RuntimeRule {
 	return (
 		rule !== null &&

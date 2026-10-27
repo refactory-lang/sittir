@@ -554,6 +554,18 @@ describe('applyPath() — kind-match + negative index', () => {
 		expect(() => at('(missing)', seq(element))).toThrow(/matched zero occurrences/);
 	});
 
+	it('edits a group lift once per entry, however many references reach it', () => {
+		const lift = { type: 'SYMBOL', name: '_list_element', metadata: { symbolSource: 'group-lift' } };
+		const rule = seq(lift, { type: 'REPEAT', content: seq(str(','), lift) });
+		const body = choice(sym('identifier'), seq(str('&'), sym('identifier')));
+		const bang = (member: any): any => seq(member, str('!'));
+		const { result, ctx } = withWireContext('list', () => applyPath(rule, parsePath('(identifier)'), bang), {
+			grammar: { rules: { _list_element: body } }
+		});
+		expect(result).toEqual(rule);
+		expect(ctx.liftBodies.get('_list_element')).toEqual(choice(bang(sym('identifier')), seq(str('&'), bang(sym('identifier')))));
+	});
+
 	it('negative index resolves from the end (-1 = last member)', async () => {
 		const { field: oneArgField } = await import('../primitives/field.ts');
 		// Use a symbol (not a bare string) as the last member so the
