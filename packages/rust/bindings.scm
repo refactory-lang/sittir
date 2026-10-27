@@ -205,10 +205,10 @@
 (else_clause) @clause.else
 (let_condition) @clause.let
 (let_chain) @clause.let.chain
-(match_arm value: _ @body) @clause.case.match
+(match_arm value: _ @body) @clause.arm.match
 (match_arm_with_comma match: (match_pattern pattern: _ @pattern condition: _? @guard))
 (match_arm_block_ending match: (match_pattern pattern: _ @pattern condition: _? @guard))
-(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.case.match
+(last_match_arm match: (match_pattern pattern: _ @pattern condition: _? @guard) value: _ @body) @clause.arm.match
 ((match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm match: _ @dropped) (#set! reason "the arm's pattern and guard are read through its match pattern"))
 ((last_match_arm trailing_comma: _ @dropped) (#set! reason "the last arm's optional comma is a position, not a fact"))
@@ -315,7 +315,7 @@
 (try_block) @expression.block.try
 (gen_block) @expression.block.gen
 (generic_function) @expression.instantiation
-(scoped_identifier) @identifier.qualified
+(scoped_identifier) @identifier.scoped
 (scoped_identifier path: (_) @qualifier)
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
@@ -382,9 +382,9 @@
 (bounded_type) @type.bounded
 (qualified_type) @type.qualified
 (bracketed_type) @type.bracketed
-(scoped_type_identifier) @identifier.qualified
+(scoped_type_identifier) @identifier.scoped
 (scoped_type_identifier path: (_) @qualifier)
-(scoped_type_identifier_in_expression_position) @identifier.qualified
+(scoped_type_identifier_in_expression_position) @identifier.scoped
 (scoped_type_identifier_in_expression_position path: (_) @qualifier)
 
 ; ── literal ────────────────────────────────────────────────────────────────────
