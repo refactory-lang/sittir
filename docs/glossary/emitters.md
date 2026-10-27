@@ -1328,7 +1328,8 @@ Fails generation when a kind's builder may omit a required slot that has no empt
 
 ### `packages/codegen/src/emitters/from.ts::emitBranchFrom`
 
-```text
+Emits a branch's `from()` resolver. A kind whose children take the container calling convention (`fromEmitsChildrenCoercer`) gets `emitChildrenFrom`. Otherwise the function emits one exported resolver per config slot (`fieldResolverName`), typed `T.<X>.LooseConfig[key]` (with `| undefined` when the input is optional and the field required), and then the coercer. Its signature is generic over the input and refuses undeclared keys (`I & RefuseUndeclared`). A spelled delimiter gives the `<const I, const O>` form, and sibling leads add their refusal. A kind with no spelled delimiter, no sibling refusal, no numeric refusal and no options parameter is a `seatDeclaration` const typed by `refusingParam`; any other kind is an overload set, with `withEmptyOverload` in front. A kind with a list spread target adds an `(...args)` prelude that hands several arguments to the target's coercer. The body is either a direct factory call on the sole slot (when `fromBareInput` answers `value`), where a node of the kind passes through unchanged unless the kind holds its own kind, and a spelled delimiter is parsed by `spelledForm` or `spelledInterior`, or an object literal with each config slot resolved through its field resolver.
+
 /**
  * Emit a branch from() resolver — dispatches to the container calling
  * convention (positional element args) when `classifyChildFactorySurface`
@@ -1338,134 +1339,18 @@ Fails generation when a kind's builder may omit a required slot that has no empt
  */
 ```
 
-#### body
 
-```text
-// Only the SPREAD surface gets the children-taking coercer. A sole
-// singular slot falls through to the field-carrying path below, whose
-// direct-call emission already tolerates both shapes — bare value or
-// `{ <propertyName>: value }` — keyed on the slot's own name, which
-// the model supplies for an unnamed slot (`content`) exactly as for a
-// named one.
-//
-// `emitsFieldResolvers` asks the same question of the SURFACE and adds its
-// own emission conditions on top, so it is not this gate's negation — a
-// kind that emits no `from` at all is not thereby a spread kind.
-```
 
-#### body
 
-```text
-// A field forces required input only if the caller must actually supply
-// it: auto-stamped fields (always `required` but have no Config slot) and
-// keyword-presence fields (default to absent/false) are excluded, same as
-// the model's slot record — every slot is a Config field
-// (shared.ts) — a caller only ever HAS to supply what that surface lists.
-```
 
-#### body
 
-```text
-// `fromBareInput` answering 'value' (a 'direct' or 'forwarded' factory
-// shape) already guarantees the sole user slot is the only non-stamped
-// field (resolveDirectFactorySlot) — no separate keyword-presence
-// exclusion needed here.
-```
 
-#### body
 
-```text
-// 'forwarded' refines 'direct' — the factory still accepts the single
-// direct value (a pre-built node dispatches via $type), so the same
-// direct-call emission applies.
-```
 
-#### body
 
-```text
-// The direct-call body accepts the sole slot's value supplied BARE — and,
-// when that slot holds a separated list, a single element, which the
-// resolver wraps into the list node before the factory sees it. The
-// signature is still just `T.<Kind>.Loose`: the kind's `Loose` carries the
-// bare slot's loose form as its `NodeNs` bare arm, keyed by the slot the
-// types emitter stamps on the row for exactly the kinds `fromBareInput`
-// classifies. Spelling the union here again
-// would admit the value at the coercer alone, while every slot that
-// references the wrapper kept reading the narrower `Loose`.
-```
 
-#### body
 
-```text
-// One exported resolver per caller-supplied field: the single derivation
-// of what that field accepts. `coerceTo<Kind>` and the tree-node `$with`
-// setters in wrap.ts both call it, so the two surfaces cannot drift.
-//
-// The parameter is `LooseConfig[key]`, never `Loose[key]`: reading a field
-// off `Loose` picks up the interface's accessor signature from its `| T`
-// arm, and never `LooseValue<Config[key]>`, which drops the owner and with
-// it the field's `__looseHints__`.
-```
 
-#### body
-
-```text
-// A non-empty repeated field carries its own emptiness check: the
-// assertion narrows the resolved array to the tuple form the storage
-// type declares, so the declared return type holds and every caller
-// -- `coerceTo<Kind>` and the `$with` setters alike -- inherits the
-// check from this one place.
-```
-
-#### body
-
-```text
-// Keyword-presence fields (boolean / bitflag) are NOT array-shaped on
-// the factory's Config surface — they're a `Bitflag<Const, T>` /
-// `BooleanKeyword<T>` brand. Skip the non-empty hoist for those even
-// when the underlying values are repeat1: their storage is a brand, not
-// a list to type as non-empty.
-```
-
-#### body
-
-```text
-// Gap 5: single-field factories take the value directly. Emit
-// `return F.label(resolved)` instead of `F.label({ identifier: resolved })`.
-// Uses pre-computed slotClass for the sole-slot reference.
-// Excluded: hidden kinds (inner polymorph children), keyword-presence,
-// and multiple (array) fields.
-```
-
-#### body
-
-```text
-// Not routed through the field resolver: this expression yields the
-// parent's own loose input when the value was supplied bare, which is
-// wider than what the field itself declares it accepts.
-```
-
-#### body
-
-```text
-// Gap A: sole-slot direct-call factories skip the Config object
-// literal entirely, so a required sole field needs its own guard.
-```
-
-#### body
-
-```text
-// Gap A: a required field whose loose-input value didn't
-// resolve is otherwise silently `undefined` here.
-```
-
-#### body
-
-```text
-// No fields: pass-through to the factory with a boundary cast — the
-// Loose input shape is wider than the factory's strict Config, but the
-// structural overlap (children + leaf shape) is enough at runtime.
-```
 
 #### token interior
 
@@ -1537,7 +1422,8 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
 
 ### `packages/codegen/src/emitters/from.ts::emitRestParamFromResolver`
 
-```text
+Emits a rest-parameter `from()` resolver for a container kind: `fn(...input: T.<X>.LooseArgs)`, typed by `refusingParam` and emitted as a `seatDeclaration` const. The body runs the kind's admit statement and, when the kind has leading options (`leadingOptions`), splits them off the rest input (`leadingOptionsSplit`). With `unwrapConfigKey`, a single non-node object carrying that key unwraps to its elements. A kind with a numeric discriminant that does not hold its own kind also checks for a single node of the kind: its stored children (`data[storageKey]`, normalized to an array) go to `buildCallExpr('children', true)`, and any kept leading options are read back from the held record. Every other input calls `buildCallExpr` on the fresh input. The two callers, `emitRepeatedChildrenFrom` and `emitSeparatedListFrom`, supply `buildCallExpr`.
+
 /**
  * Shared body for a rest-param (`...input`) from() resolver that reconstructs
  * either from a flat list of already-resolved elements or by unwrapping an
@@ -1583,44 +1469,9 @@ The `SiblingLeadRefusal` a polymorph coercer's input is intersected with: the fu
  */
 ```
 
-#### body
 
-```text
-// The slot's config key, when the resolver should ALSO accept the
-// legacy named-field object shape (`from({ identifier: [...] })`) — a
-// single non-UntypedNode object carrying the key unwraps to its elements.
-```
 
-#### body
 
-```text
-// `isSelfUnwrap` distinguishes the two call sites below: `true` inside
-// the self-UntypedNode-unwrap branch (a `data` local naming the original
-// wrapped node is in scope, so a caller like `emitSeparatedListFrom` can
-// read per-instance facts off it — e.g. preserving `_separator`/
-// `_delimiter` when reconstructing an already-wrapped
-// separatedList node); `false` for the fresh-input path, where no such
-// source node exists to read facts from.
-```
-
-#### body
-
-```text
-// TSGrammar-only kinds (string $type) can't satisfy isNode() (which
-// requires numeric $type). Skip the node-data pass-through guard entirely
-// — the check would always be false at runtime anyway.
-```
-
-#### body
-
-```text
-// The accepted-input union allows callers to hand back an existing
-// <kind> UntypedNode OR a flat list of element children. The single-arg
-// self-UntypedNode path unwraps the storage key; otherwise every item must
-// already be an element. The storage value is typed as singular-or-array
-// on the loose `AnyUntypedNode` shape; normalize to an array before the
-// boundary cast.
-```
 
 #### options-first list coercer
 
@@ -1672,7 +1523,8 @@ A builder with leading options is called through an untyped view with the option
 
 ### `packages/codegen/src/emitters/from.ts::emitSingularChildrenFrom`
 
-```text
+Emits the singular-child variant of a container `from()`. A kind with no numeric discriminant gets `optionalConfigCoercer` over `<element> | T.<X>`, passing the input to the factory cast to its first parameter. Otherwise the input type is the element type (loose-widened when the slot resolves a loose input, with `inputWiden` added) plus `T.<X>`. Unless the kind holds its own kind, a node of the kind is unwrapped: the stored child (`data[storageKey]`) goes to the factory. Other input goes through the slot's field resolver (`resolveFieldCall`) when the slot resolves a loose input, and is otherwise cast to the factory's first parameter.
+
 /**
  * Emits the singular-child variant of a container from() function.
  *
@@ -1697,37 +1549,6 @@ A builder with leading options is called through an untyped view with the option
  * @param nodeMap - The assembled node map (used for member-name derivation).
  * @returns The emitted function source string.
  */
-```
-
-#### body
-
-```text
-// The factory's child parameter inferred type may be required or optional
-// depending on grammar shape. Cast at the boundary funnels both shapes
-// through one assertion so the emitter doesn't have to track which form
-// each kind maps to. Runtime behaviour: required factories will throw
-// on `undefined`, matching the unwrap path's "missing children" diagnostic.
-```
-
-#### body
-
-```text
-// TSGrammar-only kinds (string $type) can't satisfy isNode() (which
-// requires numeric $type). Skip the node-data pass-through guard entirely
-// — the check would always be false at runtime anyway.
-```
-
-#### body
-
-```text
-// Post-guard `input` is one of the element union's members; the
-// slot's normal field resolver coerces it (loose leaf text
-// included) exactly as a named config field would. Literal-bearing
-// slots keep the passthrough — a bare string is a valid member.
-// No cast on the resolved value: the resolver's return is already
-// the element type, and a forwarded factory's pre-built-node
-// overload must resolve naturally (a `Parameters<typeof f>[0]`
-// cast would force the LAST overload — the forwarding-args form).
 ```
 
 ### `packages/codegen/src/emitters/from.ts::emitSeparatedListFrom`
@@ -11346,30 +11167,7 @@ admits). A slot of literals only passes its input through; the raw factory's lit
 
 ### `packages/codegen/src/emitters/from.ts::emitStringLikeFrom`
 
-#### body
-
-```text
-// `isNode` does not negative-narrow `Terminal<K, V>` out of the
-// input union (TS structural-Exclude limitation), so the
-// `typeof === 'string'` test is what funnels the post-guard branch
-// to the factory's `string` parameter.
-```
-
-#### body
-
-```text
-// Enum-leaf factories declare a narrow string-literal union for
-// their text parameter; the from() entry point accepts arbitrary
-// strings and the factory's runtime guard catches invalid values.
-// Cast at the boundary funnels the `string` to the narrow shape.
-```
-
-### `packages/codegen/src/emitters/from.ts::emitStringLikeFrom`
-
-```text
-/** A text-constructible leaf's coercer takes `<Kind>.Loose` — the node
- *  or its text — the same surface every other kind's coercer takes. */
-```
+Emits the `from()` coercer of a text-constructible leaf: `fn(input: T.<X>.Loose)`, the node or its text, the same surface every other kind's coercer takes. It is typed by `refusingParam` (with `loose`) and emitted as a `seatDeclaration` const, whose first argument is the node map. The body returns an input unchanged unless it is a string or, for a leaf with a numeric shape, a number the shape's test accepts. Those go to the leaf's raw factory, cast to the factory's first parameter.
 
 ### `packages/codegen/src/emitters/from.ts::emitKeywordFrom`
 
