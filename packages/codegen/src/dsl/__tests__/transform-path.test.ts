@@ -538,6 +538,22 @@ describe('applyPath() — kind-match + negative index', () => {
 		expect(() => at('(method_declaration)/0', seq(rule.members[0]))).toThrow(/matched zero occurrences/);
 	});
 
+	it('a kind-match or a field name searches an enrich group lift as part of its owner, as positional descent does', () => {
+		const lift = { type: 'SYMBOL', name: '_list_optional1', metadata: { symbolSource: 'group-lift' } };
+		const element = choice(sym('_pattern'), sym('parameter'));
+		const rule = seq(str('|'), optional(lift), str('|'));
+		const beside = (member: any): any => choice(member, sym('marked'));
+		const at = (path: string, body: any) =>
+			withWireContext('list', () => applyPath(rule, parsePath(path), beside), { grammar: { rules: { _list_optional1: body } } });
+		const bare = at('(_pattern)', seq(element, { type: 'REPEAT', content: seq(str(','), element) }));
+		const marked = choice(choice(sym('_pattern'), sym('marked')), sym('parameter'));
+		expect(bare.result).toEqual(rule);
+		expect(bare.ctx.liftBodies.get('_list_optional1')).toEqual(seq(marked, { type: 'REPEAT', content: seq(str(','), marked) }));
+		const fielded = at('items:/(_pattern)', seq(str('<'), fld('items', element)));
+		expect(fielded.ctx.liftBodies.get('_list_optional1')).toEqual(seq(str('<'), fld('items', marked)));
+		expect(() => at('(missing)', seq(element))).toThrow(/matched zero occurrences/);
+	});
+
 	it('negative index resolves from the end (-1 = last member)', async () => {
 		const { field: oneArgField } = await import('../primitives/field.ts');
 		// Use a symbol (not a bare string) as the last member so the

@@ -244,6 +244,16 @@ const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
 		'integer_decimal_imaginary',
 		'integer_decimal_plain',
 		'wildcard_pattern'
+	],
+	as_pattern_target: [
+		'identifier',
+		'integer_decimal_long',
+		'integer_decimal_imaginary',
+		'integer_decimal_plain',
+		'true',
+		'false',
+		'none',
+		'ellipsis'
 	]
 };
 

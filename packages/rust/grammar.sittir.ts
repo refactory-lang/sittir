@@ -280,9 +280,15 @@ export default grammar(enrich(base), wire({
 			1: field('elements')
 		},
 
-		closure_parameters: {
-			1: field('parameters')
-		},
+		// A closure's untyped parameter is a pattern, which says nothing of its
+		// role; the alias names it as a parameter where it stands, at both of
+		// the list's occurrences of it. It comes before the field, since a
+		// kind-match passes over a symbol already inside a named field. The
+		// typed arm, `parameter`, is a parameter kind already.
+		closure_parameters: [
+			{ '(_pattern)': alias('closure_parameter') },
+			{ 1: field('parameters') }
+		],
 		struct_pattern: {
 			2: field('fields')
 		},

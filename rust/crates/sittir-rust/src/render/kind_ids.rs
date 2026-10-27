@@ -480,21 +480,22 @@ pub const DELIM_TOKEN_TREE_PAREN_REPEAT1: KindId = KindId(469);
 pub const _MATCH_BLOCK_ARMS_REPEAT1: KindId = KindId(470);
 pub const _DECLARATION_LIST_TRAIT_ITEM_REPEAT1: KindId = KindId(471);
 pub const _DECLARATION_LIST_IMPL_ITEM_BODY_REPEAT1: KindId = KindId(472);
-pub const _CRATE_VISIBILITY_MODIFIER: KindId = KindId(473);
-pub const _FIELD_IDENTIFIER: KindId = KindId(474);
-pub const _METHOD_DECLARATION: KindId = KindId(476);
-pub const _SELF_MODULE: KindId = KindId(477);
-pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(478);
-pub const _SIGNATURE_METHOD_DECLARATION: KindId = KindId(479);
-pub const _TYPE_IDENTIFIER: KindId = KindId(480);
+pub const _CLOSURE_PARAMETER: KindId = KindId(473);
+pub const _CRATE_VISIBILITY_MODIFIER: KindId = KindId(474);
+pub const _FIELD_IDENTIFIER: KindId = KindId(475);
+pub const _METHOD_DECLARATION: KindId = KindId(477);
+pub const _SELF_MODULE: KindId = KindId(478);
+pub const _SHORTHAND_FIELD_IDENTIFIER: KindId = KindId(479);
+pub const _SIGNATURE_METHOD_DECLARATION: KindId = KindId(480);
+pub const _TYPE_IDENTIFIER: KindId = KindId(481);
 pub const ERROR: KindId = KindId(65535);
-pub const LET_CHAIN: KindId = KindId(475);
+pub const LET_CHAIN: KindId = KindId(476);
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
 pub const SURFACE_KINDS: ::sittir_core::trivia_table::SurfaceKinds = ::sittir_core::trivia_table::SurfaceKinds {
     lists: &[KindId(342), KindId(343), KindId(344), KindId(345), KindId(346), KindId(347), KindId(348), KindId(349), KindId(350), KindId(351), KindId(352), KindId(353), KindId(354), KindId(355), KindId(356), KindId(357), KindId(358), KindId(359)],
-    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(55), KindId(56), KindId(57), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(65), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(73), KindId(74), KindId(75), KindId(76), KindId(77), KindId(78), KindId(79), KindId(80), KindId(81), KindId(82), KindId(83), KindId(84), KindId(85), KindId(86), KindId(87), KindId(88), KindId(89), KindId(90), KindId(91), KindId(92), KindId(93), KindId(94), KindId(95), KindId(96), KindId(97), KindId(98), KindId(99), KindId(100), KindId(101), KindId(102), KindId(103), KindId(104), KindId(105), KindId(106), KindId(107), KindId(108), KindId(109), KindId(110), KindId(111), KindId(112), KindId(113), KindId(114), KindId(115), KindId(116), KindId(117), KindId(118), KindId(119), KindId(122), KindId(123), KindId(125), KindId(126), KindId(127), KindId(129), KindId(130), KindId(131), KindId(136), KindId(137), KindId(138), KindId(139), KindId(140), KindId(156), KindId(163), KindId(164), KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175), KindId(178), KindId(244), KindId(254), KindId(281), KindId(321), KindId(338), KindId(339), KindId(363), KindId(364), KindId(421), KindId(426), KindId(473), KindId(477)],
+    units: &[KindId(2), KindId(3), KindId(4), KindId(5), KindId(6), KindId(7), KindId(8), KindId(9), KindId(10), KindId(11), KindId(12), KindId(13), KindId(14), KindId(15), KindId(16), KindId(17), KindId(18), KindId(19), KindId(20), KindId(21), KindId(22), KindId(23), KindId(24), KindId(25), KindId(26), KindId(27), KindId(28), KindId(29), KindId(30), KindId(31), KindId(32), KindId(33), KindId(34), KindId(35), KindId(36), KindId(37), KindId(38), KindId(39), KindId(40), KindId(41), KindId(42), KindId(43), KindId(44), KindId(45), KindId(46), KindId(47), KindId(48), KindId(49), KindId(50), KindId(51), KindId(52), KindId(53), KindId(55), KindId(56), KindId(57), KindId(58), KindId(59), KindId(60), KindId(61), KindId(62), KindId(63), KindId(64), KindId(65), KindId(66), KindId(67), KindId(68), KindId(69), KindId(70), KindId(71), KindId(72), KindId(73), KindId(74), KindId(75), KindId(76), KindId(77), KindId(78), KindId(79), KindId(80), KindId(81), KindId(82), KindId(83), KindId(84), KindId(85), KindId(86), KindId(87), KindId(88), KindId(89), KindId(90), KindId(91), KindId(92), KindId(93), KindId(94), KindId(95), KindId(96), KindId(97), KindId(98), KindId(99), KindId(100), KindId(101), KindId(102), KindId(103), KindId(104), KindId(105), KindId(106), KindId(107), KindId(108), KindId(109), KindId(110), KindId(111), KindId(112), KindId(113), KindId(114), KindId(115), KindId(116), KindId(117), KindId(118), KindId(119), KindId(122), KindId(123), KindId(125), KindId(126), KindId(127), KindId(129), KindId(130), KindId(131), KindId(136), KindId(137), KindId(138), KindId(139), KindId(140), KindId(156), KindId(163), KindId(164), KindId(168), KindId(169), KindId(170), KindId(171), KindId(172), KindId(173), KindId(174), KindId(175), KindId(178), KindId(244), KindId(254), KindId(281), KindId(321), KindId(338), KindId(339), KindId(363), KindId(364), KindId(421), KindId(426), KindId(474), KindId(478)],
     layout: &[],
     indent: KindId(174),
     dedent: KindId(175),
@@ -810,7 +811,7 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         287 => "if_expression", // "if_expression"
         288 => "let_condition", // "let_condition"
         289 => "_let_chain", // "_let_chain"
-        475 => "let_chain", // "_let_chain"
+        476 => "let_chain", // "_let_chain"
         290 => "_condition", // "_condition"
         291 => "else_clause", // "else_clause"
         292 => "match_expression", // "match_expression"
@@ -994,13 +995,14 @@ pub fn kind_name_from_id(id: KindId) -> &'static str {
         470 => "_match_block_arms_repeat1", // "_match_block_arms_repeat1"
         471 => "_declaration_list_trait_item_repeat1", // "_declaration_list_trait_item_repeat1"
         472 => "_declaration_list_impl_item_body_repeat1", // "_declaration_list_impl_item_body_repeat1"
-        473 => "crate_visibility_modifier", // "_crate_visibility_modifier"
-        474 => "field_identifier", // "_field_identifier"
-        476 => "method_declaration", // "_method_declaration"
-        477 => "self_module", // "_self_module"
-        478 => "shorthand_field_identifier", // "_shorthand_field_identifier"
-        479 => "signature_method_declaration", // "_signature_method_declaration"
-        480 => "type_identifier", // "_type_identifier"
+        473 => "closure_parameter", // "_closure_parameter"
+        474 => "crate_visibility_modifier", // "_crate_visibility_modifier"
+        475 => "field_identifier", // "_field_identifier"
+        477 => "method_declaration", // "_method_declaration"
+        478 => "self_module", // "_self_module"
+        479 => "shorthand_field_identifier", // "_shorthand_field_identifier"
+        480 => "signature_method_declaration", // "_signature_method_declaration"
+        481 => "type_identifier", // "_type_identifier"
         65535 => "ERROR", // "ERROR"
         _ => "<unknown>",
     }

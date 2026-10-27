@@ -611,7 +611,7 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[475, '_let_chain'],
+	[476, '_let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -795,13 +795,14 @@ export const KIND_NAMES: ReadonlyMap<number, string> = new Map([
 	[470, '_match_block_arms_repeat1'],
 	[471, '_declaration_list_trait_item_repeat1'],
 	[472, '_declaration_list_impl_item_body_repeat1'],
-	[473, 'crate_visibility_modifier'],
-	[474, 'field_identifier'],
-	[476, 'method_declaration'],
-	[477, 'self_module'],
-	[478, 'shorthand_field_identifier'],
-	[479, 'signature_method_declaration'],
-	[480, 'type_identifier'],
+	[473, 'closure_parameter'],
+	[474, 'crate_visibility_modifier'],
+	[475, 'field_identifier'],
+	[477, 'method_declaration'],
+	[478, 'self_module'],
+	[479, 'shorthand_field_identifier'],
+	[480, 'signature_method_declaration'],
+	[481, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -1096,7 +1097,7 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[287, 'if_expression'],
 	[288, 'let_condition'],
 	[289, '_let_chain'],
-	[475, 'let_chain'],
+	[476, 'let_chain'],
 	[290, '_condition'],
 	[291, 'else_clause'],
 	[292, 'match_expression'],
@@ -1280,13 +1281,14 @@ export const KIND_DISPLAY_NAMES: ReadonlyMap<number, string> = new Map([
 	[470, '_match_block_arms_repeat1'],
 	[471, '_declaration_list_trait_item_repeat1'],
 	[472, '_declaration_list_impl_item_body_repeat1'],
-	[473, 'crate_visibility_modifier'],
-	[474, 'field_identifier'],
-	[476, 'method_declaration'],
-	[477, 'self_module'],
-	[478, 'shorthand_field_identifier'],
-	[479, 'signature_method_declaration'],
-	[480, 'type_identifier'],
+	[473, 'closure_parameter'],
+	[474, 'crate_visibility_modifier'],
+	[475, 'field_identifier'],
+	[477, 'method_declaration'],
+	[478, 'self_module'],
+	[479, 'shorthand_field_identifier'],
+	[480, 'signature_method_declaration'],
+	[481, 'type_identifier'],
 	[65535, 'ERROR']
 ]);
 
@@ -2239,6 +2241,8 @@ export function kindIdFromName(kindName: string): TSKindId {
 			return TSKindId._DeclarationListTraitItemRepeat1;
 		case '_declaration_list_impl_item_body_repeat1':
 			return TSKindId._DeclarationListImplItemBodyRepeat1;
+		case 'closure_parameter':
+			return TSKindId.ClosureParameter;
 		case 'crate_visibility_modifier':
 			return TSKindId.CrateVisibilityModifier;
 		case 'field_identifier':
@@ -7392,24 +7396,14 @@ export interface ConstBlock {
 
 export interface ClosureParameters {
 	readonly $type: TSKindId.ClosureParameters;
-	readonly _parameters: readonly (Pattern | Parameter)[];
+	readonly _parameters: readonly (ClosureParameter | Parameter)[];
 	readonly __slotNames__?: {
 		readonly _parameters: 'parameters';
 	};
-	readonly __inputHints__?: {
-		readonly parameters?: readonly (
-			| KindEnum<
-					'true' | 'false' | '..' | '_',
-					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
-			  >
-			| Pattern
-			| Parameter
-		)[];
-	};
 	readonly __slotHints__?: {
-		readonly parameters: SlotHint<(T.Pattern | T.Parameter)[], false, true>;
+		readonly parameters: SlotHint<((T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types)[], false, true>;
 	};
-	readonly parameters: () => readonly (Pattern | Parameter)[];
+	readonly parameters: () => readonly (ClosureParameter | Parameter)[];
 }
 
 export interface Label {
@@ -8831,7 +8825,7 @@ export interface ClosureExpressionBlock {
 			| Type;
 	};
 	readonly __looseHints__?: {
-		readonly parameters: readonly (Pattern | Parameter)[];
+		readonly parameters: readonly (ClosureParameter | Parameter)[];
 	};
 	readonly __slotHints__?: {
 		readonly static: SlotHint<NonNullable<T.ClosureExpressionBlock.Config>['static'], true>;
@@ -8875,7 +8869,7 @@ export interface ClosureExpressionExpr {
 			| Expression;
 	};
 	readonly __looseHints__?: {
-		readonly parameters: readonly (Pattern | Parameter)[];
+		readonly parameters: readonly (ClosureParameter | Parameter)[];
 	};
 	readonly __slotHints__?: {
 		readonly static: SlotHint<NonNullable<T.ClosureExpressionExpr.Config>['static'], true>;
@@ -10793,6 +10787,27 @@ export interface FieldIdentifier {
 	};
 	readonly __aliasContent__?: FieldIdentifier.Types;
 	readonly content: () => Identifier;
+}
+
+export interface ClosureParameter {
+	readonly $type: TSKindId.ClosureParameter;
+	readonly _content: Pattern;
+	readonly __slotNames__?: {
+		readonly _content: 'content';
+	};
+	readonly __inputHints__?: {
+		readonly content:
+			| KindEnum<
+					'true' | 'false' | '..' | '_',
+					TSKindId.TrueKeyword | TSKindId.FalseKeyword | TSKindId.DotDot | TSKindId.Underscore
+			  >
+			| Pattern;
+	};
+	readonly __slotHints__?: {
+		readonly content: SlotHint<NonNullable<T.Pattern>>;
+	};
+	readonly __aliasContent__?: ClosureParameter.Types;
+	readonly content: () => Pattern;
 }
 
 export interface ShorthandFieldIdentifier {
@@ -13036,33 +13051,12 @@ export namespace ClosureParameters {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly parameters?: {
-				readonly capturedPattern?: { readonly after?: LayoutKindId };
-				readonly constBlock?: { readonly after?: LayoutKindId };
 				readonly end?: LayoutKindId;
-				readonly genericPattern?: { readonly after?: LayoutKindId };
-				readonly macroInvocation?: { readonly after?: LayoutKindId };
-				readonly mutPattern?: { readonly after?: LayoutKindId };
-				readonly negativeLiteral?: { readonly after?: LayoutKindId };
-				readonly orPatternBinary?: { readonly after?: LayoutKindId };
-				readonly orPatternPrefix?: { readonly after?: LayoutKindId };
 				readonly parameter?: { readonly after?: LayoutKindId };
-				readonly qualifiedIdentifier?: { readonly after?: LayoutKindId };
-				readonly rangePatternPrefix?: { readonly after?: LayoutKindId };
-				readonly rangePatternWithLeft?: { readonly after?: LayoutKindId };
-				readonly rawStringLiteral?: { readonly after?: LayoutKindId };
-				readonly refPattern?: { readonly after?: LayoutKindId };
-				readonly referencePattern?: { readonly after?: LayoutKindId };
-				readonly remainingFieldPattern?: { readonly after?: LayoutKindId };
 				readonly separator?: {
 					readonly comma?: { readonly after?: WhitespaceKindId; readonly before?: WhitespaceKindId };
 				};
-				readonly slicePattern?: { readonly after?: LayoutKindId };
 				readonly start?: LayoutKindId;
-				readonly stringLiteral?: { readonly after?: LayoutKindId };
-				readonly structPattern?: { readonly after?: LayoutKindId };
-				readonly tuplePattern?: { readonly after?: LayoutKindId };
-				readonly tupleStructPattern?: { readonly after?: LayoutKindId };
-				readonly wildcardPattern?: { readonly after?: LayoutKindId };
 			};
 			readonly pipe?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
@@ -18090,6 +18084,20 @@ export interface FieldIdentifierNs extends NodeNs<
 	readonly BuildArgs: FieldIdentifier.BuildArgs;
 	readonly LooseArgs: FieldIdentifier.LooseArgs;
 }
+export interface ClosureParameterNs extends NodeNs<
+	ClosureParameter,
+	LeafScalarMap,
+	LeafStringMap,
+	NamespaceMap,
+	ClosureParameter.Bound,
+	'content',
+	TSKindId.ClosureParameter,
+	ClosureParameter.Parsed,
+	never
+> {
+	readonly BuildArgs: ClosureParameter.BuildArgs;
+	readonly LooseArgs: ClosureParameter.LooseArgs;
+}
 export interface ShorthandFieldIdentifierNs extends NodeNs<
 	ShorthandFieldIdentifier,
 	LeafScalarMap,
@@ -18489,6 +18497,7 @@ export interface NamespaceMap {
 	[TSKindId.ParametersElementsReceiverGroup]: ParametersElementsReceiverGroupNs;
 	[TSKindId.TypeIdentifier]: TypeIdentifierNs;
 	[TSKindId.FieldIdentifier]: FieldIdentifierNs;
+	[TSKindId.ClosureParameter]: ClosureParameterNs;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifierNs;
 	[TSKindId.MethodDeclaration]: MethodDeclarationNs;
 	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclarationNs;
@@ -18768,6 +18777,7 @@ export interface BoundByKindId {
 	[TSKindId.ParametersElementsReceiverGroup]: ParametersElementsReceiverGroup.Bound;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Bound;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Bound;
+	[TSKindId.ClosureParameter]: ClosureParameter.Bound;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Bound;
 	[TSKindId.MethodDeclaration]: MethodDeclaration.Bound;
 	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclaration.Bound;
@@ -19021,6 +19031,7 @@ export interface ParsedByKindId {
 	[TSKindId.ParametersElementsReceiverGroup]: ParametersElementsReceiverGroup.Parsed;
 	[TSKindId.TypeIdentifier]: TypeIdentifier.Parsed;
 	[TSKindId.FieldIdentifier]: FieldIdentifier.Parsed;
+	[TSKindId.ClosureParameter]: ClosureParameter.Parsed;
 	[TSKindId.ShorthandFieldIdentifier]: ShorthandFieldIdentifier.Parsed;
 	[TSKindId.MethodDeclaration]: MethodDeclaration.Parsed;
 	[TSKindId.SignatureMethodDeclaration]: SignatureMethodDeclaration.Parsed;
@@ -19429,6 +19440,7 @@ export interface TypeKeyOf {
 	[TSKindId.ParametersElementsReceiverGroup]: 'parametersElementsReceiverGroup';
 	[TSKindId.TypeIdentifier]: 'typeIdentifier';
 	[TSKindId.FieldIdentifier]: 'fieldIdentifier';
+	[TSKindId.ClosureParameter]: 'closureParameter';
 	[TSKindId.ShorthandFieldIdentifier]: 'shorthandFieldIdentifier';
 	[TSKindId.MethodDeclaration]: 'methodDeclaration';
 	[TSKindId.SignatureMethodDeclaration]: 'signatureMethodDeclaration';
@@ -20389,30 +20401,13 @@ export namespace TraitBounds {
 		| [
 				...children: NonEmptyArray<
 					| T.TraitBounds.Loose
-					| LooseValue<
-							(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
 					| LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				>
 		  ]
 		| [
 				children: Readonly<
 					NonEmptyArray<
-						| LooseValue<
-								(T.Type | T.Lifetime | T.HigherRankedTraitBound) | T.TypeIdentifier.Types,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
-						| LooseValue<
-								T.Type | T.Lifetime | T.HigherRankedTraitBound,
-								T.LeafScalarMap,
-								T.LeafStringMap,
-								T.NamespaceMap
-						  >
+						LooseValue<T.Type | T.Lifetime | T.HigherRankedTraitBound, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					>
 				>
 		  ];
@@ -22132,15 +22127,19 @@ export namespace ClosureParameters {
 	}
 	export type Loose = LooseFor<TSKindId.ClosureParameters>;
 	export type LooseConfig = LooseConfigFor<TSKindId.ClosureParameters>;
-	export type BuildArgs = [...children: Admit<(T.Pattern | T.Parameter)[]>];
+	export type BuildArgs = [...children: Admit<((T.ClosureParameter | T.Parameter) | T.ClosureParameter.Types)[]>];
 	export type LooseArgs =
 		| [
 				...children: (
 					| T.ClosureParameters.Loose
-					| LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
+					| LooseValue<T.ClosureParameter | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
-		| [children: Readonly<LooseValue<T.Pattern | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]>];
+		| [
+				children: Readonly<
+					LooseValue<T.ClosureParameter | T.Parameter, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>[]
+				>
+		  ];
 	export type Kind = TSKindId.ClosureParameters;
 }
 export namespace Label {
@@ -23053,21 +23052,11 @@ export namespace OrderedFieldDeclarationListElements {
 		| [
 				element:
 					| T.OrderedFieldDeclarationListElements.Loose
-					| LooseValue<
-							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| T.AttributedOrderedField.LooseArgs[0],
 				...elements: (
 					| T.OrderedFieldDeclarationListElements.Loose
-					| LooseValue<
-							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| T.AttributedOrderedField.LooseArgs[0]
 				)[]
 		  ]
@@ -23075,21 +23064,11 @@ export namespace OrderedFieldDeclarationListElements {
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.OrderedFieldDeclarationListElements.Loose
-					| LooseValue<
-							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| T.AttributedOrderedField.LooseArgs[0],
 				...elements: (
 					| T.OrderedFieldDeclarationListElements.Loose
-					| LooseValue<
-							T.AttributedOrderedField | T.Type | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.AttributedOrderedField | T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 					| T.AttributedOrderedField.LooseArgs[0]
 				)[]
 		  ];
@@ -23477,12 +23456,7 @@ export namespace ParametersElements {
 				element:
 					| T.ParametersElements.Loose
 					| LooseValue<
-							| T.AttributedParameter
-							| T.Parameter
-							| T.VariadicParameter
-							| TSKindId.Underscore
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23491,12 +23465,7 @@ export namespace ParametersElements {
 				...elements: (
 					| T.ParametersElements.Loose
 					| LooseValue<
-							| T.AttributedParameter
-							| T.Parameter
-							| T.VariadicParameter
-							| TSKindId.Underscore
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23509,12 +23478,7 @@ export namespace ParametersElements {
 				element:
 					| T.ParametersElements.Loose
 					| LooseValue<
-							| T.AttributedParameter
-							| T.Parameter
-							| T.VariadicParameter
-							| TSKindId.Underscore
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23523,12 +23487,7 @@ export namespace ParametersElements {
 				...elements: (
 					| T.ParametersElements.Loose
 					| LooseValue<
-							| T.AttributedParameter
-							| T.Parameter
-							| T.VariadicParameter
-							| TSKindId.Underscore
-							| T.Type
-							| T.TypeIdentifier.Types,
+							T.AttributedParameter | T.Parameter | T.VariadicParameter | TSKindId.Underscore | T.Type,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23616,23 +23575,13 @@ export namespace Types {
 		  ];
 	export type LooseArgs =
 		| [
-				element:
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				element: T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ]
 		| [
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
-				element:
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
-				...elements: (
-					| T.Types.Loose
-					| LooseValue<T.Type | T.TypeIdentifier.Types, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
-				)[]
+				element: T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
+				...elements: (T.Types.Loose | LooseValue<T.Type, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>)[]
 		  ];
 	export type Kind = TSKindId.Types;
 	type NonEmptySlots = Proven<
@@ -23675,40 +23624,20 @@ export namespace UseBoundsElements {
 		| [
 				element:
 					| T.UseBoundsElements.Loose
-					| LooseValue<
-							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
+					| LooseValue<T.Lifetime | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (
 					| T.UseBoundsElements.Loose
-					| LooseValue<
-							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.Lifetime | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ]
 		| [
 				options: ListOptions<{ delimiter?: Delimiter.None | Delimiter.Trailing }>,
 				element:
 					| T.UseBoundsElements.Loose
-					| LooseValue<
-							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >,
+					| LooseValue<T.Lifetime | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>,
 				...elements: (
 					| T.UseBoundsElements.Loose
-					| LooseValue<
-							T.Lifetime | T.TypeIdentifier | T.TypeIdentifier.Types,
-							T.LeafScalarMap,
-							T.LeafStringMap,
-							T.NamespaceMap
-					  >
+					| LooseValue<T.Lifetime | T.TypeIdentifier, T.LeafScalarMap, T.LeafStringMap, T.NamespaceMap>
 				)[]
 		  ];
 	export type Kind = TSKindId.UseBoundsElements;
@@ -23764,7 +23693,7 @@ export namespace TypeArgumentsElements {
 				element:
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
-							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23773,7 +23702,7 @@ export namespace TypeArgumentsElements {
 				...elements: (
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
-							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23786,7 +23715,7 @@ export namespace TypeArgumentsElements {
 				element:
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
-							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -23795,7 +23724,7 @@ export namespace TypeArgumentsElements {
 				...elements: (
 					| T.TypeArgumentsElements.Loose
 					| LooseValue<
-							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block | T.TypeIdentifier.Types,
+							T.TypeArgument | T.Type | T.TypeBinding | T.Lifetime | T.Literal | T.Block,
 							T.LeafScalarMap,
 							T.LeafStringMap,
 							T.NamespaceMap
@@ -26709,6 +26638,31 @@ export namespace FieldIdentifier {
 	export type BuildArgs = [value: Admit<T.Identifier>];
 	export type LooseArgs = [value: T.FieldIdentifier.Loose];
 	export type Kind = TSKindId.FieldIdentifier;
+}
+export namespace ClosureParameter {
+	export type Config = ConfigFor<TSKindId.ClosureParameter>;
+	export type Types = SupertypeSurface<Pattern, BoundByKindId>;
+	export interface Bound extends BoundOf<T.ClosureParameter, BoundByKindId>, NodeMethodsOf, HoldsSource {
+		readonly $type: T.ClosureParameter['$type'];
+		readonly $with: BoundWithNode<this, BoundByKindId>;
+	}
+	export interface Parsed extends ParsedOf<T.ClosureParameter, ParsedByKindId>, NodeMethodsOf, HoldsSource, HoldsTree {
+		readonly $type: T.ClosureParameter['$type'];
+		readonly $with: WithNode<this, BoundByKindId>;
+		readonly $query: () => QueryFacet<
+			this,
+			ParsedByKindId,
+			PortableQueryIds<PortableReads>,
+			KindMembers,
+			FixedTextKindId
+		>;
+		readonly $snapshot: () => Snapshot<T.ClosureParameter['$type']>;
+	}
+	export type Loose = LooseFor<TSKindId.ClosureParameter>;
+	export type LooseConfig = LooseConfigFor<TSKindId.ClosureParameter>;
+	export type BuildArgs = [value: Admit<T.Pattern>];
+	export type LooseArgs = [value: T.ClosureParameter.Loose];
+	export type Kind = TSKindId.ClosureParameter;
 }
 export namespace ShorthandFieldIdentifier {
 	export type Config = ConfigFor<TSKindId.ShorthandFieldIdentifier>;

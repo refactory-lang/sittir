@@ -273,7 +273,12 @@ const _TEXT_KINDS_BY_RANK: readonly string[] = [
 ];
 
 const _ENVELOPE_TEXT_LEAVES: Record<string, readonly string[] | undefined> = {
-	_lhs_expression: ['undefined', 'identifier']
+	_lhs_expression: ['undefined', 'identifier'],
+	statement_identifier: ['identifier'],
+	shorthand_property_identifier: ['identifier'],
+	shorthand_property_identifier_pattern: ['identifier'],
+	property_identifier: ['identifier'],
+	type_identifier: ['identifier']
 };
 
 function _resolveBareText(v: string, kinds: readonly string[]): AnyUntypedNode | number | undefined {

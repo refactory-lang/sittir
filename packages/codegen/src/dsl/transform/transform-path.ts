@@ -216,6 +216,10 @@ function descendThroughGroupLiftSymbol(
 	patch: RuntimeRule | ((member: RuntimeRule, enclosing?: readonly RuntimeRule[]) => RuntimeRule),
 	enclosing: readonly RuntimeRule[] | undefined
 ): RuntimeRule {
+	return editGroupLift(rule, (body) => ({ rule: applyPath(body, segments, patch, enclosing), matched: true })).rule;
+}
+
+function editGroupLift(rule: RuntimeRule, edit: (body: RuntimeRule) => WalkResult): WalkResult {
 	const name = (rule as unknown as { name?: string }).name;
 	if (!name) {
 		throw new ApplyPathSkip('applyPath: enrich group-lift symbol has no name to resolve its body');
@@ -227,11 +231,9 @@ function descendThroughGroupLiftSymbol(
 				`(no wire() context, or the name was pruned)`
 		);
 	}
-	wireSetLiftBody(
-		name,
-		wireWithLiftScope(name, () => applyPath(body, segments, patch, enclosing))
-	);
-	return rule;
+	const edited = wireWithLiftScope(name, () => edit(body));
+	if (edited.matched) wireSetLiftBody(name, edited.rule);
+	return { rule, matched: edited.matched };
 }
 
 function isEnrichContentAlias(rule: RuntimeRule): boolean {
@@ -430,7 +432,7 @@ function enteredCopy(reference: RuntimeRule, request: WireCopyRequest, edit: (bo
 }
 
 function enteredHiddenRule(rule: RuntimeRule, reached: ReachedRule, segment: KindSegment, rest: readonly PathSegment[], patch: PathPatch): WalkResult {
-	if (!isParserHiddenName(reached.kind) || isEnrichGroupLiftSymbol(rule)) return { rule, matched: false };
+	if (!isParserHiddenName(reached.kind)) return { rule, matched: false };
 	if (wireCopyEdited(reached.request)) return { rule: enteredCopy(rule, reached.request, (body) => body), matched: true };
 	const body = wireCopyBody(reached.request);
 	const inner = body === undefined ? undefined : wireEnteringRule(reached.kind, () => walkKindMatch(body, segment, rest, patch, undefined, false));
@@ -495,6 +497,8 @@ function walkMatches(rule: RuntimeRule, enclosing: readonly RuntimeRule[] | unde
 			matched: inner.matched
 		};
 	}
+
+	if (isEnrichGroupLiftSymbol(rule)) return editGroupLift(rule, (body) => walkMatches(body, enclosing, insideNamedField, leaf));
 
 	const own = leaf(rule, enclosing, insideNamedField);
 	if (own !== undefined) return own;

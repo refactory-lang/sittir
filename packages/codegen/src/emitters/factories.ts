@@ -1401,8 +1401,9 @@ function resolveConfigFactorySurface(
 	const singleField = !spreadFacts ? resolveDirectFactorySlot(node, nodeMap) : undefined;
 	if (spreadFacts) {
 		const elementType = constructionChildElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
+		const looseChild = childElementType({ children: [spreadFacts.slot] }, nodeMap, kindEntries);
 		if (spreadFacts.multiple) {
-			const looseElement = [...new Set([elementType, coercedChildElementType(spreadFacts.slot, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
+			const looseElement = [...new Set([looseChild, coercedChildElementType(spreadFacts.slot, nodeMap, kindEntries)].map(looseValueOf))].join(' | ');
 			const { nonEmpty } = spreadFacts;
 			const param = refusingWhole(
 				{
@@ -1432,7 +1433,7 @@ function resolveConfigFactorySurface(
 				optional: !spreadFacts.required,
 				rest: false,
 				strictType: elementType,
-				looseType: looseValueOf(elementType),
+				looseType: looseValueOf(looseChild),
 				rowLooseType: `T.${node.typeName}.Loose`,
 				rowLooseOptional: !spreadFacts.required || node.argumentOptional(nodeMap),
 				admitsNodes: true
@@ -1453,14 +1454,15 @@ function resolveConfigFactorySurface(
 	if (singleField) {
 		const baseType = constructionChildElementType({ children: [singleField] }, nodeMap, kindEntries);
 		const singleShape = numericSlotShape(singleField);
-		const elemType = singleShape === undefined ? baseType : `${baseType} | ${numberInputType(singleShape)}`;
+		const withNumber = (type: string): string => (singleShape === undefined ? type : `${type} | ${numberInputType(singleShape)}`);
+		const elemType = withNumber(baseType);
 		const optional = !isRequired(singleField) || holdsFixedText(singleField);
 		const valueParam: FactoryParam = {
 			label: 'value',
 			optional,
 			rest: false,
 			strictType: elemType,
-			looseType: looseValueOf(elemType),
+			looseType: looseValueOf(withNumber(childElementType({ children: [singleField] }, nodeMap, kindEntries))),
 			rowLooseType: `T.${node.typeName}.Loose`,
 			rowLooseOptional: optional || node.argumentOptional(nodeMap),
 			admitsNodes: true
@@ -2577,6 +2579,7 @@ export function separatedListSurface(
 	const contentSlot = buildSeparatedListContentSlot(node);
 	const baseElemType = fieldElementType(contentSlot, nodeMap, kindEntries);
 	let elemType = withAdmittedTypes(baseElemType, contentSlot, nodeMap);
+	let looseElemType = baseElemType;
 	let wrapper: ReturnType<typeof separatedListSurface>['wrapper'];
 	const contentKinds = slotKindNames(contentSlot);
 	if (contentKinds.length === 1 && kindEntries) {
@@ -2595,7 +2598,9 @@ export function separatedListSurface(
 				decorationKeys: wrapperSlots.filter((slot) => slot !== content).map((slot) => slot.storageKey),
 				typeName: nodeMap.nodes.get(wKind)!.typeName
 			};
-			elemType = `${elemType} | ${withAdmittedTypes(fieldElementType(content, nodeMap, kindEntries), content, nodeMap)}`;
+			const contentType = fieldElementType(content, nodeMap, kindEntries);
+			elemType = `${elemType} | ${withAdmittedTypes(contentType, content, nodeMap)}`;
+			looseElemType = `${looseElemType} | ${contentType}`;
 		}
 	}
 	const strictElemType = admitNodes(elemType);
@@ -2606,7 +2611,7 @@ export function separatedListSurface(
 		storageElemType: baseElemType,
 		elemTypeForArray,
 		strictElemType,
-		looseElemTypeForArray: parenthesizeUnion(elemType),
+		looseElemTypeForArray: parenthesizeUnion(looseElemType),
 		elementsType,
 		rawElementsType: elementsTypeOf(node.nonEmpty, elemType),
 		...listOptionParts(node, nodeMap, kindEntries),
