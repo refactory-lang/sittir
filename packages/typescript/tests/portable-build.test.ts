@@ -15,6 +15,11 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'expression.binary.membership.in', left: 'a', right: 'b' }))).toBe('a in b');
 	});
 
+	it('takes the export form whose slot seats the clause given: a namespace export through the namespace form', () => {
+		const source = { $path: 'literal.string', elements: ['m'] };
+		expect(render(runtime.build({ $path: 'statement.export', exportClause: { $path: 'clause.export.namespace', moduleExportName: 'ns' }, source }))).toBe('export * as ns from "m";');
+	});
+
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
 		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x');
 		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };

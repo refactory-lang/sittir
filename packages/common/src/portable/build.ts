@@ -47,6 +47,7 @@ interface Reached {
 
 class Frame {
 	readonly config: Record<string, unknown> = {};
+	readonly presets = new Set<string>();
 	input: unknown;
 	mount: string | undefined;
 	constructor(
@@ -164,7 +165,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			seats.find(
 				(seat) =>
 					(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1])) &&
-					(seat.kinds === undefined || seat.kinds.includes(arm.kind))
+					seat.kinds.includes(arm.kind)
 			);
 		const textOf = (value: string, seats: readonly PortableSeat[]): unknown => {
 			const leaf = seats.find((seat) => seat.leaf !== undefined)?.leaf;
@@ -205,6 +206,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				const holders = [...new Set(path.arms.flatMap((arm) => (arm.holders ?? []).map(([holder]) => nameOf(holder))))].sort();
 				throw new Error(`portable build: ${structure.$path} has no root build in ${language}; it builds in a holder slot of ${holders.join(', ')}`);
 			}
+			if (seats !== undefined && !path.arms.some((arm) => seatOf(arm, seats) !== undefined)) {
+				const slots = [...new Set(seats.map(({ at: [holder, key] }) => `${nameOf(holder)}.${key}`))].sort();
+				throw new Error(`portable build: no ${language} form of ${structure.$path} sits in ${slots.join(', ')}`);
+			}
 			const members = memberKeys(structure);
 			const flags = structure.$flags ?? [];
 			throw new Error(
@@ -222,12 +227,17 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			}
 			if (!mountable(host, builder)) return undefined;
 			const entered = mounts(host, builder) ? 1 : 0;
+			const superseded = entered === 0 && frame.presets.has(mounted.key);
 			if (create) {
 				mountOnto(host, builder);
 				if (host.mount === builder) for (const [at, outer] of formed) at.form = outer;
+				if (superseded) {
+					delete frame.config[mounted.key];
+					frame.presets.delete(mounted.key);
+				}
 			}
-			if (!('key' in mounted)) return { frame, reached: entered };
-			const held = frame.config[mounted.key];
+			if (mounted.call !== 'keyed' && mounted.call !== 'keyedArgs') return { frame, reached: entered };
+			const held = superseded ? undefined : frame.config[mounted.key];
 			if (held !== undefined) {
 				if (!(held instanceof Frame) || held.form === undefined) return undefined;
 				if (create && host.mount === builder) held.form = mounted;
@@ -272,7 +282,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (held instanceof Frame) {
 				if (held.input !== undefined || Object.keys(held.config).length > 0) throw new Error(`portable build: ${path} sets ${key} twice`);
 				held.input = value;
-			} else frame.config[key] = held === undefined ? value : [...listOf(held), ...listOf(value)];
+			} else if (frame.presets.delete(key) && !Array.isArray(held) && !Array.isArray(value)) frame.config[key] = value;
+			else frame.config[key] = held === undefined ? value : [...listOf(held), ...listOf(value)];
 		};
 		const mountOn = (frame: Frame, placed: Placed, path: string): void => {
 			const head = placed.mount!;
@@ -287,7 +298,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				return;
 			}
 			const owner = ownerOf(frame, step.steps.slice(0, -1), path);
-			if (step.builder === undefined) set(owner, last.key, step.kind ?? step.text, path);
+			if (step.builder === undefined) {
+				const fixed = step.kind ?? step.text;
+				const held = owner.config[last.key];
+				owner.config[last.key] = held === undefined ? fixed : [...listOf(held), fixed];
+				owner.presets.add(last.key);
+			}
 			else if (owner.config[last.key] === undefined) owner.config[last.key] = new Frame(step.builder);
 		};
 
@@ -298,7 +314,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			}
 			const placed = typeof value === 'string' ? textOf(value, seats) : value;
 			const kind = hasKind(placed) ? placed.$type : typeof placed === 'number' ? placed : undefined;
-			const seat = seats.find((s) => s.kinds === undefined || (kind !== undefined && s.kinds.includes(kind))) ?? seats[0]!;
+			const seat = seats.find((s) => kind !== undefined && s.kinds.includes(kind)) ?? seats[0]!;
 			return seated(placed, within(seat).slice(depth), false);
 		};
 		const unmounted = (placed: Placed, member: PortableMemberStep, path: string): unknown => {
@@ -325,6 +341,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (placed.mount !== undefined) mountOn(owner, placed, path);
 			else set(owner, member.steps.at(-1)!.key, placed.value, path);
 		};
+		const admits = (route: PortableMemberStep, value: unknown): boolean =>
+			listOf(value).every((item) =>
+				isStructure(item) ? pick(item, route.seats) !== undefined : !hasKind(item) || route.seats.some((seat) => seat.kinds.includes(item.$type))
+			);
 		const routesOf = (arm: PortableBuildArm, name: string): readonly PortableMemberStep[] =>
 			arm.members.filter((member, i) => member.name === name && !arm.members.slice(0, i).some((other) => other.name === name && sameSteps(other, member)));
 		const templated = (arm: PortableBuildArm, structure: PortableStructure): string | undefined => {
@@ -368,8 +388,18 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					const reach = descend(frame, candidate.steps.slice(0, -1), false);
 					return reach === undefined ? [] : [{ candidate, reached: reach.reached }];
 				});
-				const fits = open.filter(({ candidate }) => !Array.isArray(value) || candidate.multiple || candidate.seats.some((seat) => seat.many === true));
-				const route = (furthest(fits) ?? furthest(open))?.candidate;
+				const admitted = open.filter(({ candidate }) => admits(candidate, value));
+				if (admitted.length === 0) {
+					const seats = open.flatMap(({ candidate }) => candidate.seats);
+					for (const item of listOf(value)) {
+						if (!isStructure(item)) continue;
+						const held = pathOf(item);
+						if (held !== undefined && pick(item, seats) === undefined) refuse(item, held, seats);
+					}
+				}
+				const candidates = admitted.length > 0 ? admitted : open;
+				const fits = candidates.filter(({ candidate }) => !Array.isArray(value) || candidate.multiple || candidate.seats.some((seat) => seat.many === true));
+				const route = (furthest(fits) ?? furthest(candidates))?.candidate;
 				if (route === undefined) throw new Error(`portable build: ${structure.$path}: ${name} has no route beside the other members`);
 				placeMember(frame, route, value, structure.$path);
 			}

@@ -61,10 +61,12 @@ export interface PortableKeyedMount {
 }
 
 /**
- * A mount's call. Where the mount's holder is itself seated at a key of its own holder, `outer` says how the mount's builder takes the holder's
- * input there, nearest holder first.
+ * A mount's call and the key it seats its kind at. Where the mount's holder is itself seated at a key of its own holder, `outer` says how the
+ * mount's builder takes the holder's input there, nearest holder first.
  */
-export type PortableMount = PortableKeyedMount | { readonly call: Exclude<PortableMountCall, 'keyed' | 'keyedArgs'>; readonly outer?: PortableKeyedMount };
+export type PortableMount =
+	| PortableKeyedMount
+	| { readonly call: Exclude<PortableMountCall, 'keyed' | 'keyedArgs'>; readonly key: string; readonly outer?: PortableKeyedMount };
 
 /**
  * One step from a holder toward a member's slot: the config key it fills, the builder of the kind the next step sits in (absent when that kind
@@ -91,13 +93,13 @@ export interface PortableContainer {
 }
 
 /**
- * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has where the
- * member has more than one seat, the builder text given for the seat builds through (`leaf`), and the containers the build puts around it,
- * outermost first. A seat that holds many (`many`) takes a list.
+ * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has, the
+ * builder text given for the seat builds through (`leaf`), and the containers the build puts around it, outermost first. A seat that holds
+ * many (`many`) takes a list.
  */
 export interface PortableSeat {
 	readonly at: readonly [holder: number, key: string];
-	readonly kinds?: readonly number[];
+	readonly kinds: readonly number[];
 	readonly leaf?: string;
 	readonly within?: readonly PortableContainer[];
 	readonly many?: true;

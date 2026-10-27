@@ -62,6 +62,19 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'type.function', trait: 'Fn', parameters: [] }))).toBe('Fn()');
 	});
 
+	it("builds a restricted visibility's scope as given, a path through the scope's path form in place of the token the first claim fixes", () => {
+		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: rust.kinds.Super }))).toBe('pub(super)');
+		expect(render(runtime.build({ $path: 'modifier.visibility.public.restricted', scope: 'a' }))).toBe('pub(in a)');
+	});
+
+	it("takes the route whose slot seats the value: an attribute's delimited token tree as its arguments, and refuses a token tree no route seats", () => {
+		expect(render(runtime.build({ $path: 'attribute.content', path: 'derive', input: { $path: 'element.macro.token_tree.delimited', tokens: [] } }))).toBe('derive()');
+		expect(render(runtime.build({ $path: 'attribute.content', path: 'cfg', input: { $path: 'element.macro.token_tree.delimited.bracket', tokens: [] } }))).toBe('cfg[]');
+		expect(() => runtime.build({ $path: 'attribute.content', path: 'derive', input: { $path: 'element.macro.token_tree', tokens: [] } })).toThrow(
+			/element\.macro\.token_tree sits in attribute_input\.arguments, attribute_input\.value/
+		);
+	});
+
 	it('refuses a path the language does not build, naming the path and the language', () => {
 		expect(() => runtime.build({ $path: 'declaration.class', name: 'C' })).toThrow(/declaration\.class.*rust/);
 	});

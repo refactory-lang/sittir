@@ -150,7 +150,8 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const builder = register(fn.builder, fn.shape);
 		const outer = fn.outer === undefined ? {} : { outer: fn.outer };
 		const { call } = mount;
-		return { builder, mounted: call === 'keyed' || call === 'keyedArgs' ? { call, key: keyAt(owner, slot), seats, ...outer } : { call, ...outer } };
+		const key = keyAt(owner, slot);
+		return { builder, mounted: call === 'keyed' || call === 'keyedArgs' ? { call, key, seats, ...outer } : { call, key, ...outer } };
 	};
 	const mountHolders = new Map<string, { readonly holder: string; readonly slot: string }>();
 	for (const node of model.values())
@@ -226,11 +227,11 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const owner = path.at(-1)?.owner;
 		return slot === undefined || holder === undefined || key === undefined || owner === undefined ? undefined : seatsOf(holder, key, owner, slot, [], new Set());
 	};
-	const seatRecord = (seat: Seat, alone: boolean): PortableSeat => {
+	const seatRecord = (seat: Seat): PortableSeat => {
 		const leaf = defaultLeaf(seat.slot);
 		return {
 		at: [seat.holder.kindId!, seat.key],
-		...(alone ? {} : { kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])) }),
+		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
 		...(leaf === undefined ? {} : { leaf }),
 		...(seat.within.length === 0 ? {} : { within: seat.within }),
 		...(seat.many ? { many: true as const } : {})
@@ -321,7 +322,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 				name: route.name,
 				steps,
 				multiple: route.route === 'nested' ? route.multiple : isMultiple(slot),
-				seats: seats.map((seat) => seatRecord(seat, seats.length === 1))
+				seats: seats.map(seatRecord)
 			},
 			seats
 		};

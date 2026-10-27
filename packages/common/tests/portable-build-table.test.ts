@@ -136,7 +136,7 @@ describe('the portable build table', () => {
 		});
 		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
 		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).members.filter((member) => member.name === 'right');
-		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge' } });
+		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' } });
 	});
 
 	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
@@ -144,18 +144,34 @@ describe('the portable build table', () => {
 		expect(value.steps[1]).toEqual({
 			key: 'content',
 			builder: 'exportStatementDefaultDeclaration.defaultKw.value',
-			mounted: { call: 'child', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } }
+			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } }
 		});
 		expect(tables.typescript.table.builders['exportStatementDefaultDeclaration.defaultKw.value']).toBe('config');
 		const list = armsOf('python', 'clause.catch')[0]!.members.flatMap((member) => member.seats.flatMap((seat) => seat.within ?? []));
-		expect(list).toContainEqual({ builder: 'exceptClause.exception.list', key: 'values', mounted: { call: 'child', outer: { call: 'keyedArgs', key: 'exception', seats: 'spread' } } });
+		expect(list).toContainEqual({
+			builder: 'exceptClause.exception.list',
+			key: 'values',
+			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'exception', seats: 'spread' } }
+		});
 	});
 
 	it("marks an arm built through its holder's mount", () => {
 		const pub = armsOf('rust', 'modifier.visibility.public')[0]!;
 		expect(pub.kind).toBe(rust.kinds.VisibilityModifier);
 		expect(pub.builder).toBe('visibilityModifier.pub');
-		expect(pub.mounted).toEqual({ call: 'child' });
+		expect(pub.mounted).toEqual({ call: 'child', key: 'content' });
+	});
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every seat states the kinds a value there has, so a member with several routes takes one that seats it', (grammar) => {
+		for (const { arms } of Object.values(tables[grammar].table.paths))
+			for (const arm of arms) for (const member of arm.members) for (const seat of member.seats) expect(Array.isArray(seat.kinds), `${member.name} at ${seat.at.join('.')}`).toBe(true);
+		const input = armsOf('rust', 'attribute.content')[0]!.members.filter((member) => member.name === 'input');
+		expect(input.find((route) => route.steps.at(-1)!.key === 'arguments')!.seats[0]!.kinds).toEqual([
+			rust.kinds.DelimTokenTree,
+			rust.kinds.DelimTokenTreeParen,
+			rust.kinds.DelimTokenTreeBracket,
+			rust.kinds.DelimTokenTreeBrace
+		]);
 	});
 
 	it('never takes an arm for a structure stating a member the arm lacks', () => {
