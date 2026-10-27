@@ -5003,50 +5003,6 @@ A recursive-descent parser of tree-sitter's pattern dialect into a `Node`: alter
 
 The whole pattern as one `Node`; text left over after the top alternation is unsupported.
 
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::peek`
-
-The next pattern character without consuming it.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::take`
-
-Consumes and returns the next pattern character; the end of the pattern is unsupported here.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::alternation`
-
-Arms separated by `|`, each a `sequence`.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::sequence`
-
-Quantified atoms up to the next `|` or `)`.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::quantified`
-
-Wraps an atom in each quantifier that follows it.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::quantifier`
-
-The `[min, max]` bounds of the quantifier at the cursor, consuming a lazy `?` after it, or `undefined` when none is there. A `{` that does not open a bound is not a quantifier, so `atom` reads it as a literal `{`.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::atom`
-
-One group, class, escape, `.` or literal character. Anchors, lookaround groups and a quantifier with nothing to repeat are unsupported.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::charClass`
-
-A bracketed class as a `CharSet`, complemented when it opens with `^`. A range whose ends are not single characters is unsupported.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::classAtom`
-
-One class member: its set, and its code point when it is a single character that can end a range.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::escape`
-
-The set an escape denotes, inside or outside a class. Inside a class `\b` is a backspace; outside it, `\b`, `\B` and backreferences are unsupported.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::PatternParser::hexEscape`
-
-The code point a hex escape spells, from the digits the given regex matches.
-
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaState`
 
 One Thompson-NFA state: its character edges and its empty (epsilon) edges.
@@ -5062,10 +5018,6 @@ Adds an empty state and returns its index.
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder::fragment`
 
 A fresh start and end state with the node wired between them.
-
-### `packages/codegen/src/compiler/model/pattern-automaton.ts::NfaBuilder::wire`
-
-Wires a node between two states: a set as one edge, a sequence through fresh states, an alternation as each arm between the same two states, and a repeat as described on `NfaBuilder`.
 
 ### `packages/codegen/src/compiler/model/pattern-automaton.ts::DfaEdge`
 
@@ -6130,3 +6082,19 @@ A seat of a node: a slot a sub-factory fills.
 ### `packages/codegen/src/compiler/model/sub-factories.ts::SeatSource`
 
 Where a seat's value comes from.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNodeBase::unit`
+
+Whether the node is a unit, read from its classification.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledNonterminal::splicedEnvelope`
+
+The envelope kind name a spliced slot admits, when it has one.
+
+### `packages/codegen/src/compiler/model/spliced-envelopes.ts::stampSplicedEnvelopes`
+
+Stamps each nonterminal a spliced envelope applies to with its envelope, across the whole node map.
+
+### `packages/codegen/src/compiler/model/spliced-envelopes.ts::splicedEnvelopeOf`
+
+The spliced envelope of a nonterminal slot, or undefined when the slot has none.
