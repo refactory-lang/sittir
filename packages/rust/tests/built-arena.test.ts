@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { BuiltArena, cellFormatOf, chunkOf, decodeCell, wordOf } from '@sittir/common/engine';
 import { builtRecordOf, LEAF_SITES, storeCell, storeList } from '@sittir/common/utils';
-import { leafSitesOf } from '../../common/src/built-ref.ts';
+import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
+import { setTriviaOf } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
@@ -15,13 +16,14 @@ const NO_SIDES: SideStore = {
 	writeLeafSide: () => undefined
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
-const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {} }): BuiltArena =>
+type WriteLeafSites = ConstructorParameters<typeof BuiltArena>[4];
+const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {} }, writeLeafSites: WriteLeafSites = () => undefined): BuiltArena =>
 	new BuiltArena(
 		{ format: format!, owner: {}, hold: () => undefined, trivia },
 		() => ({}),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
-		() => undefined
+		writeLeafSites
 	);
 
 const placed = (arena: BuiltArena, node: object, words: number): number[] => {
@@ -192,6 +194,36 @@ describe('a built arena', () => {
 		storeList(arena, two, 11, ['a', leaf], 5);
 		const second = builtRecordOf(arena.view(two), arena)!;
 		expect(leafSitesOf(leaf)).toEqual([first, 2, 0, second, 11, 1]);
+	});
+
+	it('holds a leaf placed once as one number in its field, and makes the field a list at a second site or one too wide to pack', () => {
+		const once = { [LEAF_SITES]: undefined };
+		placeLeaf(once, 0xffffffff, 127, 16383);
+		expect(typeof once[LEAF_SITES]).toBe('number');
+		expect(leafSitesOf(once)).toEqual([0xffffffff, 127, 16383]);
+		placeLeaf(once, 5, 2, 0);
+		expect(once[LEAF_SITES]).toEqual([0xffffffff, 127, 16383, 5, 2, 0]);
+		const wide = { [LEAF_SITES]: undefined };
+		placeLeaf(wide, 5, 128, 0);
+		placeLeaf(wide, 6, 2, 16384);
+		expect(wide[LEAF_SITES]).toEqual([5, 128, 0, 6, 2, 16384]);
+	});
+
+	it('writes the sides of a leaf it places only when the leaf holds some', () => {
+		const written: [object, number[]][] = [];
+		const arena = arenaOf(NO_SIDES, { rows: {} }, (leaf, sites) => void written.push([leaf, [...sites]]));
+		const bare = arena.adoptLeaf({ $type: 4, [LEAF_SITES]: undefined }, 'a');
+		const sided = arena.adoptLeaf({ $type: 4, [LEAF_SITES]: undefined }, 'b');
+		setTriviaOf(sided, { leading: [3] });
+		const record = arena.record(9, 13);
+		storeCell(arena, record, 2, bare);
+		storeList(arena, record, 11, [sided], 5);
+		const at = builtRecordOf(arena.view(record), arena)!;
+		expect([leafSitesOf(bare), leafSitesOf(sided)]).toEqual([
+			[at, 2, 0],
+			[at, 11, 0]
+		]);
+		expect(written).toEqual([[sided, [at, 11, 0]]]);
 	});
 
 	it('answers the node a side holds by its address, and refuses an address no side holds', () => {

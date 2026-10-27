@@ -2,12 +2,12 @@ import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { stampBuilt } from './source-stamp.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { coordinateOf, holdReadTree, isRead, isRebuilt } from './node-data.ts';
+import { coordinateOf, holdReadTree, isRead, isRebuilt, triviaOf } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
-import { adoptBuilt, builtRefOf, LEAF_SITES, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
+import { adoptBuilt, builtRefOf, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { leafData, RECORD, recordOf, recordStub, SEEDS, SLOTS, type RecordStub, type SeededSlots } from './record-view.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
@@ -293,9 +293,8 @@ export class BuiltArena {
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
-		const sites = ((leaf as { [LEAF_SITES]?: number[] })[LEAF_SITES] ??= []);
-		sites.push(holder, word, item);
-		this.#writeLeafSites(leaf, [holder, word, item]);
+		placeLeaf(leaf, holder, word, item);
+		if (triviaOf(leaf) !== undefined) this.#writeLeafSites(leaf, [holder, word, item]);
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */

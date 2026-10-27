@@ -31,6 +31,29 @@ export function builtLeafOf(value: unknown): BuiltLeafRef | undefined {
 	return ref?.text === undefined ? undefined : ref;
 }
 
+type LeafSites = number | number[];
+
+const ITEM_RADIX = 2 ** 14;
+const WORD_RADIX = 2 ** 7;
+const HOLDER_RADIX = ITEM_RADIX * WORD_RADIX;
+
+export function placeLeaf(leaf: object, holder: number, word: number, item: number): void {
+	const held = leaf as { [LEAF_SITES]?: LeafSites };
+	const sites = held[LEAF_SITES];
+	if (sites === undefined && word < WORD_RADIX && item < ITEM_RADIX) {
+		held[LEAF_SITES] = holder * HOLDER_RADIX + word * ITEM_RADIX + item;
+		return;
+	}
+	const triples = sites === undefined ? [] : typeof sites === 'number' ? unpackedSite(sites) : sites;
+	triples.push(holder, word, item);
+	held[LEAF_SITES] = triples;
+}
+
 export function leafSitesOf(leaf: object): readonly number[] | undefined {
-	return (leaf as { readonly [LEAF_SITES]?: readonly number[] })[LEAF_SITES];
+	const sites = (leaf as { readonly [LEAF_SITES]?: LeafSites })[LEAF_SITES];
+	return typeof sites === 'number' ? unpackedSite(sites) : sites;
+}
+
+function unpackedSite(site: number): number[] {
+	return [Math.floor(site / HOLDER_RADIX), Math.floor(site / ITEM_RADIX) % WORD_RADIX, site % ITEM_RADIX];
 }
