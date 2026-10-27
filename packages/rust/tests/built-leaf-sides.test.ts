@@ -2,10 +2,23 @@
 // on its object and at every site that holds it. Each case renders as it does
 // on object construction.
 import { describe, expect, it } from 'vitest';
+import { useRecordConstruction } from '@sittir/common/engine';
 import { builtRefOf } from '../../common/src/built-ref.ts';
+import arena from '../src/arena.ts';
 import { constructions, objects, records, type Engine } from './constructions.mts';
 
 const comment = (rs: Engine, text: string) => rs.build.blockComment(rs.build.blockCommentRegular(` ${text} `));
+
+const foreign = (await arena.createEngine()) as Engine;
+useRecordConstruction(foreign, await import('../src/factories/records.ts'));
+
+function rejectedWrite(rs: Engine, placed: boolean): string[] {
+	const x = rs.build.identifier('x');
+	x.$trivia.leading(comment(rs, 'ok'));
+	const holder = placed ? rs.build.expressionStatement(x) : undefined;
+	expect(() => x.$trivia.leading(comment(foreign, 'foreign'))).toThrow();
+	return [rs.render(x).toString(), ...(holder === undefined ? [] : [rs.render(holder).toString()])];
+}
 
 function siteRenders(rs: Engine): string[] {
 	const b = rs.build;
@@ -48,6 +61,14 @@ describe('a built leaf holds no storage', () => {
 		const expected = siteRenders(objects);
 		expect(expected[0]).toBe('/* before */ x;');
 		for (const [name, rs] of constructions) expect([name, siteRenders(rs)]).toEqual([name, expected]);
+	});
+
+	it('refuses a side naming another engine record, placed or not, and keeps the sides it had', () => {
+		for (const placed of [true, false]) {
+			const expected = rejectedWrite(objects, placed);
+			expect(expected[0]).toBe('/* ok */ x');
+			for (const [name, rs] of constructions) expect([name, placed, rejectedWrite(rs, placed)]).toEqual([name, placed, expected]);
+		}
 	});
 
 	it("renders a parsed leaf a built record holds with its row's sides", () => {

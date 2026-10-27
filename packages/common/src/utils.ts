@@ -104,10 +104,11 @@ const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undef
 export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	const leaf = builtLeafOf(node);
 	if (leaf !== undefined) {
+		const wired = wireSides(node, trivia);
+		const sites = leafSitesOf(node);
+		if (sites !== undefined) writeSites(leaf.arena, sites, trivia, wired);
 		const own = triviaOf(node);
 		setTriviaOf(node, own === undefined ? trivia : { ...own, ...trivia });
-		const sites = leafSitesOf(node);
-		if (sites !== undefined) writeSites(node, leaf.arena, sites, trivia);
 		return;
 	}
 	const at = tableAt(node);
@@ -117,11 +118,12 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 		setTriviaOf(node as AnyUntypedNode, own === undefined ? trivia : { ...own, ...trivia });
 		return;
 	}
-	const wire = entryWire(node);
+	const wired = wireSides(node, trivia);
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
-		if (entries === undefined) continue;
-		at.tree.writeTriviaSide(at.index, side, entries.map(wire));
+		const wire = wired[side];
+		if (entries === undefined || wire === undefined) continue;
+		at.tree.writeTriviaSide(at.index, side, wire);
 		holdSideEntries(at.tree, `${at.index}:${side}`, entries);
 	}
 }
@@ -129,22 +131,25 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 export function writeLeafSites(leaf: object, sites: readonly number[]): void {
 	const ref = builtLeafOf(leaf);
 	const own = triviaOf(leaf);
-	if (ref !== undefined && own !== undefined) writeSites(leaf, ref.arena, sites, own);
+	if (ref !== undefined && own !== undefined) writeSites(ref.arena, sites, own, wireSides(leaf, own));
 }
 
 export function leafWireSides(leaf: object): TriviaSides<unknown> | undefined {
 	const own = triviaOf(leaf);
-	if (own === undefined) return undefined;
-	const wire = entryWire(leaf);
-	return mapTriviaEntries(own as TriviaSides<TriviaEntry>, (entries) => entries.map(wire));
+	return own === undefined ? undefined : wireSides(leaf, own);
 }
 
-function writeSites(leaf: object, arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia): void {
-	const wire = entryWire(leaf);
+function wireSides(node: object, trivia: NodeTrivia): TriviaSides<unknown> {
+	const wire = entryWire(node);
+	return mapTriviaEntries(trivia as TriviaSides<TriviaEntry>, (entries) => entries.map(wire));
+}
+
+function writeSites(arena: BuiltArena, sites: readonly number[], trivia: NodeTrivia, wired: TriviaSides<unknown>): void {
 	for (const side of TRIVIA_SIDES) {
 		const entries = trivia[side];
-		if (entries === undefined) continue;
-		arena.writeLeafSide(sites, side, entries.map(wire));
+		const wire = wired[side];
+		if (entries === undefined || wire === undefined) continue;
+		arena.writeLeafSide(sites, side, wire);
 		for (let n = 0; n < sites.length; n += 3) holdSideEntries(arena.tree, `${sites[n]}.${sites[n + 1]}.${sites[n + 2]}:${side}`, entries);
 	}
 }
