@@ -57,6 +57,7 @@ async function iteration(mode) {
 	const start = performance.now();
 	for (const name of names) roots.push(functionCase(build, name));
 	const built = performance.now();
+	const builtRecords = store.records;
 	const renderBefore = native.allocatorTotals();
 	let nativeRenderNs = 0;
 	let bodyAllocationCalls = 0;
@@ -80,6 +81,7 @@ async function iteration(mode) {
 	const allocations = difference(allocationBefore, renderAfter);
 	disposeTrees(trees);
 	const replacement = build.identifier('updated');
+	const recordsBeforeEdit = store.records;
 	const editBefore = native.allocatorTotals();
 	const editStart = performance.now();
 	const edited = roots.map((root) => root.$with.name(replacement));
@@ -90,7 +92,12 @@ async function iteration(mode) {
 		assert.equal(edited[n].name().text(), 'updated');
 		assert.equal(store.identity(roots[n].body()), store.identity(edited[n].body()));
 	}
-	assert.equal(store.records, count * 5 + 1);
+	assert.equal(
+		builtRecords,
+		count * (mode === 'arena' ? 3 : 4),
+		'a function case is its item, parameters and body, and on the object arm its name: a built leaf is its cell'
+	);
+	assert.equal(store.records, recordsBeforeEdit + count, 'an edit writes one record, its new item, and shares the rest');
 	let legacyEncode;
 	if (mode === 'object') {
 		const encoder = new LegacyEncoder();
