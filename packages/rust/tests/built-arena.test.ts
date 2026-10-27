@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { BuiltArena, cellFormatOf, chunkOf, decodeCell, wordOf } from '@sittir/common/engine';
 import { builtRecordOf, LEAF_SITES, storeCell, storeList } from '@sittir/common/utils';
 import { leafSitesOf } from '../../common/src/built-ref.ts';
-import { triviaOf } from '../../common/src/node-data.ts';
 import { getActiveBackend } from '../src/backend.ts';
 
 const backend = getActiveBackend();
@@ -13,11 +12,10 @@ const NO_SIDES: SideStore = {
 	writeTriviaSide: () => undefined,
 	unitSides: () => [],
 	writeUnitSides: () => undefined,
-	leafSide: () => undefined,
 	writeLeafSide: () => undefined
 };
 type Views = ConstructorParameters<typeof BuiltArena>[3];
-const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {}, leaves: {} }): BuiltArena =>
+const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = { rows: {} }): BuiltArena =>
 	new BuiltArena(
 		{ format: format!, owner: {}, hold: () => undefined, trivia },
 		() => ({}),
@@ -194,29 +192,6 @@ describe('a built arena', () => {
 		storeList(arena, two, 11, ['a', leaf], 5);
 		const second = builtRecordOf(arena.view(two), arena)!;
 		expect(leafSitesOf(leaf)).toEqual([first, 2, 0, second, 11, 1]);
-	});
-
-	it('makes a leaf for a site from the sides the store holds there, and records the site', () => {
-		const stored = new Map<string, readonly unknown[]>();
-		const asked: number[] = [];
-		const key = (holder: number, word: number, item: number, side: string) => `${holder}.${word}.${item}:${side}`;
-		const sides: SideStore = {
-			...NO_SIDES,
-			leafSide: (holder, word, item, side) => (asked.push(holder), stored.get(key(holder, word, item, side)) as unknown[] | undefined),
-			writeLeafSide: (sites, side, entries) => {
-				for (let n = 0; n < sites.length; n += 3) stored.set(key(sites[n]!, sites[n + 1]!, sites[n + 2]!, side), entries);
-			}
-		};
-		const arena = arenaOf(sides, { rows: {}, leaves: { 4: (text) => ({ $type: 4, text }) } });
-		const text = arena.text('x');
-		const cell = { kind: 4, offset: text.at, len: text.len };
-		expect(triviaOf(arena.leaf(cell, 9, 2, 0))).toBeUndefined();
-		expect(asked).toEqual([]);
-		arena.writeLeafSide([9, 2, 0], 'leading', [3]);
-		const sided = arena.leaf(cell, 9, 2, 0);
-		expect(triviaOf(sided)).toEqual({ leading: [3] });
-		expect(leafSitesOf(sided)).toEqual([9, 2, 0]);
-		expect(triviaOf(arena.leaf(cell, 9, 2, 1))).toBeUndefined();
 	});
 
 	it('answers the node a side holds by its address, and refuses an address no side holds', () => {

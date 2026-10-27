@@ -1,15 +1,15 @@
-import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
+import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
 import { stampBuilt } from './source-stamp.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { coordinateOf, holdReadTree, isRead, isRebuilt, setTriviaOf } from './node-data.ts';
+import { coordinateOf, holdReadTree, isRead, isRebuilt } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { addressOf, chunkOf, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { adoptBuilt, builtRefOf, LEAF_SITES, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { leafData, RECORD, recordOf, recordStub, SEEDS, SLOTS, type RecordStub, type SeededSlots } from './record-view.ts';
-import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
+import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** Text a built arena interned: its UTF-8 bytes' packed offset in the arena's string chunks and their length. */
 export interface BuiltText {
@@ -47,7 +47,6 @@ export interface BuiltRecords {
 		writeTriviaSide(at: number, side: TriviaSideName, entries: readonly unknown[]): void;
 		unitSides(at: number): unknown[];
 		writeUnitSides(at: number, units: readonly unknown[]): void;
-		leafSide(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | undefined;
 		writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
 	};
 }
@@ -132,7 +131,6 @@ export type BuiltRow = {
 
 export interface BuiltViews {
 	readonly rows: Readonly<Record<number, (node: object, handle: EngineHandle | undefined) => BuiltRow>>;
-	readonly leaves: Readonly<Record<number, (text: string, handle: EngineHandle | undefined) => object>>;
 }
 
 export class BuiltArena {
@@ -152,7 +150,6 @@ export class BuiltArena {
 	readonly #trees = new Map<number, { readonly tree: TreeHandle; readonly token: TreeToken }>();
 	readonly #sided = new Map<number, number>();
 	readonly #unitSided = new Set<number>();
-	readonly #leafSided = new Set<number>();
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 
@@ -304,7 +301,6 @@ export class BuiltArena {
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
 	writeLeafSide(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void {
 		this.#trivia.writeLeafSide(sites, side, entries);
-		for (let n = 0; n < sites.length; n += 3) this.#leafSided.add(sites[n]!);
 	}
 
 	/**
@@ -345,20 +341,6 @@ export class BuiltArena {
 		const record = this.#header(kind, 2);
 		record.data[record.base + 1] = this.push([this.format.sideSides.bit, tree, index, end, span.start, span.end]);
 		return record.at;
-	}
-
-	/** A leaf for the built leaf cell at the site `holder`, `word`, `item`, which has no object of its own: its sides are the ones the store holds there. */
-	leaf({ kind, offset, len }: { readonly kind: number; readonly offset: number; readonly len: number }, holder: number, word: number, item: number): object {
-		const leaf = this.#adopt(this.#views.leaves[kind]!(this.textOf(offset, len), this.#handle), { arena: this, text: { at: offset, len } });
-		(leaf as { [LEAF_SITES]?: number[] })[LEAF_SITES] = [holder, word, item];
-		if (!this.#leafSided.has(holder)) return leaf;
-		const sides: { [S in TriviaSideName]?: unknown[] } = {};
-		for (const side of TRIVIA_SIDES) {
-			const entries = this.#trivia.leafSide(holder, word, item, side);
-			if (entries !== undefined) sides[side] = readEntries(this.tree, entries);
-		}
-		if (Object.keys(sides).length > 0) setTriviaOf(leaf, sides as NodeTrivia);
-		return leaf;
 	}
 
 	/** The parsed leaf a copied leaf's record names, as its tree's own view of it. */

@@ -182,7 +182,7 @@ export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: nu
 	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };
 }
 
-function cellData(holder: object, tree: TreeHandle, cell: RecordCell, at: number, word: number, item: number): unknown {
+function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 	switch (cell.form) {
 		case 'absent':
 			return undefined;
@@ -200,8 +200,7 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell, at: number
 		case 'unit':
 			return cell.kind;
 		case 'builtLeaf':
-			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.leaf(cell, at, word, item);
+			throw new Error(tree.built === undefined ? 'a parsed record holds no built cell' : 'a built leaf is read from the holder that keeps it');
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
 			return tree.built.textOf(cell.offset, cell.len);
@@ -213,20 +212,19 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell, at: number
 
 /** The value of the one-cell slot at the generated `word` offset of the record `holder` views, as read data. */
 export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): unknown {
-	const { cell, at } = slotCell(holder, tree, word, width, inline);
-	return cellData(holder, tree, cell, at, word, 0);
+	return cellData(holder, tree, slotCell(holder, tree, word, width, inline));
 }
 
 export function recordPresent(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): boolean {
-	return slotCell(holder, tree, word, width, inline).cell.form !== 'absent';
+	return slotCell(holder, tree, word, width, inline).form !== 'absent';
 }
 
-function slotCell(holder: object, tree: TreeHandle, word: number, width: number, inline: number): { readonly cell: RecordCell; readonly at: number } {
+function slotCell(holder: object, tree: TreeHandle, word: number, width: number, inline: number): RecordCell {
 	const at = recordOf(holder);
 	if (at === undefined) throw new Error('a record slot read needs a record view');
 	const records = recordsOf(tree);
 	const { words, start } = wordsAt(records, at, word + width);
-	return { cell: decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word), at };
+	return decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word);
 }
 
 /** The items of the list slot at the generated `word` offset of the record `holder` views, each as read data. */
@@ -247,7 +245,7 @@ export function recordSlots(
 	if (list.len === 0) return [];
 	const items = wordsAt(records, list.run, list.len * run);
 	return Array.from({ length: list.len }, (_, n) =>
-		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format), at, word, n)
+		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format))
 	);
 }
 

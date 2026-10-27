@@ -1141,6 +1141,5 @@ export const builtViews: BuiltViews = Object.freeze({
 		62: rowNamedNodeSupertyped,
 		63: rowNamedNodeGroupChildren,
 		64: rowNamedNodeGroupAnchoredLast
-	}),
-	leaves: Object.freeze({ 5: leafIdentifier, 6: leafImmediateIdentifier, 23: leafStringContentText })
+	})
 });

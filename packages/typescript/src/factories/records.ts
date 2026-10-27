@@ -14115,18 +14115,5 @@ export const builtViews: BuiltViews = Object.freeze({
 		501: rowShorthandPropertyIdentifierPattern,
 		502: rowStatementIdentifier,
 		504: rowTypeIdentifier
-	}),
-	leaves: Object.freeze({
-		1: leafIdentifier,
-		119: leafUnescapedDoubleStringFragment,
-		120: leafUnescapedSingleStringFragment,
-		126: leafRegexPattern,
-		127: leafRegexFlags,
-		159: leafNumberDecimal,
-		175: leafTemplateChars,
-		176: leafTernaryQmark,
-		177: leafHtmlComment,
-		178: leafJsxText,
-		180: leafErrorRecovery
 	})
 });

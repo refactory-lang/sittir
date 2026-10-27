@@ -38,23 +38,13 @@ impl<G: EngineGrammar> Engine<G> {
         Ok(())
     }
 
-    /// The entries a write gave `side` of the built leaf at `site`, or `None`
-    /// when no write did.
-    ///
-    /// # Errors
-    ///
-    /// `ArenaError::Malformed` for a site whose holder is address 0.
-    pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
-        site.holder.record()?;
-        Ok(self.written().side(Place::Leaf(site), side))
-    }
-
     /// Replace `side` of the built leaf at each of `sites` with `entries`,
     /// which a render of its holder then writes.
     ///
     /// # Errors
     ///
-    /// As `built_leaf_side`, before any site is written.
+    /// `ArenaError::Malformed` for a site whose holder is address 0, before
+    /// any site is written.
     pub fn write_built_leaf_side(&self, sites: &[Site<Address>], side: TriviaSide, entries: &[TriviaEntry<G::Trivia>]) -> Result<(), ArenaError> {
         for site in sites {
             site.holder.record()?;

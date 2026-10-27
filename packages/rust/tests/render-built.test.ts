@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { useRecordConstruction } from '@sittir/common/engine';
 import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
-import { builtRefOf } from '../../common/src/built-ref.ts';
+import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import arena from '../src/arena.ts';
 import { TSKindId } from '../src/kinds.ts';
@@ -17,14 +17,12 @@ function addon() {
 
 function arenaEngine() {
 	const native = new (addon().SittirEngine)();
-	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, builtLeafSide, writeBuiltLeafSide, holdBuiltArena } = native;
+	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = native;
 	if (
 		renderBuilt === undefined ||
 		renderBuiltLeaf === undefined ||
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
-		builtLeafSide === undefined ||
-		writeBuiltLeafSide === undefined ||
 		holdBuiltArena === undefined
 	)
 		throw new Error('the native addon was built without the arena feature');
@@ -36,9 +34,7 @@ function arenaEngine() {
 		renderBuiltLeaf: (kind: number, text: { readonly at: number; readonly len: number }) => renderBuiltLeaf.call(native, native, kind, text, null, false, false),
 		dispose: () => native.dispose(),
 		builtTriviaSide: builtTriviaSide.bind(native),
-		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native),
-		builtLeafSide: builtLeafSide.bind(native),
-		writeBuiltLeafSide: writeBuiltLeafSide.bind(native)
+		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native)
 	};
 }
 
@@ -119,16 +115,19 @@ describe('a built arena rendered natively', () => {
 		expect(() => native.builtTriviaSide(5, 'beside' as never)).toThrow();
 	});
 
-	it('reads and writes the sides of a built leaf by its site, refusing holder 0', () => {
-		const native = arenaEngine();
-		expect(native.builtLeafSide(5, 2, 0, 'leading')).toBeNull();
-		native.writeBuiltLeafSide([5, 2, 0, 7, 11, 1], 'leading', []);
-		expect([native.builtLeafSide(5, 2, 0, 'leading'), native.builtLeafSide(7, 11, 1, 'leading')]).toEqual([[], []]);
-		expect(native.builtLeafSide(5, 2, 1, 'leading')).toBeNull();
-		expect(() => native.builtLeafSide(0, 2, 0, 'leading')).toThrow(/record address 0/);
-		expect(() => native.writeBuiltLeafSide([5, 2, 0, 0, 2, 0], 'trailing', [])).toThrow(/record address 0/);
-		expect(native.builtLeafSide(5, 2, 0, 'trailing')).toBeNull();
-		expect(() => native.writeBuiltLeafSide([5, 2], 'leading', [])).toThrow(/triples/);
+	it('writes a side of a built leaf at each site it names, refusing holder 0 and anything but triples before writing any', async () => {
+		const rs = await recordEngine();
+		const b = rs.build;
+		const x = b.identifier('x');
+		const statement = b.expressionStatement(x);
+		const [holder, word, item] = leafSitesOf(x)!;
+		const arena = builtRefOf(x)!.arena;
+		const entry = writtenEntry(b.blockComment(b.blockCommentRegular(' c ')));
+		expect(() => arena.writeLeafSide([holder!, word!, item!, 0, word!, item!], 'leading', [entry])).toThrow(/record address 0/);
+		expect(() => arena.writeLeafSide([holder!, word!], 'leading', [entry])).toThrow(/triples/);
+		expect(rs.render(statement).toString()).toBe('x;');
+		arena.writeLeafSide([holder!, word!, item!], 'leading', [entry]);
+		expect(rs.render(statement).toString()).toBe('/* c */ x;');
 	});
 
 	it.each([

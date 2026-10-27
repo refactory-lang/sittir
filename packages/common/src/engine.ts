@@ -210,7 +210,6 @@ export interface NativeEngineLike<TNode = unknown> {
 	writeBuiltTriviaSide?(address: number, side: TriviaSideName, entries: readonly unknown[]): void;
 	builtUnitSides?(address: number): unknown[];
 	writeBuiltUnitSides?(address: number, units: readonly unknown[]): void;
-	builtLeafSide?(holder: number, word: number, item: number, side: TriviaSideName): unknown[] | null;
 	writeBuiltLeafSide?(sites: readonly number[], side: TriviaSideName, entries: readonly unknown[]): void;
 	holdBuiltArena?(words: readonly Uint32Array[], bytes: readonly Uint8Array[], writtenWords: Uint32Array, writtenBytes: Uint32Array): void;
 	/** Renders a parsed candidate from its native record, or its recordless coordinate, excluding its outer trivia. */
@@ -627,13 +626,12 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltRecords {
-	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, builtLeafSide, writeBuiltLeafSide, holdBuiltArena } = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, holdBuiltArena } = engine;
 	if (
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
 		builtUnitSides === undefined ||
 		writeBuiltUnitSides === undefined ||
-		builtLeafSide === undefined ||
 		writeBuiltLeafSide === undefined ||
 		holdBuiltArena === undefined
 	)
@@ -647,7 +645,6 @@ function builtRecordsOf(engine: NativeEngineLike, format: CellFormat): BuiltReco
 			writeTriviaSide: (at, side, entries) => writeBuiltTriviaSide.call(engine, at, side, entries),
 			unitSides: (at) => builtUnitSides.call(engine, at),
 			writeUnitSides: (at, units) => writeBuiltUnitSides.call(engine, at, units),
-			leafSide: (holder, word, item, side) => builtLeafSide.call(engine, holder, word, item, side) ?? undefined,
 			writeLeafSide: (sites, side, entries) => writeBuiltLeafSide.call(engine, sites, side, entries)
 		}
 	};

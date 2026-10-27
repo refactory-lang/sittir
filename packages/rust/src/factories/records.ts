@@ -13509,23 +13509,5 @@ export const builtViews: BuiltViews = Object.freeze({
 		477: rowShorthandFieldIdentifier,
 		478: rowSignatureMethodDeclaration,
 		479: rowTypeIdentifier
-	}),
-	leaves: Object.freeze({
-		1: leafIdentifier,
-		132: leafTokenRepetitionPatternText,
-		133: leafStringOpen,
-		146: leafCharLiteralEmpty,
-		155: leafLineCommentRegular,
-		157: leafStringContent,
-		158: leafStringClose,
-		159: leafRawStringLiteralStart,
-		160: leafRawStringLiteralContent,
-		161: leafRawStringLiteralEnd,
-		162: leafFloatLiteral,
-		165: leafBlockCommentContent,
-		166: leafDocComment,
-		167: leafErrorSentinel,
-		399: leafLineCommentExtraSlashes,
-		404: leafBlockCommentRegular
 	})
 });

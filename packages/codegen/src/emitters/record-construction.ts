@@ -130,8 +130,7 @@ export class BuiltViewTable {
 		const entries = (table: ReadonlyMap<number, string>) => [...table].sort(([a], [b]) => a - b).map(([kindId, name]) => ` ${kindId}: ${name}`).join(',');
 		return [
 			'export const builtViews: BuiltViews = Object.freeze({',
-			`  rows: Object.freeze({${entries(this.#rows)} }),`,
-			`  leaves: Object.freeze({${entries(new Map([...this.#leaves].map(([kindId, { name }]) => [kindId, name])))} })`,
+			`  rows: Object.freeze({${entries(this.#rows)} })`,
 			'});'
 		];
 	}

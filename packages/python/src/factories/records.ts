@@ -8723,19 +8723,5 @@ export const builtViews: BuiltViews = Object.freeze({
 		342: rowFormatExpression,
 		343: rowMethodDeclaration,
 		344: rowNames
-	}),
-	leaves: Object.freeze({
-		1: leafIdentifier,
-		66: leafTypeConversion,
-		89: leafFormatSpecifierText,
-		93: leafIntegerDecimalLong,
-		94: leafIntegerDecimalImaginary,
-		95: leafIntegerDecimalPlain,
-		106: leafLineContinuationNewline,
-		119: leafStringStart,
-		120: leafStringFragment,
-		121: leafEscapeInterpolation,
-		122: leafStringEnd,
-		132: leafImportPrefix
 	})
 });

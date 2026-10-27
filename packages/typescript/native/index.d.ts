@@ -294,13 +294,6 @@ holdBuiltArena(words: Uint32Array[], bytes: Uint8Array[], writtenWords: Uint32Ar
  */
 builtTriviaSide(address: number, side: string): object[] | null
 /**
- * r" The entries a write gave `side` (`leading`, `trailing` or
- * r" `inner`) of the built leaf at the site `holder`, `word`,
- * r" `item`, or `null` when no write did. Refuses holder 0 and
- * r" any other side.
- */
-builtLeafSide(holder: number, word: number, item: number, side: string): object[] | null
-/**
  * r" Replace `side` of the built leaf at each site `sites` names,
  * r" `[holder, word, item]` after another, with `entries`, which
  * r" `renderBuilt` then writes; a built record among them

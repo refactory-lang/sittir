@@ -1673,21 +1673,5 @@ export const builtViews: BuiltViews = Object.freeze({
 		83: rowInlineFlagsGroupEnable,
 		84: rowInlineFlagsGroupToggle,
 		85: rowInlineFlagsGroupDisable
-	}),
-	leaves: Object.freeze({
-		12: leafPatternCharacter,
-		20: leafClassCharacter,
-		34: leafDecimalEscape,
-		35: leafUnicodePropertyValue,
-		36: leafControlLetterEscape,
-		38: leafGroupName,
-		39: leafDecimalDigits,
-		41: leafCharacterClassEscapeText1,
-		42: leafCharacterClassEscapeText2,
-		60: leafPosixClassName,
-		66: leafFlags,
-		74: leafUnicodeCharacterEscape,
-		76: leafControlEscape,
-		90: leafUnicodePropertyName
 	})
 });
