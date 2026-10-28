@@ -1,8 +1,14 @@
-import { addressOf, chunkOf, wordOf, decodeCell } from '../../../../../packages/common/src/record-cell.ts';
+import { addressOf, chunkOf, wordOf, withKind, kindField, headerKind, decodeListCell } from '../../../../../packages/common/src/record-cell.ts';
+import { builtCell, decodeBuiltCell, unitCell } from '../../../../../packages/common/src/built-arena.ts';
+
+export { builtCell, unitCell };
 
 const nodes = new WeakMap();
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
+const ENTRY_HEAD_BYTES = 4;
+const NO_WORDS = new Uint32Array(0);
+const NO_BYTES = new Uint8Array(0);
 
 export function ownerOf(node) {
 	const owner = nodes.get(node);
@@ -33,50 +39,60 @@ export function check(store, value, admitted, shape, required, many) {
 }
 
 class Chunks {
-	#chunks = [];
 	#open = -1;
 	#width;
 	#first;
 	#Type;
+	#other;
+	#none;
+	chunks;
 	used = [];
+	count = 0;
 
-	constructor(Type, width, first, reserve) {
+	constructor(Type, width, first, chunks, other, none) {
 		this.#Type = Type;
 		this.#width = width;
 		this.#first = first;
-		if (reserve) this.alloc(1);
+		this.chunks = chunks;
+		this.#other = other;
+		this.#none = none;
 	}
 
 	alloc(size) {
 		if (!Number.isSafeInteger(size) || size < 0 || size > 0xffffffff) throw new Error('invalid allocation size');
 		let chunk = this.#open;
 		const own = size > this.#width;
-		if (own || chunk < 0 || this.used[chunk] >= this.#width || this.used[chunk] + size > this.#chunks[chunk].length) {
-			const previous = chunk < 0 ? this.#first : this.#chunks[chunk].length;
+		if (own || chunk < 0 || this.used[chunk] + size > this.chunks[chunk].length) {
+			const previous = chunk < 0 ? this.#first : this.chunks[chunk].length;
 			const capacity = own ? size : Math.max(size, Math.min(this.#width, previous * (chunk < 0 ? 1 : 2)));
-			chunk = this.#chunks.length;
-			if (chunk >= 2 ** 32 / this.#width) throw new Error('arena is full');
-			this.#chunks.push(new this.#Type(capacity));
-			this.used.push(0);
+			chunk = this.chunks.length;
+			if (chunk >= 2 ** 30 / this.#width) throw new Error('arena is full');
+			this.chunks.push(new this.#Type(capacity));
+			this.#other.push(this.#none);
+			this.used[chunk] = 0;
+			this.count++;
 			if (!own) this.#open = chunk;
 		}
 		const word = this.used[chunk];
 		this.used[chunk] += size;
-		return { chunk, word, data: this.#chunks[chunk] };
+		return { chunk, word, data: this.chunks[chunk] };
+	}
+
+	holds(n) {
+		return this.chunks[n] !== undefined && this.chunks[n].length !== 0;
 	}
 
 	chunk(n) {
-		const chunk = this.#chunks[n];
-		if (chunk === undefined) throw new Error('unknown chunk');
-		return chunk;
+		if (!this.holds(n)) throw new Error(`no chunk ${n} of this table`);
+		return this.chunks[n];
 	}
 
 	views() {
-		return this.#chunks.map((chunk, n) => chunk.subarray(0, this.used[n]));
+		return this.chunks.map((chunk, n) => chunk.subarray(0, this.used[n] ?? 0));
 	}
 	registryViews() {
 		return {
-			chunks: this.#chunks.map((chunk, n) => (n === this.#open ? chunk : chunk.subarray(0, this.used[n]))),
+			chunks: this.chunks.map((chunk, n) => (n === this.#open ? chunk : chunk.subarray(0, this.used[n] ?? 0))),
 			open: this.#open < 0 ? undefined : this.#open
 		};
 	}
@@ -84,7 +100,7 @@ class Chunks {
 		return this.used[this.#open] ?? 0;
 	}
 	capacity() {
-		return this.#chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
+		return this.chunks.reduce((sum, chunk) => sum + chunk.byteLength, 0);
 	}
 	occupied() {
 		return this.used.reduce((sum, used) => sum + used * this.#Type.BYTES_PER_ELEMENT, 0);
@@ -96,14 +112,15 @@ export class Storage {
 	#format;
 	#words;
 	#strings;
+	#heads = [];
 	#wrap;
 	#native;
 	#packet;
 	#registration;
-	#registeredWords = -1;
-	#registeredStrings = -1;
-	#textByValue = new Map();
-	#textByOffset = new Map();
+	#registered = -1;
+	#entries = new Map();
+	#entryAt = new Map();
+	#reader;
 	records = 0;
 	wrappers = 0;
 
@@ -115,9 +132,21 @@ export class Storage {
 		this.#native = native;
 		if (mode === 'arena') {
 			const width = 2 ** format.chunkShift;
-			this.#words = new Chunks(Uint32Array, width, firstWords, true);
-			this.#strings = new Chunks(Uint8Array, width, firstWords, false);
+			const words = [NO_WORDS];
+			const bytes = [NO_BYTES];
+			this.#words = new Chunks(Uint32Array, width, firstWords, words, bytes, NO_BYTES);
+			this.#strings = new Chunks(Uint8Array, width, firstWords, bytes, words, NO_WORDS);
+			this.#reader = {
+				format,
+				holdsRecords: (chunk) => this.#words.holds(chunk),
+				words: (at) => this.#words.chunk(chunkOf(at, format)),
+				entryAt: (at) => this.#entryOf(at)
+			};
 		}
+	}
+
+	get format() {
+		return this.#format;
 	}
 
 	register(node, record = true) {
@@ -134,7 +163,7 @@ export class Storage {
 
 	identity(node) {
 		const ref = this.ref(node);
-		return ref._r ?? `${ref.$type}:${ref._offset}:${ref._len}`;
+		return ref._r ?? `leaf:${ref._entry}`;
 	}
 
 	address(ref) {
@@ -161,41 +190,68 @@ export class Storage {
 		if (this.#mode === 'object') return { kind, data: { $type: kind } };
 		const cursor = this.#allocate(size);
 		cursor.kind = kind;
-		cursor.data[cursor.word] = kind;
+		cursor.data[cursor.word] = withKind(kind, this.#format.kindBits);
 		return cursor;
 	}
 
 	leaf(kind, text) {
 		if (typeof text !== 'string') throw new Error('a leaf needs text');
-		if (this.#mode === 'arena') return { kind, ...this.#text(text) };
+		if (this.#mode === 'arena') {
+			const entry = this.#entry(kind, text);
+			return { kind, entry: entry.at, len: entry.len, text };
+		}
 		const ref = this.begin(kind, 0);
 		ref.data.$text = text;
 		return ref;
 	}
 
-	#text(text) {
-		const known = this.#textByValue.get(text);
+	#entry(kind, text) {
+		const key = `${kind}:${text}`;
+		const known = this.#entries.get(key);
 		if (known !== undefined) return known;
-		const target = this.#strings.alloc(text.length * 3);
-		const { read, written } = encoder.encodeInto(text, target.data.subarray(target.word));
+		const target = this.#strings.alloc((ENTRY_HEAD_BYTES + text.length * 3 + 3) & ~3);
+		const start = target.word + ENTRY_HEAD_BYTES;
+		const { read, written } = encoder.encodeInto(text, target.data.subarray(start));
 		if (read !== text.length) throw new Error('string did not fit its reservation');
-		this.#strings.used[target.chunk] = target.word + written;
+		const { kindBits } = this.#format;
+		if (written >= 2 ** (32 - kindBits)) throw new Error(`a leaf's text of ${written} bytes is past what an entry's length holds`);
+		this.#strings.used[target.chunk] = target.word + ((ENTRY_HEAD_BYTES + written + 3) & ~3);
+		this.#headsOf(target.chunk)[target.word >>> 2] = (withKind(kind, kindBits) | (written * 2 ** kindBits)) >>> 0;
 		this.#packet = undefined;
-		const entry = { offset: addressOf(target.chunk, target.word, this.#format), len: written, text };
-		this.#textByValue.set(text, entry);
-		if (written !== 0) this.#textByOffset.set(entry.offset, entry);
+		const entry = { at: addressOf(target.chunk, target.word, this.#format), kind, len: written, text };
+		this.#entries.set(key, entry);
+		this.#entryAt.set(entry.at, entry);
 		return entry;
+	}
+
+	#headsOf(chunk) {
+		const data = this.#strings.chunk(chunk);
+		return (this.#heads[chunk] ??= new Uint32Array(data.buffer, data.byteOffset, data.byteLength >>> 2));
+	}
+
+	#entryOf(at) {
+		const known = this.#entryAt.get(at);
+		if (known !== undefined) return { kind: known.kind, len: known.len, entry: known };
+		const chunk = chunkOf(at, this.#format);
+		const byte = wordOf(at, this.#format);
+		const head = this.#headsOf(chunk)[byte >>> 2];
+		const { kindBits } = this.#format;
+		const kind = kindField(head, kindBits);
+		const len = Math.floor(head / 2 ** kindBits);
+		const data = this.#strings.chunk(chunk);
+		const text = decoder.decode(data.subarray(byte + ENTRY_HEAD_BYTES, byte + ENTRY_HEAD_BYTES + len));
+		const entry = { at, kind, len, text };
+		this.#entryAt.set(at, entry);
+		return { kind, len, entry };
 	}
 
 	text(ref) {
 		if (this.#mode === 'object') return ref.data.$text;
-		if (ref.text !== undefined) return ref.text;
-		if (ref.len === 0) return '';
-		const known = this.#textByOffset.get(ref.offset);
-		if (known?.len === ref.len) return known.text;
-		const chunk = this.#strings.chunk(chunkOf(ref.offset, this.#format));
-		const at = wordOf(ref.offset, this.#format);
-		return decoder.decode(chunk.subarray(at, at + ref.len));
+		return ref.text ?? this.#entryOf(ref.entry).entry.text;
+	}
+
+	textCell(text) {
+		return builtCell(this.#entry(0, text).at);
 	}
 
 	copy(ref, size) {
@@ -204,7 +260,7 @@ export class Storage {
 		const before = this.#location(ref._r);
 		const after = this.#allocate(size);
 		after.data.set(before.data.subarray(before.word, before.word + size), after.word);
-		after.kind = before.data[before.word];
+		after.kind = headerKind(before.data[before.word], this.#format.kindBits);
 		return after;
 	}
 
@@ -212,15 +268,10 @@ export class Storage {
 		return this.#mode === 'arena';
 	}
 
-	run(length, stride) {
-		if (length === 0) return { at: 0, len: 0 };
-		const cursor = this.#allocate(length * stride);
-		cursor.len = length;
+	run(length) {
+		const cursor = this.#allocate(length + 1);
+		cursor.data[cursor.word] = length;
 		return cursor;
-	}
-
-	intern(text) {
-		return this.#text(text);
 	}
 
 	#fromRaw(value) {
@@ -229,17 +280,17 @@ export class Storage {
 		return this.#wrap(this, { kind: value.$type, data: value });
 	}
 
-	#fromCell(data, word, address = 0, inline = 0) {
-		const cell = decodeCell(data, word, this.#format, inline, address);
+	#fromCell(word) {
+		const cell = decodeBuiltCell(this.#reader, word);
 		switch (cell.form) {
 			case 'absent':
 				return undefined;
 			case 'unit':
 				return cell.kind;
 			case 'builtText':
-				return this.text(cell);
+				return this.#entryOf(cell.offset).entry.text;
 			case 'builtLeaf':
-				return this.#wrap(this, { kind: cell.kind, offset: cell.offset, len: cell.len });
+				return this.#wrap(this, { kind: cell.kind, entry: cell.offset, len: cell.len });
 			case 'child':
 				if (cell.link !== undefined) throw new Error('the construction probe does not own parsed links');
 				return this.#wrap(this, { kind: cell.kind, at: cell.at });
@@ -248,16 +299,16 @@ export class Storage {
 		}
 	}
 
-	get(ref, key, word, run, bit, inline = 0) {
+	get(ref, key, cell, list, bit) {
 		if (this.#mode === 'object') return this.#fromRaw(ref._r[key]);
 		const at = this.#location(ref._r);
-		if (bit !== undefined) return (at.data[at.word + word] & (2 ** bit)) !== 0;
-		if (run === undefined) return this.#fromCell(at.data, at.word + word, ref._r + word, inline);
-		const start = at.data[at.word + word];
-		const len = at.data[at.word + word + 1];
+		if (bit !== undefined) return (at.data[at.word + cell] & (2 ** bit)) !== 0;
+		const word = at.data[at.word + cell];
+		if (!list) return this.#fromCell(word);
+		const { run, len } = decodeListCell(this.#reader, word);
 		if (len === 0) return [];
-		const list = this.#location(start);
-		return Array.from({ length: len }, (_, item) => this.#fromCell(list.data, list.word + item * run));
+		const items = this.#location(run);
+		return Array.from({ length: len }, (_, item) => this.#fromCell(items.data[items.word + item]));
 	}
 
 	packet() {
@@ -267,20 +318,19 @@ export class Storage {
 
 	renderRef(ref) {
 		if (this.#mode === 'object') return this.#native.renderObject(ref._r);
-		if (this.#registeredWords !== this.#words.used.length || this.#registeredStrings !== this.#strings.used.length) {
+		if (this.#registered !== this.#words.chunks.length) {
 			const words = this.#words.registryViews();
 			const strings = this.#strings.registryViews();
 			const previous = this.#registration;
 			this.#registration = this.#native.registerArena(words.chunks, strings.chunks, words.open, strings.open);
-			this.#registeredWords = this.#words.used.length;
-			this.#registeredStrings = this.#strings.used.length;
+			this.#registered = this.#words.chunks.length;
 			previous?.dispose();
 		}
 		const words = this.#words.written();
 		const bytes = this.#strings.written();
-		return ref._offset === undefined
+		return ref._entry === undefined
 			? this.#registration.renderRecord(ref._r, words, bytes)
-			: this.#registration.renderLeaf(ref.$type, ref._offset, ref._len, words, bytes);
+			: this.#registration.renderLeaf(ref.$type, ref._entry, words, bytes);
 	}
 
 	render(node) {
@@ -295,8 +345,8 @@ export class Storage {
 			recordCapacity: this.#words.capacity(),
 			stringBytes: this.#strings.occupied(),
 			stringCapacity: this.#strings.capacity(),
-			chunks: this.#words.used.length,
-			stringChunks: this.#strings.used.length
+			chunks: this.#words.count,
+			stringChunks: this.#strings.count
 		};
 	}
 }

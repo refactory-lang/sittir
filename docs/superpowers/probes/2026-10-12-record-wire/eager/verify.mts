@@ -5,6 +5,9 @@ import { TSKindId } from '../../../../../packages/rust/src/kinds.ts';
 
 assert.equal(typeof native.registerArena, 'function');
 assert.equal(native.heldArenaReferences(), 0);
+const shift = grammarNative.ARENA_CHUNK_SHIFT;
+const chunkAt = (at: number) => Math.floor(at / 2 ** shift);
+const wordAt = (at: number) => at % 2 ** shift;
 
 {
   const { store, build } = setup('arena', 16);
@@ -28,14 +31,18 @@ function registeredFixture(retainArrays = false) {
   const { store, build } = setup('arena');
   const root = functionCase(build, 'held');
   const at = store.identity(root);
+  const chunk = chunkAt(at);
+  const stringChunk = chunkAt(root.name()._entry);
   const packet = store.packet();
   const expected = native.renderBuilt(packet.chunks, packet.strings, at).text;
   return {
     owner: native.registerArena(packet.chunks, packet.strings),
     at,
+    chunk,
+    stringChunk,
     expected,
     count: packet.chunks.length + packet.strings.length,
-    weak: new WeakRef(packet.chunks[0]),
+    weak: new WeakRef(packet.chunks[chunk]),
     arrays: retainArrays ? packet : undefined
   };
 }
@@ -61,8 +68,8 @@ for (let attempt = 0; attempt < 20 && native.heldArenaReferences() !== 0; attemp
 assert.equal(native.heldArenaReferences(), 0, 'GC releases registration references');
 
 const mutable = registeredFixture(true);
-const firstChunk = mutable.arrays!.chunks[0];
-const word = mutable.at % 2 ** grammarNative.ARENA_CHUNK_SHIFT;
+const firstChunk = mutable.arrays!.chunks[mutable.chunk];
+const word = wordAt(mutable.at);
 const kind = firstChunk[word];
 firstChunk[word] = 65535;
 assert.throws(() => mutable.owner.render(mutable.at));
@@ -71,7 +78,7 @@ assert.equal(mutable.owner.render(mutable.at).text, mutable.expected);
 mutable.owner.dispose();
 
 const detached = registeredFixture(true);
-structuredClone(detached.arrays!.chunks[0].buffer, { transfer: [detached.arrays!.chunks[0].buffer] });
+structuredClone(detached.arrays!.chunks[detached.chunk].buffer, { transfer: [detached.arrays!.chunks[detached.chunk].buffer] });
 assert.throws(() => detached.owner.render(detached.at));
 detached.owner.dispose();
 assert.equal(native.heldArenaReferences(), 0);
@@ -98,11 +105,16 @@ const shiftedStrings = sourcePacket.strings.map((chunk) => {
 const shiftedOwner = native.registerArena(shiftedWords, shiftedStrings);
 assert.equal(shiftedOwner.render(packetSource.at).text, packetSource.expected);
 shiftedOwner.dispose();
-const resizable = new ArrayBuffer(sourcePacket.chunks[0].byteLength, {
-  maxByteLength: sourcePacket.chunks[0].byteLength + 16
+const recordChunk = packetSource.chunk;
+const stringChunk = packetSource.stringChunk;
+const resizable = new ArrayBuffer(sourcePacket.chunks[recordChunk].byteLength, {
+  maxByteLength: sourcePacket.chunks[recordChunk].byteLength + 16
 });
-new Uint32Array(resizable).set(sourcePacket.chunks[0]);
-const resizedOwner = native.registerArena([new Uint32Array(resizable)], sourcePacket.strings);
+new Uint32Array(resizable).set(sourcePacket.chunks[recordChunk]);
+const resizedOwner = native.registerArena(
+  sourcePacket.chunks.map((chunk, n) => (n === recordChunk ? new Uint32Array(resizable) : chunk)),
+  sourcePacket.strings
+);
 assert.equal(resizedOwner.render(packetSource.at).text, packetSource.expected);
 resizable.resize(0);
 assert.throws(() => resizedOwner.render(packetSource.at));
@@ -113,19 +125,17 @@ for (const open of [-1, 0.5, sourcePacket.chunks.length, Infinity]) {
   assert.throws(() => native.registerArena(sourcePacket.chunks, sourcePacket.strings, open));
 }
 assert.equal(native.heldArenaReferences(), 0, 'invalid open indices retain no buffers');
-const growing = native.registerArena(sourcePacket.chunks, sourcePacket.strings, 0, 0);
-const renderPrefix = (words = sourcePacket.chunks[0].length, bytes = sourcePacket.strings[0].length) =>
-  growing.render(packetSource.at, words, bytes);
+const growing = native.registerArena(sourcePacket.chunks, sourcePacket.strings, recordChunk, stringChunk);
+const recordWords = sourcePacket.chunks[recordChunk].length;
+const stringBytes = sourcePacket.strings[stringChunk].length;
+const renderPrefix = (words = recordWords, bytes = stringBytes) => growing.render(packetSource.at, words, bytes);
 assert.equal(renderPrefix().text, packetSource.expected);
-assert.equal(
-  growing.renderRecord(packetSource.at, sourcePacket.chunks[0].length, sourcePacket.strings[0].length).text,
-  packetSource.expected
-);
-assert.throws(() => growing.renderRecord(packetSource.at, 0.5, sourcePacket.strings[0].length), /exact u32/);
+assert.equal(growing.renderRecord(packetSource.at, recordWords, stringBytes).text, packetSource.expected);
+assert.throws(() => growing.renderRecord(packetSource.at, 0.5, stringBytes), /exact u32/);
 assert.throws(() => growing.render(packetSource.at), /written length/);
 assert.throws(() => renderPrefix(0));
 assert.throws(() => renderPrefix(undefined, 0));
-assert.throws(() => renderPrefix(sourcePacket.chunks[0].length + 1), /written prefix/);
+assert.throws(() => renderPrefix(recordWords + 1), /written prefix/);
 assert.throws(() => renderPrefix(0.5), /exact u32/);
 growing.dispose();
 
@@ -186,21 +196,12 @@ for (const mode of ['object', 'arena']) {
   assert.equal(second.name().text(), 'shared');
   const replaced = first.$with.name(renamed);
   assert.notEqual(store.identity(first), store.identity(replaced));
-  if (mode === 'arena') {
-    assert.notEqual(records.FunctionItemNode.function_modifiers.inline, undefined, 'function_modifiers is a bounded child');
-    assert.equal(
-      store.identity(replaced.function_modifiers()),
-      store.identity(replaced) + records.FunctionItemNode.function_modifiers.word + grammarNative.CELL_INLINE_HEADER_WORDS
-    );
-    assert.notEqual(store.identity(replaced.function_modifiers()), store.identity(function_modifiers));
-    assert.equal(
-      replaced.function_modifiers().render().text,
-      function_modifiers.render().text,
-      'a bounded child copies its immutable value'
-    );
-  } else {
-    assert.equal(store.identity(replaced.function_modifiers()), store.identity(function_modifiers));
-  }
+  assert.notEqual(records.FunctionItemNode.function_modifiers.inline, undefined, 'function_modifiers is a bounded child');
+  assert.equal(
+    store.identity(replaced.function_modifiers()),
+    store.identity(function_modifiers),
+    'a built record holds a bounded child by reference, as any child'
+  );
   assert.equal(records.FunctionItemNode.parameters.inline, undefined, 'parameters is held by reference');
   assert.equal(store.identity(replaced.parameters()), store.identity(parameters));
   assert.equal(store.identity(replaced.body()), store.identity(body));
@@ -256,10 +257,7 @@ for (const mode of ['object', 'arena']) {
     }
     const copy = afterGrowth.chunks.map((chunk) => Uint32Array.from(chunk));
     const at = store.identity(first);
-    const shift = grammarNative.ARENA_CHUNK_SHIFT;
-    const chunk = Math.floor(at / 2 ** shift);
-    const word = at % 2 ** shift;
-    copy[chunk][word + records.FunctionItemNode.body.word] = 0xffffffff;
+    copy[chunkAt(at)][wordAt(at) + records.FunctionItemNode.body.built] = 1;
     assert.throws(() => native.renderBuilt(copy, afterGrowth.strings, at), /tag|record|cell/);
     const shared = afterGrowth.chunks.map((chunk) => new Uint32Array(new SharedArrayBuffer(chunk.byteLength)));
     shared.forEach((chunk, index) => chunk.set(afterGrowth.chunks[index]));
@@ -293,13 +291,13 @@ assert(
 const width = 2 ** grammarNative.ARENA_CHUNK_SHIFT;
 const { build: boundary } = setup('arena', width);
 boundary.identifier('x');
-const full = boundary.identifier('世'.repeat((width - 1) / 3));
-assert.equal(full.text().length, (width - 1) / 3);
+const full = boundary.identifier('世'.repeat((width - 4) / 3));
+assert.equal(full.text().length, (width - 4) / 3, 'a leaf entry, its head and its text, fills a chunk exactly');
 const empty = boundary.identifier('');
 assert.equal(empty.text(), '');
 assert.equal(empty.render().text, '');
 const { build: runs } = setup('arena');
-const unitCount = Math.floor(width / 5) + 2;
+const unitCount = width;
 const long = runs.function_modifiers({ modifier: Array(unitCount).fill(TSKindId.AsyncKeyword) });
 assert.equal(long.modifier().length, unitCount);
 assert.equal(long.render().text.split('async').length - 1, unitCount);
