@@ -90,6 +90,29 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ ...fn, name: ['f'] })).toThrow(/declaration\.function's name holds one value, not a list/);
 	});
 
+	it('builds a number $value through the arm that takes its type, and literal.number through its nearest descendants', () => {
+		expect(render(runtime.build({ $path: 'literal.number', $value: 42 }))).toBe('42');
+		expect(render(runtime.build({ $path: 'literal.number', $value: 1.5 }))).toBe('1.5');
+		expect(render(runtime.build({ $path: 'literal.number', $value: 2n ** 70n }))).toBe('1180591620717411303424');
+		expect(render(runtime.build({ $path: 'literal.number.integer.hex', $value: 255 }))).toBe('0xff');
+		expect(() => runtime.build({ $path: 'literal.number.integer', $value: 1.5 })).toThrow(/literal\.number\.integer takes an integer .* not 1\.5/);
+		expect(() => runtime.build({ $path: 'literal.number', content: '1' })).toThrow(/literal\.number is not a path rust builds/);
+	});
+
+	it('refuses NaN, the infinities and a negative number, since no rust literal spells them', () => {
+		expect(() => runtime.build({ $path: 'literal.number', $value: Number.NaN })).toThrow(/literal\.number: no rust literal spells NaN/);
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: -Infinity })).toThrow(/literal\.number\.float: no rust literal spells -Infinity/);
+		expect(() => runtime.build({ $path: 'literal.number', $value: -5 })).toThrow(/literal\.number: integer_literal_decimal spells no sign, so it cannot build -5/);
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: -1.5 })).toThrow(/float_literal spells no sign, so it cannot build -1\.5/);
+	});
+
+	it('builds a boolean by the value its binding declares, and a primitive type by its text', () => {
+		expect(runtime.build({ $path: 'literal.boolean', $value: true })).toBe(rust.kinds.TrueKeyword);
+		expect(runtime.build({ $path: 'literal', $value: false })).toBe(rust.kinds.FalseKeyword);
+		expect(runtime.build({ $path: 'type.primitive', $value: 'u8' })).toBe(rust.kinds.U8Keyword);
+		expect(() => runtime.build({ $path: 'type.primitive', $value: 'u9' })).toThrow(/type\.primitive builds this structure \(value "u9"\)/);
+	});
+
 	it('refuses a path the language does not build, naming the path and the language', () => {
 		expect(() => runtime.build({ $path: 'declaration.class', name: 'C' })).toThrow(/declaration\.class.*rust/);
 	});

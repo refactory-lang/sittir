@@ -415,7 +415,7 @@
 (string_fragment) @literal.string.text
 (template_string) @literal.string.template
 (regex) @literal.regex
-((number) @literal.number (#set! default number_float_point))
+(number) @literal.number
 (literal_type_negative_number argument: (_) @value) @literal.number.negative
 (number_decimal) @literal.number.integer
 (number_hex) @literal.number.integer.hex
@@ -428,8 +428,8 @@
 (number_float_point) @literal.number.float
 (number_float_leading_point) @literal.number.float.leading_point
 (number_float_scientific) @literal.number.float.scientific
-(true) @literal.boolean.true
-(false) @literal.boolean.false
+((true) @literal.boolean.true (#set! value true))
+((false) @literal.boolean.false (#set! value false))
 (null) @literal.null
 (undefined) @literal.null.undefined
 (regex_pattern) @literal.regex.pattern

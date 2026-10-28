@@ -11,7 +11,8 @@ import type {
 	PortablePreset,
 	PortableSeat,
 	PortableSlotStep,
-	PortableStructure
+	PortableStructure,
+	PortableValueBuild
 } from '@sittir/types';
 import { hasKind } from './classify.ts';
 
@@ -107,6 +108,14 @@ const memberKeys = (structure: PortableStructure): readonly string[] => Object.k
 
 const routeText = (steps: readonly PortableSlotStep[]): string => steps.map((step) => step.key).join('.');
 
+const scalarOf = (structure: PortableStructure): number | bigint | undefined =>
+	typeof structure.$value === 'number' || typeof structure.$value === 'bigint' ? structure.$value : undefined;
+
+const integral = (value: number | bigint): boolean => typeof value === 'bigint' || Number.isSafeInteger(value);
+
+const spelledValue = (value: PortableStructure['$value']): string =>
+	typeof value === 'string' ? `"${value}"` : typeof value === 'bigint' ? `${value}n` : Object.is(value, -0) ? '-0' : String(value);
+
 export function portableBuilder({ language, table, builders, kindName, readsAs }: PortableBuildContext): (structure: PortableStructure) => unknown {
 	const nameOf = (kind: number): string => kindName(kind) ?? `kind ${kind}`;
 	const builderAt = (key: string): Builder => {
@@ -160,12 +169,30 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (!built.has(text)) built.set(text, call(leaf, text));
 			return built.get(text);
 		};
-		const pathOf = (structure: PortableStructure): PortableBuildPath | undefined =>
-			Object.hasOwn(table.paths, structure.$path) ? table.paths[structure.$path] : undefined;
+		const ownPath = (name: string): PortableBuildPath | undefined => (Object.hasOwn(table.paths, name) ? table.paths[name] : undefined);
+		const valueBuildOf = (structure: PortableStructure): PortableValueBuild | undefined =>
+			table.values !== undefined && Object.hasOwn(table.values, structure.$path) ? table.values[structure.$path] : undefined;
+		const valueKeyOf = (value: PortableStructure['$value'], build: PortableValueBuild): keyof PortableValueBuild | undefined => {
+			if (typeof value === 'boolean') return value ? 'true' : 'false';
+			if (typeof value === 'bigint') return 'integer';
+			if (typeof value !== 'number') return undefined;
+			return Number.isSafeInteger(value) && build.integer !== undefined ? 'integer' : 'float';
+		};
+		const pathOf = (structure: PortableStructure): PortableBuildPath | undefined => {
+			const own = ownPath(structure.$path);
+			const build = valueBuildOf(structure);
+			if ((own !== undefined && own.arms.length > 0) || build === undefined) return own;
+			const key = valueKeyOf(structure.$value, build);
+			const target = key === undefined ? undefined : build[key];
+			return target === undefined ? own : ownPath(target);
+		};
 		const builtPathOf = (structure: PortableStructure): PortableBuildPath => {
 			const path = pathOf(structure);
-			if (path === undefined) throw new Error(`portable build: ${structure.$path} is not a path ${language} builds`);
-			return path;
+			if (path !== undefined) return path;
+			const build = valueBuildOf(structure);
+			if (build !== undefined && structure.$value !== undefined)
+				throw new Error(`portable build: ${structure.$path} builds only ${Object.keys(build).join(' and ')} values in ${language}, not ${spelledValue(structure.$value)}`);
+			throw new Error(`portable build: ${structure.$path} is not a path ${language} builds`);
 		};
 		const slotsOf = (seats: readonly PortableSeat[]): string => [...new Set(seats.map(({ at: [holder, key] }) => `${nameOf(holder)}.${key}`))].sort().join(', ');
 		const seatOf = (arm: PortableBuildArm, seats: readonly PortableSeat[]): PortableSeat | undefined =>
@@ -187,6 +214,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if ('absent' in test) return test.required.every((name) => structure[name] !== undefined) && test.absent.every((name) => structure[name] === undefined);
 			if ('flag' in test) return (structure.$flags ?? []).includes(test.flag) === test.set;
 			if ('text' in test) return structure.$value === test.text;
+			if ('boolean' in test) return structure.$value === test.boolean;
 			if ('variant' in test) return test.default === true;
 			const value = structure[test.member];
 			if (value === undefined) return true;
@@ -197,14 +225,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const memo = picks.get(structure) ?? picks.set(structure, new Map()).get(structure)!;
 			if (memo.has(seats)) return memo.get(seats);
 			memo.set(seats, undefined);
-			let picked: Picked | undefined;
-			for (const arm of pathOf(structure)?.arms ?? []) {
+			const open = (pathOf(structure)?.arms ?? []).flatMap((arm): Picked[] => {
 				const seat = seats === undefined ? undefined : seatOf(arm, seats);
-				if (seats === undefined ? arm.holders !== undefined : seat === undefined) continue;
-				if (!arm.when.every((test) => passes(test, arm, structure))) continue;
-				picked = { arm, seat };
-				break;
-			}
+				return (seats === undefined ? arm.holders !== undefined : seat === undefined) ? [] : [{ arm, seat }];
+			});
+			const scalar = scalarOf(structure);
+			const scalars = scalar === undefined ? [] : open.filter(({ arm }) => arm.scalar !== undefined);
+			const picked =
+				scalars.length > 0
+					? (scalars.find(({ arm }) => arm.scalar === (integral(scalar!) ? 'integer' : 'float')) ?? scalars[0])
+					: open.find(({ arm }) => arm.when.every((test) => passes(test, arm, structure)));
 			memo.set(seats, picked);
 			return picked;
 		};
@@ -219,9 +249,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				throw new Error(`portable build: no ${language} form of ${structure.$path} sits in ${slotsOf(seats)}`);
 			const members = memberKeys(structure);
 			const flags = structure.$flags ?? [];
-			throw new Error(
-				`portable build: no ${language} form of ${structure.$path} builds this structure (${members.length === 0 ? 'no members' : `members ${members.join(', ')}`}${flags.length === 0 ? '' : `, flags ${flags.join(', ')}`})`
-			);
+			const stated = [
+				...(structure.$value === undefined ? [] : [`value ${spelledValue(structure.$value)}`]),
+				...(members.length === 0 && structure.$value === undefined ? ['no members'] : members.length === 0 ? [] : [`members ${members.join(', ')}`]),
+				...(flags.length === 0 ? [] : [`flags ${flags.join(', ')}`])
+			];
+			throw new Error(`portable build: no ${language} form of ${structure.$path} builds this structure (${stated.join(', ')})`);
 		};
 
 		const enter = (frame: Frame, builder: string, mounted: PortableMount, create: boolean): Reached | undefined => {
@@ -350,12 +383,33 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (placed.mount !== undefined) mountOn(owner, placed, path);
 			else set(owner, key, placed.value, path);
 		};
+		const decimalParts = (value: number, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
+			const has = (name: string): boolean => arm.numeric!.includes(name);
+			const member = (name: string): PortableMemberStep | undefined => arm.members.find((m) => m.name === name);
+			const cannot = (): never => {
+				throw new Error(`portable build: ${path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(value)}`);
+			};
+			const [, integer, fraction, sign, exponent] = /^(\d+)(?:\.(\d+))?(?:e([+-])(\d+))?$/.exec(String(value)) ?? cannot();
+			const parts = new Map<string, string>();
+			if (has('integer')) parts.set('integer', integer!);
+			else if (integer !== '0') cannot();
+			if (has('fraction')) parts.set('fraction', fraction ?? '0');
+			else if (fraction !== undefined) cannot();
+			const required = member('exponent')?.steps.every((step) => step.optional !== true) === true;
+			const written = exponent ?? (has('exponent') && required ? '0' : undefined);
+			if (written === undefined) return parts;
+			if (!has('exponent')) cannot();
+			parts.set('exponent', written);
+			if (member('marker') !== undefined) parts.set('marker', 'e');
+			if (sign === '-' && member('sign') !== undefined) parts.set('sign', '-');
+			return parts;
+		};
 		const takesList = (route: PortableMemberStep): boolean => route.multiple || route.seats.some((seat) => seat.many === true);
 		const seats = (route: PortableMemberStep, item: unknown): boolean =>
 			isStructure(item)
 				? pick(item, route.seats) !== undefined
 				: typeof item === 'string'
-					? route.seats.some((seat) => seat.leaf !== undefined)
+					? route.seats.some((seat) => seat.leaf !== undefined || seat.kinds.length === 0)
 					: !hasKind(item) || route.seats.some((seat) => seat.kinds.includes(item.$type));
 		const admits = (route: PortableMemberStep, value: unknown): boolean =>
 			Array.isArray(value) ? takesList(route) && value.every((item) => seats(route, item)) : seats(route, value);
@@ -400,6 +454,19 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const values = new Map<string, unknown>(memberKeys(structure).flatMap((name) => (holes.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const])));
 			const spelled = templated(arm, structure);
 			if (spelled !== undefined) values.set(arm.template!.member, spelled);
+			const scalar = scalarOf(structure);
+			if (arm.scalar !== undefined && scalar !== undefined) {
+				if (typeof scalar === 'number' && !Number.isFinite(scalar)) throw new Error(`portable build: ${structure.$path}: no ${language} literal spells ${spelledValue(scalar)}`);
+				if (scalar < 0 || Object.is(scalar, -0))
+					throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} spells no sign, so it cannot build ${spelledValue(scalar)}; build the negation of its magnitude`);
+				if (arm.scalar === 'float' ? typeof scalar === 'bigint' : !integral(scalar))
+					throw new Error(
+						`portable build: ${structure.$path} takes ${arm.scalar === 'float' ? 'a float (a number)' : 'an integer (a safe integer or a bigint)'} in ${language}, not ${spelledValue(scalar)}`
+					);
+				if (arm.numeric === undefined) frame.input = scalar;
+				else if (arm.numeric.length === 1) values.set(arm.numeric[0]!, scalar);
+				else for (const [name, part] of decimalParts(Number(scalar), arm, structure.$path)) values.set(name, part);
+			}
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
 				if (routes.length === 0) throw new Error(`portable build: ${structure.$path}: ${nameOf(arm.kind)} has no member ${name}`);

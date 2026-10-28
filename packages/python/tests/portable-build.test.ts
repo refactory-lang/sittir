@@ -19,6 +19,19 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ $path: 'clause.catch', type: ['E', 'F'], body }))).toBe('except E, F: pass\n');
 	});
 
+	it('builds a float $value split into its form\'s parts, and a boolean by its declared value', () => {
+		expect(render(runtime.build({ $path: 'literal.number.float', $value: 2 }))).toBe('2.0');
+		expect(render(runtime.build({ $path: 'literal.number.float', $value: 1.5 }))).toBe('1.5');
+		expect(render(runtime.build({ $path: 'literal.number.float.scientific', $value: 1e21 }))).toBe('1e21');
+		expect(render(runtime.build({ $path: 'literal.number.integer.hex', $value: 255 }))).toBe('0xff');
+		expect(runtime.build({ $path: 'literal.boolean', $value: false })).toBe(python.kinds.False);
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: Number.NaN })).toThrow(/literal\.number\.float: no python literal spells NaN/);
+	});
+
+	it('takes text as given at a slot that holds text', () => {
+		expect(render(runtime.build({ $path: 'literal.number.float', integer: '1', fraction: '5' }))).toBe('1.5');
+	});
+
 	it('takes a route only beside the members that complete the kind it enters', () => {
 		expect(() => runtime.build({ $path: 'clause.catch', name: 'e', body: [{ $path: 'statement.empty' }] })).toThrow(/clause\.catch: name builds only beside type/);
 		expect(render(runtime.build({ $path: 'clause.resource.item', value: 'a', name: 'b' }))).toBe('a as b');

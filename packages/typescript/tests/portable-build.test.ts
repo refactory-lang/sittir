@@ -27,6 +27,13 @@ describe('the portable build through the strict table', () => {
 		expect(render(runtime.build({ ...member, $flags: ['privateName'] }))).toBe('a.#b');
 	});
 
+	it('builds a number $value by its type at literal.number, a hex integer through its numeric slot, and a boolean by its declared value', () => {
+		expect((runtime.build({ $path: 'literal.number', $value: 1.5 }) as { $type: number }).$type).toBe(typescript.kinds.NumberFloatPoint);
+		expect(render(runtime.build({ $path: 'literal.number', $value: 1.5 }))).toBe('1.5');
+		expect(render(runtime.build({ $path: 'literal.number.integer.hex', $value: 255 }))).toBe('0xff');
+		expect(runtime.build({ $path: 'literal.boolean', $value: true })).toBe(typescript.kinds.True);
+	});
+
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
 		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x');
 		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };

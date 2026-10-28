@@ -11391,7 +11391,13 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'macro_definition',
+							value: 416,
+							default: true
+						}
+					]
 				},
 				{
 					kind: 418,
@@ -11443,7 +11449,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'macro_definition',
+							value: 418
+						}
+					]
 				},
 				{
 					kind: 417,
@@ -11495,7 +11506,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'macro_definition',
+							value: 417
+						}
+					]
 				}
 			]
 		},
@@ -22230,7 +22246,13 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'token_tree',
+							value: 408,
+							default: true
+						}
+					]
 				},
 				{
 					kind: 410,
@@ -22270,7 +22292,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'token_tree',
+							value: 410
+						}
+					]
 				},
 				{
 					kind: 409,
@@ -22310,7 +22337,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'token_tree',
+							value: 409
+						}
+					]
 				}
 			]
 		},
@@ -22445,7 +22477,13 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'delim_token_tree',
+							value: 411,
+							default: true
+						}
+					]
 				},
 				{
 					kind: 413,
@@ -22485,7 +22523,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'delim_token_tree',
+							value: 413
+						}
+					]
 				},
 				{
 					kind: 412,
@@ -22525,7 +22568,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'delim_token_tree',
+							value: 412
+						}
+					]
 				}
 			]
 		},
@@ -22750,7 +22798,13 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'token_tree_pattern',
+							value: 405,
+							default: true
+						}
+					]
 				},
 				{
 					kind: 407,
@@ -22790,7 +22844,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'token_tree_pattern',
+							value: 407
+						}
+					]
 				},
 				{
 					kind: 406,
@@ -22830,7 +22889,12 @@ export const build: PortableBuildTable = {
 					],
 					presets: [],
 					flags: {},
-					when: []
+					when: [
+						{
+							variant: 'token_tree_pattern',
+							value: 406
+						}
+					]
 				}
 			]
 		},
@@ -27811,7 +27875,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							text: 'true'
+							boolean: true
 						}
 					]
 				},
@@ -27822,7 +27886,7 @@ export const build: PortableBuildTable = {
 					flags: {},
 					when: [
 						{
-							text: 'false'
+							boolean: false
 						}
 					]
 				}
@@ -28040,6 +28104,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 141,
 					builder: 'integerLiteralDecimal',
+					numeric: ['content'],
 					members: [
 						{
 							name: 'content',
@@ -28086,6 +28151,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 143,
 					builder: 'integerLiteralBinary',
+					numeric: ['content'],
 					members: [
 						{
 							name: 'content',
@@ -28132,6 +28198,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 142,
 					builder: 'integerLiteralHex',
+					numeric: ['content'],
 					members: [
 						{
 							name: 'content',
@@ -28178,6 +28245,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 144,
 					builder: 'integerLiteralOctal',
+					numeric: ['content'],
 					members: [
 						{
 							name: 'content',
@@ -32162,6 +32230,18 @@ export const build: PortableBuildTable = {
 					when: []
 				}
 			]
+		}
+	},
+	values: {
+		literal: {
+			integer: 'literal.number.integer',
+			float: 'literal.number.float',
+			true: 'literal.boolean',
+			false: 'literal.boolean'
+		},
+		'literal.number': {
+			integer: 'literal.number.integer',
+			float: 'literal.number.float'
 		}
 	}
 };

@@ -189,12 +189,14 @@ export function collectInteriors(nodeMap: { readonly nodes: ReadonlyMap<string, 
 	return out;
 }
 
-export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly whole: string };
+export type NumberShape = { readonly base: 2 | 8 | 10 | 16; readonly prefix: string } | { readonly base: 'float'; readonly whole: string; readonly complete: boolean };
 export type NumberSignature = 'decimal' | 'hex' | 'octal' | 'binary' | 'float';
 
 const FLOAT_PROBES = ['1.5', '.5', '1e5', '1.5e5'] as const;
 
 const FLOAT_WHOLE_SPELLINGS = ['.0', '.', 'e0'] as const;
+
+const FLOAT_EVERY_PART = '1.5e5';
 
 const INTEGER_BASES: readonly { readonly base: 2 | 8 | 10 | 16; readonly accepts: string; readonly rejects: string; readonly prefixes: readonly string[] }[] = [
 	{ base: 16, accepts: 'ff', rejects: 'g', prefixes: ['0x', '0X', ''] },
@@ -213,7 +215,7 @@ export function numberShape(pattern: RegExp): NumberShape | undefined {
 		}
 	}
 	if (pattern.test('a') || !FLOAT_PROBES.some((text) => pattern.test(text))) return undefined;
-	return { base: 'float', whole: FLOAT_WHOLE_SPELLINGS.find((spelling) => pattern.test(`1${spelling}`)) ?? '' };
+	return { base: 'float', whole: FLOAT_WHOLE_SPELLINGS.find((spelling) => pattern.test(`1${spelling}`)) ?? '', complete: pattern.test(FLOAT_EVERY_PART) };
 }
 
 const SIGNATURE_OF_BASE = { 2: 'binary', 8: 'octal', 10: 'decimal', 16: 'hex', float: 'float' } as const;
@@ -234,14 +236,18 @@ function leafGuard(kind: string, node: AssembledNode): RegExp | undefined {
 	return node instanceof AssembledPattern ? anchoredLeafRegex(kind, node.textPattern) : undefined;
 }
 
-export function numberSignatures(nodeMap: NodeMap): ReadonlyMap<string, NumberSignature> {
-	const out = new Map<string, NumberSignature>();
+export function numberShapes(nodeMap: NodeMap): ReadonlyMap<string, NumberShape> {
+	const out = new Map<string, NumberShape>();
 	for (const [kind, node] of nodeMap.nodes) {
 		const guard = leafGuard(kind, node);
-		const signature = guard === undefined ? undefined : numberSignature(guard);
-		if (signature !== undefined) out.set(kind, signature);
+		const shape = guard === undefined ? undefined : numberShape(guard);
+		if (shape !== undefined) out.set(kind, shape);
 	}
 	return out;
+}
+
+export function numberSignatures(nodeMap: NodeMap): ReadonlyMap<string, NumberSignature> {
+	return new Map([...numberShapes(nodeMap)].map(([kind, shape]) => [kind, SIGNATURE_OF_BASE[shape.base]]));
 }
 
 export function numericLeafKinds(nodeMap: NodeMap): readonly string[] {

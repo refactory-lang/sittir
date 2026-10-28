@@ -550,13 +550,13 @@ export default grammar(enrich(base), wire({
 		// repeat($._delim_tokens))` and siblings) come from enrich's
 		// repeat-union field promotion (dsl/enrich.ts) — no override
 		// needed here; only the visible-variant splits remain.
-		token_tree_pattern: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
-		token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
-		delim_token_tree: { 0: variant('paren'), 1: variant('bracket'), 2: variant('brace') },
+		token_tree_pattern: { 0: variant('paren', { default: true }), 1: variant('bracket'), 2: variant('brace') },
+		token_tree: { 0: variant('paren', { default: true }), 1: variant('bracket'), 2: variant('brace') },
+		delim_token_tree: { 0: variant('paren', { default: true }), 1: variant('bracket'), 2: variant('brace') },
 
 		field_pattern: { '1/0': field('mutable'), '2/0': variant('shorthand'), '2/1': variant('named') },
 
-		macro_definition: { '2/0': variant('paren'), '2/1': variant('bracket'), '2/2': variant('brace') },
+		macro_definition: { '2/0': variant('paren', { default: true }), '2/1': variant('bracket'), '2/2': variant('brace') },
 
 		range_pattern: [
 			{

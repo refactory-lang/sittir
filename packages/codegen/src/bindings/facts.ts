@@ -67,7 +67,7 @@ export interface ClaimFact {
 	readonly children: readonly ChildFact[];
 	readonly flag?: string;
 	readonly match?: LeadMatch;
-	readonly default?: string;
+	readonly value?: boolean;
 }
 
 export interface UnclaimedFact {

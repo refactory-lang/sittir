@@ -21756,6 +21756,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 157,
 					builder: 'numberFloatLeadingPoint',
+					numeric: ['fraction', 'exponent'],
 					members: [
 						{
 							name: 'fraction',
@@ -21833,6 +21834,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 156,
 					builder: 'numberFloatPoint',
+					numeric: ['integer', 'fraction', 'exponent'],
 					members: [
 						{
 							name: 'integer',
@@ -21927,6 +21929,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 158,
 					builder: 'numberFloatScientific',
+					numeric: ['integer', 'exponent'],
 					members: [
 						{
 							name: 'integer',
@@ -22140,6 +22143,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 156,
 					builder: 'numberFloatPoint',
+					numeric: ['integer', 'fraction', 'exponent'],
 					members: [
 						{
 							name: 'integer',
@@ -22234,6 +22238,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 157,
 					builder: 'numberFloatLeadingPoint',
+					numeric: ['fraction', 'exponent'],
 					members: [
 						{
 							name: 'fraction',
@@ -22312,6 +22317,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 158,
 					builder: 'numberFloatScientific',
+					numeric: ['integer', 'exponent'],
 					members: [
 						{
 							name: 'integer',
@@ -26463,6 +26469,18 @@ export const build: PortableBuildTable = {
 					when: []
 				}
 			]
+		}
+	},
+	values: {
+		literal: {
+			integer: 'literal.number',
+			float: 'literal.number',
+			true: 'literal.boolean.true',
+			false: 'literal.boolean.false'
+		},
+		'literal.boolean': {
+			true: 'literal.boolean.true',
+			false: 'literal.boolean.false'
 		}
 	}
 };

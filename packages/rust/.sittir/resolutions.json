@@ -1,5 +1,5 @@
 {
-	"grammarHash": "d8f5156b07bae35586bf972655679ef87d51fa3f57ba8d19e0135d5f987e42cd",
+	"grammarHash": "3328a664b49f1f26eee92f62ab068f53deefe7046b1b5aea63cb8f4f0fd97e49",
 	"resolutions": [
 		{"resolution":{"kind":"AddConflict","symbols":["_attributed_argument"]},"step":"default","sourceChains":[["_attributed_argument"]],"conflict":{"symbolSequence":["'['","tuple_expression_repeat1","_expression"],"lookahead":"']'","interpretations":["_attributed_argument","_attributed_argument"]}},
 		{"resolution":{"kind":"AddConflict","symbols":["_pattern","_primitive_type"]},"step":"upstream-declared","sourceChains":[["_pattern"],["_primitive_type","_type"]],"conflict":{"symbolSequence":["'fn'","identifier","'('","'('","'u8'"],"lookahead":"')'","interpretations":["_pattern","_primitive_type"]}},
@@ -12,7 +12,7 @@
 		{"resolution":{"kind":"AddConflict","symbols":["visibility_modifier_pub"]},"step":"upstream-declared","sourceChains":[["visibility_modifier_pub","visibility_modifier"]],"conflict":{"symbolSequence":["'struct'","identifier","'('","'pub'"],"lookahead":"'('","interpretations":["visibility_modifier_pub","visibility_modifier_pub"]}}
 	],
 	"bound": {
-		"grammarHash": "c7c58146e5b44f8b96206ff6f0ef8b8c8b2621654c772491216d4e48953511d9",
+		"grammarHash": "1aa08b87025717c3ec69194f0ac49b3e6c9c4ff9c8eb97316cfa4b2c07327ddb",
 		"resolutions": []
 	}
 }

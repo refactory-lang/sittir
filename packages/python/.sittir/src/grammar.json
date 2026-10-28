@@ -1481,7 +1481,8 @@
           },
           "annotations": {
             "variant": "bare",
-            "variantOf": "with_clause"
+            "variantOf": "with_clause",
+            "default": true
           }
         },
         {

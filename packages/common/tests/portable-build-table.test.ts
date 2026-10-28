@@ -111,8 +111,10 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'declaration.variable', rust.kinds.LetDeclaration).when).toContainEqual({ flag: 'static', set: false });
 	});
 
-	it('takes a tie the derived steps leave from the default the bindings declare', () => {
+	it("takes a tie the derived steps leave from the grammar's default arm", () => {
 		expect(armsOf('python', 'clause.resource').map((arm) => arm.kind)).toEqual([python.kinds.WithClauseBare, python.kinds.WithClauseParen]);
+		expect(armOf('python', 'clause.resource', python.kinds.WithClauseBare).when).toContainEqual({ variant: 'with_clause', value: python.kinds.WithClauseBare, default: true });
+		expect(armOf('rust', 'declaration.macro', rust.kinds.MacroDefinitionParen).when).toContainEqual({ variant: 'macro_definition', value: rust.kinds.MacroDefinitionParen, default: true });
 	});
 
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
@@ -217,6 +219,12 @@ describe('the portable build table', () => {
 			for (const { arms } of Object.values(table.paths)) for (const arm of arms) for (const test of arm.when) expect(Object.keys(test)).not.toContain('scalar');
 	});
 
+	it('takes the float form that spells every float, for a $value and first among the forms a member structure fits', () => {
+		const kinds = armsOf('typescript', 'literal.number').map((arm) => arm.kind);
+		expect(armOf('typescript', 'literal.number', typescript.kinds.NumberFloatPoint).scalar).toBe('float');
+		expect(kinds.indexOf(typescript.kinds.NumberFloatPoint)).toBeLessThan(kinds.indexOf(typescript.kinds.NumberFloatScientific));
+	});
+
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__' });
 		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
@@ -227,6 +235,19 @@ describe('the portable build table', () => {
 			presets: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.OptionalChain }],
 			unset: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.Dot }]
 		});
+	});
+
+	it('builds a $value at a path with no arms through the nearest descendant that takes its type', () => {
+		expect(tables.rust.table.values?.['literal.number']).toEqual({ integer: 'literal.number.integer', float: 'literal.number.float' });
+		expect(tables.python.table.values?.['literal.boolean']).toEqual({ true: 'literal.boolean.true', false: 'literal.boolean.false' });
+		expect(tables.typescript.table.values?.['literal.number']).toBeUndefined();
+	});
+
+	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric members", () => {
+		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
+		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toEqual(['content']);
+		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual(['integer', 'fraction', 'exponent']);
+		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toBeUndefined();
 	});
 
 	it('reaches a kind a flag presets only through the flag', () => {

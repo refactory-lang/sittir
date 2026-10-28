@@ -217,6 +217,7 @@ export interface SubBuilderRowKind {
 	'declarationStatement.impl.semi': TSKindId.ImplItemSemi;
 	'declarationStatement.innerAttribute': TSKindId.InnerAttributeItem;
 	'declarationStatement.let': TSKindId.LetDeclaration;
+	'declarationStatement.macro': TSKindId.MacroDefinitionParen;
 	'declarationStatement.macro.brace': TSKindId.MacroDefinitionBrace;
 	'declarationStatement.macro.bracket': TSKindId.MacroDefinitionBracket;
 	'declarationStatement.macro.paren': TSKindId.MacroDefinitionParen;
@@ -231,6 +232,7 @@ export interface SubBuilderRowKind {
 	'declarationStatement.type': TSKindId.TypeItem;
 	'declarationStatement.union': TSKindId.UnionItem;
 	'declarationStatement.use': TSKindId.UseDeclaration;
+	delimTokenTree: TSKindId.DelimTokenTreeParen;
 	'delimTokenTree.brace': TSKindId.DelimTokenTreeBrace;
 	'delimTokenTree.bracket': TSKindId.DelimTokenTreeBracket;
 	'delimTokenTree.paren': TSKindId.DelimTokenTreeParen;
@@ -250,6 +252,7 @@ export interface SubBuilderRowKind {
 	'integerLiteral.decimal': TSKindId.IntegerLiteralDecimal;
 	'integerLiteral.hex': TSKindId.IntegerLiteralHex;
 	'integerLiteral.octal': TSKindId.IntegerLiteralOctal;
+	macroDefinition: TSKindId.MacroDefinitionParen;
 	'macroDefinition.brace': TSKindId.MacroDefinitionBrace;
 	'macroDefinition.bracket': TSKindId.MacroDefinitionBracket;
 	'macroDefinition.paren': TSKindId.MacroDefinitionParen;
@@ -274,9 +277,11 @@ export interface SubBuilderRowKind {
 	'structItem.brace': TSKindId.StructItemBrace;
 	'structItem.tuple': TSKindId.StructItemTuple;
 	'structItem.unit': TSKindId.StructItemUnit;
+	tokenTree: TSKindId.TokenTreeParen;
 	'tokenTree.brace': TSKindId.TokenTreeBrace;
 	'tokenTree.bracket': TSKindId.TokenTreeBracket;
 	'tokenTree.paren': TSKindId.TokenTreeParen;
+	tokenTreePattern: TSKindId.TokenTreePatternParen;
 	'tokenTreePattern.brace': TSKindId.TokenTreePatternBrace;
 	'tokenTreePattern.bracket': TSKindId.TokenTreePatternBracket;
 	'tokenTreePattern.paren': TSKindId.TokenTreePatternParen;
