@@ -1,7 +1,7 @@
 import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
-import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, type ChangedEdges, type KindView } from './node-data.ts';
+import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
@@ -51,6 +51,7 @@ export interface BuiltChunk<A extends WritableWords | Uint8Array> {
 	readonly data: A;
 	readonly meta: Uint8Array;
 	readonly freed: readonly number[];
+	readonly sealed?: { readonly chunk: number; readonly meta: Uint8Array };
 }
 
 export interface BuiltRecords {
@@ -90,6 +91,7 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	readonly #make: (length: number) => BuiltChunk<A>;
 	readonly #opened: (chunk: number, data: A, meta: Uint8Array) => void;
 	readonly #freed: (chunks: readonly number[]) => void;
+	readonly #sealed: ((chunk: number, meta: Uint8Array) => void) | undefined;
 	readonly #empty: A;
 	readonly #first: number;
 	readonly #limit: number;
@@ -103,11 +105,13 @@ class Chunks<A extends WritableWords | Uint8Array> {
 		freed: (chunks: readonly number[]) => void,
 		empty: A,
 		first: number,
-		format: CellFormat
+		format: CellFormat,
+		sealed?: (chunk: number, meta: Uint8Array) => void
 	) {
 		this.#make = make;
 		this.#opened = opened;
 		this.#freed = freed;
+		this.#sealed = sealed;
 		this.#empty = empty;
 		this.#limit = 2 ** format.chunkShift;
 		this.#first = Math.min(first, this.#limit);
@@ -132,8 +136,9 @@ class Chunks<A extends WritableWords | Uint8Array> {
 	}
 
 	#push(length: number): number {
-		const { chunk, data, meta, freed } = this.#make(length);
+		const { chunk, data, meta, freed, sealed } = this.#make(length);
 		if (freed.length !== 0) this.#freed(freed);
+		if (sealed !== undefined) this.#sealed?.(sealed.chunk, sealed.meta);
 		if (chunk === 0 || this.has(chunk)) throw new Error(`a built arena's new chunk came back as chunk ${chunk}, which it already holds or names none`);
 		this.chunks[chunk] = data;
 		this.used[chunk] = 0;
@@ -162,22 +167,21 @@ class Chunks<A extends WritableWords | Uint8Array> {
 }
 
 interface CountTable {
-	readonly head: Uint32Array;
-	readonly bits: Uint32Array;
-	readonly ranks: Uint16Array;
-	readonly counts: Uint8Array;
+	head: Uint32Array;
+	bits: Uint32Array;
+	ranks: Uint16Array;
+	counts: Uint8Array;
 	ranked: number;
 }
 
-function countTable(meta: Uint8Array, words: number): CountTable {
+function countViews(meta: Uint8Array, words: number): Omit<CountTable, 'ranked'> {
 	const blocks = Math.ceil(words / 64);
 	const counts = 8 + blocks * 8 + Math.ceil(blocks / 2) * 4;
 	return {
 		head: new Uint32Array(meta.buffer, meta.byteOffset, 2),
 		bits: new Uint32Array(meta.buffer, meta.byteOffset + 8, blocks * 2),
 		ranks: new Uint16Array(meta.buffer, meta.byteOffset + 8 + blocks * 8, blocks),
-		counts: new Uint8Array(meta.buffer, meta.byteOffset + counts, meta.byteLength - counts),
-		ranked: 0
+		counts: new Uint8Array(meta.buffer, meta.byteOffset + counts, meta.byteLength - counts)
 	};
 }
 
@@ -267,7 +271,15 @@ export class BuiltArena {
 		};
 		bindTree(this.tree, handle);
 		const freed = (chunks: readonly number[]): void => this.#sweep(chunks);
-		this.#words = new Chunks(words, (chunk, data, meta) => (this.#tables[chunk] = countTable(meta, data.length)), freed, new Uint32Array(0), FIRST_CHUNK_WORDS, format);
+		this.#words = new Chunks(
+			words,
+			(chunk, data, meta) => (this.#tables[chunk] = { ...countViews(meta, data.length), ranked: 0 }),
+			freed,
+			new Uint32Array(0),
+			FIRST_CHUNK_WORDS,
+			format,
+			(chunk, meta) => Object.assign(this.#tables[chunk]!, countViews(meta, this.#words.chunks[chunk]!.length))
+		);
 		this.#bytes = new Chunks(
 			bytes,
 			(chunk, data, meta) => {
@@ -403,6 +415,27 @@ export class BuiltArena {
 	/** Releases the count the handle of the record at `at` holds, a no-op when the handle holds none. */
 	release(at: number): void {
 		this.#released(this.#release(at, this.format.held.record, true));
+	}
+
+	/** Releases what the handle `node` holds: its record's count, or for a leaf, the count of each built record its sides hold until the leaf is placed. A record already released, or its count already placed, is passed over. */
+	releaseHandle(node: object): void {
+		const at = (node as { readonly $at?: unknown }).$at;
+		if (typeof at === 'number') {
+			this.release(at);
+			return;
+		}
+		forEachTriviaList(triviaOf(node) ?? {}, (entries) => {
+			for (const entry of entries) {
+				const parked = recordRefOf(entry);
+				if (parked?.arena === this && this.#words.has(chunkOf(parked.at, this.format))) this.release(parked.at);
+			}
+		});
+	}
+
+	/** Refuses the record at `at` once it is released. */
+	refuseReleased(at: number): void {
+		const { counts, index } = this.#countAt(at);
+		if ((counts[index]! & this.format.countSaturated) === 0) throw new Error(releasedRecord(at));
 	}
 
 	#released(trees: readonly number[]): void {
@@ -784,6 +817,7 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 	const built = recordRefOf(entry);
 	if (built === undefined) return readCoordinateOf(entry);
 	if (built.arena !== arena) throw new Error(OTHER_ENGINE_RECORD);
+	built.arena.refuseReleased(built.at);
 	return { $type: (entry as { readonly $type: number }).$type, $record: built.at };
 }
 

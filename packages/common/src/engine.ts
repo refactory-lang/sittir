@@ -203,8 +203,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	chunk?(treeId: number, n: number): ChunkWords;
 	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through it, written `depth` levels down and the cell rewritten to name it. Present when the addon carries the record codec. */
 	readCell?(treeId: number, holder: number, word: number, item: number, depth?: number): number;
-	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept. Present when the addon carries the record codec. */
-	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[] };
+	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept, with the chunk it sealed and that chunk's meta, now sized for its entries. Present when the addon carries the record codec. */
+	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
 	builtBytes?(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
 	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
@@ -212,7 +212,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** Releases a count of the built entry at `address` of form `held`, the count its builder's handle holds when `owned`; answers the trees released link and side records named. Present when the addon carries the record codec. */
 	releaseBuilt?(address: number, held: number, owned: boolean): number[];
 	/** The bytes the built arena's chunks take, and of them its counts'. Present when the addon carries the record codec. */
-	builtMemory?(): { chunks: number; counts: number };
+	builtMemory?(): { chunks: number; counts: number; live: number };
 	/** Refuses, by name, a runtime that does not allow external array buffers. Present when the addon carries the record codec. */
 	externalBuffers?(): void;
 	/** The kind and subtree end, as `[kind, end]`, a read of tree `treeId` names the node at `index` by. Present when the addon carries the record codec. */
@@ -636,9 +636,9 @@ export function createNativeEngine<
 
 				release(node) {
 					const built = builtRefOf(node);
-					if (built?.at === undefined) return;
+					if (built === undefined) return;
 					if (built.arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned');
-					built.arena.release(built.at);
+					built.arena.releaseHandle(node);
 				},
 
 				dispose() {

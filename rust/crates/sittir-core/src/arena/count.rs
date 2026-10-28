@@ -49,11 +49,12 @@ pub fn counts_at(words: u32) -> usize {
     META_HEAD + blocks * 8 + (blocks * 2).next_multiple_of(4)
 }
 
-/// The bytes a word chunk of `words` words keeps its meta in: its head,
-/// bitmap and ranks, and a count for each entry it can hold.
+/// The bytes a word chunk of `words` words keeps its meta in while it is
+/// open: its head, bitmap and ranks, and a count for each entry it can hold.
+/// A chunk past `CHUNK_WORDS` holds one run, so it has one count.
 #[must_use]
 pub fn meta_len(words: u32) -> usize {
-    counts_at(words) + words.div_ceil(ENTRY_MIN_WORDS) as usize
+    counts_at(words) + if words > super::CHUNK_WORDS { 1 } else { words.div_ceil(ENTRY_MIN_WORDS) as usize }
 }
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
@@ -105,8 +106,24 @@ impl CountTable {
         unsafe { self.meta.slice() }
     }
 
-    pub(super) fn live(&mut self) -> u32 {
-        read_u32(self.bytes(), LIVE)
+    /// Moves the meta into one sized for the entries placed, now that no
+    /// more are: its head, bitmap and ranks, then a count per entry. Answers
+    /// the new meta when it is smaller.
+    pub(super) fn seal(&mut self) -> Option<Arc<ChunkMem<u8>>> {
+        let exact = self.counts + read_u32(self.read(), PLACED) as usize;
+        if exact >= self.meta.len() {
+            return None;
+        }
+        let meta = ChunkMem::zeroed(exact);
+        // SAFETY: the new meta is not shared yet, and the old one is read
+        // through the arena's borrow, inside one native call.
+        unsafe { meta.slice_mut() }.copy_from_slice(&self.read()[..exact]);
+        self.meta = Arc::clone(&meta);
+        Some(meta)
+    }
+
+    pub(super) fn live(&self) -> u32 {
+        read_u32(self.read(), LIVE)
     }
 
     fn set_live(&mut self, live: u32) {

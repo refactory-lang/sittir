@@ -91,7 +91,7 @@ export declare function builtLeafSide(engine: object, holder: number, word: numb
  * r" The bytes the built arena's chunks take, and of them the
  * r" bytes their counts take: `{ chunks, counts }`. A diagnostic.
  */
-export declare function builtMemory(engine: object): { chunks: number; counts: number }
+export declare function builtMemory(engine: object): { chunks: number; counts: number; live: number }
 
 /**
  * r" The entries a write gave `side` (`leading`, `trailing` or
@@ -111,15 +111,17 @@ export declare function builtUnitSides(engine: object, address: number): object[
 /**
  * r" A new chunk of `length` words of the built arena this
  * r" engine's builders write, zeroed: `{ chunk, data, meta,
- * r" freed }`, its number, a `Uint32Array` over its native
- * r" memory, which the builders write records into, a
- * r" `Uint8Array` over its counts' meta (`count`), and the
- * r" chunks freed since the last chunk was made. A trivia entry this
+ * r" freed, sealed }`, its number, a `Uint32Array` over its
+ * r" native memory, which the builders write records into, a
+ * r" `Uint8Array` over its counts' meta (`count`), the chunks
+ * r" freed since the last chunk was made, and the chunk this one
+ * r" sealed with a `Uint8Array` over its meta, now sized for the
+ * r" entries it holds, the old one detached. A trivia entry this
  * r" engine's store answers renders from it. Refuses an empty
  * r" chunk, an engine already disposed, and a runtime that does
  * r" not allow external array buffers.
  */
-export declare function builtWords(engine: object, length: number): { chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }
+export declare function builtWords(engine: object, length: number): { chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } }
 
 /**
  * r" The chunk-0 offset a built blank arm's cell names

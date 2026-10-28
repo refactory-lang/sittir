@@ -288,11 +288,11 @@ export interface ParsedRoot {
 export interface EngineDiagnostics<TRoot = unknown, TTree extends object = object> {
 	readonly buildProfile: string | undefined;
 	/**
-	 * The bytes the engine's built arena takes now: `chunks`, every chunk with its counts, and
-	 * `counts`, the part of them the counts take. `undefined` when the engine does not build into
-	 * an arena.
+	 * The engine's built arena now: `chunks`, the bytes every chunk takes with its counts,
+	 * `counts`, the part of them the counts take, and `live`, the records, runs and side records
+	 * it holds that are not yet released. `undefined` when the engine does not build into an arena.
 	 */
-	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number } | undefined;
+	readonly builtMemory?: () => { readonly chunks: number; readonly counts: number; readonly live: number } | undefined;
 	/** Parses and retains a tree; accessing `root` performs its first read. Keeping only `tree` exports no root data. */
 	parseAndRead(source: string, options?: ParseOptions): ParsedRead<TRoot & ParsedRoot, TTree>;
 }
@@ -403,10 +403,12 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	readonly write: (path: string, node: API['root']) => Pending;
 	/**
 	 * Releases what a builder result holds, as its `[Symbol.dispose]` does. Under record
-	 * construction a result holds its record until it is placed into a parent or a side; a node
-	 * already placed, read, parsed or released, and any node of object construction, holds nothing,
-	 * so its release does nothing. A record nothing holds any more is freed with every child only it
-	 * held, and a read through a node whose memory was freed throws.
+	 * construction a result holds its record until it is placed into a parent or a side, and a built
+	 * leaf holds the records written to its sides until it is placed; a node already placed, read,
+	 * parsed or released, and any node of object construction, holds nothing, so its release does
+	 * nothing. A record nothing holds any more is freed with every child only it held, and a read
+	 * through a node whose memory was freed throws. A result dropped without a release keeps its
+	 * record until the engine is disposed.
 	 *
 	 * @throws When `node` was built by another engine.
 	 */

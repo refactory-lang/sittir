@@ -965,14 +965,16 @@ macro_rules! napi_engine {
 
             /// A new chunk of `length` words of the built arena this
             /// engine's builders write, zeroed: `{ chunk, data, meta,
-            /// freed }`, its number, a `Uint32Array` over its native
-            /// memory, which the builders write records into, a
-            /// `Uint8Array` over its counts' meta (`count`), and the
-            /// chunks freed since the last chunk was made. A trivia entry this
+            /// freed, sealed }`, its number, a `Uint32Array` over its
+            /// native memory, which the builders write records into, a
+            /// `Uint8Array` over its counts' meta (`count`), the chunks
+            /// freed since the last chunk was made, and the chunk this one
+            /// sealed with a `Uint8Array` over its meta, now sized for the
+            /// entries it holds, the old one detached. A trivia entry this
             /// engine's store answers renders from it. Refuses an empty
             /// chunk, an engine already disposed, and a runtime that does
             /// not allow external array buffers.
-            #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }")]
+            #[::napi_derive::napi(ts_return_type = "{ chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } }")]
             pub fn built_words(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env, length: f64) -> ::napi::Result<$crate::napi_engine::Made> {
                 let engine = engine_of(engine)?;
                 let length: u32 = $crate::napi_engine::checked_whole(length, "length")?;
@@ -1023,7 +1025,7 @@ macro_rules! napi_engine {
 
             /// The bytes the built arena's chunks take, and of them the
             /// bytes their counts take: `{ chunks, counts }`. A diagnostic.
-            #[::napi_derive::napi(ts_return_type = "{ chunks: number; counts: number }")]
+            #[::napi_derive::napi(ts_return_type = "{ chunks: number; counts: number; live: number }")]
             pub fn built_memory(#[napi(ts_arg_type = "object")] engine: &::napi::bindgen_prelude::External<EngineCell>, env: ::napi::Env) -> ::napi::Result<$crate::napi_engine::Made> {
                 let engine = engine_of(engine)?;
                 $crate::napi_engine::built_memory(&env, engine.written())
@@ -1514,6 +1516,19 @@ impl Buffers {
         }
     }
 
+    /// Holds `array`, the buffer over chunk `chunk`'s meta since it sealed,
+    /// weakly, and detaches the buffer over its meta before.
+    ///
+    /// # Errors
+    ///
+    /// A reference or status napi refuses.
+    pub fn reseat_meta(&mut self, env: &napi::Env, chunk: u32, array: napi::sys::napi_value) -> napi::Result<()> {
+        match self.meta.insert(chunk, WeakValue::new(env, array)?) {
+            Some(old) => detach_weak(env, old),
+            None => Ok(()),
+        }
+    }
+
     /// Detaches every buffer over chunk `chunk` that lives, its meta's
     /// included, and lets go of each reference.
     ///
@@ -1589,10 +1604,11 @@ impl napi::bindgen_prelude::TypeName for Made {
 }
 
 /// A new chunk of the built arena `store` holds, of `length` bytes when
-/// `bytes`, else of `length` words: `{ chunk, data, meta, freed }`, its
-/// number, the typed arrays over it and its meta, held weakly in the store's
-/// buffers and reported to V8, and the chunks freed since JavaScript was
-/// last told.
+/// `bytes`, else of `length` words: `{ chunk, data, meta, freed, sealed }`,
+/// its number, the typed arrays over it and its meta, held weakly in the
+/// store's buffers and reported to V8, the chunks freed since JavaScript was
+/// last told, and the word chunk it sealed with its new meta, the old one
+/// detached.
 ///
 /// # Errors
 ///
@@ -1602,18 +1618,31 @@ pub fn built_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<
     use napi::JsValue;
     let refused = |e: crate::arena::ArenaError| napi::Error::from_reason(e.to_string());
     let mut buffers = store.buffers();
-    let (chunk, data, meta) = if bytes {
+    let (chunk, data, meta, sealed) = if bytes {
         let made = store.built_mut().alloc_bytes(length).map_err(refused)?;
-        (made.chunk, buffers.view::<u8>(env, true, made.chunk, || Some(made.mem))?, made.meta)
+        (made.chunk, buffers.view::<u8>(env, true, made.chunk, || Some(made.mem))?, made.meta, made.sealed)
     } else {
         let made = store.built_mut().alloc_words(length).map_err(refused)?;
-        (made.chunk, buffers.view::<u32>(env, false, made.chunk, || Some(made.mem))?, made.meta)
+        (made.chunk, buffers.view::<u32>(env, false, made.chunk, || Some(made.mem))?, made.meta, made.sealed)
     };
     let data = data.ok_or_else(|| napi::Error::from_reason("a built chunk made no buffer"))?;
     let meta = external_view::<u8>(env, meta)?;
     buffers.hold_meta(env, chunk, meta)?;
+    let sealed = sealed
+        .map(|(sealed, meta)| -> napi::Result<napi::bindgen_prelude::Object<'_>> {
+            let meta = external_view::<u8>(env, meta)?;
+            buffers.reseat_meta(env, sealed, meta)?;
+            let mut object = napi::bindgen_prelude::Object::new(env)?;
+            napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "chunk", sealed)?;
+            napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
+            Ok(object)
+        })
+        .transpose()?;
     settle_buffers(*env, &mut buffers, store)?;
     let mut object = napi::bindgen_prelude::Object::new(env)?;
+    if let Some(sealed) = sealed {
+        napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "sealed", sealed)?;
+    }
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "chunk", chunk)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "data", data)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "meta", Made(meta))?;
@@ -1621,8 +1650,9 @@ pub fn built_chunk<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore<
     Ok(Made(object.raw()))
 }
 
-/// `{ chunks, counts }`: the bytes the built arena `store` holds takes, and
-/// of them the bytes its counts take.
+/// `{ chunks, counts, live }`: the bytes the built arena `store` holds takes,
+/// of them the bytes its counts take, and the entries it holds that are not
+/// yet released.
 ///
 /// # Errors
 ///
@@ -1633,9 +1663,10 @@ pub fn built_memory<T>(env: &napi::Env, store: &crate::trivia_store::TriviaStore
     let built = store.built();
     let mut object = napi::bindgen_prelude::Object::new(env)?;
     #[allow(clippy::cast_precision_loss, reason = "a byte count well below 2^53")]
-    let (chunks, counts) = (built.allocated_bytes() as f64, built.count_bytes() as f64);
+    let (chunks, counts, live) = (built.allocated_bytes() as f64, built.count_bytes() as f64, built.live_entries() as f64);
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "chunks", chunks)?;
     napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "counts", counts)?;
+    napi::bindgen_prelude::JsObjectValue::set_named_property(&mut object, "live", live)?;
     Ok(Made(object.raw()))
 }
 

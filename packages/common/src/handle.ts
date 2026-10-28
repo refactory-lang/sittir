@@ -28,7 +28,7 @@ export type LeafMaker = (tree: TreeHandle, entry: BuiltText, site: LeafSite | un
 export const HANDLE_FIELDS: ReadonlySet<string> = new Set(['$tree', '$at', '$words', '$cache', '$entry', '$site']);
 
 export function handleDispose(this: { readonly $tree: TreeHandle; readonly $at?: number }): void {
-	if (this.$at !== undefined) this.$tree.built?.release(this.$at);
+	this.$tree.built?.releaseHandle(this);
 }
 
 export function isHandle(value: object): boolean {

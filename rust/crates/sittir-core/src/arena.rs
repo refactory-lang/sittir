@@ -475,6 +475,9 @@ pub struct NewChunk<T: ChunkUnit> {
     pub chunk: u32,
     pub mem: Arc<ChunkMem<T>>,
     pub meta: Arc<ChunkMem<u8>>,
+    /// The word chunk this one sealed, with its meta now sized for the
+    /// entries it holds, when it still lives.
+    pub sealed: Option<(u32, Arc<ChunkMem<u8>>)>,
 }
 
 /// The record shape of a kind, the grammar's (`RecordGrammar::shape`).
@@ -525,8 +528,11 @@ impl BuiltChunks {
         let counts = count::CountTable::new(len);
         let meta = Arc::clone(counts.meta());
         self.chunks[chunk as usize] = Some(BuiltChunk::Words { mem: Arc::clone(&mem), counts });
-        self.opened(0, chunk, len <= CHUNK_WORDS);
-        Ok(NewChunk { chunk, mem, meta })
+        let sealed = self.opened(0, chunk, len <= CHUNK_WORDS).and_then(|sealed| match self.chunks.get_mut(sealed as usize) {
+            Some(Some(BuiltChunk::Words { counts, .. })) => counts.seal().map(|meta| (sealed, meta)),
+            _ => None,
+        });
+        Ok(NewChunk { chunk, mem, meta, sealed })
     }
 
     /// A new string chunk of `len` bytes, zeroed: its number, its memory
@@ -541,7 +547,7 @@ impl BuiltChunks {
         let meta = ChunkMem::zeroed(count::CELLS_META_BYTES);
         self.chunks[chunk as usize] = Some(BuiltChunk::Bytes { mem: Arc::clone(&mem), cells: Arc::clone(&meta) });
         self.opened(1, chunk, len <= STRING_CHUNK_BYTES);
-        Ok(NewChunk { chunk, mem, meta })
+        Ok(NewChunk { chunk, mem, meta, sealed: None })
     }
 
     fn number(&mut self, len: u32) -> Result<u32, ArenaError> {
@@ -560,13 +566,13 @@ impl BuiltChunks {
         }
     }
 
-    fn opened(&mut self, form: usize, chunk: u32, shared: bool) {
+    fn opened(&mut self, form: usize, chunk: u32, shared: bool) -> Option<u32> {
         if !shared {
-            return;
+            return None;
         }
-        if let Some(sealed) = self.open[form].replace(chunk) {
-            self.seal_check(sealed);
-        }
+        let sealed = self.open[form].replace(chunk)?;
+        self.seal_check(sealed);
+        Some(sealed)
     }
 
     /// The numbers of the chunks freed since the last call, whose buffers
@@ -596,6 +602,19 @@ impl BuiltChunks {
     #[must_use]
     pub fn allocated_bytes(&self) -> usize {
         self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
+    }
+
+    /// The entries the word chunks hold that are not yet released.
+    #[must_use]
+    pub fn live_entries(&self) -> usize {
+        self.chunks
+            .iter()
+            .flatten()
+            .map(|chunk| match chunk {
+                BuiltChunk::Words { counts, .. } => counts.live() as usize,
+                BuiltChunk::Bytes { .. } => 0,
+            })
+            .sum()
     }
 
     /// The bytes the chunks' counts take: their meta, the counts included.
