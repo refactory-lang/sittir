@@ -14,15 +14,15 @@ describe('a runtime that does not allow external array buffers', () => {
 			const real = await importOriginal<typeof import('../src/backend.js')>();
 			const status = real.getActiveBackend();
 			if (status.name !== 'native') return real;
-			const Real = status.native.SittirEngine;
-			function Sandboxed(this: unknown, ...args: ConstructorParameters<typeof Real>) {
-				const inner = new Real(...args);
-				inner.externalBuffers = () => {
-					throw new Error(REFUSED);
-				};
-				return inner;
-			}
-			const sandboxed = { ...status, native: { ...status.native, SittirEngine: Sandboxed as unknown as typeof Real } };
+			const sandboxed = {
+				...status,
+				native: {
+					...status.native,
+					externalBuffers: () => {
+						throw new Error(REFUSED);
+					}
+				}
+			};
 			return { ...real, getActiveBackend: () => sandboxed };
 		});
 		const rust = (await import('../src/index.ts')).default;

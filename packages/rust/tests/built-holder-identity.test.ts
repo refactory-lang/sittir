@@ -1,9 +1,9 @@
-// A built node read through its holder is the object its builder was given,
+// A built node read through its holder is the node its builder was given,
 // and a built node a side holds by address reads back as its builder's node.
 import { describe, expect, it } from 'vitest';
 import { coordinateOf } from '@sittir/common/utils';
 import { carryTree } from '../../common/src/tree-token.ts';
-import { constructions } from './constructions.mts';
+import { constructions, expectGiven } from './constructions.mts';
 
 const SOURCE = 'fn a() {}\nfn b(x: u8) { let x = 1; }\n';
 
@@ -18,9 +18,10 @@ describe.each(constructions)('a built node read through its holder (%s)', (_, rs
 		const statement = b.expressionStatement(b.callExpression({ function: b.identifier('g'), arguments: [] }));
 		const body = b.block({ statements: [statement] });
 		const fn = b.functionItem({ name, parameters: b.parameters(), body });
-		expect(fn.name()).toBe(name);
-		expect(fn.body()).toBe(body);
-		expect(fn.body().statements()[0]).toBe(statement);
+		expectGiven(fn.name(), name);
+		expectGiven(fn.body(), body);
+		expectGiven(fn.body().statements()[0], statement);
+		expect(fn.body()).toBe(fn.body());
 		expect(fn.body().statements()).toBe(fn.body().statements());
 	});
 
@@ -45,7 +46,7 @@ describe.each(constructions)('a built node read through its holder (%s)', (_, rs
 	it('keeps a node a side holds, and reads it back as that node', () => {
 		const comment = b.blockComment(b.blockCommentRegular(' c '));
 		const statement = b.expressionStatement(b.identifier('x')).$trivia.leading(comment);
-		expect(statement.$trivia.leading()[0]).toBe(comment);
+		expectGiven(statement.$trivia.leading()[0], comment);
 		expect(rs.render(statement).toString()).toBe('/* c */ x;');
 	});
 });

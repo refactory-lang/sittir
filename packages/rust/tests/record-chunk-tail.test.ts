@@ -2,11 +2,10 @@
 // records, and the cells it rewrites to name them, appear in the same array.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { nativeEngineOf } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.js';
 
 const SOURCE = 'fn f(a: u8) -> u8 { let b = a + 1; b * 2 }\nfn g(c: &str) { println!("{}", c); }\n';
-
-type Chunked = { chunk(treeId: number, n: number): Uint32Array };
 
 function addon() {
 	const status = getActiveBackend();
@@ -17,20 +16,19 @@ function addon() {
 describe("a parsed tree's chunk", () => {
 	it('crosses as one array over its native memory, which later reads fill in place, and refuses a chunk the arena does not hold', () => {
 		const status = addon();
-		const native = new status.SittirEngine();
-		const { readRecord, hydrateRecord } = native;
-		if (readRecord === undefined || hydrateRecord === undefined) throw new Error('the native addon was built without the arena feature');
-		const chunked = native as unknown as Chunked;
+		const native = nativeEngineOf(status);
+		const { readRecord, hydrateRecord, chunk: chunkOf } = native;
+		if (readRecord === undefined || hydrateRecord === undefined || chunkOf === undefined) throw new Error('the native addon was built without the arena feature');
 		const { treeId } = JSON.parse(native.parse(SOURCE)) as { treeId: number };
-		const root = readRecord.call(native, treeId, 0, 1)!;
-		const chunk = chunked.chunk(treeId, 0);
-		const before = [...chunk];
-		expect(chunked.chunk(treeId, 0)).toBe(chunk);
-		hydrateRecord.call(native, treeId, 0, Infinity);
-		expect([...chunk].filter((word) => word !== 0).length).toBeGreaterThan(before.filter((word) => word !== 0).length);
-		expect([...chunk].slice(root, root + 2)).toEqual(before.slice(root, root + 2));
+		const root = readRecord(treeId, 0, 1)!;
+		const chunk = chunkOf(treeId, 0);
+		const before = Array.from(chunk);
+		expect(chunkOf(treeId, 0)).toBe(chunk);
+		hydrateRecord(treeId, 0, Infinity);
+		expect(Array.from(chunk).filter((word) => word !== 0).length).toBeGreaterThan(before.filter((word) => word !== 0).length);
+		expect(Array.from(chunk).slice(root, root + 2)).toEqual(before.slice(root, root + 2));
 		expect(before.some((word, at) => chunk[at] !== word)).toBe(true);
-		expect(() => chunked.chunk(treeId, 99)).toThrow(`tree ${treeId}'s arena holds no chunk 99`);
+		expect(() => chunkOf(treeId, 99)).toThrow(`tree ${treeId}'s arena holds no chunk 99`);
 		status.disposeTree(treeId);
 		expect(chunk.length).toBe(0);
 		native.dispose();
@@ -49,17 +47,18 @@ describe('an arena tree read deeper', () => {
 			const real = await importOriginal<typeof import('../src/backend.js')>();
 			const status = real.getActiveBackend();
 			if (status.name !== 'native') return real;
-			const Real = status.native.SittirEngine;
-			function Counting(this: unknown, ...args: ConstructorParameters<typeof Real>) {
-				const inner = new Real(...args);
-				const chunk = (inner as unknown as Chunked).chunk;
-				(inner as unknown as Chunked).chunk = (treeId, n) => {
-					requests.push(n);
-					return chunk.call(inner, treeId, n);
-				};
-				return inner;
-			}
-			const counted = { ...status, native: { ...status.native, SittirEngine: Counting as unknown as typeof Real } };
+			const { chunk } = status.native;
+			if (chunk === undefined) return real;
+			const counted = {
+				...status,
+				native: {
+					...status.native,
+					chunk: (treeId: number, n: number) => {
+						requests.push(n);
+						return chunk(treeId, n);
+					}
+				}
+			};
 			return { ...real, getActiveBackend: () => counted };
 		});
 		const rust = (await import('../src/index.ts')).default;

@@ -31,17 +31,14 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_node: Record<string, unknown>): string {
-							return 'ok';
-						}
+						readonly handle = {};
 						parse(_source: string): string {
 							return JSON.stringify({ treeId: 1, errors: [] });
 						}
-						read(_treeId: number, _index: number, _depth: number): object {
-							return { $type: TSKindId.Identifier, $text: 'x' };
-						}
 						dispose(): void {}
-					}
+					},
+					render: (_engine: object, _node: Record<string, unknown>): string => 'ok',
+					read: (_treeId: number, _index: number, _depth: number): object => ({ $type: TSKindId.Identifier, $text: 'x' })
 				}
 			})
 		}));
@@ -65,25 +62,24 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(_node: Record<string, unknown>): string {
-							return 'ok';
-						}
+						readonly handle = {};
 						parse(_source: string): string {
 							return JSON.stringify({ treeId: 3, errors: [] });
 						}
-						read(treeId: number, index: number, depth: number): object {
-							reads.push([treeId, index, depth]);
-							return index === 0
-								? {
-										$type: TSKindId.FunctionItem,
-										$_layout: { at: coordinate(0, 0, 11, TSKindId.FunctionItem) },
-										_name: coordinate(1, 7, 11, TSKindId.Identifier)
-									}
-								: { $type: TSKindId.Identifier, $_layout: { at: coordinate(index, 7, 11, TSKindId.Identifier) }, $text: 'main' };
-						}
-						disposeTree(_treeId: number): void {}
 						dispose(): void {}
-					}
+					},
+					render: (_engine: object, _node: Record<string, unknown>): string => 'ok',
+					read: (treeId: number, index: number, depth: number): object => {
+						reads.push([treeId, index, depth]);
+						return index === 0
+							? {
+									$type: TSKindId.FunctionItem,
+									$_layout: { at: coordinate(0, 0, 11, TSKindId.FunctionItem) },
+									_name: coordinate(1, 7, 11, TSKindId.Identifier)
+								}
+							: { $type: TSKindId.Identifier, $_layout: { at: coordinate(index, 7, 11, TSKindId.Identifier) }, $text: 'main' };
+					},
+					disposeTree: (_treeId: number): void => {}
 				}
 			})
 		}));
@@ -113,14 +109,11 @@ describe('engine', () => {
 				hashMatch: true,
 				native: {
 					SittirEngine: class {
-						render(node: Record<string, unknown>): string {
-							return render(node);
-						}
-						renderToFile(untypedNode: Record<string, unknown>, path: string): void {
-							renderToFile(untypedNode, path);
-						}
+						readonly handle = {};
 						dispose(): void {}
-					}
+					},
+					render: (_engine: object, node: Record<string, unknown>): string => render(node),
+					renderToFile: (_engine: object, untypedNode: Record<string, unknown>, path: string): void => renderToFile(untypedNode, path)
 				}
 			})
 		}));

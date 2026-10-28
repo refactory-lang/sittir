@@ -4,7 +4,7 @@
 import { describe, expect, it } from 'vitest';
 import { builtRefOf } from '../../common/src/built-ref.ts';
 import rust from '../src/index.ts';
-import { constructions, objects, records, type Engine } from './constructions.mts';
+import { constructions, expectGiven, objects, records, type Engine } from './constructions.mts';
 
 const comment = (rs: Engine, text: string) => rs.build.blockComment(rs.build.blockCommentRegular(` ${text} `));
 
@@ -52,7 +52,7 @@ describe('a built leaf holds no storage', () => {
 		expect(written()).toBe(before);
 		expect(builtRefOf(name)!.at).toBeUndefined();
 		const fn = b.functionItem({ name, parameters: b.parameters(), body: b.block() });
-		expect(fn.name()).toBe(name);
+		expectGiven(fn.name(), name);
 	});
 
 	it('renders a side written before it is placed, or after, at every site that holds it, and alone', () => {

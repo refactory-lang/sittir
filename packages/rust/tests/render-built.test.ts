@@ -1,12 +1,14 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { addressOf, cellFormatOf, nativeEngineOf } from '@sittir/common/engine';
 import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
+import { expectGiven } from './constructions.mts';
 
 function addon() {
 	const status = getActiveBackend();
@@ -15,9 +17,11 @@ function addon() {
 }
 
 function arenaEngine() {
-	const native = new (addon().SittirEngine)();
+	const native = nativeEngineOf(addon());
+	const format = cellFormatOf(addon());
 	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, builtWords, builtBytes } = native;
 	if (
+		format === undefined ||
 		renderBuilt === undefined ||
 		renderBuiltLeaf === undefined ||
 		builtTriviaSide === undefined ||
@@ -27,77 +31,77 @@ function arenaEngine() {
 	)
 		throw new Error('the native addon was built without the arena feature');
 	return {
+		at: (chunk: number, word: number) => addressOf(chunk, word, format),
 		words: (values: readonly number[], length = values.length) => {
-			const chunk = builtWords.call(native, length);
+			const chunk = builtWords(length);
 			chunk.data.set(values);
 			return chunk;
 		},
-		bytes: (text: string) => {
+		entry: (kind: number, text: string) => {
 			const encoded = new TextEncoder().encode(text);
-			const chunk = builtBytes.call(native, encoded.length);
-			chunk.data.set(encoded);
-			return chunk;
+			const chunk = builtBytes(4 + encoded.length);
+			new DataView(chunk.data.buffer, chunk.data.byteOffset).setUint32(0, (kind + encoded.length * 2 ** format.kindBits) >>> 0, true);
+			chunk.data.set(encoded, 4);
+			return addressOf(chunk.chunk, 0, format);
 		},
-		builtWords: (length: number) => builtWords.call(native, length),
-		renderBuilt: (address: number) => renderBuilt.call(native, native, address, false, false),
-		renderBuiltLeaf: (kind: number, text: { readonly at: number; readonly len: number }) => renderBuiltLeaf.call(native, native, kind, text, null, false, false),
+		builtWords,
+		renderBuilt: (address: number) => renderBuilt(native.handle, address, false, false),
+		renderBuiltLeaf: (kind: number, entry: number) => renderBuiltLeaf(native.handle, kind, entry, null, false, false),
 		dispose: () => native.dispose(),
-		builtTriviaSide: builtTriviaSide.bind(native),
-		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native)
+		builtTriviaSide,
+		writeBuiltTriviaSide
 	};
 }
-
-const record = (...values: number[]) => [0, ...values];
 
 const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
 
 const recordEngine = () => rust.createEngine();
 
 describe('a built arena rendered natively', () => {
-	it('writes records into native chunks in place, numbered as they are made, and refuses an empty chunk', () => {
+	it('writes records into native chunks in place, numbered from 1 as they are made, frees one it leaves with nothing live, and refuses an empty chunk', () => {
 		const native = arenaEngine();
 		const first = native.builtWords(4);
-		const second = native.builtWords(8);
-		expect([first.chunk, second.chunk]).toEqual([0, 1]);
-		expect([first.data.length, second.data.length]).toEqual([4, 8]);
+		expect(first.chunk).toBe(1);
 		expect(Array.from(first.data)).toEqual([0, 0, 0, 0]);
-		first.data.set(record(TSKindId.Identifier, 0));
-		expect(Array.from(first.data)).toEqual([0, TSKindId.Identifier, 0, 0]);
+		first.data.set([TSKindId.Identifier, 0]);
+		expect(Array.from(first.data)).toEqual([TSKindId.Identifier, 0, 0, 0]);
+		const second = native.builtWords(8);
+		expect([second.chunk, second.data.length, second.freed]).toEqual([2, 8, [1]]);
+		expect(first.data.length).toBe(0);
 		expect(() => native.builtWords(0)).toThrow(/chunk past/);
 	});
 
 	it('reads a word no builder wrote as zero, inside its chunk', () => {
 		const native = arenaEngine();
-		native.words([0], 16);
-		expect(() => native.renderBuilt(9)).toThrow(/record kind 0 is not one a record writer writes/);
+		const { chunk } = native.words([], 16);
+		expect(() => native.renderBuilt(native.at(chunk, 9))).toThrow(/record kind 0 is not one a record writer writes/);
 	});
 
-	it('admits a lone leaf by its kind and its text', () => {
+	it('admits a lone leaf by its kind and its entry', () => {
 		const native = arenaEngine();
-		native.words(record(1, 0));
-		native.bytes('x');
-		expect(native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toBe('x');
-		expect(() => native.renderBuiltLeaf(60000, { at: 0, len: 1 })).toThrow(/built leaf kind 60000/);
-		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 9 })).toThrow();
+		const x = native.entry(TSKindId.Identifier, 'x');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, x)).toBe('x');
+		expect(() => native.renderBuiltLeaf(60000, x)).toThrow(/built leaf kind 60000/);
+		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, x + 64)).toThrow();
 	});
 
 	it('refuses words that are no record it admits', () => {
 		const native = arenaEngine();
-		native.words(record(1, 0));
+		const { chunk } = native.words([1, 0]);
 		expect(() => native.renderBuilt(0)).toThrow(/record address 0 is not one a record writer writes/);
-		expect(() => native.renderBuilt(9)).toThrow(/past what the arena wrote/);
+		expect(() => native.renderBuilt(native.at(chunk, 9))).toThrow(/past what the arena wrote/);
 		const other = arenaEngine();
-		other.words(record(60000, 0));
-		expect(() => other.renderBuilt(1)).toThrow(/record kind 60000 is not one a record writer writes/);
+		const written = other.words([60000, 0]);
+		expect(() => other.renderBuilt(other.at(written.chunk, 0))).toThrow(/record kind 60000 is not one a record writer writes/);
 	});
 
 	it('refuses, by name, a render from an arena its engine let go of, and detaches its chunks', () => {
 		const native = arenaEngine();
-		expect(() => native.renderBuilt(1)).toThrow(/past what the arena wrote/);
-		const { data } = native.words(record(1, 0));
+		expect(() => native.renderBuilt(native.at(1, 0))).toThrow(/past what the arena wrote/);
+		const { chunk, data } = native.words([1, 0]);
 		native.dispose();
 		expect(data.length).toBe(0);
-		expect(() => native.renderBuilt(1)).toThrow(/the arena that built a side's record was released/);
+		expect(() => native.renderBuilt(native.at(chunk, 0))).toThrow(/the arena that built a side's record was released/);
 		expect(() => native.builtWords(4)).toThrow(/the arena that built a side's record was released/);
 	});
 
@@ -198,8 +202,8 @@ describe('a built arena rendered natively', () => {
 
 		it("reads back as its builder's node", async () => {
 			const { statement, built, comment } = await holders(recordEngine);
-			expect(statement.$trivia.trailing()[0]).toBe(comment);
-			expect(built.$trivia.trailing()[0]).toBe(comment);
+			expectGiven(statement.$trivia.trailing()[0]!, comment);
+			expectGiven(built.$trivia.trailing()[0]!, comment);
 		});
 
 		it("refuses by name another engine's record, in a parsed and a built holder", async () => {
@@ -221,16 +225,15 @@ describe('a built arena rendered natively', () => {
 		it("reads back as its builder's node from a parsed unit's side", async () => {
 			const engine = await recordEngine();
 			const block = (engine.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
-			const comment = engine.build.blockComment(engine.build.blockCommentRegular(' c '));
 			const tree = treeOf(block)!;
 			const holderRow = treeHandleOf(block)! % 2 ** 32;
-			const written = [writtenEntry(comment)];
-			const unitRow = [1, 2, 3].map((n) => holderRow + n).find((row) => {
-				tree.writeTriviaSide!(row, 'leading', written);
-				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(row, 'leading', []), false);
+			const comments = [1, 2, 3].map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
+			const unit = comments.findIndex((comment, n) => {
+				tree.writeTriviaSide!(holderRow + n + 1, 'leading', [writtenEntry(comment)]);
+				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(holderRow + n + 1, 'leading', []), false);
 			});
-			expect(unitRow).toBeDefined();
-			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comment]);
+			expect(unit).not.toBe(-1);
+			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);
 			expect(JSON.stringify(snapshotOf(block))).toContain('" c "');
 		});
 	});
