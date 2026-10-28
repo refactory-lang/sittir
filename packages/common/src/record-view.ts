@@ -54,8 +54,9 @@ function wordsAt(
 
 export function liveWords(holder: RecordPosition): ChunkWords | undefined {
 	const own = (holder as Partial<RecordHandle>).$words;
-	if (own?.length === 0) throw new Error(`the node at ${holder.$at} was released: the chunk its record was in is freed`);
-	return own;
+	if (own?.length !== 0) return own;
+	holder.$tree.records?.words(holder.$at, 1);
+	throw new Error(`the node at ${holder.$at} was released: the chunk its record was in is freed`);
 }
 
 function holderWords(holder: RecordPosition, length: number): { readonly words: ChunkWords; readonly start: number; readonly records: RecordWords } {

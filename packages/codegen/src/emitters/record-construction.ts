@@ -13,6 +13,7 @@ export const RECORD_CONSTRUCTION_IMPORTS = [
 	'storeList',
 	'storeListOptions',
 	'patchCell',
+	'carriedSlot',
 	'patchFlag',
 	'patchList',
 	'patchListOptions',
@@ -63,16 +64,22 @@ export interface RecordParts {
 	readonly after: readonly string[];
 }
 
-function slotStore(place: RecordPlace, local: string): string {
+interface PlacedSlot {
+	readonly place: RecordPlace;
+	readonly local: string;
+	readonly accessor: string;
+}
+
+function slotStore({ place, local }: PlacedSlot): string {
 	if ('bit' in place) return `  if (${local}) storeFlag(record.data, record.base + ${place.word}, ${2 ** place.bit});`;
 	if (place.run !== undefined) return `  storeList(arena, record, ${place.built}, ${place.word}, ${local});`;
 	return `  storeCell(arena, record, ${place.built}, ${place.word}, ${local});`;
 }
 
-function slotPatch(place: RecordPlace, local: string): string {
+function slotPatch({ place, local, accessor }: PlacedSlot): string {
 	if ('bit' in place) return `  patchFlag(record, ${place.word}, ${2 ** place.bit}, ${local});`;
 	if (place.run !== undefined) return `  patchList(arena, record, ${place.built}, ${place.word}, ${local});`;
-	return `  patchCell(arena, record, ${place.built}, ${place.word}, ${local});`;
+	return `  patchCell(arena, record, ${place.built}, ${place.word}, carriedSlot(source, ${JSON.stringify(accessor)}, ${local}));`;
 }
 
 export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: BuiltViewTable): RecordParts {
@@ -80,18 +87,18 @@ export function recordParts(spec: RecordConstruction, nodeMap: NodeMap, views: B
 	const layout = nodeRecordLayout(spec.node, nodeMap);
 	if (places === undefined || layout === undefined) return { tail: recordRefusalLines(spec.node), patchTail: recordRefusalLines(spec.node), after: [] };
 	views.width(spec.node, layout);
-	const placed = spec.slots.map((slot) => {
+	const placed = spec.slots.map((slot): PlacedSlot => {
 		const place = places.get(slot.storageKey);
 		if (place === undefined) throw new Error(`recordTailLines: ${spec.node.kind}.${slot.name} has no record place`);
-		return { place, local: slot.storageKey };
+		return { place, local: slot.storageKey, accessor: slot.propertyName };
 	});
 	const options = spec.listOptions;
 	const listOptions = options === undefined ? undefined : `arena, record, ${options.delimiter ? '_delimiter' : 'undefined'}, ${options.separator ? '_separator' : 'undefined'}`;
-	const tailOf = (record: string, store: (place: RecordPlace, local: string) => string, storeOptions: string): string[] => [
+	const tailOf = (record: string, store: (slot: PlacedSlot) => string, storeOptions: string): string[] => [
 		'  const arena = builtArenaOf(handle);',
 		`  handle?.verifyStored?.(${spec.kind}, { ${spec.slots.map((slot) => slot.storageKey).join(', ')} });`,
 		`  const record = ${record};`,
-		...placed.map(({ place, local }) => store(place, local)),
+		...placed.map(store),
 		...(listOptions === undefined ? [] : [`  ${storeOptions}(${listOptions});`]),
 		'  const node = arena.view(record);',
 		...spec.checks,

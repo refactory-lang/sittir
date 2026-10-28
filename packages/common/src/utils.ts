@@ -3,7 +3,7 @@ import { mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { asTextNode, carryRead, carryPlace, heldUnitSides, indexOf, isRead, isStorageKey, markRebuilt, PLAIN_KINDS, realignedUnits, setTriviaOf, setUnitSides, sideOf, sideRead, sitedLeaf, slotSeparatorOf, sourceHandleOf, placeOf, tableAt, toNodeData, treeHandleOf, triviaOf, unitSidesOf, writtenSides, type UnitSidesData } from './node-data.ts';
 import { Source } from './source.ts';
 import { ERROR_KIND_ID } from './error-kind.ts';
-import { engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
+import { currentHandle, engineOf, hydrateOn, hydrateStored, inEngine, isLive, treeBuiltArena, treeEngineHandle, type EngineHandle } from './engine-scope.ts';
 import { Delimiter } from './delimiter.ts';
 import { decodeIndex, decodeTree, isCoordinate, readNode, type TreeHandle, type TriviaSideName } from './read.ts';
 import { registered, wrapRegistered, type Role } from './identity.ts';
@@ -11,7 +11,7 @@ import { treeOf, treeOfToken, treeTokenOf } from './tree-token.ts';
 import { sourceOf } from './source-stamp.ts';
 import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
-import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia } from './record-view.ts';
+import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import type { LeafHandle, RecordHandle, RecordPosition } from './handle.ts';
 import { builtLeafOf, builtRefOf, leafSitesOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
@@ -111,11 +111,9 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	carryPlace(node, result);
 	carryUnitSides(node, result);
 	const facts = handle?.current.trivia;
-	if (facts !== undefined) {
-		const stands = (kindId: number): boolean => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
-		carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, stands);
-	}
-	const inner = isEmptyNode(result) ? [] : sideOf(node, 'inner');
+	if (facts !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, standsIn(facts));
+	const held = sideOf(node, 'inner');
+	const inner = held.length === 0 || isEmptyNode(result) ? [] : held;
 	if (inner.some((entry) => typeof entry !== 'number')) {
 		const kind = facts?.kindName(node.$type) ?? String(node.$type);
 		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
@@ -135,13 +133,14 @@ export function isEmptyNode(node: AnyUntypedNode): boolean {
 }
 
 export function storesNothingIn(node: AnyUntypedNode, region: readonly string[] | undefined, namedUnits?: ReadonlySet<number>): boolean {
-	const record = node as unknown as Record<string, unknown>;
-	const owns = (value: unknown): boolean =>
-		Array.isArray(value) ? value.some(owns) : typeof value === 'number' ? (namedUnits?.has(value) ?? true) : value != null;
-	for (const key of region ?? Object.keys(record)) {
-		if (key.charCodeAt(0) === 95 && owns(record[key])) return false;
-	}
-	return true;
+	const owns = (value: unknown): boolean => {
+		if (typeof value === 'number') return namedUnits?.has(value) ?? true;
+		if (value === null || value === undefined) return false;
+		if (typeof value === 'object' && !isNode(value) && Symbol.iterator in value) return [...(value as Iterable<unknown>)].some(owns);
+		return true;
+	};
+	const counted = (key: string): boolean => key.charCodeAt(0) === 95 && (region === undefined || region.includes(key));
+	return !storedSlotValues(node).some(([key, value]) => counted(key) && owns(value));
 }
 
 const scopedBy = (handle: EngineHandle | undefined): Scoped => (handle === undefined ? (fn) => fn() : (fn) => inEngine(handle, fn));
@@ -281,20 +280,42 @@ function carryRebuiltSlots(read: Record<string, unknown>, result: Record<string,
 		if (!isStorageKey(key)) continue;
 		const fresh = result[key];
 		const held = read[key];
-		if (fresh === null || typeof fresh !== 'object' || Array.isArray(fresh) || held === null || typeof held !== 'object' || Array.isArray(held) || fresh === held) continue;
-		const freshNode = fresh as Record<string, unknown>;
-		const heldNode = held as Record<string, unknown>;
-		if (typeof freshNode.$type !== 'number' || freshNode.$type !== heldNode.$type || !stands(freshNode.$type)) continue;
-		if (placeOf(freshNode) !== undefined) continue;
-		if (placeOf(heldNode) === undefined) {
-			const trivia = triviaOf(heldNode);
-			if (trivia !== undefined && triviaOf(freshNode) === undefined) setTriviaOf(freshNode as unknown as AnyUntypedNode, trivia);
-			carryUnitSides(heldNode, freshNode);
+		if (!carriesFrom(held, fresh, stands)) continue;
+		if (placeOf(held as object) === undefined) {
+			carrySides(held as object, fresh);
 			continue;
 		}
-		carryRead(heldNode, freshNode);
-		carryPlace(heldNode, freshNode);
+		carryRead(held as object, fresh);
+		carryPlace(held as object, fresh);
 	}
+}
+
+export function carriedSlot(source: object, accessor: string, value: unknown): unknown {
+	const facts = currentHandle()?.current.trivia;
+	if (facts === undefined || builtRefOf(value)?.at === undefined) return value;
+	const read = (source as Record<string, unknown>)[accessor];
+	if (typeof read !== 'function') throw new Error(`a $with of kind ${(source as AnyUntypedNode).$type} reads no slot ${accessor}`);
+	const held = (read as () => unknown).call(source);
+	if (!carriesFrom(held, value, standsIn(facts))) return value;
+	if (placeOf(held as object) !== undefined) return sourcedRecord(held as object, value);
+	carrySides(held as object, value);
+	return value;
+}
+
+function standsIn(facts: TriviaFacts): (kindId: number) => boolean {
+	return (kindId) => facts.rebuildWrappers.has(kindId) || facts.listKinds.has(kindId);
+}
+
+function carriesFrom(held: unknown, fresh: unknown, stands: (kindId: number) => boolean): fresh is AnyUntypedNode {
+	if (fresh === null || typeof fresh !== 'object' || Array.isArray(fresh) || held === null || typeof held !== 'object' || Array.isArray(held) || fresh === held) return false;
+	const kind = (fresh as { readonly $type?: unknown }).$type;
+	return typeof kind === 'number' && kind === (held as { readonly $type?: unknown }).$type && stands(kind) && placeOf(fresh) === undefined;
+}
+
+function carrySides(held: object, fresh: object): void {
+	const trivia = triviaOf(held);
+	if (trivia !== undefined && triviaOf(fresh) === undefined) setTriviaOf(fresh as AnyUntypedNode, trivia);
+	carryUnitSides(held, fresh);
 }
 
 /** How a query names a read node: the handle its coordinate names it by. */
