@@ -1,6 +1,7 @@
-//! The record layout codegen stamps on a node: `words` on
-//! `#[node(…)]`, and `word` with `width` (and `run`) or `bit` on each
-//! slot's `#[slot(…)]`, beside the slot's read facts. The derive checks it and
+//! The record layout codegen stamps on a node: `words` and `built_words` on
+//! `#[node(…)]`, and on each slot's `#[slot(…)]` its parsed cell, `word`
+//! with `width`, `forms` (and `run` or `inline`), or `bit`, and its built
+//! cell, `built`, beside the slot's read facts. The derive checks it and
 //! computes none of it: the stamped cells stay inside the record's words and
 //! never overlap, and each slot's type fits its cell (`sittir_core::record`),
 //! asserted at compile time.
@@ -125,22 +126,23 @@ mod tests {
     #[test]
     fn each_stamped_field_asserts_its_type_fits_its_cell() {
         let out = checks(&parse_quote! {
-            #[node(words = 10)]
+            #[node(words = 7, built_words = 5)]
             pub struct LetDeclarationNode {
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[slot(word = 2, bit = 0)]
                 pub mutable: bool,
-                #[slot(word = 3, width = 5)]
+                #[slot(word = 3, width = 3, forms = 1, built = 3)]
                 pub pattern: SlotValue<PatternNode>,
-                #[slot(word = 8, width = 2, run = 5)]
+                #[slot(word = 6, width = 1, run = 3, forms = 1, built = 4)]
                 pub items: Vec<SlotValue<ItemNode>>,
             }
         })
         .expect("checks");
         assert!(has(&out, r#"assert!(::sittir_core::record::fits_bit::<bool>(), "LetDeclarationNode.mutable: a stamped bit holds only a presence")"#));
-        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(5u32, 0u32), "LetDeclarationNode.pattern: its type needs more than its stamped record cell")"#));
-        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(2u32, 5u32)"));
+        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(1u8, 3u32, 0u32, 0u32), "LetDeclarationNode.pattern: its type is not held as its stamped forms in its stamped cell")"#));
+        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(1u8, 1u32, 3u32, 0u32)"));
+        assert!(has(&out, r#"assert!(4u32 >= ::sittir_core::record::HEADER_WORDS, "LetDeclarationNode.items: its built cell overlaps the header")"#));
     }
 
     #[test]
@@ -164,9 +166,9 @@ mod tests {
         let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
-                #[slot(word = 6, width = 4)]
+                #[slot(word = 4, width = 2, forms = 4)]
                 pub b: String,
             }
         });
@@ -176,13 +178,13 @@ mod tests {
     #[test]
     fn a_cell_past_the_record_s_words_is_refused() {
         let message = refusal(&parse_quote! {
-            #[node(words = 6)]
+            #[node(words = 4)]
             pub struct S {
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
             }
         });
-        assert!(message.contains("`a`") && message.contains('6'), "{message}");
+        assert!(message.contains("`a`") && message.contains('4'), "{message}");
     }
 
     #[test]
@@ -200,7 +202,7 @@ mod tests {
         let inside = refusal(&parse_quote! {
             #[node(words = 8)]
             pub struct S {
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
                 #[slot(word = 3, bit = 0)]
                 pub b: bool,
@@ -225,7 +227,7 @@ mod tests {
         let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
-                #[slot(word = 4294967295, width = 5)]
+                #[slot(word = 4294967295, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
             }
         });

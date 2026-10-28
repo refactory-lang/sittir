@@ -49,7 +49,12 @@ impl BuiltImage {
     /// A leaf entry of `kind` holding `text`, `KindId::BLANK` for a text
     /// slot's.
     pub(crate) fn entry(&mut self, kind: KindId, text: &str) -> Address {
-        let len = u32::try_from(text.len()).expect("a text length");
+        self.entry_claiming(kind, u32::try_from(text.len()).expect("a text length"), text)
+    }
+
+    /// A leaf entry of `kind` whose header claims `len` bytes, holding
+    /// `text`.
+    pub(crate) fn entry_claiming(&mut self, kind: KindId, len: u32, text: &str) -> Address {
         let mut bytes = self.header(kind, len).to_ne_bytes().to_vec();
         bytes.extend_from_slice(text.as_bytes());
         bytes.resize(bytes.len().next_multiple_of(4), 0);

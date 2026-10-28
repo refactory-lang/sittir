@@ -4,24 +4,31 @@ import {
 	addressOf,
 	cellFormatOf,
 	chunkOf,
-	decodeCell,
 	decodeListCell,
+	decodeParsedCell,
 	decodeSideDelimiter,
 	decodeSideRow,
-	encodeCell,
 	wordOf,
 	type RecordCell
 } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.ts';
 
-type Entry = Record<string, unknown> & { readonly form: RecordCell['form']; readonly words: readonly number[] };
+type Entry = Record<string, unknown> & {
+	readonly form: RecordCell['form'];
+	readonly forms: number;
+	readonly inline?: number;
+	readonly address?: number;
+	readonly words: readonly number[];
+};
 
 const fixture = JSON.parse(
 	readFileSync(new URL('../../../rust/crates/sittir-core/src/arena/cell-forms.json', import.meta.url), 'utf8')
 ) as {
-	readonly cells: readonly Entry[];
-	readonly inlines: readonly (Entry & { readonly address: number; readonly capacity: number })[];
-	readonly lists: readonly { readonly run: number; readonly len: number; readonly words: readonly number[] }[];
+	readonly parsed: { readonly headerWords: number; readonly cells: readonly Entry[] };
+	readonly built: {
+		readonly chunks: readonly { readonly chunk: number; readonly words?: readonly number[] }[];
+		readonly lists: readonly { readonly word: number; readonly run: number; readonly len: number }[];
+	};
 	readonly sides: readonly {
 		readonly row: {
 			readonly index: number;
@@ -56,24 +63,8 @@ function expected(entry: Entry): RecordCell {
 			};
 		case 'unit':
 			return { form: 'unit', kind: entry.kind as number, row: (entry.row as number | null) ?? undefined };
-		case 'builtLeaf':
-			return {
-				form: 'builtLeaf',
-				kind: entry.kind as number,
-				offset: entry.offset as number,
-				len: entry.len as number,
-				changed: { leading: entry.leading as boolean, trailing: entry.trailing as boolean }
-			};
-		case 'builtText':
-			return { form: 'builtText', offset: entry.offset as number, len: entry.len as number };
-		case 'copiedLeaf':
-			return {
-				form: 'copiedLeaf',
-				kind: entry.kind as number,
-				offset: entry.offset as number,
-				len: entry.len as number,
-				record: entry.record as number
-			};
+		default:
+			throw new Error(`the parsed fixture holds no ${entry.form} cell`);
 	}
 }
 
@@ -81,62 +72,35 @@ describe('the record cell decoder reads what the native codec writes', () => {
 	const backend = getActiveBackend();
 	const format = backend.name === 'native' ? cellFormatOf(backend.native) : undefined;
 
-	it('takes its tags and address packing from the addon', () => {
+	it('takes its tags, forms and address packing from the addon', () => {
 		expect(format).toBeDefined();
 	});
 
-	it.each(fixture.cells.map((entry) => [JSON.stringify(entry.words), entry] as const))(
-		'decodes %s as the codec wrote it',
-		(_, entry) => {
-			expect(decodeCell(entry.words, 0, format!)).toEqual(expected(entry));
+	it.each(fixture.parsed.cells.map((entry) => [JSON.stringify(entry.words), entry.forms, entry] as const))(
+		'decodes %s in a slot of forms %i as the codec wrote it',
+		(_, forms, entry) => {
+			expect(decodeParsedCell(entry.words, 0, forms, format!, entry.inline, entry.address)).toEqual(expected(entry));
 		}
 	);
-
-	const written = new Set<RecordCell['form']>(['absent', 'child', 'unit', 'builtLeaf', 'builtText', 'copiedLeaf']);
-	it.each(fixture.cells.filter((entry) => written.has(entry.form)).map((entry) => [JSON.stringify(entry.words), entry] as const))(
-		'encodes %s as the codec writes it',
-		(_, entry) => {
-			const words = Array.from({ length: entry.words.length }, () => 0);
-			encodeCell(words, 0, format!, expected(entry));
-			expect(words).toEqual(entry.words);
-		}
-	);
-
-	it('refuses to encode a form only a parsed tree holds', () => {
-		for (const entry of fixture.cells.filter((cell) => !written.has(cell.form))) {
-			expect(() => encodeCell([], 0, format!, expected(entry))).toThrow(/never writes/);
-		}
-	});
 
 	it('decodes a cell at its offset in a record', () => {
-		const words = [7, 7, ...fixture.cells[1]!.words];
-		expect(decodeCell(words, 2, format!)).toEqual(expected(fixture.cells[1]!));
+		const entry = fixture.parsed.cells.find((cell) => cell.form === 'coordinate')!;
+		expect(decodeParsedCell([7, 7, ...entry.words], 2, entry.forms, format!)).toEqual(expected(entry));
 	});
 
-	it('resolves embedded records within their stamped cells, including another chunk', () => {
-		for (const entry of fixture.inlines) {
-			expect(decodeCell(entry.words, 0, format!, entry.capacity, entry.address)).toEqual({
-				form: 'child',
-				kind: entry.kind,
-				at: entry.at,
-				link: undefined,
-				changed: { leading: entry.leading, trailing: entry.trailing }
-			});
-			expect(() => decodeCell(entry.words, 0, format!, 0, entry.address)).toThrow(/stamped capacity/);
-			expect(() =>
-				decodeCell(
-					entry.words.slice(0, format!.inlineHeaderWords + entry.capacity - 1),
-					0,
-					format!,
-					entry.capacity,
-					entry.address
-				)
-			).toThrow(/stamped capacity/);
+	it('resolves an embedded record within its stamped capacity, at least a record header', () => {
+		for (const entry of fixture.parsed.cells.filter((cell) => cell.address !== undefined)) {
+			const { forms, inline, address, words } = entry;
+			expect(() => decodeParsedCell(words, 0, forms, format!, fixture.parsed.headerWords - 1, address)).toThrow(/stamped capacity/);
+			expect(() => decodeParsedCell(words.slice(0, -1), 0, forms, format!, inline, address)).toThrow(/stamped capacity/);
+			expect(() => decodeParsedCell(words, 0, forms, format!, inline, 0)).toThrow(/stamped capacity/);
 		}
 	});
 
 	it('decodes every list cell, and packs and splits every address', () => {
-		for (const list of fixture.lists) expect(decodeListCell(list.words, 0)).toEqual({ run: list.run, len: list.len });
+		const chunks = new Map(fixture.built.chunks.flatMap(({ chunk, words }) => (words === undefined ? [] : [[chunk, Uint32Array.from(words)] as const])));
+		const records = { format: format!, words: (address: number) => chunks.get(chunkOf(address, format!))! };
+		for (const list of fixture.built.lists) expect(decodeListCell(records, list.word)).toEqual({ run: list.run, len: list.len });
 		for (const { chunk, word, address } of fixture.addresses) {
 			expect(addressOf(chunk, word, format!)).toBe(address);
 			expect([chunkOf(address, format!), wordOf(address, format!)]).toEqual([chunk, word]);
@@ -155,9 +119,10 @@ describe('the record cell decoder reads what the native codec writes', () => {
 	});
 
 	it('refuses a tag no writer writes, and a cell cut short', () => {
-		expect(() => decodeCell([0xffffffff, 0, 0, 0, 0], 0, format!)).toThrow(
-			/cell tag 4294967295, which no record writer writes/
-		);
-		expect(() => decodeCell([format!.child, 2, 4], 0, format!)).toThrow(/ends at word 3/);
+		const tagged = format!.forms.node | format!.forms.text;
+		expect(() => decodeParsedCell([0xffffffff, 0, 0, 0], 0, tagged, format!)).toThrow(/cell tag 4294967295, which no record writer writes/);
+		expect(() => decodeParsedCell([format!.tag.unit, 0, 0, 0], 0, tagged, format!)).toThrow(/which its slot of forms 5 does not hold/);
+		const coordinate = fixture.parsed.cells.find((cell) => cell.form === 'coordinate' && cell.forms === tagged)!;
+		expect(() => decodeParsedCell(coordinate.words.slice(0, -1), 0, tagged, format!)).toThrow(/ends at word 3/);
 	});
 });

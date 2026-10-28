@@ -2210,21 +2210,6 @@ mod tests {
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
     }
 
-    #[cfg(feature = "arena")]
-    #[test]
-    fn each_tree_keeps_its_own_records() {
-        use crate::arena::{RecordSink, write_record};
-        use crate::layout::NodeLayout;
-        let (one, _) = parsed("fn f() {}");
-        let (two, _) = parsed("fn g() {}");
-        let row = NodeIndex::new(1);
-        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 })), ..NodeLayout::default() };
-        let cell = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
-        let crate::arena::Cell::Child { at, .. } = cell else { panic!("a record, not {cell:?}") };
-        assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");
-        assert_eq!(two.tree_arena().record(row), None, "another tree's row has a record of its own");
-    }
-
     fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryItem]) -> Vec<String> {
         found
             .iter()

@@ -88,9 +88,9 @@ describe('a group seat flattens exactly the group fields its config surface name
 				expect(readerSites(read(grammar, file)), file).toHaveLength(hints.length);
 			}
 			const wrap = read(grammar, 'wrap.ts');
-			const inView = (at: number): boolean => wrap.lastIndexOf('\nfunction view', at) > wrap.lastIndexOf('\nexport function wrap', at);
-			expect(readerSites(wrap).filter((at) => !inView(at)), 'object wraps').toHaveLength(hints.length);
-			expect(readerSites(wrap).filter(inView), 'record views').toHaveLength(hints.length);
+			expect(readerSites(wrap), 'object wraps').toHaveLength(hints.length);
+			const keyReads = [...wrap.matchAll(/return groupField\(viewSlot<T\.\w+ \| undefined>\(this, [^)]*\), '\w+'\);/g)];
+			expect(keyReads, 'record views').toHaveLength(hints.flatMap((hint) => hint.keys).length);
 		});
 	}
 });

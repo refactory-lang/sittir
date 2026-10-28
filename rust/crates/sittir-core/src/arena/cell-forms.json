@@ -1,87 +1,28 @@
 {
-	"cells": [
-		{ "form": "absent", "words": [0] },
-		{ "form": "coordinate", "kind": 12, "index": 40, "start": 3, "end": 7, "words": [1, 12, 40, 3, 7] },
-		{ "form": "parsedLeaf", "kind": 13, "start": 3, "end": 7, "row": 41, "words": [2, 13, 3, 7, 41] },
-		{ "form": "parsedText", "start": 3, "end": 7, "words": [2, 0, 3, 7] },
-		{
-			"form": "child",
-			"kind": 14,
-			"at": 3145737,
-			"link": null,
-			"leading": false,
-			"trailing": false,
-			"words": [3, 14, 3145737, 0, 0]
-		},
-		{
-			"form": "child",
-			"kind": 14,
-			"at": 3145737,
-			"link": null,
-			"leading": false,
-			"trailing": true,
-			"words": [3, 14, 3145737, 0, 2]
-		},
-		{
-			"form": "child",
-			"kind": 14,
-			"at": 3145737,
-			"link": 0,
-			"leading": false,
-			"trailing": false,
-			"words": [3, 14, 3145737, 1, 0]
-		},
-		{
-			"form": "child",
-			"kind": 14,
-			"at": 3145737,
-			"link": 9,
-			"leading": true,
-			"trailing": false,
-			"words": [3, 14, 3145737, 10, 1]
-		},
-		{
-			"form": "child",
-			"kind": 14,
-			"at": 3145737,
-			"link": 9,
-			"leading": true,
-			"trailing": true,
-			"words": [3, 14, 3145737, 10, 3]
-		},
-		{ "form": "unit", "kind": 15, "row": null, "words": [4, 15, 0] },
-		{ "form": "unit", "kind": 15, "row": 0, "words": [4, 15, 1] },
-		{ "form": "unit", "kind": 15, "row": 42, "words": [4, 15, 43] },
-		{ "form": "unit", "kind": 0, "row": null, "words": [4, 0, 0] },
-		{
-			"form": "builtLeaf",
-			"kind": 16,
-			"offset": 1048581,
-			"len": 4,
-			"leading": false,
-			"trailing": false,
-			"words": [5, 16, 1048581, 4, 0]
-		},
-		{
-			"form": "builtLeaf",
-			"kind": 16,
-			"offset": 1048581,
-			"len": 4,
-			"leading": false,
-			"trailing": true,
-			"words": [5, 16, 1048581, 4, 2]
-		},
-		{
-			"form": "builtLeaf",
-			"kind": 65535,
-			"offset": 1048581,
-			"len": 4,
-			"leading": true,
-			"trailing": false,
-			"words": [5, 65535, 1048581, 4, 1]
-		},
-		{ "form": "builtText", "offset": 1048581, "len": 4, "words": [5, 0, 1048581, 4] }
-	],
+	"parsed": {
+		"kindBits": 9,
+		"headerWords": 2,
+		"cells": [
+			{ "forms": 1, "form": "absent", "words": [0, 0, 0] },
+			{ "forms": 1, "form": "coordinate", "kind": 12, "index": 40, "start": 3, "end": 7, "words": [20492, 3, 7] },
+			{ "forms": 1, "form": "parsedLeaf", "kind": 13, "start": 3, "end": 7, "row": 41, "words": [21005, 3, 2147483655] },
+			{ "forms": 1, "form": "child", "kind": 14, "at": 5000, "link": null, "leading": false, "trailing": false, "words": [14, 5000, 0] },
+			{ "forms": 2, "form": "absent", "words": [0] },
+			{ "forms": 2, "form": "unit", "kind": 15, "row": 42, "words": [21519] },
+			{ "forms": 18, "form": "unit", "kind": 0, "row": null, "words": [0] },
+			{ "forms": 18, "form": "unit", "kind": 15, "row": 42, "words": [21519] },
+			{ "forms": 4, "form": "absent", "words": [0, 0] },
+			{ "forms": 4, "form": "parsedText", "start": 3, "end": 7, "words": [4, 7] },
+			{ "forms": 5, "form": "absent", "words": [0, 0, 0, 0] },
+			{ "forms": 5, "form": "parsedText", "start": 3, "end": 7, "words": [3, 4, 7, 0] },
+			{ "forms": 5, "form": "coordinate", "kind": 12, "index": 40, "start": 3, "end": 7, "words": [1, 20492, 3, 7] },
+			{ "forms": 3, "form": "unit", "kind": 15, "row": 42, "words": [2, 21519, 0, 0] },
+			{ "forms": 3, "form": "child", "kind": 14, "at": 5000, "link": null, "leading": false, "trailing": false, "words": [1, 14, 5000, 0] },
+			{ "forms": 8, "inline": 2, "address": 49159, "form": "child", "kind": 14, "at": 49159, "link": null, "leading": false, "trailing": false, "words": [14, 0] },
+			{ "forms": 9, "inline": 5, "form": "coordinate", "kind": 12, "index": 40, "start": 3, "end": 7, "words": [1, 20492, 3, 7, 0, 0] },
+			{ "forms": 9, "inline": 5, "address": 16385, "form": "child", "kind": 16, "at": 16386, "link": null, "leading": false, "trailing": false, "words": [4, 16, 0, 0, 0, 0] }
+		]
+	},
 	"built": {
 		"kindBits": 9,
 		"linkFlag": 1,
@@ -155,31 +96,6 @@
 			{ "word": 0, "run": 0, "len": 0 }
 		]
 	},
-	"inlineHeaderWords": 2,
-	"inlines": [
-		{
-			"address": 3145735,
-			"capacity": 2,
-			"kind": 14,
-			"at": 3145737,
-			"leading": false,
-			"trailing": false,
-			"words": [6, 0, 14, 0, 0]
-		},
-		{
-			"address": 1048577,
-			"capacity": 5,
-			"kind": 16,
-			"at": 1048579,
-			"leading": true,
-			"trailing": true,
-			"words": [6, 3, 16, 0, 0, 0, 0]
-		}
-	],
-	"lists": [
-		{ "run": 3145737, "len": 3, "words": [3145737, 3] },
-		{ "run": 0, "len": 0, "words": [0, 0] }
-	],
 	"sides": [
 		{
 			"row": { "index": 4, "end": 9, "start": 3, "endByte": 8 },

@@ -204,7 +204,7 @@ mod tests {
     #[test]
     fn a_struct_writes_each_stamped_slot_at_its_word_and_its_settings_to_its_side_record() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::BLOCK, item = statements, words = 12)]
+            #[node(kind = kind::BLOCK, item = statements, words = 7, built_words = 5)]
             pub struct BlockNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -213,35 +213,34 @@ mod tests {
                 #[slot(presence = kind::ASYNC, word = 2, bit = 3)]
                 pub r#async: bool,
                 #[wire(key = "_label")]
-                #[slot(field = field::LABEL, word = 3, width = 5)]
+                #[slot(field = field::LABEL, word = 3, width = 3, forms = 1, built = 3)]
                 pub label: Option<SlotValue<LabelNode>>,
                 #[wire(key = "_statements")]
-                #[slot(field = field::STATEMENTS, word = 8, width = 2, run = 5)]
+                #[slot(field = field::STATEMENTS, word = 6, width = 1, run = 3, forms = 1, built = 4)]
                 pub statements: Vec<SlotValue<StatementNode>>,
                 #[wire(key = "_delimiter")]
                 #[flank(trailing = 0)]
                 pub delimiter: Option<Delimiter>,
                 #[wire(key = "_statements_separator_space")]
-                #[space(slot = 8, side = after, site = options::SITE_X)]
+                #[space(slot = 6, side = after, site = options::SITE_X)]
                 pub statements_separator_space: Option<KindId>,
             }
         })
         .expect("expands");
         assert!(has(&out, "::sittir_core::records_codec! { impl ::sittir_core::arena::WriteCell<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia> for BlockNode"));
         assert!(has(&out, "__words[2usize] |= u32::from(self.r#async) << 3u32;"));
-        let layout = "::sittir_core::arena::LayoutField::layout(&self.layout)";
-        assert!(has(&out, &format!(r#"::sittir_core::arena::write_slot(__sink, &self.label, {layout}, "_label")?.encode(&mut __words[3usize..8usize])?;"#)));
-        assert!(has(&out, &format!(r#"::sittir_core::arena::write_list(__sink, 5u32, self.statements.iter(), {layout}, "_statements")?.encode(&mut __words[8usize..10usize])?;"#)));
+        assert!(has(&out, r#"__words[3usize] = ::sittir_core::arena::write_slot(__sink, &self.label, "_label")?.0;"#));
+        assert!(has(&out, r#"__words[4usize] = ::sittir_core::arena::write_list(__sink, self.statements.iter(), "_statements")?.0;"#));
         assert!(has(&out, "__side.delimiter = self.delimiter;"));
-        assert!(has(&out, "__side.slot_mut(8u32).space_after = ::core::option::Option::Some(space);"));
-        assert!(has(&out, r#""_label" => ::core::option::Option::Some(3u32), "_statements" => ::core::option::Option::Some(8u32),"#));
-        assert!(has(&out, "::sittir_core::arena::write_record(__sink, __KIND, 12u32,"));
+        assert!(has(&out, "__side.slot_mut(6u32).space_after = ::core::option::Option::Some(space);"));
+        assert!(has(&out, r#""_label" => ::core::option::Option::Some(3u32), "_statements" => ::core::option::Option::Some(6u32),"#));
+        assert!(has(&out, "::sittir_core::arena::write_record(__sink, __KIND, 5u32,"));
     }
 
     #[test]
     fn a_text_leaf_writes_a_leaf_cell() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::IDENTIFIER, text, words = 2)]
+            #[node(kind = kind::IDENTIFIER, text, words = 2, built_words = 2)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -257,26 +256,25 @@ mod tests {
     }
 
     #[test]
-    fn a_token_interior_writes_each_capture_from_its_span_at_its_capture_index() {
+    fn a_token_interior_writes_each_capture_as_a_captured_string_at_its_built_word() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 10)]
+            #[node(kind = kind::DECIMAL, interior = "(?<whole>[0-9]+)(?<suffix>[a-z]+)?", words = 6, built_words = 4)]
             pub struct DecimalNode {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_whole")]
-                #[slot(capture = "whole", word = 2, width = 4)]
+                #[slot(capture = "whole", word = 2, width = 2, forms = 4, built = 2)]
                 pub whole: String,
                 #[wire(key = "_suffix")]
-                #[slot(capture = "suffix", word = 6, width = 4)]
+                #[slot(capture = "suffix", word = 4, width = 2, forms = 4, built = 3)]
                 pub suffix: Option<String>,
             }
         })
         .expect("expands");
-        assert!(has(&out, "let __spans = ::sittir_core::arena::capture_spans(::sittir_core::arena::LayoutField::layout(&self.layout), 2usize)?;"));
-        assert!(has(&out, "(::sittir_core::arena::captured_cell(__sink, &self.whole, __spans.get(0usize).copied().flatten())?).encode(&mut __words[2usize..6usize])?;"));
-        assert!(has(&out, "::core::option::Option::Some(text) => ::sittir_core::arena::captured_cell(__sink, text, __spans.get(1usize).copied().flatten())?,"));
-        assert!(has(&out, "::core::option::Option::None => ::sittir_core::arena::Cell::Absent,"));
+        assert!(has(&out, "__words[2usize] = (::sittir_core::arena::captured_cell(__sink, &self.whole)?).0;"));
+        assert!(has(&out, "::core::option::Option::Some(text) => ::sittir_core::arena::captured_cell(__sink, text)?,"));
+        assert!(has(&out, "::core::option::Option::None => ::sittir_core::arena::CellWord(0),"));
     }
 
     #[test]
@@ -319,9 +317,9 @@ mod tests {
         .expect("expands");
         assert!(has(&out, "impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for PatternNode where IdentifierNode: ::sittir_core::arena::WriteCell<__T>, Box<TuplePatternNode>: ::sittir_core::arena::WriteCell<__T>, VerbatimNode: ::sittir_core::arena::WriteCell<__T>,"));
         assert!(has(&out, "Self::Identifier(payload) => ::sittir_core::arena::WriteCell::<__T>::write_cell(payload, __sink),"));
-        assert!(has(&out, "Self::Wildcard(_) => ::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: kind::WILDCARD, row: ::core::option::Option::None }),"));
-        assert!(has(&out, "Self::SelfArm => ::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: kind::SELF, row: ::core::option::Option::None }),"));
-        assert!(has(&out, "Self::Blank => ::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: ::sittir_core::types::KindId::BLANK, row: ::core::option::Option::None }),"));
+        assert!(has(&out, "Self::Wildcard(_) => ::sittir_core::arena::CellWord::unit(kind::WILDCARD),"));
+        assert!(has(&out, "Self::SelfArm => ::sittir_core::arena::CellWord::unit(kind::SELF),"));
+        assert!(has(&out, "Self::Blank => ::sittir_core::arena::CellWord::unit(::sittir_core::types::KindId::BLANK),"));
     }
 
     #[test]
@@ -334,6 +332,6 @@ mod tests {
             }
         })
         .expect("expands");
-        assert!(has(&out, "::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: __id(self), row: ::core::option::Option::None })"));
+        assert!(has(&out, "::sittir_core::arena::CellWord::unit(__id(self))"));
     }
 }

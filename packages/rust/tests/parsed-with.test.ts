@@ -29,7 +29,7 @@ function nth(node: Node, key: string, index: number): Node {
 function rebuiltThrough(node: Node, key: string): Node {
 	const value = slot(node, key);
 	const setter = node.$with[key]!;
-	return Array.isArray(value) && setter.length === 0 ? setter(...value) : setter(value);
+	return Array.isArray(value) && setter.length === 0 ? setter.call(node.$with, ...value) : setter.call(node.$with, value);
 }
 
 function call(engine: Engine, name: string): unknown {

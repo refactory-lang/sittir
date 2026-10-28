@@ -10,7 +10,7 @@
 //! inner side written back, a test-only write that changes no text.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, Linked, RecordGrammar, RecordSink, RecordTrees, WriteCell};
+use sittir_core::arena::{Address, ArenaRead, BuiltChunks, Cell, CellAt, HeldArenas, HydrateNode, Linked, RecordCells, RecordGrammar, RecordSink, RecordTrees, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, EngineGrammar, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
@@ -47,7 +47,7 @@ struct Renders<G: EngineGrammar, N> {
     record: RecordRender<G::Trivia>,
 }
 
-impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
+impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells> Renders<G, N> {
     fn engine(&self) -> Engine<G> {
         Engine::new(self.grammar, (self.options)()).expect("an engine")
     }
@@ -66,7 +66,7 @@ impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
 
     /// The built record `root` of the arena `built`, its parsed children in
     /// `tree`'s, rendered twice: both renders, which must agree.
-    fn record(&self, tree: &ParsedTree<G>, built: &Arena, root: CellAt, options: &ResolvedOptions) -> Result<String, String> {
+    fn record(&self, tree: &ParsedTree<G>, built: &BuiltChunks, root: CellAt, options: &ResolvedOptions) -> Result<String, String> {
         let ctx = RenderContext { options, sources: tree };
         twice(|| {
             let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
@@ -125,7 +125,7 @@ enum NodeAlike {
     Panicking,
 }
 
-impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>> Renders<G, N> {
+impl<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells> Renders<G, N> {
     /// Whether the node at `index` of `tree`, read one level down, renders
     /// from its record as natively, or panics there as natively.
     fn node_alike(&self, tree: &ParsedTree<G>, index: NodeIndex, options: &ResolvedOptions) -> Result<NodeAlike, String> {
@@ -191,7 +191,7 @@ fn sources(grammar: &str) -> Vec<String> {
         .collect()
 }
 
-fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(grammar: &str, renders: &Renders<G, N>) {
+fn corpus<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(grammar: &str, renders: &Renders<G, N>) {
     let sources = sources(grammar);
     assert!(!sources.is_empty(), "{grammar} has round-trip fixtures");
     let mut differ = Vec::new();
@@ -246,7 +246,7 @@ fn every_scm_source_renders_alike_from_its_records() {
 /// The node of kind `kind` spanning `text` in `source`, read one level
 /// down, renders as `text` natively and from its record, untouched and
 /// with a write in its range (`edit_in_place`), through its template.
-fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia>>(renders: &Renders<G, N>, source: &str, kind: &str, text: &str) {
+fn renders_as_its_source<G: RecordGrammar, N: ReadNode + WriteCell<G::Trivia> + HydrateNode + RecordCells>(renders: &Renders<G, N>, source: &str, kind: &str, text: &str) {
     let mut engine = renders.engine();
     let options = engine.options().clone();
     for edited in [false, true] {
@@ -379,20 +379,20 @@ fn an_untouched_parsed_record_a_built_record_links_renders_as_its_source() {
 /// `node` written as a built record into a fresh arena, each untouched
 /// parsed child it holds linked to its record in `tree`'s arena, and how many
 /// it linked.
-fn built_record<G: EngineGrammar, N: ReadNode + WriteCell<G::Trivia>>(tree: &ParsedTree<G>, node: &N) -> (Arena, CellAt, usize) {
-    let mut built = Arena::new();
+fn built_record<G: RecordGrammar, N: WriteCell<G::Trivia> + HydrateNode + RecordCells>(tree: &ParsedTree<G>, node: &N) -> (BuiltChunks, CellAt, usize) {
+    let mut built = BuiltChunks::new(G::KIND_BITS, G::shape);
     let mut linked = 0;
     let mut link = |coord: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> {
-        let child: N = tree.read(coord.index, Depth::ONE).map_err(|_| sittir_core::arena::ArenaError::Unwritable("an unread child"))?;
-        match child.write_cell(&mut RecordSink::parsed(tree.tree_id(), &mut tree.tree_arena()))? {
-            Cell::Child { at, .. } => {
+        match tree.read_record::<N>(coord.index, Depth::ONE).map_err(|_| sittir_core::arena::ArenaError::Unwritable("an unread child"))? {
+            Some(at) => {
                 linked += 1;
                 Ok(Linked::Record(at))
             }
-            _ => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
+            None => Ok(Linked::Leaf(tree.source()[coord.span.range()].to_owned())),
         }
     };
-    let cell = node.write_cell(&mut RecordSink::built(&mut built, tree.written(), &mut link)).expect("a built record");
+    let word = node.write_cell(&mut RecordSink::built(&mut built, tree.written(), &mut link)).expect("a built record");
+    let cell = Cell::decode_built(word, &built, G::KIND_BITS).expect("a built root");
     (built, CellAt { cell, tree: None, site: None }, linked)
 }
 
@@ -450,9 +450,30 @@ fn a_node_s_record_is_written_on_its_first_read_and_answered_by_every_later_one(
     let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 0);
     let child = tree.read_record::<sittir_rust::render::AnyNode>(statement, Depth::ONE).expect("a read").expect("a record");
     assert_ne!(child, root);
-    assert_eq!(tree.tree_arena().record(statement), Some(child), "the row index holds it");
+    assert_eq!(tree.written_record::<sittir_rust::render::AnyNode>(statement), Some(child), "a later read reaches it");
     let leaf = index_of(&tree, rust_kinds::IDENTIFIER, 0);
     assert_eq!(tree.read_record::<sittir_rust::render::AnyNode>(leaf, Depth::ONE), Ok(None), "a parsed leaf has no record: its holder's cell holds it whole");
+}
+
+/// Whether `after` holds the words of `before` but for node cells a read
+/// rewrote once, from the coordinate `[kind | row, start, end]` to the
+/// record it wrote, `[kind, address, 0]` (`Cell::patch_parsed`).
+fn kept_but_patched(before: &[u32], after: &[u32]) -> bool {
+    let bits = <sittir_rust::RustGrammar as EngineGrammar>::KIND_BITS;
+    let kind = |word: u32| word & ((1 << bits) - 1);
+    let mut at = 0;
+    while at < before.len() {
+        if before[at] == after[at] {
+            at += 1;
+            continue;
+        }
+        let (Some(coordinate), Some(record)) = (before.get(at..at + 3), after.get(at..at + 3)) else { return false };
+        if coordinate[0] >> bits == 0 || record[0] != kind(coordinate[0]) || record[1] == 0 || record[2] != 0 {
+            return false;
+        }
+        at += 3;
+    }
+    true
 }
 
 #[test]
@@ -462,7 +483,7 @@ fn native_hydration_deepens_a_cached_record_without_rewriting_it() {
     let root = RustRenders::first_read(&tree, Depth::ONE).expect("a shallow root");
     let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 0);
     assert_eq!(
-        tree.tree_arena().record(statement),
+        tree.written_record::<sittir_rust::render::AnyNode>(statement),
         None,
         "the shallow read leaves the statement unmaterialized"
     );
@@ -472,15 +493,14 @@ fn native_hydration_deepens_a_cached_record_without_rewriting_it() {
         Ok(Some(root))
     );
     assert!(
-        tree.tree_arena().record(statement).is_some(),
+        tree.written_record::<sittir_rust::render::AnyNode>(statement).is_some(),
         "hydration must reach children of a cached root"
     );
     for (n, words) in before.iter().enumerate() {
         let chunk = u32::try_from(n).expect("the chunk index fits");
-        assert_eq!(
-            &tree.record_chunk(chunk).expect("the chunk remains")[..words.len()],
-            words,
-            "published words stay immutable"
+        assert!(
+            kept_but_patched(words, &tree.record_chunk(chunk).expect("the chunk remains")[..words.len()]),
+            "published words stay as they were but for the coordinate cells a read rewrote to name their records"
         );
     }
     let hydrated: Vec<_> = (0..).map_while(|n| tree.record_chunk(n)).collect();
@@ -518,7 +538,7 @@ fn native_hydration_uses_the_readers_depth_boundary() {
         let rows = |tree: &ParsedTree<sittir_rust::RustGrammar>| {
             (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
                 .map(NodeIndex::new)
-                .filter(|&index| tree.tree_arena().record(index).is_some())
+                .filter(|&index| tree.written_record::<sittir_rust::render::AnyNode>(index).is_some())
                 .collect::<Vec<_>>()
         };
         let got = rows(&tree);
@@ -607,8 +627,8 @@ fn an_address_inside_a_side_record_is_refused_before_source_folding() {
     RustRenders::first_read(&tree, Depth::All).expect("every record written");
     let row = index_of(&tree, rust_kinds::PARAMETERS, 0);
     let at = {
+        let record = tree.written_record::<sittir_rust::render::AnyNode>(row).expect("the parameters record");
         let arena = tree.tree_arena();
-        let record = arena.record(row).expect("the parameters record");
         let header = arena.arena().words(record, 2).expect("its header");
         Address(header[1])
             .offset(1)
@@ -631,12 +651,9 @@ fn payload_words_never_render_as_node_records() {
         let options = engine.options().clone();
         let tree = RustRenders::parse(&mut engine, &source);
         RustRenders::first_read(&tree, Depth::All).expect("every record written");
-        let records: HashSet<_> = {
-            let arena = tree.tree_arena();
-            (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
-                .filter_map(|row| arena.record(NodeIndex::new(row)))
-                .collect()
-        };
+        let records: HashSet<_> = (0..sittir_core::read::descendant_count(&tree.tree().root_node()))
+            .filter_map(|row| tree.written_record::<sittir_rust::render::AnyNode>(NodeIndex::new(row)))
+            .collect();
         for chunk_index in 0.. {
             let Some(chunk) = tree.record_chunk(chunk_index) else {
                 break;
@@ -666,7 +683,7 @@ fn a_chunk_is_copied_out_as_its_records_fill_it() {
     let statement = index_of(&tree, rust_kinds::EXPRESSION_STATEMENT, 1);
     tree.read_record::<sittir_rust::render::AnyNode>(statement, Depth::All).expect("a read").expect("a record");
     let after = tree.record_chunk(root.chunk()).expect("the root's chunk");
-    assert!(after.len() > before.len() && after.starts_with(&before), "a later read appends; the words before it stay");
+    assert!(after.len() > before.len() && kept_but_patched(&before, &after[..before.len()]), "a later read appends; the words before it stay as they were but for the coordinate cells it rewrote to name their records");
     assert_eq!(tree.record_chunk(sittir_core::arena::MAX_CHUNKS), None);
 }
 
@@ -677,7 +694,7 @@ fn a_record_rendered_as_a_render_root_drops_the_seams_its_holder_gave_it() {
     let tree = RustRenders::parse(&mut engine, "fn a() {}\n\nfn b() { Ok(None) }\n");
     RustRenders::first_read(&tree, Depth::All).expect("every record written");
     let both = ChangedEdges { leading: true, trailing: true };
-    let record = |kind, nth| tree.tree_arena().record(index_of(&tree, kind, nth)).expect("its record");
+    let record = |kind, nth| tree.written_record::<sittir_rust::render::AnyNode>(index_of(&tree, kind, nth)).expect("its record");
     let call = record(rust_kinds::CALL_EXPRESSION, 0);
     assert_eq!(tree.render_record(call, both, &options, &tree).expect("a render"), "Ok(None)", "a node crossing as its coordinate renders so");
     assert_eq!(tree.render_record(call, ChangedEdges::default(), &options, &tree).expect("a render"), " Ok(None) ", "in its holder, it keeps the block's padding");
@@ -704,7 +721,7 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         .render_record(record, ChangedEdges::default(), &options, &tree)
         .expect("the ordinary render");
     assert_eq!(
-        tree.render_candidate(statement, &options, &tree)
+        tree.render_candidate::<sittir_rust::render::AnyNode>(statement, &options, &tree)
             .expect("the candidate render"),
         "call(/* inside */ arg);"
     );
@@ -720,7 +737,7 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         .expect("a leaf read");
     assert_eq!(at, None);
     assert_eq!(
-        tree.render_candidate(leaf, &options, &tree)
+        tree.render_candidate::<sittir_rust::render::AnyNode>(leaf, &options, &tree)
             .expect("a recordless candidate"),
         "arg"
     );
