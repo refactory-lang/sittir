@@ -28,6 +28,10 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'literal.number.float', $value: Number.NaN })).toThrow(/literal\.number\.float: no python literal spells NaN/);
 	});
 
+	it('refuses a bigint at a float form that takes its parts, keeping every digit in the refusal', () => {
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: 2n ** 60n + 1n })).toThrow(/literal\.number\.float takes a float \(a number\) in python, not 1152921504606846977n/);
+	});
+
 	it('refuses a member its $value spells, stated beside it', () => {
 		expect(() => runtime.build({ $path: 'literal.number.float', $value: 1.5, marker: 'e', exponent: '8' })).toThrow(
 			/literal\.number\.float: \$value 1\.5 spells exponent and marker; state the \$value or those members, not both/

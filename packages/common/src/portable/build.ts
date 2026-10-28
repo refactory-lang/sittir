@@ -384,7 +384,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (placed.mount !== undefined) mountOn(owner, placed, path);
 			else set(owner, key, placed.value, path);
 		};
-		const decimalParts = (value: number, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
+		const decimalParts = (value: number | bigint, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
 			const cannot = (): never => {
 				throw new Error(`portable build: ${path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(value)}`);
 			};
@@ -467,7 +467,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					throw new Error(`portable build: ${structure.$path}: $value ${spelledValue(scalar)} spells ${stated.join(' and ')}; state the $value or ${stated.length === 1 ? 'that member' : 'those members'}, not both`);
 				if (arm.numeric === undefined) frame.input = scalar;
 				else if (typeof arm.numeric === 'string') values.set(arm.numeric, scalar);
-				else for (const [name, part] of decimalParts(Number(scalar), arm.numeric, arm, structure.$path)) values.set(name, part);
+				else for (const [name, part] of decimalParts(scalar, arm.numeric, arm, structure.$path)) values.set(name, part);
 			}
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
