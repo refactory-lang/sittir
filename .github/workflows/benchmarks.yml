@@ -12,8 +12,8 @@ on:
       construction:
         description: How the corpus job's arena arm builds nodes
         type: choice
-        default: objects
-        options: [objects, records]
+        default: object
+        options: [object, record]
 
 permissions:
   contents: read

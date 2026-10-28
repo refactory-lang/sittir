@@ -4,17 +4,18 @@ import { TSKindId } from '../src/types.ts';
 import { createEngine } from '@sittir/common';
 
 const py = await createEngine(python);
+const objects = await createEngine(python, { nodeStorage: 'object' });
 
-const contentOf = (source: string) => {
-	const statement = py.parse(source).statements()[0]!;
+const contentOf = (source: string, engine: typeof py = py) => {
+	const statement = engine.parse(source).statements()[0]!;
 	if (!py.is.simpleStatements(statement)) throw new Error('not a simple statement');
 	const element = statement.elements()[0]!;
 	if (!py.is.expressionStatement(element)) throw new Error('not an expression statement');
 	return element.content();
 };
 
-const sliceOf = (source: string) => {
-	const subscript = contentOf(source);
+const sliceOf = (source: string, engine: typeof py = py) => {
+	const subscript = contentOf(source, engine);
 	if (!py.is.subscript(subscript)) throw new Error('not a subscript');
 	const [slice] = subscript.subscripts();
 	if (slice === undefined || typeof slice === 'number' || !py.is.slice(slice)) throw new Error('not a slice');
@@ -34,9 +35,13 @@ describe('a group seat flattens its group fields onto the parent', () => {
 
 	it('takes the flattened expression key through $with', () => {
 		const rebuilt = sliceOf('a[1:2:3]\n').$with.expression(py.build.integer('9'));
-		expect(rebuilt._step).toBeDefined();
 		expect(String(py.render(present(rebuilt.expression())))).toBe('9');
 		expect(String(py.render(present(rebuilt.stop())))).toBe('2');
+	});
+
+	it('stores the flattened key in its group under object storage', () => {
+		const rebuilt = sliceOf('a[1:2:3]\n', objects).$with.expression(objects.build.integer('9'));
+		expect(rebuilt._step).toBeDefined();
 	});
 });
 

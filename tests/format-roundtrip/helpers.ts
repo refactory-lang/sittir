@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { nativeEngineOf, type NativeEngineLike, type NativeModuleLike } from '@sittir/common/engine';
 import { NATIVE_LOADER, nativeBindingDir } from '../../packages/codegen/src/grammars.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -11,14 +12,7 @@ const CORPUS_PATH = resolve(repoRoot, 'tests/format-roundtrip/format-corpus.json
 
 type Grammar = 'python' | 'rust' | 'typescript';
 
-export type NativeEngine = {
-	parse(src: string): string;
-	read(treeId: number, index: number, depth?: number): object;
-	snapshot(treeId: number, index: number, holderByte?: number): object;
-	siblings(treeId: number, index: number): string;
-	render(node: object): string;
-	dispose(): void;
-};
+export type NativeEngine = NativeEngineLike<object>;
 
 export type FormatCorpusEntry = {
 	grammar: Grammar;
@@ -42,11 +36,7 @@ export function loadFixtureSource(fixture: string): string {
 export function tryLoadNativeEngine(grammar: Grammar): NativeEngine | null {
 	try {
 		const req = createRequire(import.meta.url);
-		const mod = req(resolve(nativeBindingDir(grammar), NATIVE_LOADER)) as {
-			SittirEngine: new () => NativeEngine;
-		};
-
-		return new mod.SittirEngine();
+		return nativeEngineOf(req(resolve(nativeBindingDir(grammar), NATIVE_LOADER)) as NativeModuleLike<object>);
 	} catch {
 		return null;
 	}

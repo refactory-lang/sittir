@@ -111,12 +111,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], trivia:
         Some(content) => {
             let field = fields.iter().find(|field| field.ident == content).ok_or_else(|| syn::Error::new_spanned(content, format!("`{ident}` seats through `{content}`, which is none of its fields")))?;
             let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, format!("`{content}` seats `{ident}`, so it is a slot"))) };
-            let (Some(word), Some(width), None) = (slot.cell.word, slot.cell.width, slot.cell.run) else {
+            let (Some(_), Some(_), None) = (slot.cell.word, slot.cell.width, slot.cell.run) else {
                 return Err(syn::Error::new_spanned(content, format!("`{content}` seats `{ident}`, so it is a single slot with its record cell")));
             };
             let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a wrapper's content holds a `SlotValue<…>`"))?;
-            let inline = slot.cell.inline.unwrap_or(0);
-            quote!(.or_else(|| ::sittir_core::arena::seat_through::<#trivia, #node>(prep, at, #claims, ::sittir_core::arena::CellShape { word: #word, width: #width, run: ::core::option::Option::None, inline: #inline }, table, ctx)))
+            let shape = crate::views::cell_shape(field, &slot.cell)?;
+            quote!(.or_else(|| ::sittir_core::arena::seat_through::<#trivia, #node>(prep, at, #claims, #shape, table, ctx)))
         }
         None => TokenStream::new(),
     };
@@ -168,7 +168,8 @@ pub fn choice(ident: &Ident, attrs: &KindAttrs, variants: &[WireVariant<'_>]) ->
             (quote!(kind == ::sittir_core::types::KindId::BLANK), None)
         } else {
             let Some(first) = &variant.first else { continue };
-            (quote!(kind == #first), Some(first))
+            let claims = &variant.claims;
+            (quote!([#(#claims),*].contains(&kind)), Some(first))
         };
         let edged = variant.edged;
         gaps.push(quote!(if #claim { return #edged; }));
@@ -286,13 +287,13 @@ mod tests {
     #[test]
     fn a_struct_prepares_its_record_through_its_body_and_seats_by_its_kind_then_its_content() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::EXPRESSION_STATEMENT, words = 7, fields = StatementFields, prepare = StatementPrepare, view = StatementNodeRecord, prepare_fn = prepare_statement, seat_through = content)]
+            #[node(kind = kind::EXPRESSION_STATEMENT, words = 5, built_words = 3, fields = StatementFields, prepare = StatementPrepare, view = StatementNodeRecord, prepare_fn = prepare_statement, seat_through = content)]
             pub struct StatementNode {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_content")]
-                #[slot(field = field::CONTENT, word = 2, width = 5)]
+                #[slot(field = field::CONTENT, word = 2, width = 3, forms = 1, built = 2)]
                 pub content: SlotValue<ExpressionNode>,
             }
         })
@@ -303,36 +304,36 @@ mod tests {
         assert!(has(&out, &format!("::sittir_core::arena::RecordAt::of(prep, at, {claims}, |word| <Self as ::sittir_core::arena::PrepareRecord<{trivia}>>::slot_key(kind::EXPRESSION_STATEMENT, word))?; prepare_statement(&mut record, prep, ctx)")));
         assert!(has(&out, &format!("if !{claims}(kind) {{ return ::core::option::Option::None; }} match word {{ 2u32 => ::core::option::Option::Some(\"_content\"), _ => ::core::option::Option::None, }}")));
         assert!(has(&out, &format!("if !{claims}(kind) {{ return ::core::option::Option::None; }} match key {{ \"_content\" => ::core::option::Option::Some(2u32), _ => ::core::option::Option::None, }}")));
-        assert!(has(&out, &format!("::sittir_core::arena::own_seat(prep, at, kind::EXPRESSION_STATEMENT, table).or_else(|| ::sittir_core::arena::seat_through::<{trivia}, ExpressionNode>(prep, at, {claims}, ::sittir_core::arena::CellShape {{ word: 2u32, width: 5u32, run: ::core::option::Option::None, inline: 0u32 }}, table, ctx))")));
+        assert!(has(&out, &format!("::sittir_core::arena::own_seat(prep, at, kind::EXPRESSION_STATEMENT, table).or_else(|| ::sittir_core::arena::seat_through::<{trivia}, ExpressionNode>(prep, at, {claims}, ::sittir_core::arena::CellShape {{ word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }}, table, ctx))")));
         assert!(has(&out, "::sittir_core::arena::view_kind_in::<<Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, StatementNodeRecord<'_>>(prep, at, kinds)"));
         assert!(has(&out, "impl<'r> StatementPrepare for ::sittir_core::arena::RecordAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia>"));
         assert!(has(&out, "type Content<'a> = ::sittir_core::arena::SlotAt<'r, <Option<Box<NodeLayout>> as ::sittir_core::arena::LayoutField>::Trivia, ExpressionNode> where Self: 'a;"));
-        assert!(has(&out, "StatementPrepareParts { layout: self.layout(), content: self.slot::<ExpressionNode>(2u32, 5u32, ::core::option::Option::None), }"));
+        assert!(has(&out, "StatementPrepareParts { layout: self.layout(), content: self.slot::<ExpressionNode>(::sittir_core::arena::CellShape { word: 2u32, width: 3u32, run: ::core::option::Option::None, inline: 0u32, forms: 1u8, built: 2u32, key: \"_content\" }), }"));
     }
 
     #[test]
     fn a_struct_with_a_view_names_its_prepare_body_and_its_seat_slot_is_a_single_slot_of_it() {
         let struct_with = |stamps: proc_macro2::TokenStream| -> syn::DeriveInput {
             parse_quote! {
-                #[node(kind = kind::LIST, words = 4, fields = ListFields, prepare = ListPrepare, view = ListNodeRecord, #stamps)]
+                #[node(kind = kind::LIST, words = 3, built_words = 3, fields = ListFields, prepare = ListPrepare, view = ListNodeRecord, #stamps)]
                 pub struct ListNode {
                     #[wire(key = "$_layout")]
                     #[layout]
                     pub layout: Option<Box<NodeLayout>>,
                     #[wire(key = "_items")]
-                    #[slot(field = field::ITEMS, word = 2, width = 2, run = 5)]
+                    #[slot(field = field::ITEMS, word = 2, width = 1, run = 3, forms = 1, built = 2)]
                     pub items: Vec<SlotValue<ItemNode>>,
                 }
             }
         };
-        let unnamed = expand(&struct_with(quote::quote!(words = 4))).expect_err("refused").to_string();
+        let unnamed = expand(&struct_with(quote::quote!(words = 3))).expect_err("refused").to_string();
         assert!(unnamed.contains("`ListNode` has a record view, so it names its kind and its prepare body"), "{unnamed}");
         let listed = expand(&struct_with(quote::quote!(prepare_fn = prepare_list, seat_through = items))).expect_err("refused").to_string();
         assert!(listed.contains("`items` seats `ListNode`, so it is a single slot with its record cell"), "{listed}");
         let missing = expand(&struct_with(quote::quote!(prepare_fn = prepare_list, seat_through = body))).expect_err("refused").to_string();
         assert!(missing.contains("`ListNode` seats through `body`, which is none of its fields"), "{missing}");
         let out = expand(&struct_with(quote::quote!(prepare_fn = prepare_list))).expect("expands");
-        assert!(has(&out, "self.slot::<ItemNode>(2u32, 2u32, ::core::option::Option::Some(5u32))"));
+        assert!(has(&out, r#"self.slot::<ItemNode>(::sittir_core::arena::CellShape { word: 2u32, width: 1u32, run: ::core::option::Option::Some(3u32), inline: 0u32, forms: 1u8, built: 2u32, key: "_items" })"#));
         assert!(has(&out, "::sittir_core::arena::own_seat(prep, at, kind::LIST, table) }"), "no content to seat through");
     }
 
@@ -351,8 +352,8 @@ mod tests {
         .expect("expands");
         assert!(has(&out, "impl<__T> ::sittir_core::arena::PrepareRecord<__T> for StatementNode where ExpressionStatementNode: ::sittir_core::arena::PrepareRecord<__T>,"));
         assert!(has(&out, "if <ExpressionStatementNode as ::sittir_core::arena::PrepareRecord<__T>>::claims(kind) { return <ExpressionStatementNode as ::sittir_core::arena::PrepareRecord<__T>>::prepare_record(prep, at, ctx); }"));
-        assert!(has(&out, "if kind == kind::EMPTY_STATEMENT { return true; }"), "an edged unit takes a gap");
-        assert!(has(&out, "if kind == kind::EMPTY_STATEMENT { return ::sittir_core::prepare::seat_site(table, kind::EMPTY_STATEMENT)"));
+        assert!(has(&out, "if [kind::EMPTY_STATEMENT].contains(&kind) { return true; }"), "an edged unit takes a gap");
+        assert!(has(&out, "if [kind::EMPTY_STATEMENT].contains(&kind) { return ::sittir_core::prepare::seat_site(table, kind::EMPTY_STATEMENT)"));
         assert!(has(&out, "::sittir_core::arena::view_kind_in::<__T, <Self as ::sittir_core::arena::HasRecord>::Record<'_>>(prep, at, kinds)"));
     }
 

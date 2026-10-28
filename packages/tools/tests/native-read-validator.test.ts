@@ -9,13 +9,13 @@ import { validateReadRenderParse } from '../src/validate/read-render-parse.ts';
 import { RoundtripProfile } from '../src/validate/roundtrip-profile.ts';
 import { reportFor, storageBenchTestTimeout } from './storage-bench.helpers.ts';
 
-const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as NativeModuleLike;
+const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as Required<NativeModuleLike>;
 
 afterEach(() => vi.restoreAllMocks());
 
 it('defers the diagnostic root read and keeps its error stamp and cached identity', async () => {
-	const engine = await createEngine(await languageByName('scm'));
-	const read = vi.spyOn(native.SittirEngine.prototype, 'read');
+	const read = vi.spyOn(native, 'read');
+	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'object' });
 	try {
 		const parsed = engine.diagnostics.parseAndRead('(identifier)');
 		expect(read).not.toHaveBeenCalled();
@@ -35,12 +35,12 @@ function refuseExports() {
 }
 
 it('hydrates and renders a diagnostic tree without exporting objects or record chunks', async () => {
-	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'arena' });
 	for (const method of refuseExports())
-		vi.spyOn(native.SittirEngine.prototype, method).mockImplementation(() => {
+		vi.spyOn(native, method).mockImplementation(() => {
 			throw new Error(`unexpected ${method}`);
 		});
-	const hydrated = vi.spyOn(native.SittirEngine.prototype, 'hydrateRecord');
+	const hydrated = vi.spyOn(native, 'hydrateRecord');
+	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'arena' });
 	try {
 		const source = '(identifier) @name';
 		const tree = engine.diagnostics.parseAndRead(source).tree as TreeHandle;
@@ -56,12 +56,12 @@ it('hydrates and renders a diagnostic tree without exporting objects or record c
 it('deep-reads each arena root before enumeration and render, without object reads or chunk export', async () => {
 	useValidationNodeStorage('arena');
 	for (const method of refuseExports())
-		vi.spyOn(native.SittirEngine.prototype, method).mockImplementation(() => {
+		vi.spyOn(native, method).mockImplementation(() => {
 			throw new Error(`unexpected ${method}`);
 		});
-	const hydrated = vi.spyOn(native.SittirEngine.prototype, 'hydrateRecord');
-	const queried = vi.spyOn(native.SittirEngine.prototype, 'recordCandidates');
-	const rendered = vi.spyOn(native.SittirEngine.prototype, 'renderCandidate');
+	const hydrated = vi.spyOn(native, 'hydrateRecord');
+	const queried = vi.spyOn(native, 'recordCandidates');
+	const rendered = vi.spyOn(native, 'renderCandidate');
 	const profile = new RoundtripProfile();
 	const result = await validateReadRenderParse('scm', { recursive: true, profile });
 	expect(result.errors).toEqual([]);
@@ -71,7 +71,7 @@ it('deep-reads each arena root before enumeration and render, without object rea
 	expect(hydrated.mock.calls.every((call) => call[1] === 0 && call[2] === Infinity)).toBe(true);
 	expect(hydrated.mock.invocationCallOrder[0]).toBeLessThan(queried.mock.invocationCallOrder[0]!);
 	for (const [i, call] of rendered.mock.calls.entries()) {
-		const rootRead = hydrated.mock.calls.findIndex((read) => read[0] === call[0]);
+		const rootRead = hydrated.mock.calls.findIndex((read) => read[0] === call[1]);
 		expect(rootRead).toBeGreaterThanOrEqual(0);
 		expect(hydrated.mock.invocationCallOrder[rootRead]).toBeLessThan(rendered.mock.invocationCallOrder[i]!);
 	}

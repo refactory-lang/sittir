@@ -244,6 +244,7 @@ export function analyzeCorpus(data) {
 			result.workers += part.workers;
 			result.phases.push(...part.phases);
 			Object.assign(result.memoryMiB, part.memoryMiB);
+			if (part.builtArena) Object.assign((result.builtArena ??= {}), part.builtArena);
 			for (const [bucket, times] of Object.entries(part.aggregates)) {
 				const aggregate = (result.aggregates[bucket] ??= { objectMs: 0, arenaMs: 0 });
 				aggregate.objectMs += times.objectMs;
@@ -289,6 +290,16 @@ export function analyzeCorpus(data) {
 								1048576
 						)
 					)
+				};
+			}
+			const built = memoryWorkers.filter((worker) => worker.grammar === grammar && worker.memory.built !== undefined);
+			if (built.length) {
+				const chunks = median(built.map(({ memory }) => memory.built.chunks));
+				const counts = median(built.map(({ memory }) => memory.built.counts));
+				(result.builtArena ??= {})[grammar] = {
+					chunksMiB: chunks / 1048576,
+					countsMiB: counts / 1048576,
+					countShare: chunks > counts ? counts / (chunks - counts) : 0
 				};
 			}
 		}
@@ -421,6 +432,16 @@ export function summarize(data) {
 				'Memory medians cover five fresh workers per mode. Peak RSS includes process startup, warmups and all three buckets; it is not a per-bucket peak and is not summed across grammars. Settled deltas compare GC-settled snapshots after loading the engine/corpus and after all validation has finished; they do not measure retained AST populations. Memory capture and GC stay outside timing.',
 				''
 			);
+			if (analysis.builtArena) {
+				lines.push('| Grammar | Built arena, MiB | Count tables, MiB | Count tables per chunk byte |', '| --- | ---: | ---: | ---: |');
+				for (const [grammar, row] of Object.entries(analysis.builtArena))
+					lines.push(`| ${grammar} | ${row.chunksMiB.toFixed(3)} | ${row.countsMiB.toFixed(3)} | ${(row.countShare * 100).toFixed(1)} % |`);
+				lines.push(
+					'',
+					"The built arena as each arena worker left it after all three buckets, with nothing released: its chunks with their count tables, and the count tables against the chunks' own bytes.",
+					''
+				);
+			}
 		} else lines.push('Worker memory was not recorded in this historical report.', '');
 	}
 	lines.push(

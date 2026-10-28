@@ -7,7 +7,7 @@ const rs = await createEngine(rust);
 
 describe('a keyword member of a mixed enum slot passes through as itself', () => {
 	it('keeps a stored keyword node beside the extern_modifier branch instead of wrapping it', () => {
-		const async_ = stampBuilt({ $type: rs.kinds.AsyncKeyword, $text: 'async', $named: true }) as never;
+		const async_ = stampBuilt({ $type: rs.kinds.AsyncKeyword, $text: 'async' }) as never;
 		expect(rs.build.functionModifiers(async_).$render()).toBe('async');
 	});
 

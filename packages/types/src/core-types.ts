@@ -77,10 +77,6 @@ export interface AnyUntypedNode {
 	 * from (`at`), and the trivia it owns, whether read or written.
 	 */
 	$_layout?: NodeLayout;
-	/** Whether this is a named (vs anonymous) node in the grammar.
-	 * Optional at the type level because generated kind interfaces
-	 * omit it by convention (factory output always sets it at runtime). */
-	$named?: boolean;
 
 	// -------------------------------------------------------------------------
 	// $-prefixed methods — present on factory/wrap output only.

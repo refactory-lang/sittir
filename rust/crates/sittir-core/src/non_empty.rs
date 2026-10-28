@@ -12,6 +12,12 @@ pub struct NonEmptyVec<T>(Vec<T>);
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct EmptyList;
 
+impl std::fmt::Display for EmptyList {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("a repeat1 list holds no item")
+    }
+}
+
 impl<T> TryFrom<Vec<T>> for NonEmptyVec<T> {
     type Error = EmptyList;
     fn try_from(items: Vec<T>) -> Result<Self, EmptyList> {
@@ -52,7 +58,7 @@ impl<T: ::napi::bindgen_prelude::FromNapiValue> ::napi::bindgen_prelude::FromNap
     unsafe fn from_napi_value(env: ::napi::sys::napi_env, napi_val: ::napi::sys::napi_value) -> ::napi::Result<Self> {
         // SAFETY: napi calls `from_napi_value` with `napi_val` live in `env`.
         let items = unsafe { Vec::<T>::from_napi_value(env, napi_val)? };
-        Self::try_from(items).map_err(|EmptyList| ::napi::Error::from_reason("a repeat1 list holds no item"))
+        Self::try_from(items).map_err(|empty| ::napi::Error::from_reason(empty.to_string()))
     }
 }
 

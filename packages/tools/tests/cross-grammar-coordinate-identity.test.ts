@@ -7,9 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import type { AnyUntypedNode, TriviaEntry } from '@sittir/types';
 import { createEngine } from '@sittir/common';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { writeTrivia } from '@sittir/common/utils';
-import { requireGrammarModule } from '../src/grammar-internals.ts';
 import { languageByName } from '../src/languages.ts';
 
 describe('a coordinate names its tree across grammars', () => {
@@ -36,7 +34,6 @@ describe('a coordinate names its tree across grammars', () => {
 	it('refuses a record another grammar built in a side, naming both languages', async () => {
 		const recordEngine = async (grammar: 'rust' | 'typescript') => {
 			const engine = await createEngine(await languageByName(grammar), { nodeStorage: 'arena' });
-			useRecordConstruction(engine, await requireGrammarModule(grammar, 'factories/records.ts'));
 			return engine as unknown as { build: Record<string, (...args: unknown[]) => object> };
 		};
 		const [rust, typescript] = [await recordEngine('rust'), await recordEngine('typescript')];
@@ -49,8 +46,7 @@ describe('a coordinate names its tree across grammars', () => {
 		type Sided = { readonly $trivia: { trailing(...items: unknown[]): readonly unknown[] } };
 		type Engine = { parse(source: string): { statements(): readonly unknown[] }; build: Record<string, (...args: unknown[]) => object> };
 		const engineOf = async (grammar: 'rust' | 'typescript'): Promise<Engine> => {
-			const engine = await createEngine(await languageByName(grammar), storage === 'object' ? {} : { nodeStorage: 'arena' });
-			if (storage === 'records') useRecordConstruction(engine, await requireGrammarModule(grammar, 'factories/records.ts'));
+			const engine = await createEngine(await languageByName(grammar), storage === 'object' ? { nodeStorage: 'object' } : storage === 'arena' ? { nodeConstruction: 'object' } : {});
 			return engine as unknown as Engine;
 		};
 		const [rust, typescript] = [await engineOf('rust'), await engineOf('typescript')];

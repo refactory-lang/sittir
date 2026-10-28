@@ -2,6 +2,10 @@ packages:
   - 'packages/*'
   - 'rust/crates/sittir-*'
 
+# One version for every package that builds a native binding.
+catalog:
+  '@napi-rs/cli': ^3.10.9
+
 # pnpm 10 moved these out of package.json's "pnpm" field (which is no longer read).
 onlyBuiltDependencies:
   - esbuild

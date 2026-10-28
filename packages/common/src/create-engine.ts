@@ -23,7 +23,7 @@ import type {
 	KindMembership,
 	StructureTable
 } from '@sittir/types';
-import { bindTree, foreignEngine, inEngine, stampEngineStorage, type EngineHandle, type TreeEngineHandle } from './engine-scope.ts';
+import { bindTree, foreignEngine, inEngine, nodeStorageOf, stampEngineStorage, type EngineHandle, type ResolvedNodeStorage, type TreeEngineHandle } from './engine-scope.ts';
 import { guardsOf, inLanguage as inLanguageOf, kindTestOf } from './language.ts';
 import { dataBytes, metricsEnabled, recordFfi } from './metrics.ts';
 import { checkInput, checkRow, verifyStructure } from './verify-structure.ts';
@@ -83,13 +83,19 @@ async function loadTable<API extends LanguageAPI, M extends BuilderMode>(
 	}
 }
 
+async function loadRecords<API extends LanguageAPI>(language: LanguageIdentity<API>, hooks: LanguageHooks<API>): Promise<object> {
+	try {
+		return await hooks.records();
+	} catch (cause) {
+		throw new Error(`failed to load the record builders of language "${language.name}"`, { cause });
+	}
+}
+
 function nativeEngineOptions<API extends LanguageAPI>(
-	options: EngineOptions<API, BuilderMode> | undefined
+	options: EngineOptions<API, BuilderMode> | undefined,
+	storage: ResolvedNodeStorage
 ): NativeEngineOptions<API['options']> {
-	return {
-		...(options?.render === undefined ? {} : { options: options.render }),
-		...(options?.nodeStorage === undefined ? {} : { nodeStorage: options.nodeStorage })
-	};
+	return { ...(options?.render === undefined ? {} : { options: options.render }), ...storage };
 }
 
 function unimplementedVerb(verb: 'read' | 'create' | 'write'): Error {
@@ -166,20 +172,6 @@ function interceptedRender<Call>(
 }
 
 const builderScopes = new WeakMap<object, <T extends object>(table: T) => T>();
-const recordConstruction = new WeakMap<object, (records: object) => void>();
-
-/**
- * Makes the builders of `engine`, an engine reading trees as records, dispatch to `records`, the language's record
- * builder module (`factories/records.ts`), from now on, so every node it builds is a view of its record. Internal:
- * the construction switch tests and measurements use until an arena engine loads the record builders itself.
- *
- * @throws When `engine` was not made by `createEngine` with `nodeStorage: 'arena'`.
- */
-export function useRecordConstruction(engine: object, records: object): void {
-	const use = recordConstruction.get(engine);
-	if (use === undefined) throw new Error("useRecordConstruction: the engine was not made by createEngine with nodeStorage 'arena'");
-	use(records);
-}
 
 export function scopeBuilders<T extends object>(engine: object, table: T): T {
 	const scope = builderScopes.get(engine);
@@ -220,9 +212,11 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	language: Language<API>,
 	hooks: LanguageHooks<API>,
 	table: API['build'][M],
-	options: EngineOptions<API, M> | undefined
+	options: EngineOptions<API, M> | undefined,
+	storage: ResolvedNodeStorage,
+	records: object | undefined
 ): Engine<API, M> {
-	const native = hooks.createNative(nativeEngineOptions(options));
+	const native = hooks.createNative(nativeEngineOptions(options, storage));
 	const identity: EngineIdentity<API> = Object.freeze({
 		language,
 		renderModuleHash: hooks.renderModuleHash,
@@ -230,7 +224,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		trivia: hooks.trivia,
 		portable: hooks.portable
 	});
-	stampEngineStorage(identity, options?.nodeStorage ?? 'object');
+	stampEngineStorage(identity, storage.nodeStorage);
 	const handle: TreeEngineHandle = {
 		current: identity,
 		hydrate: hooks.hydrate,
@@ -278,6 +272,7 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		types: undefined as unknown as API['types'],
 		diagnostics: {
 			buildProfile: native.buildProfile,
+			builtMemory: native.builtMemory,
 			parseAndRead: readAndBind
 		},
 		isNode: (value): value is API['node'] => isNode(value) && inLanguage(value),
@@ -337,6 +332,9 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 		write(): Pending {
 			throw unimplementedVerb('write');
 		},
+		release(node) {
+			native.release(node);
+		},
 		dispose() {
 			handle.current = identity;
 			native.dispose();
@@ -347,16 +345,15 @@ function assembleEngine<API extends LanguageAPI, M extends BuilderMode>(
 	};
 	handle.current = engine;
 	const frozen = Object.freeze(engine);
-	stampEngineStorage(frozen, options?.nodeStorage ?? 'object');
+	stampEngineStorage(frozen, storage.nodeStorage);
 	builderScopes.set(frozen, (table) => scopedBuild(table, handle, buildChain));
-	const built = nativeBuiltRecords(native);
-	if (built !== undefined) {
-		recordConstruction.set(frozen, (records) => {
-			const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
-			if (views === undefined) throw new Error('useRecordConstruction: the records module exports no builtViews');
-			handle.builtArena ??= new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
-			handle.records = records;
-		});
+	if (records !== undefined) {
+		const built = nativeBuiltRecords(native);
+		if (built === undefined) throw new Error("nodeConstruction 'record' needs an addon built with the `arena` feature");
+		const views = (records as { readonly builtViews?: BuiltViews }).builtViews;
+		if (views === undefined) throw new Error(`the record builders of language "${language.name}" export no builtViews`);
+		handle.builtArena = new BuiltArena(built, hooks.wrap as (data: object, tree: TreeHandle) => unknown, handle, views, writeLeafSites);
+		handle.records = records;
 	}
 	return frozen;
 }
@@ -410,5 +407,10 @@ export async function createEngine<API extends LanguageAPI>(
 	}
 	const hooks = await loadLanguage(language);
 	const mode = options?.api ?? 'default';
-	return assembleEngine(language, hooks, await loadTable(language, hooks, mode), options);
+	const storage = nodeStorageOf(options);
+	const [table, records] = await Promise.all([
+		loadTable(language, hooks, mode),
+		storage.nodeConstruction === 'record' ? loadRecords(language, hooks) : undefined
+	]);
+	return assembleEngine(language, hooks, table, options, storage, records);
 }

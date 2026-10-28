@@ -30,17 +30,18 @@ it('hydrates native trees with depth, transfers no node data, and disposes every
 	const dispose = vi.fn();
 	const backend = {
 		SittirEngine: class {
+			readonly handle = {};
 			parse(source: string) {
 				live.set(++next, source);
 				return JSON.stringify({ treeId: next });
 			}
-			read = read;
-			chunk = chunk;
-			hydrateRecord = hydrate;
-			readRecord = shallow;
-			renderRecord = render;
 			dispose = dispose;
 		},
+		read,
+		chunk,
+		hydrateRecord: hydrate,
+		readRecord: shallow,
+		renderRecord: (_engine: object, id: number, address: number, leading: boolean, trailing: boolean) => render(id, address, leading, trailing),
 		disposeTree(id: number) {
 			expect(live.delete(id)).toBe(true);
 		}

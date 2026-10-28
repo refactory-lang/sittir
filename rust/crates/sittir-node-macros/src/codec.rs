@@ -24,6 +24,9 @@ pub struct WireVariant<'a> {
     pub index: Option<u16>,
     /// The id a unit variant writes: the first it claims.
     pub first: Option<Path>,
+    /// Every id a unit variant is built from: its kinds and the kinds it
+    /// matches by display id.
+    pub claims: Vec<Path>,
     /// Ids the codec also decodes as this variant.
     pub decodes: Vec<Path>,
     pub blank: bool,

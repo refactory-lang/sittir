@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { Delimiter, recordOf, slotValuesOf } from '@sittir/common/utils';
 import rust from '../../../rust/src/index.ts';
 import { separatedListFactoryOptions, type SlotAccessorOf } from '../../src/validate/common.ts';
@@ -37,7 +36,6 @@ describe('separatedListFactoryOptions', () => {
 
 	it("reads a built record view's delimiter from the record its builder wrote", async () => {
 		const records = await createEngine(rust, { nodeStorage: 'arena' });
-		useRecordConstruction(records, await import('../../../rust/src/factories/records.ts'));
 		const b = records.build;
 		const lifetimes = b.lifetimes({ delimiter: Delimiter.Trailing }, b.lifetime(b.identifier('a')));
 		expect(recordOf(lifetimes)).toBeTypeOf('number');
@@ -48,7 +46,6 @@ describe('separatedListFactoryOptions', () => {
 
 	it('reads no list option from a built leaf, which is no record view', async () => {
 		const records = await createEngine(rust, { nodeStorage: 'arena' });
-		useRecordConstruction(records, await import('../../../rust/src/factories/records.ts'));
 		const leaf = records.build.identifier('a');
 		expect(recordOf(leaf)).toBeUndefined();
 		expect(slotValuesOf(leaf, [])).toEqual([]);

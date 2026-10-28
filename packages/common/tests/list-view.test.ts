@@ -128,9 +128,9 @@ describe('a list owner', () => {
 		expect(node[0]).toBe('a');
 	});
 
-	it('prints and concatenates as its items', () => {
+	it('concatenates and prints locale strings as its items, leaving toString to the node', () => {
 		const node = wrappedOwner(listNode(['a', 'b']));
-		expect(String(node)).toBe('a,b');
+		expect(Object.hasOwn(node, 'toString')).toBe(false);
 		expect(node.toLocaleString()).toBe('a,b');
 		expect(node.concat(wrappedOwner(listNode(['c'])))).toEqual(['a', 'b', 'c']);
 		expect(['z'].concat(node)).toEqual(['z', 'a', 'b']);

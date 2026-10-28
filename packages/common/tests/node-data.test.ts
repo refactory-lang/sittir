@@ -23,7 +23,7 @@ const rootAt = ($type: number, start: number, end: number) => ({ ...at($type, st
 const coordinate = (start: number, end: number) => at(2, start, end);
 /** A child a read expanded: its storage and the coordinate it was read at. */
 const deep = (start: number, end: number, storage: Record<string, unknown>) => ({ $type: 4, $_layout: { at: at(4, start, end) }, ...storage });
-const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, $named: true, ...storage });
+const built = (storage: Record<string, unknown> = {}) => ({ $type: 9, ...storage });
 
 describe('toNodeData', () => {
 	it('folds an unedited node with only coordinates and leaves below it to its coordinate', () => {
@@ -215,18 +215,18 @@ describe('sideOf', () => {
 });
 
 describe('the edges of the render root', () => {
-	const comment = { $type: 3, $named: true, $text: '// c' };
+	const comment = { $type: 3, $text: '// c' };
 	const both = { leading: true, trailing: true };
 
 	it('are changed, since it renders with no neighbour: a built root crosses with its trivia and both edges named', () => {
-		const node = { $type: 5, $named: true, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
+		const node = { $type: 5, $text: 'b', $_layout: { trivia: { leading: [9, comment, 8], trailing: [8] } } };
 		expect(toNodeData(node as never, PLAIN_KINDS)).toEqual({ ...node, $_layout: { trivia: node.$_layout.trivia, changed: both } });
 	});
 
 	it("are the root's only: a node below it keeps its edges", () => {
-		const child = { $type: 5, $named: true, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
-		const root = { $type: 6, $named: true, _body: child, $_layout: { trivia: { leading: [9] } } };
-		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, $named: true, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
+		const child = { $type: 5, $text: 'b', $_layout: { trivia: { leading: [9], trailing: [8] } } };
+		const root = { $type: 6, _body: child, $_layout: { trivia: { leading: [9] } } };
+		expect(toNodeData(root as never, PLAIN_KINDS)).toEqual({ $type: 6, _body: child, $_layout: { trivia: { leading: [9] }, changed: both } });
 	});
 
 	it("are the document's when the root is its tree's root: they are not changed", () => {

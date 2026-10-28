@@ -36,6 +36,7 @@ export const hooks: LanguageHooks<ScmAPI> = Object.freeze<LanguageHooks<ScmAPI>>
 		default: () => import('./ir.js').then((m) => m.ir),
 		strict: () => import('./ir-strict.js').then((m) => m.ir)
 	}),
+	records: () => import('./factories/records.js'),
 	trivia: Object.freeze({ ...triviaFacts, comment: coerceToComment }),
 	querySlots,
 	structure,

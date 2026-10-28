@@ -10,6 +10,7 @@ mod attrs;
 mod codec;
 mod expand;
 mod fields;
+mod hydrate;
 mod prepare;
 mod prepare_record;
 mod record;

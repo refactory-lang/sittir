@@ -1244,6 +1244,8 @@ export type {
 	LanguageHooks,
 	NativeEngineOptions,
 	NodeStorage,
+	NodeConstruction,
+	NodeStorageOptions,
 	NativeLanguageEngine,
 	ParsedRead,
 	ParsedRoot,

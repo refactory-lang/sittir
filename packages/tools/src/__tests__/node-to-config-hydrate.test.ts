@@ -7,7 +7,7 @@ const slot = (propertyName: string) => ({ propertyName, unnamed: false, slotCoun
 const KINDS = ['owner', 'clause', 'word'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
-const leaf = { $type: id('word'), $named: true, $text: 'x' };
+const leaf = { $type: id('word'), $text: 'x' };
 
 describe('nodeToConfig hydrates a coordinate through the wrap', () => {
 	it('reads the node a coordinate names before building its config', () => {

@@ -5,7 +5,7 @@
 use std::collections::HashMap;
 use std::hash::BuildHasher;
 
-use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, HeldArenas, RecordGrammar, StringRef};
+use super::{admit, Address, ArenaError, ArenaRead, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
 use crate::engine::{encode_handle, Engine, EngineGrammar, ParsedTree};
 use crate::prepare::RenderContext;
 use crate::render::{CoordinateError, RenderError, RenderResult, RenderSink};
@@ -34,8 +34,32 @@ impl<G: EngineGrammar> Engine<G> {
     ///
     /// As `built_trivia_side`.
     pub fn write_built_trivia_side(&self, at: Address, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), ArenaError> {
-        self.written().write_side(Place::Record(at.record()?), side, entries);
-        Ok(())
+        self.written().write_held_side(Place::Record(at.record()?), side, entries)
+    }
+
+    /// The entries a write gave `side` of the built leaf at `site`, or `None`
+    /// when no write did.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for a site whose holder is address 0.
+    pub fn built_leaf_side(&self, site: Site<Address>, side: TriviaSide) -> Result<Option<Vec<TriviaEntry<G::Trivia>>>, ArenaError> {
+        site.holder.record()?;
+        Ok(self.written().side(Place::Leaf(site), side))
+    }
+
+    /// The sides of every unit and leaf site of the built record at `from`,
+    /// written at the same site of the record at `to`, except a site at a
+    /// word `skip` names.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for address 0 as either record, before any
+    /// side is copied.
+    pub fn copy_built_sites(&self, from: Address, to: Address, skip: &[u32]) -> Result<(), ArenaError> {
+        from.record()?;
+        to.record()?;
+        self.written().copy_sites(from, to, skip)
     }
 
     /// Replace `side` of the built leaf at each of `sites` with `entries`,
@@ -49,10 +73,7 @@ impl<G: EngineGrammar> Engine<G> {
         for site in sites {
             site.holder.record()?;
         }
-        for &site in sites {
-            self.written().write_side(Place::Leaf(site), side, entries.to_vec());
-        }
-        Ok(())
+        sites.iter().try_for_each(|&site| self.written().write_held_side(Place::Leaf(site), side, entries.to_vec()))
     }
 }
 
@@ -65,7 +86,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// What `ArenaRead::header_kind` refuses, and `ArenaError::Malformed` for
     /// a unit at a word the record's kind holds no slot at.
     pub fn built_unit_sides(&self, arena: &impl ArenaRead, at: Address) -> Result<Vec<crate::layout::UnitSides<G::Trivia>>, ArenaError> {
-        let kind = arena.header_kind(at)?;
+        let kind = arena.header_kind(at, G::KIND_BITS)?;
         let units = self.written().units(at);
         units
             .into_iter()
@@ -76,16 +97,17 @@ impl<G: RecordGrammar> Engine<G> {
             .collect()
     }
 
-    /// The units the built record at `at` in `arena` holds have the sides
-    /// `units` gives, in place of every unit side it had; its render then
-    /// writes them.
+    /// The units the built record at `at` holds have the sides `units`
+    /// gives, in place of every unit side it had; its render then writes
+    /// them.
     ///
     /// # Errors
     ///
-    /// What `ArenaRead::header_kind` refuses, and `ArenaError::UnknownSlot`
-    /// for a slot the record's kind has no cell for.
-    pub fn write_built_unit_sides(&self, arena: &impl ArenaRead, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
-        let kind = arena.header_kind(at)?;
+    /// What `ArenaRead::header_kind` and `TriviaStore::write_units` refuse,
+    /// and `ArenaError::UnknownSlot` for a slot the record's kind has no
+    /// cell for.
+    pub fn write_built_unit_sides(&self, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
+        let kind = self.written().built().readable()?.header_kind(at, G::KIND_BITS)?;
         let units = units
             .into_iter()
             .map(|unit| {
@@ -93,8 +115,7 @@ impl<G: RecordGrammar> Engine<G> {
                 Ok((word, unit.item, unit.trivia))
             })
             .collect::<Result<Vec<_>, ArenaError>>()?;
-        self.written().write_units(at, units);
-        Ok(())
+        self.written().write_units(at, units)
     }
 
     /// The built record at `at`, of the built arena `arena`, rendered as a
@@ -121,39 +142,45 @@ impl<G: RecordGrammar> Engine<G> {
         G::render_record(self.grammar(), root, &mut held, arena, self.written(), ctx)
     }
 
-    /// The lone built leaf of `kind` whose text is `text` in `arena`,
-    /// rendered as a render root whose `changed` edges have no neighbour,
+    /// The lone built leaf of `kind` whose leaf entry is at `entry` in
+    /// `arena`, rendered as a render root whose `changed` edges have no neighbour,
     /// with the sides `sides`: a root has no site, so its sides come with the
     /// call (`Place::ROOT_LEAF`).
     ///
     /// # Errors
     ///
     /// `RenderError::Record` for a kind no node of the grammar is written as
-    /// and for text outside the arena's strings, else what the leaf's render
-    /// refuses.
+    /// and for an entry of another kind or outside the arena's strings, else
+    /// what the leaf's render refuses.
     pub fn render_built_leaf(
         &self,
         arena: &dyn ArenaRead,
         kind: KindId,
-        text: StringRef,
+        entry: Address,
         sides: Option<NodeTrivia<G::Trivia>>,
         changed: ChangedEdges,
         ctx: &RenderContext<'_>,
     ) -> Result<String, RenderError> {
-        let cell = admitted_leaf::<G>(arena, kind, text, changed).map_err(RenderError::Record)?;
+        let cell = admitted_leaf::<G>(arena, kind, entry, changed).map_err(RenderError::Record)?;
         let store = self.written().root_leaf(sides);
         let mut held = HeldArenas::of([]);
         G::render_record(self.grammar(), CellAt { cell, tree: None, site: None }, &mut held, arena, &store, ctx)
     }
 }
 
-/// The cell of a built leaf of `kind` whose text is `text` in `arena`, as
-/// admission admits it: by what it holds, a kind the grammar writes and text
-/// inside the arena's strings.
-fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, text: StringRef, changed: ChangedEdges) -> Result<Cell, ArenaError> {
+/// The cell of a built leaf of `kind` whose leaf entry is at `entry` in
+/// `arena`, as admission admits it: by what it holds, an entry of that kind,
+/// a kind the grammar writes, and text inside the arena's strings.
+fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: Address, changed: ChangedEdges) -> Result<Cell, ArenaError> {
     G::shape(kind).ok_or(ArenaError::Malformed { what: "built leaf kind", word: u32::from(kind.0) })?;
-    arena.text(text)?;
-    Ok(Cell::BuiltLeaf { kind, text, changed })
+    let word = entry.0.checked_mul(4).filter(|_| entry.0 < 1 << 30).ok_or(ArenaError::Malformed { what: "leaf entry address", word: entry.0 })?;
+    match Cell::decode_built(CellWord(word), arena, G::KIND_BITS)? {
+        Cell::BuiltLeaf { kind: found, text, .. } if found == kind => {
+            arena.text(text)?;
+            Ok(Cell::BuiltLeaf { kind, text, changed })
+        }
+        _ => Err(ArenaError::Malformed { what: "built leaf entry", word: entry.0 }),
+    }
 }
 
 /// The built record `record` of `arena` written into `w` as a trivia entry
@@ -174,7 +201,7 @@ pub fn render_record_entry<G: RecordGrammar, H: BuildHasher>(
     ctx: &RenderContext<'_>,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
-    if arena.header_kind(record.at).map_err(RenderError::Record)? != record.kind {
+    if arena.header_kind(record.at, G::KIND_BITS).map_err(RenderError::Record)? != record.kind {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
     let (root, mut held) = admitted_root::<G, H>(arena, record.at, ChangedEdges::default(), trees)?;
@@ -187,8 +214,8 @@ fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
     changed: ChangedEdges,
     trees: &'t HashMap<TreeId, ParsedTree<G>, H>,
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
-    let kind = arena.header_kind(at).map_err(RenderError::Record)?;
-    let linked = admit(arena, at, G::shape).map_err(RenderError::Record)?;
+    let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
+    let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
     let held = linked
         .into_iter()
         .map(|tree| {

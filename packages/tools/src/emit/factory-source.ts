@@ -68,7 +68,6 @@ export interface PrintedFacts {
 }
 
 export class Printed {
-	readonly $named = true as const;
 	$_layout?: { trivia?: ReadTrivia };
 	constructor(
 		readonly $type: number,

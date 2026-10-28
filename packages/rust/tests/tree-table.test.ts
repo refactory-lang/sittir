@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
+import { nativeEngineOf } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.js';
 import rust from '../src/index.ts';
 
@@ -23,8 +24,8 @@ describe('the live tree table of a language', () => {
 	it('is one table for every engine of the addon', () => {
 		const native = addon();
 		const before = native.liveTreeCount();
-		const a = new native.SittirEngine();
-		const b = new native.SittirEngine();
+		const a = nativeEngineOf(native);
+		const b = nativeEngineOf(native);
 		const first = treeIdOf(a.parse('fn a() {}'));
 		const second = treeIdOf(b.parse('fn b() {}'));
 		expect(native.liveTreeCount()).toBe(before + 2);
@@ -41,7 +42,7 @@ describe('the live tree table of a language', () => {
 		const id = treeIdOf(a.parse('fn kept() {}'));
 		a.dispose();
 		expect(native.liveTreeCount()).toBe(before + 1);
-		expect(new native.SittirEngine().read(id, 0)).toBeDefined();
+		expect(nativeEngineOf(native).read(id, 0)).toBeDefined();
 		native.disposeTree(id);
 		expect(native.liveTreeCount()).toBe(before);
 	});

@@ -1,6 +1,7 @@
 // The native read: a node read by its descendant index into its native node,
 // which names the node it came from.
 import { describe, expect, it } from 'vitest';
+import { nativeEngineOf } from '@sittir/common/engine';
 import { getActiveBackend } from '../src/backend.js';
 
 type Coordinate = { $treeHandle: number; $end: number; $span: { start: number; end: number }; $type: number };
@@ -9,7 +10,7 @@ type Read = { $_layout?: { at?: Coordinate }; _statements?: Coordinate[] };
 function engine() {
 	const status = getActiveBackend();
 	if (status.name !== 'native') throw new Error(`native backend unavailable: ${status.reason}`);
-	return new status.native.SittirEngine();
+	return nativeEngineOf(status.native);
 }
 
 describe('a node read through the native read', () => {

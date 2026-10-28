@@ -7,6 +7,7 @@ import { treeOf } from '../../common/src/tree-token.ts';
 import rust from '../src/index.ts';
 
 const engine = await createEngine(rust);
+const objects = await createEngine(rust, { nodeStorage: 'object' });
 const SOURCE = 'fn a() {}\nfn b() { let x = 1; }\n';
 
 function viaAccessors(root: ReturnType<typeof engine.parse>) {
@@ -230,8 +231,8 @@ function storageOf(node: object): Storage {
 
 describe('a built node over parsed storage', () => {
 	it("hydrates a list item it stores into the parsed holder's object", () => {
-		const parsed = engine.parse(SOURCE, { depth: 1 });
-		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
+		const parsed = objects.parse(SOURCE, { depth: 1 });
+		const built = objects.build.sourceFile({ statements: storageOf(parsed)._statements });
 		expect(built.$render()).toBe(SOURCE);
 		expect(built.statements()[0]).toBe(parsed.statements()[0]);
 		expect(built.statements()).toBe(built.statements());
@@ -239,37 +240,37 @@ describe('a built node over parsed storage', () => {
 	});
 
 	it("hydrates a single slot it stores into the parsed holder's object", () => {
-		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const parsed = objects.parse(SOURCE, { depth: 1 });
 		const fn = parsed.statements()[1];
-		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
+		if (fn === undefined || !objects.is.functionItem(fn)) throw new Error('expected a function');
 		const stored = storageOf(fn);
 		expect(isCoordinate(stored._body)).toBe(true);
-		const built = engine.build.functionItem({ name: engine.build.identifier('c'), parameters: stored._parameters, body: stored._body });
+		const built = objects.build.functionItem({ name: objects.build.identifier('c'), parameters: stored._parameters, body: stored._body });
 		expect(built.body()).toBe(fn.body());
 		expect(built.$render()).toBe('fn c() { let x = 1; }');
 	});
 
 	it('refuses a coordinate that lost its tree, and never returns it raw', () => {
-		const parsed = engine.parse(SOURCE, { depth: 1 });
+		const parsed = objects.parse(SOURCE, { depth: 1 });
 		const held = storageOf(parsed)._statements[0];
 		expect(isCoordinate(held)).toBe(true);
 		const copied = storageOf({ _statements: [JSON.parse(JSON.stringify(held))] })._statements;
-		const built = engine.build.sourceFile({ statements: copied });
+		const built = objects.build.sourceFile({ statements: copied });
 		expect(() => built.statements()[0]).toThrow(/does not hold that tree/);
 	});
 
 	it('reads a list through its accessor on every route: at, an index and iteration', () => {
-		const root = engine.parse('type T = (Vec<A>, Vec<B>);\n', { depth: 1 });
+		const root = objects.parse('type T = (Vec<A>, Vec<B>);\n', { depth: 1 });
 		const item = root.statements()[0];
-		if (item === undefined || !engine.is.typeItem(item)) throw new Error('expected a type item');
+		if (item === undefined || !objects.is.typeItem(item)) throw new Error('expected a type item');
 		const tuple = item.value();
-		if (!engine.is.tupleType(tuple)) throw new Error('expected a tuple type');
+		if (!objects.is.tupleType(tuple)) throw new Error('expected a tuple type');
 		const parsed = tuple.types();
 		const stored = storageOf(parsed)._item;
 		expect(stored.every(isCoordinate)).toBe(true);
 		const [first, ...rest] = stored;
 		if (first === undefined) throw new Error('expected items');
-		const built = engine.build.types(first, ...rest);
+		const built = objects.build.types(first, ...rest);
 		const items = built.items();
 		expect(built.at(0)).toBe(items[0]);
 		expect(built[1]).toBe(items[1]);
@@ -278,26 +279,26 @@ describe('a built node over parsed storage', () => {
 	});
 
 	it('renders a write inside a coordinate it never read, as a holder built from the written node does', () => {
-		const parsed = engine.parse(SOURCE, { depth: 1 });
-		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
-		letAt(parsed.statements()[1], 0).$trivia.leading(engine.build.lineComment(' x'));
+		const parsed = objects.parse(SOURCE, { depth: 1 });
+		const built = objects.build.sourceFile({ statements: storageOf(parsed)._statements });
+		letAt(parsed.statements()[1], 0).$trivia.leading(objects.build.lineComment(' x'));
 		expect(built.$render()).toContain('// x');
 		expect(parsed.$render()).toContain('// x');
-		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// x');
+		expect(objects.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// x');
 	});
 
 	it('renders an outside write on the node a stored coordinate names', () => {
-		const parsed = engine.parse(SOURCE, { depth: 1 });
-		const built = engine.build.sourceFile({ statements: storageOf(parsed)._statements });
+		const parsed = objects.parse(SOURCE, { depth: 1 });
+		const built = objects.build.sourceFile({ statements: storageOf(parsed)._statements });
 		const fn = parsed.statements()[1];
-		if (fn === undefined || !engine.is.functionItem(fn)) throw new Error('expected a function');
-		fn.$trivia.leading(engine.build.lineComment(' own'));
+		if (fn === undefined || !objects.is.functionItem(fn)) throw new Error('expected a function');
+		fn.$trivia.leading(objects.build.lineComment(' own'));
 		expect(built.$render()).toContain('// own\n');
-		expect(engine.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// own\n');
+		expect(objects.build.sourceFile({ statements: [...parsed.statements()] }).$render()).toContain('// own\n');
 	});
 
 	it('refuses after its engine is disposed, naming the tree', async () => {
-		const scoped = await createEngine(rust);
+		const scoped = await createEngine(rust, { nodeStorage: 'object' });
 		const parsed = scoped.parse(SOURCE, { depth: 1 });
 		const built = scoped.build.sourceFile({ statements: storageOf(parsed)._statements });
 		scoped.dispose();

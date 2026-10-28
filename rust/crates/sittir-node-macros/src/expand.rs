@@ -55,6 +55,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             payload,
             index: None,
             first: None,
+            claims: Vec::new(),
             decodes: Vec::new(),
             blank: false,
             verbatim: false,
@@ -90,8 +91,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             wire.push(unread(payload));
             continue;
         };
+        let claims: Vec<Path> = kinds.kinds.iter().chain(&kinds.shown).cloned().collect();
         if payload.is_none() {
-            let claims = kinds.kinds.iter().chain(&kinds.shown);
             let built = unit(quote!(Self));
             builds.push(quote!(if [#(#claims),*].contains(&id) { return ::core::option::Option::Some(#built); }));
         }
@@ -100,6 +101,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         wire.push(codec::WireVariant {
             index: Some(i),
             first: first.clone(),
+            claims,
             decodes: kinds.decodes.clone(),
             ..unread(payload)
         });
@@ -221,6 +223,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
     };
     let codec = codec::choice(ident, &wire)?;
     let writer = crate::write::choice(ident, &wire)?;
+    let hydrate = crate::hydrate::choice(ident, &wire, attrs.codec_only);
     let view = crate::views::choice(ident, attrs, &wire)?;
     let prepare_record = crate::prepare_record::choice(ident, attrs, &wire);
     let from_kind_id = all_units.then(|| {
@@ -259,6 +262,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
                 #own_stamp
                 #codec
                 #writer
+                #hydrate
             };
             #view
             #prepare_record
@@ -358,6 +362,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             #has_layout
             #codec
             #writer
+            #hydrate
         };
         #view
         #prepare_record
@@ -387,6 +392,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
     let ids = firsts.iter().map(|(name, first)| quote!(#ident::#name => #first,));
     let codec = codec::members(ident);
     let writer = crate::write::members(ident);
+    let hydrate = crate::hydrate::members(ident);
     let view = crate::views::members(ident);
     let prepare_record = crate::prepare_record::members(ident);
     Ok(quote! {
@@ -434,6 +440,7 @@ fn members(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Tok
             }
             #codec
             #writer
+            #hydrate
             #view
             #prepare_record
         };
@@ -557,7 +564,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             _ => None,
         })
         .collect();
-    let record = crate::record::checks(ident, attrs.words, &stamped)?;
+    let record = crate::record::checks(ident, attrs.words, attrs.built_words, &stamped)?;
     let fields_trait = match &attrs.fields {
         Some(name) => crate::fields::fields_trait(ident, name, &fields)?,
         None => TokenStream::new(),
@@ -625,7 +632,16 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
         None => codec::structure(ident, &wire)?,
     };
     let writer = crate::write::structure(ident, attrs, &fields)?;
+    let hydrate = crate::hydrate::structure(ident, attrs, &fields)?;
     let view = crate::views::structure(ident, attrs, &fields)?;
+    let stored_kind = if kind_field.is_some() {
+        quote! {
+            let __shown = __rt::display_id(node);
+            if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
+        }
+    } else {
+        quote!(__KIND)
+    };
     let prepare_record = match &trivia {
         Some(trivia) => crate::prepare_record::structure(ident, attrs, &fields, trivia)?,
         None => TokenStream::new(),
@@ -640,6 +656,10 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             const __DISPLAYS: &[__Kind] = &[#(#displays),*];
             #[allow(dead_code)]
             const __LAYOUT: &[__Kind] = &[#(#layout),*];
+            #[allow(dead_code, unused_variables)]
+            fn __stored_kind(node: &::tree_sitter::Node<'_>) -> __Kind {
+                #stored_kind
+            }
             #items
             impl __rt::ReadNode for #ident {
                 fn admits(grammar: __Kind, display: __Kind) -> bool {
@@ -666,6 +686,7 @@ fn structure(ident: &Ident, attrs: &KindAttrs, data: &DataStruct) -> syn::Result
             #separator_kind_of
             #codec
             #writer
+            #hydrate
         };
         #record
         #fields_trait
@@ -713,10 +734,7 @@ fn common_inits(fields: &[Field<'_>], skip: Option<&Ident>, units: bool) -> Vec<
                 Role::Layout if units => Some(quote!(#name: Some(ctx.layout_with_units(index, __at, true, __units)),)),
                 Role::Layout => Some(quote!(#name: Some(ctx.layout(index, __at, true)),)),
                 Role::Space(_) | Role::Text => Some(quote!(#name: ::core::default::Default::default(),)),
-                Role::Kind => Some(quote!(#name: {
-                    let __shown = __rt::display_id(&__node);
-                    if __DISPLAYS.contains(&__shown) { __shown } else { __KIND }
-                },)),
+                Role::Kind => Some(quote!(#name: __stored_kind(&__node),)),
                 _ => None,
             }
         })

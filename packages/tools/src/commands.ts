@@ -16,8 +16,8 @@ import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/gra
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
-import type { NodeStorage } from '@sittir/types';
-import { cachedNativeEngineProfile, useValidationConstruction, useValidationNodeStorage, validationStorage, type Construction, type ValidatorSkip } from './validate/common.ts';
+import type { NodeConstruction, NodeStorage } from '@sittir/types';
+import { cachedNativeEngineProfile, useValidationConstruction, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from './validate/report-diff.ts';
@@ -317,7 +317,7 @@ export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
 export async function spawnIsolatedGrammarWorker(
 	grammar: GrammarName,
 	nodeStorage: NodeStorage = 'object',
-	construction: Construction = 'objects'
+	construction: NodeConstruction = 'object'
 ): Promise<{
 	status: 'ok' | 'crashed' | 'error';
 	stdout: string;
@@ -608,9 +608,9 @@ export function enforceCodeCeilings(grammars: readonly GrammarName[], report: Va
 export async function runCountsCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
-	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean; nodeStorage?: NodeStorage; construction?: Construction } = {}
+	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean; nodeStorage?: NodeStorage; construction?: NodeConstruction } = {}
 ): Promise<void> {
-	const { isolate = false, isolateWorker = false, nodeStorage = 'object', construction = 'objects' } = options;
+	const { isolate = false, isolateWorker = false, nodeStorage = 'object', construction = 'object' } = options;
 	useValidationNodeStorage(nodeStorage);
 	useValidationConstruction(construction);
 

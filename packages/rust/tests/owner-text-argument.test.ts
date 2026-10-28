@@ -8,13 +8,13 @@ const verifyingStrict = await createEngine(rust, { verifyStructure: 'runtime', a
 
 describe('a strict builder whose one slot holds a leaf', () => {
 	it('takes the built leaf, and refuses the leaf\'s text', () => {
-		expect(rsStrict.build.lifetime(rs.build.identifier('a')).$render()).toBe("'a");
+		expect(rsStrict.build.lifetime(rsStrict.build.identifier('a')).$render()).toBe("'a");
 		// @ts-expect-error text to a leaf is coercion: the loose entry takes it
 		expect(() => verifyingStrict.build.lifetime('a')).toThrow(/Lifetime.name: a strict factory takes a built node, not a string/);
 	});
 
 	it('refuses the text through two builders too', () => {
-		const label = rsStrict.build.label(rs.build.identifier('outer'));
+		const label = rsStrict.build.label(rsStrict.build.identifier('outer'));
 		expect(rsStrict.build.continueExpression(label).$render()).toBe("continue 'outer");
 		// @ts-expect-error text to a leaf is coercion: the loose entry takes it
 		expect(() => verifyingStrict.build.continueExpression('outer')).toThrow(/ContinueExpression.label: a strict factory takes a built node/);

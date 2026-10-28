@@ -41,6 +41,17 @@ export function kindConstants(
 	return constants;
 }
 
+export const UNIT_KIND_BITS = 14;
+
+export function kindBitsOf(constants: readonly KindConstant[]): number {
+	const largest = Math.max(0, ...constants.flatMap(({ id }) => (id === ERROR_KIND_ID ? [] : [id])));
+	const bits = Math.ceil(Math.log2(largest + 2));
+	if (bits > UNIT_KIND_BITS) {
+		throw new Error(`kind_ids.rs: kind ${largest} needs ${bits} bits, past the ${UNIT_KIND_BITS} a unit cell holds its kind in`);
+	}
+	return bits;
+}
+
 export function relaxedKeywordIds(nodeMap: NodeMap, entries: readonly KindEnumEntry[]): number[] {
 	const fixed = nodeMap.word === null || nodeMap.word === undefined ? [] : (nodeMap.fixedNameLiterals?.[nodeMap.word] ?? []);
 	return [...new Set([...(nodeMap.relaxedLiterals ?? []), ...fixed])].flatMap((literal) => {
@@ -96,7 +107,10 @@ export function emitKindIdRust(config: EmitKindIdRustConfig): string {
 		``
 	];
 
-	for (const { name, id } of kindConstants(entries)) lines.push(`pub const ${name}: KindId = KindId(${id});`);
+	const constants = kindConstants(entries);
+	for (const { name, id } of constants) lines.push(`pub const ${name}: KindId = KindId(${id});`);
+	lines.push('', `/// The bits a packed kind field takes: the least that holds every kind id below all-ones, which is \`ERROR\`.`);
+	lines.push(`pub const KIND_BITS: u32 = ${kindBitsOf(constants)};`);
 	const errorEntry = entries.find((entry) => entry.id === ERROR_KIND_ID);
 	if (errorEntry === undefined) throw new Error(`kind_ids.rs: ${grammar} has no ${ERROR_KIND_NAME} kind entry`);
 	lines.push(`const _: () = assert!(${kindConstName(errorEntry)}.get() == KindId::ERROR.get());`);

@@ -3,8 +3,8 @@ import python from '../../python/src/index.ts';
 import { createEngine } from '@sittir/common';
 import { loadSlotAccessorOf } from '../src/validate/common.ts';
 
-const py = await createEngine(python);
-const pyStrict = await createEngine(python, { api: 'strict' });
+const py = await createEngine(python, { nodeStorage: 'object' });
+const pyStrict = await createEngine(python, { api: 'strict', nodeStorage: 'object' });
 const pythonSlots = await loadSlotAccessorOf('python');
 
 function shapeOf(node: unknown): unknown {
@@ -61,13 +61,13 @@ describe('a case pattern over aliased hidden storage', () => {
 			pyStrict.build.simplePattern(
 				pyStrict.build.classPattern({
 					type: pyStrict.build.dottedName({
-						qualifier: pyStrict.build.dottedName({ name: py.build.identifier('a') }),
-						name: py.build.identifier('test')
+						qualifier: pyStrict.build.dottedName({ name: pyStrict.build.identifier('a') }),
+						name: pyStrict.build.identifier('test')
 					})
 				})
 			)
 		);
-		expect(py.render(built).toString()).toBe('a.test()');
+		expect(pyStrict.render(built).toString()).toBe('a.test()');
 		const read = findParsed(py.parse('match x:\n    case a.test():\n        pass\n'), py.kinds.CasePattern);
 		expect(parsedShape(read)).toEqual(shapeOf(built));
 	});

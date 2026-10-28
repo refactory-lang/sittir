@@ -6,56 +6,105 @@
 export const RECORD_HEADER_WORDS = 2;
 
 export const records = {
-	ProgramNode: { words: 4, definitions: { word: 2, width: 2, run: 5 } },
-	EscapeSequenceNode: { words: 6, content: { word: 2, width: 4 } },
-	IdentifierNode: { words: 2 },
-	ImmediateIdentifierNode: { words: 2 },
-	CaptureNode: { words: 7, name: { word: 2, width: 5 } },
-	StringNode: { words: 8, string_content: { word: 2, width: 6, inline: 4 } },
-	ImmediateStringNode: { words: 8, string_content: { word: 2, width: 6, inline: 4 } },
-	StringContentNode: { words: 4, content: { word: 2, width: 2, run: 5 } },
-	ParametersNode: { words: 4, elements: { word: 2, width: 2, run: 5 } },
-	CommentNode: { words: 6, content: { word: 2, width: 4 } },
-	ListNode: { words: 6, definitions: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 2, run: 5 } },
-	GroupingNode: { words: 6, grouping_group: { word: 2, width: 2, run: 5 }, elements: { word: 4, width: 2, run: 5 } },
-	MissingNodeNode: { words: 14, name: { word: 2, width: 10, inline: 8 }, elements: { word: 12, width: 2, run: 5 } },
-	AnonymousNodeNode: { words: 14, name: { word: 2, width: 10, inline: 8 }, elements: { word: 12, width: 2, run: 5 } },
-	FieldDefinitionNode: { words: 12, name: { word: 2, width: 5 }, definition: { word: 7, width: 5 } },
-	NegatedFieldNode: { words: 7, identifier: { word: 2, width: 5 } },
-	PredicateNode: {
-		words: 23,
-		prefix: { word: 2, width: 5 },
-		name: { word: 7, width: 5 },
-		type_: { word: 12, width: 5 },
-		parameters: { word: 17, width: 6, inline: 4 }
+	ProgramNode: { words: 3, builtWords: 3, definitions: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	EscapeSequenceNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
+	IdentifierNode: { words: 2, builtWords: 2 },
+	ImmediateIdentifierNode: { words: 2, builtWords: 2 },
+	CaptureNode: { words: 5, builtWords: 3, name: { word: 2, width: 3, forms: 1, built: 2 } },
+	StringNode: { words: 5, builtWords: 3, string_content: { word: 2, width: 3, inline: 3, forms: 8, built: 2 } },
+	ImmediateStringNode: {
+		words: 5,
+		builtWords: 3,
+		string_content: { word: 2, width: 3, inline: 3, forms: 8, built: 2 }
 	},
-	ListElementQuantifierNode: { words: 7, quantifier: { word: 2, width: 5 } },
-	GroupExpressionArmNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	NamedNodeExpressionArmNode: { words: 12, left: { word: 2, width: 5 }, right: { word: 7, width: 5 } },
-	GroupingGroupNode: { words: 8, group_expression: { word: 3, width: 5 }, anchor: { word: 2, bit: 0 } },
-	StringContentTextNode: { words: 2 },
+	StringContentNode: { words: 3, builtWords: 3, content: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	ParametersNode: { words: 3, builtWords: 3, elements: { word: 2, width: 1, run: 3, forms: 1, built: 2 } },
+	CommentNode: { words: 4, builtWords: 3, content: { word: 2, width: 2, forms: 4, built: 2 } },
+	ListNode: {
+		words: 4,
+		builtWords: 4,
+		definitions: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		elements: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	GroupingNode: {
+		words: 4,
+		builtWords: 4,
+		grouping_group: { word: 2, width: 1, run: 3, forms: 1, built: 2 },
+		elements: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	MissingNodeNode: {
+		words: 9,
+		builtWords: 4,
+		name: { word: 2, width: 6, inline: 5, forms: 9, built: 2 },
+		elements: { word: 8, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	AnonymousNodeNode: {
+		words: 9,
+		builtWords: 4,
+		name: { word: 2, width: 6, inline: 5, forms: 10, built: 2 },
+		elements: { word: 8, width: 1, run: 3, forms: 1, built: 3 }
+	},
+	FieldDefinitionNode: {
+		words: 8,
+		builtWords: 4,
+		name: { word: 2, width: 3, forms: 1, built: 2 },
+		definition: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	NegatedFieldNode: { words: 5, builtWords: 3, identifier: { word: 2, width: 3, forms: 1, built: 2 } },
+	PredicateNode: {
+		words: 10,
+		builtWords: 6,
+		prefix: { word: 2, width: 1, forms: 2, built: 2 },
+		name: { word: 3, width: 3, forms: 1, built: 3 },
+		type_: { word: 6, width: 1, forms: 2, built: 4 },
+		parameters: { word: 7, width: 3, inline: 3, forms: 8, built: 5 }
+	},
+	ListElementQuantifierNode: { words: 3, builtWords: 3, quantifier: { word: 2, width: 1, forms: 2, built: 2 } },
+	GroupExpressionArmNode: {
+		words: 8,
+		builtWords: 4,
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		right: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	NamedNodeExpressionArmNode: {
+		words: 8,
+		builtWords: 4,
+		left: { word: 2, width: 3, forms: 1, built: 2 },
+		right: { word: 5, width: 3, forms: 1, built: 3 }
+	},
+	GroupingGroupNode: {
+		words: 6,
+		builtWords: 4,
+		group_expression: { word: 3, width: 3, forms: 1, built: 3 },
+		anchor: { word: 2, bit: 0 }
+	},
+	StringContentTextNode: { words: 2, builtWords: 2 },
 	NamedNodePlainNode: {
-		words: 14,
-		name: { word: 2, width: 5 },
-		named_node_group: { word: 7, width: 5 },
-		elements: { word: 12, width: 2, run: 5 }
+		words: 10,
+		builtWords: 5,
+		name: { word: 2, width: 4, forms: 3, built: 2 },
+		named_node_group: { word: 6, width: 3, forms: 1, built: 3 },
+		elements: { word: 9, width: 1, run: 3, forms: 1, built: 4 }
 	},
 	NamedNodeSupertypedNode: {
-		words: 24,
-		supertype: { word: 2, width: 5 },
-		name: { word: 7, width: 10, inline: 8 },
-		named_node_group: { word: 17, width: 5 },
-		elements: { word: 22, width: 2, run: 5 }
+		words: 15,
+		builtWords: 6,
+		supertype: { word: 2, width: 3, forms: 1, built: 2 },
+		name: { word: 5, width: 6, inline: 5, forms: 9, built: 3 },
+		named_node_group: { word: 11, width: 3, forms: 1, built: 4 },
+		elements: { word: 14, width: 1, run: 3, forms: 1, built: 5 }
 	},
 	NamedNodeGroupChildrenNode: {
-		words: 5,
+		words: 4,
+		builtWords: 4,
 		anchor: { word: 2, bit: 0 },
-		named_node_expressions: { word: 3, width: 2, run: 5 }
+		named_node_expressions: { word: 3, width: 1, run: 3, forms: 1, built: 3 }
 	},
 	NamedNodeGroupAnchoredLastNode: {
-		words: 10,
+		words: 7,
+		builtWords: 5,
 		anchor: { word: 2, bit: 0 },
-		named_node_expressions: { word: 3, width: 2, run: 5 },
-		last: { word: 5, width: 5 }
+		named_node_expressions: { word: 3, width: 1, run: 3, forms: 1, built: 3 },
+		last: { word: 4, width: 3, forms: 1, built: 4 }
 	}
 } as const;

@@ -25,7 +25,6 @@ export interface NodeMemberSpec {
 	readonly extra?: readonly string[];
 	readonly parsed?: true;
 	readonly text?: string;
-	readonly row?: true;
 }
 
 export function triviaPositionsOf(kind: string, nodeMap: NodeMap): TriviaPositions | undefined {
@@ -46,14 +45,15 @@ export function withEntry(entry: SetterEntry): string {
 	return `      ${entry.name}: (${entry.params}) => rebuilt(node, handle, () => ${entry.body}),`;
 }
 
-export function builtRowLines(name: string, inputs: readonly string[], setters: readonly SetterEntry[] | undefined, trivia: TriviaPositions | undefined): string[] {
+export function builtWithLines(name: string, kind: string, inputs: readonly string[], setters: readonly SetterEntry[]): string[] {
 	return [
-		`function ${name}(node: object, handle: EngineHandle | undefined): BuiltRow {`,
+		`function ${name}(node: object, setter: string, args: readonly unknown[]): unknown {`,
+		'  const handle = handleOf(node as RecordHandle);',
 		...(inputs.length === 0 ? [] : ['  const inputs = builtInputs(node);', ...inputs]),
-		'  return {',
-		...withBlockLines(setters, withEntry),
-		...triviaBlockLines(false, trivia),
-		'  };',
+		'  switch (setter) {',
+		...setters.flatMap((entry) => [`    case ${JSON.stringify(entry.name)}:`, `      return applySetter(args, (${entry.params}) => rebuilt(node, handle, () => ${entry.body}));`]),
+		'  }',
+		`  throw new Error(\`${kind} has no $with.\${setter}\`);`,
 		'}'
 	];
 }
@@ -62,17 +62,12 @@ function withBlockLines(setters: readonly SetterEntry[] | undefined, entry: (set
 	return setters === undefined ? [] : ['    $with: {', ...setters.map(entry), '    },'];
 }
 
-function triviaBlockLines(row: boolean, trivia: TriviaPositions | undefined): string[] {
+function triviaBlockLines(trivia: TriviaPositions | undefined): string[] {
 	if (trivia === undefined) return [];
-	return ['    $trivia: {', triviaMember(row, 'leading'), triviaMember(row, 'trailing'), ...(trivia.inner ? [triviaMember(row, 'inner')] : []), '    },'];
+	return ['    $trivia: {', triviaMember('leading'), triviaMember('trailing'), ...(trivia.inner ? [triviaMember('inner')] : []), '    },'];
 }
 
-function rowWithEntry(entry: SetterEntry): string {
-	return `      ${entry.name}: (...args: unknown[]) => rowWith(node, tree, _wrap, ${JSON.stringify(entry.name)}, args),`;
-}
-
-function triviaMember(row: boolean, side: 'leading' | 'trailing' | 'inner'): string {
-	if (row) return `      ${side}: (...items: unknown[]) => rowTrivia(node, tree, _wrap, '${side}', items),`;
+function triviaMember(side: 'leading' | 'trailing' | 'inner'): string {
 	return side === 'inner'
 		? '      inner: (...items: unknown[]) => triviaInner(node, handle, items),'
 		: `      ${side}: (...items: unknown[]) => triviaSide(node, handle, '${side}', items),`;
@@ -80,9 +75,7 @@ function triviaMember(row: boolean, side: 'leading' | 'trailing' | 'inner'): str
 
 export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 	const lines: string[] = [];
-	const row = spec.row === true;
-	const target = row ? 'rowOf(node, tree, _wrap)' : 'node';
-	lines.push(...withBlockLines(spec.setters, row ? rowWithEntry : withEntry));
+	lines.push(...withBlockLines(spec.setters, withEntry));
 	for (const accessor of spec.accessors) lines.push(`    ${accessor.name}: () => ${accessorRead(accessor)},`);
 	if (spec.text !== undefined) lines.push(`    $text: () => ${spec.text},`);
 	lines.push(...(spec.extra ?? []));
@@ -90,11 +83,11 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 		'    $render: () => renderText(handle, node),',
 		'    toString: () => node.$render(),',
 		'    toJSON: refuseJSON,',
-		...triviaBlockLines(row, spec.trivia),
+		...triviaBlockLines(spec.trivia),
 		...(spec.parsed
 			? [
-					`    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, ${target}) : undefined,`,
-					`    $snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(${target}) : undefined,`
+					'    $query: handle && treeHandleOf(data) !== undefined ? () => queryOf(handle, node) : undefined,',
+					'    $snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,'
 				]
 			: []),
 		'    $engine: handle && (() => handle.current)'
@@ -150,25 +143,26 @@ export function groupSeatParts(
 	return { prelude, members };
 }
 
+export const LIST_SURFACE_LINES: readonly string[] = [
+	'    ...LIST_METHODS,',
+	'    [Symbol.iterator]: listIterator,',
+	'    [Symbol.isConcatSpreadable]: true,',
+	'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],'
+];
+
 export interface ListViewParts {
 	readonly prelude: string[];
 	readonly members: string[];
 	readonly postlude: string[];
 }
 
-export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap' | 'view'): ListViewParts {
+export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: string, environment: 'factory' | 'wrap'): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
 	const options = plan.options
 		.filter((option) => !(environment !== 'factory' && option.key === 'separator'))
 		.map((option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`);
 	const separator = environment !== 'factory' && plan.options.some((option) => option.key === 'separator');
-	const shared = [
-		'    ...LIST_METHODS,',
-		'    [Symbol.iterator]: listIterator,',
-		'    [Symbol.isConcatSpreadable]: true,',
-		'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],',
-		...options
-	];
+	const shared = [...LIST_SURFACE_LINES, ...options];
 	return {
 		prelude:
 			environment === 'factory'
@@ -192,31 +186,22 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 
 export type ListStored = { readonly elements: string } | { readonly length: string };
 
-function selfListOption(key: string, environment: 'factory' | 'wrap' | 'view'): string {
-	if (environment === 'factory') return `_${key}`;
-	if (environment === 'wrap') return `(data as { readonly _${key}?: unknown })._${key}`;
-	if (key === 'delimiter') return 'recordDelimiter(data, tree)';
-	throw new Error(`a record view's list option '${key}' is its shared getter (defineListSeparator), not a member: a parsed list's separator is its tree's`);
+function selfListOption(key: string, environment: 'factory' | 'wrap'): string {
+	return environment === 'factory' ? `_${key}` : `(data as { readonly _${key}?: unknown })._${key}`;
 }
 
 export function listSelfViewParts(
 	plan: ListViewPlan,
 	stored: ListStored,
 	elementsReader: string,
-	environment: 'factory' | 'wrap' | 'view'
+	environment: 'factory' | 'wrap'
 ): ListViewParts {
 	const wrapper = plan.wrapper ?? 'undefined';
 	const options = plan.options
 		.filter((option) => !(environment !== 'factory' && option.key === 'separator'))
 		.map((option) => `    ${option.key}: ${selfListOption(option.key, environment)} ?? ${option.default},`);
 	const separator = environment !== 'factory' && plan.options.some((option) => option.key === 'separator');
-	const shared = [
-		'    ...LIST_METHODS,',
-		'    [Symbol.iterator]: listIterator,',
-		'    [Symbol.isConcatSpreadable]: true,',
-		'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],',
-		...options
-	];
+	const shared = [...LIST_SURFACE_LINES, ...options];
 	return {
 		prelude: ['elements' in stored ? `  const listedLength = storedElements(${stored.elements}).length;` : `  const listedLength = ${stored.length};`],
 		members: [

@@ -3,13 +3,11 @@
 //! A record is named by its tree and its address together: the address
 //! reads nothing once its tree is gone.
 
-use super::{
-    Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, RecordCells, RecordTrees, Row, SideRecord, WriteCell,
-};
+use super::{Address, Arena, ArenaRead, Cell, CellAt, HeldArenas, HydrateError, HydrateNode, RecordCells, RecordTrees, Row, SideRecord, TreeArena};
 use crate::engine::{EngineGrammar, ParsedTree};
 use crate::options::ResolvedOptions;
 use crate::prepare::RenderContext;
-use crate::read::{Depth, ReadNode};
+use crate::read::Depth;
 use crate::record::HEADER_WORDS;
 use crate::render::{RenderError, SourceTable};
 use crate::slot::{ChangedEdges, NodeCoordinate};
@@ -54,66 +52,86 @@ pub trait RecordGrammar: EngineGrammar {
 
 impl<G: EngineGrammar> ParsedTree<G> {
     /// The record of the node at `index`: the one a read wrote, else the
-    /// one its read `depth` levels down writes now. `None` for a node that
-    /// has no record: a parsed leaf, which its holder's cell holds whole, and
-    /// an `ERROR` node, which is trivia of its tree.
+    /// one its direct hydration `depth` levels down writes now, with the
+    /// records of its ancestors no read wrote, each one level down (`reach`).
+    /// `None` for a node that has no record: a parsed leaf or a unit, which
+    /// its holder's cell holds whole, and an `ERROR` node, which is trivia of
+    /// its tree.
     ///
     /// # Errors
     ///
-    /// The read's refusal, naming the kind, and what the record writer
-    /// refuses.
-    pub fn read_record<N: ReadNode + WriteCell<G::Trivia>>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
-        self.materialize_record::<N>(index, depth, false)
-    }
-
-    /// Materializes records to `depth` without exporting their words. A
-    /// deeper request reaches children of records already written; published
-    /// records and their addresses remain unchanged.
-    ///
-    /// # Errors
-    ///
-    /// What the native read or a record writer refuses.
-    pub fn hydrate_record<N: ReadNode + WriteCell<G::Trivia>>(
-        &self,
-        index: NodeIndex,
-        depth: Depth,
-    ) -> Result<Option<Address>, String> {
-        self.materialize_record::<N>(index, depth, true)
-    }
-
-    fn materialize_record<N: ReadNode + WriteCell<G::Trivia>>(
-        &self,
-        index: NodeIndex,
-        depth: Depth,
-        hydrate: bool,
-    ) -> Result<Option<Address>, String> {
-        if !hydrate {
-            if let Some(at) = self.tree_arena().record(index) {
-                return Ok(Some(at));
-            }
-        }
+    /// The read's refusal, naming the kind, and what the arena refuses.
+    pub fn read_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
         if self.read_error(index).is_some() {
             return Ok(None);
         }
-        let grammar = self.grammar();
-        let node: N = self.read(index, depth).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))?;
-        let mut arena = self.tree_arena();
-        let mut sink = super::RecordSink::parsed(self.tree_id(), &mut arena);
-        if hydrate {
-            node.hydrate_records(&mut sink)
-        } else {
-            node.write_cell(&mut sink).map(|_| ())
+        self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, depth, true))
+    }
+
+    /// Writes the records `depth` levels down from the node at `index` that
+    /// no read has, reaching past records already written; a record already
+    /// written stays as it is.
+    ///
+    /// # Errors
+    ///
+    /// What the hydration refuses.
+    pub fn hydrate_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex, depth: Depth) -> Result<Option<Address>, String> {
+        if self.read_error(index).is_some() {
+            return Ok(None);
         }
-        .map_err(|refusal| refusal.to_string())?;
-        Ok(arena.record(index))
+        self.with_reads(|tree, cursor, ctx| {
+            let at = super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, true)?;
+            if let Some(at) = at {
+                super::deepen::<N>(tree, cursor, ctx, at, depth)?;
+            }
+            Ok(at)
+        })
+    }
+
+    /// The record the cell at `word`, item `item`, of the record `holder`
+    /// names: on the first read through it, written `depth` levels down and
+    /// the cell rewritten to name it (`read_cell`).
+    ///
+    /// # Errors
+    ///
+    /// What `read_cell` refuses.
+    pub fn read_cell<N: HydrateNode + RecordCells>(&self, holder: Address, word: u32, item: u32, depth: Depth) -> Result<Address, String> {
+        self.with_reads(|tree, cursor, ctx| super::read_cell::<N>(tree, cursor, ctx, holder, word, item, depth))
+    }
+
+    /// The record of the node at `index` a read wrote, or `None` while none has.
+    #[must_use]
+    pub fn written_record<N: HydrateNode + RecordCells>(&self, index: NodeIndex) -> Option<Address> {
+        self.with_reads(|tree, cursor, ctx| super::reach::<N>(tree, cursor, ctx, index, Depth::ONE, false)).ok().flatten()
+    }
+
+    fn with_reads<R>(&self, f: impl FnOnce(&mut TreeArena, &mut tree_sitter::TreeCursor<'_>, &mut crate::read::ReadCtx<'_>) -> Result<R, HydrateError>) -> Result<R, String> {
+        let grammar = self.grammar();
+        let mut arena = self.tree_arena();
+        let mut ctx = self.read_ctx();
+        f(&mut arena, &mut self.tree().walk(), &mut ctx).map_err(|refusal| refusal.describe(&|kind| grammar.kind_name(kind)))
     }
 
     /// `f` of the words records fill in chunk `n` of the tree's arena,
     /// borrowed for the call, or `None` for a chunk the arena does not hold.
-    /// Records only append to a chunk, so the words `f` sees stay as they are
-    /// and a later read adds words after them.
+    /// A later read adds words after them, and rewrites a coordinate cell
+    /// among them to name the record it writes.
     pub fn with_record_chunk<R>(&self, n: u32, f: impl FnOnce(&[u32]) -> R) -> Option<R> {
         self.tree_arena().arena().chunk(n).map(f)
+    }
+
+    /// The storage of chunk `n` of the tree's arena, every word of it, to
+    /// share with a buffer JavaScript reads it through; `None` for a chunk
+    /// the arena does not hold.
+    #[must_use]
+    pub fn record_chunk_memory(&self, n: u32) -> Option<std::sync::Arc<super::ChunkMem<u32>>> {
+        self.tree_arena().arena().chunk_memory(n)
+    }
+
+    /// The bytes the tree's arena takes.
+    #[must_use]
+    pub fn arena_bytes(&self) -> usize {
+        self.tree_arena().arena().allocated_bytes()
     }
 
     /// The words of chunk `n` of the tree's arena that records fill, copied:
@@ -132,7 +150,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
     /// # Errors
     ///
     /// An unhydrated record, an invalid row or a malformed stored cell.
-    pub fn record_candidates<N: RecordCells>(
+    pub fn record_candidates<N: HydrateNode + RecordCells>(
         &self,
         index: NodeIndex,
     ) -> Result<Vec<NodeCoordinate>, RenderError> {
@@ -140,7 +158,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
         let coord = self
             .row_coordinate(index)
             .ok_or_else(|| refused("candidate row", index.0))?;
-        let address = self.tree_arena().record(index);
+        let address = self.written_record::<N>(index);
         let root = match address {
             Some(at) => self.record_root(at, ChangedEdges::default())?.cell,
             None => Cell::Coordinate {
@@ -179,7 +197,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     let record = N::shape(kind)
                         .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
                     let first = pending.len();
-                    super::admit::for_each_cell(self.tree_arena().arena(), at, record, at, |child, _| {
+                    super::admit::for_each_parsed_cell(self.tree_arena().arena(), at, record, G::KIND_BITS, |child, _| {
                         pending.push(child);
                         Ok(())
                     })
@@ -187,31 +205,22 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     pending[first..].reverse();
                 }
                 Cell::Coordinate { kind, index, span } => {
-                    if let Some(at) = self.tree_arena().record(index) {
-                        pending.push(Cell::Child {
-                            kind,
-                            at,
-                            link: None,
-                            changed: ChangedEdges::default(),
-                        });
-                    } else {
-                        let node = crate::engine::node_at_index(self.tree(), index)
-                            .ok_or_else(|| refused("candidate row", index.0))?;
-                        if self.grammar().unit_id(&mut node.walk()).is_some() {
-                            continue;
-                        }
-                        let shape = N::shape(kind)
-                            .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
-                        if shape.words > HEADER_WORDS || !shape.cells.is_empty() {
-                            return Err(refused("unhydrated candidate record", index.0));
-                        }
-                        let mut coordinate = self
-                            .row_coordinate(index)
-                            .ok_or_else(|| refused("candidate row", index.0))?;
-                        coordinate.kind = Some(kind);
-                        coordinate.span = span;
-                        candidates.push(coordinate);
+                    let node = crate::engine::node_at_index(self.tree(), index)
+                        .ok_or_else(|| refused("candidate row", index.0))?;
+                    if self.grammar().unit_id(&mut node.walk()).is_some() {
+                        continue;
                     }
+                    let shape = N::shape(kind)
+                        .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
+                    if shape.words > HEADER_WORDS || !shape.cells.is_empty() {
+                        return Err(refused("unhydrated candidate record", index.0));
+                    }
+                    let mut coordinate = self
+                        .row_coordinate(index)
+                        .ok_or_else(|| refused("candidate row", index.0))?;
+                    coordinate.kind = Some(kind);
+                    coordinate.span = span;
+                    candidates.push(coordinate);
                 }
                 Cell::ParsedLeaf { kind, span, row } => {
                     let mut coordinate = self
@@ -251,7 +260,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
     /// # Errors
     ///
     /// An invalid row, or a refused prepare or render.
-    pub fn render_candidate(
+    pub fn render_candidate<N: HydrateNode + RecordCells>(
         &self,
         index: NodeIndex,
         options: &ResolvedOptions,
@@ -259,7 +268,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
     ) -> Result<String, RenderError> {
         let refused = || RenderError::Record(super::ArenaError::Malformed { what: "candidate row", word: index.0 });
         let coord = self.row_coordinate(index).ok_or_else(refused)?;
-        let record = self.tree_arena().record(index);
+        let record = self.written_record::<N>(index);
         let root = if let Some(at) = record {
             self.record_root(at, ChangedEdges::default())?
         } else {
@@ -296,7 +305,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
     fn record_root(&self, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
         let kind = {
             let arena = self.tree_arena();
-            let kind = arena.arena().header_kind(at).map_err(RenderError::Record)?;
+            let kind = arena.arena().header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
             if !arena.contains_record(at) {
                 return Err(RenderError::Record(super::ArenaError::Malformed { what: "record address", word: at.0 }));
             }

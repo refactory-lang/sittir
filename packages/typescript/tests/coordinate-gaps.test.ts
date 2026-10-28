@@ -11,13 +11,13 @@ const tsStrict = await createEngine(typescript, { api: 'strict' });
 describe('gaps between coordinates', () => {
 	it('keeps the blank lines a parsed block spelled and seats a statement appended after them', () => {
 		const source = 'function f() {\n  a();\n\n  b();\n\n  c();\n}\n';
-		const fn = ts.parse(source).statements()[0]!;
+		const fn = tsStrict.parse(source).statements()[0]!;
 		if (!ts.is.functionDeclaration(fn)) throw new Error('expected a function declaration');
 		const body = fn.body();
 		const rebuilt = body.$with.statements(
 			...body.statements(),
 			tsStrict.build.expressionStatement(
-				tsStrict.build.callExpression.call({ function: ts.build.identifier('d'), arguments: tsStrict.build.arguments() }),
+				tsStrict.build.callExpression.call({ function: tsStrict.build.identifier('d'), arguments: tsStrict.build.arguments() }),
 				{ terminator: ts.kinds.Semi }
 			)
 		);

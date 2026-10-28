@@ -21,7 +21,7 @@
  */
 
 import type { AnyUntypedNode, NodeTrivia } from '@sittir/types';
-import { listSeparatorOf, nodeText, placeOf, spanOf } from '@sittir/common/utils';
+import { isNode, listSeparatorOf, nodeText, placeOf, spanOf } from '@sittir/common/utils';
 import type { TreeHandle } from '@sittir/common/utils';
 import type { FactoryShape, FactorySlotMeta } from '../codegen-surface.ts';
 import { load } from '../codegen-surface.ts';
@@ -37,6 +37,7 @@ import {
 	materializeBuildInput,
 	builtStorageOf,
 	loadSlotAccessorOf,
+	storedSlotValues,
 	type SlotAccessorOf,
 	readNodeOf,
 	emitValidatorMetrics,
@@ -50,6 +51,7 @@ import {
 	type ValidatorSkip,
 	loadIrSurface,
 	buildFactoryNodeFromReference,
+	seatProjects,
 	tableSides,
 	type ReadNodeLike,
 	loadScopedFactoryMap,
@@ -107,7 +109,6 @@ const IGNORED_NODE_KEYS = new Set([
 	'$_layout',
 	'$treeHandle',
 	'$span',
-	'$named',
 	'$with',
 	'$variant'
 ]);
@@ -287,25 +288,34 @@ export interface FactoryStorageResult {
 
 const SOURCE_KEYS: ReadonlySet<string> = new Set(['$treeHandle', '$span']);
 
+type SeatReader = (parent: Record<string, unknown>, key: string, value: unknown, item: unknown) => SeatReader | undefined;
+
 function rebuildChildren(
 	node: Record<string, unknown>,
 	build: (node: Record<string, unknown>) => unknown,
 	sides: (node: ReadNodeLike, rebuild: (read: unknown) => unknown) => NodeTrivia | undefined,
-	takesText: (node: Record<string, unknown>) => boolean = () => false
+	takesText: (node: Record<string, unknown>) => boolean = () => false,
+	top: SeatReader = () => undefined,
+	reader: SeatReader = top
 ): Record<string, unknown> {
-	const rebuild = (value: unknown): unknown => {
-		if (Array.isArray(value)) return value.map(rebuild);
+	const rebuild = (value: unknown, apart?: SeatReader): unknown => {
+		if (Array.isArray(value)) return value.map((item) => rebuild(item));
 		if (typeof value !== 'object' || value === null) return value;
-		if (isComparableNode(value) && takesText(value as Record<string, unknown>)) {
-			return build(value as Record<string, unknown>) ?? value;
+		const comparable = isComparableNode(value);
+		if (comparable && takesText(value as Record<string, unknown>)) {
+			return apart !== undefined ? value : (build(value as Record<string, unknown>) ?? value);
 		}
-		const data = rebuildChildren(value as Record<string, unknown>, build, sides, takesText);
-		if (!isComparableNode(value)) return data;
+		const data = rebuildChildren(value as Record<string, unknown>, build, sides, takesText, top, apart ?? (comparable ? top : reader));
+		if (!comparable || apart !== undefined) return data;
 		return build(data) ?? data;
 	};
+	const slot = (key: string, value: unknown): unknown =>
+		Array.isArray(value)
+			? value.map((item) => rebuild(item, reader(node, key, value, item)))
+			: rebuild(value, reader(node, key, value, value));
 	const copy = Object.fromEntries(
 		Object.entries(node).flatMap(([key, value]): [string, unknown][] =>
-			SOURCE_KEYS.has(key) || key === '$_layout' ? [] : [[key, rebuild(value)]]
+			SOURCE_KEYS.has(key) || key === '$_layout' ? [] : [[key, slot(key, value)]]
 		)
 	);
 	const separator = isComparableNode(node) ? listSeparatorOf(node) : undefined;
@@ -315,11 +325,12 @@ function rebuildChildren(
 }
 
 /** Whether `value` or any node under it carries the identity of a parsed source node. */
-function carriesSource(value: unknown): boolean {
-	if (Array.isArray(value)) return value.some(carriesSource);
+function carriesSource(value: unknown, accessorOf: SlotAccessorOf): boolean {
+	if (Array.isArray(value)) return value.some((item) => carriesSource(item, accessorOf));
 	if (typeof value !== 'object' || value === null) return false;
 	if (placeOf(value) !== undefined) return true;
-	return Object.values(value).some(carriesSource);
+	const under = isNode(value) ? [...storedSlotValues(value, accessorOf).map(([, child]) => child), (value as { readonly $_layout?: unknown }).$_layout] : Object.values(value);
+	return under.some((child) => carriesSource(child, accessorOf));
 }
 
 interface FactoryArtifacts {
@@ -426,6 +437,10 @@ function buildFactoryUntypedNode(
 	}
 }
 
+function release(node: unknown): void {
+	(node as Partial<Disposable> | null)?.[Symbol.dispose]?.();
+}
+
 export async function validateFactoryStorage(
 	grammar: string,
 	backend: 'native' = 'native',
@@ -444,6 +459,18 @@ export async function validateFactoryStorage(
 
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
+	const surfaceOf = (kind: string): IrSurface | undefined => (surface?.entries[kind] === undefined ? undefined : surface);
+	const seatReader =
+		(inherited: IrSurface | undefined): SeatReader =>
+		(parent, key, value, item) => {
+			const parentKind = typeof parent.$type === 'number' ? kindNameFromId(parent.$type) : undefined;
+			if (parentKind === undefined || !key.startsWith('_')) return undefined;
+			const parentSurface = inherited ?? surfaceOf(parentKind);
+			if (parentSurface === undefined) return undefined;
+			return seatProjects(parentKind, key.slice(1), value, item, { accessorOf, kindNameFromId, surface: parentSurface })
+				? seatReader(parentSurface)
+				: undefined;
+		};
 	const renderReparseContext = await loadRenderReparseContext(
 		grammar,
 		parser,
@@ -512,7 +539,6 @@ export async function validateFactoryStorage(
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
-			if (w.$named === false) return;
 			const sourceKind = kindNameFromId(w.$type);
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;
@@ -580,11 +606,10 @@ export async function validateFactoryStorage(
 				const buildInner = (node: Record<string, unknown>): unknown => {
 					const innerKind = typeof node.$type === 'number' ? kindNameFromId(node.$type) : undefined;
 					if (innerKind === undefined) return null;
-					const innerSurface = surface?.entries[innerKind] === undefined ? undefined : surface;
 					return buildFactoryNodeFromReference(
 						node,
 						innerKind,
-						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
+						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: surfaceOf(innerKind) },
 						{ kindNameFromId, accessorOf, tree: handle, placeText: true }
 					);
 				};
@@ -604,7 +629,8 @@ export async function validateFactoryStorage(
 										root,
 										buildInner,
 										(read, rebuild) => tableSides(read, accessorOf, rebuild),
-										takesText
+										takesText,
+										seatReader(undefined)
 									)) as unknown as AnyUntypedNode,
 							kind,
 							node1?.type,
@@ -634,7 +660,7 @@ export async function validateFactoryStorage(
 					render.excluded.push({ entry: entry.name, kind, reason: hostlessReason(kind, node1?.type ?? kind, renderReparseContext), input: inputSource });
 				} else if (builtTree === null) {
 					render.errors.push(renderFailure(buildErrors[0]?.message ?? 'no node built'));
-				} else if (carriesSource(builtTree)) {
+				} else if (carriesSource(builtTree, accessorOf)) {
 					render.errors.push(renderFailure('built node carries source identity'));
 				} else {
 					try {
@@ -665,6 +691,7 @@ export async function validateFactoryStorage(
 					}
 				}
 
+				release(builtTree);
 				if (factoryData === null) continue;
 				const diff = compareNodeStorage(
 					referenceData as unknown as Record<string, unknown>,
@@ -672,6 +699,7 @@ export async function validateFactoryStorage(
 					'',
 					{ factoryShapes, kindNameFromId }
 				);
+				release(factoryData);
 				if (diff) {
 					astMismatches.push({
 						kind,

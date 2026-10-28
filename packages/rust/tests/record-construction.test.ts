@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { useRecordConstruction } from '@sittir/common/engine';
 import { recordOf } from '@sittir/common/utils';
-import arena from '../src/arena.ts';
 import rust from '../src/index.ts';
+import { expectGiven } from './constructions.mts';
 
-const objects = await arena.createEngine();
-const records = await arena.createEngine();
-useRecordConstruction(records, await import('../src/factories/records.ts'));
+const objects = await rust.createEngine({ nodeConstruction: 'object' });
+const records = await rust.createEngine();
 
 type Built = Record<string, unknown> & { readonly $type: number };
 
@@ -55,8 +53,8 @@ describe('record construction', () => {
 		const name = b.identifier('f');
 		const body = b.block({ statements: [] });
 		const fn = b.functionItem({ name, parameters: b.parameters(), body }) as unknown as Built;
-		expect((fn.name as () => unknown)()).toBe(name);
-		expect((fn.body as () => unknown)()).toBe(body);
+		expectGiven((fn.name as () => unknown)(), name);
+		expectGiven((fn.body as () => unknown)(), body);
 	});
 
 	it.each([
@@ -67,8 +65,8 @@ describe('record construction', () => {
 		const args = b.arguments(b.identifier('input'));
 		const run = b.callExpression({ function: b.identifier('run'), arguments: args }) as unknown as Built;
 		const go = b.callExpression({ function: b.identifier('go'), arguments: args }) as unknown as Built;
-		expect((run.arguments as () => unknown)()).toBe(args);
-		expect((go.arguments as () => unknown)()).toBe(args);
+		expectGiven((run.arguments as () => unknown)(), args);
+		expectGiven((go.arguments as () => unknown)(), args);
 	});
 
 	it('rebuilds a bounded child through $with as the object builders do', () => {
@@ -88,7 +86,7 @@ describe('record construction', () => {
 		const renamed = (fn.$with as { name(value: unknown): Built }).name(b.identifier('g'));
 		expect(recordOf(renamed)).not.toBe(recordOf(fn));
 		expect(((renamed.name as () => Built)().$text as () => string)()).toBe('g');
-		expect((renamed.body as () => unknown)()).toBe(body);
+		expectGiven((renamed.body as () => unknown)(), body);
 		expect(((fn.name as () => Built)().$text as () => string)()).toBe('f');
 	});
 
@@ -223,8 +221,8 @@ describe('record construction', () => {
 			const rendered = text(records, built.fn);
 			expect(rendered).toBe(text(objects, written(objects).fn));
 			expect(rendered).toContain('/* note */ noted(); // doc');
-			expect((sides(built.noted).leading() as unknown[])[0]).toBe(built.note);
-			expect((sides(built.noted).trailing() as unknown[])[0]).toBe(built.doc);
+			expectGiven((sides(built.noted).leading() as unknown[])[0], built.note);
+			expectGiven((sides(built.noted).trailing() as unknown[])[0], built.doc);
 		});
 
 		it("render a built comment entry on a parsed node as the object builders render it, and read it back as the builder's node", () => {
@@ -240,12 +238,12 @@ describe('record construction', () => {
 			const rendered = text(records, parsed.file);
 			expect(rendered).toBe(text(objects, written(objects).file));
 			expect(rendered).toContain('/* parsed */ go();');
-			expect((sides(parsed.statement).leading() as unknown[])[0]).toBe(parsed.note);
+			expectGiven((sides(parsed.statement).leading() as unknown[])[0], parsed.note);
 		});
 	});
 
 	it('refuses a child of an engine that stores its nodes differently', async () => {
-		const plain = await rust.createEngine();
+		const plain = await rust.createEngine({ nodeStorage: 'object' });
 		expect(() => objects.build.expressionStatement(plain.build.identifier('x') as never)).toThrow(/storing nodes as object .* stores them as arena/);
 		expect(() => plain.build.expressionStatement(objects.build.identifier('x') as never)).toThrow(/storing nodes as arena .* stores them as object/);
 	});

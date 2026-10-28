@@ -1,6 +1,6 @@
 {
   "grammar": "rust",
-  "generatedSha256": "23de10147826c09861df1aa1530b07461731247a1859233e510ebc36518a3c85",
+  "generatedSha256": "a10dc57902c00e9e2c389188c9cb8a80b9267c090bf755a6fb20515076c92675",
   "covered": [
     "source_file",
     "expression_statement",

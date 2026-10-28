@@ -1,6 +1,7 @@
-//! The record layout codegen stamps on a node: `words` on
-//! `#[node(…)]`, and `word` with `width` (and `run`) or `bit` on each
-//! slot's `#[slot(…)]`, beside the slot's read facts. The derive checks it and
+//! The record layout codegen stamps on a node: `words` and `built_words` on
+//! `#[node(…)]`, and on each slot's `#[slot(…)]` its parsed cell, `word`
+//! with `width`, `forms` (and `run` or `inline`), or `bit`, and its built
+//! cell, `built`, beside the slot's read facts. The derive checks it and
 //! computes none of it: the stamped cells stay inside the record's words and
 //! never overlap, and each slot's type fits its cell (`sittir_core::record`),
 //! asserted at compile time.
@@ -28,16 +29,32 @@ impl Place {
 
 /// The checks for `owner`'s stamped slots: each slot with a stamp, its type
 /// and the stamp, against the struct's `words`.
-pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellStamp)]) -> syn::Result<TokenStream> {
+pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots: &[(&Ident, &Type, &CellStamp)]) -> syn::Result<TokenStream> {
     let mut placed: Vec<(&Ident, Place)> = Vec::new();
+    let mut built: Vec<(&Ident, u32)> = Vec::new();
     let mut asserts = Vec::new();
+    for &(ident, _, stamp) in slots {
+        let Some(word) = stamp.built else { continue };
+        let Some(built_words) = built_words.filter(|_| stamp.width.is_some()) else {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}` has a built cell, so it is a cell and `{owner}` states its built words: `#[node(built_words = …)]`")));
+        };
+        if word >= built_words {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s built cell {word} is past `{owner}`'s {built_words} built words")));
+        }
+        let message = format!("{owner}.{ident}: its built cell overlaps the header");
+        asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
+        if let Some((other, _)) = built.iter().find(|(_, earlier)| *earlier == word) {
+            return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s built cell is `{other}`'s")));
+        }
+        built.push((ident, word));
+    }
     if let Some(words) = words {
         let message = format!("{owner}: its record must hold its header");
         asserts.push(quote!(const _: () = assert!(#words >= ::sittir_core::record::HEADER_WORDS, #message);));
     }
     for &(ident, ty, stamp) in slots {
         let Some(word) = stamp.word else {
-            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.inline.is_some() {
+            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.inline.is_some() || stamp.forms.is_some() {
                 return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `word`")));
             }
             continue;
@@ -47,12 +64,8 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
         };
         let message = format!("{owner}.{ident}: its record cell overlaps the header");
         asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
-        if let Some(inline) = stamp.inline {
-            let Some(width) = stamp.width.filter(|_| stamp.bit.is_none() && stamp.run.is_none()) else {
-                return Err(syn::Error::new_spanned(ident, "only a scalar child has inline record capacity"));
-            };
-            let message = format!("{owner}.{ident}: its inline record capacity fits its cell");
-            asserts.push(quote!(::sittir_core::records_codec! { const _: () = assert!(#inline >= ::sittir_core::record::HEADER_WORDS && #inline <= #width.saturating_sub(::sittir_core::arena::cell::INLINE_HEADER_WORDS), #message); }));
+        if stamp.inline.is_some() && (stamp.bit.is_some() || stamp.run.is_some()) {
+            return Err(syn::Error::new_spanned(ident, "only a scalar child has inline record capacity"));
         }
         let place = match (stamp.bit, stamp.width) {
             (Some(bit), None) if bit < 32 => {
@@ -62,8 +75,10 @@ pub fn checks(owner: &Ident, words: Option<u32>, slots: &[(&Ident, &Type, &CellS
             }
             (None, Some(width)) => {
                 let run = stamp.run.unwrap_or(0);
-                let message = format!("{owner}.{ident}: its type needs more than its stamped record cell");
-                asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#width, #run), #message);));
+                let inline = stamp.inline.unwrap_or(0);
+                let forms = stamp.forms.ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `forms`")))?;
+                let message = format!("{owner}.{ident}: its type is not held as its stamped forms in its stamped cell");
+                asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#forms, #width, #run, #inline), #message);));
                 Place::Cell { start: word, end: end_word(ident, word, width)? }
             }
             _ => return Err(syn::Error::new_spanned(ident, format!("`{ident}` is stamped a `width` or a `bit` below 32, not both"))),
@@ -101,7 +116,7 @@ mod tests {
             .map(|field| Ok(crate::attrs::slot_attrs(&field.attrs)?.map(|slot| (field.ident.clone().expect("named"), field.ty.clone(), slot.cell))))
             .collect::<syn::Result<Vec<_>>>()?;
         let stamped: Vec<_> = slots.iter().flatten().map(|(ident, ty, cell)| (ident, ty, cell)).collect();
-        super::checks(&input.ident, words, &stamped).map(|out| out.to_string().split_whitespace().collect())
+        super::checks(&input.ident, words, crate::attrs::kind_attrs(&input.attrs)?.built_words, &stamped).map(|out| out.to_string().split_whitespace().collect())
     }
 
     fn has(out: &str, part: &str) -> bool {
@@ -111,22 +126,23 @@ mod tests {
     #[test]
     fn each_stamped_field_asserts_its_type_fits_its_cell() {
         let out = checks(&parse_quote! {
-            #[node(words = 10)]
+            #[node(words = 7, built_words = 5)]
             pub struct LetDeclarationNode {
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[slot(word = 2, bit = 0)]
                 pub mutable: bool,
-                #[slot(word = 3, width = 5)]
+                #[slot(word = 3, width = 3, forms = 1, built = 3)]
                 pub pattern: SlotValue<PatternNode>,
-                #[slot(word = 8, width = 2, run = 5)]
+                #[slot(word = 6, width = 1, run = 3, forms = 1, built = 4)]
                 pub items: Vec<SlotValue<ItemNode>>,
             }
         })
         .expect("checks");
         assert!(has(&out, r#"assert!(::sittir_core::record::fits_bit::<bool>(), "LetDeclarationNode.mutable: a stamped bit holds only a presence")"#));
-        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(5u32, 0u32), "LetDeclarationNode.pattern: its type needs more than its stamped record cell")"#));
-        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(2u32, 5u32)"));
+        assert!(has(&out, r#"assert!(::sittir_core::record::fits_cell::<SlotValue<PatternNode>>(1u8, 3u32, 0u32, 0u32), "LetDeclarationNode.pattern: its type is not held as its stamped forms in its stamped cell")"#));
+        assert!(has(&out, r"::sittir_core::record::fits_cell::<Vec<SlotValue<ItemNode>>>(1u8, 1u32, 3u32, 0u32)"));
+        assert!(has(&out, r#"assert!(4u32 >= ::sittir_core::record::HEADER_WORDS, "LetDeclarationNode.items: its built cell overlaps the header")"#));
     }
 
     #[test]
@@ -150,9 +166,9 @@ mod tests {
         let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
-                #[slot(word = 6, width = 4)]
+                #[slot(word = 4, width = 2, forms = 4)]
                 pub b: String,
             }
         });
@@ -162,13 +178,13 @@ mod tests {
     #[test]
     fn a_cell_past_the_record_s_words_is_refused() {
         let message = refusal(&parse_quote! {
-            #[node(words = 6)]
+            #[node(words = 4)]
             pub struct S {
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
             }
         });
-        assert!(message.contains("`a`") && message.contains('6'), "{message}");
+        assert!(message.contains("`a`") && message.contains('4'), "{message}");
     }
 
     #[test]
@@ -186,7 +202,7 @@ mod tests {
         let inside = refusal(&parse_quote! {
             #[node(words = 8)]
             pub struct S {
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
                 #[slot(word = 3, bit = 0)]
                 pub b: bool,
@@ -211,7 +227,7 @@ mod tests {
         let message = refusal(&parse_quote! {
             #[node(words = 10)]
             pub struct S {
-                #[slot(word = 4294967295, width = 5)]
+                #[slot(word = 4294967295, width = 3, forms = 1)]
                 pub a: SlotValue<A>,
             }
         });

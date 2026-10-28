@@ -3,7 +3,8 @@ import { decodeIndex, isCoordinate, type Siblings, type TreeHandle, type TriviaS
 import { assertHoldsTree, carryTree, holdTreeOn, releaseTreeOn, treeOf, treeOfToken, treeTokenOf, type TreeToken } from './tree-token.ts';
 import { forEachTriviaList, mapTriviaEntries, TRIVIA_SIDES, type TriviaSides } from './trivia.ts';
 import { carrySourceStamp, stampSource } from './source-stamp.ts';
-import { builtRefOf } from './built-ref.ts';
+import { builtRefOf, siteOf } from './built-ref.ts';
+import { HANDLE_FIELDS, isLeafHandle, isParsedPosition, type LeafHandle } from './handle.ts';
 import { Source } from './source.ts';
 import { hydrateOn } from './engine-scope.ts';
 import { storedSlotValues } from './record-view.ts';
@@ -125,12 +126,12 @@ const readObjects = new WeakSet<object>();
 
 /** Whether a read produced `node`, or rebuilt it from one that did (`carryRead`). A copy made any other way is not. */
 export function isRead(node: object): boolean {
-	return readObjects.has(node);
+	return readObjects.has(node) || isParsedPosition(node);
 }
 
 /** Make `to` count as read when `from` does, and return `to`: for a read node a wrap or a materialization rebuilds. */
 export function carryRead<T>(from: object, to: T): T {
-	if (readObjects.has(from) && to !== null && typeof to === 'object') readObjects.add(to);
+	if (isRead(from) && to !== null && typeof to === 'object') readObjects.add(to);
 	return to;
 }
 
@@ -197,11 +198,11 @@ const MEMBER_KEYS: ReadonlySet<string> = new Set(['$with', '$trivia', '$engine',
 
 /**
  * Whether `key` carries node data across the boundary: a storage key, or a `$` metadata key that
- * is not one of the node's members. A reader, a list index, `length` and a list option are
- * members, so none of them is data.
+ * is neither one of the node's members nor a field of a handle's position. A reader, a list index,
+ * `length` and a list option are members, so none of them is data.
  */
 export function isDataKey(key: string): boolean {
-	return isStorageKey(key) || (key.charCodeAt(0) === 36 && !MEMBER_KEYS.has(key));
+	return isStorageKey(key) || (key.charCodeAt(0) === 36 && !MEMBER_KEYS.has(key) && !HANDLE_FIELDS.has(key));
 }
 
 /** Whether `node` holds storage: a slot. A text leaf and a token hold none. */
@@ -515,6 +516,8 @@ export interface SideRead {
 const NO_SIDE: SideRead = { entries: [], tree: undefined };
 
 export function sideRead(node: object, side: TriviaSideName): SideRead {
+	const site = sitedLeaf(node);
+	if (site !== undefined) return { entries: (siteSide(site, side) ?? []) as TriviaEntry[], tree: undefined };
 	const at = tableAt(node);
 	if (at !== undefined && envelopeKindOf(node) !== undefined) return NO_SIDE;
 	const written = at?.tree.triviaSide(at.index, side);
@@ -527,6 +530,24 @@ export function sideRead(node: object, side: TriviaSideName): SideRead {
 	return table === undefined ? NO_SIDE : { entries: (table.tree.triviaSide(table.index, side) ?? []) as TriviaEntry[], tree };
 }
 
+export function sitedLeaf(node: object): (LeafHandle & { readonly $site: NonNullable<LeafHandle['$site']> }) | undefined {
+	return isLeafHandle(node) && node.$site !== undefined ? (node as LeafHandle & { readonly $site: NonNullable<LeafHandle['$site']> }) : undefined;
+}
+
+function siteSide(leaf: LeafHandle & { readonly $site: NonNullable<LeafHandle['$site']> }, side: TriviaSideName): readonly unknown[] | undefined {
+	const [holder, word, item] = siteOf(leaf.$site);
+	return leaf.$tree.built?.leafSide(holder!, word!, item!, side);
+}
+
+function sidesWhere(read: (side: TriviaSideName) => readonly unknown[] | undefined): NodeTrivia | undefined {
+	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
+	for (const side of TRIVIA_SIDES) {
+		const entries = read(side);
+		if (entries !== undefined) sides[side] = entries as TriviaEntry[];
+	}
+	return Object.keys(sides).length === 0 ? undefined : sides;
+}
+
 export function sidesOf(node: object): NodeTrivia | undefined {
 	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
 	for (const side of TRIVIA_SIDES) {
@@ -537,14 +558,11 @@ export function sidesOf(node: object): NodeTrivia | undefined {
 }
 
 export function writtenSides(node: object): NodeTrivia | undefined {
+	const site = sitedLeaf(node);
+	if (site !== undefined) return sidesWhere((side) => siteSide(site, side));
 	const built = builtRefOf(node);
 	if (built?.at === undefined) return triviaOf(node);
-	const sides: { -readonly [S in TriviaSideName]?: readonly TriviaEntry[] } = {};
-	for (const side of TRIVIA_SIDES) {
-		const entries = built.arena.tree.triviaSide(built.at, side);
-		if (entries !== undefined) sides[side] = entries as TriviaEntry[];
-	}
-	return Object.keys(sides).length === 0 ? undefined : sides;
+	return sidesWhere((side) => built.arena.tree.triviaSide(built.at, side));
 }
 
 /**

@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import type { GrammarName } from '@sittir/codegen/grammars';
-import { loadCorpusEntries, loadNativeEngine, useValidationConstruction, useValidationNodeStorage, type Construction } from '../validate/common.ts';
+import { loadCorpusEntries, loadNativeEngine, useValidationConstruction, useValidationNodeStorage } from '../validate/common.ts';
+import type { NodeConstruction } from '@sittir/types';
 import { validateFactoryStorage } from '../validate/factory-storage.ts';
 import { validateReadRenderParse } from '../validate/read-render-parse.ts';
 import { RoundtripProfile } from '../validate/roundtrip-profile.ts';
@@ -18,7 +19,7 @@ import {
 export interface ValidationStorageOptions {
 	grammar: GrammarName;
 	storage: StorageMode;
-	construction: Construction;
+	construction: NodeConstruction;
 	warmup: number;
 	iterations: number;
 }
@@ -26,7 +27,7 @@ export interface ValidationStorageOptions {
 export async function sampleValidationStorage(options: ValidationStorageOptions): Promise<ValidationStorageRun> {
 	useValidationNodeStorage(options.storage);
 	useValidationConstruction(options.construction);
-	await loadNativeEngine(options.grammar);
+	const engine = await loadNativeEngine(options.grammar);
 	const corpus = corpusFingerprint(loadCorpusEntries(options.grammar));
 	await collectGarbage();
 	const baseline = process.memoryUsage();
@@ -76,7 +77,13 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 		buckets.push(first!);
 	}
 	await collectGarbage();
-	const memory = { baseline, after: process.memoryUsage(), peakRssBytes: process.resourceUsage().maxRSS * 1024 };
+	const built = engine.diagnostics.builtMemory?.();
+	const memory = {
+		baseline,
+		after: process.memoryUsage(),
+		peakRssBytes: process.resourceUsage().maxRSS * 1024,
+		...(built === undefined ? {} : { built: { chunks: built.chunks, counts: built.counts } })
+	};
 	return { grammar: options.grammar, storage: options.storage, construction: options.construction, pid: process.pid, corpus, buckets, memory };
 }
 

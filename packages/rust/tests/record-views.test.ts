@@ -2,11 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { recordOf } from '@sittir/common/utils';
 import { TSKindId } from '../src/kinds.ts';
 import rust from '../src/index.ts';
-import arena from '../src/arena.ts';
 
 const source = 'struct A { a: u8, pub b: u8, #[x] c: u8 }\n\nfn f(x: u8) -> u8 {\n    g(x, "héllo")\n}\n';
 
-const engines = { object: await rust.createEngine(), arena: await arena.createEngine() };
+const engines = { object: await rust.createEngine({ nodeStorage: 'object' }), arena: await rust.createEngine({ nodeConstruction: 'object' }) };
 const wires = ['object', 'arena'] as const;
 type Wire = (typeof wires)[number];
 

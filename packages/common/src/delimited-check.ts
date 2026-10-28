@@ -1,7 +1,8 @@
 import type { AnyUntypedNode } from '@sittir/types';
 import { isLive, type EngineHandle, type LiveEngine } from './engine-scope.ts';
 import { applyHost } from './reparse.ts';
-import { nodeText, spanOf } from './utils.ts';
+import { storedSlotValues } from './record-view.ts';
+import { isNode, nodeText, spanOf } from './utils.ts';
 
 export interface DelimitedSpec {
 	readonly kind: string;
@@ -29,15 +30,15 @@ const pairings = new WeakMap<DelimitedSpec, Set<string>>();
 
 function leafTexts(value: unknown, skip: ReadonlySet<number>, into: string[]): string[] {
 	if (value === undefined || value === null) return into;
-	if (Array.isArray(value)) {
-		for (const item of value) leafTexts(item, skip, into);
+	if (typeof value === 'object' && !isNode(value) && Symbol.iterator in value) {
+		for (const item of value as Iterable<unknown>) leafTexts(item, skip, into);
 		return into;
 	}
 	const node = value as Record<string, unknown>;
 	if (typeof node.$type === 'number' && skip.has(node.$type)) return into;
 	const text = nodeText(node);
 	if (text !== undefined) into.push(text);
-	else for (const key of Object.keys(node)) if (key.startsWith('_')) leafTexts(node[key], skip, into);
+	else if (typeof value === 'object') for (const [, child] of storedSlotValues(value)) leafTexts(child, skip, into);
 	return into;
 }
 

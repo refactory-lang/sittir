@@ -27,6 +27,9 @@ use std::sync::Arc;
 
 /// Grammar-specific hooks used by the shared native engine.
 pub trait EngineGrammar: Copy {
+    /// The bits a packed kind field takes: the least that holds every kind
+    /// id of the grammar below all-ones, which is `ERROR`.
+    const KIND_BITS: u32;
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> Result<(), String>;
     fn render_module_hash(self) -> &'static str;
     /// The name of a kind of this grammar, for messages that name one.
@@ -455,8 +458,8 @@ pub struct ParsedTree<G: EngineGrammar> {
     work: crate::layout::LayoutWorkCounter,
     /// The sides a write set, in the store of the engine that parsed the tree.
     written: TriviaStore<G::Trivia>,
-    /// The tree's records, each written on its node's first read, and the
-    /// row index that reaches them (`tree_arena`).
+    /// The tree's records, each written on its node's first read, and those
+    /// no cell names, which it holds by row (`tree_arena`).
     #[cfg(feature = "arena")]
     arena: std::sync::Mutex<crate::arena::TreeArena>,
 }
@@ -591,7 +594,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.grammar
     }
 
-    /// The tree's records and their row index, held while the guard lives:
+    /// The tree's records, held while the guard lives:
     /// every route that reads a node reaches or writes its record here.
     #[cfg(feature = "arena")]
     pub fn tree_arena(&self) -> std::sync::MutexGuard<'_, crate::arena::TreeArena> {
@@ -640,7 +643,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Some(crate::ErrorRead { text, kind: at.kind, at: ctx.origin(&node, index) })
     }
 
-    fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
+    pub(crate) fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
         crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes())
     }
 
@@ -1362,9 +1365,26 @@ impl<G: EngineGrammar> ParsedTree<G> {
         &self.written
     }
 
+    /// Replace `side` of the node at `index` with `entries`, holding the
+    /// built records among them (`TriviaStore::write_held_side`).
+    ///
+    /// # Errors
+    ///
+    /// What holding or releasing a built record refuses.
+    #[cfg(feature = "arena")]
+    pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
+        self.written.write_held_side(Place::Row { tree: self.tree_id, row: index }, side, entries).map_err(|e| e.to_string())
+    }
+
     /// Replace `side` of the node at `index` with `entries`.
-    pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) {
+    ///
+    /// # Errors
+    ///
+    /// None: no entry names a built record.
+    #[cfg(not(feature = "arena"))]
+    pub fn write_trivia_side(&self, index: crate::types::NodeIndex, side: TriviaSide, entries: Vec<TriviaEntry<G::Trivia>>) -> Result<(), String> {
         self.written.write_side(Place::Row { tree: self.tree_id, row: index }, side, entries);
+        Ok(())
     }
 
     /// Whether a write replaced a side of a node under the node at `index`:
@@ -1526,14 +1546,19 @@ pub struct Engine<G: EngineGrammar> {
 
 impl<G: EngineGrammar> Engine<G> {
     pub fn new(grammar: G, options: ResolvedOptions) -> Result<Self, String> {
+        Self::with_store(grammar, options, TriviaStore::with_kind_bits(G::KIND_BITS))
+    }
+
+    /// An engine whose store of written sides, and the built arena it
+    /// holds, is `written`.
+    ///
+    /// # Errors
+    ///
+    /// What the grammar's parser configuration refuses.
+    pub fn with_store(grammar: G, options: ResolvedOptions, written: TriviaStore<G::Trivia>) -> Result<Self, String> {
         let mut parser = tree_sitter::Parser::new();
         grammar.configure_parser(&mut parser)?;
-        Ok(Self {
-            grammar,
-            parser,
-            options,
-            written: TriviaStore::new(),
-        })
+        Ok(Self { grammar, parser, options, written })
     }
 
     pub fn options(&self) -> &ResolvedOptions {
@@ -1574,6 +1599,8 @@ impl<G: EngineGrammar> Engine<G> {
         let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let read_options = inferred.over(&self.options);
+        #[cfg(feature = "arena")]
+        let nodes = crate::read::descendant_count(&tree.root_node());
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,
@@ -1590,7 +1617,7 @@ impl<G: EngineGrammar> Engine<G> {
             work: crate::layout::LayoutWorkCounter::default(),
             written: self.written.clone(),
             #[cfg(feature = "arena")]
-            arena: std::sync::Mutex::new(crate::arena::TreeArena::new()),
+            arena: std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, nodes)),
         })
     }
 
@@ -2008,6 +2035,8 @@ mod tests {
     struct TestGrammar;
 
     impl EngineGrammar for TestGrammar {
+        const KIND_BITS: u32 = 9;
+
         fn configure_parser(
             self,
             parser: &mut tree_sitter::Parser,
@@ -2179,21 +2208,6 @@ mod tests {
         let snapped = tree.snapshot_error(index, None).expect("an ERROR snapshots");
         let span = crate::points::PointSpan { start: crate::points::Point::ZERO, end: crate::points::Point { row: 0, column: 2 } };
         assert_eq!((snapped.text.as_str(), snapped.at), ("@@", crate::read::Origin::Snapshot(span)));
-    }
-
-    #[cfg(feature = "arena")]
-    #[test]
-    fn each_tree_keeps_its_own_records() {
-        use crate::arena::{RecordSink, write_record};
-        use crate::layout::NodeLayout;
-        let (one, _) = parsed("fn f() {}");
-        let (two, _) = parsed("fn g() {}");
-        let row = NodeIndex::new(1);
-        let layout = NodeLayout::<crate::trivia::TriviaText> { at: Some(NodeCoordinate::new(one.tree_id(), row, NodeIndex::new(2), Span { start: 0, end: 2 })), ..NodeLayout::default() };
-        let cell = write_record(&mut RecordSink::parsed(one.tree_id(), &mut one.tree_arena()), KindId(3), 2, Some(&layout), |_| None, |_, _, _| Ok(())).expect("written");
-        let crate::arena::Cell::Child { at, .. } = cell else { panic!("a record, not {cell:?}") };
-        assert_eq!(one.tree_arena().record(row), Some(at), "a later read reaches the record");
-        assert_eq!(two.tree_arena().record(row), None, "another tree's row has a record of its own");
     }
 
     fn texts(tree: &ParsedTree<TestGrammar>, found: &[QueryItem]) -> Vec<String> {
@@ -2474,7 +2488,7 @@ mod tests {
         let g = index_of_kind(&tree, "function_item", 1);
         let a = index_of_kind(&tree, "expression_statement", 0);
         let written = vec![TriviaEntry::new(SlotValue::Node(TestTrivia::Text(TriviaText { kind: KindId(1), text: "// w".to_owned(), span: None, before: None, after: None })))];
-        tree.write_trivia_side(a, TriviaSide::Leading, written.clone());
+        tree.write_trivia_side(a, TriviaSide::Leading, written.clone()).expect("a side write");
         assert_eq!(tree.trivia_side(a, TriviaSide::Leading), written);
         assert!(tree.edited_within(NodeIndex::ROOT, false));
         assert!(tree.edited_within(f, false));
@@ -2487,7 +2501,7 @@ mod tests {
     fn a_written_inner_side_is_within_its_own_node() {
         let (tree, _) = parsed("fn f() {}\n");
         let block = index_of_kind(&tree, "block", 0);
-        tree.write_trivia_side(block, TriviaSide::Inner, Vec::new());
+        tree.write_trivia_side(block, TriviaSide::Inner, Vec::new()).expect("a side write");
         assert!(tree.edited_within(block, false));
     }
 
@@ -2497,8 +2511,8 @@ mod tests {
         let first = engine.parse("fn f() {}\n", claim()).expect("parse");
         let second = engine.parse("fn f() {}\n", claim()).expect("parse");
         let f = index_of_kind(&first, "function_item", 0);
-        first.write_trivia_side(f, TriviaSide::Leading, Vec::new());
-        second.write_trivia_side(f, TriviaSide::Trailing, Vec::new());
+        first.write_trivia_side(f, TriviaSide::Leading, Vec::new()).expect("a side write");
+        second.write_trivia_side(f, TriviaSide::Trailing, Vec::new()).expect("a side write");
         assert!(first.edited_within(NodeIndex::ROOT, false));
         assert_eq!(second.trivia_side(f, TriviaSide::Leading), first.trivia_side(f, TriviaSide::Trailing), "each tree reads its own writes");
         assert_eq!(engine.written.len(), 2);
@@ -2540,7 +2554,7 @@ mod tests {
         let (tree, _) = parsed("fn f() { a(); }\nfn g() {}\n");
         let f = coordinate(&tree, index_of_kind(&tree, "function_item", 0));
         let g = coordinate(&tree, index_of_kind(&tree, "function_item", 1));
-        tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new());
+        tree.write_trivia_side(index_of_kind(&tree, "expression_statement", 0), TriviaSide::Leading, Vec::new()).expect("a side write");
         let sources = table(tree);
         assert!(sources.edited_within(&f));
         assert!(!sources.edited_within(&g));

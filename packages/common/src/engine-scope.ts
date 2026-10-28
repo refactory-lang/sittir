@@ -4,6 +4,7 @@ import type {
 	EngineIdentity,
 	LanguageAPI,
 	LanguageHooks,
+	NodeConstruction,
 	NodeStorage,
 	QuerySlots,
 	Rendered,
@@ -42,7 +43,7 @@ export function sameLanguage(a: EngineIdentity, b: EngineIdentity): boolean {
 export function engineOf(value: unknown): EngineHandle['current'] | undefined {
 	if (typeof value !== 'object' || value === null) return undefined;
 	const bound = (value as { readonly $engine?: unknown }).$engine;
-	if (typeof bound === 'function') return bound();
+	if (typeof bound === 'function') return (bound as (this: unknown) => EngineHandle['current'] | undefined).call(value);
 	const tree = treeOf(value);
 	return tree === undefined ? undefined : treeHandles.get(tree)?.current;
 }
@@ -53,6 +54,17 @@ export function foreignEngine(value: unknown, identity: EngineIdentity): EngineH
 }
 
 const engineStorages = new WeakMap<object, NodeStorage>();
+
+export type ResolvedNodeStorage =
+	| { readonly nodeStorage: 'arena'; readonly nodeConstruction: NodeConstruction }
+	| { readonly nodeStorage: 'object'; readonly nodeConstruction: 'object' };
+
+export function nodeStorageOf(options: { readonly nodeStorage?: NodeStorage; readonly nodeConstruction?: NodeConstruction } | undefined): ResolvedNodeStorage {
+	const nodeStorage = options?.nodeStorage ?? 'arena';
+	if (nodeStorage === 'arena') return { nodeStorage, nodeConstruction: options?.nodeConstruction ?? 'record' };
+	if (options?.nodeConstruction === 'record') throw new Error("nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena");
+	return { nodeStorage, nodeConstruction: 'object' };
+}
 
 /** Records how `engine`, a live engine or its identity, stores its nodes, which admission compares. */
 export function stampEngineStorage(engine: object, storage: NodeStorage): void {
@@ -137,6 +149,10 @@ const treeHandles = new WeakMap<object, TreeEngineHandle>();
 
 export function bindTree(tree: object, handle: TreeEngineHandle): void {
 	treeHandles.set(tree, handle);
+}
+
+export function treeEngineHandle(tree: object): TreeEngineHandle | undefined {
+	return treeHandles.get(tree);
 }
 
 export function hydrateStored(value: unknown): unknown {

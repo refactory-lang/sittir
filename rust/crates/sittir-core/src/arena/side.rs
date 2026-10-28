@@ -5,7 +5,7 @@
 //! in the engine's store of written sides ([`crate::trivia_store`]), and a
 //! parsed node's assigned sides in its tree's trivia table.
 
-use super::{Address, Arena, ArenaError, ArenaRead};
+use super::{Address, ArenaError, ArenaRead};
 use crate::options::{EdgeArm, Edges};
 use crate::points::{Point, PointSpan};
 use crate::slot::ChangedEdges;
@@ -193,9 +193,10 @@ impl SideRecord {
         *self == SideRecord::default()
     }
 
-    /// Writes the side record, its slots' token runs first, and its address:
+    /// Writes the side record through `place`, which places words at a fresh
+    /// address, its slots' token runs first, and answers its address:
     /// `Address::NONE` when it holds nothing.
-    pub fn write(&self, arena: &mut Arena) -> Result<Address, ArenaError> {
+    pub fn write(&self, place: &mut dyn FnMut(&[u32]) -> Result<Address, ArenaError>) -> Result<Address, ArenaError> {
         if self.is_empty() {
             return Ok(Address::NONE);
         }
@@ -244,7 +245,7 @@ impl SideRecord {
             words.push(u32::try_from(self.slots.len()).map_err(|_| ArenaError::Full)?);
             for slot in &self.slots {
                 let tokens: Vec<u32> = slot.tokens.iter().copied().map(optional_kind).collect();
-                let (run, len) = if tokens.is_empty() { (Address::NONE, 0) } else { (arena.push(&tokens)?, u32::try_from(tokens.len()).map_err(|_| ArenaError::Full)?) };
+                let (run, len) = if tokens.is_empty() { (Address::NONE, 0) } else { (place(&tokens)?, u32::try_from(tokens.len()).map_err(|_| ArenaError::Full)?) };
                 words.extend([
                     slot.word,
                     optional_kind(slot.before),
@@ -258,7 +259,7 @@ impl SideRecord {
             }
         }
         words[0] = flags;
-        arena.push(&words)
+        place(&words)
     }
 
     /// The side record at `at`; an empty one at `Address::NONE`.
@@ -342,6 +343,7 @@ impl SideRecord {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::arena::Arena;
 
     fn full() -> SideRecord {
         SideRecord {
@@ -377,7 +379,7 @@ mod tests {
     fn a_side_record_reads_back_as_written() {
         let mut arena = Arena::new();
         let record = full();
-        let at = record.write(&mut arena).expect("room");
+        let at = record.write(&mut |words| arena.push(words)).expect("room");
         assert_eq!(SideRecord::read(&arena, at), Ok(record));
     }
 
@@ -387,7 +389,7 @@ mod tests {
         arena.alloc(crate::arena::CHUNK_WORDS).expect("a full chunk");
         arena.alloc(crate::arena::CHUNK_WORDS - 2).expect("leave two words");
         let record = SideRecord { separator: Some(KindId(7)), ..SideRecord::default() };
-        let at = record.write(&mut arena).expect("room");
+        let at = record.write(&mut |words| arena.push(words)).expect("room");
         assert_eq!(at.word(), crate::arena::CHUNK_WORDS - 2);
         assert_eq!(SideRecord::read(&arena, at), Ok(record));
     }
@@ -411,7 +413,7 @@ mod tests {
         ];
         let mut arena = Arena::new();
         for record in alone {
-            let at = record.write(&mut arena).expect("room");
+            let at = record.write(&mut |words| arena.push(words)).expect("room");
             assert_ne!(at, Address::NONE);
             assert_eq!(SideRecord::read(&arena, at), Ok(record));
         }
@@ -437,7 +439,7 @@ mod tests {
         let row = every.at;
         for (n, record) in [every, SideRecord { delimiter: Some(Delimiter::NONE), ..SideRecord::default() }, SideRecord { at: row, ..SideRecord::default() }].into_iter().enumerate() {
             let mut arena = Arena::new();
-            let at = record.write(&mut arena).expect("room");
+            let at = record.write(&mut |words| arena.push(words)).expect("room");
             let expected = words_of(n);
             let len = u32::try_from(expected.len()).expect("a length");
             assert_eq!(arena.words(at, len).expect("its words"), expected.as_slice(), "side {n}");
@@ -448,7 +450,7 @@ mod tests {
     #[test]
     fn an_empty_side_record_is_no_record() {
         let mut arena = Arena::new();
-        assert_eq!(SideRecord::default().write(&mut arena), Ok(Address::NONE));
+        assert_eq!(SideRecord::default().write(&mut |words| arena.push(words)), Ok(Address::NONE));
         assert_eq!(SideRecord::read(&arena, Address::NONE), Ok(SideRecord::default()));
     }
 

@@ -5,7 +5,7 @@ import { createEngine } from '@sittir/common';
 import { isCoordinate } from '@sittir/common/utils';
 import python from '../src/index.ts';
 
-const py = await createEngine(python);
+const py = await createEngine(python, { nodeStorage: 'object' });
 
 type Statements = { readonly _statements: readonly unknown[] };
 

@@ -22,7 +22,7 @@ import {
 	writtenSides,
 	type RefusedSlot
 } from '@sittir/common/utils';
-import { scopeBuilders, useRecordConstruction } from '@sittir/common/engine';
+import { nodeStorageOf, scopeBuilders } from '@sittir/common/engine';
 import {
 	carryRead,
 	carryPlace,
@@ -37,6 +37,7 @@ import {
 	type KindView
 } from '@sittir/common/utils';
 import {
+	isFactoryNode,
 	isNode,
 	treeOf,
 	type TriviaSideName,
@@ -50,7 +51,7 @@ import {
 import type * as TS from 'web-tree-sitter';
 import type { DisplayFamilies } from './display-families.ts';
 
-import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
+import type { AnyUntypedNode, Engine, LanguageAPI, NativeLanguageEngine, NodeConstruction, NodeLayout, NodeStorage, NodeTrivia, ParseOptions, NodeCoordinate, QuerySlotEntry, QuerySlots, TriviaEntry } from '@sittir/types';
 import type { TriviaSides } from '@sittir/common';
 import type { TreeHandle } from '@sittir/common/utils';
 import { invoke, load } from '../codegen-surface.ts';
@@ -208,32 +209,28 @@ export function validationStorage(): NodeStorage {
 	return validationNodeStorage;
 }
 
-export type Construction = 'objects' | 'records';
+const CONSTRUCTIONS: readonly NodeConstruction[] = ['object', 'record'];
 
-const CONSTRUCTIONS: readonly Construction[] = ['objects', 'records'];
-
-export function parseConstruction(value: string): Construction {
+export function parseConstruction(value: string): NodeConstruction {
 	const construction = CONSTRUCTIONS.find((known) => known === value);
 	if (construction === undefined) throw new Error(`construction '${value}' is none of ${CONSTRUCTIONS.join(', ')}`);
 	return construction;
 }
 
-let validationConstruction: Construction = 'objects';
+let validationConstruction: NodeConstruction = 'object';
 
-export function useValidationConstruction(construction: Construction): void {
+export function useValidationConstruction(construction: NodeConstruction): void {
 	if (construction === validationConstruction) return;
 	if (cachedNativeEngines.size > 0) {
 		throw new Error(`validation builds nodes as '${validationConstruction}' already; choose '${construction}' before the first engine loads`);
 	}
-	if (construction === 'records' && validationNodeStorage !== 'arena') {
-		throw new Error("record construction needs an engine reading trees as records: choose 'arena' node storage first");
-	}
+	nodeStorageOf({ nodeStorage: validationNodeStorage, nodeConstruction: construction });
 	validationConstruction = construction;
 }
 
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', nodeStorage: validationNodeStorage });
-	if (validationConstruction === 'records') useRecordConstruction(engine, await requireGrammarModule(grammar, 'factories/records.ts'));
+	const storage = nodeStorageOf({ nodeStorage: validationNodeStorage, nodeConstruction: validationConstruction });
+	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', ...storage });
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
 		throw new Error(
@@ -820,11 +817,11 @@ export function materializeBuildInput(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const data = materialize(root, accessorOf, onAccessorThrow);
-	return validationConstruction === 'records' ? holdingTreeOf(root, data) : data;
+	return validationConstruction === 'record' ? holdingTreeOf(root, data) : data;
 }
 
 export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
-	return validationConstruction === 'records' ? materialize(node, accessorOf) : node;
+	return validationConstruction === 'record' ? materialize(node, accessorOf) : node;
 }
 
 export function materializeDetached(
@@ -1110,12 +1107,7 @@ export interface NodeToConfigOpts {
 export interface ReadNodeLike {
 	readonly $type?: number;
 	readonly $text?: string | (() => string);
-	readonly $named?: boolean;
 	readonly $_layout?: NodeLayout;
-}
-
-function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
-	return c.$named === false;
 }
 
 function pathOf(opts: NodeToConfigOpts): string {
@@ -1142,16 +1134,13 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
-	if (isAnonTokenPassthrough(c)) {
-		if (tree === undefined) return child;
-		throw new Error(`nodeToConfig: an anonymous token (${String(c.$type)}) reached a builder input at ${pathOf(opts)}`);
-	}
 	if (!tree || !factoryMap) return child;
 	const hydrated = hydrateForConfig(c, opts);
 	if (opts.placeText === true && _parentKind !== undefined && opts.factoryShapes?.[_parentKind] === 'placed') {
 		const text = readNodeText(hydrated, opts);
 		if (text !== '') return text;
 	}
+	if (isFactoryNode(hydrated)) return hydrated;
 	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind = rawTypeId !== undefined ? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId)) : undefined;
 	if (!rawKind) return hydrated;
@@ -1260,6 +1249,15 @@ export function seatKindOf(config: unknown): string | undefined {
 	return typeof config === 'object' && config !== null ? (config as { [SEAT_KIND]?: string })[SEAT_KIND] : undefined;
 }
 
+function projects(seat: Seat, item: unknown, opts: NodeToConfigOpts): boolean {
+	return seat.shape !== 'forwarded' && (seat.shape !== 'elements' || readValueKind(item, opts) === seat.kind);
+}
+
+export function seatProjects(parentKind: string, slotName: string, value: unknown, item: unknown, opts: NodeToConfigOpts): boolean {
+	const seat = seatForSlotValue(parentKind, slotName, value, opts);
+	return seat !== undefined && projects(seat, item, opts);
+}
+
 function childOpts(opts: NodeToConfigOpts): NodeToConfigOpts {
 	return { ...opts, _depth: (opts._depth ?? 0) + 1 };
 }
@@ -1272,7 +1270,7 @@ function projectElements(
 	opts: NodeToConfigOpts
 ): unknown[] {
 	return items.map((item) => {
-		if (readValueKind(item, opts) !== seat.kind) {
+		if (!projects(seat, item, opts)) {
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = hydrateForConfig(item as ReadNodeLike, opts);
@@ -1652,9 +1650,7 @@ function narrowSingularUnnamedChildrenValue(
 		const hinted = value.filter((item) => rawChildKindName(item, childOpts.kindNameFromId) === hintedKind);
 		if (hinted.length === 1) return hinted[0]!;
 	}
-	const named = value.filter(
-		(item): item is ReadNodeLike => item != null && typeof item === 'object' && (item as ReadNodeLike).$named !== false
-	);
+	const named = value.filter((item): item is ReadNodeLike => item != null && typeof item === 'object');
 	if (named.length === 1) return named[0];
 	return value;
 }
@@ -1722,72 +1718,6 @@ function assignSlotToConfig(
 	}
 }
 
-function getMissingDeclaredFields(
-	parentKind: string,
-	declaredFields: readonly string[],
-	factorySlots: NodeToConfigOpts['factorySlots'],
-	out: Record<string, unknown>
-): string[] {
-	return declaredFields.filter((name) => out[slotKeyOf(factorySlots, parentKind, name)] === undefined);
-}
-
-function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
-	return value != null && typeof value === 'object' && (value as ReadNodeLike).$named === false;
-}
-
-function isOpeningDelimiter(text: string | undefined): boolean {
-	return text === '{' || text === '{|' || text === '[' || text === '(' || text === '<';
-}
-
-function isClosingDelimiter(text: string | undefined): boolean {
-	return text === '}' || text === '|}' || text === ']' || text === ')' || text === '>';
-}
-
-function promoteAnonymousTokenFields(
-	declaredFields: readonly string[] | undefined,
-	namedSlotEntries: readonly [string, unknown][],
-	opts: NodeToConfigOpts,
-	parentKind: string | undefined,
-	out: Record<string, unknown>
-): void {
-	if (!declaredFields || !parentKind) return;
-	const missing = new Set(getMissingDeclaredFields(parentKind, declaredFields, opts.factorySlots, out));
-	if (missing.size === 0) return;
-	const anonymousEntries = namedSlotEntries.filter(
-		([key, value]) => !isIdentifierShapedFieldKey(key) && isAnonymousTokenNode(value)
-	);
-	const used = new Set<number>();
-	const assign = (fieldName: string, entryIndex: number): void => {
-		const entry = anonymousEntries[entryIndex]?.[1];
-		if (!entry) return;
-		assignSlotToConfig(
-			createNamedSlotModel(fieldName, slotKeyOf(opts.factorySlots, parentKind, fieldName), 'one'),
-			entry,
-			memberValueOpts(opts, parentKind, fieldName),
-			out
-		);
-		missing.delete(fieldName);
-		used.add(entryIndex);
-	};
-
-	if (missing.has('semicolon')) {
-		const semicolonIndex = anonymousEntries.findIndex(([, value]) => nodeText(value) === ';');
-		if (semicolonIndex >= 0) assign('semicolon', semicolonIndex);
-	}
-	if (missing.has('opening')) {
-		const openingIndex = anonymousEntries.findIndex(
-			([, value], index) => !used.has(index) && isOpeningDelimiter(nodeText(value))
-		);
-		if (openingIndex >= 0) assign('opening', openingIndex);
-	}
-	if (missing.has('closing')) {
-		const closingIndex = anonymousEntries.findLastIndex(
-			([, value], index) => !used.has(index) && isClosingDelimiter(nodeText(value))
-		);
-		if (closingIndex >= 0) assign('closing', closingIndex);
-	}
-}
-
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	const rec = data as unknown as Record<string, unknown>;
@@ -1821,13 +1751,6 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record
 		}
 		assignSlotToConfig(slot, v, memberValueOpts(opts, parentKind, k), out);
 	}
-	promoteAnonymousTokenFields(
-		parentKind ? opts.factoryFields?.[parentKind] : undefined,
-		namedSlotEntries,
-		opts,
-		parentKind,
-		out
-	);
 	return out;
 }
 

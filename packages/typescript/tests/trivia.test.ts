@@ -3,13 +3,12 @@ import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
 const ts = await createEngine(typescript);
-const tsStrict = await createEngine(typescript, { api: 'strict' });
 
 function makeFn(name: string) {
 	return ts.build.declaration.function({
 		name,
-		parameters: tsStrict.build.formalParameters(),
-		body: tsStrict.build.statementBlock()
+		parameters: ts.build.formalParameters(),
+		body: ts.build.statementBlock()
 	});
 }
 

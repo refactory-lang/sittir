@@ -1,13 +1,13 @@
 import type { ByteSpan, NodeCoordinate, QuerySlotEntry } from '@sittir/types';
-import { decodeIndex, encodeHandle, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
+import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type RecordWords, type TreeHandle } from './read.ts';
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
-import type { BuiltArena } from './built-arena.ts';
+import { decodeBuiltCell } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
-	decodeCell,
 	decodeListCell,
+	decodeParsedCell,
 	decodeSideDelimiter,
 	decodeSideRow,
 	decodeSideSeparatorKind,
@@ -16,32 +16,15 @@ import {
 	type RecordCell
 } from './record-cell.ts';
 import { aliasContentOf, carryReadTree, coordinateOf, isStorageKey } from './node-data.ts';
+import { isRecordPosition, type RecordHandle, type RecordPosition } from './handle.ts';
 
-/** The own key of a record stub and of the view made from it: the record's address. */
-export const RECORD = Symbol.for('sittir.record');
-
-export const SLOTS = Symbol.for('sittir.slots');
-
-export const SEEDS = Symbol.for('sittir.seeds');
-
-export type KeptSlots = Record<number, unknown>;
-
-export type SeededSlots = Readonly<KeptSlots>;
-
-/** A record as the read returns it, before the wrap table makes it a view: its kind, its address and its coordinate. */
-export interface RecordStub {
-	readonly $type: number;
-	readonly [RECORD]: number;
-	readonly $_layout: { readonly at: NodeCoordinate };
-	readonly [SEEDS]?: SeededSlots;
-	[SLOTS]?: KeptSlots;
+export function positionWords(position: RecordPosition): ChunkWords {
+	return recordsOf(position.$tree).words(position.$at, 2);
 }
 
-/** The address a record stub or view holds, `undefined` for any other value. */
+/** The address a record position or handle holds, `undefined` for any other value. */
 export function recordOf(value: unknown): number | undefined {
-	if (value === null || typeof value !== 'object') return undefined;
-	const at: unknown = (value as { readonly [RECORD]?: unknown })[RECORD];
-	return typeof at === 'number' ? at : undefined;
+	return isRecordPosition(value) ? value.$at : undefined;
 }
 
 function recordsOf(tree: TreeHandle): RecordWords {
@@ -65,11 +48,27 @@ function wordsAt(
 	records: RecordWords,
 	at: number,
 	length: number
-): { readonly words: Uint32Array; readonly start: number } {
+): { readonly words: ChunkWords; readonly start: number } {
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
-function sideWordsAt(records: RecordWords, side: number): { readonly words: Uint32Array; readonly start: number } {
+export function freedRecord(at: number): string {
+	return `the node at ${at} was released: the chunk its record was in is freed`;
+}
+
+export function liveWords(holder: RecordPosition): ChunkWords | undefined {
+	const own = (holder as Partial<RecordHandle>).$words;
+	if (own?.length !== 0) return own;
+	holder.$tree.records?.words(holder.$at, 1);
+	throw new Error(freedRecord(holder.$at));
+}
+
+function holderWords(holder: RecordPosition, length: number): { readonly words: ChunkWords; readonly start: number; readonly records: RecordWords } {
+	const records = recordsOf(holder.$tree);
+	return { words: liveWords(holder) ?? records.words(holder.$at, length), start: wordOf(holder.$at, records.format), records };
+}
+
+function sideWordsAt(records: RecordWords, side: number): { readonly words: ChunkWords; readonly start: number } {
 	const { words: head, start } = wordsAt(records, side, 1);
 	const mask = head[start]!;
 	const { format } = records;
@@ -99,27 +98,25 @@ function rowCoordinate(tree: TreeHandle, records: RecordReader, side: number, ki
 	return coordinateAt(tree, row.index, row.span);
 }
 
-/** The record at `at` of `tree` as a stub: its kind and its coordinate, read from its own words. */
-export function recordStub(tree: TreeHandle, at: number): RecordStub {
+/** The record at `at` of `tree` as a position: its kind and its coordinate, read from its own words. */
+export function recordStub(tree: TreeHandle, at: number): RecordPosition {
 	const records = parsedRecordsOf(tree);
 	const { words, start } = wordsAt(records, at, 2);
 	const kind = words[start]!;
-	return { $type: kind, [RECORD]: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) }, [SLOTS]: undefined };
+	return { $type: kind, $tree: tree, $at: at, $_layout: { at: rowCoordinate(tree, records, words[start + 1]!, kind) } };
 }
 
-export function recordDelimiter(holder: object, tree: TreeHandle): number | undefined {
-	return recordListSetting(holder, tree, decodeSideDelimiter);
+export function recordDelimiter(holder: RecordPosition): number | undefined {
+	return recordListSetting(holder, decodeSideDelimiter);
 }
 
-export function recordSeparator(holder: object, tree: TreeHandle): number | undefined {
-	return recordListSetting(holder, tree, decodeSideSeparatorKind);
+export function recordSeparator(holder: RecordPosition): number | undefined {
+	return recordListSetting(holder, decodeSideSeparatorKind);
 }
 
-function recordListSetting(holder: object, tree: TreeHandle, decode: (words: Uint32Array, at: number, format: RecordWords['format']) => number | undefined): number | undefined {
-	const at = recordOf(holder);
-	if (at === undefined) throw new Error('a record option read needs a record view');
-	const records = recordsOf(tree);
-	const side = sideOf(records, at);
+function recordListSetting(holder: RecordPosition, decode: (words: ChunkWords, at: number, format: RecordWords['format']) => number | undefined): number | undefined {
+	const records = recordsOf(holder.$tree);
+	const side = sideOf(records, holder.$at);
 	if (side === 0) return undefined;
 	const { words, start } = sideWordsAt(records, side);
 	return decode(words, start, records.format);
@@ -127,24 +124,20 @@ function recordListSetting(holder: object, tree: TreeHandle, decode: (words: Uin
 
 const rows = new WeakMap<object, Record<string, unknown>>();
 
-export function rowOf(
-	node: object,
-	tree: TreeHandle,
-	wrap: (data: object, tree: TreeHandle) => unknown
-): Record<string, unknown> {
+export function rowOf(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown): Record<string, unknown> {
 	const known = rows.get(node);
 	if (known !== undefined) return known;
-	const row = tree.built === undefined ? (wrap(rowData(node, tree) as object, tree) as Record<string, unknown>) : tree.built.row(node);
+	const row = wrap(rowData(node) as object, node.$tree) as Record<string, unknown>;
 	rows.set(node, row);
 	return row;
 }
 
-/** The read data of the row a record stub or view names, read as an object (`RecordReader.object`). */
-export function rowData(stub: object, tree: TreeHandle): unknown {
+/** The read data of the row a record position names, read as an object (`RecordReader.object`). */
+export function rowData(stub: RecordPosition): unknown {
 	const at = coordinateOf(stub);
 	if (at === undefined) throw new Error('a record view names no row');
-	const kind = (stub as { readonly $type?: number }).$type;
-	let row = parsedRecordsOf(tree).object(decodeIndex(at.$treeHandle), 1);
+	const kind = stub.$type;
+	let row = parsedRecordsOf(stub.$tree).object(decodeIndex(at.$treeHandle), 1);
 	while (row !== null && typeof row === 'object') {
 		if ((row as { readonly $type?: number }).$type === kind) return row;
 		row = aliasContentOf(row);
@@ -154,37 +147,18 @@ export function rowData(stub: object, tree: TreeHandle): unknown {
 
 type Members = Readonly<Record<string, (...args: unknown[]) => unknown>>;
 
-/** A view's setter `name` called with `args`, through its row's `$with`. */
-export function rowWith(
-	node: object,
-	tree: TreeHandle,
-	wrap: (data: object, tree: TreeHandle) => unknown,
-	name: string,
-	args: readonly unknown[]
-): unknown {
-	const built = tree.built === undefined ? treeBuiltArena(tree) : undefined;
-	return ((built === undefined ? rowOf(node, tree, wrap) : builtRowOf(node, built)).$with as Members)[name]!(...args);
+/** A handle's setter `name` called with `args`: its kind's record setter where its engine builds records, else its row's `$with`. */
+export function rowWith(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown, name: string, args: readonly unknown[]): unknown {
+	const arena = node.$tree.built ?? treeBuiltArena(node.$tree);
+	if (arena === undefined) return (rowOf(node, wrap).$with as Members)[name]!(...args);
+	const set = arena.withOf(node.$type);
+	if (set === undefined) throw new Error(`no record builder writes kind ${node.$type}, so a node of that kind has no $with`);
+	return set(node, name, args);
 }
 
-const builtRows = new WeakMap<object, Record<string, unknown>>();
-
-function builtRowOf(node: object, arena: BuiltArena): Record<string, unknown> {
-	const known = builtRows.get(node);
-	if (known !== undefined) return known;
-	const row = arena.row(node);
-	builtRows.set(node, row);
-	return row;
-}
-
-/** A view's trivia `side` read or written with `items`, through its row's `$trivia`. */
-export function rowTrivia(
-	node: object,
-	tree: TreeHandle,
-	wrap: (data: object, tree: TreeHandle) => unknown,
-	side: string,
-	items: readonly unknown[]
-): unknown {
-	return (rowOf(node, tree, wrap).$trivia as Members)[side]!(...items);
+/** A handle's trivia `side` read or written with `items`, through its row's `$trivia`. */
+export function rowTrivia(node: RecordPosition, wrap: (data: object, tree: TreeHandle) => unknown, side: string, items: readonly unknown[]): unknown {
+	return (rowOf(node, wrap).$trivia as Members)[side]!(...items);
 }
 
 /** A parsed leaf as read data: its kind, its coordinate (`coordinateAt`) and its text, which the tree answers each time it is asked (`TreeHandle.text`). */
@@ -194,12 +168,13 @@ export function leafData(tree: TreeHandle, kind: number, span: ByteSpan, row: nu
 	return { $type: kind, $text: () => text(span), $_layout: { at: coordinateAt(tree, row, span) } };
 }
 
-function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
+function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: number): unknown {
+	const tree = holder.$tree;
 	switch (cell.form) {
 		case 'absent':
 			return undefined;
 		case 'coordinate':
-			return coordinateAt(tree, cell.index, cell.span);
+			return recordStub(tree, parsedRecordsOf(tree).cell(holder.$at, word, item));
 		case 'parsedLeaf':
 			return carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row));
 		case 'parsedText':
@@ -208,80 +183,72 @@ function cellData(holder: object, tree: TreeHandle, cell: RecordCell): unknown {
 			if (tree.built !== undefined) return cell.link === undefined ? tree.built.node(cell.at) : tree.built.linked(cell.link, cell.at);
 			if (cell.link !== undefined && cell.link !== idOf(tree))
 				throw new Error(`a parsed record names a record of tree ${cell.link}`);
-			return carryReadTree(holder, recordStub(tree, cell.at));
+			return recordStub(tree, cell.at);
 		case 'unit':
 			return cell.kind;
 		case 'builtLeaf':
-			throw new Error(tree.built === undefined ? 'a parsed record holds no built cell' : 'a built leaf is read from the holder that keeps it');
+			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
+			return tree.built.leafAt(cell.kind, cell.offset, holder.$at, word, item);
 		case 'builtText':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.textOf(cell.offset, cell.len);
-		case 'copiedLeaf':
+			return tree.built.entryText(tree.built.entryAt(cell.offset).entry);
+		case 'linkedLeaf':
 			if (tree.built === undefined) throw new Error('a parsed record holds no built cell');
-			return tree.built.copiedLeaf(cell);
+			return tree.built.linkedLeaf(cell);
 	}
 }
 
-/** The value of the one-cell slot at the generated `word` offset of the record `holder` views, as read data. */
-export function recordSlot(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): unknown {
-	return cellData(holder, tree, slotCell(holder, tree, word, width, inline));
+/** The value of the one-cell slot whose parsed cell is at `word`, `width` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, as read data. */
+export function recordSlot(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): unknown {
+	return cellData(holder, slotCell(holder, word, width, forms, inline, built), word, 0);
 }
 
-export function recordPresent(holder: object, tree: TreeHandle, word: number, width: number, inline = 0): boolean {
-	return slotCell(holder, tree, word, width, inline).form !== 'absent';
+export function recordPresent(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): boolean {
+	return slotCell(holder, word, width, forms, inline, built).form !== 'absent';
 }
 
-function slotCell(holder: object, tree: TreeHandle, word: number, width: number, inline: number): RecordCell {
-	const at = recordOf(holder);
-	if (at === undefined) throw new Error('a record slot read needs a record view');
-	const records = recordsOf(tree);
-	const { words, start } = wordsAt(records, at, word + width);
-	return decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, at + word);
+function slotCell(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): RecordCell {
+	const arena = holder.$tree.built;
+	if (arena !== undefined) {
+		const { words, start } = holderWords(holder, built + 1);
+		return decodeBuiltCell(arena, words[start + built]!);
+	}
+	const { words, start, records } = holderWords(holder, word + width);
+	return decodeParsedCell(words.subarray(0, start + word + width), start + word, forms, records.format, inline, holder.$at + word);
 }
 
-/** The items of the list slot at the generated `word` offset of the record `holder` views, each as read data. */
-export function recordSlots(
-	holder: object,
-	tree: TreeHandle,
-	word: number,
-	width: number,
-	run?: number,
-	inline = 0
-): readonly unknown[] {
-	const at = recordOf(holder);
-	if (at === undefined) throw new Error('a record slot read needs a record view');
-	const records = recordsOf(tree);
-	if (run === undefined) return [recordSlot(holder, tree, word, width, inline)].filter((item) => item !== undefined);
-	const { words, start } = wordsAt(records, at, word + width);
-	const list = decodeListCell(words, start + word);
+/** The list one word of a holder names: the built cell `built` of a built record, else the parsed cell at `word`. */
+function listOf(holder: RecordPosition, word: number, built: number): { readonly records: RecordWords; readonly run: number; readonly len: number } {
+	const arena = holder.$tree.built;
+	const at = arena === undefined ? word : built;
+	const { words, start, records } = holderWords(holder, at + 1);
+	const runs = arena ?? records;
+	return { records: runs, ...decodeListCell(runs, words[start + at]!) };
+}
+
+/** The items of the list slot whose parsed cell is at `word`, each item's cell `run` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, each as read data. */
+export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): readonly unknown[] {
+	if (run === undefined) return [recordSlot(holder, word, width, forms, inline, built)].filter((item) => item !== undefined);
+	const arena = holder.$tree.built;
+	const list = listOf(holder, word, built);
 	if (list.len === 0) return [];
-	const items = wordsAt(records, list.run, list.len * run);
-	return Array.from({ length: list.len }, (_, n) =>
-		cellData(holder, tree, decodeCell(items.words, items.start + n * run, records.format))
-	);
+	if (arena !== undefined) {
+		const items = wordsAt(arena, list.run, list.len);
+		return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n));
+	}
+	const items = wordsAt(list.records, list.run, list.len * run);
+	return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeParsedCell(items.words, items.start + n * run, forms, list.records.format), word, n));
 }
 
-/** The number of items the list slot at the generated `word` offset of the record `holder` views holds. */
-export function recordLength(
-	holder: object,
-	tree: TreeHandle,
-	word: number,
-	width: number,
-	run?: number,
-	inline = 0
-): number {
-	if (run === undefined) return recordPresent(holder, tree, word, width, inline) ? 1 : 0;
-	const at = recordOf(holder);
-	if (at === undefined) throw new Error('a record slot read needs a record view');
-	const { words, start } = wordsAt(recordsOf(tree), at, word + width);
-	return decodeListCell(words, start + word).len;
+/** The number of items the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at holds. */
+export function recordLength(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): number {
+	if (run === undefined) return recordPresent(holder, word, width, forms, inline, built) ? 1 : 0;
+	return listOf(holder, word, built).len;
 }
 
-/** Whether the presence bit at the generated `word` offset of the record `holder` views is set. */
-export function recordFlag(holder: object, tree: TreeHandle, word: number, bit: number): boolean {
-	const at = recordOf(holder);
-	if (at === undefined) throw new Error('a record slot read needs a record view');
-	const { words, start } = wordsAt(recordsOf(tree), at, word + 1);
+/** Whether the presence bit at the generated `word` offset of the record `holder` is at is set. */
+export function recordFlag(holder: RecordPosition, word: number, bit: number): boolean {
+	const { words, start } = holderWords(holder, word + 1);
 	return ((words[start + word]! >>> bit) & 1) === 1;
 }
 
@@ -293,15 +260,9 @@ function chosenDelimiterOf(node: object): unknown {
 	return chosenListSetting(node, '_delimiter', recordDelimiter);
 }
 
-function chosenListSetting(node: object, key: '_delimiter' | '_separator', read: (holder: object, tree: TreeHandle) => number | undefined): unknown {
+function chosenListSetting(node: object, key: '_delimiter' | '_separator', read: (holder: RecordPosition) => number | undefined): unknown {
 	const own = (node as Record<string, unknown>)[key];
-	if (own !== undefined || recordOf(node) === undefined) return own;
-	const tree = viewTreeOf(node);
-	return tree === undefined ? undefined : read(node, tree);
-}
-
-function viewTreeOf(node: object): TreeHandle | undefined {
-	return builtRefOf(node)?.arena.tree ?? treeOf(node);
+	return own !== undefined || !isRecordPosition(node) ? own : read(node);
 }
 
 export interface RefusedSlot {
@@ -334,10 +295,10 @@ export function slotValuesOf(node: object, rows: readonly QuerySlotEntry[], refu
 }
 
 export function builtInputs(node: object): BuilderInputs {
-	const tree = recordOf(node) === undefined ? undefined : viewTreeOf(node);
-	if (tree === undefined) throw new Error('a built row reads the record of a record view');
-	const kind = (node as { readonly $type: number }).$type;
-	const members = node as Record<string, unknown>;
+	if (!isRecordPosition(node)) throw new Error('a built row reads the record of a record handle');
+	const tree = node.$tree;
+	const kind = node.$type;
+	const members = node as unknown as Record<string, unknown>;
 	const inputs = builderInputs(treeSlotTable(tree)?.[kind] ?? [], treeStructureTable(tree)?.[kind], (accessor) => {
 		const read = members[accessor];
 		return typeof read === 'function' ? listed((read as () => unknown).call(node)) : undefined;
@@ -352,7 +313,7 @@ function listed(value: unknown): unknown {
 }
 
 function engineSlotsOf(node: object): (kind: number) => readonly QuerySlotEntry[] {
-	const tree = builtRefOf(node)?.arena.tree ?? treeOf(node);
+	const tree = isRecordPosition(node) ? node.$tree : (builtRefOf(node)?.arena.tree ?? treeOf(node));
 	const table = tree === undefined ? undefined : treeSlotTable(tree);
 	return (kind) => table?.[kind] ?? [];
 }

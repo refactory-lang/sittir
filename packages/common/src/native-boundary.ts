@@ -18,12 +18,6 @@ function assertString(value: unknown, path: string): asserts value is string {
 	}
 }
 
-function assertBoolean(value: unknown, path: string): asserts value is boolean {
-	if (typeof value !== 'boolean') {
-		throw new TypeError(`${path} must be a boolean, got ${describe(value)}`);
-	}
-}
-
 function assertFiniteNumber(value: unknown, path: string): asserts value is number {
 	if (typeof value !== 'number' || !Number.isFinite(value)) {
 		throw new TypeError(`${path} must be a finite number, got ${describe(value)}`);
@@ -60,7 +54,6 @@ function assertNativeFieldValue(value: unknown, path: string): asserts value is 
  * Checks all runtime invariants required before passing node data to the
  * native (napi) render engine:
  *  - `$type` is a finite number (a parser kind id)
- *  - `$named`, when present, is a boolean
  *  - no function-valued properties (methods like `render()` cannot cross napi)
  *  - a coordinate (`$treeHandle`) names its handle as a finite number and carries its `$span`
  *  - `$_layout`, when present, is an object
@@ -81,7 +74,6 @@ function assertNativeUntypedNodeInternal(value: unknown, path: string): asserts 
 	if (typeof value.$type !== 'number') {
 		throw new TypeError(`${path}.$type must be a number, got ${describe(value.$type)}`);
 	}
-	if (value.$named !== undefined) assertBoolean(value.$named, `${path}.$named`);
 	for (const key of Object.keys(value)) {
 		if (!key.startsWith('_')) continue;
 		if (value[key] === undefined) continue;

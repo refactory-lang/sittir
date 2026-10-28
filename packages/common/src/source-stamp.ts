@@ -1,5 +1,7 @@
 import type { SourceMember } from '@sittir/types';
 import { Source } from './source.ts';
+import type { TreeHandle } from './read.ts';
+import { isHandle } from './handle.ts';
 
 const STAMP = Symbol('sittir.source-stamp') as typeof SourceMember;
 
@@ -24,7 +26,13 @@ export function stampBuilt<T extends object>(node: T): T {
  *   or a JSON, `structuredClone` or string-key copy of a node).
  */
 export function sourceOf(node: object): Source | undefined {
-	return (node as Stamped)[STAMP];
+	const own = (node as Stamped)[STAMP];
+	if (own !== undefined) return own;
+	const tree = (node as { readonly $tree?: TreeHandle }).$tree;
+	if (tree === undefined || !isHandle(node)) return undefined;
+	const at = (node as { readonly $at?: unknown }).$at;
+	if (tree.built === undefined) return typeof at === 'number' ? Source.Ts : undefined;
+	return typeof at === 'number' && tree.built.rebuiltFromRead(at) ? Source.Ts : Source.Factory;
 }
 
 export function carrySourceStamp<T extends object>(from: object, to: T): T {

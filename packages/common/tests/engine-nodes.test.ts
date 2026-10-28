@@ -74,7 +74,7 @@ function fakeLanguage(name: string) {
 async function engineOf(language: ReturnType<typeof fakeLanguage>, indent?: string) {
 	return (await createEngine(
 		language.language as never,
-		(indent ? { render: { indent } } : undefined) as never
+		{ nodeStorage: 'object', ...(indent ? { render: { indent } } : {}) } as never
 	)) as any;
 }
 
@@ -204,7 +204,7 @@ describe('the immutability of an engine', () => {
 
 	it('leaves the options the caller passed unfrozen', async () => {
 		const options = { indent: '>' };
-		const engine = (await createEngine(fakeLanguage('fake').language as never, { render: options } as never)) as any;
+		const engine = (await createEngine(fakeLanguage('fake').language as never, { nodeStorage: 'object', render: options } as never)) as any;
 		expect(Object.isFrozen(engine)).toBe(true);
 		expect(Object.isFrozen(options)).toBe(false);
 		expect(engine.build.leaf('a').$render()).toBe('A:>:1');

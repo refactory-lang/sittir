@@ -34,15 +34,15 @@ arena = ["sittir-core/arena"]
 
 [dependencies]
 sittir-core = { path = "../sittir-core" }
-napi = { version = "3", default-features = false, features = ["napi4", "serde-json"], optional = true }
-napi-derive = { version = "3", optional = true }
+napi = { workspace = true, features = ["serde-json"], optional = true }
+napi-derive = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tree-sitter = { workspace = true }
 tree-sitter-language = { workspace = true }
 
 [build-dependencies]
-napi-build = "2"
+napi-build = { workspace = true }
 cc = { workspace = true }
 
 [lints]
@@ -142,7 +142,7 @@ fn rerun_if_changed_with_includes(
 					'build:debug': `tsx ../../../scripts/build-native.mts ${v.name}`,
 					'build:gate': `tsx ../../../scripts/build-native.mts ${v.name} --profile gate`
 				},
-				devDependencies: { '@napi-rs/cli': '^3.0.0' },
+				devDependencies: { '@napi-rs/cli': 'catalog:' },
 				napi: {
 					binaryName: nativeBinaryName(v.name),
 					packageName: `sittir-${v.name}`,
@@ -194,6 +194,8 @@ const NATIVE_RENDER_NODE_ABI: u32 = ${NATIVE_RENDER_NODE_ABI};
 pub struct ${v.Name}Grammar;
 
 impl EngineGrammar for ${v.Name}Grammar {
+    const KIND_BITS: u32 = render::KIND_BITS;
+
     fn configure_parser(self, parser: &mut tree_sitter::Parser) -> std::result::Result<(), String> {
         let language = crate::language();
         parser

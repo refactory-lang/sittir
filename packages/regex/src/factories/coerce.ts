@@ -618,7 +618,7 @@ export const coerceToPattern: ConfigSeat<T.Pattern.Loose, ReturnType<typeof F.bu
 	if (isNodeOfKind(input, TSKindId.Pattern)) return input as unknown as ReturnType<typeof F.buildPattern>;
 	return F.buildPattern(
 		_resolveOne<T.Alternation | T.Term>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.Pattern),
 			_K0,
 			_K1
 		)
@@ -699,7 +699,7 @@ export const coerceToLookaroundAssertion: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildLookaroundAssertion>;
 	return F.buildLookaroundAssertion(
 		_resolveOne<T.LookaheadAssertion | T.LookbehindAssertion>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.LookaroundAssertion),
 			_K0,
 			_K2
 		)
@@ -837,8 +837,11 @@ export const coerceToPosixCharacterClass: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildPosixCharacterClass>;
 	return F.buildPosixCharacterClass(
 		_resolveOneLeaf<T.PosixClassName>(
-			configFieldOr(input, 'posixClassName', () =>
-				typeof input === 'string' ? spelledInterior(input, '[:', ':]') : input
+			configFieldOr(
+				input,
+				'posixClassName',
+				() => (typeof input === 'string' ? spelledInterior(input, '[:', ':]') : input),
+				TSKindId.PosixCharacterClass
 			),
 			'posix_class_name'
 		)
@@ -902,7 +905,7 @@ export const coerceToAnonymousCapturingGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildAnonymousCapturingGroup>;
 	return F.buildAnonymousCapturingGroup(
 		_resolveOneBranch<T.Pattern>(
-			configFieldOr(input, 'pattern', () => input),
+			configFieldOr(input, 'pattern', () => input, TSKindId.AnonymousCapturingGroup),
 			'pattern'
 		)
 	);
@@ -957,7 +960,7 @@ export const coerceToNonCapturingGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildNonCapturingGroup>;
 	return F.buildNonCapturingGroup(
 		_resolveOneBranch<T.Pattern>(
-			configFieldOr(input, 'pattern', () => input),
+			configFieldOr(input, 'pattern', () => input, TSKindId.NonCapturingGroup),
 			'pattern'
 		)
 	);
@@ -1053,8 +1056,11 @@ export const coerceToBackreferenceEscape: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildBackreferenceEscape>;
 	return F.buildBackreferenceEscape(
 		_resolveOneLeaf<T.GroupName>(
-			configFieldOr(input, 'groupName', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\k<', '>') : input
+			configFieldOr(
+				input,
+				'groupName',
+				() => (typeof input === 'string' ? spelledInterior(input, '\\k<', '>') : input),
+				TSKindId.BackreferenceEscape
 			),
 			'group_name'
 		)
@@ -1075,8 +1081,11 @@ export const coerceToNamedGroupBackreference: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildNamedGroupBackreference>;
 	return F.buildNamedGroupBackreference(
 		_resolveOneLeaf<T.GroupName>(
-			configFieldOr(input, 'groupName', () =>
-				typeof input === 'string' ? spelledInterior(input, '(?P=', ')') : input
+			configFieldOr(
+				input,
+				'groupName',
+				() => (typeof input === 'string' ? spelledInterior(input, '(?P=', ')') : input),
+				TSKindId.NamedGroupBackreference
 			),
 			'group_name'
 		)
@@ -1108,7 +1117,7 @@ export const coerceToCharacterClassEscape: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildCharacterClassEscape>;
 	return F.buildCharacterClassEscape(
 		_resolveOne<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>(
-			configFieldOr(input, 'content', () => input),
+			configFieldOr(input, 'content', () => input, TSKindId.CharacterClassEscape),
 			_K9,
 			_K10
 		)
@@ -1190,8 +1199,12 @@ export const coerceToIdentityEscape: ConfigSeat<T.IdentityEscape.Loose, ReturnTy
 	if (isNodeValue(input)) return input as unknown as ReturnType<typeof F.buildIdentityEscape>;
 	return F.buildIdentityEscape(
 		_resolveOne<string>(
-			configFieldOr(input, 'content', () =>
-				typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content) : input
+			configFieldOr(
+				input,
+				'content',
+				() =>
+					typeof input === 'string' ? spelledInterior(input, '\\', '', F._slotRe_buildIdentityEscape_content) : input,
+				TSKindId.IdentityEscape
 			),
 			_K0,
 			_K0
@@ -1290,8 +1303,11 @@ export const coerceToCountQuantifierGroup: OptionalConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildCountQuantifierGroup>;
 	return F.buildCountQuantifierGroup(
 		_resolveOneLeaf<T.DecimalDigits>(
-			configFieldOr(input, 'decimalDigits', () =>
-				typeof input === 'string' ? spelledInterior(input, ',', '') : input
+			configFieldOr(
+				input,
+				'decimalDigits',
+				() => (typeof input === 'string' ? spelledInterior(input, ',', '') : input),
+				TSKindId.CountQuantifierGroup
 			),
 			'decimal_digits'
 		)
@@ -1368,8 +1384,11 @@ export const coerceToUnicodePropertyValueExpressionGroup: ConfigSeat<
 		return input as unknown as ReturnType<typeof F.buildUnicodePropertyValueExpressionGroup>;
 	return F.buildUnicodePropertyValueExpressionGroup(
 		_resolveOneLeaf<T.UnicodePropertyName>(
-			configFieldOr(input, 'unicodePropertyName', () =>
-				typeof input === 'string' ? spelledInterior(input, '', '=') : input
+			configFieldOr(
+				input,
+				'unicodePropertyName',
+				() => (typeof input === 'string' ? spelledInterior(input, '', '=') : input),
+				TSKindId.UnicodePropertyValueExpressionGroup
 			),
 			'unicode_property_name'
 		)

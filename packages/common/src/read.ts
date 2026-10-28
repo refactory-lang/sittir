@@ -2,6 +2,7 @@ import type { BuiltArena } from './built-arena.ts';
 import type { CellFormat } from './record-cell.ts';
 import type { ByteSpan, NodeCoordinate } from '@sittir/types';
 import type { TreeQuery } from './query.ts';
+import type { TreeToken } from './tree-token.ts';
 
 /** A side of a node that holds trivia: before its first token, after its last, or, for a node with no named child, between its own tokens. */
 export type TriviaSideName = 'leading' | 'trailing' | 'inner';
@@ -43,19 +44,28 @@ export interface TreeHandle {
 	records?: RecordReader;
 	/** The built arena whose records this handle's views read, for the handle a built arena reads through (`BuiltArena.tree`). */
 	built?: BuiltArena;
+	token?: TreeToken;
+}
+
+export interface ChunkWords {
+	readonly length: number;
+	readonly [index: number]: number;
+	subarray(begin?: number, end?: number): ChunkWords;
 }
 
 /** What any record view reads its records' words through. */
 export interface RecordWords {
 	readonly format: CellFormat;
 	/** The words of the chunk `address` lies in, holding at least `length` words from it. */
-	words(address: number, length: number): Uint32Array;
+	words(address: number, length: number): ChunkWords;
 }
 
 /** What a record view reads its tree's records through. */
 export interface RecordReader extends RecordWords {
 	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
 	record(index: number, depth?: number): number | undefined;
+	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through the cell, written `depth` levels down (one when absent), and the cell rewritten to name it. */
+	cell(holder: number, word: number, item: number, depth?: number): number;
 	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
 	hydrate(index: number, depth?: number): number | undefined;
 	candidates(index: number): readonly NodeCoordinate[];
@@ -64,8 +74,6 @@ export interface RecordReader extends RecordWords {
 	renderCandidate(index: number): string;
 	/** The node at descendant `index` read as an object, `depth` levels down (one when absent): the row a view's writes, queries and snapshots read once. */
 	object(index: number, depth?: number): unknown;
-	/** The words of the chunk `address` lies in, holding at least `length` words from it: a copy JavaScript owns, fetched again when the words sought lie past the copy held. */
-	words(address: number, length: number): Uint32Array;
 	/** The kind and subtree end a read names the node at descendant `index` by: the coordinate the read stamps (the addon's `coordinate`), so a cell's view and the object wire name one coordinate. */
 	coordinate(index: number): { readonly kind: number; readonly end: number };
 }

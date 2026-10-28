@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 import { createEngine } from '@sittir/common';
 
-const ts = await createEngine(typescript);
-const tsStrict = await createEngine(typescript, { api: 'strict' });
+const ts = await createEngine(typescript, { nodeStorage: 'object' });
+const tsStrict = await createEngine(typescript, { api: 'strict', nodeStorage: 'object' });
 
 function shapeOf(node: unknown): unknown {
 	if (Array.isArray(node)) return node.map(shapeOf);
@@ -41,8 +41,8 @@ function findParsed(node: unknown, kind: number): Record<string, unknown> | unde
 describe('an assignment target over aliased hidden storage', () => {
 	it('builds the same envelope the reader reads', () => {
 		const built = tsStrict.build.assignmentExpression({
-			left: tsStrict.build.lhsExpression(ts.build.identifier('a')),
-			right: ts.build.number('1')
+			left: tsStrict.build.lhsExpression(tsStrict.build.identifier('a')),
+			right: tsStrict.build.number('1')
 		});
 		expect(built.$render().toString()).toBe('a = 1');
 		const assignment = findParsed(ts.parse('a = 1;'), ts.kinds.AssignmentExpression) as { left(): unknown } | undefined;
@@ -52,8 +52,8 @@ describe('an assignment target over aliased hidden storage', () => {
 	it('takes a bare string on the loose surface and builds the strict envelope', () => {
 		const loose = ts.build.assignmentExpression({ left: 'result', right: ts.build.number('1') });
 		const strict = tsStrict.build.assignmentExpression({
-			left: tsStrict.build.lhsExpression(ts.build.identifier('result')),
-			right: ts.build.number('1')
+			left: tsStrict.build.lhsExpression(tsStrict.build.identifier('result')),
+			right: tsStrict.build.number('1')
 		});
 		expect(loose.$render().toString()).toBe('result = 1');
 		expect(shapeOf(loose)).toEqual(shapeOf(strict));

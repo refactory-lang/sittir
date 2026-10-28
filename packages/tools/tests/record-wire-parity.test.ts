@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { chunkOf } from '@sittir/common/engine';
-import { coordinateOf, decodeIndex, isCoordinate, nodeText, treeOf } from '@sittir/common/utils';
+import { coordinateOf, decodeIndex, isCoordinate, nodeText, recordOf, treeOf } from '@sittir/common/utils';
 import { stableGrammars } from '@sittir/codegen/grammars';
 import type { NodeCoordinate } from '@sittir/types';
 import { languageByName } from '../src/languages.ts';
@@ -13,8 +13,6 @@ import {
 	type SlotAccessorOf,
 	type TypedNode
 } from '../src/validate/common.ts';
-
-const RECORD = Symbol.for('sittir.record');
 
 const placeOf = (at: NodeCoordinate | undefined) =>
 	at && { row: decodeIndex(at.$treeHandle), end: at.$end, span: at.$span, kind: at.$type };
@@ -115,10 +113,10 @@ describe('an arena view held across a later read', () => {
 		const held = root.statements()[0]!;
 		const before = surfaceOf(held, accessorOf);
 		const chunks = wrappedNodesOf(root, accessorOf).flatMap((node) => {
-			const at = (node as { readonly [RECORD]?: number })[RECORD];
+			const at = recordOf(node);
 			return at === undefined ? [] : [chunkOf(at, format)];
 		});
-		expect(Math.max(...chunks)).toBeGreaterThan(chunkOf((held as { readonly [RECORD]: number })[RECORD], format));
+		expect(Math.max(...chunks)).toBeGreaterThan(chunkOf(recordOf(held)!, format));
 		expect(surfaceOf(held, accessorOf)).toEqual(before);
 		expect(surfaceOf(root.statements()[0], accessorOf)).toEqual(before);
 		arena.dispose();

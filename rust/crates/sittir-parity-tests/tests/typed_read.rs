@@ -45,7 +45,7 @@ sittir_core::grammar_trivia!(NoTrivia; NoTrivia, Ident, Params, Block, Function,
 type Layout = Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>;
 
 #[derive(Debug, Clone, PartialEq, Node)]
-#[node(kind = kind::IDENTIFIER, text)]
+#[node(kind = kind::IDENTIFIER, text, words = 2, built_words = 2)]
 struct Ident {
     #[wire(key = "$_layout")]
     #[layout]
@@ -695,13 +695,13 @@ struct Decimal {
 }
 
 #[derive(Debug, Clone, PartialEq, Node)]
-#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
+#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 5, built_words = 3)]
 struct TypeIdent {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     content: SlotValue<Ident>,
 }
 
@@ -839,13 +839,13 @@ enum Name {
 }
 
 #[derive(Debug, Clone, PartialEq, Node)]
-#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content)]
+#[node(kind = kind::_TYPE_IDENTIFIER, display, content = content, words = 5, built_words = 3)]
 struct TypeIdentOfChoice {
     #[wire(key = "$_layout")]
     #[layout]
     layout: Option<Box<sittir_core::layout::NodeLayout<NoTrivia>>>,
     #[wire(key = "_content")]
-    #[slot]
+    #[slot(word = 2, width = 3, forms = 1, built = 2)]
     content: SlotValue<Name>,
 }
 

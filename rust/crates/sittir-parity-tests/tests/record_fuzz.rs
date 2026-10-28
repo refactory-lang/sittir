@@ -5,7 +5,7 @@
 //! that names a record holding it is refused at admission.
 #![cfg(feature = "arena")]
 
-use sittir_core::arena::{Address, Arena, ArenaError, Cell, CellAt, HeldArenas, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
+use sittir_core::arena::{Address, ArenaError, ArenaRead, BuiltChunks, Cell, CellAt, CellWord, HeldArenas, Linked, RecordCells, RecordGrammar, RecordSink, WriteCell};
 use sittir_core::engine::{claim_tree_id, Engine, ParsedTree};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
@@ -35,9 +35,45 @@ impl Words {
 const SOURCES: usize = 24;
 const MUTATIONS: u32 = 400;
 
+/// A built arena's chunks, copied so a test can replace any word.
+struct Image {
+    words: Vec<Option<Vec<u32>>>,
+    bytes: Vec<Option<Vec<u8>>>,
+}
+
+impl Image {
+    fn of(arena: &BuiltChunks) -> Self {
+        let (mut words, mut bytes) = (vec![None], vec![None]);
+        for n in 1.. {
+            let (chunk, string) = (arena.chunk(n), arena.string_chunk(n));
+            if chunk.is_none() && string.is_none() {
+                break;
+            }
+            words.push(chunk.map(<[u32]>::to_vec));
+            bytes.push(string.map(<[u8]>::to_vec));
+        }
+        Self { words, bytes }
+    }
+
+    fn word_mut(&mut self, at: Address) -> &mut u32 {
+        &mut self.words[at.chunk() as usize].as_mut().expect("a words chunk")[at.word() as usize]
+    }
+}
+
+impl ArenaRead for Image {
+    fn chunk(&self, n: u32) -> Option<&[u32]> {
+        self.words.get(n as usize)?.as_deref()
+    }
+
+    fn string_chunk(&self, n: u32) -> Option<&[u8]> {
+        self.bytes.get(n as usize)?.as_deref()
+    }
+}
+
 /// A source's tree, read whole as plain data and written as built records.
 struct Built<T> {
-    arena: Arena,
+    image: Image,
+    bits: u32,
     store: TriviaStore<T>,
     root: CellAt,
 }
@@ -45,18 +81,26 @@ struct Built<T> {
 impl<T: Clone> Built<T> {
     fn of<G: RecordGrammar<Trivia = T>, N: ReadNode + WriteCell<T>>(tree: &ParsedTree<G>) -> Option<Self> {
         let node: N = tree.snapshot(NodeIndex::ROOT, None).ok()?;
-        let mut arena = Arena::new();
+        let mut arena = BuiltChunks::new(G::KIND_BITS, G::shape);
         let store = TriviaStore::new();
         let mut link = |_: &sittir_core::slot::NodeCoordinate| -> Result<Linked, sittir_core::arena::ArenaError> { Err(sittir_core::arena::ArenaError::Unwritable("a coordinate in a snapshot")) };
-        let cell = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).ok()?;
-        matches!(cell, Cell::Child { .. }).then_some(Self { arena, store, root: CellAt { cell, tree: None, site: None } })
+        let word = node.write_cell(&mut RecordSink::built(&mut arena, &store, &mut link)).ok()?;
+        let cell = Cell::decode_built(word, &arena, G::KIND_BITS).ok()?;
+        matches!(cell, Cell::Child { .. }).then(|| Self { image: Image::of(&arena), bits: G::KIND_BITS, store, root: CellAt { cell, tree: None, site: None } })
     }
 
-    /// Every written word's address, but the arena's reserved first one.
+    /// The address of every word of each words chunk up to the word after
+    /// its last written one, but the arena's reserved first one.
     fn addresses(&self) -> Vec<Address> {
-        (0..)
-            .map_while(|chunk| self.arena.chunk(chunk).map(|words| (chunk, words.len())))
-            .flat_map(|(chunk, len)| (0..len).filter_map(move |word| Address::new(chunk, u32::try_from(word).ok()?)))
+        self.image
+            .words
+            .iter()
+            .enumerate()
+            .filter_map(|(chunk, words)| Some((u32::try_from(chunk).ok()?, words.as_ref()?)))
+            .flat_map(|(chunk, words)| {
+                let written = words.iter().rposition(|&word| word != 0).map_or(0, |last| (last + 2).min(words.len()));
+                (0..written).filter_map(move |word| Address::new(chunk, u32::try_from(word).ok()?))
+            })
             .filter(|&at| at != Address::NONE)
             .collect()
     }
@@ -65,13 +109,13 @@ impl<T: Clone> Built<T> {
     /// writer (`arena::admit`).
     fn admit<N: RecordCells>(&self) -> Result<(), ArenaError> {
         let Cell::Child { at, .. } = self.root.cell else { unreachable!("a built root is a child cell") };
-        sittir_core::arena::admit(&self.arena, at, N::shape).map(drop)
+        sittir_core::arena::admit(&self.image, at, N::shape, self.bits).map(drop)
     }
 
     /// `G`'s render of the root, its panic caught.
     fn render<G: RecordGrammar<Trivia = T>>(&self, tree: &ParsedTree<G>, ctx: &RenderContext<'_>) -> std::thread::Result<Result<String, RenderError>> {
         let mut arenas = HeldArenas::of([(tree.tree_id(), tree.tree_arena())]);
-        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.arena, &self.store, ctx)))
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| tree.grammar().render_record(self.root, &mut arenas, &self.image, &self.store, ctx)))
     }
 }
 
@@ -82,13 +126,13 @@ fn sources(grammar: &str) -> impl Iterator<Item = String> {
     })
 }
 
-/// A word to put where a record holds another: a cell tag, a kind, an
-/// address in the arena (the root's among them), or anything.
+/// A word to put where a record holds another: a unit's cell, a kind, a
+/// cell naming an address in the arena (the root's among them), or anything.
 fn mutation(words: &mut Words, addresses: &[Address]) -> u32 {
     match words.below(8) {
         0 | 1 => words.below(8),
         2 => words.below(1 << 11),
-        3..=5 => addresses[words.below(u32::try_from(addresses.len()).expect("a count")) as usize].0,
+        3..=5 => addresses[words.below(u32::try_from(addresses.len()).expect("a count")) as usize].0 << 2,
         6 => 0,
         _ => words.next(),
     }
@@ -111,7 +155,7 @@ fn fuzz<G: RecordGrammar + Default, N: ReadNode + WriteCell<G::Trivia> + RecordC
         for _ in 0..MUTATIONS {
             let at = addresses[words.below(u32::try_from(addresses.len()).expect("a count")) as usize];
             let word = mutation(&mut words, &addresses);
-            let kept = std::mem::replace(&mut built.arena.words_mut(at, 1).expect("written")[0], word);
+            let kept = std::mem::replace(built.image.word_mut(at), word);
             if built.admit::<N>().is_ok() {
                 admitted += 1;
                 match built.render(&tree, &ctx) {
@@ -120,7 +164,7 @@ fn fuzz<G: RecordGrammar + Default, N: ReadNode + WriteCell<G::Trivia> + RecordC
                     Err(_) => panicked.push(format!("source {i}: word {at:?} = {word}")),
                 }
             }
-            built.arena.words_mut(at, 1).expect("written")[0] = kept;
+            *built.image.word_mut(at) = kept;
         }
     }
     eprintln!("{grammar}: {fuzzed} sources fuzzed, {admitted} of their mutations admitted, {rendered} of those rendered, the rest refused");
@@ -169,13 +213,13 @@ fn a_child_cell_naming_a_record_that_holds_it_is_refused() {
     let calls: Vec<(Address, Address)> = built
         .addresses()
         .into_iter()
-        .filter_map(|cell| match built.arena.words(cell, 5).ok().map(Cell::decode) {
+        .filter_map(|cell| match built.image.word(cell).ok().map(|word| Cell::decode_built(CellWord(word), &built.image, built.bits)) {
             Some(Ok(Cell::Child { kind: CALL_EXPRESSION, at, link: None, .. })) => Some((cell, at)),
             _ => None,
         })
         .collect();
     let &(innermost, _) = calls.iter().min_by_key(|(_, at)| *at).expect("a call cell");
     let &(_, outermost) = calls.iter().max_by_key(|(_, at)| *at).expect("a call cell");
-    built.arena.words_mut(innermost.offset(2).expect("its address word"), 1).expect("written")[0] = outermost.0;
+    *built.image.word_mut(innermost) = outermost.0 << 2;
     assert_eq!(built.admit::<sittir_rust::render::AnyNode>(), Err(ArenaError::Malformed { what: "child record address", word: outermost.0 }), "the cycle is refused when it is admitted, never followed");
 }

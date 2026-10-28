@@ -7,7 +7,7 @@ import { validateFactoryStorage } from '../src/validate/factory-storage.ts';
 
 it('deep-reads every object root for read-render-parse', async () => {
 	const native = createRequire(import.meta.url)('../../scm/native/index.cjs') as NativeModuleLike;
-	const read = vi.spyOn(native.SittirEngine.prototype, 'read');
+	const read = vi.spyOn(native, 'read');
 	try {
 		const result = await validateReadRenderParse('scm', { recursive: true });
 		expect(result.pass).toBe(19);

@@ -2,22 +2,23 @@ use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::{OnceCell, RefCell};
 use std::collections::HashMap;
 use std::ffi::c_void;
+use std::rc::Rc;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, LazyLock};
 use std::time::Instant;
 
-use napi::bindgen_prelude::{FromNapiValue, ObjectFinalize};
+use napi::bindgen_prelude::{External, FromNapiValue, ObjectFinalize};
 use napi::{Env, Error, JsValue, Result, Status, Unknown, UnknownRef};
 use napi_derive::napi;
-use sittir_core::arena::{
-    admit, Address, ArenaRead, BorrowedArena, Cell, CellAt, HeldArenas, RecordCells, StringRef,
-};
+use sittir_core::arena::{admit, Address, ArenaRead, BorrowedArena, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
 use sittir_core::options::ResolvedOptions;
 use sittir_core::prepare::RenderContext;
 use sittir_core::render::SourceTable;
 use sittir_core::trivia_store::TriviaStore;
 use sittir_core::types::{KindId, TreeId};
-use sittir_rust::render::node::{self, AnyNode, RenderRoot};
+use sittir_rust::render::node::{self, RenderRoot, TriviaNode};
+use sittir_rust::render::KIND_BITS;
+use sittir_rust::RustGrammar;
 
 static ALLOCS: AtomicU64 = AtomicU64::new(0);
 static ALLOCATED: AtomicU64 = AtomicU64::new(0);
@@ -76,6 +77,12 @@ unsafe impl GlobalAlloc for Counted {
 static ALLOCATOR: Counted = Counted;
 static OPTIONS: LazyLock<ResolvedOptions> = LazyLock::new(sittir_rust::render::options::defaults);
 
+thread_local! {
+    // The engine renders a built record against its long-lived store; a
+    // built root here has no trivia, so one empty store serves every render.
+    static STORE: TriviaStore<TriviaNode> = TriviaStore::new();
+}
+
 struct NoSources;
 
 impl SourceTable for NoSources {
@@ -114,6 +121,7 @@ pub fn allocator_totals() -> AllocationTotals {
 
 fn measured(run: impl FnOnce() -> Result<String>) -> Result<RenderSample> {
     LazyLock::force(&OPTIONS);
+    STORE.with(|_| ());
     let before = [
         ALLOCS.load(Ordering::Relaxed),
         ALLOCATED.load(Ordering::Relaxed),
@@ -249,23 +257,22 @@ pub fn render_built_leaf(
     chunks: Vec<Unknown<'_>>,
     strings: Vec<Unknown<'_>>,
     kind: f64,
-    text_offset: f64,
-    text_len: f64,
+    entry: f64,
 ) -> Result<RenderSample> {
     measured(|| {
         let words = typed_slices::<u32>(&env, &chunks)?;
         let bytes = typed_slices::<u8>(&env, &strings)?;
         let arena =
             BorrowedArena::new(&words, &bytes).map_err(|e| Error::from_reason(e.to_string()))?;
-        render_arena(&arena, Root::Leaf { kind, text_offset, text_len })
+        render_arena(&arena, Root::Leaf { kind, entry })
     })
 }
 
 /// A built root: a record by its address, or a leaf, which has no record,
-/// by its kind and its text.
+/// by its kind and the address of its leaf entry.
 enum Root {
     Record(f64),
-    Leaf { kind: f64, text_offset: f64, text_len: f64 },
+    Leaf { kind: f64, entry: f64 },
 }
 
 fn render_arena(arena: &dyn ArenaRead, root: Root) -> Result<String> {
@@ -275,15 +282,8 @@ fn render_arena(arena: &dyn ArenaRead, root: Root) -> Result<String> {
             if at == Address::NONE {
                 return Err(Error::from_reason("a built root must name a record"));
             }
-            admit(arena, at, AnyNode::shape).map_err(|e| Error::from_reason(e.to_string()))?;
-            let kind = KindId(
-                u16::try_from(
-                    arena
-                        .word(at)
-                        .map_err(|e| Error::from_reason(e.to_string()))?,
-                )
-                .map_err(|_| Error::from_reason("record kind exceeds u16"))?,
-            );
+            admit(arena, at, RustGrammar::shape, KIND_BITS).map_err(|e| Error::from_reason(e.to_string()))?;
+            let kind = arena.header_kind(at, KIND_BITS).map_err(|e| Error::from_reason(e.to_string()))?;
             Cell::Child {
                 kind,
                 at,
@@ -291,18 +291,20 @@ fn render_arena(arena: &dyn ArenaRead, root: Root) -> Result<String> {
                 changed: Default::default(),
             }
         }
-        Root::Leaf { kind, text_offset, text_len } => {
+        Root::Leaf { kind, entry } => {
             let kind = KindId(
                 u16::try_from(word_argument(kind)?)
                     .map_err(|_| Error::from_reason("leaf kind exceeds u16"))?,
             );
-            AnyNode::shape(kind).ok_or_else(|| Error::from_reason(format!("built leaf kind {} is not one the grammar writes", kind.0)))?;
-            let text = StringRef::from_offset(word_argument(text_offset)?, word_argument(text_len)?);
-            arena.text(text).map_err(|e| Error::from_reason(e.to_string()))?;
-            Cell::BuiltLeaf {
-                kind,
-                text,
-                changed: Default::default(),
+            RustGrammar::shape(kind).ok_or_else(|| Error::from_reason(format!("built leaf kind {} is not one the grammar writes", kind.0)))?;
+            let entry = word_argument(entry)?;
+            let word = entry.checked_mul(4).filter(|_| entry < 1 << 30).ok_or_else(|| Error::from_reason("a leaf entry address is past what a built cell holds"))?;
+            match Cell::decode_built(CellWord(word), arena, KIND_BITS).map_err(|e| Error::from_reason(e.to_string()))? {
+                Cell::BuiltLeaf { kind: found, text, .. } if found == kind => {
+                    arena.text(text).map_err(|e| Error::from_reason(e.to_string()))?;
+                    Cell::BuiltLeaf { kind, text, changed: Default::default() }
+                }
+                _ => return Err(Error::from_reason(format!("no built leaf entry of kind {} at {entry}", kind.0))),
             }
         }
     };
@@ -311,29 +313,33 @@ fn render_arena(arena: &dyn ArenaRead, root: Root) -> Result<String> {
         tree: None,
         site: None,
     };
-    node::render_record(
-        root,
-        &mut HeldArenas::of([]),
-        arena,
-        &TriviaStore::new(),
-        &RenderContext {
-            options: &OPTIONS,
-            sources: &NoSources,
-        },
-    )
-    .map_err(|e| Error::from_reason(e.to_string()))
+    STORE.with(|store| {
+        node::render_record(
+            root,
+            &mut HeldArenas::of([]),
+            arena,
+            store,
+            &RenderContext {
+                options: &OPTIONS,
+                sources: &NoSources,
+            },
+        )
+        .map_err(|e| Error::from_reason(e.to_string()))
+    })
 }
 
 // Only JavaScript references persist here; pointers and Rust slices are per-call.
 struct ChunkRefs<T> {
     values: Vec<UnknownRef>,
+    holds: Vec<bool>,
     element: std::marker::PhantomData<T>,
 }
 
 impl<T: Element> ChunkRefs<T> {
-    fn new(env: &Env, values: &[Unknown<'_>]) -> Result<Self> {
+    fn new(env: &Env, values: &[Unknown<'_>], holds: Vec<bool>) -> Result<Self> {
         let mut held = Self {
             values: Vec::with_capacity(values.len()),
+            holds,
             element: std::marker::PhantomData,
         };
         for value in values {
@@ -364,11 +370,19 @@ impl<T: Element> ChunkRefs<T> {
     }
 }
 
-#[napi(custom_finalize)]
-pub struct RegisteredArena {
+/// The chunks one registration holds, shared by its `RegisteredArena` and the
+/// handles the render functions take. Only the `RegisteredArena` releases them.
+pub struct Registered {
     chunks: Option<(ChunkRefs<u32>, ChunkRefs<u8>)>,
     word_open: Option<usize>,
     string_open: Option<usize>,
+}
+
+type Registration = Rc<RefCell<Registered>>;
+
+#[napi(custom_finalize)]
+pub struct RegisteredArena {
+    registered: Registration,
 }
 
 fn open_chunk(value: Option<f64>, count: usize) -> Result<Option<usize>> {
@@ -426,6 +440,9 @@ impl<'a, T: Element> CachedChunks<'a, T> {
     }
 
     fn get(&self, index: u32) -> Option<&[T]> {
+        if !self.refs.holds.get(index as usize).copied().unwrap_or(false) {
+            return None;
+        }
         let Some(&(first, slice)) = self.first.get() else {
             return self.first.get_or_init(|| (index, self.read(index))).1;
         };
@@ -482,14 +499,14 @@ struct RegisteredRead<'a> {
 
 impl ArenaRead for RegisteredRead<'_> {
     fn chunk(&self, index: u32) -> Option<&[u32]> {
-        self.words.get(index)
+        self.words.get(index).filter(|chunk| !chunk.is_empty())
     }
     fn string_chunk(&self, index: u32) -> Option<&[u8]> {
-        self.strings.get(index)
+        self.strings.get(index).filter(|chunk| !chunk.is_empty())
     }
 }
 
-impl RegisteredArena {
+impl Registered {
     fn render_root(&self, env: Env, root: Root, word_len: Option<f64>, string_len: Option<f64>) -> Result<RenderSample> {
         measured(|| {
             let (words, bytes) = self
@@ -511,46 +528,53 @@ impl RegisteredArena {
     }
 }
 
+fn registered(handle: &External<Registration>) -> Result<std::cell::Ref<'_, Registered>> {
+    handle.try_borrow().map_err(|_| Error::from_reason("arena registration is being released"))
+}
+
+/// The record at `address` of the registration `handle` names, rendered.
+#[napi]
+pub fn render_registered_record(
+    env: Env,
+    #[napi(ts_arg_type = "object")] handle: &External<Registration>,
+    address: f64,
+    word_len: Option<f64>,
+    string_len: Option<f64>,
+) -> Result<RenderSample> {
+    registered(handle)?.render_root(env, Root::Record(address), word_len, string_len)
+}
+
+/// The leaf of `kind` whose entry the registration `handle` names holds at
+/// `entry`, rendered.
+#[napi]
+pub fn render_registered_leaf(
+    env: Env,
+    #[napi(ts_arg_type = "object")] handle: &External<Registration>,
+    kind: f64,
+    entry: f64,
+    word_len: Option<f64>,
+    string_len: Option<f64>,
+) -> Result<RenderSample> {
+    registered(handle)?.render_root(env, Root::Leaf { kind, entry }, word_len, string_len)
+}
+
 #[napi]
 impl RegisteredArena {
-    #[napi]
-    pub fn render_record(
-        &self,
-        env: Env,
-        address: f64,
-        word_len: f64,
-        string_len: f64,
-    ) -> Result<RenderSample> {
-        self.render_root(env, Root::Record(address), Some(word_len), Some(string_len))
-    }
-
-    #[napi]
-    pub fn render(
-        &self,
-        env: Env,
-        address: f64,
-        word_len: Option<f64>,
-        string_len: Option<f64>,
-    ) -> Result<RenderSample> {
-        self.render_root(env, Root::Record(address), word_len, string_len)
-    }
-
-    #[napi]
-    pub fn render_leaf(
-        &self,
-        env: Env,
-        kind: f64,
-        text_offset: f64,
-        text_len: f64,
-        word_len: Option<f64>,
-        string_len: Option<f64>,
-    ) -> Result<RenderSample> {
-        self.render_root(env, Root::Leaf { kind, text_offset, text_len }, word_len, string_len)
+    /// The handle the render functions take.
+    #[napi(getter, ts_return_type = "object")]
+    pub fn handle(&self) -> External<Registration> {
+        External::new(Rc::clone(&self.registered))
     }
 
     #[napi]
     pub fn dispose(&mut self, env: Env) -> Result<()> {
-        let Some((mut words, mut bytes)) = self.chunks.take() else {
+        let Some((mut words, mut bytes)) = self
+            .registered
+            .try_borrow_mut()
+            .map_err(|_| Error::from_reason("arena registration is rendering"))?
+            .chunks
+            .take()
+        else {
             return Ok(());
         };
         let words_result = words.release(&env);
@@ -578,17 +602,21 @@ pub fn register_arena(
     let words = typed_slices::<u32>(&env, &chunks)?;
     let bytes = typed_slices::<u8>(&env, &strings)?;
     BorrowedArena::new(&words, &bytes).map_err(|error| Error::from_reason(error.to_string()))?;
+    let word_holds = words.iter().map(|chunk| !chunk.is_empty()).collect();
+    let string_holds = bytes.iter().map(|chunk| !chunk.is_empty()).collect();
     drop((words, bytes));
-    let mut words = ChunkRefs::new(&env, &chunks)?;
-    let bytes = match ChunkRefs::new(&env, &strings) {
+    let mut words = ChunkRefs::new(&env, &chunks, word_holds)?;
+    let bytes = match ChunkRefs::new(&env, &strings, string_holds) {
         Ok(bytes) => bytes,
         Err(error) => return words.release(&env).and(Err(error)),
     };
     REGISTRATIONS.fetch_add(1, Ordering::Relaxed);
     Ok(RegisteredArena {
-        chunks: Some((words, bytes)),
-        word_open,
-        string_open,
+        registered: Rc::new(RefCell::new(Registered {
+            chunks: Some((words, bytes)),
+            word_open,
+            string_open,
+        })),
     })
 }
 

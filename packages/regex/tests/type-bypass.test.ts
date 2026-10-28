@@ -5,6 +5,7 @@ import { buildCountQuantifierGroup } from '../src/factories/raw.ts';
 
 const trusting = await createEngine(regex, { api: 'strict' });
 const verifying = await createEngine(regex, { api: 'strict', verifyStructure: 'runtime' });
+const trustingObjects = await createEngine(regex, { api: 'strict', nodeStorage: 'object' });
 
 const quantifier = (engine: typeof trusting, content: unknown) =>
 	(engine.build.countQuantifier as unknown as (config: { content: unknown }) => { $render(): string })({ content });
@@ -15,9 +16,11 @@ describe('a value the strict types refuse, given anyway: the default mode trusts
 		expect(() => quantifier(verifying, '3')).toThrow('CountQuantifier.content: a strict factory takes a built node, not a string');
 	});
 
-	it('a value of another type is refused by the native decode by default, and bare text before it in runtime mode', () => {
-		expect(() => quantifier(trusting, 1n).$render()).toThrow(/expected u16 kind_id, string, or object with \$type/);
-		expect(() => quantifier(trusting, true).$render()).toThrow(/expected u16 kind_id, string, or object with \$type/);
+	it('a value of another type is refused by the record writer by default, by the native decode under object construction, and bare text before it in runtime mode', () => {
+		expect(() => quantifier(trusting, 1n)).toThrow('a built record holds only nodes its own engine built, not a bigint');
+		expect(() => quantifier(trusting, true)).toThrow('a built record holds only nodes its own engine built, not a boolean');
+		expect(() => quantifier(trustingObjects, 1n).$render()).toThrow(/expected u16 kind_id, string, or object with \$type/);
+		expect(() => quantifier(trustingObjects, true).$render()).toThrow(/expected u16 kind_id, string, or object with \$type/);
 		expect(() => quantifier(verifying, 1n)).toThrow('CountQuantifier.content: a strict factory takes a built node, not a bigint');
 	});
 

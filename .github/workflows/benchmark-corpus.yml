@@ -11,7 +11,7 @@ on:
         required: true
       construction:
         type: string
-        default: objects
+        default: object
 
 permissions:
   contents: read

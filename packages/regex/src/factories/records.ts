@@ -8,10 +8,7 @@ import {
 	admitChildren,
 	elementsWith,
 	rebuilt,
-	renderText,
 	refuseJSON,
-	triviaSide,
-	triviaInner,
 	describeValue,
 	restItems,
 	kindIdStorage,
@@ -23,9 +20,22 @@ import {
 	builtInputs,
 	storeCell,
 	storeFlag,
-	storeList
+	storeList,
+	patchCell,
+	carriedSlot,
+	patchFlag,
+	patchList,
+	applySetter,
+	handleOf,
+	leafText,
+	leafLeading,
+	leafTrailing,
+	handleRender,
+	handleToString,
+	handleEngine,
+	handleDispose
 } from '@sittir/common/utils';
-import type { BuiltRow, BuiltViews, EngineHandle } from '@sittir/common/utils';
+import type { BuiltText, BuiltViews, LeafSite, RecordHandle, TreeHandle } from '@sittir/common/utils';
 
 import {
 	_leafRe_buildPatternCharacter,
@@ -53,21 +63,31 @@ export function buildPattern(value: Admit<T.Alternation | T.Term>): T.Pattern.Bo
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Pattern as const, { _content });
 	const record = arena.record(TSKindId.Pattern as const);
-	storeCell(arena, record, 2, _content);
-	const node = arena.view(record, { 2: _content });
+	storeCell(arena, record, 2, 2, _content);
+	const node = arena.view(record);
 	return node as unknown as T.Pattern.Bound;
 }
 
-function rowPattern(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<T.Alternation | T.Term>) => rebuilt(node, handle, () => buildPattern(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildPattern$patch(source: object, value: Admit<T.Alternation | T.Term>): T.Pattern.Bound {
+	const _content = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'pattern', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Pattern as const, { _content });
+	const record = arena.copy(source, TSKindId.Pattern as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	const node = arena.view(record);
+	return node as unknown as T.Pattern.Bound;
+}
+function withPattern(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.Alternation | T.Term>) =>
+				rebuilt(node, handle, () => buildPattern$patch(node, value))
+			);
+	}
+	throw new Error(`pattern has no $with.${setter}`);
 }
 
 export function buildAlternation<A extends NonEmptyArray<Admit<T.Term>>>(
@@ -81,22 +101,32 @@ export function buildAlternation(...children: NonEmptyArray<Admit<T.Term>>): T.A
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Alternation as const, { _terms });
 	const record = arena.record(TSKindId.Alternation as const);
-	storeList(arena, record, 2, _terms, 5);
-	const node = arena.view(record, { 2: _terms });
+	storeList(arena, record, 2, 2, _terms);
+	const node = arena.view(record);
 	return node as unknown as T.Alternation.Bound;
 }
 
-function rowAlternation(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			terms: (...vs: NonEmptyArray<Admit<T.Term>>) =>
-				rebuilt(node, handle, () => buildAlternation(...restItems('terms', vs)))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildAlternation$patch(source: object, ...children: NonEmptyArray<Admit<T.Term>>): T.Alternation.Bound {
+	currentHandle()?.admit(TSKindId.Alternation, children);
+	const _terms = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'alternation', { terms: _terms });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Alternation as const, { _terms });
+	const record = arena.copy(source, TSKindId.Alternation as const);
+	patchList(arena, record, 2, 2, _terms);
+	const node = arena.view(record);
+	return node as unknown as T.Alternation.Bound;
+}
+function withAlternation(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'terms':
+			return applySetter(args, (...vs: NonEmptyArray<Admit<T.Term>>) =>
+				rebuilt(node, handle, () => buildAlternation$patch(node, ...restItems('terms', vs)))
+			);
+	}
+	throw new Error(`alternation has no $with.${setter}`);
 }
 
 export function buildTerm<A extends NonEmptyArray<Admit<T.TermGroup>>>(
@@ -110,28 +140,38 @@ export function buildTerm(...children: NonEmptyArray<Admit<T.TermGroup>>): T.Ter
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.Term as const, { _term_group });
 	const record = arena.record(TSKindId.Term as const);
-	storeList(arena, record, 2, _term_group, 5);
-	const node = arena.view(record, { 2: _term_group });
+	storeList(arena, record, 2, 2, _term_group);
+	const node = arena.view(record);
 	return node as unknown as T.Term.Bound;
 }
 
-function rowTerm(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			termGroups: (...args: unknown[]) =>
+function buildTerm$patch(source: object, ...children: NonEmptyArray<Admit<T.TermGroup>>): T.Term.Bound {
+	currentHandle()?.admit(TSKindId.Term, children);
+	const _term_group = children;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'term', { termGroups: _term_group });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Term as const, { _term_group });
+	const record = arena.copy(source, TSKindId.Term as const);
+	patchList(arena, record, 2, 2, _term_group);
+	const node = arena.view(record);
+	return node as unknown as T.Term.Bound;
+}
+function withTerm(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'termGroups':
+			return applySetter(args, (...args: unknown[]) =>
 				rebuilt(node, handle, () =>
 					elementsWith(
 						args,
 						{ slot: 'termGroups', keys: ['content', 'quantifier'], make: buildTermGroup },
-						(...vs: NonEmptyArray<Admit<T.TermGroup>>) => buildTerm(...restItems('termGroups', vs))
+						(...vs: NonEmptyArray<Admit<T.TermGroup>>) => buildTerm$patch(node, ...restItems('termGroups', vs))
 					)
 				)
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+			);
+	}
+	throw new Error(`term has no $with.${setter}`);
 }
 
 export const buildAnyCharacter: TSKindId.AnyCharacter = TSKindId.AnyCharacter;
@@ -156,22 +196,34 @@ export function buildLookaroundAssertion(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LookaroundAssertion as const, { _content });
 	const record = arena.record(TSKindId.LookaroundAssertion as const);
-	storeCell(arena, record, 2, _content);
-	const node = arena.view(record, { 2: _content });
+	storeCell(arena, record, 2, 2, _content);
+	const node = arena.view(record);
 	return node as unknown as T.LookaroundAssertion.Bound;
 }
 
-function rowLookaroundAssertion(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>) =>
-				rebuilt(node, handle, () => buildLookaroundAssertion(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildLookaroundAssertion$patch(
+	source: object,
+	value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>
+): T.LookaroundAssertion.Bound {
+	const _content = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'lookaround_assertion', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.LookaroundAssertion as const, { _content });
+	const record = arena.copy(source, TSKindId.LookaroundAssertion as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	const node = arena.view(record);
+	return node as unknown as T.LookaroundAssertion.Bound;
+}
+function withLookaroundAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.LookaheadAssertion | T.LookbehindAssertion>) =>
+				rebuilt(node, handle, () => buildLookaroundAssertion$patch(node, value))
+			);
+	}
+	throw new Error(`lookaround_assertion has no $with.${setter}`);
 }
 
 export function buildLookaheadAssertion<PatternSlot extends T.LookaheadAssertion.Config['pattern']>(
@@ -186,27 +238,44 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
 	const record = arena.record(TSKindId.LookaheadAssertion as const);
-	storeCell(arena, record, 2, _content);
-	storeCell(arena, record, 7, _pattern);
-	const node = arena.view(record, { 2: _content, 7: _pattern });
+	storeCell(arena, record, 2, 2, _content);
+	storeCell(arena, record, 3, 3, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.LookaheadAssertion.Bound;
 }
 
-function rowLookaheadAssertion(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildLookaheadAssertion$patch(
+	source: object,
+	config: T.LookaheadAssertion.Config
+): T.LookaheadAssertion.Bound {
+	currentHandle()?.admit(TSKindId.LookaheadAssertion, [config]);
+	const _content = kindIdStorage<NonNullable<T.LookaheadAssertion['_content']>>(config.content);
+	const _pattern = config.pattern;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'lookahead_assertion', { content: _content, pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
+	const record = arena.copy(source, TSKindId.LookaheadAssertion as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.LookaheadAssertion.Bound;
+}
+function withLookaheadAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.LookaheadAssertion.Config;
-	return {
-		$with: {
-			content: (value: Admit<NonNullable<T.LookaheadAssertion.Config>['content']>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, content: value })),
-			pattern: (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookaheadAssertion({ ...config, pattern: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<NonNullable<T.LookaheadAssertion.Config>['content']>) =>
+				rebuilt(node, handle, () => buildLookaheadAssertion$patch(node, { ...config, content: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildLookaheadAssertion$patch(node, { ...config, pattern: value }))
+			);
+	}
+	throw new Error(`lookahead_assertion has no $with.${setter}`);
 }
 
 export function buildLookbehindAssertion<PatternSlot extends T.LookbehindAssertion.Config['pattern']>(
@@ -221,27 +290,44 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
 	const record = arena.record(TSKindId.LookbehindAssertion as const);
-	storeCell(arena, record, 2, _content);
-	storeCell(arena, record, 7, _pattern);
-	const node = arena.view(record, { 2: _content, 7: _pattern });
+	storeCell(arena, record, 2, 2, _content);
+	storeCell(arena, record, 3, 3, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.LookbehindAssertion.Bound;
 }
 
-function rowLookbehindAssertion(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildLookbehindAssertion$patch(
+	source: object,
+	config: T.LookbehindAssertion.Config
+): T.LookbehindAssertion.Bound {
+	currentHandle()?.admit(TSKindId.LookbehindAssertion, [config]);
+	const _content = kindIdStorage<NonNullable<T.LookbehindAssertion['_content']>>(config.content);
+	const _pattern = config.pattern;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'lookbehind_assertion', { content: _content, pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
+	const record = arena.copy(source, TSKindId.LookbehindAssertion as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	patchCell(arena, record, 3, 3, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.LookbehindAssertion.Bound;
+}
+function withLookbehindAssertion(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.LookbehindAssertion.Config;
-	return {
-		$with: {
-			content: (value: Admit<NonNullable<T.LookbehindAssertion.Config>['content']>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, content: value })),
-			pattern: (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildLookbehindAssertion({ ...config, pattern: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<NonNullable<T.LookbehindAssertion.Config>['content']>) =>
+				rebuilt(node, handle, () => buildLookbehindAssertion$patch(node, { ...config, content: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildLookbehindAssertion$patch(node, { ...config, pattern: value }))
+			);
+	}
+	throw new Error(`lookbehind_assertion has no $with.${setter}`);
 }
 
 export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
@@ -250,26 +336,24 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 	if (!_leafRe_buildPatternCharacter.test(text))
 		throw new Error(`pattern_character: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafPatternCharacter(text, handle),
-		text
-	) as unknown as T.PatternCharacter.Bound;
+	return builtArenaOf(handle).leaf(leafPatternCharacter, text) as unknown as T.PatternCharacter.Bound;
 }
 
-function leafPatternCharacter(text: string, handle: EngineHandle | undefined): object {
+function leafPatternCharacter(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.PatternCharacter as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -299,32 +383,69 @@ export function buildCharacterClass(config: Partial<T.CharacterClass.Config> = {
 	const record = arena.record(TSKindId.CharacterClass as const);
 	if (_negation) storeFlag(record.data, record.base + 2, 1);
 	if (_leading) storeFlag(record.data, record.base + 2, 2);
-	storeList(arena, record, 3, _class_atoms, 5);
+	storeList(arena, record, 3, 3, _class_atoms);
 	if (_trailing) storeFlag(record.data, record.base + 2, 4);
-	const node = arena.view(record, { 3: _class_atoms });
+	const node = arena.view(record);
 	return node as unknown as T.CharacterClass.Bound;
 }
 
-function rowCharacterClass(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildCharacterClass$patch(
+	source: object,
+	config: Partial<T.CharacterClass.Config> = {}
+): T.CharacterClass.Bound {
+	currentHandle()?.admit(TSKindId.CharacterClass, [config]);
+	const _negation = strictBooleanStorage(config.negation);
+	const _leading = strictBooleanStorage(config.leading);
+	const _class_atoms = listStorage<NonNullable<T.CharacterClass['_class_atoms']>>(
+		config.classAtoms ?? [],
+		kindIdStorage
+	);
+	const _trailing = strictBooleanStorage(config.trailing);
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'character_class', {
+			negation: _negation,
+			leading: _leading,
+			classAtoms: _class_atoms,
+			trailing: _trailing
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CharacterClass as const, { _negation, _leading, _class_atoms, _trailing });
+	const record = arena.copy(source, TSKindId.CharacterClass as const);
+	patchFlag(record, 2, 1, _negation);
+	patchFlag(record, 2, 2, _leading);
+	patchList(arena, record, 3, 3, _class_atoms);
+	patchFlag(record, 2, 4, _trailing);
+	const node = arena.view(record);
+	return node as unknown as T.CharacterClass.Bound;
+}
+function withCharacterClass(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.CharacterClass.Config;
-	return {
-		$with: {
-			negation: (value?: Admit<NonNullable<T.CharacterClass.Config>['negation']>) =>
-				rebuilt(node, handle, () => buildCharacterClass({ ...config, negation: value })),
-			leading: (value?: Admit<NonNullable<T.CharacterClass.Config>['leading']>) =>
-				rebuilt(node, handle, () => buildCharacterClass({ ...config, leading: value })),
-			classAtoms: (...values: Admit<NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]>) =>
-				rebuilt(node, handle, () => buildCharacterClass({ ...config, classAtoms: restItems('classAtoms', values) })),
-			trailing: (value?: Admit<NonNullable<T.CharacterClass.Config>['trailing']>) =>
-				rebuilt(node, handle, () => buildCharacterClass({ ...config, trailing: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items),
-			inner: (...items: unknown[]) => triviaInner(node, handle, items)
-		}
-	};
+	switch (setter) {
+		case 'negation':
+			return applySetter(args, (value?: Admit<NonNullable<T.CharacterClass.Config>['negation']>) =>
+				rebuilt(node, handle, () => buildCharacterClass$patch(node, { ...config, negation: value }))
+			);
+		case 'leading':
+			return applySetter(args, (value?: Admit<NonNullable<T.CharacterClass.Config>['leading']>) =>
+				rebuilt(node, handle, () => buildCharacterClass$patch(node, { ...config, leading: value }))
+			);
+		case 'classAtoms':
+			return applySetter(
+				args,
+				(...values: Admit<NonNullable<NonNullable<T.CharacterClass.Config>['classAtoms']>[number][]>) =>
+					rebuilt(node, handle, () =>
+						buildCharacterClass$patch(node, { ...config, classAtoms: restItems('classAtoms', values) })
+					)
+			);
+		case 'trailing':
+			return applySetter(args, (value?: Admit<NonNullable<T.CharacterClass.Config>['trailing']>) =>
+				rebuilt(node, handle, () => buildCharacterClass$patch(node, { ...config, trailing: value }))
+			);
+	}
+	throw new Error(`character_class has no $with.${setter}`);
 }
 
 export function buildPosixCharacterClass<V extends Admit<T.PosixClassName>>(
@@ -337,21 +458,31 @@ export function buildPosixCharacterClass(value: Admit<T.PosixClassName>): T.Posi
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.PosixCharacterClass as const, { _posix_class_name });
 	const record = arena.record(TSKindId.PosixCharacterClass as const);
-	storeCell(arena, record, 2, _posix_class_name);
-	const node = arena.view(record, { 2: _posix_class_name });
+	storeCell(arena, record, 2, 2, _posix_class_name);
+	const node = arena.view(record);
 	return node as unknown as T.PosixCharacterClass.Bound;
 }
 
-function rowPosixCharacterClass(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			posixClassName: (value: Admit<T.PosixClassName>) => rebuilt(node, handle, () => buildPosixCharacterClass(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildPosixCharacterClass$patch(source: object, value: Admit<T.PosixClassName>): T.PosixCharacterClass.Bound {
+	const _posix_class_name = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'posix_character_class', { posixClassName: _posix_class_name });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.PosixCharacterClass as const, { _posix_class_name });
+	const record = arena.copy(source, TSKindId.PosixCharacterClass as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'posixClassName', _posix_class_name));
+	const node = arena.view(record);
+	return node as unknown as T.PosixCharacterClass.Bound;
+}
+function withPosixCharacterClass(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'posixClassName':
+			return applySetter(args, (value: Admit<T.PosixClassName>) =>
+				rebuilt(node, handle, () => buildPosixCharacterClass$patch(node, value))
+			);
+	}
+	throw new Error(`posix_character_class has no $with.${setter}`);
 }
 
 export function buildPosixClassName(text: string): T.PosixClassName.Bound {
@@ -360,23 +491,24 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 	if (!_leafRe_buildPosixClassName.test(text))
 		throw new Error(`posix_class_name: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafPosixClassName(text, handle), text) as unknown as T.PosixClassName.Bound;
+	return builtArenaOf(handle).leaf(leafPosixClassName, text) as unknown as T.PosixClassName.Bound;
 }
 
-function leafPosixClassName(text: string, handle: EngineHandle | undefined): object {
+function leafPosixClassName(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.PosixClassName as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -393,27 +525,41 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.ClassRange as const, { _start, _end });
 	const record = arena.record(TSKindId.ClassRange as const);
-	storeCell(arena, record, 2, _start);
-	storeCell(arena, record, 33, _end);
-	const node = arena.view(record, { 2: _start, 33: _end });
+	storeCell(arena, record, 2, 2, _start);
+	storeCell(arena, record, 3, 21, _end);
+	const node = arena.view(record);
 	return node as unknown as T.ClassRange.Bound;
 }
 
-function rowClassRange(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildClassRange$patch(source: object, config: T.ClassRange.Config): T.ClassRange.Bound {
+	currentHandle()?.admit(TSKindId.ClassRange, [config]);
+	const _start = kindIdStorage<NonNullable<T.ClassRange['_start']>>(config.start);
+	const _end = kindIdStorage<NonNullable<T.ClassRange['_end']>>(config.end);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'class_range', { start: _start, end: _end });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ClassRange as const, { _start, _end });
+	const record = arena.copy(source, TSKindId.ClassRange as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'start', _start));
+	patchCell(arena, record, 3, 21, carriedSlot(source, 'end', _end));
+	const node = arena.view(record);
+	return node as unknown as T.ClassRange.Bound;
+}
+function withClassRange(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.ClassRange.Config;
-	return {
-		$with: {
-			start: (value: Admit<NonNullable<T.ClassRange.Config>['start']>) =>
-				rebuilt(node, handle, () => buildClassRange({ ...config, start: value })),
-			end: (value: Admit<NonNullable<T.ClassRange.Config>['end']>) =>
-				rebuilt(node, handle, () => buildClassRange({ ...config, end: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'start':
+			return applySetter(args, (value: Admit<NonNullable<T.ClassRange.Config>['start']>) =>
+				rebuilt(node, handle, () => buildClassRange$patch(node, { ...config, start: value }))
+			);
+		case 'end':
+			return applySetter(args, (value: Admit<NonNullable<T.ClassRange.Config>['end']>) =>
+				rebuilt(node, handle, () => buildClassRange$patch(node, { ...config, end: value }))
+			);
+	}
+	throw new Error(`class_range has no $with.${setter}`);
 }
 
 export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
@@ -422,23 +568,24 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 	if (!_leafRe_buildClassCharacter.test(text))
 		throw new Error(`class_character: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafClassCharacter(text, handle), text) as unknown as T.ClassCharacter.Bound;
+	return builtArenaOf(handle).leaf(leafClassCharacter, text) as unknown as T.ClassCharacter.Bound;
 }
 
-function leafClassCharacter(text: string, handle: EngineHandle | undefined): object {
+function leafClassCharacter(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ClassCharacter as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -470,21 +617,31 @@ function _buildAnonymousCapturingGroup(value: Admit<T.Pattern>): T.AnonymousCapt
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.AnonymousCapturingGroup as const, { _pattern });
 	const record = arena.record(TSKindId.AnonymousCapturingGroup as const);
-	storeCell(arena, record, 2, _pattern);
-	const node = arena.view(record, { 2: _pattern });
+	storeCell(arena, record, 2, 2, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.AnonymousCapturingGroup.Bound;
 }
 
-function rowAnonymousCapturingGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			pattern: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildAnonymousCapturingGroup(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function _buildAnonymousCapturingGroup$patch(source: object, value: Admit<T.Pattern>): T.AnonymousCapturingGroup.Bound {
+	const _pattern = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'anonymous_capturing_group', { pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.AnonymousCapturingGroup as const, { _pattern });
+	const record = arena.copy(source, TSKindId.AnonymousCapturingGroup as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.AnonymousCapturingGroup.Bound;
+}
+function withAnonymousCapturingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'pattern':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => _buildAnonymousCapturingGroup$patch(node, value))
+			);
+	}
+	throw new Error(`anonymous_capturing_group has no $with.${setter}`);
 }
 
 export function buildNamedCapturingGroup<
@@ -504,30 +661,52 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _content, _group_name, _pattern });
 	const record = arena.record(TSKindId.NamedCapturingGroup as const);
-	storeCell(arena, record, 2, _content);
-	storeCell(arena, record, 7, _group_name);
-	storeCell(arena, record, 12, _pattern);
-	const node = arena.view(record, { 2: _content, 7: _group_name, 12: _pattern });
+	storeCell(arena, record, 2, 2, _content);
+	storeCell(arena, record, 3, 3, _group_name);
+	storeCell(arena, record, 4, 6, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.NamedCapturingGroup.Bound;
 }
 
-function rowNamedCapturingGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildNamedCapturingGroup$patch(
+	source: object,
+	config: T.NamedCapturingGroup.Config
+): T.NamedCapturingGroup.Bound {
+	currentHandle()?.admit(TSKindId.NamedCapturingGroup, [config]);
+	const _content = kindIdStorage<NonNullable<T.NamedCapturingGroup['_content']>>(config.content);
+	const _group_name = config.groupName;
+	const _pattern = config.pattern;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'named_capturing_group', { content: _content, groupName: _group_name, pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _content, _group_name, _pattern });
+	const record = arena.copy(source, TSKindId.NamedCapturingGroup as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	patchCell(arena, record, 3, 3, carriedSlot(source, 'groupName', _group_name));
+	patchCell(arena, record, 4, 6, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.NamedCapturingGroup.Bound;
+}
+function withNamedCapturingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.NamedCapturingGroup.Config;
-	return {
-		$with: {
-			content: (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['content']>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, content: value })),
-			groupName: (value: Admit<T.GroupName>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, groupName: value })),
-			pattern: (value: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildNamedCapturingGroup({ ...config, pattern: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<NonNullable<T.NamedCapturingGroup.Config>['content']>) =>
+				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, content: value }))
+			);
+		case 'groupName':
+			return applySetter(args, (value: Admit<T.GroupName>) =>
+				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, groupName: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildNamedCapturingGroup$patch(node, { ...config, pattern: value }))
+			);
+	}
+	throw new Error(`named_capturing_group has no $with.${setter}`);
 }
 
 export function buildNonCapturingGroup<V extends Admit<T.Pattern>>(
@@ -558,21 +737,31 @@ function _buildNonCapturingGroup(value: Admit<T.Pattern>): T.NonCapturingGroup.B
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NonCapturingGroup as const, { _pattern });
 	const record = arena.record(TSKindId.NonCapturingGroup as const);
-	storeCell(arena, record, 2, _pattern);
-	const node = arena.view(record, { 2: _pattern });
+	storeCell(arena, record, 2, 2, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.NonCapturingGroup.Bound;
 }
 
-function rowNonCapturingGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			pattern: (value: Admit<T.Pattern>) => rebuilt(node, handle, () => _buildNonCapturingGroup(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function _buildNonCapturingGroup$patch(source: object, value: Admit<T.Pattern>): T.NonCapturingGroup.Bound {
+	const _pattern = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'non_capturing_group', { pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NonCapturingGroup as const, { _pattern });
+	const record = arena.copy(source, TSKindId.NonCapturingGroup as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.NonCapturingGroup.Bound;
+}
+function withNonCapturingGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'pattern':
+			return applySetter(args, (value: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => _buildNonCapturingGroup$patch(node, value))
+			);
+	}
+	throw new Error(`non_capturing_group has no $with.${setter}`);
 }
 
 export function buildFlags(text: string): T.Flags.Bound {
@@ -580,23 +769,24 @@ export function buildFlags(text: string): T.Flags.Bound {
 	if (text.length === 0) throw new Error(`flags: text must be non-empty`);
 	if (!_leafRe_buildFlags.test(text)) throw new Error(`flags: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafFlags(text, handle), text) as unknown as T.Flags.Bound;
+	return builtArenaOf(handle).leaf(leafFlags, text) as unknown as T.Flags.Bound;
 }
 
-function leafFlags(text: string, handle: EngineHandle | undefined): object {
+function leafFlags(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.Flags as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -613,19 +803,29 @@ export function buildZeroOrMore(config: Partial<T.ZeroOrMore.Config> = {}): T.Ze
 	return node as unknown as T.ZeroOrMore.Bound;
 }
 
-function rowZeroOrMore(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildZeroOrMore$patch(source: object, config: Partial<T.ZeroOrMore.Config> = {}): T.ZeroOrMore.Bound {
+	currentHandle()?.admit(TSKindId.ZeroOrMore, [config]);
+	const _lazy = strictBooleanStorage(config.lazy);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'zero_or_more', { lazy: _lazy });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.ZeroOrMore as const, { _lazy });
+	const record = arena.copy(source, TSKindId.ZeroOrMore as const);
+	patchFlag(record, 2, 1, _lazy);
+	const node = arena.view(record);
+	return node as unknown as T.ZeroOrMore.Bound;
+}
+function withZeroOrMore(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.ZeroOrMore.Config;
-	return {
-		$with: {
-			lazy: (value?: Admit<NonNullable<T.ZeroOrMore.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildZeroOrMore({ ...config, lazy: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'lazy':
+			return applySetter(args, (value?: Admit<NonNullable<T.ZeroOrMore.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildZeroOrMore$patch(node, { ...config, lazy: value }))
+			);
+	}
+	throw new Error(`zero_or_more has no $with.${setter}`);
 }
 
 export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
@@ -641,19 +841,29 @@ export function buildOneOrMore(config: Partial<T.OneOrMore.Config> = {}): T.OneO
 	return node as unknown as T.OneOrMore.Bound;
 }
 
-function rowOneOrMore(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildOneOrMore$patch(source: object, config: Partial<T.OneOrMore.Config> = {}): T.OneOrMore.Bound {
+	currentHandle()?.admit(TSKindId.OneOrMore, [config]);
+	const _lazy = strictBooleanStorage(config.lazy);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'one_or_more', { lazy: _lazy });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.OneOrMore as const, { _lazy });
+	const record = arena.copy(source, TSKindId.OneOrMore as const);
+	patchFlag(record, 2, 1, _lazy);
+	const node = arena.view(record);
+	return node as unknown as T.OneOrMore.Bound;
+}
+function withOneOrMore(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.OneOrMore.Config;
-	return {
-		$with: {
-			lazy: (value?: Admit<NonNullable<T.OneOrMore.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildOneOrMore({ ...config, lazy: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'lazy':
+			return applySetter(args, (value?: Admit<NonNullable<T.OneOrMore.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildOneOrMore$patch(node, { ...config, lazy: value }))
+			);
+	}
+	throw new Error(`one_or_more has no $with.${setter}`);
 }
 
 export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
@@ -669,19 +879,29 @@ export function buildOptional(config: Partial<T.Optional.Config> = {}): T.Option
 	return node as unknown as T.Optional.Bound;
 }
 
-function rowOptional(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildOptional$patch(source: object, config: Partial<T.Optional.Config> = {}): T.Optional.Bound {
+	currentHandle()?.admit(TSKindId.Optional, [config]);
+	const _lazy = strictBooleanStorage(config.lazy);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'optional', { lazy: _lazy });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.Optional as const, { _lazy });
+	const record = arena.copy(source, TSKindId.Optional as const);
+	patchFlag(record, 2, 1, _lazy);
+	const node = arena.view(record);
+	return node as unknown as T.Optional.Bound;
+}
+function withOptional(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.Optional.Config;
-	return {
-		$with: {
-			lazy: (value?: Admit<NonNullable<T.Optional.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildOptional({ ...config, lazy: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'lazy':
+			return applySetter(args, (value?: Admit<NonNullable<T.Optional.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildOptional$patch(node, { ...config, lazy: value }))
+			);
+	}
+	throw new Error(`optional has no $with.${setter}`);
 }
 
 export function buildCountQuantifier<ContentSlot extends T.CountQuantifier.Config['content']>(
@@ -696,27 +916,41 @@ export function buildCountQuantifier(config: T.CountQuantifier.Config): T.CountQ
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CountQuantifier as const, { _content, _lazy });
 	const record = arena.record(TSKindId.CountQuantifier as const);
-	storeCell(arena, record, 3, _content);
+	storeCell(arena, record, 3, 3, _content);
 	if (_lazy) storeFlag(record.data, record.base + 2, 1);
-	const node = arena.view(record, { 3: _content });
+	const node = arena.view(record);
 	return node as unknown as T.CountQuantifier.Bound;
 }
 
-function rowCountQuantifier(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildCountQuantifier$patch(source: object, config: T.CountQuantifier.Config): T.CountQuantifier.Bound {
+	currentHandle()?.admit(TSKindId.CountQuantifier, [config]);
+	const _content = config.content;
+	const _lazy = strictBooleanStorage(config.lazy);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'count_quantifier', { content: _content, lazy: _lazy });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CountQuantifier as const, { _content, _lazy });
+	const record = arena.copy(source, TSKindId.CountQuantifier as const);
+	patchCell(arena, record, 3, 3, carriedSlot(source, 'content', _content));
+	patchFlag(record, 2, 1, _lazy);
+	const node = arena.view(record);
+	return node as unknown as T.CountQuantifier.Bound;
+}
+function withCountQuantifier(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.CountQuantifier.Config;
-	return {
-		$with: {
-			content: (value: Admit<T.CountQuantifierArm | T.DecimalDigits>) =>
-				rebuilt(node, handle, () => buildCountQuantifier({ ...config, content: value })),
-			lazy: (value?: Admit<NonNullable<T.CountQuantifier.Config>['lazy']>) =>
-				rebuilt(node, handle, () => buildCountQuantifier({ ...config, lazy: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<T.CountQuantifierArm | T.DecimalDigits>) =>
+				rebuilt(node, handle, () => buildCountQuantifier$patch(node, { ...config, content: value }))
+			);
+		case 'lazy':
+			return applySetter(args, (value?: Admit<NonNullable<T.CountQuantifier.Config>['lazy']>) =>
+				rebuilt(node, handle, () => buildCountQuantifier$patch(node, { ...config, lazy: value }))
+			);
+	}
+	throw new Error(`count_quantifier has no $with.${setter}`);
 }
 
 export function buildBackreferenceEscape<V extends Admit<T.GroupName>>(
@@ -729,21 +963,31 @@ export function buildBackreferenceEscape(value: Admit<T.GroupName>): T.Backrefer
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.BackreferenceEscape as const, { _group_name });
 	const record = arena.record(TSKindId.BackreferenceEscape as const);
-	storeCell(arena, record, 2, _group_name);
-	const node = arena.view(record, { 2: _group_name });
+	storeCell(arena, record, 2, 2, _group_name);
+	const node = arena.view(record);
 	return node as unknown as T.BackreferenceEscape.Bound;
 }
 
-function rowBackreferenceEscape(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			groupName: (value: Admit<T.GroupName>) => rebuilt(node, handle, () => buildBackreferenceEscape(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildBackreferenceEscape$patch(source: object, value: Admit<T.GroupName>): T.BackreferenceEscape.Bound {
+	const _group_name = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'backreference_escape', { groupName: _group_name });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.BackreferenceEscape as const, { _group_name });
+	const record = arena.copy(source, TSKindId.BackreferenceEscape as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'groupName', _group_name));
+	const node = arena.view(record);
+	return node as unknown as T.BackreferenceEscape.Bound;
+}
+function withBackreferenceEscape(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'groupName':
+			return applySetter(args, (value: Admit<T.GroupName>) =>
+				rebuilt(node, handle, () => buildBackreferenceEscape$patch(node, value))
+			);
+	}
+	throw new Error(`backreference_escape has no $with.${setter}`);
 }
 
 export function buildNamedGroupBackreference<V extends Admit<T.GroupName>>(
@@ -756,21 +1000,34 @@ export function buildNamedGroupBackreference(value: Admit<T.GroupName>): T.Named
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.NamedGroupBackreference as const, { _group_name });
 	const record = arena.record(TSKindId.NamedGroupBackreference as const);
-	storeCell(arena, record, 2, _group_name);
-	const node = arena.view(record, { 2: _group_name });
+	storeCell(arena, record, 2, 2, _group_name);
+	const node = arena.view(record);
 	return node as unknown as T.NamedGroupBackreference.Bound;
 }
 
-function rowNamedGroupBackreference(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			groupName: (value: Admit<T.GroupName>) => rebuilt(node, handle, () => buildNamedGroupBackreference(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildNamedGroupBackreference$patch(
+	source: object,
+	value: Admit<T.GroupName>
+): T.NamedGroupBackreference.Bound {
+	const _group_name = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'named_group_backreference', { groupName: _group_name });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.NamedGroupBackreference as const, { _group_name });
+	const record = arena.copy(source, TSKindId.NamedGroupBackreference as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'groupName', _group_name));
+	const node = arena.view(record);
+	return node as unknown as T.NamedGroupBackreference.Bound;
+}
+function withNamedGroupBackreference(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'groupName':
+			return applySetter(args, (value: Admit<T.GroupName>) =>
+				rebuilt(node, handle, () => buildNamedGroupBackreference$patch(node, value))
+			);
+	}
+	throw new Error(`named_group_backreference has no $with.${setter}`);
 }
 
 export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
@@ -779,23 +1036,24 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 	if (!_leafRe_buildDecimalEscape.test(text))
 		throw new Error(`decimal_escape: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafDecimalEscape(text, handle), text) as unknown as T.DecimalEscape.Bound;
+	return builtArenaOf(handle).leaf(leafDecimalEscape, text) as unknown as T.DecimalEscape.Bound;
 }
 
-function leafDecimalEscape(text: string, handle: EngineHandle | undefined): object {
+function leafDecimalEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.DecimalEscape as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -811,22 +1069,36 @@ export function buildCharacterClassEscape(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CharacterClassEscape as const, { _content });
 	const record = arena.record(TSKindId.CharacterClassEscape as const);
-	storeCell(arena, record, 2, _content);
-	const node = arena.view(record, { 2: _content });
+	storeCell(arena, record, 2, 2, _content);
+	const node = arena.view(record);
 	return node as unknown as T.CharacterClassEscape.Bound;
 }
 
-function rowCharacterClassEscape(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>) =>
-				rebuilt(node, handle, () => buildCharacterClassEscape(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildCharacterClassEscape$patch(
+	source: object,
+	value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>
+): T.CharacterClassEscape.Bound {
+	const _content = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'character_class_escape', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CharacterClassEscape as const, { _content });
+	const record = arena.copy(source, TSKindId.CharacterClassEscape as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	const node = arena.view(record);
+	return node as unknown as T.CharacterClassEscape.Bound;
+}
+function withCharacterClassEscape(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(
+				args,
+				(value: Admit<T.CharacterClassEscapeText1 | T.CharacterClassEscapeArm | T.UnicodeCharacterEscape>) =>
+					rebuilt(node, handle, () => buildCharacterClassEscape$patch(node, value))
+			);
+	}
+	throw new Error(`character_class_escape has no $with.${setter}`);
 }
 
 export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEscape.Bound {
@@ -836,26 +1108,24 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 	if (!_leafRe_buildUnicodeCharacterEscape.test(text))
 		throw new Error(`unicode_character_escape: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafUnicodeCharacterEscape(text, handle),
-		text
-	) as unknown as T.UnicodeCharacterEscape.Bound;
+	return builtArenaOf(handle).leaf(leafUnicodeCharacterEscape, text) as unknown as T.UnicodeCharacterEscape.Bound;
 }
 
-function leafUnicodeCharacterEscape(text: string, handle: EngineHandle | undefined): object {
+function leafUnicodeCharacterEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnicodeCharacterEscape as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -890,29 +1160,61 @@ export function buildUnicodePropertyValueExpression(
 		_unicode_property_value
 	});
 	const record = arena.record(TSKindId.UnicodePropertyValueExpression as const);
-	storeCell(arena, record, 2, _unicode_property_value_expression_group);
-	storeCell(arena, record, 11, _unicode_property_value);
-	const node = arena.view(record, { 2: _unicode_property_value_expression_group, 11: _unicode_property_value });
+	storeCell(arena, record, 2, 2, _unicode_property_value_expression_group);
+	storeCell(arena, record, 3, 7, _unicode_property_value);
+	const node = arena.view(record);
 	return node as unknown as T.UnicodePropertyValueExpression.Bound;
 }
 
-function rowUnicodePropertyValueExpression(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildUnicodePropertyValueExpression$patch(
+	source: object,
+	config: T.UnicodePropertyValueExpression.Config
+): T.UnicodePropertyValueExpression.Bound {
+	currentHandle()?.admit(TSKindId.UnicodePropertyValueExpression, [config]);
+	const _unicode_property_value_expression_group = config.unicodePropertyValueExpressionGroup;
+	const _unicode_property_value = config.unicodePropertyValue;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'unicode_property_value_expression', {
+			unicodePropertyValueExpressionGroup: _unicode_property_value_expression_group,
+			unicodePropertyValue: _unicode_property_value
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UnicodePropertyValueExpression as const, {
+		_unicode_property_value_expression_group,
+		_unicode_property_value
+	});
+	const record = arena.copy(source, TSKindId.UnicodePropertyValueExpression as const);
+	patchCell(
+		arena,
+		record,
+		2,
+		2,
+		carriedSlot(source, 'unicodePropertyValueExpressionGroup', _unicode_property_value_expression_group)
+	);
+	patchCell(arena, record, 3, 7, carriedSlot(source, 'unicodePropertyValue', _unicode_property_value));
+	const node = arena.view(record);
+	return node as unknown as T.UnicodePropertyValueExpression.Bound;
+}
+function withUnicodePropertyValueExpression(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.UnicodePropertyValueExpression.Config;
-	return {
-		$with: {
-			unicodePropertyValueExpressionGroup: (value?: Admit<T.UnicodePropertyValueExpressionGroup>) =>
+	switch (setter) {
+		case 'unicodePropertyValueExpressionGroup':
+			return applySetter(args, (value?: Admit<T.UnicodePropertyValueExpressionGroup>) =>
 				rebuilt(node, handle, () =>
-					buildUnicodePropertyValueExpression({ ...config, unicodePropertyValueExpressionGroup: value })
-				),
-			unicodePropertyValue: (value: Admit<T.UnicodePropertyValue>) =>
-				rebuilt(node, handle, () => buildUnicodePropertyValueExpression({ ...config, unicodePropertyValue: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+					buildUnicodePropertyValueExpression$patch(node, { ...config, unicodePropertyValueExpressionGroup: value })
+				)
+			);
+		case 'unicodePropertyValue':
+			return applySetter(args, (value: Admit<T.UnicodePropertyValue>) =>
+				rebuilt(node, handle, () =>
+					buildUnicodePropertyValueExpression$patch(node, { ...config, unicodePropertyValue: value })
+				)
+			);
+	}
+	throw new Error(`unicode_property_value_expression has no $with.${setter}`);
 }
 
 export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.Bound {
@@ -922,26 +1224,24 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 	if (!_leafRe_buildUnicodePropertyValue.test(text))
 		throw new Error(`unicode_property_value: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafUnicodePropertyValue(text, handle),
-		text
-	) as unknown as T.UnicodePropertyValue.Bound;
+	return builtArenaOf(handle).leaf(leafUnicodePropertyValue, text) as unknown as T.UnicodePropertyValue.Bound;
 }
 
-function leafUnicodePropertyValue(text: string, handle: EngineHandle | undefined): object {
+function leafUnicodePropertyValue(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnicodePropertyValue as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -951,23 +1251,24 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 	if (!_leafRe_buildControlEscape.test(text))
 		throw new Error(`control_escape: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafControlEscape(text, handle), text) as unknown as T.ControlEscape.Bound;
+	return builtArenaOf(handle).leaf(leafControlEscape, text) as unknown as T.ControlEscape.Bound;
 }
 
-function leafControlEscape(text: string, handle: EngineHandle | undefined): object {
+function leafControlEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ControlEscape as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -977,26 +1278,24 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 	if (!_leafRe_buildControlLetterEscape.test(text))
 		throw new Error(`control_letter_escape: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafControlLetterEscape(text, handle),
-		text
-	) as unknown as T.ControlLetterEscape.Bound;
+	return builtArenaOf(handle).leaf(leafControlLetterEscape, text) as unknown as T.ControlLetterEscape.Bound;
 }
 
-function leafControlLetterEscape(text: string, handle: EngineHandle | undefined): object {
+function leafControlLetterEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ControlLetterEscape as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -1019,21 +1318,41 @@ export function buildIdentityEscape(input: string, affix: boolean = true): T.Ide
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.IdentityEscape as const, { _content });
 	const record = arena.record(TSKindId.IdentityEscape as const);
-	storeCell(arena, record, 2, _content);
-	const node = arena.view(record, { 2: _content });
+	storeCell(arena, record, 2, 2, _content);
+	const node = arena.view(record);
 	return node as unknown as T.IdentityEscape.Bound;
 }
 
-function rowIdentityEscape(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			content: (value: Admit<string>) => rebuilt(node, handle, () => buildIdentityEscape(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildIdentityEscape$patch(source: object, input: string, affix: boolean = true): T.IdentityEscape.Bound {
+	let value = input;
+	if (!affix) {
+		if (typeof input !== 'string')
+			throw new Error(`identity_escape.content: text must be a string: ${describeValue(input)}`);
+		value = unaffixed(input, '\\', '', 'identity_escape');
+	}
+	const _content = value;
+	if (typeof _content !== 'string')
+		throw new Error(`identity_escape.content: text must be a string: ${describeValue(_content)}`);
+	if (!_slotRe_buildIdentityEscape_content.test(_content))
+		throw new Error(`identity_escape.content: text does not match pattern: ${describeValue(_content)}`);
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'identity_escape', { content: _content });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.IdentityEscape as const, { _content });
+	const record = arena.copy(source, TSKindId.IdentityEscape as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	const node = arena.view(record);
+	return node as unknown as T.IdentityEscape.Bound;
+}
+function withIdentityEscape(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<string>) =>
+				rebuilt(node, handle, () => buildIdentityEscape$patch(node, value))
+			);
+	}
+	throw new Error(`identity_escape has no $with.${setter}`);
 }
 
 export function buildGroupName(text: string): T.GroupName.Bound {
@@ -1042,23 +1361,24 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 	if (!_leafRe_buildGroupName.test(text))
 		throw new Error(`group_name: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafGroupName(text, handle), text) as unknown as T.GroupName.Bound;
+	return builtArenaOf(handle).leaf(leafGroupName, text) as unknown as T.GroupName.Bound;
 }
 
-function leafGroupName(text: string, handle: EngineHandle | undefined): object {
+function leafGroupName(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.GroupName as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -1072,23 +1392,24 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 	if (!_leafRe_buildDecimalDigits.test(text))
 		throw new Error(`decimal_digits: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(leafDecimalDigits(text, handle), text) as unknown as T.DecimalDigits.Bound;
+	return builtArenaOf(handle).leaf(leafDecimalDigits, text) as unknown as T.DecimalDigits.Bound;
 }
 
-function leafDecimalDigits(text: string, handle: EngineHandle | undefined): object {
+function leafDecimalDigits(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.DecimalDigits as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -1105,27 +1426,41 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.TermGroup as const, { _content, _quantifier });
 	const record = arena.record(TSKindId.TermGroup as const);
-	storeCell(arena, record, 2, _content);
-	storeCell(arena, record, 33, _quantifier);
-	const node = arena.view(record, { 2: _content, 33: _quantifier });
+	storeCell(arena, record, 2, 2, _content);
+	storeCell(arena, record, 3, 21, _quantifier);
+	const node = arena.view(record);
 	return node as unknown as T.TermGroup.Bound;
 }
 
-function rowTermGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildTermGroup$patch(source: object, config: T.TermGroup.Config): T.TermGroup.Bound {
+	currentHandle()?.admit(TSKindId.TermGroup, [config]);
+	const _content = kindIdStorage<NonNullable<T.TermGroup['_content']>>(config.content);
+	const _quantifier = config.quantifier;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'term_group', { content: _content, quantifier: _quantifier });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.TermGroup as const, { _content, _quantifier });
+	const record = arena.copy(source, TSKindId.TermGroup as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'content', _content));
+	patchCell(arena, record, 3, 21, carriedSlot(source, 'quantifier', _quantifier));
+	const node = arena.view(record);
+	return node as unknown as T.TermGroup.Bound;
+}
+function withTermGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.TermGroup.Config;
-	return {
-		$with: {
-			content: (value: Admit<NonNullable<T.TermGroup.Config>['content']>) =>
-				rebuilt(node, handle, () => buildTermGroup({ ...config, content: value })),
-			quantifier: (value?: Admit<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>) =>
-				rebuilt(node, handle, () => buildTermGroup({ ...config, quantifier: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'content':
+			return applySetter(args, (value: Admit<NonNullable<T.TermGroup.Config>['content']>) =>
+				rebuilt(node, handle, () => buildTermGroup$patch(node, { ...config, content: value }))
+			);
+		case 'quantifier':
+			return applySetter(args, (value?: Admit<T.ZeroOrMore | T.OneOrMore | T.Optional | T.CountQuantifier>) =>
+				rebuilt(node, handle, () => buildTermGroup$patch(node, { ...config, quantifier: value }))
+			);
+	}
+	throw new Error(`term_group has no $with.${setter}`);
 }
 
 export function buildCountQuantifierGroup<V extends Admit<T.DecimalDigits>>(
@@ -1138,21 +1473,31 @@ export function buildCountQuantifierGroup(value?: Admit<T.DecimalDigits>): T.Cou
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CountQuantifierGroup as const, { _decimal_digits });
 	const record = arena.record(TSKindId.CountQuantifierGroup as const);
-	storeCell(arena, record, 2, _decimal_digits);
-	const node = arena.view(record, { 2: _decimal_digits });
+	storeCell(arena, record, 2, 2, _decimal_digits);
+	const node = arena.view(record);
 	return node as unknown as T.CountQuantifierGroup.Bound;
 }
 
-function rowCountQuantifierGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			decimalDigits: (value?: Admit<T.DecimalDigits>) => rebuilt(node, handle, () => buildCountQuantifierGroup(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildCountQuantifierGroup$patch(source: object, value?: Admit<T.DecimalDigits>): T.CountQuantifierGroup.Bound {
+	const _decimal_digits = value;
+	const handle = currentHandle();
+	if (handle !== undefined) admitChildren(handle, 'count_quantifier_group', { decimalDigits: _decimal_digits });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CountQuantifierGroup as const, { _decimal_digits });
+	const record = arena.copy(source, TSKindId.CountQuantifierGroup as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'decimalDigits', _decimal_digits));
+	const node = arena.view(record);
+	return node as unknown as T.CountQuantifierGroup.Bound;
+}
+function withCountQuantifierGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'decimalDigits':
+			return applySetter(args, (value?: Admit<T.DecimalDigits>) =>
+				rebuilt(node, handle, () => buildCountQuantifierGroup$patch(node, value))
+			);
+	}
+	throw new Error(`count_quantifier_group has no $with.${setter}`);
 }
 
 export function buildCountQuantifierArm<
@@ -1177,27 +1522,48 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.CountQuantifierArm as const, { _decimal_digits, _count_quantifier_group });
 	const record = arena.record(TSKindId.CountQuantifierArm as const);
-	storeCell(arena, record, 2, _decimal_digits);
-	storeCell(arena, record, 7, _count_quantifier_group);
-	const node = arena.view(record, { 2: _decimal_digits, 7: _count_quantifier_group });
+	storeCell(arena, record, 2, 2, _decimal_digits);
+	storeCell(arena, record, 3, 5, _count_quantifier_group);
+	const node = arena.view(record);
 	return node as unknown as T.CountQuantifierArm.Bound;
 }
 
-function rowCountQuantifierArm(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildCountQuantifierArm$patch(
+	source: object,
+	config: T.CountQuantifierArm.Config
+): T.CountQuantifierArm.Bound {
+	currentHandle()?.admit(TSKindId.CountQuantifierArm, [config]);
+	const _decimal_digits = config.decimalDigits;
+	const _count_quantifier_group = config.countQuantifierGroup;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'count_quantifier_arm', {
+			decimalDigits: _decimal_digits,
+			countQuantifierGroup: _count_quantifier_group
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CountQuantifierArm as const, { _decimal_digits, _count_quantifier_group });
+	const record = arena.copy(source, TSKindId.CountQuantifierArm as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'decimalDigits', _decimal_digits));
+	patchCell(arena, record, 3, 5, carriedSlot(source, 'countQuantifierGroup', _count_quantifier_group));
+	const node = arena.view(record);
+	return node as unknown as T.CountQuantifierArm.Bound;
+}
+function withCountQuantifierArm(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.CountQuantifierArm.Config;
-	return {
-		$with: {
-			decimalDigits: (value: Admit<T.DecimalDigits>) =>
-				rebuilt(node, handle, () => buildCountQuantifierArm({ ...config, decimalDigits: value })),
-			countQuantifierGroup: (value?: Admit<T.CountQuantifierGroup>) =>
-				rebuilt(node, handle, () => buildCountQuantifierArm({ ...config, countQuantifierGroup: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'decimalDigits':
+			return applySetter(args, (value: Admit<T.DecimalDigits>) =>
+				rebuilt(node, handle, () => buildCountQuantifierArm$patch(node, { ...config, decimalDigits: value }))
+			);
+		case 'countQuantifierGroup':
+			return applySetter(args, (value?: Admit<T.CountQuantifierGroup>) =>
+				rebuilt(node, handle, () => buildCountQuantifierArm$patch(node, { ...config, countQuantifierGroup: value }))
+			);
+	}
+	throw new Error(`count_quantifier_arm has no $with.${setter}`);
 }
 
 export function buildCharacterClassEscapeArm<
@@ -1230,27 +1596,61 @@ export function buildCharacterClassEscapeArm(
 		_unicode_property_value_expression
 	});
 	const record = arena.record(TSKindId.CharacterClassEscapeArm as const);
-	storeCell(arena, record, 2, _character_class_escape_text2);
-	storeCell(arena, record, 7, _unicode_property_value_expression);
-	const node = arena.view(record, { 2: _character_class_escape_text2, 7: _unicode_property_value_expression });
+	storeCell(arena, record, 2, 2, _character_class_escape_text2);
+	storeCell(arena, record, 3, 5, _unicode_property_value_expression);
+	const node = arena.view(record);
 	return node as unknown as T.CharacterClassEscapeArm.Bound;
 }
 
-function rowCharacterClassEscapeArm(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildCharacterClassEscapeArm$patch(
+	source: object,
+	config: T.CharacterClassEscapeArm.Config
+): T.CharacterClassEscapeArm.Bound {
+	currentHandle()?.admit(TSKindId.CharacterClassEscapeArm, [config]);
+	const _character_class_escape_text2 = config.characterClassEscapeText2;
+	const _unicode_property_value_expression = config.unicodePropertyValueExpression;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'character_class_escape_arm', {
+			characterClassEscapeText2: _character_class_escape_text2,
+			unicodePropertyValueExpression: _unicode_property_value_expression
+		});
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.CharacterClassEscapeArm as const, {
+		_character_class_escape_text2,
+		_unicode_property_value_expression
+	});
+	const record = arena.copy(source, TSKindId.CharacterClassEscapeArm as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'characterClassEscapeText2', _character_class_escape_text2));
+	patchCell(
+		arena,
+		record,
+		3,
+		5,
+		carriedSlot(source, 'unicodePropertyValueExpression', _unicode_property_value_expression)
+	);
+	const node = arena.view(record);
+	return node as unknown as T.CharacterClassEscapeArm.Bound;
+}
+function withCharacterClassEscapeArm(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.CharacterClassEscapeArm.Config;
-	return {
-		$with: {
-			characterClassEscapeText2: (value: Admit<T.CharacterClassEscapeText2>) =>
-				rebuilt(node, handle, () => buildCharacterClassEscapeArm({ ...config, characterClassEscapeText2: value })),
-			unicodePropertyValueExpression: (value: Admit<T.UnicodePropertyValueExpression>) =>
-				rebuilt(node, handle, () => buildCharacterClassEscapeArm({ ...config, unicodePropertyValueExpression: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'characterClassEscapeText2':
+			return applySetter(args, (value: Admit<T.CharacterClassEscapeText2>) =>
+				rebuilt(node, handle, () =>
+					buildCharacterClassEscapeArm$patch(node, { ...config, characterClassEscapeText2: value })
+				)
+			);
+		case 'unicodePropertyValueExpression':
+			return applySetter(args, (value: Admit<T.UnicodePropertyValueExpression>) =>
+				rebuilt(node, handle, () =>
+					buildCharacterClassEscapeArm$patch(node, { ...config, unicodePropertyValueExpression: value })
+				)
+			);
+	}
+	throw new Error(`character_class_escape_arm has no $with.${setter}`);
 }
 
 export function buildUnicodePropertyValueExpressionGroup<V extends Admit<T.UnicodePropertyName>>(
@@ -1266,22 +1666,35 @@ export function buildUnicodePropertyValueExpressionGroup(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.UnicodePropertyValueExpressionGroup as const, { _unicode_property_name });
 	const record = arena.record(TSKindId.UnicodePropertyValueExpressionGroup as const);
-	storeCell(arena, record, 2, _unicode_property_name);
-	const node = arena.view(record, { 2: _unicode_property_name });
+	storeCell(arena, record, 2, 2, _unicode_property_name);
+	const node = arena.view(record);
 	return node as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
 }
 
-function rowUnicodePropertyValueExpressionGroup(node: object, handle: EngineHandle | undefined): BuiltRow {
-	return {
-		$with: {
-			unicodePropertyName: (value: Admit<T.UnicodePropertyName>) =>
-				rebuilt(node, handle, () => buildUnicodePropertyValueExpressionGroup(value))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+function buildUnicodePropertyValueExpressionGroup$patch(
+	source: object,
+	value: Admit<T.UnicodePropertyName>
+): T.UnicodePropertyValueExpressionGroup.Bound {
+	const _unicode_property_name = value;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'unicode_property_value_expression_group', { unicodePropertyName: _unicode_property_name });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.UnicodePropertyValueExpressionGroup as const, { _unicode_property_name });
+	const record = arena.copy(source, TSKindId.UnicodePropertyValueExpressionGroup as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'unicodePropertyName', _unicode_property_name));
+	const node = arena.view(record);
+	return node as unknown as T.UnicodePropertyValueExpressionGroup.Bound;
+}
+function withUnicodePropertyValueExpressionGroup(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
+	switch (setter) {
+		case 'unicodePropertyName':
+			return applySetter(args, (value: Admit<T.UnicodePropertyName>) =>
+				rebuilt(node, handle, () => buildUnicodePropertyValueExpressionGroup$patch(node, value))
+			);
+	}
+	throw new Error(`unicode_property_value_expression_group has no $with.${setter}`);
 }
 
 export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEscapeText1.Bound {
@@ -1291,26 +1704,24 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 	if (!_leafRe_buildCharacterClassEscapeText1.test(text))
 		throw new Error(`character_class_escape_text1: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafCharacterClassEscapeText1(text, handle),
-		text
-	) as unknown as T.CharacterClassEscapeText1.Bound;
+	return builtArenaOf(handle).leaf(leafCharacterClassEscapeText1, text) as unknown as T.CharacterClassEscapeText1.Bound;
 }
 
-function leafCharacterClassEscapeText1(text: string, handle: EngineHandle | undefined): object {
+function leafCharacterClassEscapeText1(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.CharacterClassEscapeText1 as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -1321,26 +1732,24 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 	if (!_leafRe_buildCharacterClassEscapeText2.test(text))
 		throw new Error(`character_class_escape_text2: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafCharacterClassEscapeText2(text, handle),
-		text
-	) as unknown as T.CharacterClassEscapeText2.Bound;
+	return builtArenaOf(handle).leaf(leafCharacterClassEscapeText2, text) as unknown as T.CharacterClassEscapeText2.Bound;
 }
 
-function leafCharacterClassEscapeText2(text: string, handle: EngineHandle | undefined): object {
+function leafCharacterClassEscapeText2(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.CharacterClassEscapeText2 as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -1362,27 +1771,45 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupEnable as const, { _enabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupEnable as const);
-	storeCell(arena, record, 2, _enabled);
-	storeCell(arena, record, 7, _pattern);
-	const node = arena.view(record, { 2: _enabled, 7: _pattern });
+	storeCell(arena, record, 2, 2, _enabled);
+	storeCell(arena, record, 3, 5, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupEnable.Bound;
 }
 
-function rowInlineFlagsGroupEnable(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildInlineFlagsGroupEnable$patch(
+	source: object,
+	config: T.InlineFlagsGroupEnable.Config
+): T.InlineFlagsGroupEnable.Bound {
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupEnable, [config]);
+	const _enabled = config.enabled;
+	const _pattern = config.pattern;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'inline_flags_group_enable', { enabled: _enabled, pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.InlineFlagsGroupEnable as const, { _enabled, _pattern });
+	const record = arena.copy(source, TSKindId.InlineFlagsGroupEnable as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'enabled', _enabled));
+	patchCell(arena, record, 3, 5, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.InlineFlagsGroupEnable.Bound;
+}
+function withInlineFlagsGroupEnable(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.InlineFlagsGroupEnable.Config;
-	return {
-		$with: {
-			enabled: (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, enabled: value })),
-			pattern: (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupEnable({ ...config, pattern: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'enabled':
+			return applySetter(args, (value: Admit<T.Flags>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$patch(node, { ...config, enabled: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value?: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupEnable$patch(node, { ...config, pattern: value }))
+			);
+	}
+	throw new Error(`inline_flags_group_enable has no $with.${setter}`);
 }
 
 export function buildInlineFlagsGroupToggle<
@@ -1406,30 +1833,52 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupToggle as const, { _enabled, _disabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupToggle as const);
-	storeCell(arena, record, 2, _enabled);
-	storeCell(arena, record, 7, _disabled);
-	storeCell(arena, record, 12, _pattern);
-	const node = arena.view(record, { 2: _enabled, 7: _disabled, 12: _pattern });
+	storeCell(arena, record, 2, 2, _enabled);
+	storeCell(arena, record, 3, 5, _disabled);
+	storeCell(arena, record, 4, 8, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupToggle.Bound;
 }
 
-function rowInlineFlagsGroupToggle(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildInlineFlagsGroupToggle$patch(
+	source: object,
+	config: T.InlineFlagsGroupToggle.Config
+): T.InlineFlagsGroupToggle.Bound {
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupToggle, [config]);
+	const _enabled = config.enabled;
+	const _disabled = config.disabled;
+	const _pattern = config.pattern;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'inline_flags_group_toggle', { enabled: _enabled, disabled: _disabled, pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.InlineFlagsGroupToggle as const, { _enabled, _disabled, _pattern });
+	const record = arena.copy(source, TSKindId.InlineFlagsGroupToggle as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'enabled', _enabled));
+	patchCell(arena, record, 3, 5, carriedSlot(source, 'disabled', _disabled));
+	patchCell(arena, record, 4, 8, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.InlineFlagsGroupToggle.Bound;
+}
+function withInlineFlagsGroupToggle(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.InlineFlagsGroupToggle.Config;
-	return {
-		$with: {
-			enabled: (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, enabled: value })),
-			disabled: (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, disabled: value })),
-			pattern: (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupToggle({ ...config, pattern: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'enabled':
+			return applySetter(args, (value: Admit<T.Flags>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$patch(node, { ...config, enabled: value }))
+			);
+		case 'disabled':
+			return applySetter(args, (value: Admit<T.Flags>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$patch(node, { ...config, disabled: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value?: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupToggle$patch(node, { ...config, pattern: value }))
+			);
+	}
+	throw new Error(`inline_flags_group_toggle has no $with.${setter}`);
 }
 
 export function buildInlineFlagsGroupDisable<
@@ -1450,27 +1899,45 @@ export function buildInlineFlagsGroupDisable(
 	const arena = builtArenaOf(handle);
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupDisable as const, { _disabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupDisable as const);
-	storeCell(arena, record, 2, _disabled);
-	storeCell(arena, record, 7, _pattern);
-	const node = arena.view(record, { 2: _disabled, 7: _pattern });
+	storeCell(arena, record, 2, 2, _disabled);
+	storeCell(arena, record, 3, 5, _pattern);
+	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupDisable.Bound;
 }
 
-function rowInlineFlagsGroupDisable(node: object, handle: EngineHandle | undefined): BuiltRow {
+function buildInlineFlagsGroupDisable$patch(
+	source: object,
+	config: T.InlineFlagsGroupDisable.Config
+): T.InlineFlagsGroupDisable.Bound {
+	currentHandle()?.admit(TSKindId.InlineFlagsGroupDisable, [config]);
+	const _disabled = config.disabled;
+	const _pattern = config.pattern;
+	const handle = currentHandle();
+	if (handle !== undefined)
+		admitChildren(handle, 'inline_flags_group_disable', { disabled: _disabled, pattern: _pattern });
+	const arena = builtArenaOf(handle);
+	handle?.verifyStored?.(TSKindId.InlineFlagsGroupDisable as const, { _disabled, _pattern });
+	const record = arena.copy(source, TSKindId.InlineFlagsGroupDisable as const);
+	patchCell(arena, record, 2, 2, carriedSlot(source, 'disabled', _disabled));
+	patchCell(arena, record, 3, 5, carriedSlot(source, 'pattern', _pattern));
+	const node = arena.view(record);
+	return node as unknown as T.InlineFlagsGroupDisable.Bound;
+}
+function withInlineFlagsGroupDisable(node: object, setter: string, args: readonly unknown[]): unknown {
+	const handle = handleOf(node as RecordHandle);
 	const inputs = builtInputs(node);
 	const config = inputs.config as T.InlineFlagsGroupDisable.Config;
-	return {
-		$with: {
-			disabled: (value: Admit<T.Flags>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, disabled: value })),
-			pattern: (value?: Admit<T.Pattern>) =>
-				rebuilt(node, handle, () => buildInlineFlagsGroupDisable({ ...config, pattern: value }))
-		},
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		}
-	};
+	switch (setter) {
+		case 'disabled':
+			return applySetter(args, (value: Admit<T.Flags>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$patch(node, { ...config, disabled: value }))
+			);
+		case 'pattern':
+			return applySetter(args, (value?: Admit<T.Pattern>) =>
+				rebuilt(node, handle, () => buildInlineFlagsGroupDisable$patch(node, { ...config, pattern: value }))
+			);
+	}
+	throw new Error(`inline_flags_group_disable has no $with.${setter}`);
 }
 
 export const buildTight: TSKindId.Tight = TSKindId.Tight;
@@ -1489,26 +1956,24 @@ export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bo
 	if (!_leafRe_buildUnicodePropertyName.test(text))
 		throw new Error(`unicode_property_name: text does not match pattern: ${describeValue(text)}`);
 	const handle = currentHandle();
-	return builtArenaOf(handle).adoptLeaf(
-		leafUnicodePropertyName(text, handle),
-		text
-	) as unknown as T.UnicodePropertyName.Bound;
+	return builtArenaOf(handle).leaf(leafUnicodePropertyName, text) as unknown as T.UnicodePropertyName.Bound;
 }
 
-function leafUnicodePropertyName(text: string, handle: EngineHandle | undefined): object {
+function leafUnicodePropertyName(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnicodePropertyName as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
+		$tree: tree,
+		$entry: entry,
+		$site: site,
+		$text: leafText,
+		$render: handleRender,
+		toString: handleToString,
 		toJSON: refuseJSON,
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
+		$trivia: undefined as unknown as object,
+		$engine: handleEngine,
+		[Symbol.dispose]: handleDispose
 	};
+	node.$trivia = { node, leading: leafLeading, trailing: leafTrailing };
 	return node;
 }
 
@@ -1628,66 +2093,113 @@ export const _factoryMap = {
 export type _FactoryMap = typeof _factoryMap;
 
 export const builtViews: BuiltViews = Object.freeze({
-	rows: Object.freeze({
-		37: rowIdentityEscape,
-		51: rowPattern,
-		52: rowAlternation,
-		53: rowTerm,
-		55: rowLookaroundAssertion,
-		56: rowLookaheadAssertion,
-		57: rowLookbehindAssertion,
-		58: rowCharacterClass,
-		59: rowPosixCharacterClass,
-		61: rowClassRange,
-		62: rowAnonymousCapturingGroup,
-		63: rowNamedCapturingGroup,
-		64: rowNonCapturingGroup,
-		67: rowZeroOrMore,
-		68: rowOneOrMore,
-		69: rowOptional,
-		70: rowCountQuantifier,
-		71: rowBackreferenceEscape,
-		72: rowNamedGroupBackreference,
-		73: rowCharacterClassEscape,
-		75: rowUnicodePropertyValueExpression,
-		77: rowTermGroup,
-		78: rowCountQuantifierGroup,
-		79: rowCountQuantifierArm,
-		80: rowCharacterClassEscapeArm,
-		81: rowUnicodePropertyValueExpressionGroup,
-		83: rowInlineFlagsGroupEnable,
-		84: rowInlineFlagsGroupToggle,
-		85: rowInlineFlagsGroupDisable
+	withs: Object.freeze({
+		37: withIdentityEscape,
+		51: withPattern,
+		52: withAlternation,
+		53: withTerm,
+		55: withLookaroundAssertion,
+		56: withLookaheadAssertion,
+		57: withLookbehindAssertion,
+		58: withCharacterClass,
+		59: withPosixCharacterClass,
+		61: withClassRange,
+		62: withAnonymousCapturingGroup,
+		63: withNamedCapturingGroup,
+		64: withNonCapturingGroup,
+		67: withZeroOrMore,
+		68: withOneOrMore,
+		69: withOptional,
+		70: withCountQuantifier,
+		71: withBackreferenceEscape,
+		72: withNamedGroupBackreference,
+		73: withCharacterClassEscape,
+		75: withUnicodePropertyValueExpression,
+		77: withTermGroup,
+		78: withCountQuantifierGroup,
+		79: withCountQuantifierArm,
+		80: withCharacterClassEscapeArm,
+		81: withUnicodePropertyValueExpressionGroup,
+		83: withInlineFlagsGroupEnable,
+		84: withInlineFlagsGroupToggle,
+		85: withInlineFlagsGroupDisable
 	}),
 	words: Object.freeze({
-		37: 6,
-		51: 8,
-		52: 4,
-		53: 4,
-		55: 21,
-		56: 17,
-		57: 17,
-		58: 5,
-		59: 7,
-		61: 64,
-		62: 12,
-		63: 22,
-		64: 12,
+		37: 3,
+		51: 3,
+		52: 3,
+		53: 3,
+		55: 3,
+		56: 4,
+		57: 4,
+		58: 4,
+		59: 3,
+		61: 4,
+		62: 3,
+		63: 5,
+		64: 3,
 		67: 3,
 		68: 3,
 		69: 3,
-		70: 21,
-		71: 7,
-		72: 7,
-		73: 29,
-		75: 16,
-		77: 56,
-		78: 7,
-		79: 16,
-		80: 25,
-		81: 7,
-		83: 17,
-		84: 22,
-		85: 17
+		70: 4,
+		71: 3,
+		72: 3,
+		73: 3,
+		75: 4,
+		77: 4,
+		78: 3,
+		79: 4,
+		80: 4,
+		81: 3,
+		83: 4,
+		84: 5,
+		85: 4
+	}),
+	cells: Object.freeze({
+		37: 2,
+		51: 2,
+		52: 2,
+		53: 2,
+		55: 2,
+		56: 2,
+		57: 2,
+		58: 3,
+		59: 2,
+		61: 2,
+		62: 2,
+		63: 2,
+		64: 2,
+		67: 3,
+		68: 3,
+		69: 3,
+		70: 3,
+		71: 2,
+		72: 2,
+		73: 2,
+		75: 2,
+		77: 2,
+		78: 2,
+		79: 2,
+		80: 2,
+		81: 2,
+		83: 2,
+		84: 2,
+		85: 2
+	}),
+	leaves: Object.freeze({
+		12: leafPatternCharacter,
+		20: leafClassCharacter,
+		34: leafDecimalEscape,
+		35: leafUnicodePropertyValue,
+		36: leafControlLetterEscape,
+		38: leafGroupName,
+		39: leafDecimalDigits,
+		41: leafCharacterClassEscapeText1,
+		42: leafCharacterClassEscapeText2,
+		60: leafPosixClassName,
+		66: leafFlags,
+		74: leafUnicodeCharacterEscape,
+		76: leafControlEscape,
+		90: leafUnicodePropertyName
 	})
 });

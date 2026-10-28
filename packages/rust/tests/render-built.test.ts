@@ -1,13 +1,14 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { useRecordConstruction } from '@sittir/common/engine';
+import { addressOf, cellFormatOf, nativeEngineOf } from '@sittir/common/engine';
 import { snapshotOf, treeHandleOf, treeOf, writeTrivia } from '@sittir/common/utils';
 import { sideEntryOf } from '../../common/src/built-arena.ts';
 import { builtRefOf, leafSitesOf } from '../../common/src/built-ref.ts';
 import { getActiveBackend } from '../src/backend.js';
-import arena from '../src/arena.ts';
+import rust from '../src/index.ts';
 import { TSKindId } from '../src/kinds.ts';
+import { expectGiven } from './constructions.mts';
 
 function addon() {
 	const status = getActiveBackend();
@@ -16,81 +17,92 @@ function addon() {
 }
 
 function arenaEngine() {
-	const native = new (addon().SittirEngine)();
-	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, holdBuiltArena } = native;
+	const native = nativeEngineOf(addon());
+	const format = cellFormatOf(addon());
+	const { renderBuilt, renderBuiltLeaf, builtTriviaSide, writeBuiltTriviaSide, builtWords, builtBytes } = native;
 	if (
+		format === undefined ||
 		renderBuilt === undefined ||
 		renderBuiltLeaf === undefined ||
 		builtTriviaSide === undefined ||
 		writeBuiltTriviaSide === undefined ||
-		holdBuiltArena === undefined
+		builtWords === undefined ||
+		builtBytes === undefined
 	)
 		throw new Error('the native addon was built without the arena feature');
-	const written = (chunks: readonly { readonly length: number }[]) => new Uint32Array(chunks.map((chunk) => chunk.length));
 	return {
-		hold: (words: readonly Uint32Array[], bytes: readonly Uint8Array[] = [], writtenWords = written(words)) =>
-			holdBuiltArena.call(native, words, bytes, writtenWords, written(bytes)),
-		renderBuilt: (address: number) => renderBuilt.call(native, native, address, false, false),
-		renderBuiltLeaf: (kind: number, text: { readonly at: number; readonly len: number }) => renderBuiltLeaf.call(native, native, kind, text, null, false, false),
+		at: (chunk: number, word: number) => addressOf(chunk, word, format),
+		words: (values: readonly number[], length = values.length) => {
+			const chunk = builtWords(length);
+			chunk.data.set(values);
+			return chunk;
+		},
+		entry: (kind: number, text: string) => {
+			const encoded = new TextEncoder().encode(text);
+			const chunk = builtBytes(4 + encoded.length);
+			new DataView(chunk.data.buffer, chunk.data.byteOffset).setUint32(0, (kind + encoded.length * 2 ** format.kindBits) >>> 0, true);
+			chunk.data.set(encoded, 4);
+			return addressOf(chunk.chunk, 0, format);
+		},
+		builtWords,
+		renderBuilt: (address: number) => renderBuilt(native.handle, address, false, false),
+		renderBuiltLeaf: (kind: number, entry: number) => renderBuiltLeaf(native.handle, kind, entry, null, false, false),
 		dispose: () => native.dispose(),
-		builtTriviaSide: builtTriviaSide.bind(native),
-		writeBuiltTriviaSide: writeBuiltTriviaSide.bind(native)
+		builtTriviaSide,
+		writeBuiltTriviaSide
 	};
 }
 
-const words = (...values: number[]) => new Uint32Array([0, ...values]);
-
 const writtenEntry = (node: object) => sideEntryOf(node, builtRefOf(node)!.arena, builtRefOf(node)!.arena.engine)!;
 
-const recordEngine = async () => {
-	const engine = await arena.createEngine();
-	useRecordConstruction(engine, await import('../src/factories/records.ts'));
-	return engine;
-};
+const recordEngine = () => rust.createEngine();
 
 describe('a built arena rendered natively', () => {
-	it('borrows only typed arrays of their kind over an ordinary ArrayBuffer, each when the render first reads it', () => {
+	it('writes records into native chunks in place, numbered from 1 as they are made, frees one it leaves with nothing live, and refuses an empty chunk', () => {
 		const native = arenaEngine();
-		native.hold([new Uint32Array(new SharedArrayBuffer(16))]);
-		expect(() => native.renderBuilt(1)).toThrow(/a built arena chunk must be a Uint32Array over an ordinary ArrayBuffer/);
-		native.hold([new Uint8Array(16) as never]);
-		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
-		native.hold([[0, 1] as never]);
-		expect(() => native.renderBuilt(1)).toThrow(/must be a Uint32Array/);
-		native.hold([words(TSKindId.Identifier, 0)], [new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toThrow(/a built arena chunk must be a Uint8Array over an ordinary ArrayBuffer/);
-		native.hold([words(1, 0)], [], [3] as never);
-		expect(() => native.renderBuilt(1)).toThrow(/written table/);
+		const first = native.builtWords(4);
+		expect(first.chunk).toBe(1);
+		expect(Array.from(first.data)).toEqual([0, 0, 0, 0]);
+		first.data.set([TSKindId.Identifier, 0]);
+		expect(Array.from(first.data)).toEqual([TSKindId.Identifier, 0, 0, 0]);
+		const second = native.builtWords(8);
+		expect([second.chunk, second.data.length, second.freed]).toEqual([2, 8, [1]]);
+		expect(first.data.length).toBe(0);
+		expect(() => native.builtWords(0)).toThrow(/chunk past/);
 	});
 
-	it('borrows no chunk the render does not read', () => {
+	it('reads a word no builder wrote as zero, inside its chunk', () => {
 		const native = arenaEngine();
-		native.hold([words(TSKindId.Identifier, 0), new Uint32Array(new SharedArrayBuffer(16))], [new TextEncoder().encode('x'), new Uint8Array(new SharedArrayBuffer(8))]);
-		expect(native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 1 })).toBe('x');
+		const { chunk } = native.words([], 16);
+		expect(() => native.renderBuilt(native.at(chunk, 9))).toThrow(/record kind 0 is not one a record writer writes/);
 	});
 
-	it('admits a lone leaf by its kind and its text', () => {
+	it('admits a lone leaf by its kind and its entry', () => {
 		const native = arenaEngine();
-		native.hold([words(1, 0)], [new TextEncoder().encode('x')]);
-		expect(() => native.renderBuiltLeaf(60000, { at: 0, len: 1 })).toThrow(/built leaf kind 60000/);
-		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, { at: 0, len: 9 })).toThrow();
+		const x = native.entry(TSKindId.Identifier, 'x');
+		expect(native.renderBuiltLeaf(TSKindId.Identifier, x)).toBe('x');
+		expect(() => native.renderBuiltLeaf(60000, x)).toThrow(/built leaf kind 60000/);
+		expect(() => native.renderBuiltLeaf(TSKindId.Identifier, x + 64)).toThrow();
 	});
 
 	it('refuses words that are no record it admits', () => {
 		const native = arenaEngine();
-		native.hold([words(1, 0)]);
+		const { chunk } = native.words([1, 0]);
 		expect(() => native.renderBuilt(0)).toThrow(/record address 0 is not one a record writer writes/);
-		expect(() => native.renderBuilt(9)).toThrow(/past what the arena wrote/);
-		native.hold([words(60000, 0)]);
-		expect(() => native.renderBuilt(1)).toThrow(/record kind 60000 is not one a record writer writes/);
+		expect(() => native.renderBuilt(native.at(chunk, 9))).toThrow(/past what the arena wrote/);
+		const other = arenaEngine();
+		const written = other.words([60000, 0]);
+		expect(() => other.renderBuilt(other.at(written.chunk, 0))).toThrow(/record kind 60000 is not one a record writer writes/);
 	});
 
-	it('refuses, by name, a render from an arena its engine let go of', () => {
+	it('refuses, by name, a render from an arena its engine let go of, and detaches its chunks', () => {
 		const native = arenaEngine();
-		expect(() => native.renderBuilt(1)).toThrow(/the arena that built a side's record was released/);
-		native.hold([words(1, 0)]);
+		expect(() => native.renderBuilt(native.at(1, 0))).toThrow(/past what the arena wrote/);
+		const { chunk, data } = native.words([1, 0]);
 		native.dispose();
-		expect(() => native.renderBuilt(1)).toThrow(/the arena that built a side's record was released/);
+		expect(data.length).toBe(0);
+		expect(() => native.renderBuilt(native.at(chunk, 0))).toThrow(/the arena that built a side's record was released/);
+		expect(() => native.builtWords(4)).toThrow(/the arena that built a side's record was released/);
 	});
 
 	it("refuses, by name, a record in a side once the engine that built it is disposed, and renders the rest after", async () => {
@@ -131,7 +143,7 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it.each([
-		['objects', async () => arena.createEngine()],
+		['objects', async () => rust.createEngine({ nodeConstruction: 'object' })],
 		['records', recordEngine]
 	])('refuses at the render, as its trivia type names it, a node of a kind no side holds: %s', async (_, make) => {
 		const engine = await make();
@@ -145,7 +157,7 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it.each([
-		['objects', async () => arena.createEngine()],
+		['objects', async () => rust.createEngine({ nodeConstruction: 'object' })],
 		['records', recordEngine]
 	])('renders a node another engine of its language built with the sides that engine wrote, under its own options: %s', async (_, make) => {
 		const noted = (engine: Awaited<ReturnType<typeof make>>, name: string, note: string) => {
@@ -183,15 +195,15 @@ describe('a built arena rendered natively', () => {
 		};
 
 		it('renders where the side renders, on records as on objects', async () => {
-			const objects = await rendered(async () => arena.createEngine());
+			const objects = await rendered(async () => rust.createEngine({ nodeConstruction: 'object' }));
 			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* c */\n}\n', built: 'x; /* c */' });
 			expect(await rendered(recordEngine)).toEqual(objects);
 		});
 
 		it("reads back as its builder's node", async () => {
 			const { statement, built, comment } = await holders(recordEngine);
-			expect(statement.$trivia.trailing()[0]).toBe(comment);
-			expect(built.$trivia.trailing()[0]).toBe(comment);
+			expectGiven(statement.$trivia.trailing()[0]!, comment);
+			expectGiven(built.$trivia.trailing()[0]!, comment);
 		});
 
 		it("refuses by name another engine's record, in a parsed and a built holder", async () => {
@@ -204,7 +216,7 @@ describe('a built arena rendered natively', () => {
 
 		it('refuses in a side of an object node, whose engine builds no records', async () => {
 			const comment = (await recordEngine()).build.blockComment(' c ');
-			const objects = await arena.createEngine();
+			const objects = await rust.createEngine({ nodeConstruction: 'object' });
 			const statement = objects.build.expressionStatement(objects.build.identifier('x'));
 			expect(() => statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
 			expect(() => statementOf(objects).statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
@@ -213,16 +225,15 @@ describe('a built arena rendered natively', () => {
 		it("reads back as its builder's node from a parsed unit's side", async () => {
 			const engine = await recordEngine();
 			const block = (engine.parse('fn f() {\n    ;\n    x();\n}\n').statements()[0] as unknown as { body(): object }).body();
-			const comment = engine.build.blockComment(engine.build.blockCommentRegular(' c '));
 			const tree = treeOf(block)!;
 			const holderRow = treeHandleOf(block)! % 2 ** 32;
-			const written = [writtenEntry(comment)];
-			const unitRow = [1, 2, 3].map((n) => holderRow + n).find((row) => {
-				tree.writeTriviaSide!(row, 'leading', written);
-				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(row, 'leading', []), false);
+			const comments = [1, 2, 3].map(() => engine.build.blockComment(engine.build.blockCommentRegular(' c ')));
+			const unit = comments.findIndex((comment, n) => {
+				tree.writeTriviaSide!(holderRow + n + 1, 'leading', [writtenEntry(comment)]);
+				return (tree.unitSides!(holderRow) as readonly unknown[]).length > 0 || (tree.writeTriviaSide!(holderRow + n + 1, 'leading', []), false);
 			});
-			expect(unitRow).toBeDefined();
-			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comment]);
+			expect(unit).not.toBe(-1);
+			expect((tree.unitSides!(holderRow) as readonly { leading: readonly unknown[] }[])[0]!.leading).toEqual([comments[unit]]);
 			expect(JSON.stringify(snapshotOf(block))).toContain('" c "');
 		});
 	});
@@ -240,8 +251,7 @@ describe('a built arena rendered natively', () => {
 	}, 60_000);
 
 	it('refuses a record that links a parsed tree that is not live, naming the tree', async () => {
-		const records = await arena.createEngine();
-		useRecordConstruction(records, await import('../src/factories/records.ts'));
+		const records = await rust.createEngine();
 		const parsed = records.parse('fn f() { g(); }').statements()[0] as unknown as { body(): unknown };
 		const b = records.build;
 		const fn = b.functionItem({ name: b.identifier('h'), parameters: b.parameters(), body: parsed.body() as never });

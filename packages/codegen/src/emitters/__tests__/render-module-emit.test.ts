@@ -763,9 +763,9 @@ describe('node attributes', () => {
 		const src = await getRustTemplatesRs();
 		expect(src).toContain('use super::{field_ids as field, kind_ids as kind};');
 		expect(src).toMatch(
-			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 72, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
+			/#\[derive\(Debug, Clone, PartialEq, ::sittir_core::Node\)\]\n#\[node\(kind = kind::FUNCTION_ITEM, displays = \[kind::_METHOD_DECLARATION\], layout = \[kind::FN_KEYWORD, kind::DASH_GT\], words = 44, built_words = 10, fields = FunctionItemFields, prepare = FunctionItemPrepare, view = FunctionItemNodeRecord, prepare_fn = prepare_function_item\)\]\npub struct FunctionItemNode \{\n    #\[wire\(key = "\$type"\)\]\n    pub kind: KindId,/
 		);
-		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 29, width = 8, inline = 6\)\]\n    pub name: /);
+		expect(extractStructBody(src, 'FunctionItemNode')).toMatch(/    #\[slot\(field = field::NAME, word = 19, width = 5, inline = 4, forms = 9, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'ParametersElementsNode')).toMatch(/    #\[flank\(trailing = 0\)\]\n    pub delimiter: Option<::sittir_core::types::Delimiter>,/);
 	});
 
@@ -843,7 +843,7 @@ describe('the wire codec facts', () => {
 		expect(src).toContain('use ::sittir_core::VerbatimNode;');
 		const item = extractStructBody(src, 'FunctionItemNode');
 		expect(item).toMatch(/    #\[wire\(key = "\$_layout"\)\]\n    #\[layout\]\n    pub layout: Option<Box<NodeLayout>>,/);
-		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 29, width = 8, inline = 6\)\]\n    pub name: /);
+		expect(item).toMatch(/    #\[wire\(key = "_name"\)\]\n    #\[slot\(field = field::NAME, word = 19, width = 5, inline = 4, forms = 9, built = 4\)\]\n    pub name: /);
 		expect(extractStructBody(src, 'IdentifierNode')).toMatch(/    #\[wire\(key = "\$text"\)\]\n    #\[text\]\n    pub text: String,/);
 	});
 

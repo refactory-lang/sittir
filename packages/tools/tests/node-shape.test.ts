@@ -15,10 +15,15 @@ const fastCount = (make: () => object): number => Array.from({ length: COUNT }, 
 const rs = await createEngine(rust);
 const ts = await createEngine(typescript);
 const py = await createEngine(python);
+const objects = {
+	rs: await createEngine(rust, { nodeStorage: 'object' }),
+	ts: await createEngine(typescript, { nodeStorage: 'object' }),
+	py: await createEngine(python, { nodeStorage: 'object' })
+};
 const { identifier: buildIdentifier } = await (await rust.load()).tables.default();
 const rustSlots = await loadSlotAccessorOf('rust');
 
-const parsedMatchBlock = () => {
+const parsedMatchBlock = (rs: typeof objects.rs) => {
 	const item = rs.parse('fn f() { match x { 1 => 1, _ => 2 } }\n').statements()[0]!;
 	if (!rs.is.functionItem(item)) throw new Error('not a function');
 	const statement = item.body().statements()[0]!;
@@ -27,27 +32,28 @@ const parsedMatchBlock = () => {
 	if (!rs.is.matchExpression(expression)) throw new Error('not a match');
 	return expression.body();
 };
-const arms = parsedMatchBlock().matchBlockArms();
-
-const classes: Record<string, () => object> = {
-	'rust text leaf': () => rs.build.identifier('x'),
-	'rust plain kind': () =>
-		rs.build.binaryExpression({ left: rs.build.identifier('a'), operator: '+', right: rs.build.identifier('b') }),
-	'rust group seat, group present': () => rs.build.matchBlock(arms),
-	'rust group seat, group absent': () => rs.build.matchBlock(),
-	'rust list owner': () =>
-		rs.build.arguments(rs.build.identifier('a'), rs.build.identifier('b'), rs.build.identifier('c')),
-	'typescript text leaf': () => ts.build.identifier('x'),
-	'typescript plain kind': () =>
-		ts.build.binaryExpression({ left: ts.build.identifier('a'), operator: '+', right: ts.build.identifier('b') }),
-	'typescript group seat': () => ts.build.catchClause({ body: ts.build.statementBlock() }),
-	'python text leaf': () => py.build.identifier('x'),
-	'python group seat': () => py.build.slice({})
+const classesOf = ({ rs, ts, py }: typeof objects): Record<string, () => object> => {
+	const arms = parsedMatchBlock(rs).matchBlockArms();
+	return {
+		'rust text leaf': () => rs.build.identifier('x'),
+		'rust plain kind': () =>
+			rs.build.binaryExpression({ left: rs.build.identifier('a'), operator: '+', right: rs.build.identifier('b') }),
+		'rust group seat, group present': () => rs.build.matchBlock(arms),
+		'rust group seat, group absent': () => rs.build.matchBlock(),
+		'rust list owner': () =>
+			rs.build.arguments(rs.build.identifier('a'), rs.build.identifier('b'), rs.build.identifier('c')),
+		'typescript text leaf': () => ts.build.identifier('x'),
+		'typescript plain kind': () =>
+			ts.build.binaryExpression({ left: ts.build.identifier('a'), operator: '+', right: ts.build.identifier('b') }),
+		'typescript group seat': () => ts.build.catchClause({ body: ts.build.statementBlock() }),
+		'python text leaf': () => py.build.identifier('x'),
+		'python group seat': () => py.build.slice({})
+	};
 };
+const classes = { record: classesOf({ rs, ts, py }), object: classesOf(objects) };
 
 const NODE_METADATA = new Set([
 	'$type',
-	'$named',
 	'$text',
 	'$other',
 	'$span',
@@ -79,7 +85,7 @@ describe('what a node sends across the boundary carries no member', () => {
 		'typescript parsed': () => ts.parse('const x = f(a, b);\n'),
 		'python parsed': () => py.parse('x = f(a, b)\n')
 	};
-	for (const [label, make] of Object.entries({ ...classes, ...wrapped })) {
+	for (const [label, make] of Object.entries({ ...classes.object, ...wrapped })) {
 		it(label, () => {
 			expect(offenders(toNodeData(make() as never, PLAIN_KINDS))).toEqual([]);
 		});
@@ -95,8 +101,8 @@ describe('a wrapped node holds its tree token', () => {
 	});
 });
 
-describe('a built node keeps fast properties', () => {
-	for (const [label, make] of Object.entries(classes)) {
+describe.each(Object.entries(classes))('a built node keeps fast properties under %s construction', (_, built) => {
+	for (const [label, make] of Object.entries(built)) {
 		const run = () => expect(fastCount(make)).toBe(COUNT);
 		it(label, run);
 	}

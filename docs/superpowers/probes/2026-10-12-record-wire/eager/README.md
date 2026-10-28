@@ -6,10 +6,10 @@ design](../../../specs/2026-10-01-shared-arena-design.md). It reuses the older
 construction and UTF-8 allocator probes' approach with the current grammar,
 layout, admission sets and renderer.
 
-It generates 243 Rust grammar builders and views, including `function_item`
+It generates 251 Rust grammar builders and views, including `function_item`
 and its slot kinds. Object and arena builders use the same own-literal
 accessor and `$with` surface. Views own their address and resolve the owner through one weak registry; their methods do not capture a per-node store/reference pair. There are no node prototypes. The record form
-writes directly into JS-owned word and UTF-8 chunks at construction. Each record receives one writable cursor; generated stores write literal slot offsets, widths, flags and admitted forms directly. List runs are allocated before the parent record, and shared helpers handle allocation, ownership and text interning. Published views retain no writable cursor. Built text is interned once per arena, and text access retains the original builder string, including strings whose UTF-8 form replaces a lone surrogate. A native
+writes directly into JS-owned word and UTF-8 chunks at construction. Each record receives one writable cursor; generated stores write each slot's one-word cell, or its presence bit, at its stamped place directly. List runs are allocated before the parent record, and shared helpers handle allocation, ownership and text interning. Published views retain no writable cursor. Built text is interned once per arena, and text access retains the original builder string, including strings whose UTF-8 form replaces a lone surrogate. A native
 registration retains the typed arrays; each synchronous render borrows fresh
 spans from only the chunks it visits, bounded by their current written prefixes.
 No borrowed span survives the call. The object form
@@ -19,10 +19,13 @@ encoder or JS inspection walk runs at render.
 This is measurement code, separate from the public engine builders. Inputs
 are already validated strict inputs; the probe reuses requiredness and slot
 admission, but does not reproduce loose coercion, lexical guards, queries,
-trivia or the complete public node API. It uses the canonical packed layout: bounded child records occupy stamped
-inline capacities, while list runs, recursive children and string bytes remain
-out of line. Inline records retain a side address for metadata; they do not
-store a child pointer. Parsed links and record reclamation remain further work
+trivia or the complete public node API. It writes the engine's built format: a record is its header, its side word
+and its presence words, then one word a slot. A child is named by its record's
+address, a bounded child as any other; a leaf by the address of its entry,
+`[kind | len]` then its UTF-8 bytes, interned by kind and text; a unit by its
+kind in chunk 0; a list by the address of its run, `[len, cells]`. Word and
+string chunks share one numbering from 1. Reads decode through the engine's own
+built-cell decoders. Parsed links and record reclamation remain further work
 for this eager probe. Object storage remains the
 public construction path. These results cannot establish definitive cutover
 readiness or replace the full corpus validator comparisons.
@@ -47,7 +50,7 @@ derivation. Generated builders are script-owned.
 
 Verification covers paired render bytes, native full-depth reparses, Unicode,
 text deduplication, original-string retention, own numeric addresses, presence bits, receiver-new-node `$with`, explicit ancestor replacement,
-recursive child identity, bounded-child value copies, retained views across 10,000 builds, oversized
+child identity, bounded children shared by reference, retained views across 10,000 builds, oversized
 list runs, stable chunks, and an empty string following a full string chunk.
 The native entries reject malformed words, invalid numeric addresses and
 shared buffers. Registered buffers are checked again for detach, resize and
@@ -57,9 +60,8 @@ children. A typed-array view's byte offset is respected.
 
 `$with` returns a new receiver. Editing a child leaves every existing parent
 pointing at the original child; a parent changes only when explicitly rebuilt.
-Unchanged recursive child addresses are shared. Bounded child records are
-copied into the new parent, including immutable replacement. There is no
-in-place record update.
+Unchanged child addresses are shared, bounded or not. There is no in-place
+record update.
 The JS storage owner retains its append-only chunks while any of its views
 remain live; this probe does not reclaim individual dead records.
 
@@ -101,7 +103,10 @@ result conversion.
 The measurement addon counts Rust global-allocator calls, allocated bytes,
 deallocation calls and freed bytes. Before/after render snapshots also include
 automatic Rust-side N-API conversion; per-call body counts isolate the native
-borrow/admission/decode/prepare/render work. Counts do not include V8 or C++
+borrow/admission/decode/prepare/render work. An arena render uses one empty
+trivia store per thread, as the engine renders a built record against its
+long-lived store; results before the one-word built cells charged a fresh store
+to every arena render, so their arena allocation counts are not comparable. Counts do not include V8 or C++
 allocations. It creates no worker threads and measurement processes run alone.
 
 A separate untimed memory population retains all 10,000 original roots before
@@ -135,13 +140,12 @@ workspace profile: fat LTO and one codegen unit. Both storage modes use that
 same addon. The historical baseline below used LTO off and 16 codegen units;
 absolute old/new timings cannot isolate the effect of the runtime changes.
 
-The current inline milestone stamps 428 bounded slots across all five grammars
-(Rust 152, Python 79, TypeScript 171, regex 20, scm 6). The largest record is
-88 words. Rust's function record is now 77 words, so replacing its name copies
-308 bytes of root record rather than the preceding layout's 168 bytes. This
-fixed capacity includes absent bounded variants. Already built bounded inputs
-also remain in the append-only owner after their values are copied into parents;
-inline storage does not guarantee lower retained memory.
+At the inline milestone, built records copied bounded children into stamped
+capacities: 428 bounded slots across all five grammars (Rust 152, Python 79,
+TypeScript 171, regex 20, scm 6), the largest record 88 words. Rust's function
+record was 77 words, so replacing its name copied 308 bytes of root record
+rather than the preceding layout's 168 bytes. Built records now take one word a
+slot and hold bounded children by reference; only parsed records embed them.
 
 Source review found no actionable issues for this milestone. Fresh checks pass:
 five-grammar regeneration, the full workspace release build, all TypeScript
@@ -155,8 +159,8 @@ rendering, native full-depth reparse and retained-view checks across 10,000 buil
 
 The preceding measurements below predate bounded inline storage and fully
 specialized stores. Public eager builders and definitive cutover remain further
-work. Native parsed hydration still uses the typed Rust reader followed by
-record encoding; the eager builder itself writes records directly.
+work. Native parsed hydration now writes records straight from the tree, and the
+eager builder writes records directly.
 
 ## Current inline measurements
 

@@ -165,6 +165,7 @@ export const hooks: LanguageHooks<${api}> = Object.freeze<LanguageHooks<${api}>>
 	tables: Object.freeze({
 ${BUILDER_TABLES.map(({ mode, surface }) => `\t\t${mode}: () => import('./${irModuleOf(surface)}.js').then((m) => m.ir)`).join(',\n')}
 	}),
+	records: () => import('./factories/records.js'),
 	trivia: ${triviaHook(config)},
 	querySlots,
 	structure,

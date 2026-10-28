@@ -99,6 +99,9 @@ pub const CHARACTER_CLASS_REPEAT1: KindId = KindId(88);
 pub const _LAZY: KindId = KindId(89);
 pub const _UNICODE_PROPERTY_NAME: KindId = KindId(90);
 pub const ERROR: KindId = KindId(65535);
+
+/// The bits a packed kind field takes: the least that holds every kind id below all-ones, which is `ERROR`.
+pub const KIND_BITS: u32 = 7;
 const _: () = assert!(ERROR.get() == KindId::ERROR.get());
 
 /// The surface kinds: list kinds, whose items the surface exposes in their place, unit kinds, which it exposes as a kind id, the extras that are layout members, which it assigns as layout, and the depth members a layout run's excess indentation reads as.
