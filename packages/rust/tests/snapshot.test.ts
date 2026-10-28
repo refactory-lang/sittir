@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createEngine, snapshotOf } from '@sittir/common';
 import language from '../src/index.ts';
+import { constructions, type Engine } from './constructions.mts';
 
 const engine = await createEngine(language);
 const WHOLE = { deep: true, depth: Infinity };
@@ -34,6 +35,21 @@ describe('$snapshot()', () => {
 		expect(snapped).toContain(`"leading":[{"$type":${engine.kinds.LineComment},"_content":{"$type":${engine.kinds.LineCommentRegular},"$text":" new"}}]`);
 		expect(snapped).toContain('"$text":"// keep"');
 		expect(snapped).toContain('"span":{"start":{"row":1,"column":4},"end":{"row":1,"column":14}}');
+	});
+	it('writes a built node the same under every construction', () => {
+		const snapshots = (engine: Engine) => {
+			const root = engine.parse('fn f() {\n    let x = 1;\n}\n', WHOLE);
+			const fn = root.statements()[0]!;
+			if (!engine.is.functionItem(fn)) throw new Error('expected a function');
+			const stmt = fn.body().statements()[0];
+			if (stmt === undefined || !engine.is.letDeclaration(stmt)) throw new Error('expected a let declaration');
+			stmt.$trivia.leading('// new');
+			return { side: JSON.stringify(root.$snapshot()), built: JSON.stringify(snapshotOf(engine.build.lineComment('// c'))) };
+		};
+		const each = constructions.map(([name, engine]) => [name, snapshots(engine)] as const);
+		const first = each[0]![1];
+		expect(first.built).toBe(`{"$type":${engine.kinds.LineComment},"_content":{"$type":${engine.kinds.LineCommentRegular},"$text":" c"}}`);
+		for (const [name, snapshot] of each) expect(snapshot, name).toEqual(first);
 	});
 	it('a clean node under a built parent is measured from its own start', () => {
 		const root = engine.parse('\n\nfn f() {}\n', WHOLE);

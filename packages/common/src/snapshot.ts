@@ -83,7 +83,7 @@ function copyOf(value: Record<string, unknown>): Record<string, unknown> {
 			out.$text = nodeText(value);
 			continue;
 		}
-		if (isStorageKey(key) || !isDataKey(key) || key === '$_layout' || typeof raw === 'function') continue;
+		if (isStorageKey(key) || !isDataKey(key) || key === '$_layout' || key === '$named' || typeof raw === 'function') continue;
 		out[key] = raw;
 	}
 	for (const [key, stored] of storedSlotValues(value)) out[key] = snapshotIn(stored, undefined, undefined);
