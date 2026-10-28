@@ -117,6 +117,7 @@ export class Storage {
 	#native;
 	#packet;
 	#registration;
+	#handle;
 	#registered = -1;
 	#entries = [];
 	#entryAt = new Map();
@@ -323,14 +324,15 @@ export class Storage {
 			const strings = this.#strings.registryViews();
 			const previous = this.#registration;
 			this.#registration = this.#native.registerArena(words.chunks, strings.chunks, words.open, strings.open);
+			this.#handle = this.#registration.handle;
 			this.#registered = this.#words.chunks.length;
 			previous?.dispose();
 		}
 		const words = this.#words.written();
 		const bytes = this.#strings.written();
 		return ref._entry === undefined
-			? this.#native.renderRegisteredRecord(this.#registration.handle, ref._r, words, bytes)
-			: this.#native.renderRegisteredLeaf(this.#registration.handle, ref.$type, ref._entry, words, bytes);
+			? this.#native.renderRegisteredRecord(this.#handle, ref._r, words, bytes)
+			: this.#native.renderRegisteredLeaf(this.#handle, ref.$type, ref._entry, words, bytes);
 	}
 
 	render(node) {
