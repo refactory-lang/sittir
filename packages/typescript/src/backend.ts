@@ -18,7 +18,7 @@ import { nativeLoadFailure } from '@sittir/common/engine';
 import type {
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
-	NativeEngineLike as CoreNativeEngineLike,
+	NativeEngineInstance,
 	NativeModuleLike
 } from '@sittir/common/engine';
 import { RENDER_MODULE_HASH } from './hash.js';
@@ -42,12 +42,12 @@ export type JsBackendStatus = JsBackendStatusLike & {
 export type BackendStatus = NativeBackendStatus | JsBackendStatus;
 
 /**
- * Structural shape of the grammar-local `sittir-typescript` native module. We
- * only require `SittirEngine` with the documented surface. Declared locally
+ * Structural shape of the grammar-local `sittir-typescript` native module: its
+ * `SittirEngine` class and its functions. Declared locally
  * (not imported) so the package type-checks even when the native package is
  * not installed.
  */
-export interface NativeEngine extends CoreNativeEngineLike<unknown> {
+export interface NativeEngine extends NativeEngineInstance {
 	readonly renderModuleHash: string;
 	readonly nativeRenderNodeAbi: number;
 	findAndRead(source: string, pattern: string): string;

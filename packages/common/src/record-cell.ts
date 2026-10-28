@@ -21,7 +21,6 @@ export interface RecordCodecConstants {
 	readonly LINK_RECORD_WORDS: number;
 	readonly COUNT_OWNED: number;
 	readonly COUNT_SATURATED: number;
-	readonly COUNT_SEGMENT: number;
 	readonly HELD_RECORD: number;
 	readonly HELD_RUN: number;
 	readonly HELD_SIDE: number;
@@ -75,7 +74,6 @@ export interface CellFormat {
 	readonly linkWords: number;
 	readonly countOwned: number;
 	readonly countSaturated: number;
-	readonly countSegment: number;
 	readonly held: { readonly record: number; readonly run: number; readonly side: number; readonly text: number };
 	readonly chunkShift: number;
 	/** The side record's `at`, its first field: a parsed node's row, its subtree's end and its byte span. */
@@ -154,7 +152,6 @@ const CODEC_KEYS = [
 	'LINK_RECORD_WORDS',
 	'COUNT_OWNED',
 	'COUNT_SATURATED',
-	'COUNT_SEGMENT',
 	'HELD_RECORD',
 	'HELD_RUN',
 	'HELD_SIDE',
@@ -191,7 +188,6 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		linkWords: codec.LINK_RECORD_WORDS,
 		countOwned: codec.COUNT_OWNED,
 		countSaturated: codec.COUNT_SATURATED,
-		countSegment: codec.COUNT_SEGMENT,
 		held: { record: codec.HELD_RECORD, run: codec.HELD_RUN, side: codec.HELD_SIDE, text: codec.HELD_TEXT },
 		chunkShift: codec.ARENA_CHUNK_SHIFT,
 		sideAt: { bit: codec.SIDE_FIELD_AT, words: codec.SIDE_WORDS_AT },

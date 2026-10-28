@@ -1,11 +1,12 @@
 import { createHash } from 'node:crypto';
+import { nativeEngineOf, type NativeEngineLike } from '@sittir/common/engine';
 import type { loadCorpusEntries } from '../validate/common.ts';
 import type { nativeBackendOf } from '../validate/layout-runs.ts';
 
 export type HydrationDepth = number | 'all';
 export const nativePhases = ['parse', 'hydrate', 'render', 'pipeline', 'afterShallow'] as const;
 type Backend = Awaited<ReturnType<typeof nativeBackendOf>>;
-type NativeEngine = InstanceType<Backend['SittirEngine']>;
+type NativeEngine = NativeEngineLike;
 type Entries = ReturnType<typeof loadCorpusEntries>;
 
 export interface NativeHydrationSample {
@@ -157,7 +158,7 @@ export async function sampleNativeHydration(
 	iterations: number,
 	collect: () => Promise<void>
 ): Promise<NativeHydrationSample> {
-	const engine = new backend.SittirEngine();
+	const engine = nativeEngineOf(backend);
 	try {
 		if (!engine.hydrateRecord || !engine.readRecord || !engine.renderRecord)
 			throw new Error('native workflow needs an addon exposing hydrateRecord, readRecord and renderRecord');

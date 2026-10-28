@@ -598,7 +598,7 @@ impl BuiltChunks {
         self.chunks.iter().flatten().map(BuiltChunk::byte_len).sum()
     }
 
-    /// The bytes the chunks' counts take: their meta and count segments.
+    /// The bytes the chunks' counts take: their meta, the counts included.
     #[must_use]
     pub fn count_bytes(&self) -> usize {
         self.chunks

@@ -5,10 +5,13 @@
 //! native code decrements when it releases one.
 //!
 //! A word chunk's meta holds its live entries, its placed entries, a bitmap
-//! with a bit set at each entry's first word, and a rank directory, one
-//! `u16` per 64 words, of the entries placed before that block. An entry's
+//! with a bit set at each entry's first word, a rank directory, one `u16`
+//! per 64 words, of the entries placed before that block, and the chunk's
+//! counts, one byte per entry. An entry takes at least `ENTRY_MIN_WORDS`
+//! words, so a chunk of `w` words holds at most `w / ENTRY_MIN_WORDS`
+//! entries, and its meta is made at that size and never grows. An entry's
 //! ordinal is its block's rank and the bits below it in the block; its count
-//! is that ordinal's byte in the chunk's count segments. A count byte keeps
+//! is that ordinal's byte of the counts. A count byte keeps
 //! `OWNED`, set while the handle a builder returned holds one of the counts,
 //! and the count in its other bits, which saturates at `SATURATED` into the
 //! arena's overflow map. A string chunk's meta is one `u32`: the cells that
@@ -29,20 +32,28 @@ use crate::types::{KindId, TreeId};
 pub const OWNED: u8 = 0x80;
 /// The count a count byte saturates at: the rest is in the overflow map.
 pub const SATURATED: u8 = 0x7f;
-/// The counts one segment of a word chunk's count table holds.
-pub const COUNT_SEGMENT: u32 = 256;
+/// The fewest words an entry of a word chunk takes: a record's header, or a
+/// run's length and one item.
+pub const ENTRY_MIN_WORDS: u32 = 2;
 /// The bytes of a string chunk's meta: its cell count.
 pub const CELLS_META_BYTES: usize = 4;
 const META_HEAD: usize = 8;
 const LIVE: usize = 0;
 const PLACED: usize = 4;
 
-/// The bytes a word chunk of `words` words keeps its meta in: its head, two
-/// bitmap words and a rank per 64 words, padded to a word.
+/// The byte of a word chunk of `words` words' meta its counts start at,
+/// past its head, two bitmap words and a rank per 64 words, padded to a word.
 #[must_use]
-pub fn meta_len(words: u32) -> usize {
+pub fn counts_at(words: u32) -> usize {
     let blocks = words.div_ceil(64) as usize;
     META_HEAD + blocks * 8 + (blocks * 2).next_multiple_of(4)
+}
+
+/// The bytes a word chunk of `words` words keeps its meta in: its head,
+/// bitmap and ranks, and a count for each entry it can hold.
+#[must_use]
+pub fn meta_len(words: u32) -> usize {
+    counts_at(words) + words.div_ceil(ENTRY_MIN_WORDS) as usize
 }
 
 fn malformed(what: &'static str, word: u32) -> ArenaError {
@@ -59,18 +70,18 @@ fn write_u32(bytes: &mut [u8], at: usize, value: u32) {
     bytes[at..at + 4].copy_from_slice(&value.to_ne_bytes());
 }
 
-/// A word chunk's meta and count segments.
+/// A word chunk's meta, its counts included.
 #[derive(Debug)]
 pub(super) struct CountTable {
     meta: Arc<ChunkMem<u8>>,
-    segments: Vec<Arc<ChunkMem<u8>>>,
     blocks: usize,
+    counts: usize,
     ranked: usize,
 }
 
 impl CountTable {
     pub(super) fn new(words: u32) -> Self {
-        Self { meta: ChunkMem::zeroed(meta_len(words)), segments: Vec::new(), blocks: words.div_ceil(64) as usize, ranked: 0 }
+        Self { meta: ChunkMem::zeroed(meta_len(words)), blocks: words.div_ceil(64) as usize, counts: counts_at(words), ranked: 0 }
     }
 
     pub(super) fn meta(&self) -> &Arc<ChunkMem<u8>> {
@@ -78,17 +89,7 @@ impl CountTable {
     }
 
     pub(super) fn byte_len(&self) -> usize {
-        self.meta.byte_len() + self.segments.iter().map(|segment| segment.byte_len()).sum::<usize>()
-    }
-
-    /// A new segment of counts: the `segment`th, which is the next.
-    pub(super) fn segment(&mut self, segment: u32) -> Result<Arc<ChunkMem<u8>>, ArenaError> {
-        if segment as usize != self.segments.len() {
-            return Err(malformed("count segment", segment));
-        }
-        let mem = ChunkMem::zeroed(COUNT_SEGMENT as usize);
-        self.segments.push(Arc::clone(&mem));
-        Ok(mem)
+        self.meta.byte_len()
     }
 
     fn bytes(&mut self) -> &mut [u8] {
@@ -121,9 +122,13 @@ impl CountTable {
         }
         let blocks = self.blocks;
         let ranked = self.ranked;
+        let counts = self.counts;
         let bytes = self.bytes();
         let ordinal = read_u32(bytes, PLACED);
         let rank = u16::try_from(ordinal).map_err(|_| malformed("entry ordinal", ordinal))?;
+        if counts + ordinal as usize >= bytes.len() {
+            return Err(malformed("entry ordinal", ordinal));
+        }
         write_u32(bytes, PLACED, ordinal + 1);
         write_u32(bytes, LIVE, read_u32(bytes, LIVE) + 1);
         for at in (ranked..=block).map(|block| META_HEAD + blocks * 8 + block * 2) {
@@ -132,9 +137,6 @@ impl CountTable {
         let at = META_HEAD + block * 8 + if word % 64 >= 32 { 4 } else { 0 };
         write_u32(bytes, at, read_u32(bytes, at) | 1 << (word % 32));
         self.ranked = self.ranked.max(block + 1);
-        if ordinal.is_multiple_of(COUNT_SEGMENT) {
-            self.segment(ordinal / COUNT_SEGMENT)?;
-        }
         *self.count(word)? = count;
         Ok(())
     }
@@ -164,17 +166,14 @@ impl CountTable {
     /// The count byte of the entry starting at `word`, read.
     pub(super) fn peek(&self, word: u32) -> Result<u8, ArenaError> {
         let ordinal = self.ordinal(word)?;
-        let segment = self.segments.get((ordinal / COUNT_SEGMENT) as usize).ok_or(malformed("count segment", ordinal / COUNT_SEGMENT))?;
-        // SAFETY: as `read`.
-        Ok(unsafe { segment.slice() }[(ordinal % COUNT_SEGMENT) as usize])
+        self.read().get(self.counts + ordinal as usize).copied().ok_or(malformed("entry ordinal", ordinal))
     }
 
     /// The count byte of the entry starting at `word`.
     fn count(&mut self, word: u32) -> Result<&mut u8, ArenaError> {
         let ordinal = self.ordinal(word)?;
-        let segment = self.segments.get((ordinal / COUNT_SEGMENT) as usize).ok_or(malformed("count segment", ordinal / COUNT_SEGMENT))?;
-        // SAFETY: as `bytes`.
-        Ok(&mut unsafe { segment.slice_mut() }[(ordinal % COUNT_SEGMENT) as usize])
+        let at = self.counts + ordinal as usize;
+        self.bytes().get_mut(at).ok_or(malformed("entry ordinal", ordinal))
     }
 }
 
@@ -255,20 +254,6 @@ impl BuiltChunks {
         let bytes = unsafe { cells.slice_mut() };
         write_u32(bytes, 0, read_u32(bytes, 0) + 1);
         Ok(())
-    }
-
-    /// A new segment of chunk `chunk`'s counts, its `segment`th.
-    ///
-    /// # Errors
-    ///
-    /// `ARENA_RELEASED` once released, `ArenaError::OutOfBounds` for a chunk
-    /// that holds no records, and `ArenaError::Malformed` for a segment that
-    /// is not the next.
-    pub fn counts(&mut self, chunk: u32, segment: u32) -> Result<Arc<ChunkMem<u8>>, ArenaError> {
-        if self.released {
-            return Err(ARENA_RELEASED);
-        }
-        self.table(chunk)?.segment(segment)
     }
 
     /// One more count of the entry at `at`, whose count byte saturated.
@@ -597,9 +582,6 @@ mod tests {
             let at = META_HEAD + block * 8 + if word % 64 >= 32 { 4 } else { 0 };
             let bits = read_u32(bytes, at) | 1 << (word % 32);
             write_u32(bytes, at, bits);
-            if ordinal.is_multiple_of(COUNT_SEGMENT) {
-                table.segment(ordinal / COUNT_SEGMENT).expect("the next segment");
-            }
             let entry = Address::new(self.chunk, word).expect("an address");
             *self.arena.table(self.chunk).expect("a words chunk").count(word).expect("its count") = count;
             entry

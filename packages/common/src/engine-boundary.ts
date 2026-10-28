@@ -1,4 +1,4 @@
-export { createNativeEngine, createRenderHandle, nativeLanguageEngine } from './engine.ts';
+export { createNativeEngine, createRenderHandle, nativeEngineOf, nativeLanguageEngine } from './engine.ts';
 export { scopeBuilders } from './create-engine.ts';
 export { nodeStorageOf } from './engine-scope.ts';
 export { hostPlatform, nativeLoadFailure, platformSuffix, targetSuffix } from './native-binding.ts';
@@ -16,6 +16,8 @@ export type {
 	ParseOptions,
 	JsBackendStatusLike,
 	NativeBackendStatusLike,
+	EngineHandle,
+	NativeEngineInstance,
 	NativeEngineLike,
 	NativeModuleLike,
 	ParseAndReadResult,

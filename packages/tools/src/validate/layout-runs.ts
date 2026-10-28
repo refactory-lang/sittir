@@ -1,4 +1,4 @@
-import type { BaselineRun, LayoutWork, NativeEngineLike, StoredLayout } from '@sittir/common/engine';
+import { nativeEngineOf, type BaselineRun, type LayoutWork, type NativeEngineLike, type NativeModuleLike, type StoredLayout } from '@sittir/common/engine';
 import { treeOf } from '@sittir/common/utils';
 import { loadCorpusEntries } from './common.ts';
 
@@ -28,7 +28,7 @@ export interface LayoutRunsResult {
 
 interface NativeBackend {
 	readonly name: string;
-	readonly native?: { readonly SittirEngine: new () => NativeEngineLike; disposeTree(treeId: number): void };
+	readonly native?: NativeModuleLike;
 }
 
 export async function nativeBackendOf(grammar: string): Promise<Required<NativeBackend>['native']> {
@@ -41,7 +41,7 @@ export async function nativeBackendOf(grammar: string): Promise<Required<NativeB
 /** A function parsing a source with `grammar`'s native engine and handing its tree id to `use`, disposing the tree after. */
 async function withTreeOf(grammar: string): Promise<<T>(source: string, use: (engine: NativeEngineLike, treeId: number) => T) => T> {
 	const native = await nativeBackendOf(grammar);
-	const engine = new native.SittirEngine();
+	const engine = nativeEngineOf(native);
 	return (source, use) => {
 		const { treeId } = JSON.parse(engine.parse(source)) as { treeId: number };
 		try {
@@ -61,7 +61,7 @@ export async function layoutRunsOf(grammar: string): Promise<(source: string, wh
 /** A function reading the work done so far by the layout reads of the tree a parsed node belongs to (`NativeEngineLike.layoutWork`). */
 export async function layoutWorkOf(grammar: string): Promise<(node: object) => LayoutWork> {
 	const native = await nativeBackendOf(grammar);
-	const engine = new native.SittirEngine();
+	const engine = nativeEngineOf(native);
 	return (node) => {
 		const treeId = treeOf(node)?.id;
 		if (treeId === undefined) throw new Error('layout work: the node names no live tree');
