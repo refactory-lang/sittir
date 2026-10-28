@@ -72,35 +72,47 @@ export type PortableMount =
  * One step from a holder toward a member's slot: the config key it fills, the builder of the kind the next step sits in (absent when that kind
  * has no builder and its config fills the key as is), and `optional` where the slot at the key may be left out. An empty list leaves out the
  * first optional slot on its way, through the steps and then the containers. A `mounted` step's builder is a mount: it builds the holder itself
- * with the kind at the key seated in it, taking its input as the mount says, and a deeper mount on the same holder replaces it.
+ * with the kind at the key seated in it, taking its input as the mount says, and a deeper mount on the same holder replaces it. A `flatten`
+ * step's kind has no builder: its holder takes the next step's key in its own input, in place of this one. A `seated` step's kind has no
+ * builder either: its holder takes, at the key, the arguments that kind's call shape gives its input. A `many` step's slot holds a list, so
+ * the kind built for the next step is the one element of it.
  */
 export interface PortableSlotStep {
 	readonly key: string;
 	readonly builder?: string;
 	readonly optional?: true;
+	readonly flatten?: true;
+	readonly seated?: PortableCallShape;
+	readonly many?: true;
 	readonly mounted?: PortableMount;
 }
 
 /**
  * A container a member's value sits in: its builder, absent when its holder builds it, the key of its element slot, and `optional` where that
- * slot may be left out. A `mounted` container's builder is a mount on the holder of the member's slot, so that holder is built through it.
+ * slot may be left out. A `mounted` container's builder is a mount on the holder of the member's slot, so that holder is built through it. A
+ * `flatten` container's holder takes the container's element key in its own input, in place of the slot that holds the container. `through`
+ * lists the element keys of the containers a mounted container stands in for, outermost first: a parsed tree passes through them, while the
+ * build reaches the container through its mount.
  */
 export interface PortableContainer {
 	readonly builder?: string;
 	readonly key: string;
 	readonly optional?: true;
 	readonly mounted?: PortableMount;
+	readonly flatten?: true;
+	readonly through?: readonly string[];
 }
 
 /**
  * A place a member's value sits: the holder kind and key it is picked at (an arm's `holders` names them), the kinds a value there has, the
- * builder text given for the seat builds through (`leaf`), and the containers the build puts around it, outermost first. A seat that holds
- * many (`many`) takes a list.
+ * builder text given for the seat builds through (`leaf`) and the kinds whose text that builder builds back (`texts`), and the containers the
+ * build puts around it, outermost first. A seat that holds many (`many`) takes a list.
  */
 export interface PortableSeat {
 	readonly at: readonly [holder: number, key: string];
 	readonly kinds: readonly number[];
 	readonly leaf?: string;
+	readonly texts?: readonly number[];
 	readonly within?: readonly PortableContainer[];
 	readonly many?: true;
 }
@@ -108,7 +120,8 @@ export interface PortableSeat {
 /**
  * A member of a build arm: the steps to its slot, whether the slot holds a list, and the seats a value finds in the slot, the slot's own first.
  * A route that enters a kind the arm does not make `requires` other members to fill that kind's required slots: each group names the members
- * any one of which fills one slot, so the route is taken only when every group has a member present.
+ * any one of which fills one slot, so the route is taken only when every group has a member present. `reads` lists the kinds the member
+ * reads from its slot where its binding captures only some of what the slot holds; a read keeps only values of those kinds.
  */
 export interface PortableMemberStep {
 	readonly name: string;
@@ -116,6 +129,7 @@ export interface PortableMemberStep {
 	readonly multiple: boolean;
 	readonly seats: readonly PortableSeat[];
 	readonly requires?: readonly (readonly string[])[];
+	readonly reads?: readonly number[];
 }
 
 /** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */

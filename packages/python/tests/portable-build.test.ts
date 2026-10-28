@@ -52,4 +52,9 @@ describe('the portable build through the strict table', () => {
 	it('builds a list given for a slot that holds one value through the container that holds the list', () => {
 		expect(render(runtime.build({ $path: 'declaration.function', name: 'f', parameters: [], body: [{ $path: 'statement.empty' }] }))).toBe('def f(): pass\n');
 	});
+
+	it("builds one comparison operand through the comparator list its route walks, and a float through the exponent spelling its form takes", () => {
+		expect(render(runtime.build({ $path: 'expression.binary.membership.in', left: 'a', right: 'b' }))).toBe('a in b');
+		expect(render(runtime.build({ $path: 'literal.number.float.scientific', $value: 0.001 }))).toBe('1e-3');
+	});
 });

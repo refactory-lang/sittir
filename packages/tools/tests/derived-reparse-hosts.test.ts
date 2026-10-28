@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { applyHost } from '@sittir/common';
 import { findReparsedNodeAtOffset, hostlessReason, loadRenderReparseContext } from '../src/validate/read-render-parse.ts';
-import { loadLanguageForGrammar, loadNativeEngine, wrapForReparse } from '../src/validate/common.ts';
+import { loadLanguageForGrammar, loadNativeRender, wrapForReparse } from '../src/validate/common.ts';
 
 async function contextFor(grammar: 'python' | 'regex' | 'rust' | 'typescript') {
 	const { Parser, lang } = await loadLanguageForGrammar(grammar);
 	const parser = new Parser();
 	parser.setLanguage(lang);
-	return loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
+	return loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
 }
 
 const hostFor = (grammar: string, kind: string, ctx: Awaited<ReturnType<typeof contextFor>>) =>

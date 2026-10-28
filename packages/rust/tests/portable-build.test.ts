@@ -120,4 +120,16 @@ describe('the portable build through the strict table', () => {
 	it('refuses a flag the picked kind has no step for, naming the flag and the kind', () => {
 		expect(() => runtime.build({ ...fn, $flags: ['static'] })).toThrow(/static.*function_item/);
 	});
+
+	it("places a receiver at the key its holder takes flattened, and the parameters after it in the group the holder takes as arguments", () => {
+		const receiver = { $path: 'declaration.parameter.receiver', reference: true };
+		expect(render(runtime.build({ $path: 'declaration.method', name: 'f', receiver, parameters: [parameter(rust.kinds.U8Keyword)], body: fn.body }))).toBe('fn f(&self, x: u8) {}');
+	});
+
+	it('puts a built node in place of the slot a refinement presets, and a list in the seat that seats every item', () => {
+		const field = { $path: 'expression.member', object: 'a', property: 'b' };
+		expect(render(runtime.build({ $path: 'expression.call.member', function: field, arguments: [] }))).toBe('a.b()');
+		const variant = { $path: 'declaration.enum_member.tuple', name: 'B', body: [{ $path: 'declaration.field', type: 'T' }] };
+		expect(render(runtime.build({ $path: 'declaration.enum', name: 'O', body: [variant] }))).toBe('enum O {\n    B(T),\n}');
+	});
 });

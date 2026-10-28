@@ -68,6 +68,14 @@ const mountsOf = (slot: NodeModelSlot): { readonly mounts?: Readonly<Record<stri
 	return mounts.length === 0 ? {} : { mounts: Object.fromEntries(mounts) };
 };
 
+const seatedOf = (slot: NodeModelSlot, shape: 'flatten' | 'tuple'): readonly string[] => (slot.values ?? []).flatMap(({ seat }) => (seat?.shape === shape ? [seat.kind] : []));
+
+const seatShapesOf = (slot: NodeModelSlot): { readonly flattens?: readonly string[]; readonly tuples?: readonly string[] } => {
+	const flattens = seatedOf(slot, 'flatten');
+	const tuples = seatedOf(slot, 'tuple');
+	return { ...(flattens.length === 0 ? {} : { flattens }), ...(tuples.length === 0 ? {} : { tuples }) };
+};
+
 export function slotModelOf(record: NodeModelRecord): SlotModel {
 	const out = new Map<string, ModelNode>();
 	for (const n of nodesOf(record)) {
@@ -83,7 +91,8 @@ export function slotModelOf(record: NodeModelRecord): SlotModel {
 				storage: s.storage ?? 'verbatim',
 				kinds: slotKindsOf(s),
 				terminals: (s.values ?? []).flatMap((v) => (v.kind === 'terminal' && v.value !== undefined ? [v.value] : [])),
-				...mountsOf(s)
+				...mountsOf(s),
+				...seatShapesOf(s)
 			})),
 			subtypes: n.subtypes ?? [],
 			elementKinds: n.elementKinds ?? [],

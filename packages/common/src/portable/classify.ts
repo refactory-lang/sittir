@@ -49,6 +49,7 @@ interface RowsReader {
 	readonly classify: PortableClassifier;
 	readonly flagHolds: (value: Node | number, flag: string) => boolean;
 	readonly builtReadsAs: (path: string, node: Node) => boolean;
+	readonly textOf: (value: unknown) => string | undefined;
 }
 
 const readers = new WeakMap<PortableRows, RowsReader>();
@@ -93,6 +94,10 @@ export function flagHolds(rows: PortableRows, value: Node | number, flag: string
 
 export function builtReadsAs(rows: PortableRows, path: string, node: Node): boolean {
 	return readerOf(rows).builtReadsAs(path, node);
+}
+
+export function portableTextOf(rows: PortableRows, value: unknown): string | undefined {
+	return readerOf(rows).textOf(value);
 }
 
 function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
@@ -172,5 +177,5 @@ function rowsReader({ table, querySlots, flags }: PortableRows): RowsReader {
 		if (entries.length === 0 || !entries.every(unplaced)) return true;
 		return entries.some((entry) => entry.test.every((condition) => conditionHolds(condition, node)));
 	};
-	return { classify, flagHolds, builtReadsAs };
+	return { classify, flagHolds, builtReadsAs, textOf };
 }
