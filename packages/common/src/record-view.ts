@@ -52,11 +52,15 @@ function wordsAt(
 	return { words: records.words(at, length), start: wordOf(at, records.format) };
 }
 
+export function freedRecord(at: number): string {
+	return `the node at ${at} was released: the chunk its record was in is freed`;
+}
+
 export function liveWords(holder: RecordPosition): ChunkWords | undefined {
 	const own = (holder as Partial<RecordHandle>).$words;
 	if (own?.length !== 0) return own;
 	holder.$tree.records?.words(holder.$at, 1);
-	throw new Error(`the node at ${holder.$at} was released: the chunk its record was in is freed`);
+	throw new Error(freedRecord(holder.$at));
 }
 
 function holderWords(holder: RecordPosition, length: number): { readonly words: ChunkWords; readonly start: number; readonly records: RecordWords } {

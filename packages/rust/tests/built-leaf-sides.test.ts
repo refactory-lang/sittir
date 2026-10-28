@@ -42,6 +42,30 @@ function parsedLeafRender(rs: Engine): string {
 	return rs.render(rs.build.expressionStatement(a as never)).toString();
 }
 
+function parkedRenders(rs: Engine): string[] {
+	const b = rs.build;
+	const shared = comment(rs, 'shared');
+	const one = b.identifier('a');
+	const two = b.identifier('b');
+	one.$trivia.leading(shared);
+	two.$trivia.leading(shared);
+	rs.release(one);
+	const own = comment(rs, 'own');
+	const three = b.identifier('c');
+	three.$trivia.leading(own);
+	rs.release(own);
+	return [rs.render(two).toString(), rs.render(b.expressionStatement(two)).toString(), rs.render(b.expressionStatement(three)).toString()];
+}
+
+function writtenAfterWith(rs: Engine): string {
+	const fn = rs.parse('fn f() {}\n').statements()[0];
+	if (fn === undefined || !rs.is.functionItem(fn)) throw new Error('expected a function');
+	const name = rs.build.identifier('g');
+	const edited = fn.$with.name(name);
+	name.$trivia.leading(comment(rs, 'after'));
+	return rs.render(edited).toString();
+}
+
 describe('a built leaf holds no storage', () => {
 	it('is appended as no record, and its holder reads back the leaf its builder was given', () => {
 		const b = records.build;
@@ -59,6 +83,17 @@ describe('a built leaf holds no storage', () => {
 		const expected = siteRenders(objects);
 		expect(expected[0]).toBe('/* before */ x;');
 		for (const [name, rs] of constructions) expect([name, siteRenders(rs)]).toEqual([name, expected]);
+	});
+
+	it('keeps a record it parks while unplaced through the release of another leaf parking it, and of its own handle', () => {
+		const expected = parkedRenders(objects);
+		expect(expected).toEqual(['/* shared */ b', '/* shared */ b;', '/* own */ c;']);
+		for (const [name, rs] of constructions) expect([name, parkedRenders(rs)]).toEqual([name, expected]);
+	});
+
+	it("renders a side written after the leaf was given to a parsed node's $with", () => {
+		expect(writtenAfterWith(objects)).toBe('fn /* after */ g() {}');
+		for (const [name, rs] of constructions) expect([name, writtenAfterWith(rs)]).toEqual([name, writtenAfterWith(objects)]);
 	});
 
 	it('refuses a side naming another engine record, placed or not, and keeps the sides it had', () => {

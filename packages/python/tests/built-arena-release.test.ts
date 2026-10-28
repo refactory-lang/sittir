@@ -44,3 +44,11 @@ it("seals each full chunk's counts to the entries it holds, which it still holds
 	engine.release(module);
 	expect(memory().live).toBe(0);
 });
+
+it("a parsed node's $with releases the record it builds before naming its source, so a released edit leaves nothing live", async () => {
+	const { engine, memory } = await engineWithMemory();
+	const fn = engine.parse('def f():\n    pass\n').statements()[0];
+	if (fn === undefined || !engine.is.functionDefinition(fn)) throw new Error('expected a function definition');
+	for (let n = 0; n < 3; n++) engine.release(fn.$with.name(engine.build.identifier('g')) as never);
+	expect(memory().live).toBe(0);
+});

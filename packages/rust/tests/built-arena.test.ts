@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BuiltArena, builtCell, cellFormatOf, chunkOf, decodeBuiltCell, unitCell, wordOf } from '@sittir/common/engine';
-import { builtRecordOf, handleDispose, LEAF_SITES, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
+import { builtRecordOf, handleDispose, LEAF_SITES, positionWords, storeCell, storeList, storeListOptions, writeLeafSites } from '@sittir/common/utils';
 import type { BuiltText, LeafSite, TreeHandle } from '@sittir/common/utils';
 import { leafSitesOf, placeLeaf } from '../../common/src/built-ref.ts';
 import { PLAIN_KINDS, setTriviaOf } from '../../common/src/node-data.ts';
@@ -39,7 +39,7 @@ function chunksOf() {
 const arenaOf = (trivia: SideStore = NO_SIDES, views: Views = NO_VIEWS, leafSites: WriteLeafSites = () => undefined): BuiltArena =>
 	new BuiltArena(
 		{ format: format!, owner: {}, kinds: PLAIN_KINDS, ...chunksOf(), bump: () => undefined, release: () => [], trivia },
-		(data) => ({ ...data, [Symbol.dispose]: handleDispose }),
+		(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
 		{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
 		views,
 		leafSites
@@ -119,6 +119,28 @@ describe('a built arena', () => {
 		expect(arena.tree.unitSides(a)).toEqual([]);
 		expect(arena.tree.unitSides(b)).toEqual([{ slot: '_items', item: 0, leading: [4] }]);
 		expect(asked).toEqual([`trailing of ${a}`, `leading of ${b}`, `units of ${b}`]);
+	});
+
+	it('refuses a handle whose chunk was freed and its number given to a new chunk, and releases nothing through it', () => {
+		const released: number[] = [];
+		let next = 0;
+		const words = (length: number) => ({ chunk: 1, data: new Uint32Array(length), meta: new Uint8Array(metaBytes(length)), freed: next++ === 0 ? [] : [1] });
+		const arena = new BuiltArena(
+			{ format: format!, owner: {}, kinds: PLAIN_KINDS, words, bytes: chunksOf().bytes, bump: () => undefined, release: (at: number) => (released.push(at), []), trivia: NO_SIDES },
+			(data) => ({ ...data, $words: positionWords(data as never), [Symbol.dispose]: handleDispose }),
+			{ current: {} as never, settle: <T>(node: T): T => node, hydrate: () => undefined, querySlots: {}, structure: {} } as never,
+			NO_VIEWS,
+			() => undefined
+		);
+		const wide = 2 ** format!.chunkShift + 1;
+		const stale = arena.view(arena.draft(7, wide));
+		const fresh = arena.view(arena.draft(8, wide));
+		expect(builtRecordOf(fresh, arena)).toBe((stale as { readonly $at: number }).$at);
+		expect(() => builtRecordOf(stale, arena)).toThrow('the chunk its record was in is freed');
+		arena.releaseHandle(stale);
+		expect(released).toEqual([]);
+		arena.releaseHandle(fresh);
+		expect(released).toEqual([(fresh as { readonly $at: number }).$at]);
 	});
 
 	it('keeps every outstanding draft whole', () => {
@@ -281,7 +303,7 @@ describe('a built arena', () => {
 		storeListOptions(arena, record, 3, 6);
 		const node = arena.view(record);
 		const at = builtRecordOf(node, arena)!;
-		const copy = arena.rebuiltFrom(node, { id: 7 } as never, {} as never, 21, 25, { start: 40, end: 52 });
+		const copy = arena.rebuiltFrom(node, { id: 7 } as never, {} as never, 21, 25, { start: 40, end: 52 }, false);
 		const copiedAt = builtRecordOf(copy, arena)!;
 		expect(copiedAt).not.toBe(at);
 		const [kind, side, ...cells] = placed(arena, copy, 13);

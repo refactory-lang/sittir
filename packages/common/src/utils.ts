@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import type { LeafHandle, RecordHandle, RecordPosition } from './handle.ts';
-import { builtLeafOf, builtRefOf, leafSitesOf, siteOf } from './built-ref.ts';
+import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -105,23 +105,35 @@ export function rebuilt<R>(source: object, handle: EngineHandle | undefined, bui
 	const node = source as AnyUntypedNode;
 	const built = handle === undefined ? build() : inEngine(handle, build);
 	if (!isNode(built)) return built;
-	const result = sourcedRecord(node, built);
-	markRebuilt(result);
-	carryRead(node, result);
-	carryPlace(node, result);
-	carryUnitSides(node, result);
-	const facts = handle?.current.trivia;
-	if (facts !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, standsIn(facts));
-	const held = sideOf(node, 'inner');
-	const inner = held.length === 0 || isEmptyNode(result) ? [] : held;
-	if (inner.some((entry) => typeof entry !== 'number')) {
-		const kind = facts?.kindName(node.$type) ?? String(node.$type);
-		throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
+	let result = built;
+	try {
+		result = sourcedRecord(node, built, true);
+		markRebuilt(result);
+		carryRead(node, result);
+		carryPlace(node, result);
+		carryUnitSides(node, result);
+		const facts = handle?.current.trivia;
+		if (facts !== undefined) carryRebuiltSlots(node as unknown as Record<string, unknown>, result as unknown as Record<string, unknown>, standsIn(facts));
+		const held = sideOf(node, 'inner');
+		const inner = held.length === 0 || isEmptyNode(result) ? [] : held;
+		if (inner.some((entry) => typeof entry !== 'number')) {
+			const kind = facts?.kindName(node.$type) ?? String(node.$type);
+			throw new Error(`trivia: ${kind} holds inner comments; move them to leading/trailing on the new child`);
+		}
+		const trivia = writtenSides(node);
+		if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
+		else if (trivia !== undefined) writeTrivia(result, trivia);
+		return handle === undefined ? result : handle.settle(result);
+	} catch (error) {
+		releaseBuilt(result);
+		throw error;
+	} finally {
+		if (result !== built) releaseBuilt(built);
 	}
-	const trivia = writtenSides(node);
-	if (inner.length > 0) writeTrivia(result, { ...trivia, inner: [] });
-	else if (trivia !== undefined) writeTrivia(result, trivia);
-	return handle === undefined ? result : handle.settle(result);
+}
+
+function releaseBuilt(node: object): void {
+	handleArenaOf(node)?.releaseHandle(node);
 }
 
 export function isEmptyNode(node: AnyUntypedNode): boolean {
@@ -154,7 +166,7 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 		if (sites !== undefined) writeSites(leaf.arena, sites, trivia, wired);
 		if (sited !== undefined) return;
 		const own = triviaOf(node);
-		setTriviaOf(node, own === undefined ? trivia : { ...own, ...trivia });
+		setTriviaOf(node, leaf.arena.repark(node, own, trivia));
 		return;
 	}
 	const at = tableAt(node);
@@ -263,12 +275,12 @@ export function hydrateTriviaEntry(entry: unknown, tree?: TreeHandle): TriviaEnt
 	return asTextNode(tree === undefined ? entry : hydrateOn(tree, entry)) as TriviaEntry;
 }
 
-function sourcedRecord<R extends object>(source: object, built: R): R {
+function sourcedRecord<R extends object>(source: object, built: R, own: boolean): R {
 	const ref = builtRefOf(built);
 	const from = placeOf(source);
 	const tree = from === undefined ? undefined : treeOfToken(from.token);
 	if (ref?.at === undefined || from === undefined || tree?.id === undefined) return built;
-	return ref.arena.rebuiltFrom(built, tree as TreeHandle & { readonly id: number }, from.token, decodeIndex(from.treeHandle), from.end, from.span) as R;
+	return ref.arena.rebuiltFrom(built, tree as TreeHandle & { readonly id: number }, from.token, decodeIndex(from.treeHandle), from.end, from.span, own) as R;
 }
 
 /**
@@ -297,7 +309,7 @@ export function carriedSlot(source: object, accessor: string, value: unknown): u
 	if (typeof read !== 'function') throw new Error(`a $with of kind ${(source as AnyUntypedNode).$type} reads no slot ${accessor}`);
 	const held = (read as () => unknown).call(source);
 	if (!carriesFrom(held, value, standsIn(facts))) return value;
-	if (placeOf(held as object) !== undefined) return sourcedRecord(held as object, value);
+	if (placeOf(held as object) !== undefined) return sourcedRecord(held as object, value, false);
 	carrySides(held as object, value);
 	return value;
 }

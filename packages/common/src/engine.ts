@@ -21,7 +21,7 @@ import type { DescendantBatch } from './query.ts';
 import { cellFormatOf, chunkOf, wordOf, type CellFormat } from './record-cell.ts';
 import { recordOf, recordStub } from './record-view.ts';
 import { readEntries, readUnits, type BuiltRecords, type WritableWords } from './built-arena.ts';
-import { builtRefOf } from './built-ref.ts';
+import { builtRefOf, handleArenaOf } from './built-ref.ts';
 import { nodeStorageOf } from './engine-scope.ts';
 import { leafWireSides } from './utils.ts';
 
@@ -635,10 +635,10 @@ export function createNativeEngine<
 				},
 
 				release(node) {
-					const built = builtRefOf(node);
-					if (built === undefined) return;
-					if (built.arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned');
-					built.arena.releaseHandle(node);
+					const arena = handleArenaOf(node);
+					if (arena === undefined) return;
+					if (arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned');
+					arena.releaseHandle(node);
 				},
 
 				dispose() {

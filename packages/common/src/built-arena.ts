@@ -1,4 +1,4 @@
-import type { EngineIdentity, NodeCoordinate } from '@sittir/types';
+import type { EngineIdentity, NodeCoordinate, NodeTrivia } from '@sittir/types';
 import { bindTree, engineOf, sameLanguage, treeBuiltArena, type TreeEngineHandle } from './engine-scope.ts';
 import { wrapRegistered, type Role } from './identity.ts';
 import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, triviaOf, type ChangedEdges, type KindView } from './node-data.ts';
@@ -7,9 +7,9 @@ import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
 import { BLANK_KIND_ID } from './error-kind.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
-import { builtRefOf, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
-import { leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
-import type { LeafMaker, RecordPosition } from './handle.ts';
+import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
+import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
+import type { LeafHandle, LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** A leaf entry of a built arena: its packed address in a string chunk, 0 before its leaf is first placed, its kind once placed, its text, and the chunk it lies in. */
@@ -239,6 +239,8 @@ export class BuiltArena {
 	readonly #leafSited: (Set<number> | undefined)[] = [];
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
+	readonly #parkedBy = new WeakMap<object, object>();
+	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 
 	constructor({ format, owner, kinds, words, bytes, bump, release, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
 		this.format = format;
@@ -417,19 +419,49 @@ export class BuiltArena {
 		this.#released(this.#release(at, this.format.held.record, true));
 	}
 
-	/** Releases what the handle `node` holds: its record's count, or for a leaf, the count of each built record its sides hold until the leaf is placed. A record already released, or its count already placed, is passed over. */
+	/** Releases what the handle `node` holds: its record's count, or for a leaf not yet placed, the count it holds of each built record its sides park. A record already released, or its count already placed, is passed over, and so is a handle whose record's chunk was freed. */
 	releaseHandle(node: object): void {
 		const at = (node as { readonly $at?: unknown }).$at;
 		if (typeof at === 'number') {
-			this.release(at);
+			if (this.#liveRecord(node, at)) this.release(at);
 			return;
 		}
-		forEachTriviaList(triviaOf(node) ?? {}, (entries) => {
-			for (const entry of entries) {
-				const parked = recordRefOf(entry);
-				if (parked?.arena === this && this.#words.has(chunkOf(parked.at, this.format))) this.release(parked.at);
-			}
-		});
+		this.#unpark(this.#parkedOf(node));
+	}
+
+	liveAt(node: object, at: number): number {
+		if (!this.#liveRecord(node, at)) throw new Error(freedRecord(at));
+		return at;
+	}
+
+	#liveRecord(node: object, at: number): boolean {
+		return (node as Partial<RecordHandle>).$words === this.#words.chunks[chunkOf(at, this.format)];
+	}
+
+	repark(leaf: object, own: NodeTrivia | undefined, written: NodeTrivia): NodeTrivia {
+		const next = { ...own, ...written };
+		if (leafSitesOf(leaf) !== undefined || (leaf as Partial<LeafHandle>).$site !== undefined) return next;
+		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
+		this.#unpark(this.#parkedOf(leaf));
+		this.#parkedBy.set(next, leaf);
+		return next;
+	}
+
+	#parkedOf(leaf: object): NodeTrivia | undefined {
+		const trivia = triviaOf(leaf);
+		return trivia !== undefined && this.#parkedBy.get(trivia) === leaf ? trivia : undefined;
+	}
+
+	#unpark(trivia: NodeTrivia | undefined): void {
+		if (trivia === undefined || !this.#parkedBy.delete(trivia)) return;
+		forEachTriviaList(trivia as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.drop(at, this.format.held.record)));
+	}
+
+	#eachParked(entries: readonly unknown[], each: (at: number) => void): void {
+		for (const entry of entries) {
+			const parked = recordRefOf(entry);
+			if (parked?.arena === this) each(parked.at);
+		}
 	}
 
 	/** Refuses the record at `at` once it is released. */
@@ -623,7 +655,9 @@ export class BuiltArena {
 		const placed = record.placed;
 		for (let n = 0; placed !== undefined && n < placed.length; n += 3) this.#site(placed[n] as object, place.at, placed[n + 1] as number, placed[n + 2] as number);
 		if (record.copyOf !== undefined) this.#copySites(record.copyOf, place.at, record.patched ?? []);
-		return this.#view(place.at);
+		const node = this.#view(place.at);
+		this.#placedLast = placed === undefined ? undefined : { node, placed };
+		return node;
 	}
 
 	/** A leaf of text `text` made by `maker`, as a built leaf of this arena: it has no record, and its entry is interned when it is first placed. */
@@ -643,8 +677,10 @@ export class BuiltArena {
 	}
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
+		const parked = this.#parkedOf(leaf);
 		placeLeaf(leaf, holder, word, item);
 		this.#writeLeafSites(leaf, [holder, word, item]);
+		this.#unpark(parked);
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */
@@ -706,7 +742,7 @@ export class BuiltArena {
 		return words;
 	}
 
-	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }): object {
+	rebuiltFrom(node: object, tree: TreeHandle & { readonly id: number }, token: TreeToken, index: number, end: number, span: { readonly start: number; readonly end: number }, own: boolean): object {
 		const at = builtRecordOf(node, this);
 		if (at === undefined) throw new Error('only a record this arena built is rebuilt from a parsed node');
 		const head = wordOf(at, this.format);
@@ -720,6 +756,8 @@ export class BuiltArena {
 		place.data.set(this.#chunk(at, words).subarray(head, head + words), place.base);
 		place.data[place.base + 1] = side;
 		this.#copySites(at, place.at, []);
+		const last = this.#placedLast;
+		if (own && last?.node === node) for (let n = 0; n < last.placed.length; n += 3) moveLeafSite(last.placed[n] as object, at, place.at, last.placed[n + 1] as number, last.placed[n + 2] as number);
 		return this.#view(place.at);
 	}
 
@@ -822,7 +860,7 @@ export function sideEntryOf(entry: object, arena: BuiltArena | undefined, holder
 }
 
 export function refuseForeignEntry(entry: object, holder: EngineIdentity | undefined): void {
-	const engine = builtRefOf(entry)?.arena.engine ?? engineOf(entry);
+	const engine = builtArenaOf(entry)?.engine ?? engineOf(entry);
 	if (engine === undefined || holder === undefined || sameLanguage(engine, holder)) return;
 	throw new Error(`cannot write a ${engine.language.name} ${isBuiltNode(entry) ? 'record' : 'node'} into a side of a ${holder.language.name} node`);
 }
@@ -851,11 +889,11 @@ export function holdSideEntries(table: object, place: string, entries: readonly 
 }
 
 export function isBuiltNode(value: object): boolean {
-	return builtRefOf(value) !== undefined;
+	return handleArenaOf(value) !== undefined;
 }
 
 export function builtArenaOf(value: object): BuiltArena | undefined {
-	return builtRefOf(value)?.arena;
+	return handleArenaOf(value);
 }
 
 export function builtRecordOf(value: object, arena: BuiltArena): number | undefined {
