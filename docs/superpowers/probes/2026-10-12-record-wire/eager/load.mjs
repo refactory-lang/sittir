@@ -23,7 +23,7 @@ export function parseDeep(text) {
 	const parsed = JSON.parse(parser.parse(text));
 	try {
 		if (parsed.errors.length !== 0) throw new Error('rendered function has parse errors');
-		if (parser.hydrateRecord(parsed.treeId, 0, Infinity) === null) throw new Error('deep parse has no root record');
+		if (grammarNative.hydrateRecord(parsed.treeId, 0, Infinity) === null) throw new Error('deep parse has no root record');
 		return parsed.treeId;
 	} catch (error) {
 		grammarNative.disposeTree(parsed.treeId);

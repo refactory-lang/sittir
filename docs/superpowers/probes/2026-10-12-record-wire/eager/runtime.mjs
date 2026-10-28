@@ -118,7 +118,7 @@ export class Storage {
 	#packet;
 	#registration;
 	#registered = -1;
-	#entries = new Map();
+	#entries = [];
 	#entryAt = new Map();
 	#reader;
 	records = 0;
@@ -206,8 +206,8 @@ export class Storage {
 	}
 
 	#entry(kind, text) {
-		const key = `${kind}:${text}`;
-		const known = this.#entries.get(key);
+		const texts = (this.#entries[kind] ??= new Map());
+		const known = texts.get(text);
 		if (known !== undefined) return known;
 		const target = this.#strings.alloc((ENTRY_HEAD_BYTES + text.length * 3 + 3) & ~3);
 		const start = target.word + ENTRY_HEAD_BYTES;
@@ -219,7 +219,7 @@ export class Storage {
 		this.#headsOf(target.chunk)[target.word >>> 2] = (withKind(kind, kindBits) | (written * 2 ** kindBits)) >>> 0;
 		this.#packet = undefined;
 		const entry = { at: addressOf(target.chunk, target.word, this.#format), kind, len: written, text };
-		this.#entries.set(key, entry);
+		texts.set(text, entry);
 		this.#entryAt.set(entry.at, entry);
 		return entry;
 	}
@@ -329,8 +329,8 @@ export class Storage {
 		const words = this.#words.written();
 		const bytes = this.#strings.written();
 		return ref._entry === undefined
-			? this.#registration.renderRecord(ref._r, words, bytes)
-			: this.#registration.renderLeaf(ref.$type, ref._entry, words, bytes);
+			? this.#native.renderRegisteredRecord(this.#registration.handle, ref._r, words, bytes)
+			: this.#native.renderRegisteredLeaf(this.#registration.handle, ref.$type, ref._entry, words, bytes);
 	}
 
 	render(node) {

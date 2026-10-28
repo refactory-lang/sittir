@@ -56,12 +56,12 @@ async function settle() {
 const held = registeredFixture();
 await settle();
 assert(held.weak.deref());
-assert.equal(held.owner.render(held.at).text, held.expected);
+assert.equal(native.renderRegisteredRecord(held.owner.handle, held.at).text, held.expected);
 assert.equal(native.heldArenaReferences(), held.count);
 held.owner.dispose();
 held.owner.dispose();
 assert.equal(native.heldArenaReferences(), 0);
-assert.throws(() => held.owner.render(held.at), /released/);
+assert.throws(() => native.renderRegisteredRecord(held.owner.handle, held.at), /released/);
 
 registeredFixture();
 for (let attempt = 0; attempt < 20 && native.heldArenaReferences() !== 0; attempt++) await settle();
@@ -72,14 +72,14 @@ const firstChunk = mutable.arrays!.chunks[mutable.chunk];
 const word = wordAt(mutable.at);
 const kind = firstChunk[word];
 firstChunk[word] = 65535;
-assert.throws(() => mutable.owner.render(mutable.at));
+assert.throws(() => native.renderRegisteredRecord(mutable.owner.handle, mutable.at));
 firstChunk[word] = kind;
-assert.equal(mutable.owner.render(mutable.at).text, mutable.expected);
+assert.equal(native.renderRegisteredRecord(mutable.owner.handle, mutable.at).text, mutable.expected);
 mutable.owner.dispose();
 
 const detached = registeredFixture(true);
 structuredClone(detached.arrays!.chunks[detached.chunk].buffer, { transfer: [detached.arrays!.chunks[detached.chunk].buffer] });
-assert.throws(() => detached.owner.render(detached.at));
+assert.throws(() => native.renderRegisteredRecord(detached.owner.handle, detached.at));
 detached.owner.dispose();
 assert.equal(native.heldArenaReferences(), 0);
 assert.throws(() => native.registerArena([new Uint32Array(new SharedArrayBuffer(16))], []), /ordinary/);
@@ -103,7 +103,7 @@ const shiftedStrings = sourcePacket.strings.map((chunk) => {
   return padded.subarray(3, chunk.length + 3);
 });
 const shiftedOwner = native.registerArena(shiftedWords, shiftedStrings);
-assert.equal(shiftedOwner.render(packetSource.at).text, packetSource.expected);
+assert.equal(native.renderRegisteredRecord(shiftedOwner.handle, packetSource.at).text, packetSource.expected);
 shiftedOwner.dispose();
 const recordChunk = packetSource.chunk;
 const stringChunk = packetSource.stringChunk;
@@ -115,9 +115,9 @@ const resizedOwner = native.registerArena(
   sourcePacket.chunks.map((chunk, n) => (n === recordChunk ? new Uint32Array(resizable) : chunk)),
   sourcePacket.strings
 );
-assert.equal(resizedOwner.render(packetSource.at).text, packetSource.expected);
+assert.equal(native.renderRegisteredRecord(resizedOwner.handle, packetSource.at).text, packetSource.expected);
 resizable.resize(0);
-assert.throws(() => resizedOwner.render(packetSource.at));
+assert.throws(() => native.renderRegisteredRecord(resizedOwner.handle, packetSource.at));
 resizedOwner.dispose();
 assert.equal(native.heldArenaReferences(), 0);
 
@@ -128,11 +128,11 @@ assert.equal(native.heldArenaReferences(), 0, 'invalid open indices retain no bu
 const growing = native.registerArena(sourcePacket.chunks, sourcePacket.strings, recordChunk, stringChunk);
 const recordWords = sourcePacket.chunks[recordChunk].length;
 const stringBytes = sourcePacket.strings[stringChunk].length;
-const renderPrefix = (words = recordWords, bytes = stringBytes) => growing.render(packetSource.at, words, bytes);
+const renderPrefix = (words = recordWords, bytes = stringBytes) => native.renderRegisteredRecord(growing.handle, packetSource.at, words, bytes);
 assert.equal(renderPrefix().text, packetSource.expected);
-assert.equal(growing.renderRecord(packetSource.at, recordWords, stringBytes).text, packetSource.expected);
-assert.throws(() => growing.renderRecord(packetSource.at, 0.5, stringBytes), /exact u32/);
-assert.throws(() => growing.render(packetSource.at), /written length/);
+assert.equal(native.renderRegisteredRecord(growing.handle, packetSource.at, recordWords, stringBytes).text, packetSource.expected);
+assert.throws(() => native.renderRegisteredRecord(growing.handle, packetSource.at, 0.5, stringBytes), /exact u32/);
+assert.throws(() => native.renderRegisteredRecord(growing.handle, packetSource.at), /written length/);
 assert.throws(() => renderPrefix(0));
 assert.throws(() => renderPrefix(undefined, 0));
 assert.throws(() => renderPrefix(recordWords + 1), /written prefix/);
@@ -144,10 +144,10 @@ const sparseOwner = native.registerArena(
   [...sourcePacket.strings, ...Array.from({ length: 63 }, () => new Uint8Array(0))]
 );
 const compactOwner = native.registerArena(sourcePacket.chunks, sourcePacket.strings);
-const compactRender = compactOwner.render(packetSource.at);
+const compactRender = native.renderRegisteredRecord(compactOwner.handle, packetSource.at);
 compactOwner.dispose();
 const chunkReads = native.arenaChunkReadCount();
-const sparseRender = sparseOwner.render(packetSource.at);
+const sparseRender = native.renderRegisteredRecord(sparseOwner.handle, packetSource.at);
 assert.equal(sparseRender.text, packetSource.expected);
 assert.equal(native.arenaChunkReadCount() - chunkReads, 2, 'render acquires only the referenced word and UTF-8 chunks');
 assert.equal(sparseRender.allocatedBytes, compactRender.allocatedBytes, 'unused chunks add no per-render allocation');

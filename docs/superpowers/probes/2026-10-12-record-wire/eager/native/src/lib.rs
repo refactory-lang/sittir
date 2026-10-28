@@ -2,11 +2,12 @@ use std::alloc::{GlobalAlloc, Layout, System};
 use std::cell::{OnceCell, RefCell};
 use std::collections::HashMap;
 use std::ffi::c_void;
+use std::rc::Rc;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, LazyLock};
 use std::time::Instant;
 
-use napi::bindgen_prelude::{FromNapiValue, ObjectFinalize};
+use napi::bindgen_prelude::{External, FromNapiValue, ObjectFinalize};
 use napi::{Env, Error, JsValue, Result, Status, Unknown, UnknownRef};
 use napi_derive::napi;
 use sittir_core::arena::{admit, Address, ArenaRead, BorrowedArena, Cell, CellAt, CellWord, HeldArenas, RecordGrammar};
@@ -369,11 +370,19 @@ impl<T: Element> ChunkRefs<T> {
     }
 }
 
-#[napi(custom_finalize)]
-pub struct RegisteredArena {
+/// The chunks one registration holds, shared by its `RegisteredArena` and the
+/// handles the render functions take. Only the `RegisteredArena` releases them.
+pub struct Registered {
     chunks: Option<(ChunkRefs<u32>, ChunkRefs<u8>)>,
     word_open: Option<usize>,
     string_open: Option<usize>,
+}
+
+type Registration = Rc<RefCell<Registered>>;
+
+#[napi(custom_finalize)]
+pub struct RegisteredArena {
+    registered: Registration,
 }
 
 fn open_chunk(value: Option<f64>, count: usize) -> Result<Option<usize>> {
@@ -497,7 +506,7 @@ impl ArenaRead for RegisteredRead<'_> {
     }
 }
 
-impl RegisteredArena {
+impl Registered {
     fn render_root(&self, env: Env, root: Root, word_len: Option<f64>, string_len: Option<f64>) -> Result<RenderSample> {
         measured(|| {
             let (words, bytes) = self
@@ -519,45 +528,53 @@ impl RegisteredArena {
     }
 }
 
+fn registered(handle: &External<Registration>) -> Result<std::cell::Ref<'_, Registered>> {
+    handle.try_borrow().map_err(|_| Error::from_reason("arena registration is being released"))
+}
+
+/// The record at `address` of the registration `handle` names, rendered.
+#[napi]
+pub fn render_registered_record(
+    env: Env,
+    #[napi(ts_arg_type = "object")] handle: &External<Registration>,
+    address: f64,
+    word_len: Option<f64>,
+    string_len: Option<f64>,
+) -> Result<RenderSample> {
+    registered(handle)?.render_root(env, Root::Record(address), word_len, string_len)
+}
+
+/// The leaf of `kind` whose entry the registration `handle` names holds at
+/// `entry`, rendered.
+#[napi]
+pub fn render_registered_leaf(
+    env: Env,
+    #[napi(ts_arg_type = "object")] handle: &External<Registration>,
+    kind: f64,
+    entry: f64,
+    word_len: Option<f64>,
+    string_len: Option<f64>,
+) -> Result<RenderSample> {
+    registered(handle)?.render_root(env, Root::Leaf { kind, entry }, word_len, string_len)
+}
+
 #[napi]
 impl RegisteredArena {
-    #[napi]
-    pub fn render_record(
-        &self,
-        env: Env,
-        address: f64,
-        word_len: f64,
-        string_len: f64,
-    ) -> Result<RenderSample> {
-        self.render_root(env, Root::Record(address), Some(word_len), Some(string_len))
-    }
-
-    #[napi]
-    pub fn render(
-        &self,
-        env: Env,
-        address: f64,
-        word_len: Option<f64>,
-        string_len: Option<f64>,
-    ) -> Result<RenderSample> {
-        self.render_root(env, Root::Record(address), word_len, string_len)
-    }
-
-    #[napi]
-    pub fn render_leaf(
-        &self,
-        env: Env,
-        kind: f64,
-        entry: f64,
-        word_len: Option<f64>,
-        string_len: Option<f64>,
-    ) -> Result<RenderSample> {
-        self.render_root(env, Root::Leaf { kind, entry }, word_len, string_len)
+    /// The handle the render functions take.
+    #[napi(getter, ts_return_type = "object")]
+    pub fn handle(&self) -> External<Registration> {
+        External::new(Rc::clone(&self.registered))
     }
 
     #[napi]
     pub fn dispose(&mut self, env: Env) -> Result<()> {
-        let Some((mut words, mut bytes)) = self.chunks.take() else {
+        let Some((mut words, mut bytes)) = self
+            .registered
+            .try_borrow_mut()
+            .map_err(|_| Error::from_reason("arena registration is rendering"))?
+            .chunks
+            .take()
+        else {
             return Ok(());
         };
         let words_result = words.release(&env);
@@ -595,9 +612,11 @@ pub fn register_arena(
     };
     REGISTRATIONS.fetch_add(1, Ordering::Relaxed);
     Ok(RegisteredArena {
-        chunks: Some((words, bytes)),
-        word_open,
-        string_open,
+        registered: Rc::new(RefCell::new(Registered {
+            chunks: Some((words, bytes)),
+            word_open,
+            string_open,
+        })),
     })
 }
 
