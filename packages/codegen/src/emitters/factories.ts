@@ -54,7 +54,7 @@ import {
 	delimiterMembersFor
 } from '../compiler/model/node-map.ts';
 export { delimiterMembersFor } from '../compiler/model/node-map.ts';
-import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
+import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 import {
 	DELIMITER_IMPORT,
 	isRequired,
@@ -178,12 +178,12 @@ function slotGuardKey(kind: string, slot: string): string {
 	return `${kind}\0${slot}`;
 }
 
-export function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; literal: string } | undefined {
+export function leafReDeclaration(kind: string, node: AssembledNode): { constName: string; regex: RegExp; literal: string } | undefined {
 	if (node.surfaceHidden && isFixedTextLeaf(node)) return undefined;
 	if (node.modelType !== 'pattern') return undefined;
-	const literal = anchoredLeafRegexLiteral(kind, node.textPattern);
-	if (literal === undefined) return undefined;
-	return { constName: `_leafRe_${node.rawFactoryName!}`, literal };
+	const regex = anchoredLeafRegex(kind, node.textPattern);
+	if (regex === undefined) return undefined;
+	return { constName: `_leafRe_${node.rawFactoryName!}`, regex, literal: regexLiteral(regex) };
 }
 
 function hasDelimited(nodeMap: NodeMap): boolean {

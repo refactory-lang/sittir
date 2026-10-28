@@ -88,7 +88,11 @@ function compiledLeafRegex(kind: string, textPattern: string, anchor: 'whole' | 
 	return compiled.regex;
 }
 
+export function regexLiteral(regex: RegExp): string {
+	return `/${regex.source}/${regex.flags}`;
+}
+
 export function anchoredLeafRegexLiteral(kind: string, textPattern: string | undefined): string | undefined {
 	const regex = anchoredLeafRegex(kind, textPattern);
-	return regex === undefined ? undefined : `/${regex.source}/${regex.flags}`;
+	return regex === undefined ? undefined : regexLiteral(regex);
 }

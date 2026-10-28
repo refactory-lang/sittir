@@ -283,7 +283,11 @@ export const build: PortableBuildTable = {
 									at: [192, 'path'],
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -315,7 +319,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -404,6 +412,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -485,7 +497,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -519,7 +535,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -556,6 +576,10 @@ export const build: PortableBuildTable = {
 									kinds: [239, 481],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'useBoundsElements',
@@ -633,7 +657,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -660,7 +688,11 @@ export const build: PortableBuildTable = {
 										336, 365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							],
 							requires: [['pattern']]
@@ -715,7 +747,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -740,7 +776,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -767,7 +807,11 @@ export const build: PortableBuildTable = {
 										336, 365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							],
 							requires: [['pattern']]
@@ -827,7 +871,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -852,7 +900,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -879,7 +931,11 @@ export const build: PortableBuildTable = {
 										336, 365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							],
 							requires: [['pattern']]
@@ -951,7 +1007,11 @@ export const build: PortableBuildTable = {
 									at: [228, 'name'],
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -968,7 +1028,11 @@ export const build: PortableBuildTable = {
 									at: [228, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -1005,6 +1069,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'useClauses',
@@ -1043,7 +1111,11 @@ export const build: PortableBuildTable = {
 									at: [226, 'path'],
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -1123,7 +1195,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -1145,7 +1221,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -1181,7 +1261,11 @@ export const build: PortableBuildTable = {
 										336, 365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -1205,6 +1289,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -1364,7 +1452,11 @@ export const build: PortableBuildTable = {
 										253, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -1389,6 +1481,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -1421,13 +1517,21 @@ export const build: PortableBuildTable = {
 									at: [340, 'content'],
 									kinds: [404],
 									leaf: 'blockCommentRegular',
-									texts: [404]
+									texts: [404],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									}
 								},
 								{
 									at: [402, 'doc'],
 									kinds: [165],
 									leaf: 'blockCommentContent',
 									texts: [165],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'blockComment.docOuter',
@@ -1445,6 +1549,10 @@ export const build: PortableBuildTable = {
 									kinds: [165],
 									leaf: 'blockCommentContent',
 									texts: [165],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'blockComment.docInner',
@@ -1487,13 +1595,21 @@ export const build: PortableBuildTable = {
 									at: [340, 'content'],
 									kinds: [404],
 									leaf: 'blockCommentRegular',
-									texts: [404]
+									texts: [404],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									}
 								},
 								{
 									at: [402, 'doc'],
 									kinds: [165],
 									leaf: 'blockCommentContent',
 									texts: [165],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'blockComment.docOuter',
@@ -1511,6 +1627,10 @@ export const build: PortableBuildTable = {
 									kinds: [165],
 									leaf: 'blockCommentContent',
 									texts: [165],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'blockComment.docInner',
@@ -1567,13 +1687,21 @@ export const build: PortableBuildTable = {
 									at: [340, 'content'],
 									kinds: [404],
 									leaf: 'blockCommentRegular',
-									texts: [404]
+									texts: [404],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									}
 								},
 								{
 									at: [402, 'doc'],
 									kinds: [165],
 									leaf: 'blockCommentContent',
 									texts: [165],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'blockComment.docOuter',
@@ -1591,6 +1719,10 @@ export const build: PortableBuildTable = {
 									kinds: [165],
 									leaf: 'blockCommentContent',
 									texts: [165],
+									pattern: {
+										source: '^(?:(?:[^]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'blockComment.docInner',
@@ -1682,6 +1814,10 @@ export const build: PortableBuildTable = {
 									kinds: [166],
 									leaf: 'docComment',
 									texts: [166],
+									pattern: {
+										source: '^(?:(?:.*\\n?))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'lineComment.docOuter',
@@ -1698,6 +1834,10 @@ export const build: PortableBuildTable = {
 									kinds: [166],
 									leaf: 'docComment',
 									texts: [166],
+									pattern: {
+										source: '^(?:(?:.*\\n?))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'lineComment.docInner',
@@ -1749,6 +1889,10 @@ export const build: PortableBuildTable = {
 									kinds: [166],
 									leaf: 'docComment',
 									texts: [166],
+									pattern: {
+										source: '^(?:(?:.*\\n?))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'lineComment.docOuter',
@@ -1765,6 +1909,10 @@ export const build: PortableBuildTable = {
 									kinds: [166],
 									leaf: 'docComment',
 									texts: [166],
+									pattern: {
+										source: '^(?:(?:.*\\n?))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'lineComment.docInner',
@@ -1823,6 +1971,10 @@ export const build: PortableBuildTable = {
 									kinds: [166],
 									leaf: 'docComment',
 									texts: [166],
+									pattern: {
+										source: '^(?:(?:.*\\n?))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'lineComment.docOuter',
@@ -1839,6 +1991,10 @@ export const build: PortableBuildTable = {
 									kinds: [166],
 									leaf: 'docComment',
 									texts: [166],
+									pattern: {
+										source: '^(?:(?:.*\\n?))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'lineComment.docInner',
@@ -1939,7 +2095,11 @@ export const build: PortableBuildTable = {
 									at: [205, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -1959,7 +2119,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -1982,7 +2146,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -2013,7 +2181,11 @@ export const build: PortableBuildTable = {
 									at: [205, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2033,7 +2205,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2056,7 +2232,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -2118,7 +2298,11 @@ export const build: PortableBuildTable = {
 									at: [205, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2138,7 +2322,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2161,7 +2349,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -2210,7 +2402,11 @@ export const build: PortableBuildTable = {
 									at: [205, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2230,7 +2426,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2253,7 +2453,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -2315,7 +2519,11 @@ export const build: PortableBuildTable = {
 									at: [205, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2335,7 +2543,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2358,7 +2570,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2408,6 +2624,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -2467,7 +2687,11 @@ export const build: PortableBuildTable = {
 									at: [198, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2611,7 +2835,11 @@ export const build: PortableBuildTable = {
 									at: [198, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2786,7 +3014,11 @@ export const build: PortableBuildTable = {
 									at: [198, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -2948,7 +3180,11 @@ export const build: PortableBuildTable = {
 									at: [198, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3123,7 +3359,11 @@ export const build: PortableBuildTable = {
 									at: [198, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3286,6 +3526,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -3345,7 +3589,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3434,7 +3682,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -3465,7 +3717,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3554,7 +3810,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -3616,7 +3876,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3705,7 +3969,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -3754,7 +4022,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3843,7 +4115,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -3905,7 +4181,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -3994,7 +4274,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4044,6 +4328,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -4103,7 +4391,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4192,7 +4484,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -4233,7 +4529,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4322,7 +4622,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -4393,7 +4697,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4482,7 +4790,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -4540,7 +4852,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4629,7 +4945,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -4700,7 +5020,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4789,7 +5113,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4839,6 +5167,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -4907,7 +5239,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -4996,7 +5332,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -5037,7 +5377,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -5126,7 +5470,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -5197,7 +5545,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -5286,7 +5638,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -5344,7 +5700,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -5433,7 +5793,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -5504,7 +5868,11 @@ export const build: PortableBuildTable = {
 									at: [200, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -5593,7 +5961,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -5643,6 +6015,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -5778,7 +6154,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -5892,7 +6272,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6041,7 +6425,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6118,7 +6506,11 @@ export const build: PortableBuildTable = {
 									at: [202, 'name'],
 									kinds: [475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6138,7 +6530,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6190,7 +6586,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6227,7 +6627,11 @@ export const build: PortableBuildTable = {
 									at: [202, 'name'],
 									kinds: [475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6247,7 +6651,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6330,7 +6738,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6398,7 +6810,11 @@ export const build: PortableBuildTable = {
 									at: [202, 'name'],
 									kinds: [475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6418,7 +6834,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6488,7 +6908,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6543,7 +6967,11 @@ export const build: PortableBuildTable = {
 									at: [202, 'name'],
 									kinds: [475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6563,7 +6991,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6646,7 +7078,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -6714,7 +7150,11 @@ export const build: PortableBuildTable = {
 									at: [202, 'name'],
 									kinds: [475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6734,7 +7174,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6784,6 +7228,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -6864,7 +7312,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -6914,6 +7366,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -6979,7 +7435,11 @@ export const build: PortableBuildTable = {
 									at: [208, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -7048,7 +7508,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -7136,6 +7600,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -7185,6 +7653,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -7358,7 +7830,11 @@ export const build: PortableBuildTable = {
 									at: [208, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -7427,7 +7903,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -7515,6 +7995,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -7564,6 +8048,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -7768,7 +8256,11 @@ export const build: PortableBuildTable = {
 									at: [208, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -7837,7 +8329,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -7925,6 +8421,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -7974,6 +8474,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -8165,7 +8669,11 @@ export const build: PortableBuildTable = {
 									at: [208, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -8234,7 +8742,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -8322,6 +8834,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -8371,6 +8887,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -8575,7 +9095,11 @@ export const build: PortableBuildTable = {
 									at: [208, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -8644,7 +9168,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -8747,6 +9275,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -8792,6 +9324,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -8841,6 +9377,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -9059,7 +9599,11 @@ export const build: PortableBuildTable = {
 									at: [209, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -9128,7 +9672,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -9179,6 +9727,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -9228,6 +9780,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -9359,7 +9915,11 @@ export const build: PortableBuildTable = {
 									at: [209, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -9428,7 +9988,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -9479,6 +10043,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -9528,6 +10096,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -9690,7 +10262,11 @@ export const build: PortableBuildTable = {
 									at: [209, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -9759,7 +10335,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -9810,6 +10390,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -9859,6 +10443,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -10008,7 +10596,11 @@ export const build: PortableBuildTable = {
 									at: [209, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -10077,7 +10669,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -10128,6 +10724,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -10177,6 +10777,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -10339,7 +10943,11 @@ export const build: PortableBuildTable = {
 									at: [209, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -10408,7 +11016,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -10474,6 +11086,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -10519,6 +11135,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -10568,6 +11188,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -10690,7 +11314,11 @@ export const build: PortableBuildTable = {
 									at: [214, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -10810,6 +11438,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -10841,7 +11473,11 @@ export const build: PortableBuildTable = {
 									at: [214, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -10961,6 +11597,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -11023,7 +11663,11 @@ export const build: PortableBuildTable = {
 									at: [214, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11143,6 +11787,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -11192,7 +11840,11 @@ export const build: PortableBuildTable = {
 									at: [214, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11312,6 +11964,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -11374,7 +12030,11 @@ export const build: PortableBuildTable = {
 									at: [214, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11494,6 +12154,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -11544,6 +12208,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -11603,7 +12271,11 @@ export const build: PortableBuildTable = {
 									at: [416, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11662,7 +12334,11 @@ export const build: PortableBuildTable = {
 									at: [418, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11720,7 +12396,11 @@ export const build: PortableBuildTable = {
 									at: [417, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11783,7 +12463,11 @@ export const build: PortableBuildTable = {
 									at: [418, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11841,7 +12525,11 @@ export const build: PortableBuildTable = {
 									at: [417, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11899,7 +12587,11 @@ export const build: PortableBuildTable = {
 									at: [416, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -11957,7 +12649,11 @@ export const build: PortableBuildTable = {
 									at: [477, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -12026,7 +12722,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -12148,6 +12848,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -12197,6 +12901,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -12370,7 +13078,11 @@ export const build: PortableBuildTable = {
 									at: [477, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -12439,7 +13151,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -12561,6 +13277,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -12610,6 +13330,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -12814,7 +13538,11 @@ export const build: PortableBuildTable = {
 									at: [477, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -12883,7 +13611,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -13005,6 +13737,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -13054,6 +13790,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -13245,7 +13985,11 @@ export const build: PortableBuildTable = {
 									at: [477, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -13314,7 +14058,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -13436,6 +14184,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -13485,6 +14237,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -13689,7 +14445,11 @@ export const build: PortableBuildTable = {
 									at: [477, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -13758,7 +14518,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -13895,6 +14659,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -13940,6 +14708,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -13989,6 +14761,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -14207,7 +14983,11 @@ export const build: PortableBuildTable = {
 									at: [480, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -14276,7 +15056,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -14327,6 +15111,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -14376,6 +15164,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -14507,7 +15299,11 @@ export const build: PortableBuildTable = {
 									at: [480, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -14576,7 +15372,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -14627,6 +15427,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -14676,6 +15480,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -14838,7 +15646,11 @@ export const build: PortableBuildTable = {
 									at: [480, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -14907,7 +15719,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -14958,6 +15774,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -15007,6 +15827,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -15156,7 +15980,11 @@ export const build: PortableBuildTable = {
 									at: [480, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -15225,7 +16053,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -15276,6 +16108,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -15325,6 +16161,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -15487,7 +16327,11 @@ export const build: PortableBuildTable = {
 									at: [480, 'name'],
 									kinds: [1, 127],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -15556,7 +16400,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -15622,6 +16470,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -15667,6 +16519,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -15716,6 +16572,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -15838,7 +16698,11 @@ export const build: PortableBuildTable = {
 									at: [384, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -15869,7 +16733,11 @@ export const build: PortableBuildTable = {
 									at: [385, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16056,7 +16924,11 @@ export const build: PortableBuildTable = {
 									at: [384, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16118,7 +16990,11 @@ export const build: PortableBuildTable = {
 									at: [385, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16215,7 +17091,11 @@ export const build: PortableBuildTable = {
 									at: [384, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16264,7 +17144,11 @@ export const build: PortableBuildTable = {
 									at: [385, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16348,7 +17232,11 @@ export const build: PortableBuildTable = {
 									at: [384, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16410,7 +17298,11 @@ export const build: PortableBuildTable = {
 									at: [385, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16507,7 +17399,11 @@ export const build: PortableBuildTable = {
 									at: [384, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16557,6 +17453,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -16616,7 +17516,11 @@ export const build: PortableBuildTable = {
 									at: [385, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16696,6 +17600,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -16763,7 +17671,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16813,7 +17725,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16849,7 +17765,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16869,7 +17789,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16926,7 +17850,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -16976,7 +17904,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -16996,7 +17928,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -17125,7 +18061,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -17156,7 +18096,11 @@ export const build: PortableBuildTable = {
 									at: [425, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -17235,7 +18179,11 @@ export const build: PortableBuildTable = {
 									at: [423, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -17383,7 +18331,11 @@ export const build: PortableBuildTable = {
 									at: [424, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -17518,7 +18470,11 @@ export const build: PortableBuildTable = {
 									at: [423, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -17693,7 +18649,11 @@ export const build: PortableBuildTable = {
 									at: [423, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -17855,7 +18815,11 @@ export const build: PortableBuildTable = {
 									at: [423, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18030,7 +18994,11 @@ export const build: PortableBuildTable = {
 									at: [423, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18193,6 +19161,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -18252,7 +19224,11 @@ export const build: PortableBuildTable = {
 									at: [424, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18378,7 +19354,11 @@ export const build: PortableBuildTable = {
 									at: [424, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18535,7 +19515,11 @@ export const build: PortableBuildTable = {
 									at: [424, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18679,7 +19663,11 @@ export const build: PortableBuildTable = {
 									at: [424, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18836,7 +19824,11 @@ export const build: PortableBuildTable = {
 									at: [424, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -18981,6 +19973,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -19040,7 +20036,11 @@ export const build: PortableBuildTable = {
 									at: [425, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19119,7 +20119,11 @@ export const build: PortableBuildTable = {
 									at: [425, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19229,7 +20233,11 @@ export const build: PortableBuildTable = {
 									at: [425, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19326,7 +20334,11 @@ export const build: PortableBuildTable = {
 									at: [425, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19436,7 +20448,11 @@ export const build: PortableBuildTable = {
 									at: [425, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19534,6 +20550,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -19593,7 +20613,11 @@ export const build: PortableBuildTable = {
 									at: [207, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19677,7 +20701,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19724,7 +20752,11 @@ export const build: PortableBuildTable = {
 									at: [215, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19814,6 +20846,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -19845,7 +20881,11 @@ export const build: PortableBuildTable = {
 									at: [207, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -19929,7 +20969,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20007,7 +21051,11 @@ export const build: PortableBuildTable = {
 									at: [207, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20091,7 +21139,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20156,7 +21208,11 @@ export const build: PortableBuildTable = {
 									at: [207, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20240,7 +21296,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20318,7 +21378,11 @@ export const build: PortableBuildTable = {
 									at: [207, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20402,7 +21466,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20468,6 +21536,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -20527,7 +21599,11 @@ export const build: PortableBuildTable = {
 									at: [221, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20548,7 +21624,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20574,6 +21654,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -20629,6 +21713,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -20660,7 +21748,11 @@ export const build: PortableBuildTable = {
 									at: [220, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20680,7 +21772,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20701,7 +21797,11 @@ export const build: PortableBuildTable = {
 										334, 336, 365
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -20732,7 +21832,11 @@ export const build: PortableBuildTable = {
 									at: [197, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -20876,7 +21980,11 @@ export const build: PortableBuildTable = {
 									at: [197, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21051,7 +22159,11 @@ export const build: PortableBuildTable = {
 									at: [197, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21213,7 +22325,11 @@ export const build: PortableBuildTable = {
 									at: [197, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21388,7 +22504,11 @@ export const build: PortableBuildTable = {
 									at: [197, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21551,6 +22671,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -21610,7 +22734,11 @@ export const build: PortableBuildTable = {
 									at: [206, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21630,7 +22758,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21653,7 +22785,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -21706,7 +22842,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21727,7 +22867,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21750,7 +22894,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21802,7 +22950,11 @@ export const build: PortableBuildTable = {
 									at: [206, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21822,7 +22974,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21845,7 +23001,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -21921,7 +23081,11 @@ export const build: PortableBuildTable = {
 									at: [206, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21941,7 +23105,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -21964,7 +23132,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -22027,7 +23199,11 @@ export const build: PortableBuildTable = {
 									at: [206, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22047,7 +23223,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22070,7 +23250,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -22146,7 +23330,11 @@ export const build: PortableBuildTable = {
 									at: [206, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22166,7 +23354,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22189,7 +23381,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22239,6 +23435,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -22540,6 +23740,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22563,7 +23767,11 @@ export const build: PortableBuildTable = {
 									at: [188, 'separator'],
 									kinds: [132],
 									leaf: 'tokenRepetitionPatternText',
-									texts: [132]
+									texts: [132],
+									pattern: {
+										source: '^(?:(?:[^+*?]+))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22623,6 +23831,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22646,7 +23858,11 @@ export const build: PortableBuildTable = {
 									at: [185, 'separator'],
 									kinds: [132],
 									leaf: 'tokenRepetitionPatternText',
-									texts: [132]
+									texts: [132],
+									pattern: {
+										source: '^(?:(?:[^+*?]+))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -22706,6 +23922,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22757,6 +23977,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22807,6 +24031,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22862,6 +24090,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22912,6 +24144,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -22962,6 +24198,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23013,6 +24253,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23063,6 +24307,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23118,6 +24366,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23168,6 +24420,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23218,6 +24474,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23268,6 +24528,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23318,6 +24582,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23369,6 +24637,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23419,6 +24691,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23474,6 +24750,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23524,6 +24804,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23574,6 +24858,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'nonSpecialToken',
@@ -23615,7 +24903,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -23663,7 +24955,11 @@ export const build: PortableBuildTable = {
 									at: [284, 'field'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -23711,7 +25007,11 @@ export const build: PortableBuildTable = {
 									at: [285, 'field'],
 									kinds: [141, 142, 143, 144, 331, 475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -23733,7 +25033,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -23773,7 +25077,11 @@ export const build: PortableBuildTable = {
 										254, 255, 256, 259, 265, 313, 328, 331, 332, 333, 334, 336, 341, 365, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -23799,6 +25107,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									many: true
 								}
 							]
@@ -23830,7 +25142,11 @@ export const build: PortableBuildTable = {
 									at: [251, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -23881,7 +25197,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -23917,7 +25237,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -23939,7 +25263,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -23979,7 +25307,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24001,7 +25333,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24046,7 +25382,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24068,7 +25408,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24113,7 +25457,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24135,7 +25483,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24180,7 +25532,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24202,7 +25558,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24247,7 +25607,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24269,7 +25633,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24314,7 +25682,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24336,7 +25708,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24381,7 +25757,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24403,7 +25783,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24448,7 +25832,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24470,7 +25858,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24515,7 +25907,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24537,7 +25933,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24582,7 +25982,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24604,7 +26008,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24649,7 +26057,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24689,7 +26101,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24711,7 +26127,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24756,7 +26176,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24778,7 +26202,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24823,7 +26251,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24845,7 +26277,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24890,7 +26326,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24912,7 +26352,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -24957,7 +26401,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -24979,7 +26427,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25024,7 +26476,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25046,7 +26502,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25091,7 +26551,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25113,7 +26577,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25158,7 +26626,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25180,7 +26652,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25225,7 +26701,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25247,7 +26727,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25292,7 +26776,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25314,7 +26802,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25359,7 +26851,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25381,7 +26877,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25426,7 +26926,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25448,7 +26952,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25493,7 +27001,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25515,7 +27027,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25560,7 +27076,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25582,7 +27102,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25627,7 +27151,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25649,7 +27177,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25694,7 +27226,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25716,7 +27252,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25761,7 +27301,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25783,7 +27327,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -25828,7 +27376,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -25850,7 +27402,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -26040,7 +27596,11 @@ export const build: PortableBuildTable = {
 										369, 370, 371, 372, 373, 374
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26083,6 +27643,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'arguments',
@@ -26127,7 +27691,11 @@ export const build: PortableBuildTable = {
 									at: [259, 'function'],
 									kinds: [1, 263],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26178,7 +27746,11 @@ export const build: PortableBuildTable = {
 										369, 370, 371, 372, 373, 374
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26221,6 +27793,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'arguments',
@@ -26279,7 +27855,11 @@ export const build: PortableBuildTable = {
 										369, 370, 371, 372, 373, 374
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26322,6 +27902,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'arguments',
@@ -26371,7 +27955,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26391,7 +27979,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -26461,6 +28053,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'argumentsElements',
@@ -26527,7 +28123,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26549,7 +28149,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -26611,7 +28215,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26633,7 +28241,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -26664,7 +28276,11 @@ export const build: PortableBuildTable = {
 									at: [282, 'name'],
 									kinds: [247, 264, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26753,6 +28369,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'expressions',
@@ -26790,7 +28410,11 @@ export const build: PortableBuildTable = {
 									at: [245, 'function'],
 									kinds: [1, 263, 308],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26856,6 +28480,10 @@ export const build: PortableBuildTable = {
 									kinds: [233, 473],
 									leaf: 'identifier',
 									texts: [1, 473],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'closureParameters',
@@ -26884,7 +28512,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -26935,6 +28567,10 @@ export const build: PortableBuildTable = {
 									kinds: [233, 473],
 									leaf: 'identifier',
 									texts: [1, 473],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'closureParameters',
@@ -26964,7 +28600,11 @@ export const build: PortableBuildTable = {
 										365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27014,7 +28654,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -27031,7 +28675,11 @@ export const build: PortableBuildTable = {
 									at: [308, 'property'],
 									kinds: [141, 142, 143, 144, 331, 475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27067,7 +28715,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27103,7 +28755,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27152,7 +28808,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27188,7 +28848,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27242,7 +28906,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27278,7 +28946,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27314,7 +28986,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -27336,7 +29012,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27386,7 +29066,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -27408,7 +29092,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27453,7 +29141,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27489,7 +29181,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27533,7 +29229,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27577,7 +29277,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27622,7 +29326,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -27644,7 +29352,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27684,7 +29396,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27729,7 +29445,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27774,7 +29494,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -27832,7 +29556,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28199,7 +29927,11 @@ export const build: PortableBuildTable = {
 									at: [303, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28230,7 +29962,11 @@ export const build: PortableBuildTable = {
 									at: [239, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28266,7 +30002,11 @@ export const build: PortableBuildTable = {
 									at: [264, 'qualifier'],
 									kinds: [1, 125, 126, 127, 247, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28283,7 +30023,11 @@ export const build: PortableBuildTable = {
 									at: [264, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28316,7 +30060,11 @@ export const build: PortableBuildTable = {
 									at: [263, 'qualifier'],
 									kinds: [1, 125, 126, 127, 237, 247, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28333,7 +30081,11 @@ export const build: PortableBuildTable = {
 									at: [263, 'name'],
 									kinds: [1, 125],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28453,7 +30205,11 @@ export const build: PortableBuildTable = {
 									at: [265, 'qualifier'],
 									kinds: [1, 125, 126, 127, 237, 246, 247, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28470,7 +30226,11 @@ export const build: PortableBuildTable = {
 									at: [265, 'name'],
 									kinds: [481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28612,7 +30372,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [145, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: "^(?:(?:[^\\\\']))$",
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28659,7 +30423,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [150, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:\\\\(?:x[0-9a-fA-F]{2}))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28688,7 +30456,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [147, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:\\\\(?:[^xu]))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28717,7 +30489,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [149, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:\\\\(?:u\\{[0-9a-fA-F]+\\}))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28746,7 +30522,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [148, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:\\\\(?:u[0-9a-fA-F]{4}))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28795,7 +30575,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [141, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:[0-9][0-9_]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28811,7 +30595,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [141, 'suffix'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28842,7 +30630,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [143, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:0b[01_]+))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28858,7 +30650,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [143, 'suffix'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28889,7 +30685,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [142, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:0x[0-9a-fA-F_]+))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28905,7 +30705,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [142, 'suffix'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -28936,7 +30740,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [144, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:0o[0-7_]+))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -28952,7 +30760,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [144, 'suffix'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:isize|usize|u128|i128|u16|i16|u32|i32|u64|i64|f32|f64|u8|i8)$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29019,7 +30831,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [151, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:[^xu]))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29049,7 +30865,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [154, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:x[0-9a-fA-F]{2}))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29078,7 +30898,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [153, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:u\\{[0-9a-fA-F]+\\}))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29107,7 +30931,11 @@ export const build: PortableBuildTable = {
 							seats: [
 								{
 									at: [152, 'content'],
-									kinds: []
+									kinds: [],
+									pattern: {
+										source: '^(?:(?:u[0-9a-fA-F]{4}))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29339,6 +31167,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -29383,7 +31215,11 @@ export const build: PortableBuildTable = {
 									at: [379, 'path'],
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29432,7 +31268,11 @@ export const build: PortableBuildTable = {
 									at: [325, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -29453,7 +31293,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29484,7 +31328,11 @@ export const build: PortableBuildTable = {
 									at: [315, 'name'],
 									kinds: [1, 263],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -29555,6 +31403,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'patterns',
@@ -29596,7 +31448,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29631,7 +31487,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29666,7 +31526,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -29687,7 +31551,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29730,7 +31598,11 @@ export const build: PortableBuildTable = {
 										331, 332, 333, 334, 336, 365, 478
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29773,7 +31645,11 @@ export const build: PortableBuildTable = {
 										331, 332, 333, 334, 336, 365, 478
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -29801,7 +31677,11 @@ export const build: PortableBuildTable = {
 										331, 332, 333, 334, 336, 365, 478
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29857,7 +31737,11 @@ export const build: PortableBuildTable = {
 										331, 332, 333, 334, 336, 365, 478
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29900,7 +31784,11 @@ export const build: PortableBuildTable = {
 										331, 332, 333, 334, 336, 365, 478
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -29928,7 +31816,11 @@ export const build: PortableBuildTable = {
 										331, 332, 333, 334, 336, 365, 478
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -29985,7 +31877,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30020,7 +31916,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30065,7 +31965,11 @@ export const build: PortableBuildTable = {
 									at: [319, 'type'],
 									kinds: [265, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30123,7 +32027,11 @@ export const build: PortableBuildTable = {
 									at: [318, 'type'],
 									kinds: [1, 247, 263],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30150,6 +32058,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'patterns',
@@ -30192,7 +32104,11 @@ export const build: PortableBuildTable = {
 									at: [414, 'name'],
 									kinds: [479],
 									leaf: 'identifier',
-									texts: [1, 479]
+									texts: [1, 479],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30237,7 +32153,11 @@ export const build: PortableBuildTable = {
 									at: [415, 'name'],
 									kinds: [475],
 									leaf: 'identifier',
-									texts: [1, 475]
+									texts: [1, 475],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30258,7 +32178,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30330,6 +32254,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'tuplePatternElements',
@@ -30421,7 +32349,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30474,7 +32406,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30557,6 +32493,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'expressionStatement.withSemi',
@@ -30602,7 +32542,11 @@ export const build: PortableBuildTable = {
 										336, 365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30664,7 +32608,11 @@ export const build: PortableBuildTable = {
 									at: [224, 'argument'],
 									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30695,7 +32643,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30713,7 +32665,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30744,7 +32700,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30762,7 +32722,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30824,7 +32788,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30842,7 +32810,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30891,7 +32863,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30909,7 +32885,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -30971,7 +32951,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'name'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -30989,7 +32973,11 @@ export const build: PortableBuildTable = {
 									at: [204, 'alias'],
 									kinds: [1],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31039,6 +33027,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -31098,7 +33090,11 @@ export const build: PortableBuildTable = {
 									at: [224, 'argument'],
 									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31160,7 +33156,11 @@ export const build: PortableBuildTable = {
 									at: [224, 'argument'],
 									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31209,7 +33209,11 @@ export const build: PortableBuildTable = {
 									at: [224, 'argument'],
 									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31271,7 +33275,11 @@ export const build: PortableBuildTable = {
 									at: [224, 'argument'],
 									kinds: [1, 125, 126, 127, 226, 227, 228, 229, 263, 478],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31321,6 +33329,10 @@ export const build: PortableBuildTable = {
 									kinds: [1, 125, 126, 127, 263, 478],
 									leaf: 'identifier',
 									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'visibilityModifier.pub.scope.inPath',
@@ -31445,7 +33457,11 @@ export const build: PortableBuildTable = {
 										419, 422, 426
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31467,7 +33483,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31534,7 +33554,11 @@ export const build: PortableBuildTable = {
 										336, 365, 366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31585,7 +33609,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31648,7 +33676,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31727,7 +33759,11 @@ export const build: PortableBuildTable = {
 									at: [255, 'trait'],
 									kinds: [218, 242, 243, 246, 248, 265, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31761,7 +33797,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31784,7 +33824,11 @@ export const build: PortableBuildTable = {
 										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
 									],
 									leaf: 'identifier',
-									texts: [1]
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31818,7 +33862,11 @@ export const build: PortableBuildTable = {
 										243, 244, 246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31838,7 +33886,11 @@ export const build: PortableBuildTable = {
 										243, 244, 246, 248, 249, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31872,7 +33924,11 @@ export const build: PortableBuildTable = {
 										243, 244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31903,7 +33959,11 @@ export const build: PortableBuildTable = {
 									at: [256, 'trait'],
 									kinds: [217, 242, 243, 246, 265, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -31954,7 +34014,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -31989,6 +34053,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -32116,7 +34184,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -32151,6 +34223,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											key: 'content'
@@ -32181,7 +34257,11 @@ export const build: PortableBuildTable = {
 									at: [382, 'trait'],
 									kinds: [265, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -32217,7 +34297,11 @@ export const build: PortableBuildTable = {
 									at: [246, 'type'],
 									kinds: [1, 265, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -32278,7 +34362,11 @@ export const build: PortableBuildTable = {
 									at: [247, 'type'],
 									kinds: [263, 481],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -32342,7 +34430,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -32376,7 +34468,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -32841,7 +34937,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						},
@@ -32861,7 +34961,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -32911,7 +35015,11 @@ export const build: PortableBuildTable = {
 										244, 246, 248, 252, 253, 254, 255, 256, 259, 265, 341, 388, 389, 481
 									],
 									leaf: 'identifier',
-									texts: [1, 481]
+									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
 								}
 							]
 						}
@@ -32964,6 +35072,10 @@ export const build: PortableBuildTable = {
 									],
 									leaf: 'identifier',
 									texts: [1, 481],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									},
 									within: [
 										{
 											builder: 'types',

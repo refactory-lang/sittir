@@ -57,6 +57,11 @@ describe('the portable read', () => {
 		expect(roundTrip('enum O { A, B(T), C { x: u8 } }')).toBe('enum O {\n    A,\n    B(T),\n    C {\n        x: u8,\n    },\n}\n');
 	});
 
+	it('builds a character in the form whose spelling admits it: an escape builds the escape form', () => {
+		expect(readFirst("let c = '\\'';").value).toEqual({ $path: 'literal.character', content: "\\'" });
+		for (const source of ["let c = 'a';", "let c = '\\'';", "let c = '\\n';", "let c = '\\x41';", "let c = '\\u{0}';"]) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('carries a node whose flags its path cannot build: a byte literal stays a byte', () => {
 		expect(readFirst("let c = b'a';").value).toMatchObject({ $type: rust.kinds.CharLiteralPlain });
 		expect(roundTrip("let c = b'a';")).toBe("let c = b'a';\n");

@@ -3,7 +3,7 @@ import { inLanguage } from '../language.ts';
 import { portableBuilder } from './build.ts';
 import { builtReadsAs, classifierOf, flagHolds, portableTextOf, readsAs } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
-import { portableReader } from './read.ts';
+import { portableReader, type PortableCarried } from './read.ts';
 import { portableTrees, type LanguageGuard, type PortableGuardTree } from './tree.ts';
 import { vocabularyFlags, vocabularyPaths } from './vocabulary-paths.ts';
 
@@ -30,7 +30,7 @@ export interface PortableRuntime<API extends LanguageAPI> {
 	readonly engine: Engine<API, 'strict'>;
 	readonly is: PortableGuardTree<string, LanguageGuard>;
 	readonly build: (structure: PortableStructure) => unknown;
-	readonly read: (node: { readonly $type: number } | number) => unknown;
+	readonly read: (node: { readonly $type: number } | number, carried?: PortableCarried) => unknown;
 }
 
 export async function portableRuntime<API extends LanguageAPI>(engine: Engine<API, 'strict'>): Promise<PortableRuntime<API>> {

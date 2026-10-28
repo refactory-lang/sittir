@@ -61,6 +61,7 @@ export interface ValidationRun {
 	portableRoundTripPass?: number;
 	portableRoundTripTotal?: number;
 	portableRoundTripAstMatchPass?: number;
+	portableRoundTripCarried?: number;
 }
 
 /**

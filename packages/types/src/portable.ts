@@ -113,6 +113,7 @@ export interface PortableSeat {
 	readonly kinds: readonly number[];
 	readonly leaf?: string;
 	readonly texts?: readonly number[];
+	readonly pattern?: { readonly source: string; readonly flags: string };
 	readonly within?: readonly PortableContainer[];
 	readonly many?: true;
 }

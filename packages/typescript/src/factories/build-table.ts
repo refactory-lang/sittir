@@ -399,42 +399,18 @@ export interface Routes<Table extends AnyTable> {
 		readonly getter: Routes<Table>['classBodyMemberMethod$getter'];
 		readonly setter: Routes<Table>['classBodyMemberMethod$setter'];
 	};
-	readonly classBodyMemberMethodSig$plain: <
-		const V extends OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-			ArgsOf<Table['buildMethodSignaturePlain']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-					ArgsOf<Table['buildMethodSignaturePlain']>[0]
-			>,
-		options?: OptionsArg<Table['buildClassBodyMemberMethodSig']>
-	) => ReturnType<Table['buildClassBodyMemberMethodSig']>;
-	readonly classBodyMemberMethodSig$getter: <
-		const V extends OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-			ArgsOf<Table['buildMethodSignatureGetter']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-					ArgsOf<Table['buildMethodSignatureGetter']>[0]
-			>,
-		options?: OptionsArg<Table['buildClassBodyMemberMethodSig']>
-	) => ReturnType<Table['buildClassBodyMemberMethodSig']>;
-	readonly classBodyMemberMethodSig$setter: <
-		const V extends OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-			ArgsOf<Table['buildMethodSignatureSetter']>[0]
-	>(
-		config: V &
-			RefuseUndeclared<
-				V,
-				OmitEach<ArgsOf<Table['buildClassBodyMemberMethodSig']>[0], 'methodSignature'> &
-					ArgsOf<Table['buildMethodSignatureSetter']>[0]
-			>,
-		options?: OptionsArg<Table['buildClassBodyMemberMethodSig']>
-	) => ReturnType<Table['buildClassBodyMemberMethodSig']>;
+	readonly classBodyMemberMethodSig$plain: Seat<
+		ArgsOf<Table['buildMethodSignaturePlain']>,
+		ReturnType<typeof F.buildClassBodyMemberMethodSig>
+	>;
+	readonly classBodyMemberMethodSig$getter: Seat<
+		ArgsOf<Table['buildMethodSignatureGetter']>,
+		ReturnType<typeof F.buildClassBodyMemberMethodSig>
+	>;
+	readonly classBodyMemberMethodSig$setter: Seat<
+		ArgsOf<Table['buildMethodSignatureSetter']>,
+		ReturnType<typeof F.buildClassBodyMemberMethodSig>
+	>;
 	readonly classBodyMemberMethodSig: Table['buildClassBodyMemberMethodSig'] & {
 		readonly plain: Routes<Table>['classBodyMemberMethodSig$plain'];
 		readonly getter: Routes<Table>['classBodyMemberMethodSig$getter'];
@@ -2904,11 +2880,11 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		} as const)
 	);
 	const classBodyMemberMethodSig$plain: Routes<Table>['classBodyMemberMethodSig$plain'] =
-		K.classBodyMemberMethodSig$plain($at('buildClassBodyMemberMethodSig'), $at('buildMethodSignaturePlain'));
+		K.classBodyMemberMethodSig$plain(F.buildClassBodyMemberMethodSig, $at('buildMethodSignaturePlain'));
 	const classBodyMemberMethodSig$getter: Routes<Table>['classBodyMemberMethodSig$getter'] =
-		K.classBodyMemberMethodSig$getter($at('buildClassBodyMemberMethodSig'), $at('buildMethodSignatureGetter'));
+		K.classBodyMemberMethodSig$getter(F.buildClassBodyMemberMethodSig, $at('buildMethodSignatureGetter'));
 	const classBodyMemberMethodSig$setter: Routes<Table>['classBodyMemberMethodSig$setter'] =
-		K.classBodyMemberMethodSig$setter($at('buildClassBodyMemberMethodSig'), $at('buildMethodSignatureSetter'));
+		K.classBodyMemberMethodSig$setter(F.buildClassBodyMemberMethodSig, $at('buildMethodSignatureSetter'));
 	const classBodyMemberMethodSig: Routes<Table>['classBodyMemberMethodSig'] = Object.freeze(
 		Object.assign(delegate($at('buildClassBodyMemberMethodSig')), {
 			plain: classBodyMemberMethodSig$plain,

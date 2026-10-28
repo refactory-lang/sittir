@@ -179,6 +179,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const keyed = key === undefined ? placed : { ...placed, key };
 		return head?.mounted === undefined ? keyed : { ...keyed, mount: head };
 	};
+	const patterns = new WeakMap<NonNullable<PortableSeat['pattern']>, RegExp>();
+	const spells = (seat: PortableSeat, text: string): boolean => {
+		if (seat.pattern === undefined) return true;
+		const regex = patterns.get(seat.pattern) ?? patterns.set(seat.pattern, new RegExp(seat.pattern.source, seat.pattern.flags)).get(seat.pattern)!;
+		return regex.test(text);
+	};
 
 	return (root: PortableStructure): unknown => {
 		const picks = new WeakMap<object, Map<readonly PortableSeat[] | undefined, Picked | undefined>>();
@@ -220,8 +226,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1])) &&
 					seat.kinds.includes(arm.kind)
 			);
+		const leafSeatOf = (value: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
+			seats.find((seat) => seat.leaf !== undefined && spells(seat, value)) ?? seats.find((seat) => seat.leaf !== undefined);
 		const textOf = (value: string, seats: readonly PortableSeat[]): unknown => {
-			const leaf = seats.find((seat) => seat.leaf !== undefined)?.leaf;
+			const leaf = leafSeatOf(value, seats)?.leaf;
 			return leaf === undefined ? value : leafOf(leaf, value);
 		};
 		const kindOf = (value: unknown, member: PortableMemberStep): number | undefined => {
@@ -234,7 +242,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if ('flag' in test) return (structure.$flags ?? []).includes(test.flag) === test.set;
 			if ('text' in test) return structure.$value === test.text;
 			if ('boolean' in test) return structure.$value === test.boolean;
-			if ('variant' in test) return test.default === true;
+			if ('variant' in test) return spelledBy(arm, structure);
 			const value = structure[test.member];
 			if (value === undefined) return true;
 			const member = arm.members.find((m) => m.name === test.member);
@@ -376,7 +384,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				return seated(built.value, within(built.seat ?? seats[0]!).slice(depth), false);
 			}
 			if (typeof value === 'string') {
-				const seat = seats.find((s) => s.leaf !== undefined) ?? seats[0]!;
+				const seat = leafSeatOf(value, seats) ?? seats[0]!;
 				return seated(textOf(value, [seat]), within(seat).slice(depth), false);
 			}
 			const kind = hasKind(value) ? value.$type : typeof value === 'number' ? value : undefined;
@@ -443,7 +451,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			isStructure(item)
 				? pick(item, offered) !== undefined
 				: typeof item === 'string'
-					? offered.some((seat) => seat.leaf !== undefined || seat.kinds.length === 0)
+					? offered.some((seat) => (seat.leaf !== undefined || seat.kinds.length === 0) && spells(seat, item))
 					: !hasKind(item) || offered.some((seat) => seat.kinds.includes(item.$type));
 		const seats = (route: PortableMemberStep, item: unknown): boolean => seatsIn(route.seats, item);
 		const admits = (route: PortableMemberStep, value: unknown): boolean =>
@@ -458,6 +466,11 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		};
 		const routesOf = (arm: PortableBuildArm, name: string): readonly PortableMemberStep[] =>
 			arm.members.filter((member, i) => member.name === name && !arm.members.slice(0, i).some((other) => other.name === name && sameSteps(other, member)));
+		const spelledBy = (arm: PortableBuildArm, structure: PortableStructure): boolean =>
+			arm.members.every(({ name }) => {
+				const texts = listOf(structure[name]).filter((item) => typeof item === 'string');
+				return texts.length === 0 || routesOf(arm, name).some((route) => texts.every((text) => seats(route, text)));
+			});
 		const templated = (arm: PortableBuildArm, structure: PortableStructure): string | undefined => {
 			const template = arm.template;
 			if (template === undefined || structure[template.member] !== undefined) return undefined;

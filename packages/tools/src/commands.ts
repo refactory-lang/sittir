@@ -131,7 +131,7 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		...(portableRoundTrip === undefined
 			? []
 			: [
-					`  portable-round-tripPass=${portableRoundTrip.pass}    portable-round-tripTotal=${portableRoundTrip.total}    portable-round-tripAstMatchPass=${portableRoundTrip.astMatchPass}`
+					`  portable-round-tripPass=${portableRoundTrip.pass}    portable-round-tripTotal=${portableRoundTrip.total}    portable-round-tripAstMatchPass=${portableRoundTrip.astMatchPass}    portable-round-tripCarried=${portableRoundTrip.carried.length}`
 				])
 	];
 	const rtFails = formatFirstFailures(
@@ -250,7 +250,8 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 			: {
 					portableRoundTripPass: portableRoundTrip.pass,
 					portableRoundTripTotal: portableRoundTrip.total,
-					portableRoundTripAstMatchPass: portableRoundTrip.astMatchPass
+					portableRoundTripAstMatchPass: portableRoundTrip.astMatchPass,
+					portableRoundTripCarried: portableRoundTrip.carried.length
 				})
 	};
 }

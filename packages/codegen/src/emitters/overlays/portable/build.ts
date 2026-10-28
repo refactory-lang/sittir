@@ -36,7 +36,8 @@ import {
 } from '../../../compiler/model/node-map.ts';
 import { buildFactoryMap } from '../../factory-map.ts';
 import { slotResolverKinds, transparentEnvelopeTextLeaves } from '../../from.ts';
-import { numberShapes, numericSlotKeys } from '../../interior.ts';
+import { interiorSlotGuards, numberShapes, numericSlotKeys } from '../../interior.ts';
+import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
 
@@ -249,10 +250,12 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	};
 	const seatRecord = (seat: Seat): PortableSeat => {
 		const leaf = defaultLeaf(seat.slot, seat.kinds);
+		const guard = leaf === undefined ? interiorSlotGuards(seat.holder.kind, seat.holder).find(({ slot }) => slot === seat.slot.name)?.regex : leaf.pattern;
 		return {
 		at: [seat.holder.kindId!, seat.key],
 		kinds: sortedIds([...seat.kinds].flatMap((kind) => typeOf(kind) ?? [])),
-		...(leaf === undefined ? {} : leaf),
+		...(leaf === undefined ? {} : { leaf: leaf.leaf, texts: leaf.texts }),
+		...(guard === undefined ? {} : { pattern: { source: guard.source, flags: guard.flags } }),
 		...(seat.within.length === 0 ? {} : { within: seat.within }),
 		...(seat.many ? { many: true as const } : {})
 		};
@@ -261,7 +264,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const kinds = [...new Set(seats.flatMap((seat) => [...seat.kinds]))];
 		return new Set(kinds.every(textLeaf) ? [] : kinds.flatMap((kind) => typeOf(kind) ?? []));
 	};
-	const defaultLeaf = (slot: AssembledNonterminal, admitted: ReadonlySet<string>): { readonly leaf: string; readonly texts: readonly number[] } | undefined => {
+	const defaultLeaf = (slot: AssembledNonterminal, admitted: ReadonlySet<string>): { readonly leaf: string; readonly texts: readonly number[]; readonly pattern?: RegExp } | undefined => {
 		const { leafKinds, branchKinds } = slotResolverKinds(slot, nodeMap);
 		const textLeavesOf = (kind: string): readonly string[] => {
 			const node = nodeOf(kind);
@@ -276,7 +279,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const leaf = plain.length === 1 ? builderOf(plain[0]!) : undefined;
 		if (leaf === undefined) return undefined;
 		const texts = sortedIds([...new Set([plain[0]!, ...reached.filter((kind) => textLeavesOf(kind).includes(plain[0]!))])].flatMap((kind) => typeOf(kind) ?? []));
-		return { leaf, texts };
+		const node = nodeOf(plain[0]!);
+		const pattern = node === undefined ? undefined : leafReDeclaration(plain[0]!, node)?.regex;
+		return { leaf, texts, ...(pattern === undefined ? {} : { pattern }) };
 	};
 	const stepsOf = (path: readonly SlotStep[]): PortableSlotStep[] | undefined => {
 		const steps: PortableSlotStep[] = [];

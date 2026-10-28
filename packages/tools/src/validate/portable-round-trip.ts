@@ -1,4 +1,4 @@
-import { portableRuntime } from '@sittir/common/engine';
+import { portableRuntime, type PortableCarry } from '@sittir/common/engine';
 import type { AnyUntypedNode, PortableStructure } from '@sittir/types';
 import { createStrictNativeEngine, loadCorpusEntries, loadLanguageForGrammar, loadNodeModel, type CorpusEntry } from './common.ts';
 import { loadRenderReparseContext, renderReparse } from './read-render-parse.ts';
@@ -12,10 +12,16 @@ export interface PortableRoundTripFailure {
 	readonly rendered?: string;
 }
 
+export interface PortableRoundTripCarried {
+	readonly entry: string;
+	readonly carries: readonly PortableCarry[];
+}
+
 export interface PortableRoundTripResult {
 	readonly total: number;
 	readonly pass: number;
 	readonly astMatchPass: number;
+	readonly carried: readonly PortableRoundTripCarried[];
 	readonly errors: readonly PortableRoundTripFailure[];
 	readonly astMismatches: readonly PortableRoundTripFailure[];
 }
@@ -38,8 +44,11 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 	let astMatchPass = 0;
 	const errors: PortableRoundTripFailure[] = [];
 	const astMismatches: PortableRoundTripFailure[] = [];
+	const carried: PortableRoundTripCarried[] = [];
 	for (const { name, source } of entries) {
-		const structure = runtime.read(engine.parse(source));
+		const carries: PortableCarry[] = [];
+		const structure = runtime.read(engine.parse(source), (_, carry) => carries.push(carry));
+		if (carries.length > 0) carried.push({ entry: name, carries });
 		if (!isStructure(structure)) {
 			errors.push({ entry: name, stage: 'read', message: 'the root reads as no vocabulary path' });
 			continue;
@@ -67,5 +76,5 @@ export async function runPortableRoundTrip(grammar: string, entries: readonly Co
 			tree?.delete();
 		}
 	}
-	return { total: entries.length, pass, astMatchPass, errors, astMismatches };
+	return { total: entries.length, pass, astMatchPass, carried, errors, astMismatches };
 }

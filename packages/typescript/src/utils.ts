@@ -970,6 +970,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		402: ['terminator'],
 		403: ['terminator'],
 		408: ['terminator'],
+		409: ['terminator'],
 		410: ['terminator'],
 		430: ['terminator'],
 		436: ['automaticSemicolon'],
@@ -3143,14 +3144,10 @@ export const structure: StructureTable = Object.freeze({
 	},
 	409: {
 		kind: 'class_body_member_method_sig',
-		required: [
-			['_method_signature', 'methodSignature'],
-			['_terminator', 'terminator']
-		],
+		required: [['_method_signature', 'methodSignature']],
 		single: [['_method_signature', 'ClassBodyMemberMethodSig.methodSignature']],
 		nodeOnly: [['_method_signature', 'ClassBodyMemberMethodSig.methodSignature', 'a built MethodSignature', [300]]],
-		kindIds: [['_terminator', 'ClassBodyMemberMethodSig.terminator', [15, 179]]],
-		config: ['methodSignature', 'terminator']
+		kindIds: [['_terminator', 'ClassBodyMemberMethodSig.terminator', [15, 179]]]
 	},
 	410: {
 		kind: 'class_body_member_declaration',

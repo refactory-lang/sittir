@@ -13,7 +13,7 @@ import {
 } from '../compiler/model/node-map.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import { lexedContentSlot, slotLiteralValues } from './shared.ts';
-import { anchoredLeafRegex, anchoredLeafRegexLiteral } from '../compiler/model/leaf-pattern.ts';
+import { anchoredLeafRegex, regexLiteral } from '../compiler/model/leaf-pattern.ts';
 
 export type InteriorEntry =
 	| { readonly lit: string }
@@ -36,11 +36,11 @@ export function interiorEnumArms(values: readonly string[]): string {
 export function interiorSlotGuards(
 	kind: string,
 	node: AssembledNode
-): readonly { readonly slot: string; readonly literal: string; readonly constName: string }[] {
+): readonly { readonly slot: string; readonly regex: RegExp; readonly literal: string; readonly constName: string }[] {
 	return (interiorOf(node)?.entries ?? []).flatMap((entry) => {
 		const guarded = 'slot' in entry ? { slot: entry.slot, pattern: entry.pattern } : 'enum' in entry ? { slot: entry.enum, pattern: interiorEnumArms(entry.values) } : undefined;
-		const literal = guarded === undefined ? undefined : anchoredLeafRegexLiteral(kind, guarded.pattern);
-		return guarded === undefined || literal === undefined ? [] : [{ slot: guarded.slot, literal, constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}` }];
+		const regex = guarded === undefined ? undefined : anchoredLeafRegex(kind, guarded.pattern);
+		return guarded === undefined || regex === undefined ? [] : [{ slot: guarded.slot, regex, literal: regexLiteral(regex), constName: `_slotRe_${node.rawFactoryName!}_${guarded.slot}` }];
 	});
 }
 

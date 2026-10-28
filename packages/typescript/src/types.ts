@@ -8620,7 +8620,7 @@ export interface ClassBodyMemberMethodSig {
 	};
 	readonly __slotHints__?: {
 		readonly methodSignature: SlotHint<T.MethodSignature>;
-		readonly terminator: SlotHint<NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']>;
+		readonly terminator: SlotHint<NonNullable<T.ClassBodyMemberMethodSig.Options>['terminator']>;
 	};
 	readonly methodSignature: () => MethodSignature;
 	readonly terminator: () => number;
@@ -13465,6 +13465,7 @@ export namespace ClassBodyMemberMethodSig {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly comma?: { readonly before?: LayoutKindId };
+			readonly terminator?: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma;
 		};
 	}
 }
@@ -16626,7 +16627,7 @@ export interface ClassBodyMemberMethodSigNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	ClassBodyMemberMethodSig.Bound,
-	never,
+	'method_signature',
 	TSKindId.ClassBodyMemberMethodSig,
 	ClassBodyMemberMethodSig.Parsed,
 	never
@@ -24081,7 +24082,8 @@ export namespace ClassBodyMemberMethod {
 	export type Kind = TSKindId.ClassBodyMemberMethod;
 }
 export namespace ClassBodyMemberMethodSig {
-	export type Config = ConfigFor<TSKindId.ClassBodyMemberMethodSig>;
+	export type Config = OmitEach<ConfigFor<TSKindId.ClassBodyMemberMethodSig>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma };
 	export interface Bound extends BoundOf<T.ClassBodyMemberMethodSig, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.ClassBodyMemberMethodSig['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -24099,10 +24101,10 @@ export namespace ClassBodyMemberMethodSig {
 		>;
 		readonly $snapshot: () => Snapshot<T.ClassBodyMemberMethodSig['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.ClassBodyMemberMethodSig>;
-	export type LooseConfig = LooseConfigFor<TSKindId.ClassBodyMemberMethodSig>;
-	export type BuildArgs = [config: ConfigOf<T.ClassBodyMemberMethodSig>];
-	export type LooseArgs = [config: T.ClassBodyMemberMethodSig.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.ClassBodyMemberMethodSig>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassBodyMemberMethodSig>, 'terminator'>;
+	export type BuildArgs = [value: Admit<T.MethodSignature>, options?: T.ClassBodyMemberMethodSig.Options];
+	export type LooseArgs = [value: T.ClassBodyMemberMethodSig.Loose, options?: T.ClassBodyMemberMethodSig.Options];
 	export type Kind = TSKindId.ClassBodyMemberMethodSig;
 }
 export namespace ClassBodyMemberDeclaration {
