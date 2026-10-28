@@ -276,7 +276,8 @@
           "name": "macro_definition_paren",
           "annotations": {
             "variant": "paren",
-            "variantOf": "macro_definition"
+            "variantOf": "macro_definition",
+            "default": true
           }
         },
         {
@@ -383,7 +384,8 @@
           "name": "token_tree_pattern_paren",
           "annotations": {
             "variant": "paren",
-            "variantOf": "token_tree_pattern"
+            "variantOf": "token_tree_pattern",
+            "default": true
           }
         },
         {
@@ -670,7 +672,8 @@
           "name": "token_tree_paren",
           "annotations": {
             "variant": "paren",
-            "variantOf": "token_tree"
+            "variantOf": "token_tree",
+            "default": true
           }
         },
         {
@@ -4864,7 +4867,8 @@
           "name": "delim_token_tree_paren",
           "annotations": {
             "variant": "paren",
-            "variantOf": "delim_token_tree"
+            "variantOf": "delim_token_tree",
+            "default": true
           }
         },
         {

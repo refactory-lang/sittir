@@ -32,6 +32,15 @@ describe('flattening classifier', () => {
 		expect(flattenedSupertypes(wired as never)).toEqual(['parent']);
 	});
 
+	it('carries a declared default onto the variant it hoists', () => {
+		const wired = wire<GrammarJson>({ name: 'g', rules: {}, edits: { parent: { '1/0': variant('eq'), '1/1': variant('type', { default: true }) } } }, baseOf(tokenArms));
+		const arms = (evaluateWired(wired).parent as { members: { annotations?: { variant?: string; default?: true } }[] }).members;
+		expect(arms.map((arm) => [arm.annotations?.variant, arm.annotations?.default])).toEqual([
+			['eq', undefined],
+			['type', true]
+		]);
+	});
+
 	it('does not register an extra', () => {
 		const wired = wire<GrammarJson>({
 			name: 'g',

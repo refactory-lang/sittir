@@ -68,7 +68,7 @@
 (case_clause) @clause.case.match
 (case_clause guard: (if_clause condition: _ @guard))
 (case_clause consequence: _ @body)
-((with_clause with_items: (_)? @items) @clause.resource (#set! default with_clause_bare))
+(with_clause with_items: (_)? @items) @clause.resource
 (with_item) @clause.resource.item
 (with_item value: (as_pattern expression: (_) @value))
 (with_item value: (as_pattern alias: (_) @name))
@@ -246,8 +246,8 @@
 (float_leading_point) @literal.number.float.leading_point
 (float_scientific) @literal.number.float.scientific
 (simple_pattern_negative) @literal.number.negative
-(true) @literal.boolean.true
-(false) @literal.boolean.false
+((true) @literal.boolean.true (#set! value true))
+((false) @literal.boolean.false (#set! value false))
 (none) @literal.none
 
 ; ── identifier ─────────────────────────────────────────────────────────────────

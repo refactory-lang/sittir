@@ -132,18 +132,30 @@ export interface PortableFlagStep {
 	readonly unset?: readonly PortablePreset[];
 }
 
-/** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
+/** A test a build arm passes for its input: a structure that states every `required` member and none of the `absent` ones, the members the path's other arms have and this one lacks (arms with fewer members come first); a flag stated or not; a member's value of one of `kinds`; a fixed literal's text; the boolean a binding declares its kind's value; or the form chosen at a supertype's variant site: the render options' choice at `<variant>/variant`, the `default` form when they make none. */
 export type PortablePickTest =
 	| { readonly absent: readonly string[]; readonly required: readonly string[] }
 	| { readonly flag: string; readonly set: boolean }
 	| { readonly member: string; readonly kinds: readonly number[] }
 	| { readonly text: string }
+	| { readonly boolean: boolean }
 	| { readonly variant: string; readonly value: number; readonly default?: true };
+
+/** The member a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
+export interface PortableDecimalParts {
+	readonly integer?: string;
+	readonly fraction?: string;
+	readonly exponent?: string;
+	readonly marker?: string;
+	readonly sign?: string;
+}
 
 /**
  * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
- * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type. A `template`
+ * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type; it takes the
+ * number as its builder's input, or, where its builder takes a config, through `numeric`: the member that takes the number whole, or the member
+ * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder with the
  * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass.
@@ -154,6 +166,7 @@ export interface PortableBuildArm {
 	readonly mounted?: PortableMount;
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float';
+	readonly numeric?: string | PortableDecimalParts;
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];
@@ -180,10 +193,22 @@ export interface PortableStructure {
 	readonly [member: string]: unknown;
 }
 
-/** A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, and each vocabulary path's arms. */
+/** Where a `$value` builds at a path with no arms of its own: for an integer, a float, `true` or `false`, the nearest descendant path whose arms take it. */
+export interface PortableValueBuild {
+	readonly integer?: string;
+	readonly float?: string;
+	readonly true?: string;
+	readonly false?: string;
+}
+
+/**
+ * A bound grammar's portable build table: each strict builder's call shape by its key in the strict table, each vocabulary path's arms, and, at
+ * a path with no arms of its own, the paths a `$value` builds through (`values`).
+ */
 export interface PortableBuildTable {
 	readonly builders: Readonly<Record<string, PortableCallShape>>;
 	readonly paths: Readonly<Record<string, PortableBuildPath>>;
+	readonly values?: Readonly<Record<string, PortableValueBuild>>;
 }
 
 /**

@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { PortableBuildArm, PortableBuildTable } from '@sittir/types';
+import { createEngine } from '../src/create-engine.ts';
+import { portableBuilder } from '../src/portable/build.ts';
 import python from '@sittir/python';
 import rust from '@sittir/rust';
 import typescript from '@sittir/typescript';
@@ -111,8 +113,10 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'declaration.variable', rust.kinds.LetDeclaration).when).toContainEqual({ flag: 'static', set: false });
 	});
 
-	it('takes a tie the derived steps leave from the default the bindings declare', () => {
+	it("takes a tie the derived steps leave from the grammar's default arm", () => {
 		expect(armsOf('python', 'clause.resource').map((arm) => arm.kind)).toEqual([python.kinds.WithClauseBare, python.kinds.WithClauseParen]);
+		expect(armOf('python', 'clause.resource', python.kinds.WithClauseBare).when).toContainEqual({ variant: 'with_clause', value: python.kinds.WithClauseBare, default: true });
+		expect(armOf('rust', 'declaration.macro', rust.kinds.MacroDefinitionParen).when).toContainEqual({ variant: 'macro_definition', value: rust.kinds.MacroDefinitionParen, default: true });
 	});
 
 	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
@@ -217,6 +221,12 @@ describe('the portable build table', () => {
 			for (const { arms } of Object.values(table.paths)) for (const arm of arms) for (const test of arm.when) expect(Object.keys(test)).not.toContain('scalar');
 	});
 
+	it('takes the float form that spells every float, for a $value and first among the forms a member structure fits', () => {
+		const kinds = armsOf('typescript', 'literal.number').map((arm) => arm.kind);
+		expect(armOf('typescript', 'literal.number', typescript.kinds.NumberFloatPoint).scalar).toBe('float');
+		expect(kinds.indexOf(typescript.kinds.NumberFloatPoint)).toBeLessThan(kinds.indexOf(typescript.kinds.NumberFloatScientific));
+	});
+
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__' });
 		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
@@ -227,6 +237,43 @@ describe('the portable build table', () => {
 			presets: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.OptionalChain }],
 			unset: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.Dot }]
 		});
+	});
+
+	it('builds a $value at a path with no arms through the nearest descendant that takes its type', () => {
+		expect(tables.rust.table.values?.['literal.number']).toEqual({ integer: 'literal.number.integer', float: 'literal.number.float' });
+		expect(tables.python.table.values?.['literal.boolean']).toEqual({ true: 'literal.boolean.true', false: 'literal.boolean.false' });
+		expect(tables.typescript.table.values?.['literal.number']).toBeUndefined();
+	});
+
+	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric members", () => {
+		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
+		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toBe('content');
+		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', sign: 'sign' });
+		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toBeUndefined();
+	});
+
+	it("spells a number's decimal parts through the members its arm maps them to, whatever their names, and refuses a part it has no member for", async () => {
+		const engine = await createEngine(python, { api: 'strict' });
+		const withSign = (sign: string | undefined) => (arm: PortableBuildArm): PortableBuildArm => {
+			const parts = typeof arm.numeric === 'object' ? arm.numeric : undefined;
+			if (parts?.sign === undefined) return arm;
+			const { sign: old, ...rest } = parts;
+			return {
+				...arm,
+				members: arm.members.flatMap((member) => (member.name !== old ? [member] : sign === undefined ? [] : [{ ...member, name: sign }])),
+				numeric: sign === undefined ? rest : { ...rest, sign }
+			};
+		};
+		const builderWith = (sign: string | undefined) =>
+			portableBuilder({
+				language: 'python',
+				table: { ...tables.python.table, paths: Object.fromEntries(Object.entries(tables.python.table.paths).map(([path, at]) => [path, { ...at, arms: at.arms.map(withSign(sign)) }])) },
+				builders: engine.build,
+				kindName: () => undefined,
+				readsAs: () => true
+			});
+		expect(String(engine.render(builderWith('exponentSign')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
+		expect(() => builderWith(undefined)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
 	});
 
 	it('reaches a kind a flag presets only through the flag', () => {

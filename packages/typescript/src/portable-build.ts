@@ -21756,6 +21756,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 157,
 					builder: 'numberFloatLeadingPoint',
+					numeric: {
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'fraction',
@@ -21833,6 +21839,13 @@ export const build: PortableBuildTable = {
 				{
 					kind: 156,
 					builder: 'numberFloatPoint',
+					numeric: {
+						integer: 'integer',
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -21927,6 +21940,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 158,
 					builder: 'numberFloatScientific',
+					numeric: {
+						integer: 'integer',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -22140,6 +22159,13 @@ export const build: PortableBuildTable = {
 				{
 					kind: 156,
 					builder: 'numberFloatPoint',
+					numeric: {
+						integer: 'integer',
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -22234,6 +22260,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 157,
 					builder: 'numberFloatLeadingPoint',
+					numeric: {
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'fraction',
@@ -22312,6 +22344,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 158,
 					builder: 'numberFloatScientific',
+					numeric: {
+						integer: 'integer',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -26463,6 +26501,18 @@ export const build: PortableBuildTable = {
 					when: []
 				}
 			]
+		}
+	},
+	values: {
+		literal: {
+			integer: 'literal.number',
+			float: 'literal.number',
+			true: 'literal.boolean.true',
+			false: 'literal.boolean.false'
+		},
+		'literal.boolean': {
+			true: 'literal.boolean.true',
+			false: 'literal.boolean.false'
 		}
 	}
 };

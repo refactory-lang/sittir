@@ -580,6 +580,8 @@ function containerFact(
 	};
 }
 
+const DIRECTIVES: ReadonlySet<string> = new Set(['reason', 'value']);
+
 function directivesOf(predicates: readonly Predicate.Parsed[]): ReadonlyMap<string, string | true> {
 	const out = new Map<string, string | true>();
 	for (const predicate of predicates) {
@@ -591,12 +593,19 @@ function directivesOf(predicates: readonly Predicate.Parsed[]): ReadonlyMap<stri
 	return out;
 }
 
+function valueOf(declared: string | true | undefined, origin: PatternOrigin): boolean | undefined {
+	if (declared === undefined) return undefined;
+	if (declared === 'true' || declared === 'false') return declared === 'true';
+	return refuse(origin, `#set! value takes true or false, not ${declared === true ? 'nothing' : declared}`);
+}
+
 function reasonOf(predicates: readonly Predicate.Parsed[]): string | null {
 	const reason = directivesOf(predicates).get('reason');
 	return typeof reason === 'string' ? reason : null;
 }
 
 function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin: PatternOrigin): void {
+	for (const key of directivesOf(predicates).keys()) if (!DIRECTIVES.has(key)) refuse(origin, `#set! ${key} is not a bindings directive; the bindings read ${[...DIRECTIVES].join(' and ')}`);
 	const unclaimed = nodes.filter((v) => captures(v).includes(UNCLAIMED));
 	if (unclaimed.length > 0) {
 		const reason = reasonOf(predicates);
@@ -633,9 +642,8 @@ function patternFacts({ top, nodes, predicates }: Pattern, facts: Facts, origin:
 			refuseAnchoredPlacement(v, name, origin);
 			(claimed.get(v) ?? claimed.set(v, []).get(v))?.push(facts.claims.length);
 			const claim = claimFact(v, name, top, nodes, claimPredicates, origin);
-			const declared = atTop(v, top) ? directivesOf(predicates).get('default') : undefined;
-			const named = declared === true ? claim.kind : declared;
-			facts.claims.push(named === undefined || named === null ? claim : { ...claim, default: named });
+			const value = atTop(v, top) ? valueOf(directivesOf(predicates).get('value'), origin) : undefined;
+			facts.claims.push({ ...claim, ...(value === undefined ? {} : { value }) });
 		}
 	}
 	for (const v of nodes) {

@@ -386,7 +386,7 @@ export default grammar(enrich(base), wire({
 		},
 
 		with_clause: {
-			0: variant('bare'),
+			0: variant('bare', { default: true }),
 			1: variant('paren')
 		},
 

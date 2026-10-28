@@ -379,17 +379,17 @@ export interface Routes<Table extends AnyTable> {
 		readonly bare: Routes<Table>['rangePatternWithLeft$bare'];
 	};
 	readonly parametersElementsReceiver: Table['parametersElementsReceiver$seated'];
-	readonly macroDefinition: {
+	readonly macroDefinition: Routes<Table>['macroDefinitionParen'] & {
 		readonly paren: Routes<Table>['macroDefinitionParen'];
 		readonly bracket: Routes<Table>['macroDefinitionBracket'];
 		readonly brace: Routes<Table>['macroDefinitionBrace'];
 	};
-	readonly tokenTreePattern: {
+	readonly tokenTreePattern: Table['buildTokenTreePatternParen'] & {
 		readonly paren: Table['buildTokenTreePatternParen'];
 		readonly bracket: Table['buildTokenTreePatternBracket'];
 		readonly brace: Table['buildTokenTreePatternBrace'];
 	};
-	readonly tokenTree: {
+	readonly tokenTree: Table['buildTokenTreeParen'] & {
 		readonly paren: Table['buildTokenTreeParen'];
 		readonly bracket: Table['buildTokenTreeBracket'];
 		readonly brace: Table['buildTokenTreeBrace'];
@@ -406,7 +406,7 @@ export interface Routes<Table extends AnyTable> {
 	};
 	readonly implItem: { readonly body: Routes<Table>['implItemBody']; readonly semi: Routes<Table>['implItemSemi'] };
 	readonly pointerType: { readonly const: Table['buildPointerTypeConst']; readonly mut: Table['buildPointerTypeMut'] };
-	readonly delimTokenTree: {
+	readonly delimTokenTree: Table['buildDelimTokenTreeParen'] & {
 		readonly paren: Table['buildDelimTokenTreeParen'];
 		readonly bracket: Table['buildDelimTokenTreeBracket'];
 		readonly brace: Table['buildDelimTokenTreeBrace'];
@@ -1226,21 +1226,27 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 	const parametersElementsReceiver: Routes<Table>['parametersElementsReceiver'] = $at(
 		'parametersElementsReceiver$seated'
 	);
-	const macroDefinition: Routes<Table>['macroDefinition'] = Object.freeze({
-		paren: macroDefinitionParen,
-		bracket: macroDefinitionBracket,
-		brace: macroDefinitionBrace
-	} as const);
-	const tokenTreePattern: Routes<Table>['tokenTreePattern'] = Object.freeze({
-		paren: $at('buildTokenTreePatternParen'),
-		bracket: $at('buildTokenTreePatternBracket'),
-		brace: $at('buildTokenTreePatternBrace')
-	} as const);
-	const tokenTree: Routes<Table>['tokenTree'] = Object.freeze({
-		paren: $at('buildTokenTreeParen'),
-		bracket: $at('buildTokenTreeBracket'),
-		brace: $at('buildTokenTreeBrace')
-	} as const);
+	const macroDefinition: Routes<Table>['macroDefinition'] = Object.freeze(
+		Object.assign(delegate(macroDefinitionParen), {
+			paren: macroDefinitionParen,
+			bracket: macroDefinitionBracket,
+			brace: macroDefinitionBrace
+		} as const)
+	);
+	const tokenTreePattern: Routes<Table>['tokenTreePattern'] = Object.freeze(
+		Object.assign(delegate($at('buildTokenTreePatternParen')), {
+			paren: $at('buildTokenTreePatternParen'),
+			bracket: $at('buildTokenTreePatternBracket'),
+			brace: $at('buildTokenTreePatternBrace')
+		} as const)
+	);
+	const tokenTree: Routes<Table>['tokenTree'] = Object.freeze(
+		Object.assign(delegate($at('buildTokenTreeParen')), {
+			paren: $at('buildTokenTreeParen'),
+			bracket: $at('buildTokenTreeBracket'),
+			brace: $at('buildTokenTreeBrace')
+		} as const)
+	);
 	const modItem: Routes<Table>['modItem'] = Object.freeze({
 		external: $at('buildModItemExternal'),
 		inline: $at('buildModItemInline')
@@ -1259,11 +1265,13 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 		const: $at('buildPointerTypeConst'),
 		mut: $at('buildPointerTypeMut')
 	} as const);
-	const delimTokenTree: Routes<Table>['delimTokenTree'] = Object.freeze({
-		paren: $at('buildDelimTokenTreeParen'),
-		bracket: $at('buildDelimTokenTreeBracket'),
-		brace: $at('buildDelimTokenTreeBrace')
-	} as const);
+	const delimTokenTree: Routes<Table>['delimTokenTree'] = Object.freeze(
+		Object.assign(delegate($at('buildDelimTokenTreeParen')), {
+			paren: $at('buildDelimTokenTreeParen'),
+			bracket: $at('buildDelimTokenTreeBracket'),
+			brace: $at('buildDelimTokenTreeBrace')
+		} as const)
+	);
 	const rangeExpression: Routes<Table>['rangeExpression'] = Object.freeze({
 		binary: $at('buildRangeExpressionBinary'),
 		postfix: $at('buildRangeExpressionPostfix'),

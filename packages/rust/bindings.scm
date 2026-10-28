@@ -153,7 +153,7 @@
 (attributed_ordered_field (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope (crate))))) @declaration.field.public.crate
 (attributed_ordered_field (visibility_modifier (visibility_modifier_pub (visibility_modifier_pub_scope [(super) (visibility_modifier_pub_scope_in_path)]) @scope))) @declaration.field.public.restricted
 (attributed_field_declaration (attribute_item)* @attributes (_) @element)
-((macro_definition name: (_) (_)? @rules) @declaration.macro (#set! default macro_definition_paren))
+(macro_definition name: (_) (_)? @rules) @declaration.macro
 (macro_definition_paren) @declaration.macro.paren
 (macro_definition_bracket) @declaration.macro.bracket
 (macro_definition_brace) @declaration.macro.brace
@@ -239,15 +239,15 @@
 (shorthand_field_initializer name: (_) @field)
 (base_field_initializer) @element.struct.base
 (type_binding) @element.type_binding
-((token_tree) @element.macro.token_tree (#set! default token_tree_paren))
+(token_tree) @element.macro.token_tree
 (token_tree_paren) @element.macro.token_tree.paren
 (token_tree_bracket) @element.macro.token_tree.bracket
 (token_tree_brace) @element.macro.token_tree.brace
-((delim_token_tree (_)* @tokens) @element.macro.token_tree.delimited (#set! default delim_token_tree_paren))
+(delim_token_tree (_)* @tokens) @element.macro.token_tree.delimited
 (delim_token_tree_paren) @element.macro.token_tree.delimited.paren
 (delim_token_tree_bracket) @element.macro.token_tree.delimited.bracket
 (delim_token_tree_brace) @element.macro.token_tree.delimited.brace
-((token_tree_pattern (_)* @tokens) @element.macro.token_tree.pattern (#set! default token_tree_pattern_paren))
+(token_tree_pattern (_)* @tokens) @element.macro.token_tree.pattern
 (token_tree_pattern_paren) @element.macro.token_tree.pattern.paren
 (token_tree_pattern_bracket) @element.macro.token_tree.pattern.bracket
 (token_tree_pattern_brace) @element.macro.token_tree.pattern.brace
@@ -414,8 +414,8 @@
 (float_literal) @literal.number.float
 (negative_literal) @literal.number.negative
 (boolean_literal) @literal.boolean
-((boolean_literal) @literal.boolean.true (#eq? @literal.boolean.true "true"))
-((boolean_literal) @literal.boolean.false (#eq? @literal.boolean.false "false"))
+((boolean_literal) @literal.boolean.true (#eq? @literal.boolean.true "true") (#set! value true))
+((boolean_literal) @literal.boolean.false (#eq? @literal.boolean.false "false") (#set! value false))
 
 ; ── identifier ─────────────────────────────────────────────────────────────────
 (identifier) @identifier

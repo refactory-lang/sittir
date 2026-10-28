@@ -149,14 +149,10 @@ export async function generate(cfg: GenerateConfig): Promise<GeneratedFiles> {
 				...(holder === undefined ? {} : { ownerKind: holder }),
 				...(slot === undefined ? {} : { slotName: slot }),
 				message:
-					code === 'portable-default-repeated'
-						? `${path}: ${kinds.join(', ')} are each declared its build default`
-						: code === 'portable-default-unknown'
-							? `${path}: ${kinds[0]} is declared its build default, but no arm at the path is that kind`
-							: code === 'portable-default-redundant'
-							? `${path}: ${kinds[0]} is declared its build default, but the pick already decides it`
-							: code === 'portable-form-product'
-							? `${path}: ${kinds[0]}'s required form slots make ${arms} sibling arms`
+					code === 'portable-form-product'
+						? `${path}: ${kinds[0]}'s required form slots make ${arms} sibling arms`
+						: code === 'portable-value-undecided'
+							? `${path}: a ${slot} value builds as any of ${kinds.join(', ')}, and the grammar declares no default arm among them`
 							: `${path}: nothing picks among ${kinds.join(', ')}${holder === undefined ? ', and no holder slot admits them' : ` in ${holder}'s slot ${slot}`}`
 			})
 		);

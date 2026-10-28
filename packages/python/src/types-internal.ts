@@ -199,6 +199,7 @@ export interface SubBuilderRowKind {
 	'suite.block': TSKindId.SuiteBlock;
 	'suite.empty': TSKindId.SuiteEmpty;
 	'suite.inline': TSKindId.SuiteInline;
+	withClause: TSKindId.WithClauseBare;
 	'withClause.bare': TSKindId.WithClauseBare;
 	'withClause.paren': TSKindId.WithClauseParen;
 }

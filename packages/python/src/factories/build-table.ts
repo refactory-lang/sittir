@@ -203,7 +203,10 @@ export interface Routes<Table extends AnyTable> {
 		readonly block: Table['buildMatchBlockBlock'];
 		readonly empty: Table['buildMatchBlockEmpty'];
 	};
-	readonly withClause: { readonly bare: Table['buildWithClauseBare']; readonly paren: Table['buildWithClauseParen'] };
+	readonly withClause: Table['buildWithClauseBare'] & {
+		readonly bare: Table['buildWithClauseBare'];
+		readonly paren: Table['buildWithClauseParen'];
+	};
 	readonly suite: {
 		readonly inline: Table['buildSuiteInline'];
 		readonly block: Table['buildSuiteBlock'];
@@ -2412,10 +2415,12 @@ export function buildTable<Table extends AnyTable>($table: Table): Ir<Table> {
 			empty: $at('buildMatchBlockEmpty')
 		} as const)
 	);
-	const withClause: Routes<Table>['withClause'] = Object.freeze({
-		bare: $at('buildWithClauseBare'),
-		paren: $at('buildWithClauseParen')
-	} as const);
+	const withClause: Routes<Table>['withClause'] = Object.freeze(
+		Object.assign(delegate($at('buildWithClauseBare')), {
+			bare: $at('buildWithClauseBare'),
+			paren: $at('buildWithClauseParen')
+		} as const)
+	);
 	const suite: Routes<Table>['suite'] = Object.freeze({
 		inline: $at('buildSuiteInline'),
 		block: $at('buildSuiteBlock'),

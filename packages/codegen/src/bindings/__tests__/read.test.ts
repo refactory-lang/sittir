@@ -498,26 +498,21 @@ describe('bindingPatterns', () => {
 	});
 });
 
-describe('the default directive', () => {
-	it("stamps a claim at the pattern's top with its kind as authored", async () => {
-		const facts = await readBindings('((token_tree_paren) @element.macro.token_tree (#set! default))');
-		expect(facts.claims.map((c) => [c.vocab, c.default])).toEqual([['element.macro.token_tree', 'token_tree_paren']]);
+describe('a directive the bindings do not read', () => {
+	it('refuses it by name', async () => {
+		await expect(readBindings('((token_tree_paren) @element.macro.token_tree (#set! default))')).rejects.toThrow(/#set! default is not a bindings directive; the bindings read reason and value/);
 	});
-	it('leaves a claim with no directive, and a claim below the top, unstamped', async () => {
-		const plain = await readBindings('(struct_pattern) @pattern.struct');
-		expect(plain.claims[0]?.default).toBeUndefined();
-		const nested = await readBindings('((function_definition body: (block (expression_statement (string) @literal.string.docstring))) @declaration.function (#set! default))');
-		expect(nested.claims.map((c) => [c.vocab, c.default])).toEqual([
-			['declaration.function', 'function_definition'],
-			['literal.string.docstring', undefined]
+});
+
+describe('the value directive', () => {
+	it("stamps a claim at the pattern's top with the boolean it declares", async () => {
+		const facts = await readBindings('((true) @literal.boolean.true (#set! value true))\n((false) @literal.boolean.false (#set! value false))');
+		expect(facts.claims.map((c) => [c.vocab, c.value])).toEqual([
+			['literal.boolean.true', true],
+			['literal.boolean.false', false]
 		]);
 	});
-	it("names a form on its supertype's claim, so the default adds no claim of its own", async () => {
-		const facts = await readBindings('((with_clause with_items: (_)? @items) @clause.resource (#set! default with_clause_bare))');
-		expect(facts.claims.map((c) => [c.vocab, c.kind, c.default])).toEqual([['clause.resource', 'with_clause', 'with_clause_bare']]);
-	});
-	it('reads a reason beside it', async () => {
-		const facts = await readBindings('((line_comment) @unclaimed (#set! reason "trivia") (#set! default))');
-		expect(facts.unclaimed).toEqual([{ kind: 'line_comment', reason: 'trivia' }]);
+	it('refuses a value that is not true or false', async () => {
+		await expect(readBindings('((true) @literal.boolean.true (#set! value yes))')).rejects.toThrow(/#set! value takes true or false, not yes/);
 	});
 });
