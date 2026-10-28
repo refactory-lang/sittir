@@ -37,6 +37,7 @@ import {
 	type KindView
 } from '@sittir/common/utils';
 import {
+	isFactoryNode,
 	isNode,
 	treeOf,
 	type TriviaSideName,
@@ -1101,7 +1102,6 @@ export interface NodeToConfigOpts {
 	readonly _path?: string;
 	readonly kindNameFromId?: (id: number) => string | undefined;
 	readonly surface?: IrSurface;
-	readonly built?: Set<object>;
 }
 
 export interface ReadNodeLike {
@@ -1149,6 +1149,7 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 		const text = readNodeText(hydrated, opts);
 		if (text !== '') return text;
 	}
+	if (isFactoryNode(hydrated)) return hydrated;
 	const rawTypeId = hydrated.$type ?? c.$type;
 	const rawKind = rawTypeId !== undefined ? (opts.kindNameFromId?.(rawTypeId) ?? String(rawTypeId)) : undefined;
 	if (!rawKind) return hydrated;
@@ -1507,21 +1508,13 @@ function buildWithFactory(
 ): unknown {
 	const shape = opts.factoryShapes?.[kind] ?? 'config';
 	if (shape === 'constant') return entry;
-	const built = writeSides(referenceData, callFactory(referenceData, kind, shape, entry as (...args: unknown[]) => unknown, opts), opts);
-	if (typeof built === 'object' && built !== null) opts.built?.add(built);
-	return built;
-}
-
-function callFactory(
-	referenceData: ReadNodeLike,
-	kind: string,
-	shape: FactoryShape,
-	factory: (...args: unknown[]) => unknown,
-	opts: NodeToConfigOpts
-): unknown {
-	if (shape === 'text') return (irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts));
+	const factory = entry as (...args: unknown[]) => unknown;
+	if (shape === 'text') {
+		return writeSides(referenceData, (irStrictFor(kind, undefined, opts) ?? factory)(readNodeText(referenceData, opts)), opts);
+	}
 	const config = nodeToConfig(referenceData, opts);
-	return (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
+	const built = (irStrictFor(kind, config, opts) ?? factory)(...factoryArgs(kind, shape, config, referenceData, opts));
+	return writeSides(referenceData, built, opts);
 }
 
 export function tableSides(source: ReadNodeLike, accessorOf: SlotAccessorOf, build: (read: unknown) => unknown): NodeTrivia | undefined {
@@ -1892,7 +1885,6 @@ export interface FactoryDispatchOpts {
 	readonly tree?: TreeHandle;
 	readonly hydrate?: Hydrate;
 	readonly placeText?: boolean;
-	readonly built?: Set<object>;
 }
 
 export function buildFactoryNodeFromReference(
@@ -1920,8 +1912,7 @@ export function buildFactoryNodeFromReference(
 		accessorOf: opts.accessorOf,
 		tree: opts.tree,
 		hydrate: opts.hydrate,
-		placeText: opts.placeText,
-		built: opts.built
+		placeText: opts.placeText
 	} as NodeToConfigOpts;
 	return buildWithFactory(referenceData, kind, factory, configOpts);
 }

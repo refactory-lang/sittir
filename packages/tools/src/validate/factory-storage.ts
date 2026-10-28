@@ -405,7 +405,6 @@ function buildFactoryUntypedNode(
 		rendered?: string;
 	}[],
 	accessorOf: SlotAccessorOf,
-	built: Set<object>,
 	kindNameFromId?: (id: number) => string | undefined,
 	tree?: TreeHandle
 ): AnyUntypedNode | null {
@@ -416,7 +415,7 @@ function buildFactoryUntypedNode(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, accessorOf, tree, placeText: tree !== undefined, built }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, accessorOf, tree, placeText: tree !== undefined }
 		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
@@ -557,7 +556,6 @@ export async function validateFactoryStorage(
 					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
 					continue;
 				}
-				const built = new Set<object>();
 				const factoryData = buildFactoryUntypedNode(
 					referenceData,
 					kind,
@@ -574,7 +572,6 @@ export async function validateFactoryStorage(
 					inputSource,
 					errors,
 					accessorOf,
-					built,
 					kindNameFromId,
 					handle
 				);
@@ -594,7 +591,7 @@ export async function validateFactoryStorage(
 						node,
 						innerKind,
 						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
-						{ kindNameFromId, accessorOf, tree: handle, placeText: true, built }
+						{ kindNameFromId, accessorOf, tree: handle, placeText: true }
 					);
 				};
 				const buildErrors: typeof errors = [];
@@ -629,7 +626,6 @@ export async function validateFactoryStorage(
 							inputSource,
 							buildErrors,
 							accessorOf,
-							built,
 							kindNameFromId,
 							handle
 						);
@@ -675,17 +671,15 @@ export async function validateFactoryStorage(
 					}
 				}
 
-				const diff =
-					factoryData === null
-						? undefined
-						: compareNodeStorage(
-								referenceData as unknown as Record<string, unknown>,
-								builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
-								'',
-								{ factoryShapes, kindNameFromId }
-							);
-				for (const node of built) release(node);
+				release(builtTree);
 				if (factoryData === null) continue;
+				const diff = compareNodeStorage(
+					referenceData as unknown as Record<string, unknown>,
+					builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
+					'',
+					{ factoryShapes, kindNameFromId }
+				);
+				release(factoryData);
 				if (diff) {
 					astMismatches.push({
 						kind,
