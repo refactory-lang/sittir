@@ -1107,12 +1107,7 @@ export interface NodeToConfigOpts {
 export interface ReadNodeLike {
 	readonly $type?: number;
 	readonly $text?: string | (() => string);
-	readonly $named?: boolean;
 	readonly $_layout?: NodeLayout;
-}
-
-function isAnonTokenPassthrough(c: ReadNodeLike): boolean {
-	return c.$named === false;
 }
 
 function pathOf(opts: NodeToConfigOpts): string {
@@ -1139,10 +1134,6 @@ function resolveChild(child: unknown, opts: NodeToConfigOpts): unknown {
 	if (typeof child !== 'object') return child;
 	const c = child as ReadNodeLike;
 	const { tree, factoryMap, fieldAliasMap, _depth = 0, _parentKind, _fieldName } = opts;
-	if (isAnonTokenPassthrough(c)) {
-		if (tree === undefined) return child;
-		throw new Error(`nodeToConfig: an anonymous token (${String(c.$type)}) reached a builder input at ${pathOf(opts)}`);
-	}
 	if (!tree || !factoryMap) return child;
 	const hydrated = hydrateForConfig(c, opts);
 	if (opts.placeText === true && _parentKind !== undefined && opts.factoryShapes?.[_parentKind] === 'placed') {
@@ -1650,9 +1641,7 @@ function narrowSingularUnnamedChildrenValue(
 		const hinted = value.filter((item) => rawChildKindName(item, childOpts.kindNameFromId) === hintedKind);
 		if (hinted.length === 1) return hinted[0]!;
 	}
-	const named = value.filter(
-		(item): item is ReadNodeLike => item != null && typeof item === 'object' && (item as ReadNodeLike).$named !== false
-	);
+	const named = value.filter((item): item is ReadNodeLike => item != null && typeof item === 'object');
 	if (named.length === 1) return named[0];
 	return value;
 }
@@ -1720,72 +1709,6 @@ function assignSlotToConfig(
 	}
 }
 
-function getMissingDeclaredFields(
-	parentKind: string,
-	declaredFields: readonly string[],
-	factorySlots: NodeToConfigOpts['factorySlots'],
-	out: Record<string, unknown>
-): string[] {
-	return declaredFields.filter((name) => out[slotKeyOf(factorySlots, parentKind, name)] === undefined);
-}
-
-function isAnonymousTokenNode(value: unknown): value is ReadNodeLike {
-	return value != null && typeof value === 'object' && (value as ReadNodeLike).$named === false;
-}
-
-function isOpeningDelimiter(text: string | undefined): boolean {
-	return text === '{' || text === '{|' || text === '[' || text === '(' || text === '<';
-}
-
-function isClosingDelimiter(text: string | undefined): boolean {
-	return text === '}' || text === '|}' || text === ']' || text === ')' || text === '>';
-}
-
-function promoteAnonymousTokenFields(
-	declaredFields: readonly string[] | undefined,
-	namedSlotEntries: readonly [string, unknown][],
-	opts: NodeToConfigOpts,
-	parentKind: string | undefined,
-	out: Record<string, unknown>
-): void {
-	if (!declaredFields || !parentKind) return;
-	const missing = new Set(getMissingDeclaredFields(parentKind, declaredFields, opts.factorySlots, out));
-	if (missing.size === 0) return;
-	const anonymousEntries = namedSlotEntries.filter(
-		([key, value]) => !isIdentifierShapedFieldKey(key) && isAnonymousTokenNode(value)
-	);
-	const used = new Set<number>();
-	const assign = (fieldName: string, entryIndex: number): void => {
-		const entry = anonymousEntries[entryIndex]?.[1];
-		if (!entry) return;
-		assignSlotToConfig(
-			createNamedSlotModel(fieldName, slotKeyOf(opts.factorySlots, parentKind, fieldName), 'one'),
-			entry,
-			memberValueOpts(opts, parentKind, fieldName),
-			out
-		);
-		missing.delete(fieldName);
-		used.add(entryIndex);
-	};
-
-	if (missing.has('semicolon')) {
-		const semicolonIndex = anonymousEntries.findIndex(([, value]) => nodeText(value) === ';');
-		if (semicolonIndex >= 0) assign('semicolon', semicolonIndex);
-	}
-	if (missing.has('opening')) {
-		const openingIndex = anonymousEntries.findIndex(
-			([, value], index) => !used.has(index) && isOpeningDelimiter(nodeText(value))
-		);
-		if (openingIndex >= 0) assign('opening', openingIndex);
-	}
-	if (missing.has('closing')) {
-		const closingIndex = anonymousEntries.findLastIndex(
-			([, value], index) => !used.has(index) && isClosingDelimiter(nodeText(value))
-		);
-		if (closingIndex >= 0) assign('closing', closingIndex);
-	}
-}
-
 export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	const rec = data as unknown as Record<string, unknown>;
@@ -1819,13 +1742,6 @@ export function nodeToConfig(data: ReadNodeLike, opts: NodeToConfigOpts): Record
 		}
 		assignSlotToConfig(slot, v, memberValueOpts(opts, parentKind, k), out);
 	}
-	promoteAnonymousTokenFields(
-		parentKind ? opts.factoryFields?.[parentKind] : undefined,
-		namedSlotEntries,
-		opts,
-		parentKind,
-		out
-	);
 	return out;
 }
 

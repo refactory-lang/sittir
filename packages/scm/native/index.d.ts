@@ -388,6 +388,12 @@ export declare function readRecord(treeId: TreeId, index: NodeIndex, depth?: num
 export declare const RECORD_FLAG_LINK: number
 
 /**
+ * r" The words of a record header (`record::HEADER_WORDS`), the
+ * r" least an embedded record takes.
+ */
+export declare const RECORD_HEADER_WORDS: number
+
+/**
  * r" The hydrated typed nodes below `index` in stored field
  * r" order, as a JSON list of their rows' coordinates. Units and
  * r" captured strings are omitted. Exports no node fields or

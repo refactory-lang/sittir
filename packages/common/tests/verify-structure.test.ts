@@ -28,7 +28,7 @@ const table: StructureTable = {
 	}
 };
 
-const built = (type: number, slots: Record<string, unknown> = {}) => stampBuilt({ $type: type, $named: true as const, ...slots });
+const built = (type: number, slots: Record<string, unknown> = {}) => stampBuilt({ $type: type, ...slots });
 const name = () => built(NAME, { _text: 'f' });
 const verify = (node: unknown, seen = new WeakSet<object>()) => verifyStructure(node, table, membership, seen);
 

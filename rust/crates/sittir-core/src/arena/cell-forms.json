@@ -1,7 +1,6 @@
 {
 	"parsed": {
 		"kindBits": 9,
-		"headerWords": 2,
 		"cells": [
 			{ "forms": 1, "form": "absent", "words": [0, 0, 0] },
 			{ "forms": 1, "form": "coordinate", "kind": 12, "index": 40, "start": 3, "end": 7, "words": [20492, 3, 7] },

@@ -108,7 +108,6 @@ const IGNORED_NODE_KEYS = new Set([
 	'$_layout',
 	'$treeHandle',
 	'$span',
-	'$named',
 	'$with',
 	'$variant'
 ]);
@@ -518,7 +517,6 @@ export async function validateFactoryStorage(
 		const candidatesByKind = new Map<string, { start: number; end: number; node: TypedNode }[]>();
 		const seen = new Set<string>();
 		walkWrappedTree(wrappedRoot, accessorOf, (w: TypedNode) => {
-			if (w.$named === false) return;
 			const sourceKind = kindNameFromId(w.$type);
 			if (sourceKind === undefined || !ruleKinds.has(sourceKind)) return;
 			if (surface !== undefined && surface.entries[sourceKind] === undefined) return;

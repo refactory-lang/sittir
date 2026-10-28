@@ -342,7 +342,6 @@ export function buildPatternCharacter(text: string): T.PatternCharacter.Bound {
 function leafPatternCharacter(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.PatternCharacter as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -498,7 +497,6 @@ export function buildPosixClassName(text: string): T.PosixClassName.Bound {
 function leafPosixClassName(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.PosixClassName as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -576,7 +574,6 @@ export function buildClassCharacter(text: string): T.ClassCharacter.Bound {
 function leafClassCharacter(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ClassCharacter as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -778,7 +775,6 @@ export function buildFlags(text: string): T.Flags.Bound {
 function leafFlags(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.Flags as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1046,7 +1042,6 @@ export function buildDecimalEscape(text: string): T.DecimalEscape.Bound {
 function leafDecimalEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.DecimalEscape as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1119,7 +1114,6 @@ export function buildUnicodeCharacterEscape(text: string): T.UnicodeCharacterEsc
 function leafUnicodeCharacterEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnicodeCharacterEscape as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1236,7 +1230,6 @@ export function buildUnicodePropertyValue(text: string): T.UnicodePropertyValue.
 function leafUnicodePropertyValue(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnicodePropertyValue as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1264,7 +1257,6 @@ export function buildControlEscape(text: string): T.ControlEscape.Bound {
 function leafControlEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ControlEscape as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1292,7 +1284,6 @@ export function buildControlLetterEscape(text: string): T.ControlLetterEscape.Bo
 function leafControlLetterEscape(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ControlLetterEscape as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1376,7 +1367,6 @@ export function buildGroupName(text: string): T.GroupName.Bound {
 function leafGroupName(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.GroupName as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1408,7 +1398,6 @@ export function buildDecimalDigits(text: string | number | bigint): T.DecimalDig
 function leafDecimalDigits(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.DecimalDigits as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1721,7 +1710,6 @@ export function buildCharacterClassEscapeText1(text: string): T.CharacterClassEs
 function leafCharacterClassEscapeText1(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.CharacterClassEscapeText1 as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1750,7 +1738,6 @@ export function buildCharacterClassEscapeText2(text: string): T.CharacterClassEs
 function leafCharacterClassEscapeText2(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.CharacterClassEscapeText2 as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1975,7 +1962,6 @@ export function buildUnicodePropertyName(text: string): T.UnicodePropertyName.Bo
 function leafUnicodePropertyName(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnicodePropertyName as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,

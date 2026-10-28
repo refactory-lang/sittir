@@ -303,7 +303,6 @@ export function buildImportPrefix(text: string): T.ImportPrefix.Bound {
 function leafImportPrefix(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ImportPrefix as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -6372,7 +6371,6 @@ export function buildTypeConversion(text: string): T.TypeConversion.Bound {
 function leafTypeConversion(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.TypeConversion as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -6403,7 +6401,6 @@ export function buildIdentifier<const W extends string>(
 function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.Identifier as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -7251,7 +7248,6 @@ export function buildFormatSpecifierText(text: string): T.FormatSpecifierText.Bo
 function leafFormatSpecifierText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.FormatSpecifierText as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -8351,7 +8347,6 @@ export function buildIntegerDecimalLong(text: string): T.IntegerDecimalLong.Boun
 function leafIntegerDecimalLong(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.IntegerDecimalLong as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -8380,7 +8375,6 @@ export function buildIntegerDecimalImaginary(text: string): T.IntegerDecimalImag
 function leafIntegerDecimalImaginary(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.IntegerDecimalImaginary as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -8412,7 +8406,6 @@ export function buildIntegerDecimalPlain(text: string | number | bigint): T.Inte
 function leafIntegerDecimalPlain(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.IntegerDecimalPlain as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -9401,7 +9394,6 @@ export function buildLineContinuationNewline(text: string): T.LineContinuationNe
 function leafLineContinuationNewline(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.LineContinuationNewline as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -10432,7 +10424,6 @@ export function buildStringStart(text: string): T.StringStart.Bound {
 function leafStringStart(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.StringStart as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -10460,7 +10451,6 @@ export function buildStringFragment(text: string): T.StringFragment.Bound {
 function leafStringFragment(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.StringFragment as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -10488,7 +10478,6 @@ export function buildEscapeInterpolation(text: string): T.EscapeInterpolation.Bo
 function leafEscapeInterpolation(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.EscapeInterpolation as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -10516,7 +10505,6 @@ export function buildStringEnd(text: string): T.StringEnd.Bound {
 function leafStringEnd(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.StringEnd as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,

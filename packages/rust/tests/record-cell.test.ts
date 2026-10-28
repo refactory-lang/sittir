@@ -24,7 +24,7 @@ type Entry = Record<string, unknown> & {
 const fixture = JSON.parse(
 	readFileSync(new URL('../../../rust/crates/sittir-core/src/arena/cell-forms.json', import.meta.url), 'utf8')
 ) as {
-	readonly parsed: { readonly headerWords: number; readonly cells: readonly Entry[] };
+	readonly parsed: { readonly cells: readonly Entry[] };
 	readonly built: {
 		readonly chunks: readonly { readonly chunk: number; readonly words?: readonly number[] }[];
 		readonly lists: readonly { readonly word: number; readonly run: number; readonly len: number }[];
@@ -91,7 +91,7 @@ describe('the record cell decoder reads what the native codec writes', () => {
 	it('resolves an embedded record within its stamped capacity, at least a record header', () => {
 		for (const entry of fixture.parsed.cells.filter((cell) => cell.address !== undefined)) {
 			const { forms, inline, address, words } = entry;
-			expect(() => decodeParsedCell(words, 0, forms, format!, fixture.parsed.headerWords - 1, address)).toThrow(/stamped capacity/);
+			expect(() => decodeParsedCell(words, 0, forms, format!, format!.headerWords - 1, address)).toThrow(/stamped capacity/);
 			expect(() => decodeParsedCell(words.slice(0, -1), 0, forms, format!, inline, address)).toThrow(/stamped capacity/);
 			expect(() => decodeParsedCell(words, 0, forms, format!, inline, 0)).toThrow(/stamped capacity/);
 		}

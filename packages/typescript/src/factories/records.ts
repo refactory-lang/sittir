@@ -4939,7 +4939,6 @@ export function buildUnescapedDoubleStringFragment(text: string): T.UnescapedDou
 function leafUnescapedDoubleStringFragment(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnescapedDoubleStringFragment as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -4971,7 +4970,6 @@ export function buildUnescapedSingleStringFragment(text: string): T.UnescapedSin
 function leafUnescapedSingleStringFragment(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.UnescapedSingleStringFragment as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -5200,7 +5198,6 @@ export function buildRegexPattern(text: string): T.RegexPattern.Bound {
 function leafRegexPattern(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.RegexPattern as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -5228,7 +5225,6 @@ export function buildRegexFlags(text: string): T.RegexFlags.Bound {
 function leafRegexFlags(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.RegexFlags as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -5256,7 +5252,6 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.Identifier as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -13669,7 +13664,6 @@ export function buildNumberDecimal(text: string | number | bigint): T.NumberDeci
 function leafNumberDecimal(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.NumberDecimal as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -18868,7 +18862,6 @@ export function buildHtmlComment(text: string): T.HtmlComment.Bound {
 function leafHtmlComment(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.HtmlComment as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -18894,7 +18887,6 @@ export function buildJsxText(text: string): T.JsxText.Bound {
 function leafJsxText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.JsxText as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -18922,7 +18914,6 @@ export function buildTemplateChars(text: string): T.TemplateChars.Bound {
 function leafTemplateChars(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.TemplateChars as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -19371,7 +19362,6 @@ export function buildTernaryQmark(text: string): T.TernaryQmark.Bound {
 function leafTernaryQmark(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.TernaryQmark as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -19397,7 +19387,6 @@ export function buildErrorRecovery(text: string): T.ErrorRecovery.Bound {
 function leafErrorRecovery(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ErrorRecovery as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,

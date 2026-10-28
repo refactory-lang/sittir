@@ -679,6 +679,10 @@ macro_rules! napi_engine {
             /// The words of a link record (`arena::cell::LINK_WORDS`).
             #[::napi_derive::napi]
             pub const LINK_RECORD_WORDS: u32 = $crate::arena::cell::LINK_WORDS;
+            /// The words of a record header (`record::HEADER_WORDS`), the
+            /// least an embedded record takes.
+            #[::napi_derive::napi]
+            pub const RECORD_HEADER_WORDS: u32 = $crate::record::HEADER_WORDS;
             /// The flag of a built entry's count byte the handle its
             /// builder returned holds (`count::OWNED`).
             #[::napi_derive::napi]

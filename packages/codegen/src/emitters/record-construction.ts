@@ -134,7 +134,6 @@ function leafMakerLines(name: string, typeExpr: string, trivia: TriviaPositions 
 		`function ${name}(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {`,
 		'  const node = {',
 		`    $type: ${typeExpr},`,
-		'    $named: true as const,',
 		'    $tree: tree,',
 		'    $entry: entry,',
 		'    $site: site,',

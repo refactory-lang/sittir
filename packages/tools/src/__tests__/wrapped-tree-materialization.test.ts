@@ -16,7 +16,7 @@ import {
 const accessorOf = slotAccessorOf({ 1: [['value', 0, undefined, '_value'], ['items', 1, undefined, '_items'], ['statements', 2, undefined, '_statements']] }, { listSeparators: {} }, (id) => (id === 1 ? 'node' : 'leaf'));
 
 function leaf(type: number, text: string): TypedNode {
-	return { $type: type, $named: true, $text: text };
+	return { $type: type, $text: text };
 }
 
 const typescriptGeneratedClean = verifyManifestForGrammar('typescript').ok;
@@ -34,7 +34,6 @@ describe('wrapped tree materialization', () => {
 		const root = stampSource(
 			{
 				$type: 1,
-				$named: true,
 				_items: child,
 				items() {
 					return child;
@@ -54,7 +53,6 @@ describe('wrapped tree materialization', () => {
 		const root = {
 			$type: 1,
 			
-			$named: true,
 			_value: leaf(10, 'raw-field'),
 			_items: leaf(20, 'raw-child'),
 			value() {
@@ -84,7 +82,6 @@ describe('wrapped tree materialization', () => {
 		const root = {
 			$type: 1,
 			
-			$named: true,
 			_value: rawFieldChild,
 			_items: [rawChildrenChild],
 			value() {
@@ -129,7 +126,6 @@ describe('wrapped tree materialization', () => {
 		const root = {
 			$type: 1,
 			
-			$named: true,
 			_value: leaf(10, 'raw-field'),
 			_items: leaf(20, 'raw-child'),
 			value() {
@@ -152,7 +148,7 @@ describe('wrapped tree materialization', () => {
 
 		expect(materialized.$type).toBe(1);
 		expect(materialized._value).toMatchObject({ $type: 11, $text: 'field' });
-		expect(materialized._items).toEqual({ $type: 21, $named: true, $text: 'child' });
+		expect(materialized._items).toEqual({ $type: 21, $text: 'child' });
 		expect(materialized).not.toHaveProperty('value');
 		expect(materialized).not.toHaveProperty('items');
 		expect(materialized).not.toHaveProperty('$render');

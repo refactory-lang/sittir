@@ -19,6 +19,7 @@ export interface RecordCodecConstants {
 	readonly KIND_BITS: number;
 	readonly RECORD_FLAG_LINK: number;
 	readonly LINK_RECORD_WORDS: number;
+	readonly RECORD_HEADER_WORDS: number;
 	readonly COUNT_OWNED: number;
 	readonly COUNT_SATURATED: number;
 	readonly HELD_RECORD: number;
@@ -72,6 +73,7 @@ export interface CellFormat {
 	/** The flag above a link record's kind field. */
 	readonly linkFlag: number;
 	readonly linkWords: number;
+	readonly headerWords: number;
 	readonly countOwned: number;
 	readonly countSaturated: number;
 	readonly held: { readonly record: number; readonly run: number; readonly side: number; readonly text: number };
@@ -150,6 +152,7 @@ const CODEC_KEYS = [
 	'KIND_BITS',
 	'RECORD_FLAG_LINK',
 	'LINK_RECORD_WORDS',
+	'RECORD_HEADER_WORDS',
 	'COUNT_OWNED',
 	'COUNT_SATURATED',
 	'HELD_RECORD',
@@ -186,6 +189,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		kindBits: codec.KIND_BITS,
 		linkFlag: codec.RECORD_FLAG_LINK,
 		linkWords: codec.LINK_RECORD_WORDS,
+		headerWords: codec.RECORD_HEADER_WORDS,
 		countOwned: codec.COUNT_OWNED,
 		countSaturated: codec.COUNT_SATURATED,
 		held: { record: codec.HELD_RECORD, run: codec.HELD_RUN, side: codec.HELD_SIDE, text: codec.HELD_TEXT },
@@ -313,7 +317,7 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 		}
 		case format.forms.inline: {
 			const offset = start - at;
-			if (address === 0 || inline < 2 || start + inline > words.length || wordOf(address, format) + offset + inline > 2 ** format.chunkShift) {
+			if (address === 0 || inline < format.headerWords || start + inline > words.length || wordOf(address, format) + offset + inline > 2 ** format.chunkShift) {
 				throw new Error(`inline cell at word ${at} exceeds its stamped capacity ${inline}`);
 			}
 			return {

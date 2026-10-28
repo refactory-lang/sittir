@@ -646,7 +646,6 @@ mod tests {
         let fixture: serde_json::Value = serde_json::from_str(include_str!("cell-forms.json")).expect("the fixture parses");
         let parsed = &fixture["parsed"];
         let bits = fixture_number(parsed, "kindBits");
-        assert_eq!(fixture_number(parsed, "headerWords"), HEADER_WORDS);
         let cells = parsed["cells"].as_array().expect("cells");
         for entry in cells {
             let (shape, words, cell) = (parsed_shape(entry), fixture_words(entry), fixture_cell(entry));

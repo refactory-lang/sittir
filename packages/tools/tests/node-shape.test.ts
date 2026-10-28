@@ -54,7 +54,6 @@ const classes = { record: classesOf({ rs, ts, py }), object: classesOf(objects) 
 
 const NODE_METADATA = new Set([
 	'$type',
-	'$named',
 	'$text',
 	'$other',
 	'$span',

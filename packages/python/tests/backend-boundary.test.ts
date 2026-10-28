@@ -5,7 +5,6 @@ import { RENDER_MODULE_HASH } from '../src/hash.ts';
 const identifier = {
 	$type: 1, // TSKindId.Identifier
 	
-	$named: true,
 	$text: 'x'
 } as const;
 
@@ -69,7 +68,6 @@ describe('engine render boundary', () => {
 			expect.objectContaining({
 				$type: 1, // TSKindId.Identifier
 				
-				$named: true,
 				$text: 'x'
 			})
 		);
@@ -83,7 +81,6 @@ describe('engine render boundary', () => {
 		const invalidNode = {
 			$type: 157, // TSKindId.ArgumentList
 			
-			$named: true,
 			$children: [identifier, 'oops']
 		} as const;
 		expect(render(invalidNode)).toMatch(/^ok:/);

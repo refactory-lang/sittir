@@ -14,7 +14,6 @@ interface ExerciseCase {
 
 interface ParsedNode {
 	readonly $type: number;
-	readonly $named?: boolean;
 }
 
 interface ExerciseEngine {
@@ -108,7 +107,7 @@ function findFirstOfKind(
 ): ParsedNode | undefined {
 	let found: ParsedNode | undefined;
 	common.walkWrappedTree(root, accessorOf, (node) => {
-		if (found !== undefined || node.$named === false) return;
+		if (found !== undefined) return;
 		if (typeof node.$type === 'number' && kindNameFromId(node.$type) === kind) found = node;
 	});
 	return found;

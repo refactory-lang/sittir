@@ -5,7 +5,7 @@ const slot = (propertyName: string) => ({ propertyName, unnamed: false, slotCoun
 const KINDS = ['owner', 'clause', 'word', 'pair'];
 const id = (kind: string): number => KINDS.indexOf(kind) + 1;
 const kindNameFromId = (kindId: number): string | undefined => KINDS[kindId - 1];
-const word = (text: string) => ({ $type: id('word'), $named: true, $text: text });
+const word = (text: string) => ({ $type: id('word'), $text: text });
 const unread: SlotAccessorOf = () => {
 	throw new Error('a copy is read through its storage keys');
 };
@@ -39,13 +39,6 @@ describe('nodeToConfig never hands a builder a node it could not build', () => {
 		let inner: object = word('x');
 		for (let i = 0; i < 70; i++) inner = { $type: id('clause'), _value: inner };
 		expect(() => nodeToConfig({ $type: id('owner'), _body: inner } as never, opts)).toThrow(/is nested more than 64 deep, at owner\.body > clause\.value/);
-	});
-
-	it('refuses an anonymous token object as a builder input when it builds from a tree', () => {
-		const token = { $type: id('word'), $named: false, $text: ';' };
-		expect(() => nodeToConfig({ $type: id('owner'), _body: token } as never, opts)).toThrow(
-			`nodeToConfig: an anonymous token (${id('word')}) reached a builder input at owner.body`
-		);
 	});
 
 	it('passes a read node through unbuilt when it is given no tree', () => {

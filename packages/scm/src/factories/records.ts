@@ -150,7 +150,6 @@ export function buildIdentifier(text: string): T.Identifier.Bound {
 function leafIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.Identifier as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -178,7 +177,6 @@ export function buildImmediateIdentifier(text: string): T.ImmediateIdentifier.Bo
 function leafImmediateIdentifier(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.ImmediateIdentifier as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,
@@ -1063,7 +1061,6 @@ export function buildStringContentText(text: string): T.StringContentText.Bound 
 function leafStringContentText(tree: TreeHandle, entry: BuiltText, site: LeafSite | undefined): object {
 	const node = {
 		$type: TSKindId.StringContentText as const,
-		$named: true as const,
 		$tree: tree,
 		$entry: entry,
 		$site: site,

@@ -884,6 +884,7 @@ module.exports.readCell = nativeBinding.readCell
 module.exports.readMany = nativeBinding.readMany
 module.exports.readRecord = nativeBinding.readRecord
 module.exports.RECORD_FLAG_LINK = nativeBinding.RECORD_FLAG_LINK
+module.exports.RECORD_HEADER_WORDS = nativeBinding.RECORD_HEADER_WORDS
 module.exports.recordCandidates = nativeBinding.recordCandidates
 module.exports.releaseBuilt = nativeBinding.releaseBuilt
 module.exports.render = nativeBinding.render

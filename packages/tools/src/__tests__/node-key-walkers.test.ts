@@ -8,7 +8,6 @@ const accessorOf = slotAccessorOf({ 7: [['body', 0, undefined, '_body']] }, { li
 const leaf = (text: string) => ({
 	$type: 3,
 	
-	$named: true,
 	$text: text,
 	$render: () => text,
 	$trivia: { leading: () => [], trailing: () => [] },
@@ -18,7 +17,6 @@ const leaf = (text: string) => ({
 const owner = (child: ReturnType<typeof leaf>) => ({
 	$type: 7,
 	
-	$named: true,
 	_body: child,
 	$with: { body: () => undefined },
 	body: () => child,
@@ -39,8 +37,7 @@ describe('the tools walkers read a node through its model slots\' accessors', ()
 		expect(materialize(owner(leaf('a')), accessorOf)).toEqual({
 			$type: 7,
 			
-			$named: true,
-			_body: { $type: 3, $named: true, $text: 'a' }
+			_body: { $type: 3, $text: 'a' }
 		});
 	});
 

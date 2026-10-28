@@ -30,7 +30,7 @@ describe('exercise roundtrip helpers', () => {
 	});
 
 	it('uses real metadata-driven child args for direct child-backed factories', () => {
-		const leaf = { $type: id('identifier'), $named: true, $text: 'x' };
+		const leaf = { $type: id('identifier'), $text: 'x' };
 		const artifacts = {
 			factoryMap: {
 				direct_child: (value: unknown) => ({ $type: id('rebuilt_direct'), value })
@@ -64,8 +64,8 @@ describe('exercise roundtrip helpers', () => {
 	});
 
 	it('uses real metadata-driven child args for spread child-backed factories', () => {
-		const left = { $type: id('identifier'), $named: true, $text: 'x' };
-		const right = { $type: id('number_literal'), $named: true, $text: '1' };
+		const left = { $type: id('identifier'), $text: 'x' };
+		const right = { $type: id('number_literal'), $text: '1' };
 		const artifacts = {
 			factoryMap: {
 				spread_child: (...args: unknown[]) => ({ $type: id('rebuilt_spread'), args })

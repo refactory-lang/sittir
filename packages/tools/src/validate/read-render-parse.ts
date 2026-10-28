@@ -991,7 +991,6 @@ export async function validateReadRenderParse(
 			>();
 			const seen = new Set<string>();
 			const visitCandidate = (node: TypedNode, coordinate?: NodeCoordinate): void => {
-				if (node.$named === false) return;
 				const displayKind = kindNameFromId(node.$type);
 				const kind = canonicalKindNameFromId(node.$type);
 				if (kind === undefined || !ruleKinds.has(kind)) return;

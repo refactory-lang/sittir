@@ -1161,7 +1161,6 @@ function leafBuiltTypeSurface(
 		mainType: undefined,
 		members: [
 			`  readonly $type: ${kindDiscriminantType(node.kind, nodeMap, kindEntries)};`,
-			'  readonly $named: true;',
 			`  $text(): ${textType};`
 		],
 		setters: [],
@@ -1983,7 +1982,6 @@ function fieldCarryingFactoryText(
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
-		lines.push('    $named: true as const,');
 		for (const f of slotsToEmit) {
 			lines.push(`    ${f.storageKey},`);
 		}
@@ -2204,7 +2202,6 @@ function emitRefineFormFactory(
 	} else {
 		lines.push('  const node = {');
 		lines.push(`    $type: ${typeExpr},`);
-		lines.push('    $named: true as const,');
 		for (const f of allSlots) {
 			lines.push(`    ${f.storageKey},`);
 		}
@@ -2867,7 +2864,6 @@ function emitSeparatedListFactory(
 		} else {
 			lines.push('  const node = {');
 			lines.push(`    $type: ${typeExpr},`);
-			lines.push('    $named: true as const,');
 			lines.push(`    ${contentStorageKey},`);
 			if (hasSeparatorKindOption) lines.push('    _separator,');
 			if (hasDelimiterOption) lines.push('    _delimiter,');
@@ -2932,7 +2928,6 @@ function emitTextFactory(
 	body.push(...builderHandleLines(node.kind, []));
 	const members = [
 		`    $type: ${typeExpr},`,
-		'    $named: true as const,',
 		...nodeMemberLines({ accessors: [], text: textExpr, trivia: triviaPositionsOf(node.kind, nodeMap) })
 	];
 	if (backend === 'objects') {
