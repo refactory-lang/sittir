@@ -55,7 +55,7 @@ fn struct_impl(ident: &Ident, leaf: bool, body: &TokenStream) -> TokenStream {
 /// depth unless embedded, and its draft.
 fn record_start(words: u32) -> TokenStream {
     quote! {
-        if records.walk(index, depth, inline) == ::sittir_core::arena::Walk::Skip {
+        if records.walk(depth, inline) == ::sittir_core::arena::Walk::Skip {
             return ::core::result::Result::Ok(__held);
         }
         let __row = ::sittir_core::arena::hydrated_row(cursor, ctx);
@@ -64,7 +64,7 @@ fn record_start(words: u32) -> TokenStream {
 }
 
 fn record_end(delimiter: &TokenStream) -> TokenStream {
-    quote!(records.finish(__draft, ::sittir_core::arena::parsed_side(__row, #delimiter), index, inline, __held))
+    quote!(records.finish(__draft, ::sittir_core::arena::parsed_side(__row, #delimiter), __stored_kind(&__node), inline))
 }
 
 fn words_of(ident: &Ident, attrs: &KindAttrs) -> syn::Result<u32> {
@@ -213,7 +213,7 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     let inner: &Type = inner_of(field.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
     let shape = crate::views::cell_shape(field.ident, &slot.cell)?;
     let wraps_hidden = attrs.wraps_hidden;
-    let message = format!("{ident}: an envelope's content read from its own row is no node with a record, which its row's index names once");
+    let message = format!("{ident}: an envelope's content read from its own row is no node with a record, since a tree holds one record per row");
     let (hidden, restore) = if wraps_hidden {
         (
             quote! {

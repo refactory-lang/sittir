@@ -4,15 +4,18 @@
 //! reads a chunk in place through an external array buffer (`memory`).
 //!
 //! [`cell`] encodes and decodes one slot's cell, [`side`] a record's side
-//! record, and [`rows`] keeps a parsed tree's arena with its row index. The
+//! record, and [`rows`] keeps a parsed tree's arena with the records no cell
+//! names; `reach` finds a parsed node's record through its cells. The
 //! record writer (`write_record`) writes a native node's records, children
 //! before parents. A built record's trivia is outside the arena, in the
 //! engine's store of written sides (`trivia_store`), and what a render's
 //! prepare fills is in its overlay (`Prepared`). An engine's built records
 //! are in its `BuiltChunks`, which JavaScript's builders write.
 //!
-//! An arena only appends: no record is freed or moved, so an address names
-//! one record for as long as the arena lives.
+//! An arena only appends records: no record is freed or moved, so an address
+//! names one record for as long as the arena lives. A parsed record's cell
+//! that holds a coordinate is rewritten once, to name the record the first
+//! read through it writes; nothing else in a written record changes.
 
 mod admit;
 mod borrowed;
@@ -27,6 +30,7 @@ pub mod memory;
 mod parsed;
 mod prep;
 mod prepared;
+mod reach;
 pub mod rows;
 mod view;
 pub mod side;
@@ -47,6 +51,7 @@ pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWor
 pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::RecordGrammar;
+pub use reach::{deepen, reach, read_cell};
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};

@@ -199,8 +199,8 @@ export interface NativeEngineLike<TNode = unknown> {
 	recordCandidates?(treeId: number, index: number): string;
 	/** Chunk `n` of the tree's arena over its native memory, every word of it, with no copy; disposing the tree detaches it. Present when the addon carries the record codec. */
 	chunk?(treeId: number, n: number): ChunkWords;
-	/** The tree's row index over its native memory: per node, the address of the record a read wrote for it, 0 for none; disposing the tree detaches it. Present when the addon carries the record codec. */
-	rows?(treeId: number): ChunkWords;
+	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through it, written `depth` levels down and the cell rewritten to name it. Present when the addon carries the record codec. */
+	readCell?(treeId: number, holder: number, word: number, item: number, depth?: number): number;
 	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept. Present when the addon carries the record codec. */
 	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[] };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
@@ -411,21 +411,16 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 }>(({ release, treeId }) => release(treeId));
 
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
-	const { readRecord, chunk, rows, renderRecord, coordinate } = engine;
-	if (readRecord === undefined || chunk === undefined || rows === undefined || renderRecord === undefined || coordinate === undefined) {
+	const { readRecord, readCell, chunk, renderRecord, coordinate } = engine;
+	if (readRecord === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
 	const chunks: ChunkWords[] = [];
 	const coordinates = new Map<number, { readonly kind: number; readonly end: number }>();
-	let index: ChunkWords | undefined;
-	const row = (at: number): number | undefined => {
-		const record = (index ??= rows.call(engine, treeId))[at];
-		return record === undefined || record === 0 ? undefined : record;
-	};
 	return {
 		format,
-		row,
-		record: (at, depth) => row(at) ?? readRecord.call(engine, treeId, at, depth) ?? undefined,
+		record: (at, depth) => readRecord.call(engine, treeId, at, depth) ?? undefined,
+		cell: (holder, word, item, depth) => readCell.call(engine, treeId, holder, word, item, depth),
 		hydrate(index, depth) {
 			if (engine.hydrateRecord === undefined)
 				throw new Error('native record hydration needs an addon with hydrateRecord');

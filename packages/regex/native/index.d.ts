@@ -226,6 +226,16 @@ export declare class SittirEngine {
    */
   hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
   /**
+   * r" The address of the record the parsed cell at `word`, item
+   * r" `item` (0 for a slot of one value), of the record at
+   * r" `holder` names, in the live tree `treeId`: on the first read
+   * r" through the cell, its record written `depth` levels down
+   * r" (one when absent) and the cell rewritten to name it. Refuses
+   * r" a holder no read wrote, a word that is no slot's, an item
+   * r" past its list, and a cell that names no record.
+   */
+  readCell(treeId: TreeId, holder: number, word: number, item: number, depth?: number | undefined | null): number
+  /**
    * r" The hydrated typed nodes below `index` in stored field
    * r" order, as a JSON list of their rows' coordinates. Units and
    * r" captured strings are omitted. Exports no node fields or
@@ -404,23 +414,15 @@ export declare class SittirEngine {
   coordinate(treeId: TreeId, index: NodeIndex): Array<number>
   /**
    * r" Chunk `n` of the live tree `treeId`'s arena: a `Uint32Array`
-   * r" over its native memory, every word of it, with no copy.
-   * r" Records only append to a chunk, so a later read's records
-   * r" appear in the same array; disposing the tree detaches it.
+   * r" over its native memory, every word of it, with no copy. A
+   * r" later read's records, and the cells it rewrites to name
+   * r" them, appear in the same array; disposing the tree detaches
+   * r" it.
    * r" Refuses a tree that is not live, a chunk its arena does not
    * r" hold, and a runtime that does not allow external array
    * r" buffers.
    */
   chunk(treeId: TreeId, n: number): Uint32Array
-  /**
-   * r" The live tree `treeId`'s row index: a `Uint32Array` over
-   * r" its native memory, one word per node, the address of the
-   * r" record a read wrote for the row, 0 for none. Reads write
-   * r" to it in place; disposing the tree detaches it. Refuses a
-   * r" tree that is not live and a runtime that does not allow
-   * r" external array buffers.
-   */
-  rows(treeId: TreeId): Uint32Array
 }
 
 /**

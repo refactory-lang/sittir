@@ -64,8 +64,8 @@ export interface RecordWords {
 export interface RecordReader extends RecordWords {
 	/** The address of the record of the node at descendant `index`, read `depth` levels down (one when absent); `undefined` for a node with none, a leaf or an `ERROR` node. */
 	record(index: number, depth?: number): number | undefined;
-	/** The address of the record a read wrote for the node at descendant `index`, read from the tree's row index in place; `undefined` while no read has written one. */
-	row(index: number): number | undefined;
+	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through the cell, written `depth` levels down (one when absent), and the cell rewritten to name it. */
+	cell(holder: number, word: number, item: number, depth?: number): number;
 	/** Materializes records to `depth`, including beneath cached parents, without exporting their words. */
 	hydrate(index: number, depth?: number): number | undefined;
 	candidates(index: number): readonly NodeCoordinate[];

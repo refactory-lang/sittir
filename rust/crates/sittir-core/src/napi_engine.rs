@@ -793,6 +793,27 @@ macro_rules! napi_engine {
                     })
                 }
 
+                /// The address of the record the parsed cell at `word`, item
+                /// `item` (0 for a slot of one value), of the record at
+                /// `holder` names, in the live tree `treeId`: on the first read
+                /// through the cell, its record written `depth` levels down
+                /// (one when absent) and the cell rewritten to name it. Refuses
+                /// a holder no read wrote, a word that is no slot's, an item
+                /// past its list, and a cell that names no record.
+                #[::napi_derive::napi]
+                pub fn read_cell(&self, env: ::napi::Env, tree_id: $crate::types::TreeId, holder: u32, word: u32, item: u32, depth: Option<f64>) -> ::napi::Result<u32> {
+                    let depth = $crate::napi_engine::depth_from_wire(depth)?;
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        let at = ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.read_cell::<$any>($crate::arena::Address(holder), word, item, depth)))
+                            .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "read panicked")))?
+                            .map_err(::napi::Error::from_reason)?;
+                        report_tree(&env, tree_id, parsed)?;
+                        Ok(at.0)
+                    })
+                }
+
                 /// The hydrated typed nodes below `index` in stored field
                 /// order, as a JSON list of their rows' coordinates. Units and
                 /// captured strings are omitted. Exports no node fields or
@@ -1100,7 +1121,7 @@ macro_rules! napi_engine {
                         let trees = trees.borrow();
                         let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
                         let table = self.render_options(Some(parsed), options)?;
-                        let canonical = $crate::napi_engine::entry_sources(self.engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate(index, &table, sources))))
+                        let canonical = $crate::napi_engine::entry_sources(self.engine.grammar(), &*trees, |sources| ::std::panic::catch_unwind(::std::panic::AssertUnwindSafe(|| parsed.render_candidate::<$any>(index, &table, sources))))
                             .map_err(|payload| ::napi::Error::from_reason($crate::panic_msg(&*payload, "render_candidate panicked")))?
                             .map_err(|e| ::napi::Error::from_reason(format!("render_candidate failed: {e}")))?;
                         Ok($crate::line_endings::spell(canonical, &table.newline))
@@ -1125,9 +1146,10 @@ macro_rules! napi_engine {
                 }
 
                 /// Chunk `n` of the live tree `treeId`'s arena: a `Uint32Array`
-                /// over its native memory, every word of it, with no copy.
-                /// Records only append to a chunk, so a later read's records
-                /// appear in the same array; disposing the tree detaches it.
+                /// over its native memory, every word of it, with no copy. A
+                /// later read's records, and the cells it rewrites to name
+                /// them, appear in the same array; disposing the tree detaches
+                /// it.
                 /// Refuses a tree that is not live, a chunk its arena does not
                 /// hold, and a runtime that does not allow external array
                 /// buffers.
@@ -1143,21 +1165,6 @@ macro_rules! napi_engine {
                             let view = buffers.view::<u32>(&env, false, n, || parsed.record_chunk_memory(n))?;
                             view.ok_or_else(|| ::napi::Error::from_reason(format!("tree {tree_id}'s arena holds no chunk {n}")))
                         })
-                    })
-                }
-
-                /// The live tree `treeId`'s row index: a `Uint32Array` over
-                /// its native memory, one word per node, the address of the
-                /// record a read wrote for the row, 0 for none. Reads write
-                /// to it in place; disposing the tree detaches it. Refuses a
-                /// tree that is not live and a runtime that does not allow
-                /// external array buffers.
-                #[::napi_derive::napi(ts_return_type = "Uint32Array")]
-                pub fn rows(&self, env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::napi_engine::Made> {
-                    LIVE_TREES.with(|trees| {
-                        let trees = trees.borrow();
-                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
-                        TREE_BUFFERS.with(|buffers| buffers.borrow_mut().entry(tree_id).or_default().rows(&env, || parsed.rows_memory()))
                     })
                 }
             }
@@ -1399,7 +1406,6 @@ pub fn check_external_buffers(env: &napi::Env) -> napi::Result<()> {
 #[derive(Default)]
 pub struct Buffers {
     held: std::collections::HashMap<(bool, u32), WeakValue>,
-    rows: Option<WeakValue>,
     counts: std::collections::HashMap<u32, Vec<WeakValue>>,
     reported: i64,
     unreported: Vec<u32>,
@@ -1438,23 +1444,6 @@ impl Buffers {
             stale.delete(env)?;
         }
         Ok(Some(Made(array)))
-    }
-
-    /// The typed array JavaScript reads a parsed tree's row index through:
-    /// the one it was given while that lives, else a new one over `mem`.
-    ///
-    /// # Errors
-    ///
-    /// As `external_view`, and a reference napi refuses to make or read.
-    pub fn rows(&mut self, env: &napi::Env, mem: impl FnOnce() -> std::sync::Arc<crate::arena::ChunkMem<u32>>) -> napi::Result<Made> {
-        if let Some(array) = self.rows.as_ref().map(|weak| weak.get(env)).transpose()?.flatten() {
-            return Ok(Made(array));
-        }
-        let array = external_view(env, mem())?;
-        if let Some(stale) = self.rows.replace(WeakValue::new(env, array)?) {
-            stale.delete(env)?;
-        }
-        Ok(Made(array))
     }
 
     /// Reports `bytes`, the memory of the arena now, to V8, in place of what
@@ -1505,7 +1494,7 @@ impl Buffers {
     ///
     /// A status napi refuses with.
     pub fn detach(&mut self, env: &napi::Env) -> napi::Result<()> {
-        let held: Vec<WeakValue> = self.held.drain().map(|(_, weak)| weak).chain(self.counts.drain().flat_map(|(_, weak)| weak)).chain(self.rows.take()).collect();
+        let held: Vec<WeakValue> = self.held.drain().map(|(_, weak)| weak).chain(self.counts.drain().flat_map(|(_, weak)| weak)).collect();
         held.into_iter().try_for_each(|weak| detach_weak(env, weak))?;
         self.report(env, 0)
     }

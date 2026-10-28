@@ -33,8 +33,8 @@ pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn R
     Ok(sources.renders_as_source(&coord).then_some(coord))
 }
 
-/// The parsed trees' arenas a render reaches: the arena and row index of each
-/// tree a record names.
+/// The parsed trees' arenas a render reaches: the arena of each tree a record
+/// names.
 pub trait RecordArenas {
     fn tree(&self, tree: TreeId) -> Option<&TreeArena>;
 }
@@ -209,12 +209,6 @@ impl<'a, T> RecordCtx<'a, T> {
             Cell::LinkedLeaf { tree, span, .. } => self.linked(tree)?.source_text(span),
             _ => Err(malformed("text cell", 0)),
         }
-    }
-
-    /// The record of a parsed row its first read wrote.
-    #[must_use]
-    pub fn row_record(self, row: NodeIndex) -> Option<Address> {
-        self.arenas.tree(self.tree?)?.record(row)
     }
 
     /// The parsed node `cell` names, whatever cell names it: the row of a
@@ -477,9 +471,8 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
     Ok((words, side))
 }
 
-/// The row of the parsed record at `at` whose side record is `side`, when
-/// the row's index names it; none for a built record and for an envelope's
-/// content, which shares its envelope's row.
+/// The row of the parsed record at `at` whose side record is `side`, the one
+/// record of that row; none for a built record.
 ///
 /// # Errors
 ///
@@ -487,7 +480,7 @@ pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) 
 pub fn row_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord) -> Result<Option<Place>, ArenaError> {
     let Some(tree) = ctx.tree else { return Ok(None) };
     let row = side.at.ok_or(malformed("parsed record row", at.0))?.index;
-    Ok((ctx.row_record(row) == Some(at)).then_some(Place::Row { tree, row }))
+    Ok(Some(Place::Row { tree, row }))
 }
 
 /// The place of the record at `at` whose side record is `side`: a parsed
@@ -505,10 +498,10 @@ pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord)
 }
 
 /// The place of the parsed leaf at `row` of `ctx`'s tree, held at `site`:
-/// its row, unless a record names that row. Envelope and content share one
-/// row, and the row's record is the outermost, so such a leaf is the content
-/// of the envelope that record is, and its place is its cell's site in its
-/// envelope, as `place_of` places a record's content.
+/// its row, unless its holder is read at that row too. Envelope and content
+/// share one row, whose sides are the envelope's, so such a leaf is its
+/// envelope's content, and its place is its cell's site in its envelope, as
+/// `place_of` places a record's content.
 ///
 /// # Errors
 ///
@@ -516,7 +509,7 @@ pub fn place_of<T>(ctx: RecordCtx<'_, T>, at: Address, side: &super::SideRecord)
 pub fn leaf_place<T>(ctx: RecordCtx<'_, T>, row: NodeIndex, site: Option<Site<PrepPlace>>) -> Result<PrepPlace, ArenaError> {
     let tree = ctx.tree.ok_or(malformed("parsed leaf in a built record", row.0))?;
     match site {
-        Some(Site { holder: PrepPlace::Stored(holder), word, item }) if ctx.row_record(row).is_some() => Ok(PrepPlace::Content(Site { holder, word, item })),
+        Some(Site { holder: PrepPlace::Stored(holder @ Place::Row { row: own, .. }), word, item }) if own == row => Ok(PrepPlace::Content(Site { holder, word, item })),
         _ => Ok(Place::Row { tree, row }.into()),
     }
 }
@@ -646,12 +639,11 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     }
 
     /// The view a parsed node renders through when a write lies in its rows:
-    /// its cell's, or, for a coordinate, its row's record's.
-    fn edited(&self, row: ParsedRow, cell: Cell) -> Result<V, ArenaError> {
-        let cell = match cell {
-            Cell::Coordinate { kind, index, .. } => Cell::Child { kind, at: self.ctx.row_record(index).ok_or(malformed("edited coordinate record", index.0))?, link: None, changed: row.changed },
-            cell => cell,
-        };
+    /// its cell's, which names its record once its prepare wrote it.
+    fn edited(&self, cell: Cell) -> Result<V, ArenaError> {
+        if let Cell::Coordinate { index, .. } = cell {
+            return Err(malformed("edited coordinate record", index.0));
+        }
         V::from_cell(self.ctx, cell, Some(self.site))
     }
 }
@@ -670,7 +662,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
                 if !self.ctx.sources.edited_within(&coord) {
                     return crate::slot::write_coordinate(&coord, ADJACENT, w);
                 }
-                self.edited(row, cell).map_err(RenderError::Record)?.render(w)
+                self.edited(cell).map_err(RenderError::Record)?.render(w)
             }
         }
     }

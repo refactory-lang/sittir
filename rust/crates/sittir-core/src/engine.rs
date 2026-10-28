@@ -458,8 +458,8 @@ pub struct ParsedTree<G: EngineGrammar> {
     work: crate::layout::LayoutWorkCounter,
     /// The sides a write set, in the store of the engine that parsed the tree.
     written: TriviaStore<G::Trivia>,
-    /// The tree's records, each written on its node's first read, and the
-    /// row index that reaches them (`tree_arena`).
+    /// The tree's records, each written on its node's first read, and those
+    /// no cell names, which it holds by row (`tree_arena`).
     #[cfg(feature = "arena")]
     arena: std::sync::Mutex<crate::arena::TreeArena>,
 }
@@ -594,7 +594,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         self.grammar
     }
 
-    /// The tree's records and their row index, held while the guard lives:
+    /// The tree's records, held while the guard lives:
     /// every route that reads a node reaches or writes its record here.
     #[cfg(feature = "arena")]
     pub fn tree_arena(&self) -> std::sync::MutexGuard<'_, crate::arena::TreeArena> {

@@ -274,6 +274,12 @@ function packed(word: number, at: number, format: CellFormat): { readonly kind: 
 	return { kind, row };
 }
 
+function parsedRecord(first: number, address: number, end: number, at: number, format: CellFormat): RecordCell {
+	const kind = kindField(first, format.kindBits);
+	if (kind === BLANK_KIND_ID || kind === ERROR_KIND_ID || address === 0 || end !== 0) throw new Error(`word ${at} names record ${address} of kind ${kind}, which no parsed cell holds`);
+	return { form: 'child', kind, at: address, link: undefined, changed: { leading: false, trailing: false } };
+}
+
 /**
  * The parsed cell of a slot of `forms` whose words start at `at` in `words`, as the native hydration writes it. A bounded child's embedded record is read where it lies: `address` is the cell's own address, and `inline` the words its slot stamps for it.
  *
@@ -296,6 +302,7 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 	if (!tagged && first === 0) return { form: 'absent' };
 	switch (form) {
 		case format.forms.node: {
+			if (word(0) >>> format.kindBits === 0) return parsedRecord(word(0), word(1), word(2), at, format);
 			const { kind, row } = packed(word(0), at, format);
 			const end = word(2);
 			const span = { start: word(1), end: (end & ~format.leafBit) >>> 0 };

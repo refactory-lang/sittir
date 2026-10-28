@@ -1,5 +1,5 @@
-// A parsed tree's chunk crosses once, as its native memory: records only
-// append to a chunk, so a later read's records appear in the same array.
+// A parsed tree's chunk crosses once, as its native memory: a later read's
+// records, and the cells it rewrites to name them, appear in the same array.
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 import { getActiveBackend } from '../src/backend.js';
@@ -28,7 +28,8 @@ describe("a parsed tree's chunk", () => {
 		expect(chunked.chunk(treeId, 0)).toBe(chunk);
 		hydrateRecord.call(native, treeId, 0, Infinity);
 		expect([...chunk].filter((word) => word !== 0).length).toBeGreaterThan(before.filter((word) => word !== 0).length);
-		expect([...chunk].slice(0, root + 2)).toEqual(before.slice(0, root + 2));
+		expect([...chunk].slice(root, root + 2)).toEqual(before.slice(root, root + 2));
+		expect(before.some((word, at) => chunk[at] !== word)).toBe(true);
 		expect(() => chunked.chunk(treeId, 99)).toThrow(`tree ${treeId}'s arena holds no chunk 99`);
 		status.disposeTree(treeId);
 		expect(chunk.length).toBe(0);

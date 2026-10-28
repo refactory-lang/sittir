@@ -326,6 +326,7 @@ impl Cell {
             }
             Cell::Coordinate { kind, index, span } => (form::NODE, &[CellShape::pack(kind, index.0, bits)?, span.start, end_word(span, false)?]),
             Cell::ParsedLeaf { kind, span, row } => (form::NODE, &[CellShape::pack(kind, row.0, bits)?, span.start, end_word(span, true)?]),
+            Cell::Child { kind, at, link: None, changed } if changed == ChangedEdges::default() => (form::NODE, &[record_kind(kind, bits)?, record(at.0)?.0, 0]),
             Cell::Unit { kind: KindId::BLANK, row: None } if shape.forms & form::BLANK != 0 => (form::UNIT, &[0]),
             Cell::Unit { kind, row: Some(row) } => (form::UNIT, &[CellShape::pack(kind, row.0, bits)?]),
             Cell::ParsedText { span } => (form::TEXT, &[span.start.checked_add(1).ok_or(ArenaError::Unwritable("a span past what a parsed cell holds"))?, end_word(span, false)?]),
@@ -398,6 +399,7 @@ impl Cell {
         match form {
             form::UNIT if field(0)? == 0 && shape.forms & form::BLANK != 0 => Ok(Cell::Unit { kind: KindId::BLANK, row: None }),
             _ if start == 0 && first == 0 => absent(words),
+            form::NODE if field(0)? >> bits == 0 => parsed_record(field(0)?, field(1)?, field(2)?, bits),
             form::NODE => {
                 let (kind, row) = CellShape::unpack(field(0)?, bits)?;
                 let end = field(2)?;
@@ -430,6 +432,43 @@ impl Cell {
             _ => Err(malformed("cell forms", u32::from(shape.forms))),
         }
     }
+
+    /// Rewrites the parsed cell `words` holds, a slot of shape `shape` or an
+    /// item of its run, from the coordinate it holds to `at`, the record a
+    /// read wrote for that node, and answers the cell it holds now. A cell is
+    /// rewritten once: a cell that names a record already is refused.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a cell that holds no coordinate, and what
+    /// decoding or encoding the cell refuses.
+    pub fn patch_parsed(words: &mut [u32], shape: CellShape, bits: u32, at: Address) -> Result<Cell, ArenaError> {
+        let Cell::Coordinate { kind, .. } = Cell::decode_parsed(words, Address::NONE, shape, bits)? else {
+            return Err(ArenaError::Unwritable("a record for a cell that holds no coordinate"));
+        };
+        let cell = Cell::Child { kind, at, link: None, changed: ChangedEdges::default() };
+        cell.encode_parsed(words, shape, bits)?;
+        Ok(cell)
+    }
+}
+
+/// A node cell that names its record: `[kind, address, 0]`. Its row field is
+/// 0, which no child's row is, and its address is never 0, which no record
+/// is at, so it is apart from a coordinate, a leaf and an absent cell.
+fn parsed_record(first: u32, at: u32, end: u32, bits: u32) -> Result<Cell, ArenaError> {
+    let kind = kind_field(first, bits);
+    if kind == KindId::BLANK || kind == KindId::ERROR || end != 0 {
+        return Err(malformed("parsed record cell", first));
+    }
+    Ok(Cell::Child { kind, at: record(at)?, link: None, changed: ChangedEdges::default() })
+}
+
+/// The first word of a node cell naming a record of `kind`.
+fn record_kind(kind: KindId, bits: u32) -> Result<u32, ArenaError> {
+    if kind == KindId::BLANK || kind == KindId::ERROR {
+        return Err(malformed("cell kind", u32::from(kind.0)));
+    }
+    with_kind(kind, bits)
 }
 
 fn parsed_tag_of(form: u8) -> u32 {

@@ -487,13 +487,14 @@ pub struct SlotAt<'r, T, N> {
     node: Marker<'r, (T, N)>,
 }
 
-/// One present item of a slot: its cell, its site, and its row when it names
-/// a parsed node.
+/// One present item of a slot: its cell, its site, its row when it names a
+/// parsed node, and where its cell lies when its holder is parsed.
 #[derive(Debug, Clone, Copy)]
 struct Item {
     at: CellAt,
     site: Site<PrepPlace>,
     row: Option<ParsedRow>,
+    cell: Option<super::reach::CellPlace>,
 }
 
 /// Scalar slots stay inline. Lists keep owned scratch so preparation can append to parsed arenas.
@@ -539,7 +540,8 @@ impl<T, N> SlotAt<'_, T, N> {
         let reach = if view.tree().is_none() { self.shape.built + 1 } else { word + self.shape.width };
         let words = view.words(record, reach)?;
         let place = self.key.place;
-        let item = |cell: Cell, item: u32| -> Result<Option<Item>, ArenaError> {
+        let parsed = view.tree().is_some();
+        let item = |cell: Cell, item: u32, at: Option<Address>| -> Result<Option<Item>, ArenaError> {
             let site = Site { holder: place, word, item: ItemIndex(item) };
             let cell = match cell {
                 Cell::Absent => match prep.prepared.node(place).and_then(|node| node.slot(word)).and_then(|slot| slot.unit) {
@@ -548,14 +550,15 @@ impl<T, N> SlotAt<'_, T, N> {
                 },
                 cell => cell,
             };
+            let cell_place = at.filter(|_| parsed).map(|at| super::reach::CellPlace::new(at, self.shape));
             let at = CellAt { cell, tree: self.key.tree, site: Some(site) };
-            Ok(Some(Item { at, site, row: view.parsed_row(cell)? }))
+            Ok(Some(Item { at, site, row: view.parsed_row(cell)?, cell: cell_place }))
         };
         if self.shape.run.is_none() {
-            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0)?]));
+            return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0, record.offset(word))?]));
         }
         let (list, run) = view.slot_list(words, self.shape)?;
-        list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(view.item_cell(words, self.shape)?, at)).collect::<Result<_, _>>().map(Items::Many)
+        list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(view.item_cell(words, self.shape)?, at, list.run.offset(at * run))).collect::<Result<_, _>>().map(Items::Many)
     }
 
     fn present(&self, prep: &RecordPrep<'_, T>) -> Items<Item> {
@@ -623,23 +626,22 @@ fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>
 
 /// The cell a parsed item renders from when a write lies in its rows: a
 /// record, leaf or unit cell is its own; a coordinate's is its row's
-/// record, written on this first read when no read wrote it. `None` when
-/// the item's row has no record to write.
+/// record, written on this first read through its cell, which is rewritten
+/// to name it. `None` when the item's row has no record to write.
 fn edited_record<T: Clone + 'static, N: HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<CellAt>, CoordinateError> {
     let Cell::Coordinate { kind, .. } = item.at.cell else { return Ok(Some(item.at)) };
     let tree = coord.tree;
-    let child = |at| CellAt { cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() }, tree: Some(tree), site: item.at.site };
-    if let Some(record) = prep.trees.tree(tree).and_then(|arena| arena.record(coord.index)) {
-        return Ok(Some(child(record)));
-    }
+    let place = item.cell.ok_or(malformed("coordinate cell place", coord.index.0))?;
     let Some((live, read)) = ctx.sources.read_ctx(tree) else { return Ok(None) };
     let mut read = crate::read::ReadCtx { sides: None, changed: None, ..read };
     let arena = prep.trees.tree_mut(tree).ok_or(malformed("record tree", tree.0))?;
-    let record = super::hydrate_at::<N>(&mut live.walk(), &mut read, coord.index, crate::read::Depth::ONE, &mut super::Hydration::new(arena, false)).map_err(|error| match error {
+    let record = super::hydrate_at::<N>(&mut live.walk(), &mut read, coord.index, crate::read::Depth::ONE, &mut super::Hydration::new(arena)).map_err(|error| match error {
         super::HydrateError::Read(error) => unread(coord, &error),
         super::HydrateError::Arena(error) => error.into(),
     })?;
-    Ok(record.map(child))
+    let Some(record) = record else { return Ok(None) };
+    super::reach::patch(arena, place, record)?;
+    Ok(Some(CellAt { cell: Cell::Child { kind, at: record, link: None, changed: ChangedEdges::default() }, tree: Some(tree), site: item.at.site }))
 }
 
 /// A slot's present items as the gap and seat fills write them.

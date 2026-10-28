@@ -168,10 +168,8 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 	switch (cell.form) {
 		case 'absent':
 			return undefined;
-		case 'coordinate': {
-			const at = tree.records?.row(cell.index);
-			return at === undefined ? coordinateAt(tree, cell.index, cell.span) : recordStub(tree, at);
-		}
+		case 'coordinate':
+			return recordStub(tree, parsedRecordsOf(tree).cell(holder.$at, word, item));
 		case 'parsedLeaf':
 			return carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row));
 		case 'parsedText':

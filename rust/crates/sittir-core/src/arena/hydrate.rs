@@ -3,15 +3,14 @@
 //! The derive writes each node type's walk (`HydrateNode`) beside its typed
 //! read, through the same router; a slot's cells come from its stamps alone.
 //!
-//! A child with a record of its own is held by its coordinate. Within the
-//! read's depth it also gets its record, published as its own walk ends; past
-//! it, its row has none until a later read writes one. A bounded child, whose
-//! slot stamps an embedded capacity, is written into its holder's record at
-//! any depth, and its row's index names it there once its holder publishes,
-//! unless the row holds a record already: then the embedded copy, which holds
-//! the same words, is named by its holder alone. A leaf, a unit and a
-//! captured string have no record and are held whole. So a record's words
-//! depend on its row only, never on the depth it was read at.
+//! A child with a record of its own is held by its record's address within
+//! the read's depth, its record published as its own walk ends, and past it
+//! by its coordinate, until the first read through that cell writes the
+//! record and rewrites the cell to name it. A bounded child, whose slot
+//! stamps an embedded capacity, is written into its holder's record at any
+//! depth. A leaf, a unit and a captured string have no record and are held
+//! whole. A walk writes only nodes its holder's cell names, and a holder's
+//! walk is the one walk that does, so a tree holds one record per row.
 //!
 //! A record is a draft until its walk ends: its side record, its lists' runs
 //! and its embedded children's are written then, with the record, so a
@@ -62,6 +61,8 @@ pub enum Hydrated {
     /// A node with a record, by its coordinate, or a leaf (`leaf`): its
     /// stored kind, its row and its byte span.
     Node { kind: KindId, row: NodeIndex, span: Span, leaf: bool },
+    /// A node whose record its walk published: its stored kind and record.
+    Record { kind: KindId, at: Address },
     /// A unit and the row it was read at; the blank arm has none.
     Unit { kind: KindId, row: Option<NodeIndex> },
     /// A captured string.
@@ -78,6 +79,7 @@ impl Hydrated {
         match *self {
             Hydrated::Node { kind, row, span, leaf: false } => Cell::Coordinate { kind, index: row, span },
             Hydrated::Node { kind, row, span, leaf: true } => Cell::ParsedLeaf { kind, span, row },
+            Hydrated::Record { kind, at } => Cell::Child { kind, at, link: None, changed: crate::slot::ChangedEdges::default() },
             Hydrated::Unit { kind, row } => Cell::Unit { kind, row },
             Hydrated::Text { span } => Cell::ParsedText { span },
             Hydrated::Embedded(_) => Cell::Absent,
@@ -87,15 +89,14 @@ impl Hydrated {
 
 /// A record being written: its words, and what its walk's end writes with
 /// it, each at its offset in the words: the side records of it and of its
-/// embedded children, its lists' runs, and the rows it and its embedded
-/// children are indexed by.
+/// embedded children, its lists' runs, and its embedded children's records.
 #[derive(Debug)]
 pub struct Draft {
     words: Vec<u32>,
     bits: u32,
     sides: Vec<(u32, SideRecord)>,
     runs: Vec<(u32, Vec<u32>)>,
-    rows: Vec<(u32, NodeIndex)>,
+    embedded: Vec<u32>,
 }
 
 impl Draft {
@@ -115,7 +116,8 @@ impl Draft {
                 let at = shape.word + u32::try_from(shape.payload_start()).unwrap_or(0);
                 self.sides.extend(child.sides.into_iter().map(|(offset, side)| (offset + at, side)));
                 self.runs.extend(child.runs.into_iter().map(|(offset, run)| (offset + at, run)));
-                self.rows.extend(child.rows.into_iter().map(|(offset, row)| (offset + at, row)));
+                self.embedded.push(at);
+                self.embedded.extend(child.embedded.into_iter().map(|offset| offset + at));
                 Ok(())
             }
             value => Ok(value.map_or(Cell::Absent, |value| value.cell()).encode_parsed(out, shape, self.bits)?),
@@ -155,12 +157,9 @@ impl Draft {
     }
 }
 
-/// Where a hydration writes: the tree's arena and row index. A hydration
-/// that reaches past what is recorded (`hydrating`) walks a row that holds a
-/// record already, for the children it reaches, and writes nothing for it.
+/// Where a hydration writes: the tree's arena.
 pub struct Hydration<'a> {
     tree: &'a mut TreeArena,
-    hydrating: bool,
 }
 
 /// What a walk does for a node with a record of its own.
@@ -173,22 +172,17 @@ pub enum Walk {
 }
 
 impl<'a> Hydration<'a> {
-    /// A hydration of `tree`'s records; `hydrating` walks rows that hold a
-    /// record already for the children within the depth.
-    pub fn new(tree: &'a mut TreeArena, hydrating: bool) -> Self {
-        Self { tree, hydrating }
+    /// A hydration of `tree`'s records.
+    pub fn new(tree: &'a mut TreeArena) -> Self {
+        Self { tree }
     }
 
-    /// Whether the walk of a node with a record at `row`, read at `depth`
-    /// (`None` past the read's depth), embedded in its holder's record when
-    /// `inline`, writes its record.
+    /// Whether the walk of a node with a record, read at `depth` (`None` past
+    /// the read's depth), embedded in its holder's record when `inline`,
+    /// writes its record.
     #[must_use]
-    pub fn walk(&self, row: NodeIndex, depth: Option<Depth>, inline: bool) -> Walk {
-        match depth {
-            _ if inline => Walk::Write,
-            Some(_) if self.hydrating || self.tree.record(row).is_none() => Walk::Write,
-            _ => Walk::Skip,
-        }
+    pub fn walk(&self, depth: Option<Depth>, inline: bool) -> Walk {
+        if inline || depth.is_some() { Walk::Write } else { Walk::Skip }
     }
 
     /// The draft of a record of `kind`, `words` words, its header written.
@@ -202,33 +196,28 @@ impl<'a> Hydration<'a> {
             return Err(ArenaError::Malformed { what: "record header", word: u32::from(kind.0) }.into());
         }
         let bits = self.tree.arena().kind_bits();
-        let mut draft = Draft { words: vec![0; words as usize], bits, sides: Vec::new(), runs: Vec::new(), rows: Vec::new() };
+        let mut draft = Draft { words: vec![0; words as usize], bits, sides: Vec::new(), runs: Vec::new(), embedded: Vec::new() };
         draft.words[0] = super::with_kind(kind, bits)?;
         Ok(draft)
     }
 
-    /// Ends the walk of the record `draft` at `row`, whose side record is
-    /// `side`: embedded in its holder (`inline`), or published with its
-    /// row's index entry, and what its holder holds, `held`, answered. A row
-    /// that holds a record already keeps it, and the draft is dropped.
+    /// Ends the walk of the record `draft` of `kind`, whose side record is
+    /// `side`: embedded in its holder (`inline`), or published, and what its
+    /// holder holds answered.
     ///
     /// # Errors
     ///
     /// What the arena refuses.
-    pub fn finish(&mut self, mut draft: Draft, side: SideRecord, row: NodeIndex, inline: bool, held: Hydrated) -> Result<Hydrated, HydrateError> {
+    pub fn finish(&mut self, mut draft: Draft, side: SideRecord, kind: KindId, inline: bool) -> Result<Hydrated, HydrateError> {
         draft.sides.push((0, side));
-        draft.rows.push((0, row));
         if inline {
             return Ok(Hydrated::Embedded(draft));
         }
-        if self.tree.record(row).is_none() {
-            self.publish(draft)?;
-        }
-        Ok(held)
+        Ok(Hydrated::Record { kind, at: self.publish(draft)? })
     }
 
     fn publish(&mut self, draft: Draft) -> Result<Address, HydrateError> {
-        let Draft { mut words, sides, runs, rows, .. } = draft;
+        let Draft { mut words, sides, runs, embedded, .. } = draft;
         for (offset, side) in sides {
             if !side.is_empty() {
                 words[offset as usize + 1] = side.write(&mut |words| self.tree.arena_mut().push(words))?.0;
@@ -239,14 +228,8 @@ impl<'a> Hydration<'a> {
             words[offset as usize] = ListCell::word(at)?.0;
         }
         let at = self.tree.push_record(&words)?;
-        for (offset, row) in rows {
-            let record = at.offset(offset).ok_or(ArenaError::Malformed { what: "inline record address", word: offset })?;
-            if offset != 0 {
-                self.tree.keep_inline(record);
-            }
-            if self.tree.record(row).is_none() {
-                self.tree.index(row, record)?;
-            }
+        for offset in embedded {
+            self.tree.keep_inline(at.offset(offset).ok_or(ArenaError::Malformed { what: "inline record address", word: offset })?);
         }
         Ok(at)
     }
@@ -422,15 +405,17 @@ impl<T: HydrateNode, const A: bool> HydrateSlot for NonEmptyVec<Option<SlotValue
     }
 }
 
-/// The record of the node at `index` of `tree`'s cursor, read `depth` levels
-/// down into `N` as its walk writes it, and the record its row holds after:
-/// `None` for a node with no record, a leaf or a unit.
+/// The record of the node at `index` of `tree`'s cursor, which has none yet,
+/// read `depth` levels down into `N` as its walk writes it: `None` for a node
+/// with no record, a leaf or a unit.
 ///
 /// # Errors
 ///
 /// What the hydration refuses.
 pub fn hydrate_at<N: HydrateNode>(cursor: &mut TreeCursor<'_>, ctx: &mut ReadCtx<'_>, index: NodeIndex, depth: Depth, records: &mut Hydration<'_>) -> Result<Option<Address>, HydrateError> {
     crate::read::goto(cursor, index);
-    N::hydrate(cursor, ctx, Some(depth), records, false)?;
-    Ok(records.tree.record(index))
+    Ok(match N::hydrate(cursor, ctx, Some(depth), records, false)? {
+        Hydrated::Record { at, .. } => Some(at),
+        _ => None,
+    })
 }
