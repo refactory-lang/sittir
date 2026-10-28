@@ -6098,3 +6098,19 @@ Stamps each nonterminal a spliced envelope applies to with its envelope, across 
 ### `packages/codegen/src/compiler/model/spliced-envelopes.ts::splicedEnvelopeOf`
 
 The spliced envelope of a nonterminal slot, or undefined when the slot has none.
+
+### `packages/codegen/src/compiler/model/node-map.ts::AssembledSupertype::optionDefaultSubtype`
+
+The subtype a supertype's option defaults to, when it names one.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::Seat::call`
+
+The mount call the seat makes, when it has one.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::Seat::nested`
+
+The nested arms of the seat, from the seat's direct hosts.
+
+### `packages/codegen/src/compiler/model/sub-factories.ts::mountCallOf`
+
+The portable mount call a sub-factory makes.
