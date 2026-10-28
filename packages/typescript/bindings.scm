@@ -342,7 +342,7 @@
 (yield_expression) @expression.yield
 (yield_expression_delegate (_) @expression) @expression.yield.delegate
 (template_substitution) @expression.interpolation
-((parenthesized_expression (_) @expression) @expression.parenthesized (#set! default parenthesized_expression_sequence))
+(parenthesized_expression (_) @expression) @expression.parenthesized
 (sequence_expression) @expression.sequence
 (object) @expression.collection.object
 (array) @expression.collection.array

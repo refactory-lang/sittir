@@ -1708,10 +1708,12 @@ export function compoundStructureRow(
 		node.typeName,
 		nodeMap
 	);
+	const scalar = new Set([...checks.booleans, ...checks.kindIds, ...checks.texts].map(([key]) => key));
+	const single = stored.filter((f) => !isMultiple(f) && !scalar.has(f.storageKey)).map((f) => [f.storageKey, bareTextLabel(f, node.typeName)] as const);
 	const configFirst = classifyFactoryShape(node, nodeMap) === 'config';
 	const arrival = configFirst ? 'key' : leadingOptions === undefined ? 0 : 1;
 	const lists = stored.filter(isMultiple).map((f) => [f.propertyName, hasOptionalElements(f), arrival] as const);
-	return structureRow(node.kind, { required, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
+	return structureRow(node.kind, { required, single, nonEmpty, ...checks, config: configFirst ? configKeysOf(node) : [], lists });
 }
 
 function slotStorageChecks(

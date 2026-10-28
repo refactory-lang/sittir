@@ -72,6 +72,7 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 			contents: json({
 				extends: './tsconfig.json',
 				compilerOptions: {
+					noEmit: false,
 					composite: true,
 					incremental: true,
 					declaration: true,

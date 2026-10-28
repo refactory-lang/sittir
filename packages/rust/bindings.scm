@@ -333,7 +333,7 @@
 
 ; ── pattern ────────────────────────────────────────────────────────────────────
 (tuple_pattern) @pattern.tuple
-((struct_pattern) @pattern.struct (#set! default))
+(struct_pattern) @pattern.struct
 (tuple_struct_pattern (patterns)? @fields) @pattern.struct
 (field_pattern ref: _? @byReference) @pattern.struct.field
 (remaining_field_pattern) @pattern.struct.rest

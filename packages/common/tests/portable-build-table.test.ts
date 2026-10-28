@@ -20,14 +20,21 @@ const armsOf = (grammar: keyof typeof languages, path: string): readonly Portabl
 const armOf = (grammar: keyof typeof languages, path: string, kind: number): PortableBuildArm => armsOf(grammar, path).find((arm) => arm.kind === kind)!;
 
 describe('the portable build table', () => {
-	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every builder an arm or a step names is a strict builder, with its call shape', (grammar) => {
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every builder an arm, step, preset, seat or container names is a strict builder, with its call shape', (grammar) => {
 		const { table, strict } = tables[grammar];
 		const named = new Set<string>();
 		for (const { arms } of Object.values(table.paths))
 			for (const arm of arms) {
-				if (arm.builder !== undefined) named.add(arm.builder);
-				for (const step of [...arm.members.flatMap((m) => m.steps), ...arm.presets.flatMap((p) => p.steps)]) if (step.builder !== undefined) named.add(step.builder);
-				for (const member of arm.members) if (member.leaf !== undefined) named.add(member.leaf);
+				const presets = [...arm.presets, ...Object.values(arm.flags).flatMap((flag) => [...flag.presets, ...(flag.unset ?? [])])];
+				const seats = arm.members.flatMap((member) => member.seats);
+				const builders = [
+					arm.builder,
+					...[...arm.members.flatMap((member) => member.steps), ...presets.flatMap((preset) => preset.steps)].map((step) => step.builder),
+					...presets.map((preset) => preset.builder),
+					...seats.map((seat) => seat.leaf),
+					...seats.flatMap((seat) => seat.within ?? []).map((container) => container.builder)
+				];
+				for (const builder of builders) if (builder !== undefined) named.add(builder);
 			}
 		for (const key of named) {
 			const builder = key.split('.').reduce<unknown>((at, segment) => (at as Record<string, unknown> | undefined)?.[segment], strict);
@@ -36,13 +43,13 @@ describe('the portable build table', () => {
 		}
 	});
 
-	it('tells a struct form apart by its body kind or by the body missing', () => {
+	it('tells a struct form apart by the kinds its body holds, through the list that holds them, or by the body missing', () => {
 		const brace = armOf('rust', 'declaration.struct', rust.kinds.StructItemBrace);
 		const tuple = armOf('rust', 'declaration.struct', rust.kinds.StructItemTuple);
 		const unit = armOf('rust', 'declaration.struct', rust.kinds.StructItemUnit);
 		expect(brace.builder).toBe('structItemBrace');
-		expect(brace.when).toContainEqual({ member: 'body', kinds: [rust.kinds.FieldDeclarationList] });
-		expect(tuple.when).toContainEqual({ member: 'body', kinds: [rust.kinds.OrderedFieldDeclarationList] });
+		expect(brace.when).toContainEqual({ member: 'body', kinds: [rust.kinds.FieldDeclaration] });
+		expect(tuple.when).toContainEqual({ member: 'body', kinds: [rust.kinds.AttributedOrderedField] });
 		expect(unit.when).toContainEqual(expect.objectContaining({ absent: expect.arrayContaining(['body']) }));
 	});
 
@@ -74,7 +81,7 @@ describe('the portable build table', () => {
 
 	it('sets a presence flag by its token, through the intermediate kind that holds it', () => {
 		expect(armsOf('rust', 'declaration.function')[0]!.flags.async).toEqual({
-			presets: [{ steps: [{ key: 'functionModifiers', builder: 'functionModifiers' }, { key: 'modifiers' }], kind: rust.kinds.AsyncKeyword }]
+			presets: [{ steps: [{ key: 'functionModifiers', builder: 'functionModifiers', optional: true }, { key: 'modifiers' }], kind: rust.kinds.AsyncKeyword }]
 		});
 	});
 
@@ -104,10 +111,96 @@ describe('the portable build table', () => {
 		expect(armOf('rust', 'declaration.variable', rust.kinds.LetDeclaration).when).toContainEqual({ flag: 'static', set: false });
 	});
 
-	it("takes a tie the derived steps leave from the default the bindings declare, on the form's own claim or its supertype's", () => {
-		expect(armsOf('rust', 'pattern.struct').map((arm) => arm.kind)).toEqual([rust.kinds.StructPattern, rust.kinds.TupleStructPattern]);
-		expect(armsOf('python', 'clause.resource')[0]!.kind).toBe(python.kinds.WithClauseBare);
-		expect(armsOf('typescript', 'expression.parenthesized')[0]!.kind).toBe(typescript.kinds.ParenthesizedExpressionSequence);
+	it('takes a tie the derived steps leave from the default the bindings declare', () => {
+		expect(armsOf('python', 'clause.resource').map((arm) => arm.kind)).toEqual([python.kinds.WithClauseBare, python.kinds.WithClauseParen]);
+	});
+
+	it('tells forms apart by the kinds a member holds, where the member reaches them through the containers its slot holds', () => {
+		expect(armOf('rust', 'pattern.struct', rust.kinds.StructPattern).when).toEqual([{ member: 'type', kinds: [rust.kinds.ScopedTypeIdentifier, rust.kinds.TypeIdentifier] }]);
+		expect(armOf('rust', 'pattern.struct', rust.kinds.TupleStructPattern).when).toEqual([
+			{ member: 'type', kinds: [rust.kinds.Identifier, rust.kinds.GenericTypeWithTurbofish, rust.kinds.ScopedIdentifier] }
+		]);
+		expect(armOf('typescript', 'expression.parenthesized', typescript.kinds.ParenthesizedExpressionSequence).when).toContainEqual({
+			member: 'expression',
+			kinds: [typescript.kinds.SequenceExpression]
+		});
+	});
+
+	it("builds a form through its holder's mount, the step saying how the mount takes its input", () => {
+		const [left] = armOf('typescript', 'expression.binary.membership.in', typescript.kinds.BinaryExpression).members.filter((member) => member.name === 'left' && member.steps.length > 1);
+		expect(left!.steps[0]).toEqual({
+			key: 'binaryExpressionIn',
+			builder: 'binaryExpression.in',
+			optional: true,
+			mounted: { call: 'keyed', key: 'binaryExpressionIn', seats: 'config' }
+		});
+		expect(tables.typescript.table.builders['binaryExpression.in']).toBe('config');
+		const [right] = armOf('rust', 'pattern.range.inclusive', rust.kinds.RangePatternWithLeft).members.filter((member) => member.name === 'right');
+		expect(right!.steps[0]).toEqual({ key: 'content', builder: 'rangePatternWithLeft.withRight', mounted: { call: 'merge', key: 'content' } });
+	});
+
+	it("states a nested mount's call at the holder its holder is seated in, and registers the nested builder by that call", () => {
+		const value = armsOf('typescript', 'statement.export.default')[0]!.members.find((member) => member.name === 'value')!;
+		expect(value.steps[1]).toEqual({
+			key: 'content',
+			builder: 'exportStatementDefaultDeclaration.defaultKw.value',
+			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'content', seats: 'direct' } }
+		});
+		expect(tables.typescript.table.builders['exportStatementDefaultDeclaration.defaultKw.value']).toBe('config');
+		const list = armsOf('python', 'clause.catch')[0]!.members.flatMap((member) => member.seats.flatMap((seat) => seat.within ?? []));
+		expect(list).toContainEqual({
+			builder: 'exceptClause.exception.list',
+			key: 'values',
+			mounted: { call: 'child', key: 'content', outer: { call: 'keyedArgs', key: 'exception', seats: 'spread' } }
+		});
+	});
+
+	it("marks an arm built through its holder's mount", () => {
+		const pub = armsOf('rust', 'modifier.visibility.public')[0]!;
+		expect(pub.kind).toBe(rust.kinds.VisibilityModifier);
+		expect(pub.builder).toBe('visibilityModifier.pub');
+		expect(pub.mounted).toEqual({ call: 'child', key: 'content' });
+	});
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: every seat states the kinds a value there has, so a member with several routes takes one that seats it', (grammar) => {
+		for (const { arms } of Object.values(tables[grammar].table.paths))
+			for (const arm of arms) for (const member of arm.members) for (const seat of member.seats) expect(Array.isArray(seat.kinds), `${member.name} at ${seat.at.join('.')}`).toBe(true);
+		const input = armsOf('rust', 'attribute.content')[0]!.members.filter((member) => member.name === 'input');
+		expect(input.find((route) => route.steps.at(-1)!.key === 'arguments')!.seats[0]!.kinds).toEqual([
+			rust.kinds.DelimTokenTree,
+			rust.kinds.DelimTokenTreeParen,
+			rust.kinds.DelimTokenTreeBracket,
+			rust.kinds.DelimTokenTreeBrace
+		]);
+	});
+
+	it("splits a required form slot by the form that builds from nothing: its sibling arm presets the form's mount", () => {
+		const [fnForm, traitForm] = armsOf('rust', 'type.function');
+		expect([fnForm!.kind, traitForm!.kind]).toEqual([rust.kinds.FunctionType, rust.kinds.FunctionType]);
+		expect(fnForm!.presets).toEqual([{ steps: [{ key: 'content', builder: 'functionType.fnForm', mounted: { call: 'keyedArgs', key: 'content', seats: 'forwarded' } }] }]);
+		expect(fnForm!.when).toEqual([{ absent: ['trait'], required: [] }]);
+		expect(traitForm!.presets).toEqual([]);
+		expect(traitForm!.when).toEqual([{ absent: ['extern'], required: ['trait'] }]);
+	});
+
+	it('drops an arm with a required slot no member, flag or preset fills, so the bare path builds nothing', () => {
+		expect(armsOf('rust', 'pattern.range')).toEqual([]);
+		expect(armsOf('rust', 'expression.binary')).toEqual([]);
+		expect(armsOf('rust', 'pattern.range.inclusive').length).toBeGreaterThan(0);
+	});
+
+	it("requires the members that complete the kind a route enters: an except clause's name, its type", () => {
+		const names = armsOf('python', 'clause.catch')[0]!.members.filter((member) => member.name === 'name');
+		expect(names.map((route) => route.requires)).toEqual([[['type']]]);
+	});
+
+	it.each(Object.keys(languages) as (keyof typeof languages)[])('%s: a route requires only members and flags of its own arm', (grammar) => {
+		for (const { arms } of Object.values(tables[grammar].table.paths))
+			for (const arm of arms) {
+				const names = new Set([...arm.members.map((member) => member.name), ...Object.keys(arm.flags)]);
+				for (const member of arm.members)
+					for (const group of member.requires ?? []) for (const name of group) expect(names.has(name), `${member.name} requires ${name}`).toBe(true);
+			}
 	});
 
 	it('never takes an arm for a structure stating a member the arm lacks', () => {
@@ -127,6 +220,13 @@ describe('the portable build table', () => {
 	it("writes the text a claim's predicate fixes, and spells a templated member from its holes", () => {
 		expect(armOf('python', 'declaration.constructor', python.kinds.MethodDeclaration).presets).toContainEqual({ steps: [{ key: 'name' }], text: '__init__' });
 		expect(armOf('python', 'declaration.method.special', python.kinds.MethodDeclaration).template).toEqual({ member: 'name', pattern: '__${string}__', holes: ['stem'] });
+	});
+
+	it("writes the other token where a flag's slot must hold one of two, when the flag is unset", () => {
+		expect(armOf('typescript', 'expression.member', typescript.kinds.MemberExpression).flags.optionalChain).toEqual({
+			presets: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.OptionalChain }],
+			unset: [{ steps: [{ key: 'optionalChain' }], kind: typescript.kinds.Dot }]
+		});
 	});
 
 	it('reaches a kind a flag presets only through the flag', () => {

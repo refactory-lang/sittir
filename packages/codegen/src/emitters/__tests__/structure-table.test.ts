@@ -20,10 +20,11 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		kindEntries = collectKindEntries(nodeMap, generatedIdTables);
 	}, FULL_PIPELINE_TIMEOUT);
 
-	it('rows a compound by its stored slots: required ones, non-empty lists, and node-only slots with the builder labels', () => {
+	it('rows a compound by its stored slots: required ones, ones that hold one value, non-empty lists, and node-only slots with the builder labels', () => {
 		expect(compoundStructureRow(node('decorated_definition') as never, nodeMap, kindEntries)).toEqual({
 			kind: 'decorated_definition',
 			required: [['_definition', 'definition']],
+			single: [['_definition', 'DecoratedDefinition.definition']],
 			nonEmpty: [['_decorator', 'decorated_definition.decorators']],
 			nodeOnly: [
 				['_decorator', 'DecoratedDefinition.decorators', 'a built Decorator', [node('decorator').kindId!]],
@@ -44,6 +45,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		expect(compoundStructureRow(node('for_in_clause') as never, nodeMap, kindEntries)).toEqual({
 			kind: 'for_in_clause',
 			required: [['_left', 'left']],
+			single: [['_left', 'ForInClause.left']],
 			nonEmpty: [['_right', 'for_in_clause.rights']],
 			nodeOnly: [
 				['_left', 'ForInClause.left', 'a built Pattern / PatternList', ids('pattern', 'pattern_list')],
@@ -61,6 +63,7 @@ describe('the structure table: what a built node of each kind must hold', () => 
 		expect(compoundStructureRow(node('integer_hex') as never, nodeMap, kindEntries)).toEqual({
 			kind: 'integer_hex',
 			required: [['_content', 'content']],
+			single: [['_content', 'IntegerHex.content']],
 			texts: [['_prefix', 'IntegerHex.prefix', ['0x', '0X']]]
 		});
 	});
