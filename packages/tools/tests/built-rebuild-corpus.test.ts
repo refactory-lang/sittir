@@ -3,7 +3,9 @@
 // reading a built node's slots), rebuilds to the same structure. The validator
 // hands built children to their parents' builders as they are, so this is the
 // one place a built node is rebuilt from its slots. Once the validator has
-// released its roots, the built arena holds no record.
+// released its roots, the built arena holds no record, on the raw surface and
+// on the ir surface, where a seated group is read apart into its parent's call
+// and so is never built on its own.
 import { describe, expect, it } from 'vitest';
 import { isNode, snapshotOf, storedSlotValues } from '@sittir/common/utils';
 import { builtRefOf } from '../../common/src/built-ref.ts';
@@ -84,6 +86,18 @@ describe.each(['rust', 'typescript', 'python', 'regex', 'scm'])('the %s corpus, 
 			expect(rebuilt).toBeGreaterThan(0);
 			expect(Object.fromEntries(failed)).toEqual({});
 			expect(engine.diagnostics.builtMemory?.()?.live).toBe(0);
+		},
+		FULL_PIPELINE_TIMEOUT
+	);
+
+	it(
+		'holds no record once the ir lane releases its roots: a group its seat reads apart is never built',
+		async () => {
+			const engine = await loadNativeEngine(grammar);
+			const live = (): number | undefined => engine.diagnostics.builtMemory?.()?.live;
+			const before = live();
+			await validateFactoryStorage(grammar, 'native', { surface: 'ir' });
+			expect(live()).toBe(before);
 		},
 		FULL_PIPELINE_TIMEOUT
 	);

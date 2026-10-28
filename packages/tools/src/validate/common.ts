@@ -1249,6 +1249,15 @@ export function seatKindOf(config: unknown): string | undefined {
 	return typeof config === 'object' && config !== null ? (config as { [SEAT_KIND]?: string })[SEAT_KIND] : undefined;
 }
 
+function projects(seat: Seat, item: unknown, opts: NodeToConfigOpts): boolean {
+	return seat.shape !== 'forwarded' && (seat.shape !== 'elements' || readValueKind(item, opts) === seat.kind);
+}
+
+export function seatProjects(parentKind: string, slotName: string, value: unknown, item: unknown, opts: NodeToConfigOpts): boolean {
+	const seat = seatForSlotValue(parentKind, slotName, value, opts);
+	return seat !== undefined && projects(seat, item, opts);
+}
+
 function childOpts(opts: NodeToConfigOpts): NodeToConfigOpts {
 	return { ...opts, _depth: (opts._depth ?? 0) + 1 };
 }
@@ -1261,7 +1270,7 @@ function projectElements(
 	opts: NodeToConfigOpts
 ): unknown[] {
 	return items.map((item) => {
-		if (readValueKind(item, opts) !== seat.kind) {
+		if (!projects(seat, item, opts)) {
 			return resolveChild(item, memberValueOpts(opts, parentKind, slotName));
 		}
 		const element = hydrateForConfig(item as ReadNodeLike, opts);
