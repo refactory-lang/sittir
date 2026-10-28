@@ -49,6 +49,6 @@ it("a parsed node's $with releases the record it builds before naming its source
 	const { engine, memory } = await engineWithMemory();
 	const fn = engine.parse('def f():\n    pass\n').statements()[0];
 	if (fn === undefined || !engine.is.functionDefinition(fn)) throw new Error('expected a function definition');
-	for (let n = 0; n < 3; n++) engine.release(fn.$with.name(engine.build.identifier('g')) as never);
+	for (let n = 0; n < 3; n++) engine.release(fn.$with.name(engine.build.identifier('g')));
 	expect(memory().live).toBe(0);
 });

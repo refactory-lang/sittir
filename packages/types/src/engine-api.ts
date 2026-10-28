@@ -402,7 +402,7 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
 	/**
-	 * Releases what a builder result holds, as its `[Symbol.dispose]` does. Under record
+	 * Releases what a builder result holds, a `$with` result included, as its `[Symbol.dispose]` does. Under record
 	 * construction a result holds its record until it is placed into a parent or a side, and a built
 	 * leaf holds the records written to its sides until it is placed; a node already placed, read,
 	 * parsed or released, and any node of object construction, holds nothing, so its release does
@@ -412,7 +412,7 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 *
 	 * @throws When `node` was built by another engine.
 	 */
-	readonly release: (node: API['node']) => void;
+	readonly release: (node: { readonly $type: API['kindId'] }) => void;
 	/** Releases the native engine; `using` invokes the same cleanup at scope exit. */
 	readonly dispose: () => void;
 }
