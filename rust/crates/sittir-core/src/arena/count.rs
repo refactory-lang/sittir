@@ -65,11 +65,12 @@ pub(super) struct CountTable {
     meta: Arc<ChunkMem<u8>>,
     segments: Vec<Arc<ChunkMem<u8>>>,
     blocks: usize,
+    ranked: usize,
 }
 
 impl CountTable {
     pub(super) fn new(words: u32) -> Self {
-        Self { meta: ChunkMem::zeroed(meta_len(words)), segments: Vec::new(), blocks: words.div_ceil(64) as usize }
+        Self { meta: ChunkMem::zeroed(meta_len(words)), segments: Vec::new(), blocks: words.div_ceil(64) as usize, ranked: 0 }
     }
 
     pub(super) fn meta(&self) -> &Arc<ChunkMem<u8>> {
@@ -109,6 +110,33 @@ impl CountTable {
 
     fn set_live(&mut self, live: u32) {
         write_u32(self.bytes(), LIVE, live);
+    }
+
+    /// Places an entry starting at `word`, past every entry placed before
+    /// it in the chunk, holding `count`: as a builder places one.
+    fn place(&mut self, word: u32, count: u8) -> Result<(), ArenaError> {
+        let block = (word / 64) as usize;
+        if block >= self.blocks {
+            return Err(malformed("entry address", word));
+        }
+        let blocks = self.blocks;
+        let ranked = self.ranked;
+        let bytes = self.bytes();
+        let ordinal = read_u32(bytes, PLACED);
+        let rank = u16::try_from(ordinal).map_err(|_| malformed("entry ordinal", ordinal))?;
+        write_u32(bytes, PLACED, ordinal + 1);
+        write_u32(bytes, LIVE, read_u32(bytes, LIVE) + 1);
+        for at in (ranked..=block).map(|block| META_HEAD + blocks * 8 + block * 2) {
+            bytes[at..at + 2].copy_from_slice(&rank.to_ne_bytes());
+        }
+        let at = META_HEAD + block * 8 + if word % 64 >= 32 { 4 } else { 0 };
+        write_u32(bytes, at, read_u32(bytes, at) | 1 << (word % 32));
+        self.ranked = self.ranked.max(block + 1);
+        if ordinal.is_multiple_of(COUNT_SEGMENT) {
+            self.segment(ordinal / COUNT_SEGMENT)?;
+        }
+        *self.count(word)? = count;
+        Ok(())
     }
 
     /// The ordinal of the entry starting at `word`.
@@ -200,6 +228,33 @@ impl BuiltChunks {
             Some(Some(BuiltChunk::Words { counts, .. })) => Ok(counts),
             _ => Err(ArenaError::OutOfBounds { chunk, word: 0, len: 1 }),
         }
+    }
+
+    /// Places an entry starting at `at` holding `count`, as a builder places
+    /// one: past every entry placed before it in its chunk.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for a chunk that holds no records, and
+    /// `ArenaError::Malformed` for an address past the chunk.
+    pub(super) fn place(&mut self, at: Address, count: u8) -> Result<(), ArenaError> {
+        self.table(at.chunk())?.place(at.word(), count)
+    }
+
+    /// One more cell naming an entry of the string chunk `at` lies in.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::OutOfBounds` for a chunk that holds no strings.
+    pub(super) fn hold_text(&mut self, at: Address) -> Result<(), ArenaError> {
+        let Some(Some(BuiltChunk::Bytes { cells, .. })) = self.chunks.get(at.chunk() as usize) else {
+            return Err(ArenaError::OutOfBounds { chunk: at.chunk(), word: at.word(), len: 1 });
+        };
+        // SAFETY: the meta is reached through the arena's mutable borrow,
+        // inside one native call, and no other slice of it is live.
+        let bytes = unsafe { cells.slice_mut() };
+        write_u32(bytes, 0, read_u32(bytes, 0) + 1);
+        Ok(())
     }
 
     /// A new segment of chunk `chunk`'s counts, its `segment`th.

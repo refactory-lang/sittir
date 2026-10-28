@@ -7,22 +7,11 @@
 //! and refuses any word no writer writes, so a malformed cell is an error,
 //! never a read outside its record.
 
-use super::{Address, Arena, ArenaError, ArenaRead, CellShape, StringRef};
+use super::{Address, ArenaError, ArenaRead, CellShape, StringRef};
 use crate::record::{form, tagged};
 use crate::record::HEADER_WORDS;
 use crate::slot::ChangedEdges;
 use crate::types::{KindId, NodeIndex, Span, TreeId};
-
-/// The tag word that opens each cell.
-pub mod tag {
-    pub const ABSENT: u32 = 0;
-    pub const COORDINATE: u32 = 1;
-    pub const PARSED_LEAF: u32 = 2;
-    pub const CHILD: u32 = 3;
-    pub const UNIT: u32 = 4;
-    pub const BUILT_LEAF: u32 = 5;
-    pub const INLINE: u32 = 6;
-}
 
 /// The flags a record header holds above its kind field.
 pub mod flag {
@@ -66,9 +55,6 @@ pub fn with_kind(kind: KindId, bits: u32) -> Result<u32, ArenaError> {
 pub fn header_of(word: u32, bits: u32) -> (KindId, u32) {
     (kind_field(word, bits), word >> bits)
 }
-
-/// Words before an embedded child's own record header: tag and changed edges.
-pub const INLINE_HEADER_WORDS: u32 = 2;
 
 /// What one cell holds.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -130,34 +116,6 @@ fn changed_word(changed: ChangedEdges) -> u32 {
     u32::from(changed.leading) | u32::from(changed.trailing) << 1
 }
 
-/// A child's link and changed edges as two words: the tree plus one, or 0
-/// for the cell's own arena, then the edges (`changed_word`).
-fn link_words(link: Option<TreeId>, changed: ChangedEdges) -> Result<[u32; 2], ArenaError> {
-    let tree = match link {
-        Some(tree) => tree.0.checked_add(1).ok_or(malformed("child record tree", tree.0))?,
-        None => 0,
-    };
-    Ok([tree, changed_word(changed)])
-}
-
-fn read_link(tree: u32) -> Option<TreeId> {
-    tree.checked_sub(1).map(TreeId)
-}
-
-/// A parsed unit's row as one word, plus one so 0 is a built unit's none.
-fn row_word(row: Option<NodeIndex>) -> Result<u32, ArenaError> {
-    row.map_or(Ok(0), |row| row.0.checked_add(1).ok_or(malformed("unit row", row.0)))
-}
-
-/// A unit cell of `kind` naming the row word `row`: a blank arm is no node,
-/// so it names none.
-fn unit(kind: KindId, row: u32) -> Result<Cell, ArenaError> {
-    match (kind, row.checked_sub(1).map(NodeIndex)) {
-        (KindId::BLANK, Some(_)) => Err(malformed("blank unit row", row)),
-        (kind, row) => Ok(Cell::Unit { kind, row }),
-    }
-}
-
 fn read_changed(word: u32) -> Result<ChangedEdges, ArenaError> {
     if word >= 4 {
         return Err(malformed("child changed edges", word));
@@ -175,24 +133,34 @@ fn record(word: u32) -> Result<Address, ArenaError> {
 #[repr(transparent)]
 pub struct CellWord(pub u32);
 
-impl Cell {
-    /// Decodes a stamped scalar slot, resolving an embedded record relative
-    /// to the slot's address. Ordinary pointer cells retain their wire form.
-    pub fn decode_slot(words: &[u32], at: Address, inline: u32) -> Result<Cell, ArenaError> {
-        if words.first() != Some(&tag::INLINE) {
-            return Self::decode(words);
+impl CellWord {
+    /// The built cell naming the entry at `at`, a record, a run or a leaf
+    /// entry, with the edges `changed` its site marks.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for address 0 or one past what a cell holds.
+    pub fn of(at: Address, changed: ChangedEdges) -> Result<CellWord, ArenaError> {
+        if at.0 >> 30 != 0 || at == Address::NONE {
+            return Err(ArenaError::Unwritable("an address past what a built cell holds"));
         }
-        if at == Address::NONE || inline < crate::record::HEADER_WORDS || words.len() < (INLINE_HEADER_WORDS + inline) as usize {
-            return Err(malformed("inline cell width", inline));
-        }
-        Ok(Cell::Child {
-            kind: named_kind(words[INLINE_HEADER_WORDS as usize])?,
-            at: at.offset(INLINE_HEADER_WORDS).ok_or(malformed("inline record address", at.0))?,
-            link: None,
-            changed: read_changed(words[1])?,
-        })
+        Ok(CellWord(at.0 << 2 | changed_word(changed)))
     }
 
+    /// The built cell of a unit of `kind`: its kind as an address in chunk 0.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a kind past what a chunk-0 address holds.
+    pub fn unit(kind: KindId) -> Result<CellWord, ArenaError> {
+        if u32::from(kind.0) >= super::CHUNK_WORDS {
+            return Err(ArenaError::Unwritable("a unit kind past what a built cell holds"));
+        }
+        Ok(CellWord(u32::from(kind.0) << 2))
+    }
+}
+
+impl Cell {
     /// The cell, as one the record at `holder` holds: a writer writes a
     /// record's children before it, so a record a cell names in the
     /// holder's own arena lies below the holder. A cell that names one at
@@ -217,85 +185,6 @@ impl Cell {
             Cell::Absent => None,
             Cell::ParsedText { .. } | Cell::BuiltText { .. } => Some(KindId::BLANK),
             Cell::Coordinate { kind, .. } | Cell::ParsedLeaf { kind, .. } | Cell::Child { kind, .. } | Cell::Unit { kind, .. } | Cell::BuiltLeaf { kind, .. } | Cell::LinkedLeaf { kind, .. } => Some(kind),
-        }
-    }
-
-    /// The words this form takes.
-    #[must_use]
-    pub const fn width(self) -> u32 {
-        match self {
-            Cell::Absent => 1,
-            Cell::Unit { .. } => 3,
-            Cell::ParsedText { .. } | Cell::BuiltText { .. } => 4,
-            Cell::Coordinate { .. } | Cell::ParsedLeaf { .. } | Cell::Child { .. } | Cell::BuiltLeaf { .. } => 5,
-            Cell::LinkedLeaf { .. } => 1,
-        }
-    }
-
-    /// Writes the cell into `out`, the slot's stamped words, zeroing the
-    /// words its form leaves unused.
-    pub fn encode(self, out: &mut [u32]) -> Result<(), ArenaError> {
-        let width = self.width();
-        let room = u32::try_from(out.len()).unwrap_or(u32::MAX);
-        if room < width {
-            return Err(malformed("cell width", room));
-        }
-        let text_words = |text: StringRef| text.offset().map(|offset| [offset, text.len]).ok_or(malformed("string table offset", text.byte));
-        let named = |kind: KindId| if kind == KindId::BLANK { Err(malformed("cell kind", 0)) } else { Ok(u32::from(kind.0)) };
-        let words: [u32; 5] = match self {
-            Cell::Absent => [tag::ABSENT, 0, 0, 0, 0],
-            Cell::Coordinate { kind, index, span } => [tag::COORDINATE, named(kind)?, index.0, span.start, span.end],
-            Cell::ParsedLeaf { kind, span, row } => [tag::PARSED_LEAF, named(kind)?, span.start, span.end, row.0],
-            Cell::ParsedText { span } => [tag::PARSED_LEAF, 0, span.start, span.end, 0],
-            Cell::Child { kind, at, link, changed } => {
-                let [tree, changed] = link_words(link, changed)?;
-                [tag::CHILD, named(kind)?, record(at.0)?.0, tree, changed]
-            }
-            Cell::Unit { kind, row } => {
-                let row = row_word(row)?;
-                unit(kind, row)?;
-                [tag::UNIT, u32::from(kind.0), row, 0, 0]
-            }
-            Cell::BuiltLeaf { kind, text, changed } => {
-                let [offset, len] = text_words(text)?;
-                [tag::BUILT_LEAF, named(kind)?, offset, len, changed_word(changed)]
-            }
-            Cell::BuiltText { text } => {
-                let [offset, len] = text_words(text)?;
-                [tag::BUILT_LEAF, 0, offset, len, 0]
-            }
-            Cell::LinkedLeaf { .. } => return Err(malformed("linked leaf in a parsed record", 0)),
-        };
-        let (used, rest) = out.split_at_mut(width as usize);
-        used.copy_from_slice(&words[..width as usize]);
-        rest.fill(0);
-        Ok(())
-    }
-
-    /// The cell in `words`, the slot's stamped words.
-    pub fn decode(words: &[u32]) -> Result<Cell, ArenaError> {
-        let &tag = words.first().ok_or(malformed("cell width", 0))?;
-        let field = |n: usize| words.get(n).copied().ok_or(malformed("cell tag", tag));
-        match tag {
-            tag::ABSENT => Ok(Cell::Absent),
-            tag::COORDINATE => Ok(Cell::Coordinate { kind: named_kind(field(1)?)?, index: NodeIndex(field(2)?), span: span(field(3)?, field(4)?)? }),
-            tag::PARSED_LEAF => {
-                let span = span(field(2)?, field(3)?)?;
-                match kind(field(1)?)? {
-                    KindId::BLANK => Ok(Cell::ParsedText { span }),
-                    kind => Ok(Cell::ParsedLeaf { kind, span, row: NodeIndex(field(4)?) }),
-                }
-            }
-            tag::CHILD => Ok(Cell::Child { kind: named_kind(field(1)?)?, at: record(field(2)?)?, link: read_link(field(3)?), changed: read_changed(field(4)?)? }),
-            tag::UNIT => unit(kind(field(1)?)?, field(2)?),
-            tag::BUILT_LEAF => {
-                let text = StringRef::from_offset(field(2)?, field(3)?);
-                match kind(field(1)?)? {
-                    KindId::BLANK => Ok(Cell::BuiltText { text }),
-                    kind => Ok(Cell::BuiltLeaf { kind, text, changed: read_changed(field(4)?)? }),
-                }
-            }
-            _ => Err(malformed("cell tag", tag)),
         }
     }
 
@@ -567,23 +456,7 @@ pub struct ListCell {
 }
 
 impl ListCell {
-    pub const WIDTH: u32 = 2;
     pub const EMPTY: ListCell = ListCell { run: Address::NONE, len: 0 };
-
-    /// Writes `items` as a run of `item_width`-word cells, and the list's cell.
-    pub fn write(arena: &mut Arena, item_width: u32, items: &[Cell]) -> Result<ListCell, ArenaError> {
-        if items.is_empty() {
-            return Ok(ListCell::EMPTY);
-        }
-        let len = u32::try_from(items.len()).map_err(|_| ArenaError::Full)?;
-        let total = run_words(len, item_width)?;
-        let run = arena.alloc(total)?;
-        let words = arena.words_mut(run, total)?;
-        for (item, out) in items.iter().zip(words.chunks_exact_mut(item_width as usize)) {
-            item.encode(out)?;
-        }
-        Ok(ListCell { run, len })
-    }
 
     /// The one word a list cell holds for the run at `run`, whose first word
     /// is the list's length: the run's address above two zero bits.
@@ -592,16 +465,7 @@ impl ListCell {
     ///
     /// `ArenaError::Unwritable` for an address past what a list cell holds.
     pub fn word(run: Address) -> Result<CellWord, ArenaError> {
-        if run.0 >> 30 != 0 || run == Address::NONE {
-            return Err(ArenaError::Unwritable("a run past what a list cell holds"));
-        }
-        Ok(CellWord(run.0 << 2))
-    }
-
-    pub fn encode(self, out: &mut [u32]) -> Result<(), ArenaError> {
-        let out = out.get_mut(..2).ok_or(malformed("cell width", 0))?;
-        out.copy_from_slice(&[self.run.0, self.len]);
-        Ok(())
+        CellWord::of(run, ChangedEdges::default())
     }
 
     /// The list a list cell `word` names in `arena`: its run's address,
@@ -628,19 +492,6 @@ impl ListCell {
         }
         Ok(ListCell { run: run.offset(1).ok_or(malformed("list run address", run.0))?, len })
     }
-
-    pub fn decode(words: &[u32]) -> Result<ListCell, ArenaError> {
-        let [run, len] = *words.get(..2).ok_or(malformed("cell width", 0))? else {
-            return Err(malformed("cell width", 0));
-        };
-        match (run == Address::NONE.0, len == 0) {
-            (true, true) => Ok(ListCell::EMPTY),
-            (false, false) => Ok(ListCell { run: Address(run), len }),
-            (true, false) => Err(malformed("list run address", run)),
-            (false, true) => Err(malformed("list length", len)),
-        }
-    }
-
     /// Each item's `item_width` words, read from the run in `arena`.
     pub fn items(self, arena: &dyn ArenaRead, item_width: u32) -> Result<std::slice::ChunksExact<'_, u32>, ArenaError> {
         if self.len == 0 {
@@ -657,6 +508,7 @@ fn run_words(len: u32, item_width: u32) -> Result<u32, ArenaError> {
     }
     len.checked_mul(item_width).ok_or(malformed("list length", len))
 }
+
 
 #[cfg(test)]
 mod tests {

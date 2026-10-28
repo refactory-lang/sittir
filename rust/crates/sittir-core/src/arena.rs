@@ -20,6 +20,7 @@ mod built;
 pub mod count;
 #[cfg(test)]
 mod built_image;
+mod built_write;
 pub mod cell;
 pub mod hydrate;
 pub mod memory;
@@ -41,6 +42,7 @@ use crate::types::{KindId, TreeId};
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
+pub use built_write::BuiltWriter;
 pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
 pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
@@ -617,8 +619,9 @@ impl BuiltChunks {
 impl ArenaRead for BuiltChunks {
     fn chunk(&self, n: u32) -> Option<&[u32]> {
         match self.chunks.get(n as usize)? {
-            // SAFETY: the store's shared borrow is held for the slice's life,
-            // no native code writes a built chunk, and a native call runs no
+            // SAFETY: the store's shared borrow is held for the slice's life;
+            // native code writes a built chunk only through the store's
+            // mutable borrow (`BuiltWriter`), and a native call runs no
             // JavaScript.
             Some(BuiltChunk::Words { mem, .. }) => Some(unsafe { mem.slice() }),
             _ => None,

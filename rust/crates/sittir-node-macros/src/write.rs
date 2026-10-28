@@ -3,10 +3,10 @@
 //! and its children's. Every item sits inside `::sittir_core::records_codec!`,
 //! which keeps it only when `sittir-core` is built with the arena.
 //!
-//! A struct writes its record from its stamps alone: a presence sets its bit,
-//! a slot writes its cell at its word, a list its run of `run`-word cells, a
-//! capture its span or its text, and a print setting goes to the side record.
-//! A text leaf writes a leaf cell and no record of cells. A choice writes the
+//! A struct writes its built record from its stamps alone: a presence sets
+//! its bit, a slot writes its one-word cell at its built place, a list its
+//! run, a capture its text, and a print setting goes to the side record. A
+//! text leaf writes a leaf cell and no record of cells. A choice writes the
 //! cell of the variant it holds, and a unit arm its kind.
 
 use crate::attrs::{KindAttrs, SlotAttrs};
@@ -29,31 +29,33 @@ fn slot_write(field: &Field<'_>, slot: &SlotAttrs, capture: bool) -> syn::Result
     if let Some(bit) = slot.cell.bit {
         return Ok(quote!(__words[#at] |= u32::from(self.#name) << #bit;));
     }
-    let width = slot.cell.width.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its cell's `width`")))?;
-    let end = at + width as usize;
+    let built = slot.cell.built.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its built cell (`built = …`)")))? as usize;
     let key = field.key.as_ref().ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its wire key")))?;
-    if let Some(run) = slot.cell.run {
-        return Ok(quote!(::sittir_core::arena::write_list(__sink, #run, self.#name.iter(), #key)?.encode(&mut __words[#at..#end])?;));
+    if slot.cell.run.is_some() {
+        return Ok(quote!(__words[#built] = ::sittir_core::arena::write_list(__sink, self.#name.iter(), #key)?.0;));
     }
     if !capture {
-        return Ok(quote!(::sittir_core::arena::write_slot(__sink, &self.#name, #key)?.encode(&mut __words[#at..#end])?;));
+        return Ok(quote!(__words[#built] = ::sittir_core::arena::write_slot(__sink, &self.#name, #key)?.0;));
     }
     let cell = if inner_of(field.ty, "Option").is_some() {
         quote! {
             match &self.#name {
                 ::core::option::Option::Some(text) => ::sittir_core::arena::captured_cell(__sink, text)?,
-                ::core::option::Option::None => ::sittir_core::arena::Cell::Absent,
+                ::core::option::Option::None => ::sittir_core::arena::CellWord(0),
             }
         }
     } else {
         quote!(::sittir_core::arena::captured_cell(__sink, &self.#name)?)
     };
-    Ok(quote!((#cell).encode(&mut __words[#at..#end])?;))
+    Ok(quote!(__words[#built] = (#cell).0;))
 }
 
 /// A struct's record writer; none for a struct with no stamped record.
 pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
-    let Some(words) = attrs.words else { return Ok(TokenStream::new()) };
+    if attrs.words.is_none() {
+        return Ok(TokenStream::new());
+    }
+    let words = attrs.built_words.ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` has a record, so it states its built width: `#[node(built_words = …)]`")))?;
     let layout = fields
         .iter()
         .find(|field| matches!(field.role, Role::Layout))
@@ -63,7 +65,7 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
     let writer = |body: TokenStream| {
         gated(&quote! {
             impl ::sittir_core::arena::WriteCell<#trivia> for #ident {
-                fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<::sittir_core::arena::Cell, ::sittir_core::arena::ArenaError> {
+                fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
                     #body
                 }
             }
@@ -139,7 +141,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
     let mut bounds = Vec::new();
     for variant in variants {
         let name = variant.name;
-        let unit = |kind: TokenStream| quote!(::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: #kind, row: ::core::option::Option::None }));
+        let unit = |kind: TokenStream| quote!(::sittir_core::arena::CellWord::unit(#kind));
         let write = match (variant.payload, &variant.first) {
             _ if variant.blank => {
                 let cell = unit(quote!(::sittir_core::types::KindId::BLANK));
@@ -167,7 +169,7 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
         where
             #(#bounds)*
         {
-            fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<::sittir_core::arena::Cell, ::sittir_core::arena::ArenaError> {
+            fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
                 match self {
                     #(#arms)*
                 }
@@ -180,8 +182,8 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
 pub fn members(ident: &Ident) -> TokenStream {
     gated(&quote! {
         impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for #ident {
-            fn write_cell(&self, _: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<::sittir_core::arena::Cell, ::sittir_core::arena::ArenaError> {
-                ::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: __id(self), row: ::core::option::Option::None })
+            fn write_cell(&self, _: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<::sittir_core::arena::CellWord, ::sittir_core::arena::ArenaError> {
+                ::sittir_core::arena::CellWord::unit(__id(self))
             }
         }
     })

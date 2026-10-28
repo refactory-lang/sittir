@@ -75,6 +75,9 @@ fn words_of(ident: &Ident, attrs: &KindAttrs) -> syn::Result<u32> {
 pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result<TokenStream> {
     let leaf = attrs.text.is_some();
     let stored = stored_impl(ident, &if leaf { quote!(::sittir_core::record::stored::LEAF) } else { quote!(::sittir_core::record::stored::RECORD) });
+    if !leaf && attrs.words.is_none() {
+        return Ok(stored);
+    }
     let hydrate = if leaf {
         struct_impl(ident, true, &quote!(::core::result::Result::Ok(__held)))
     } else if let Some(pattern) = &attrs.interior {

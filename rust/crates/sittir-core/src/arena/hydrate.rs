@@ -231,7 +231,7 @@ impl<'a> Hydration<'a> {
         let Draft { mut words, sides, runs, rows, .. } = draft;
         for (offset, side) in sides {
             if !side.is_empty() {
-                words[offset as usize + 1] = side.write(self.tree.arena_mut())?.0;
+                words[offset as usize + 1] = side.write(&mut |words| self.tree.arena_mut().push(words))?.0;
             }
         }
         for (offset, run) in runs {
