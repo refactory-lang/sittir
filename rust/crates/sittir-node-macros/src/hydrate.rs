@@ -121,7 +121,7 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
             finishes.push(quote!(__draft.flag(#word, #bit, #acc);));
             continue;
         }
-        let shape = crate::views::cell_shape(field.ident, &slot.cell)?;
+        let shape = crate::views::cell_shape(field, &slot.cell)?;
         starts.push(quote!(let mut #acc = <#ty as ::sittir_core::arena::HydrateSlot>::held();));
         takes.push(quote!(__rt::Route::Slot { slot: #id, .. } => <#ty as ::sittir_core::arena::HydrateSlot>::take_held(&mut #acc, cursor, ctx, depth, #site, records, #shape)?,));
         separators.push(quote!(__rt::Route::Separator { slot: #id, tagged } => <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged),));
@@ -181,7 +181,7 @@ fn interior(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>], _pattern: &L
             cells.push(quote!(__draft.flag(#word, #bit, captures.name(#capture).is_some());));
             continue;
         }
-        let shape = crate::views::cell_shape(field.ident, &slot.cell)?;
+        let shape = crate::views::cell_shape(field, &slot.cell)?;
         let span = quote!(__rt::capture_span(&captures, #capture, base).map(|span| ::sittir_core::arena::Hydrated::Text { span }));
         cells.push(if inner_of(field.ty, "Option").is_some() {
             quote!(__draft.cell(#shape, #span)?;)
@@ -211,7 +211,7 @@ fn envelope(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Resu
     let field = fields.iter().find(|f| f.ident == content).ok_or_else(|| syn::Error::new_spanned(content, "`content` names one of the envelope's fields"))?;
     let Role::Slot(slot) = &field.role else { return Err(syn::Error::new_spanned(content, "an envelope's content is a slot")) };
     let inner: &Type = inner_of(field.ty, "SlotValue").ok_or_else(|| syn::Error::new_spanned(field.ty, "an envelope's content is a `SlotValue<…>`"))?;
-    let shape = crate::views::cell_shape(field.ident, &slot.cell)?;
+    let shape = crate::views::cell_shape(field, &slot.cell)?;
     let wraps_hidden = attrs.wraps_hidden;
     let message = format!("{ident}: an envelope's content read from its own row is no node with a record, since a tree holds one record per row");
     let (hidden, restore) = if wraps_hidden {

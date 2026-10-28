@@ -62,7 +62,7 @@ fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenS
         Role::Layout => Ok((quote!(#arena::LayoutAt<'r, #trivia>), quote!(self.layout()))),
         Role::Slot(slot) => {
             let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a prepared slot holds a `SlotValue<…>`"))?;
-            let shape = crate::views::cell_shape(field.ident, &slot.cell)?;
+            let shape = crate::views::cell_shape(field, &slot.cell)?;
             Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#shape))))
         }
         Role::Flank(_) => setting(quote!(Delimiter)),
@@ -186,19 +186,19 @@ mod tests {
     #[test]
     fn each_place_is_bounded_by_what_its_stamp_lets_prepare_write() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::LIST, item = items, words = 13, prepare = ListPrepare)]
+            #[node(kind = kind::LIST, item = items, words = 5, built_words = 5, prepare = ListPrepare)]
             pub struct ListNode {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_items")]
-                #[slot(field = field::ITEMS, word = 2, width = 2, run = 5, seated)]
+                #[slot(field = field::ITEMS, word = 2, width = 1, run = 3, forms = 1, built = 2, seated)]
                 pub items: Vec<SlotValue<ItemNode>>,
                 #[wire(key = "_terminator")]
-                #[slot(field = field::TERMINATOR, word = 4, width = 5, defaulted)]
+                #[slot(field = field::TERMINATOR, word = 3, width = 1, forms = 2, built = 3, defaulted)]
                 pub terminator: Option<SlotValue<Terminator>>,
                 #[wire(key = "_open")]
-                #[slot(word = 9, bit = 0)]
+                #[slot(word = 4, bit = 0)]
                 pub open: bool,
                 #[wire(key = "_delimiter")]
                 #[flank(trailing = 0)]
@@ -225,7 +225,7 @@ mod tests {
     #[test]
     fn a_text_leaf_prepares_its_layout_alone() {
         let out = expand(&parse_quote! {
-            #[node(kind = kind::IDENTIFIER, text, words = 2, prepare = IdentifierPrepare)]
+            #[node(kind = kind::IDENTIFIER, text, words = 2, built_words = 2, prepare = IdentifierPrepare)]
             pub struct IdentifierNode {
                 #[wire(key = "$_layout")]
                 #[layout]
@@ -271,13 +271,13 @@ mod tests {
     #[test]
     fn a_spacing_setting_names_a_list_slot_of_its_struct() {
         let error = refusal(&parse_quote! {
-            #[node(kind = kind::LIST, words = 7, prepare = ListPrepare)]
+            #[node(kind = kind::LIST, words = 5, built_words = 3, prepare = ListPrepare)]
             pub struct ListNode {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_name")]
-                #[slot(word = 2, width = 5)]
+                #[slot(word = 2, width = 3, forms = 1, built = 2)]
                 pub name: SlotValue<NameNode>,
                 #[wire(key = "_name_separator_space")]
                 #[space(slot = 2, side = after, site = options::SITE_X)]
@@ -290,13 +290,13 @@ mod tests {
     #[test]
     fn a_list_is_never_defaulted_and_a_prepared_slot_has_its_cell() {
         let defaulted = refusal(&parse_quote! {
-            #[node(kind = kind::LIST, words = 4, prepare = ListPrepare)]
+            #[node(kind = kind::LIST, words = 3, built_words = 3, prepare = ListPrepare)]
             pub struct ListNode {
                 #[wire(key = "$_layout")]
                 #[layout]
                 pub layout: Option<Box<NodeLayout>>,
                 #[wire(key = "_items")]
-                #[slot(word = 2, width = 2, run = 5, defaulted)]
+                #[slot(word = 2, width = 1, run = 3, forms = 1, built = 2, defaulted)]
                 pub items: Vec<SlotValue<ItemNode>>,
             }
         });

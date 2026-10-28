@@ -224,6 +224,7 @@ impl<'a, T> RecordCtx<'a, T> {
         Ok(match cell {
             Cell::Coordinate { kind, index, .. } => here(index, kind),
             Cell::ParsedLeaf { kind, row, .. } | Cell::Unit { kind, row: Some(row) } => here(row, kind),
+            Cell::LinkedLeaf { kind, tree, row, changed, .. } => Some(ParsedRow { tree, row, kind, changed }),
             Cell::Child { kind, at, link, changed } => {
                 let Some((ctx, side)) = self.child_side(at, kind, link)? else { return Ok(None) };
                 match row_of(ctx, at, &side)? {
@@ -600,6 +601,7 @@ enum SlotCell<V> {
 pub struct RecordSlot<'a, T, V, const ADJACENT: bool = false> {
     ctx: RecordCtx<'a, T>,
     site: Site<PrepPlace>,
+    key: &'static str,
     cell: SlotCell<V>,
 }
 
@@ -608,12 +610,12 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
     /// record at `at` (`RecordCtx::slot_cell`).
     #[must_use]
     pub fn of_shape(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, words: &[u32], at: Address, shape: CellShape) -> Self {
-        Self::of_cell(ctx, site, ctx.slot_cell(words, at, shape))
+        Self::of_cell(ctx, site, shape.key, ctx.slot_cell(words, at, shape))
     }
 
     /// The slot at `site` whose cell decoded as `decoded`. An unset single
     /// slot holds the unit its prepare defaulted it to, when it took one.
-    fn of_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, decoded: Result<Cell, ArenaError>) -> Self {
+    fn of_cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, key: &'static str, decoded: Result<Cell, ArenaError>) -> Self {
         let cell = match decoded {
             Ok(Cell::Absent) => match ctx.prepared.node(site.holder).and_then(|node| node.slot(site.word)).and_then(|slot| slot.unit) {
                 Some(kind) => Self::cell(ctx, site, Cell::Unit { kind, row: None }),
@@ -622,7 +624,7 @@ impl<'a, T, V: RecordView<'a, T>, const ADJACENT: bool> RecordSlot<'a, T, V, ADJ
             Ok(cell) => Self::cell(ctx, site, cell),
             Err(refused) => SlotCell::Refused(refused),
         };
-        Self { ctx, site, cell }
+        Self { ctx, site, key, cell }
     }
 
     fn cell(ctx: RecordCtx<'a, T>, site: Site<PrepPlace>, cell: Cell) -> SlotCell<V> {
@@ -654,7 +656,7 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> Render for Reco
     /// when no read had.
     fn render(&self, w: &mut dyn RenderSink) -> RenderResult {
         match &self.cell {
-            SlotCell::Absent => Err(RenderError::Record(malformed("required slot cell", 0))),
+            SlotCell::Absent => Err(RenderError::Record(ArenaError::MissingField(self.key))),
             SlotCell::View(view) => view.render(w),
             SlotCell::Refused(refused) => Err(RenderError::Record(refused.clone())),
             &SlotCell::Parsed(row, cell) => {
@@ -725,6 +727,19 @@ impl<'a, T, V, const ADJACENT: bool> RecordItems<'a, T, V, ADJACENT> {
         let _run = list.items(ctx.arena, run)?;
         Ok(Self { ctx, holder, shape, run, list, view: std::marker::PhantomData })
     }
+
+    /// The list, refused when it holds no item: a `repeat1` slot of
+    /// `owner`.
+    ///
+    /// # Errors
+    ///
+    /// `EmptyList` when the list holds no item.
+    pub fn non_empty(self, owner: &'static str) -> Result<Self, ArenaError> {
+        if self.list.len == 0 {
+            return Err(ArenaError::EmptyList { owner, key: self.shape.key });
+        }
+        Ok(self)
+    }
 }
 
 impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> crate::view::SlotItems for RecordItems<'a, T, V, ADJACENT> {
@@ -738,8 +753,8 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> crate::view::Sl
         let item = u32::try_from(index).ok().filter(|&item| item < self.list.len)?;
         let site = Site { holder: self.holder, word: self.shape.word, item: ItemIndex(item) };
         Some(match self.list.items(self.ctx.arena, self.run) {
-            Ok(mut items) => RecordSlot::of_cell(self.ctx, site, self.ctx.item_cell(items.nth(index)?, self.shape)),
-            Err(refused) => RecordSlot { ctx: self.ctx, site, cell: SlotCell::Refused(refused) },
+            Ok(mut items) => RecordSlot::of_cell(self.ctx, site, self.shape.key, self.ctx.item_cell(items.nth(index)?, self.shape)),
+            Err(refused) => RecordSlot { ctx: self.ctx, site, key: self.shape.key, cell: SlotCell::Refused(refused) },
         })
     }
 }
@@ -810,8 +825,8 @@ mod tests {
         Site { holder: Place::Record(Address(1)).into(), word: 2, item: ItemIndex(item) }
     }
 
-    const SLOT: CellShape = CellShape { word: 2, width: 5, run: None, inline: 0, built: 2 };
-    const LIST: CellShape = CellShape { word: 2, width: 2, run: Some(5), inline: 0, built: 2 };
+    const SLOT: CellShape = CellShape { word: 2, width: 3, run: None, inline: 0, forms: crate::record::form::NODE, built: 2, key: "_slot" };
+    const LIST: CellShape = CellShape { word: 2, width: 1, run: Some(3), inline: 0, forms: crate::record::form::NODE, built: 2, key: "_items" };
 
     fn holding(cell: u32) -> [u32; 3] {
         [0, 0, cell]
@@ -880,7 +895,7 @@ mod tests {
         let refused = WordSlot::of_shape(ctx, site(0), &holding(edged), Address(1), SLOT);
         assert!(matches!(rendered(&refused), Err(RenderError::Record(ArenaError::Malformed { what: "unit cell edges", word })) if word == edged));
         let absent = WordSlot::of_shape(ctx, site(0), &holding(0), Address(1), SLOT);
-        assert!(matches!(rendered(&absent), Err(RenderError::Record(ArenaError::Malformed { what: "required slot cell", .. }))));
+        assert!(matches!(rendered(&absent), Err(RenderError::Record(ArenaError::MissingField("_slot")))));
     }
 
     #[test]

@@ -200,6 +200,11 @@ pub enum ArenaError {
     /// A read at `at`, whose chunk was freed once every entry in it was
     /// released.
     Released(Address),
+    /// A required slot, by its wire key, that holds nothing.
+    MissingField(&'static str),
+    /// A `repeat1` slot of `owner`, by its wire key, whose list holds no
+    /// item.
+    EmptyList { owner: &'static str, key: &'static str },
 }
 
 /// A record entry whose arena, or the store that holds its sides, is gone.
@@ -220,6 +225,8 @@ impl fmt::Display for ArenaError {
             ArenaError::Unwritable(what) => write!(f, "a record writer does not write {what}"),
             ArenaError::UnknownKind { kind, owner } => f.write_str(&crate::boundary::unknown_kind(*kind, owner)),
             ArenaError::Released(at) => write!(f, "the node at {} was released: the chunk its record was in is freed", at.0),
+            ArenaError::MissingField(key) => write!(f, "Missing field `{key}`"),
+            ArenaError::EmptyList { owner, key } => write!(f, "{} on {owner}.{key}", crate::non_empty::EmptyList),
         }
     }
 }

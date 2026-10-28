@@ -55,6 +55,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             payload,
             index: None,
             first: None,
+            claims: Vec::new(),
             decodes: Vec::new(),
             blank: false,
             verbatim: false,
@@ -90,8 +91,8 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
             wire.push(unread(payload));
             continue;
         };
+        let claims: Vec<Path> = kinds.kinds.iter().chain(&kinds.shown).cloned().collect();
         if payload.is_none() {
-            let claims = kinds.kinds.iter().chain(&kinds.shown);
             let built = unit(quote!(Self));
             builds.push(quote!(if [#(#claims),*].contains(&id) { return ::core::option::Option::Some(#built); }));
         }
@@ -100,6 +101,7 @@ fn choice(ident: &Ident, attrs: &KindAttrs, data: &DataEnum) -> syn::Result<Toke
         wire.push(codec::WireVariant {
             index: Some(i),
             first: first.clone(),
+            claims,
             decodes: kinds.decodes.clone(),
             ..unread(payload)
         });
