@@ -21,6 +21,7 @@ pub mod count;
 #[cfg(test)]
 mod built_image;
 pub mod cell;
+pub mod hydrate;
 pub mod memory;
 mod parsed;
 mod prep;
@@ -40,13 +41,14 @@ use crate::types::{KindId, TreeId};
 pub use admit::{admit, CellShape, RecordCells, RecordShape};
 pub use borrowed::{ArenaRead, BorrowedArena};
 pub use built::render_record_entry;
-pub use cell::{flag, header_of, kind_field, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
+pub use cell::{flag, header_of, kind_field, parsed_tag, with_kind, Cell, CellWord, ListCell, LINK_WORDS};
+pub use hydrate::{hydrate_at, parsed_side, row_of as hydrated_row, Draft, HydrateError, HydrateNode, HydrateSlot, Hydrated, Hydration, Walk};
 pub use memory::{ChunkMem, ChunkUnit};
 pub use parsed::RecordGrammar;
 pub use prep::{own_seat, prepare_root, record_snapshot_edge, record_source_separator, seat_through, view_kind_in, CellAt, HeldArenas, LayoutAt, PrepareRecord, RecordAt, RecordPrep, RecordTrees, SettingAt, SettingOf, SlotAt};
 pub use prepared::{PrepPlace, Prepared, PreparedNode, PreparedSlot, SlotTokens};
 pub use view::{built_leaf_place, linked_leaf_place, held_changed, leaf_place, place_of, record_of, row_of, source_root, ParsedRow, RecordArenas, RecordCtx, RecordItems, RecordLayout, RecordSlot, RecordView, VerbatimRecord};
-pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, capture_spans, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot, write_inline_slot};
+pub use write::{LayoutField, Link, Linked, RecordSink, WriteCell, captured_cell, coordinate_cell, leaf_cell, write_list, write_record, write_slot};
 pub use rows::TreeArena;
 pub use side::{Row, SideRecord, SideSlot, Sides};
 
@@ -288,6 +290,7 @@ pub struct Arena {
     /// The shared string chunk strings are appended to, once one is.
     open_strings: Option<u32>,
     interned: HashMap<Box<str>, StringRef>,
+    kind_bits: u32,
 }
 
 impl Default for Arena {
@@ -300,9 +303,16 @@ impl Arena {
     /// An arena whose first word is reserved, so no record is at `Address::NONE`.
     #[must_use]
     pub fn new() -> Self {
+        Self::with_kind_bits(PARSED_KIND_BITS)
+    }
+
+    /// An arena whose kind fields take `kind_bits` bits, its first word
+    /// reserved as `new`'s is.
+    #[must_use]
+    pub fn with_kind_bits(kind_bits: u32) -> Self {
         let mut first = Chunk::with_limit(FIRST_CHUNK_WORDS);
         first.extend(1);
-        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: HashMap::new() }
+        Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: HashMap::new(), kind_bits }
     }
 
     /// `words` zeroed words, contiguous in one chunk, and their address.
@@ -419,7 +429,7 @@ impl ArenaRead for Arena {
     }
 
     fn kind_bits(&self) -> u32 {
-        PARSED_KIND_BITS
+        self.kind_bits
     }
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {

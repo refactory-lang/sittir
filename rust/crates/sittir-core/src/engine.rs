@@ -643,7 +643,7 @@ impl<G: EngineGrammar> ParsedTree<G> {
         Some(crate::ErrorRead { text, kind: at.kind, at: ctx.origin(&node, index) })
     }
 
-    fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
+    pub(crate) fn read_ctx(&self) -> crate::read::ReadCtx<'_> {
         crate::read::ReadCtx::new(&self.source, self.tree_id, self.grammar.shows()).with_relaxes(self.grammar.relaxes())
     }
 
@@ -1599,6 +1599,8 @@ impl<G: EngineGrammar> Engine<G> {
         let spaces = |unit: &str| u32::try_from(unit.chars().filter(|&c| c == ' ').count()).unwrap_or(u32::MAX);
         let level_width = [spaces(indent), spaces(&self.options.indent), 1].into_iter().find(|&width| width > 0).unwrap_or(1);
         let read_options = inferred.over(&self.options);
+        #[cfg(feature = "arena")]
+        let nodes = crate::read::descendant_count(&tree.root_node());
         Ok(ParsedTree {
             grammar: self.grammar,
             tree,
@@ -1615,7 +1617,7 @@ impl<G: EngineGrammar> Engine<G> {
             work: crate::layout::LayoutWorkCounter::default(),
             written: self.written.clone(),
             #[cfg(feature = "arena")]
-            arena: std::sync::Mutex::new(crate::arena::TreeArena::new()),
+            arena: std::sync::Mutex::new(crate::arena::TreeArena::new(G::KIND_BITS, nodes)),
         })
     }
 

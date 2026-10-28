@@ -884,16 +884,6 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 	return { form: 'builtLeaf', kind, offset: at, len, changed };
 }
 
-/** The list a built list cell `word` names: its items' first word and their number; none for an empty list. */
-export function decodeBuiltList(arena: BuiltArena, word: number): { readonly run: number; readonly len: number } {
-	if (word === 0) return { run: 0, len: 0 };
-	if ((word & 3) !== 0) throw new Error(`a built list cell ${word} marks changed edges`);
-	const at = word >>> 2;
-	const len = arena.words(at, 1)[wordOf(at, arena.format)]!;
-	if (len === 0) throw new Error('a built list cell names a run of no items');
-	return { run: at + 1, len };
-}
-
 /** Writes the cell at `cell` of the drafted `record`, its slot `word`, holding `value`. */
 export function storeCell(arena: BuiltArena, record: BuiltDraft, cell: number, word: number, value: unknown): void {
 	record.data[record.base + cell] = cellOf(arena, value, record, word, 0, NO_EDGES);

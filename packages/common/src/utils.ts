@@ -787,17 +787,17 @@ function cacheOf(node: RecordHandle): Record<number, unknown> {
 	return (node.$cache ??= {});
 }
 
-export function childSlot(node: RecordHandle, word: number, width: number, inline: number, built: number, wrap?: WrapNode, role: Role = 'node'): unknown {
+export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, role: Role = 'node'): unknown {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word];
-	const value = recordSlot(node, word, width, inline, built);
+	const value = recordSlot(node, word, width, forms, inline, built);
 	return (cache[word] = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role));
 }
 
-export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
+export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word] as readonly unknown[];
-	const items = recordSlots(node, word, width, run, inline, built).map((item) => (wrap === undefined ? item : hydrateWith(item, node.$tree, wrap)));
+	const items = recordSlots(node, word, width, run, forms, inline, built).map((item) => (wrap === undefined ? item : hydrateWith(item, node.$tree, wrap)));
 	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }
 

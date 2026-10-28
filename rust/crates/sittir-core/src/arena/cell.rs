@@ -1,11 +1,14 @@
-//! One slot's cell in a record. A parsed record's cell is a tag word, then
-//! the words its form holds. A built record's cell is one word, an address
+//! One slot's cell in a record. A parsed record's cell holds what its
+//! slot's stamped forms leave open (`record::form`): a tag word only when the
+//! slot holds more than one form, a kind only when it admits more than one.
+//! A built record's cell is one word, an address
 //! and the edges its site marks changed, whose form is the kind of chunk the
 //! address lies in (`Cell::decode_built`). A decode bounds-checks every word
 //! and refuses any word no writer writes, so a malformed cell is an error,
 //! never a read outside its record.
 
-use super::{Address, Arena, ArenaError, ArenaRead, StringRef};
+use super::{Address, Arena, ArenaError, ArenaRead, CellShape, StringRef};
+use crate::record::{form, tagged};
 use crate::record::HEADER_WORDS;
 use crate::slot::ChangedEdges;
 use crate::types::{KindId, NodeIndex, Span, TreeId};
@@ -349,6 +352,199 @@ impl Cell {
     }
 }
 
+/// The tag word a parsed cell of more than one form opens with
+/// (`record::tagged`).
+pub mod parsed_tag {
+    pub const ABSENT: u32 = 0;
+    pub const NODE: u32 = 1;
+    pub const UNIT: u32 = 2;
+    pub const TEXT: u32 = 3;
+    pub const INLINE: u32 = 4;
+}
+
+const PARSED_FORMS: [(u32, u8); 4] = [(parsed_tag::NODE, form::NODE), (parsed_tag::UNIT, form::UNIT), (parsed_tag::TEXT, form::TEXT), (parsed_tag::INLINE, form::INLINE)];
+
+impl CellShape {
+    /// `kind` with `x` above it in one word, the kind in the low `bits`
+    /// bits. `x` is a child's row, never 0: the root has no holder.
+    fn pack(kind: KindId, x: u32, bits: u32) -> Result<u32, ArenaError> {
+        if x == 0 {
+            return Err(malformed("a child's row", 0));
+        }
+        if kind == KindId::ERROR || kind == KindId::BLANK {
+            return Err(malformed("cell kind", u32::from(kind.0)));
+        }
+        if x >> (32 - bits) != 0 {
+            return Err(ArenaError::Unwritable("a row past what a parsed cell packs beside its kind"));
+        }
+        Ok(with_kind(kind, bits)? | x << bits)
+    }
+
+    /// The kind and the value above it a word packed by `pack` holds.
+    fn unpack(word: u32, bits: u32) -> Result<(KindId, u32), ArenaError> {
+        let (kind, x) = (kind_field(word, bits), word >> bits);
+        if kind == KindId::ERROR || kind == KindId::BLANK {
+            return Err(malformed("cell kind", word));
+        }
+        if x == 0 {
+            return Err(malformed("a child's row", word));
+        }
+        Ok((kind, x))
+    }
+
+    /// The words of a parsed cell of this slot that its form's payload starts
+    /// at: past the tag word when the slot holds more than one form.
+    #[must_use]
+    pub fn payload_start(self) -> usize {
+        usize::from(tagged(self.forms))
+    }
+}
+
+fn end_word(span: Span, leaf: bool) -> Result<u32, ArenaError> {
+    if span.end & form::LEAF != 0 || span.start > span.end {
+        return Err(ArenaError::Unwritable("a span past what a parsed cell holds"));
+    }
+    Ok(if leaf { span.end | form::LEAF } else { span.end })
+}
+
+impl Cell {
+    /// Writes the cell into `out`, the words of a parsed record's slot of
+    /// shape `shape` (its stamped width, or for a list item its run's),
+    /// kinds packed in `bits` bits, zeroing the words its form leaves unused.
+    /// An embedded record is copied in by its writer (`inline_payload`).
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a form the slot does not hold, a value no
+    /// parsed record holds, or a kind other than the slot's stamped one;
+    /// `ArenaError::Malformed` for a row of 0 or a kind no field holds.
+    pub fn encode_parsed(self, out: &mut [u32], shape: CellShape, bits: u32) -> Result<(), ArenaError> {
+        let (form, payload): (u8, &[u32]) = match self {
+            Cell::Absent if shape.forms & form::BLANK != 0 => return Err(ArenaError::Unwritable("an absent value in a slot that admits a blank arm")),
+            Cell::Absent => {
+                out.fill(0);
+                return Ok(());
+            }
+            Cell::Coordinate { kind, index, span } => (form::NODE, &[CellShape::pack(kind, index.0, bits)?, span.start, end_word(span, false)?]),
+            Cell::ParsedLeaf { kind, span, row } => (form::NODE, &[CellShape::pack(kind, row.0, bits)?, span.start, end_word(span, true)?]),
+            Cell::Unit { kind: KindId::BLANK, row: None } if shape.forms & form::BLANK != 0 => (form::UNIT, &[0]),
+            Cell::Unit { kind, row: Some(row) } => (form::UNIT, &[CellShape::pack(kind, row.0, bits)?]),
+            Cell::ParsedText { span } => (form::TEXT, &[span.start.checked_add(1).ok_or(ArenaError::Unwritable("a span past what a parsed cell holds"))?, end_word(span, false)?]),
+            _ => return Err(ArenaError::Unwritable("a value no parsed record holds")),
+        };
+        if shape.forms & form == 0 {
+            return Err(ArenaError::Unwritable("a form its slot does not hold"));
+        }
+        let start = shape.payload_start();
+        let used = out.get_mut(start..start + payload.len()).ok_or(malformed("cell width", u32::try_from(payload.len()).unwrap_or(u32::MAX)))?;
+        used.copy_from_slice(payload);
+        out[..start].fill(0);
+        out[start + payload.len()..].fill(0);
+        if start == 1 {
+            out[0] = parsed_tag_of(form);
+        }
+        Ok(())
+    }
+
+    /// The words of `out`, a parsed record's slot of shape `shape`, a bounded
+    /// child's embedded record is written into, tagged as one when the slot
+    /// holds more than one form.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for a slot that holds no embedded record, and
+    /// `ArenaError::Malformed` for one narrower than its stamped capacity.
+    pub fn inline_payload(out: &mut [u32], shape: CellShape) -> Result<&mut [u32], ArenaError> {
+        if shape.forms & form::INLINE == 0 {
+            return Err(ArenaError::Unwritable("an embedded record in a slot that holds none"));
+        }
+        let start = shape.payload_start();
+        let end = start + shape.inline as usize;
+        if out.len() < end || shape.inline < HEADER_WORDS {
+            return Err(malformed("inline cell width", shape.inline));
+        }
+        out.fill(0);
+        if start == 1 {
+            out[0] = parsed_tag::INLINE;
+        }
+        Ok(&mut out[start..end])
+    }
+
+    /// The cell in `words`, the words of a parsed record's slot of shape
+    /// `shape` at `at` (its stamped width, or for a list item its run's),
+    /// kinds packed in `bits` bits. An embedded record is a `Child` at its
+    /// header's address.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Malformed` for words no parsed writer writes, a cell
+    /// narrower than its form, or an embedded record past its capacity.
+    pub fn decode_parsed(words: &[u32], at: Address, shape: CellShape, bits: u32) -> Result<Cell, ArenaError> {
+        let start = shape.payload_start();
+        let &first = words.first().ok_or(malformed("cell width", 0))?;
+        let form = if start == 1 {
+            if first == parsed_tag::ABSENT {
+                return absent(words);
+            }
+            let form = PARSED_FORMS.iter().find(|(tag, _)| *tag == first).map(|(_, form)| *form).ok_or(malformed("cell tag", first))?;
+            if shape.forms & form == 0 {
+                return Err(malformed("cell form", first));
+            }
+            form
+        } else {
+            shape.forms & form::ALL
+        };
+        let payload = &words[start..];
+        let field = |n: usize| payload.get(n).copied().ok_or(malformed("cell width", u32::try_from(words.len()).unwrap_or(u32::MAX)));
+        match form {
+            form::UNIT if field(0)? == 0 && shape.forms & form::BLANK != 0 => Ok(Cell::Unit { kind: KindId::BLANK, row: None }),
+            _ if start == 0 && first == 0 => absent(words),
+            form::NODE => {
+                let (kind, row) = CellShape::unpack(field(0)?, bits)?;
+                let end = field(2)?;
+                let span = span(field(1)?, end & !form::LEAF)?;
+                Ok(if end & form::LEAF == 0 { Cell::Coordinate { kind, index: NodeIndex(row), span } } else { Cell::ParsedLeaf { kind, span, row: NodeIndex(row) } })
+            }
+            form::UNIT => {
+                let (kind, row) = CellShape::unpack(field(0)?, bits)?;
+                Ok(Cell::Unit { kind, row: Some(NodeIndex(row)) })
+            }
+            form::TEXT => {
+                let start = field(0)?.checked_sub(1).ok_or(malformed("text cell start", 0))?;
+                let end = field(1)?;
+                if end & form::LEAF != 0 {
+                    return Err(malformed("cell span end", end));
+                }
+                Ok(Cell::ParsedText { span: span(start, end)? })
+            }
+            form::INLINE => {
+                if shape.inline < HEADER_WORDS || payload.len() < shape.inline as usize || at == Address::NONE {
+                    return Err(malformed("inline cell width", shape.inline));
+                }
+                let (kind, flags) = header_of(field(0)?, bits);
+                if flags != 0 || kind == KindId::BLANK || kind == KindId::ERROR {
+                    return Err(malformed("inline record header", field(0)?));
+                }
+                let at = at.offset(u32::try_from(start).unwrap_or(0)).ok_or(malformed("inline record address", at.0))?;
+                Ok(Cell::Child { kind, at, link: None, changed: ChangedEdges::default() })
+            }
+            _ => Err(malformed("cell forms", u32::from(shape.forms))),
+        }
+    }
+}
+
+fn parsed_tag_of(form: u8) -> u32 {
+    PARSED_FORMS.iter().find(|(_, of)| *of == form).map_or(parsed_tag::ABSENT, |(tag, _)| *tag)
+}
+
+/// An absent parsed cell: every word of it zero.
+fn absent(words: &[u32]) -> Result<Cell, ArenaError> {
+    match words.iter().find(|word| **word != 0) {
+        None => Ok(Cell::Absent),
+        Some(&word) => Err(malformed("absent cell", word)),
+    }
+}
+
 /// The cell the link record at `at` of `kind` names, with the edges its
 /// holder's cell marks.
 fn linked(arena: &dyn ArenaRead, at: Address, kind: KindId, changed: ChangedEdges) -> Result<Cell, ArenaError> {
@@ -390,22 +586,36 @@ impl ListCell {
         Ok(ListCell { run, len })
     }
 
+    /// The one word a list cell holds for the run at `run`, whose first word
+    /// is the list's length: the run's address above two zero bits.
+    ///
+    /// # Errors
+    ///
+    /// `ArenaError::Unwritable` for an address past what a list cell holds.
+    pub fn word(run: Address) -> Result<CellWord, ArenaError> {
+        if run.0 >> 30 != 0 || run == Address::NONE {
+            return Err(ArenaError::Unwritable("a run past what a list cell holds"));
+        }
+        Ok(CellWord(run.0 << 2))
+    }
+
     pub fn encode(self, out: &mut [u32]) -> Result<(), ArenaError> {
         let out = out.get_mut(..2).ok_or(malformed("cell width", 0))?;
         out.copy_from_slice(&[self.run.0, self.len]);
         Ok(())
     }
 
-    /// The list a built record's list cell `word` names in `arena`: its
-    /// run's address, whose first word is the list's length, each item a
-    /// one-word built cell after it; word 0 for an empty list.
+    /// The list a list cell `word` names in `arena`: its run's address,
+    /// whose first word is the list's length, each item's cell after it (a
+    /// built record's one word, a parsed record's its slot's run); word 0
+    /// for an empty list.
     ///
     /// # Errors
     ///
     /// What reading the run's length refuses, and `ArenaError::Malformed` for
     /// changed edges on a list cell, a run of no items, or one that names no
     /// word after its length.
-    pub fn decode_built(CellWord(word): CellWord, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
+    pub fn of_word(CellWord(word): CellWord, arena: &dyn ArenaRead) -> Result<ListCell, ArenaError> {
         if word == 0 {
             return Ok(ListCell::EMPTY);
         }
@@ -620,7 +830,7 @@ mod tests {
         }
         for entry in built["lists"].as_array().expect("lists") {
             let list = ListCell { run: Address(fixture_number(entry, "run")), len: fixture_number(entry, "len") };
-            assert_eq!(ListCell::decode_built(CellWord(fixture_number(entry, "word")), &image), Ok(list), "{entry}");
+            assert_eq!(ListCell::of_word(CellWord(fixture_number(entry, "word")), &image), Ok(list), "{entry}");
         }
     }
 

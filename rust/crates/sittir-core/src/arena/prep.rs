@@ -10,7 +10,7 @@ use std::borrow::Cow;
 use std::marker::PhantomData;
 
 use super::view::ParsedRow;
-use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, Prepared, RecordArenas, RecordCtx, RecordSink, RecordView, TreeArena, WriteCell};
+use super::{place_of, record_of, Address, PrepPlace, ArenaRead, ArenaError, Cell, HydrateNode, Prepared, RecordArenas, RecordCtx, RecordView, TreeArena};
 use crate::layout::{merge_source_sides, slots_or_source, SlotLayout, UnitSides};
 use crate::options::{ArmSite, Edges, Side};
 use crate::prepare::{
@@ -313,12 +313,11 @@ impl<'r, T> RecordAt<'r, T> {
         LayoutAt { key: self.key, keys: self.keys, overlay: PhantomData }
     }
 
-    /// The handle of the slot of node type `N` whose parsed cell is at
-    /// `word`, `width` words wide, or a list of `run`-word item cells when
-    /// `run` is some, and whose built cell is the one word `built`.
+    /// The handle of the slot of node type `N` whose cell is stamped
+    /// `shape`.
     #[must_use]
-    pub fn slot<N>(&self, word: u32, width: u32, run: Option<u32>, built: u32) -> SlotAt<'r, T, N> {
-        SlotAt { key: self.key, shape: super::CellShape { word, width, run, inline: 0, built }, node: PhantomData }
+    pub fn slot<N>(&self, shape: super::CellShape) -> SlotAt<'r, T, N> {
+        SlotAt { key: self.key, shape, node: PhantomData }
     }
 
     /// The handle of one of the record's print settings.
@@ -487,14 +486,6 @@ pub struct SlotAt<'r, T, N> {
     node: Marker<'r, (T, N)>,
 }
 
-impl<T, N> SlotAt<'_, T, N> {
-    #[must_use]
-    pub fn inlined(mut self, capacity: u32) -> Self {
-        self.shape.inline = capacity;
-        self
-    }
-}
-
 /// One present item of a slot: its cell, its site, and its row when it names
 /// a parsed node.
 #[derive(Debug, Clone, Copy)]
@@ -563,7 +554,7 @@ impl<T, N> SlotAt<'_, T, N> {
             return Ok(Items::One([item(view.slot_cell(words, record, self.shape)?, 0)?]));
         }
         let (list, run) = view.slot_list(words, self.shape)?;
-        list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(view.item_cell(words)?, at)).collect::<Result<_, _>>().map(Items::Many)
+        list.items(view.arena(), run)?.zip(0..).map(|(words, at)| item(view.item_cell(words, self.shape)?, at)).collect::<Result<_, _>>().map(Items::Many)
     }
 
     fn present(&self, prep: &RecordPrep<'_, T>) -> Items<Item> {
@@ -609,7 +600,7 @@ impl<'r, T, N: PrepareRecord<T>> ArmOf<RecordPrep<'r, T>> for SlotAt<'r, T, N> {
 /// in prepares its record, as a native node read from it is prepared, with
 /// the seams its holder seated on it; any other value prepares through its
 /// type.
-fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + WriteCell<T>>(prep: &mut RecordPrep<'_, T>, item: Item, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
+fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
     let Some(row) = item.row else { return N::prepare_record(prep, item.at, ctx) };
     let coord = prep.row_coordinate(item.at.tree, row)?;
     coord.resolve(ctx.sources)?;
@@ -632,8 +623,8 @@ fn prepare_item<T: Clone + 'static, N: PrepareRecord<T> + Prepare + WriteCell<T>
 /// The cell a parsed item renders from when a write lies in its rows: a
 /// record, leaf or unit cell is its own; a coordinate's is its row's
 /// record, written on this first read when no read wrote it. `None` when
-/// the item's type reads nothing (`Prepare::read_coordinate`).
-fn edited_record<T: Clone + 'static, N: Prepare + WriteCell<T>>(prep: &mut RecordPrep<'_, T>, item: Item, coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<CellAt>, CoordinateError> {
+/// the item's row has no record to write.
+fn edited_record<T: Clone + 'static, N: HydrateNode>(prep: &mut RecordPrep<'_, T>, item: Item, coord: &NodeCoordinate, ctx: &RenderContext<'_>) -> Result<Option<CellAt>, CoordinateError> {
     let Cell::Coordinate { kind, .. } = item.at.cell else { return Ok(Some(item.at)) };
     let tree = coord.tree;
     let child = |at| CellAt { cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() }, tree: Some(tree), site: item.at.site };
@@ -642,13 +633,12 @@ fn edited_record<T: Clone + 'static, N: Prepare + WriteCell<T>>(prep: &mut Recor
     }
     let Some((live, read)) = ctx.sources.read_ctx(tree) else { return Ok(None) };
     let mut read = crate::read::ReadCtx { sides: None, changed: None, ..read };
-    let node = match N::read_coordinate(live, &mut read, coord.index) {
-        None => return Ok(None),
-        Some(read) => read.map_err(|error| unread(coord, &error))?,
-    };
     let arena = prep.trees.tree_mut(tree).ok_or(malformed("record tree", tree.0))?;
-    let cell = node.write_cell(&mut RecordSink::parsed(tree, arena))?;
-    Ok(Some(CellAt { cell, ..item.at }))
+    let record = super::hydrate_at::<N>(&mut live.walk(), &mut read, coord.index, crate::read::Depth::ONE, &mut super::Hydration::new(arena, false)).map_err(|error| match error {
+        super::HydrateError::Read(error) => unread(coord, &error),
+        super::HydrateError::Arena(error) => error.into(),
+    })?;
+    Ok(record.map(child))
 }
 
 /// A slot's present items as the gap and seat fills write them.
@@ -693,7 +683,7 @@ impl<T, N: PrepareRecord<T>> SeatItems for Fills<'_, '_, T, N> {
     }
 }
 
-impl<'r, T: Clone + 'static, N: PrepareRecord<T> + Prepare + WriteCell<T>> SlotTarget<RecordPrep<'r, T>> for SlotAt<'r, T, N> {
+impl<'r, T: Clone + 'static, N: PrepareRecord<T> + Prepare + HydrateNode> SlotTarget<RecordPrep<'r, T>> for SlotAt<'r, T, N> {
     fn prepare(&mut self, prep: &mut RecordPrep<'r, T>, ctx: &RenderContext<'_>) -> Result<(), CoordinateError> {
         for item in self.items(prep)?.into_iter().flatten() {
             prepare_item::<T, N>(prep, item, ctx)?;

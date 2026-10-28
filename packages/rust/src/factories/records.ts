@@ -114,7 +114,7 @@ export function buildSourceFile(config: Partial<T.SourceFile.Config> = {}): T.So
 	handle?.verifyStored?.(TSKindId.SourceFile as const, { _shebang, _statements });
 	const record = arena.record(TSKindId.SourceFile as const);
 	storeCell(arena, record, 2, 2, _shebang);
-	storeList(arena, record, 3, 10, _statements);
+	storeList(arena, record, 3, 6, _statements);
 	const node = arena.view(record);
 	return node as unknown as T.SourceFile.Bound;
 }
@@ -129,7 +129,7 @@ function buildSourceFile$patch(source: object, config: Partial<T.SourceFile.Conf
 	handle?.verifyStored?.(TSKindId.SourceFile as const, { _shebang, _statements });
 	const record = arena.copy(source, TSKindId.SourceFile as const);
 	patchCell(arena, record, 2, 2, _shebang);
-	patchList(arena, record, 3, 10, _statements);
+	patchList(arena, record, 3, 6, _statements);
 	const node = arena.view(record);
 	return node as unknown as T.SourceFile.Bound;
 }
@@ -267,7 +267,7 @@ export function buildMacroRule(config: T.MacroRule.Config): T.MacroRule.Bound {
 	handle?.verifyStored?.(TSKindId.MacroRule as const, { _left, _right });
 	const record = arena.record(TSKindId.MacroRule as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 8, _right);
+	storeCell(arena, record, 3, 5, _right);
 	const node = arena.view(record);
 	return node as unknown as T.MacroRule.Bound;
 }
@@ -282,7 +282,7 @@ function buildMacroRule$patch(source: object, config: T.MacroRule.Config): T.Mac
 	handle?.verifyStored?.(TSKindId.MacroRule as const, { _left, _right });
 	const record = arena.copy(source, TSKindId.MacroRule as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 8, _right);
+	patchCell(arena, record, 3, 5, _right);
 	const node = arena.view(record);
 	return node as unknown as T.MacroRule.Bound;
 }
@@ -316,7 +316,7 @@ export function buildTokenBindingPattern(config: T.TokenBindingPattern.Config): 
 	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _type });
 	const record = arena.record(TSKindId.TokenBindingPattern as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 10, _type);
+	storeCell(arena, record, 3, 6, _type);
 	const node = arena.view(record);
 	return node as unknown as T.TokenBindingPattern.Bound;
 }
@@ -334,7 +334,7 @@ function buildTokenBindingPattern$patch(
 	handle?.verifyStored?.(TSKindId.TokenBindingPattern as const, { _name, _type });
 	const record = arena.copy(source, TSKindId.TokenBindingPattern as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 10, _type);
+	patchCell(arena, record, 3, 6, _type);
 	const node = arena.view(record);
 	return node as unknown as T.TokenBindingPattern.Bound;
 }
@@ -382,8 +382,8 @@ export function buildTokenRepetitionPattern(config: T.TokenRepetitionPattern.Con
 	handle?.verifyStored?.(TSKindId.TokenRepetitionPattern as const, { _token_patterns, _separator, _operator });
 	const record = arena.record(TSKindId.TokenRepetitionPattern as const);
 	storeList(arena, record, 2, 2, _token_patterns);
-	storeCell(arena, record, 3, 4, _separator);
-	storeCell(arena, record, 4, 9, _operator);
+	storeCell(arena, record, 3, 3, _separator);
+	storeCell(arena, record, 4, 6, _operator);
 	const node = arena.view(record);
 	return node as unknown as T.TokenRepetitionPattern.Bound;
 }
@@ -409,8 +409,8 @@ function buildTokenRepetitionPattern$patch(
 	handle?.verifyStored?.(TSKindId.TokenRepetitionPattern as const, { _token_patterns, _separator, _operator });
 	const record = arena.copy(source, TSKindId.TokenRepetitionPattern as const);
 	patchList(arena, record, 2, 2, _token_patterns);
-	patchCell(arena, record, 3, 4, _separator);
-	patchCell(arena, record, 4, 9, _operator);
+	patchCell(arena, record, 3, 3, _separator);
+	patchCell(arena, record, 4, 6, _operator);
 	const node = arena.view(record);
 	return node as unknown as T.TokenRepetitionPattern.Bound;
 }
@@ -467,8 +467,8 @@ export function buildTokenRepetition(config: T.TokenRepetition.Config): T.TokenR
 	handle?.verifyStored?.(TSKindId.TokenRepetition as const, { _tokens, _separator, _operator });
 	const record = arena.record(TSKindId.TokenRepetition as const);
 	storeList(arena, record, 2, 2, _tokens);
-	storeCell(arena, record, 3, 4, _separator);
-	storeCell(arena, record, 4, 9, _operator);
+	storeCell(arena, record, 3, 3, _separator);
+	storeCell(arena, record, 4, 6, _operator);
 	const node = arena.view(record);
 	return node as unknown as T.TokenRepetition.Bound;
 }
@@ -485,8 +485,8 @@ function buildTokenRepetition$patch(source: object, config: T.TokenRepetition.Co
 	handle?.verifyStored?.(TSKindId.TokenRepetition as const, { _tokens, _separator, _operator });
 	const record = arena.copy(source, TSKindId.TokenRepetition as const);
 	patchList(arena, record, 2, 2, _tokens);
-	patchCell(arena, record, 3, 4, _separator);
-	patchCell(arena, record, 4, 9, _operator);
+	patchCell(arena, record, 3, 3, _separator);
+	patchCell(arena, record, 4, 6, _operator);
 	const node = arena.view(record);
 	return node as unknown as T.TokenRepetition.Bound;
 }
@@ -1197,7 +1197,7 @@ export function buildAttribute(config: T.Attribute.Config): T.Attribute.Bound {
 	handle?.verifyStored?.(TSKindId.Attribute as const, { _path, _input });
 	const record = arena.record(TSKindId.Attribute as const);
 	storeCell(arena, record, 2, 2, _path);
-	storeCell(arena, record, 3, 7, _input);
+	storeCell(arena, record, 3, 6, _input);
 	const node = arena.view(record);
 	return node as unknown as T.Attribute.Bound;
 }
@@ -1217,7 +1217,7 @@ function buildAttribute$patch(source: object, config: T.Attribute.Config): T.Att
 	handle?.verifyStored?.(TSKindId.Attribute as const, { _path, _input });
 	const record = arena.copy(source, TSKindId.Attribute as const);
 	patchCell(arena, record, 2, 2, _path);
-	patchCell(arena, record, 3, 7, _input);
+	patchCell(arena, record, 3, 6, _input);
 	const node = arena.view(record);
 	return node as unknown as T.Attribute.Bound;
 }
@@ -1327,10 +1327,10 @@ export function buildUnionItem(config: T.UnionItem.Config): T.UnionItem.Bound {
 	});
 	const record = arena.record(TSKindId.UnionItem as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type_parameters);
-	storeCell(arena, record, 5, 42, _where_clause);
-	storeCell(arena, record, 6, 52, _body);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type_parameters);
+	storeCell(arena, record, 5, 26, _where_clause);
+	storeCell(arena, record, 6, 31, _body);
 	const node = arena.view(record);
 	return node as unknown as T.UnionItem.Bound;
 }
@@ -1363,10 +1363,10 @@ function buildUnionItem$patch(source: object, config: T.UnionItem.Config): T.Uni
 	});
 	const record = arena.copy(source, TSKindId.UnionItem as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type_parameters);
-	patchCell(arena, record, 5, 42, _where_clause);
-	patchCell(arena, record, 6, 52, _body);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type_parameters);
+	patchCell(arena, record, 5, 26, _where_clause);
+	patchCell(arena, record, 6, 31, _body);
 	const node = arena.view(record);
 	return node as unknown as T.UnionItem.Bound;
 }
@@ -1473,10 +1473,10 @@ export function buildEnumItem(config: T.EnumItem.Config): T.EnumItem.Bound {
 	});
 	const record = arena.record(TSKindId.EnumItem as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type_parameters);
-	storeCell(arena, record, 5, 42, _where_clause);
-	storeCell(arena, record, 6, 52, _body);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type_parameters);
+	storeCell(arena, record, 5, 26, _where_clause);
+	storeCell(arena, record, 6, 31, _body);
 	const node = arena.view(record);
 	return node as unknown as T.EnumItem.Bound;
 }
@@ -1509,10 +1509,10 @@ function buildEnumItem$patch(source: object, config: T.EnumItem.Config): T.EnumI
 	});
 	const record = arena.copy(source, TSKindId.EnumItem as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type_parameters);
-	patchCell(arena, record, 5, 42, _where_clause);
-	patchCell(arena, record, 6, 52, _body);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type_parameters);
+	patchCell(arena, record, 5, 26, _where_clause);
+	patchCell(arena, record, 6, 31, _body);
 	const node = arena.view(record);
 	return node as unknown as T.EnumItem.Bound;
 }
@@ -1682,9 +1682,9 @@ export function buildEnumVariant(config: T.EnumVariant.Config): T.EnumVariant.Bo
 	handle?.verifyStored?.(TSKindId.EnumVariant as const, { _visibility_modifier, _name, _body, _value });
 	const record = arena.record(TSKindId.EnumVariant as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 28, _body);
-	storeCell(arena, record, 5, 38, _value);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 19, _body);
+	storeCell(arena, record, 5, 24, _value);
 	const node = arena.view(record);
 	return node as unknown as T.EnumVariant.Bound;
 }
@@ -1707,9 +1707,9 @@ function buildEnumVariant$patch(source: object, config: T.EnumVariant.Config): T
 	handle?.verifyStored?.(TSKindId.EnumVariant as const, { _visibility_modifier, _name, _body, _value });
 	const record = arena.copy(source, TSKindId.EnumVariant as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 28, _body);
-	patchCell(arena, record, 5, 38, _value);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 19, _body);
+	patchCell(arena, record, 5, 24, _value);
 	const node = arena.view(record);
 	return node as unknown as T.EnumVariant.Bound;
 }
@@ -1847,8 +1847,8 @@ export function buildFieldDeclaration(config: T.FieldDeclaration.Config): T.Fiel
 	handle?.verifyStored?.(TSKindId.FieldDeclaration as const, { _visibility_modifier, _name, _type });
 	const record = arena.record(TSKindId.FieldDeclaration as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type);
 	const node = arena.view(record);
 	return node as unknown as T.FieldDeclaration.Bound;
 }
@@ -1870,8 +1870,8 @@ function buildFieldDeclaration$patch(source: object, config: T.FieldDeclaration.
 	handle?.verifyStored?.(TSKindId.FieldDeclaration as const, { _visibility_modifier, _name, _type });
 	const record = arena.copy(source, TSKindId.FieldDeclaration as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type);
 	const node = arena.view(record);
 	return node as unknown as T.FieldDeclaration.Bound;
 }
@@ -2007,8 +2007,8 @@ export function buildExternCrateDeclaration(config: T.ExternCrateDeclaration.Con
 	handle?.verifyStored?.(TSKindId.ExternCrateDeclaration as const, { _visibility_modifier, _name, _alias });
 	const record = arena.record(TSKindId.ExternCrateDeclaration as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 28, _alias);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 19, _alias);
 	const node = arena.view(record);
 	return node as unknown as T.ExternCrateDeclaration.Bound;
 }
@@ -2032,8 +2032,8 @@ function buildExternCrateDeclaration$patch(
 	handle?.verifyStored?.(TSKindId.ExternCrateDeclaration as const, { _visibility_modifier, _name, _alias });
 	const record = arena.copy(source, TSKindId.ExternCrateDeclaration as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 28, _alias);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 19, _alias);
 	const node = arena.view(record);
 	return node as unknown as T.ExternCrateDeclaration.Bound;
 }
@@ -2090,9 +2090,9 @@ export function buildConstItem(config: T.ConstItem.Config): T.ConstItem.Bound {
 	handle?.verifyStored?.(TSKindId.ConstItem as const, { _visibility_modifier, _name, _type, _value });
 	const record = arena.record(TSKindId.ConstItem as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 28, _type);
-	storeCell(arena, record, 5, 33, _value);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 19, _type);
+	storeCell(arena, record, 5, 23, _value);
 	const node = arena.view(record);
 	return node as unknown as T.ConstItem.Bound;
 }
@@ -2118,9 +2118,9 @@ function buildConstItem$patch(source: object, config: T.ConstItem.Config): T.Con
 	handle?.verifyStored?.(TSKindId.ConstItem as const, { _visibility_modifier, _name, _type, _value });
 	const record = arena.copy(source, TSKindId.ConstItem as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 28, _type);
-	patchCell(arena, record, 5, 33, _value);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 19, _type);
+	patchCell(arena, record, 5, 23, _value);
 	const node = arena.view(record);
 	return node as unknown as T.ConstItem.Bound;
 }
@@ -2194,9 +2194,9 @@ export function buildStaticItem(config: T.StaticItem.Config): T.StaticItem.Bound
 	storeCell(arena, record, 3, 3, _visibility_modifier);
 	if (_by_reference) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
-	storeCell(arena, record, 4, 24, _name);
-	storeCell(arena, record, 5, 29, _type);
-	storeCell(arena, record, 6, 34, _value);
+	storeCell(arena, record, 4, 17, _name);
+	storeCell(arena, record, 5, 20, _type);
+	storeCell(arena, record, 6, 24, _value);
 	const node = arena.view(record);
 	return node as unknown as T.StaticItem.Bound;
 }
@@ -2235,9 +2235,9 @@ function buildStaticItem$patch(source: object, config: T.StaticItem.Config): T.S
 	patchCell(arena, record, 3, 3, _visibility_modifier);
 	patchFlag(record, 2, 1, _by_reference);
 	patchFlag(record, 2, 2, _mutable);
-	patchCell(arena, record, 4, 24, _name);
-	patchCell(arena, record, 5, 29, _type);
-	patchCell(arena, record, 6, 34, _value);
+	patchCell(arena, record, 4, 17, _name);
+	patchCell(arena, record, 5, 20, _type);
+	patchCell(arena, record, 6, 24, _value);
 	const node = arena.view(record);
 	return node as unknown as T.StaticItem.Bound;
 }
@@ -2328,11 +2328,11 @@ export function buildTypeItem(config: T.TypeItem.Config): T.TypeItem.Bound {
 	});
 	const record = arena.record(TSKindId.TypeItem as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type_parameters);
-	storeCell(arena, record, 5, 42, _where_clause);
-	storeCell(arena, record, 6, 52, _value);
-	storeCell(arena, record, 7, 57, _trailing_where_clause);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type_parameters);
+	storeCell(arena, record, 5, 26, _where_clause);
+	storeCell(arena, record, 6, 31, _value);
+	storeCell(arena, record, 7, 35, _trailing_where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.TypeItem.Bound;
 }
@@ -2371,11 +2371,11 @@ function buildTypeItem$patch(source: object, config: T.TypeItem.Config): T.TypeI
 	});
 	const record = arena.copy(source, TSKindId.TypeItem as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type_parameters);
-	patchCell(arena, record, 5, 42, _where_clause);
-	patchCell(arena, record, 6, 52, _value);
-	patchCell(arena, record, 7, 57, _trailing_where_clause);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type_parameters);
+	patchCell(arena, record, 5, 26, _where_clause);
+	patchCell(arena, record, 6, 31, _value);
+	patchCell(arena, record, 7, 35, _trailing_where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.TypeItem.Bound;
 }
@@ -2497,13 +2497,13 @@ export function buildFunctionItem(config: T.FunctionItem.Config): T.FunctionItem
 	});
 	const record = arena.record(TSKindId.FunctionItem as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _function_modifiers);
-	storeCell(arena, record, 4, 29, _name);
-	storeCell(arena, record, 5, 37, _type_parameters);
-	storeCell(arena, record, 6, 47, _parameters);
-	storeCell(arena, record, 7, 52, _return_type);
-	storeCell(arena, record, 8, 57, _where_clause);
-	storeCell(arena, record, 9, 67, _body);
+	storeCell(arena, record, 3, 16, _function_modifiers);
+	storeCell(arena, record, 4, 19, _name);
+	storeCell(arena, record, 5, 24, _type_parameters);
+	storeCell(arena, record, 6, 29, _parameters);
+	storeCell(arena, record, 7, 32, _return_type);
+	storeCell(arena, record, 8, 36, _where_clause);
+	storeCell(arena, record, 9, 41, _body);
 	const node = arena.view(record);
 	return node as unknown as T.FunctionItem.Bound;
 }
@@ -2546,13 +2546,13 @@ function buildFunctionItem$patch(source: object, config: T.FunctionItem.Config):
 	});
 	const record = arena.copy(source, TSKindId.FunctionItem as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _function_modifiers);
-	patchCell(arena, record, 4, 29, _name);
-	patchCell(arena, record, 5, 37, _type_parameters);
-	patchCell(arena, record, 6, 47, _parameters);
-	patchCell(arena, record, 7, 52, _return_type);
-	patchCell(arena, record, 8, 57, _where_clause);
-	patchCell(arena, record, 9, 67, _body);
+	patchCell(arena, record, 3, 16, _function_modifiers);
+	patchCell(arena, record, 4, 19, _name);
+	patchCell(arena, record, 5, 24, _type_parameters);
+	patchCell(arena, record, 6, 29, _parameters);
+	patchCell(arena, record, 7, 32, _return_type);
+	patchCell(arena, record, 8, 36, _where_clause);
+	patchCell(arena, record, 9, 41, _body);
 	const node = arena.view(record);
 	return node as unknown as T.FunctionItem.Bound;
 }
@@ -2671,12 +2671,12 @@ export function buildFunctionSignatureItem(config: T.FunctionSignatureItem.Confi
 	});
 	const record = arena.record(TSKindId.FunctionSignatureItem as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _function_modifiers);
-	storeCell(arena, record, 4, 29, _name);
-	storeCell(arena, record, 5, 37, _type_parameters);
-	storeCell(arena, record, 6, 47, _parameters);
-	storeCell(arena, record, 7, 52, _return_type);
-	storeCell(arena, record, 8, 57, _where_clause);
+	storeCell(arena, record, 3, 16, _function_modifiers);
+	storeCell(arena, record, 4, 19, _name);
+	storeCell(arena, record, 5, 24, _type_parameters);
+	storeCell(arena, record, 6, 29, _parameters);
+	storeCell(arena, record, 7, 32, _return_type);
+	storeCell(arena, record, 8, 36, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.FunctionSignatureItem.Bound;
 }
@@ -2719,12 +2719,12 @@ function buildFunctionSignatureItem$patch(
 	});
 	const record = arena.copy(source, TSKindId.FunctionSignatureItem as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _function_modifiers);
-	patchCell(arena, record, 4, 29, _name);
-	patchCell(arena, record, 5, 37, _type_parameters);
-	patchCell(arena, record, 6, 47, _parameters);
-	patchCell(arena, record, 7, 52, _return_type);
-	patchCell(arena, record, 8, 57, _where_clause);
+	patchCell(arena, record, 3, 16, _function_modifiers);
+	patchCell(arena, record, 4, 19, _name);
+	patchCell(arena, record, 5, 24, _type_parameters);
+	patchCell(arena, record, 6, 29, _parameters);
+	patchCell(arena, record, 7, 32, _return_type);
+	patchCell(arena, record, 8, 36, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.FunctionSignatureItem.Bound;
 }
@@ -2948,7 +2948,7 @@ export function buildWherePredicate(config: T.WherePredicate.Config): T.WherePre
 	handle?.verifyStored?.(TSKindId.WherePredicate as const, { _left, _bounds });
 	const record = arena.record(TSKindId.WherePredicate as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _bounds);
+	storeCell(arena, record, 3, 6, _bounds);
 	const node = arena.view(record);
 	return node as unknown as T.WherePredicate.Bound;
 }
@@ -2966,7 +2966,7 @@ function buildWherePredicate$patch(source: object, config: T.WherePredicate.Conf
 	handle?.verifyStored?.(TSKindId.WherePredicate as const, { _left, _bounds });
 	const record = arena.copy(source, TSKindId.WherePredicate as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _bounds);
+	patchCell(arena, record, 3, 6, _bounds);
 	const node = arena.view(record);
 	return node as unknown as T.WherePredicate.Bound;
 }
@@ -3042,11 +3042,11 @@ export function buildTraitItem(config: T.TraitItem.Config): T.TraitItem.Bound {
 	const record = arena.record(TSKindId.TraitItem as const);
 	storeCell(arena, record, 3, 3, _visibility_modifier);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
-	storeCell(arena, record, 4, 24, _name);
-	storeCell(arena, record, 5, 33, _type_parameters);
-	storeCell(arena, record, 6, 43, _bounds);
-	storeCell(arena, record, 7, 49, _where_clause);
-	storeCell(arena, record, 8, 59, _body);
+	storeCell(arena, record, 4, 17, _name);
+	storeCell(arena, record, 5, 22, _type_parameters);
+	storeCell(arena, record, 6, 27, _bounds);
+	storeCell(arena, record, 7, 30, _where_clause);
+	storeCell(arena, record, 8, 35, _body);
 	const node = arena.view(record);
 	return node as unknown as T.TraitItem.Bound;
 }
@@ -3086,11 +3086,11 @@ function buildTraitItem$patch(source: object, config: T.TraitItem.Config): T.Tra
 	const record = arena.copy(source, TSKindId.TraitItem as const);
 	patchCell(arena, record, 3, 3, _visibility_modifier);
 	patchFlag(record, 2, 1, _unsafe);
-	patchCell(arena, record, 4, 24, _name);
-	patchCell(arena, record, 5, 33, _type_parameters);
-	patchCell(arena, record, 6, 43, _bounds);
-	patchCell(arena, record, 7, 49, _where_clause);
-	patchCell(arena, record, 8, 59, _body);
+	patchCell(arena, record, 4, 17, _name);
+	patchCell(arena, record, 5, 22, _type_parameters);
+	patchCell(arena, record, 6, 27, _bounds);
+	patchCell(arena, record, 7, 30, _where_clause);
+	patchCell(arena, record, 8, 35, _body);
 	const node = arena.view(record);
 	return node as unknown as T.TraitItem.Bound;
 }
@@ -3179,9 +3179,9 @@ export function buildAssociatedType(config: T.AssociatedType.Config): T.Associat
 	handle?.verifyStored?.(TSKindId.AssociatedType as const, { _name, _type_parameters, _bounds, _where_clause });
 	const record = arena.record(TSKindId.AssociatedType as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 11, _type_parameters);
-	storeCell(arena, record, 4, 21, _bounds);
-	storeCell(arena, record, 5, 27, _where_clause);
+	storeCell(arena, record, 3, 7, _type_parameters);
+	storeCell(arena, record, 4, 12, _bounds);
+	storeCell(arena, record, 5, 15, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.AssociatedType.Bound;
 }
@@ -3206,9 +3206,9 @@ function buildAssociatedType$patch(source: object, config: T.AssociatedType.Conf
 	handle?.verifyStored?.(TSKindId.AssociatedType as const, { _name, _type_parameters, _bounds, _where_clause });
 	const record = arena.copy(source, TSKindId.AssociatedType as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 11, _type_parameters);
-	patchCell(arena, record, 4, 21, _bounds);
-	patchCell(arena, record, 5, 27, _where_clause);
+	patchCell(arena, record, 3, 7, _type_parameters);
+	patchCell(arena, record, 4, 12, _bounds);
+	patchCell(arena, record, 5, 15, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.AssociatedType.Bound;
 }
@@ -3324,7 +3324,7 @@ export function buildHigherRankedTraitBound(config: T.HigherRankedTraitBound.Con
 	handle?.verifyStored?.(TSKindId.HigherRankedTraitBound as const, { _type_parameters, _type });
 	const record = arena.record(TSKindId.HigherRankedTraitBound as const);
 	storeCell(arena, record, 2, 2, _type_parameters);
-	storeCell(arena, record, 3, 12, _type);
+	storeCell(arena, record, 3, 7, _type);
 	const node = arena.view(record);
 	return node as unknown as T.HigherRankedTraitBound.Bound;
 }
@@ -3346,7 +3346,7 @@ function buildHigherRankedTraitBound$patch(
 	handle?.verifyStored?.(TSKindId.HigherRankedTraitBound as const, { _type_parameters, _type });
 	const record = arena.copy(source, TSKindId.HigherRankedTraitBound as const);
 	patchCell(arena, record, 2, 2, _type_parameters);
-	patchCell(arena, record, 3, 12, _type);
+	patchCell(arena, record, 3, 7, _type);
 	const node = arena.view(record);
 	return node as unknown as T.HigherRankedTraitBound.Bound;
 }
@@ -3528,8 +3528,8 @@ export function buildConstParameter(config: T.ConstParameter.Config): T.ConstPar
 	handle?.verifyStored?.(TSKindId.ConstParameter as const, { _name, _type, _default });
 	const record = arena.record(TSKindId.ConstParameter as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _type);
-	storeCell(arena, record, 4, 12, _default);
+	storeCell(arena, record, 3, 5, _type);
+	storeCell(arena, record, 4, 9, _default);
 	const node = arena.view(record);
 	return node as unknown as T.ConstParameter.Bound;
 }
@@ -3548,8 +3548,8 @@ function buildConstParameter$patch(source: object, config: T.ConstParameter.Conf
 	handle?.verifyStored?.(TSKindId.ConstParameter as const, { _name, _type, _default });
 	const record = arena.copy(source, TSKindId.ConstParameter as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _type);
-	patchCell(arena, record, 4, 12, _default);
+	patchCell(arena, record, 3, 5, _type);
+	patchCell(arena, record, 4, 9, _default);
 	const node = arena.view(record);
 	return node as unknown as T.ConstParameter.Bound;
 }
@@ -3598,8 +3598,8 @@ export function buildTypeParameter(config: T.TypeParameter.Config): T.TypeParame
 	handle?.verifyStored?.(TSKindId.TypeParameter as const, { _name, _bounds, _default });
 	const record = arena.record(TSKindId.TypeParameter as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 11, _bounds);
-	storeCell(arena, record, 4, 17, _default);
+	storeCell(arena, record, 3, 7, _bounds);
+	storeCell(arena, record, 4, 10, _default);
 	const node = arena.view(record);
 	return node as unknown as T.TypeParameter.Bound;
 }
@@ -3621,8 +3621,8 @@ function buildTypeParameter$patch(source: object, config: T.TypeParameter.Config
 	handle?.verifyStored?.(TSKindId.TypeParameter as const, { _name, _bounds, _default });
 	const record = arena.copy(source, TSKindId.TypeParameter as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 11, _bounds);
-	patchCell(arena, record, 4, 17, _default);
+	patchCell(arena, record, 3, 7, _bounds);
+	patchCell(arena, record, 4, 10, _default);
 	const node = arena.view(record);
 	return node as unknown as T.TypeParameter.Bound;
 }
@@ -3663,7 +3663,7 @@ export function buildLifetimeParameter(config: T.LifetimeParameter.Config): T.Li
 	handle?.verifyStored?.(TSKindId.LifetimeParameter as const, { _name, _bounds });
 	const record = arena.record(TSKindId.LifetimeParameter as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 11, _bounds);
+	storeCell(arena, record, 3, 7, _bounds);
 	const node = arena.view(record);
 	return node as unknown as T.LifetimeParameter.Bound;
 }
@@ -3678,7 +3678,7 @@ function buildLifetimeParameter$patch(source: object, config: T.LifetimeParamete
 	handle?.verifyStored?.(TSKindId.LifetimeParameter as const, { _name, _bounds });
 	const record = arena.copy(source, TSKindId.LifetimeParameter as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 11, _bounds);
+	patchCell(arena, record, 3, 7, _bounds);
 	const node = arena.view(record);
 	return node as unknown as T.LifetimeParameter.Bound;
 }
@@ -3734,9 +3734,9 @@ export function buildLetDeclaration(config: T.LetDeclaration.Config): T.LetDecla
 	const record = arena.record(TSKindId.LetDeclaration as const);
 	if (_mutable) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record, 3, 3, _name);
-	storeCell(arena, record, 4, 8, _type);
-	storeCell(arena, record, 5, 13, _value);
-	storeCell(arena, record, 6, 18, _alternative);
+	storeCell(arena, record, 4, 7, _type);
+	storeCell(arena, record, 5, 11, _value);
+	storeCell(arena, record, 6, 15, _alternative);
 	const node = arena.view(record);
 	return node as unknown as T.LetDeclaration.Bound;
 }
@@ -3765,9 +3765,9 @@ function buildLetDeclaration$patch(source: object, config: T.LetDeclaration.Conf
 	const record = arena.copy(source, TSKindId.LetDeclaration as const);
 	patchFlag(record, 2, 1, _mutable);
 	patchCell(arena, record, 3, 3, _name);
-	patchCell(arena, record, 4, 8, _type);
-	patchCell(arena, record, 5, 13, _value);
-	patchCell(arena, record, 6, 18, _alternative);
+	patchCell(arena, record, 4, 7, _type);
+	patchCell(arena, record, 5, 11, _value);
+	patchCell(arena, record, 6, 15, _alternative);
 	const node = arena.view(record);
 	return node as unknown as T.LetDeclaration.Bound;
 }
@@ -3825,7 +3825,7 @@ export function buildUseDeclaration(config: T.UseDeclaration.Config): T.UseDecla
 	handle?.verifyStored?.(TSKindId.UseDeclaration as const, { _visibility_modifier, _argument });
 	const record = arena.record(TSKindId.UseDeclaration as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _argument);
+	storeCell(arena, record, 3, 16, _argument);
 	const node = arena.view(record);
 	return node as unknown as T.UseDeclaration.Bound;
 }
@@ -3846,7 +3846,7 @@ function buildUseDeclaration$patch(source: object, config: T.UseDeclaration.Conf
 	handle?.verifyStored?.(TSKindId.UseDeclaration as const, { _visibility_modifier, _argument });
 	const record = arena.copy(source, TSKindId.UseDeclaration as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _argument);
+	patchCell(arena, record, 3, 16, _argument);
 	const node = arena.view(record);
 	return node as unknown as T.UseDeclaration.Bound;
 }
@@ -3886,7 +3886,7 @@ export function buildScopedUseList(config: Partial<T.ScopedUseList.Config> = {})
 	handle?.verifyStored?.(TSKindId.ScopedUseList as const, { _path, _list });
 	const record = arena.record(TSKindId.ScopedUseList as const);
 	storeCell(arena, record, 2, 2, _path);
-	storeCell(arena, record, 3, 7, _list);
+	storeCell(arena, record, 3, 6, _list);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedUseList.Bound;
 }
@@ -3906,7 +3906,7 @@ function buildScopedUseList$patch(source: object, config: Partial<T.ScopedUseLis
 	handle?.verifyStored?.(TSKindId.ScopedUseList as const, { _path, _list });
 	const record = arena.copy(source, TSKindId.ScopedUseList as const);
 	patchCell(arena, record, 2, 2, _path);
-	patchCell(arena, record, 3, 7, _list);
+	patchCell(arena, record, 3, 6, _list);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedUseList.Bound;
 }
@@ -4048,7 +4048,7 @@ export function buildUseAsClause(config: T.UseAsClause.Config): T.UseAsClause.Bo
 	handle?.verifyStored?.(TSKindId.UseAsClause as const, { _name, _alias });
 	const record = arena.record(TSKindId.UseAsClause as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _alias);
+	storeCell(arena, record, 3, 6, _alias);
 	const node = arena.view(record);
 	return node as unknown as T.UseAsClause.Bound;
 }
@@ -4068,7 +4068,7 @@ function buildUseAsClause$patch(source: object, config: T.UseAsClause.Config): T
 	handle?.verifyStored?.(TSKindId.UseAsClause as const, { _name, _alias });
 	const record = arena.copy(source, TSKindId.UseAsClause as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _alias);
+	patchCell(arena, record, 3, 6, _alias);
 	const node = arena.view(record);
 	return node as unknown as T.UseAsClause.Bound;
 }
@@ -4338,7 +4338,7 @@ export function buildParameter(config: T.Parameter.Config): T.Parameter.Bound {
 	const record = arena.record(TSKindId.Parameter as const);
 	if (_mutable) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record, 3, 3, _name);
-	storeCell(arena, record, 4, 8, _type);
+	storeCell(arena, record, 4, 7, _type);
 	const node = arena.view(record);
 	return node as unknown as T.Parameter.Bound;
 }
@@ -4358,7 +4358,7 @@ function buildParameter$patch(source: object, config: T.Parameter.Config): T.Par
 	const record = arena.copy(source, TSKindId.Parameter as const);
 	patchFlag(record, 2, 1, _mutable);
 	patchCell(arena, record, 3, 3, _name);
-	patchCell(arena, record, 4, 8, _type);
+	patchCell(arena, record, 4, 7, _type);
 	const node = arena.view(record);
 	return node as unknown as T.Parameter.Bound;
 }
@@ -4553,7 +4553,7 @@ export function buildQualifiedType(config: T.QualifiedType.Config): T.QualifiedT
 	handle?.verifyStored?.(TSKindId.QualifiedType as const, { _type, _alias });
 	const record = arena.record(TSKindId.QualifiedType as const);
 	storeCell(arena, record, 2, 2, _type);
-	storeCell(arena, record, 3, 7, _alias);
+	storeCell(arena, record, 3, 6, _alias);
 	const node = arena.view(record);
 	return node as unknown as T.QualifiedType.Bound;
 }
@@ -4574,7 +4574,7 @@ function buildQualifiedType$patch(source: object, config: T.QualifiedType.Config
 	handle?.verifyStored?.(TSKindId.QualifiedType as const, { _type, _alias });
 	const record = arena.copy(source, TSKindId.QualifiedType as const);
 	patchCell(arena, record, 2, 2, _type);
-	patchCell(arena, record, 3, 7, _alias);
+	patchCell(arena, record, 3, 6, _alias);
 	const node = arena.view(record);
 	return node as unknown as T.QualifiedType.Bound;
 }
@@ -4647,7 +4647,7 @@ export function buildArrayType(config: T.ArrayType.Config): T.ArrayType.Bound {
 	handle?.verifyStored?.(TSKindId.ArrayType as const, { _element, _length });
 	const record = arena.record(TSKindId.ArrayType as const);
 	storeCell(arena, record, 2, 2, _element);
-	storeCell(arena, record, 3, 7, _length);
+	storeCell(arena, record, 3, 6, _length);
 	const node = arena.view(record);
 	return node as unknown as T.ArrayType.Bound;
 }
@@ -4665,7 +4665,7 @@ function buildArrayType$patch(source: object, config: T.ArrayType.Config): T.Arr
 	handle?.verifyStored?.(TSKindId.ArrayType as const, { _element, _length });
 	const record = arena.copy(source, TSKindId.ArrayType as const);
 	patchCell(arena, record, 2, 2, _element);
-	patchCell(arena, record, 3, 7, _length);
+	patchCell(arena, record, 3, 6, _length);
 	const node = arena.view(record);
 	return node as unknown as T.ArrayType.Bound;
 }
@@ -4787,9 +4787,9 @@ export function buildFunctionType(config: T.FunctionType.Config): T.FunctionType
 	handle?.verifyStored?.(TSKindId.FunctionType as const, { _for_lifetimes, _content, _parameters, _return_type });
 	const record = arena.record(TSKindId.FunctionType as const);
 	storeCell(arena, record, 2, 2, _for_lifetimes);
-	storeCell(arena, record, 3, 12, _content);
-	storeCell(arena, record, 4, 17, _parameters);
-	storeCell(arena, record, 5, 22, _return_type);
+	storeCell(arena, record, 3, 7, _content);
+	storeCell(arena, record, 4, 10, _parameters);
+	storeCell(arena, record, 5, 13, _return_type);
 	const node = arena.view(record);
 	return node as unknown as T.FunctionType.Bound;
 }
@@ -4815,9 +4815,9 @@ function buildFunctionType$patch(source: object, config: T.FunctionType.Config):
 	handle?.verifyStored?.(TSKindId.FunctionType as const, { _for_lifetimes, _content, _parameters, _return_type });
 	const record = arena.copy(source, TSKindId.FunctionType as const);
 	patchCell(arena, record, 2, 2, _for_lifetimes);
-	patchCell(arena, record, 3, 12, _content);
-	patchCell(arena, record, 4, 17, _parameters);
-	patchCell(arena, record, 5, 22, _return_type);
+	patchCell(arena, record, 3, 7, _content);
+	patchCell(arena, record, 4, 10, _parameters);
+	patchCell(arena, record, 5, 13, _return_type);
 	const node = arena.view(record);
 	return node as unknown as T.FunctionType.Bound;
 }
@@ -4938,7 +4938,7 @@ export function buildGenericFunction(config: T.GenericFunction.Config): T.Generi
 	handle?.verifyStored?.(TSKindId.GenericFunction as const, { _function, _type_arguments });
 	const record = arena.record(TSKindId.GenericFunction as const);
 	storeCell(arena, record, 2, 2, _function);
-	storeCell(arena, record, 3, 7, _type_arguments);
+	storeCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericFunction.Bound;
 }
@@ -4954,7 +4954,7 @@ function buildGenericFunction$patch(source: object, config: T.GenericFunction.Co
 	handle?.verifyStored?.(TSKindId.GenericFunction as const, { _function, _type_arguments });
 	const record = arena.copy(source, TSKindId.GenericFunction as const);
 	patchCell(arena, record, 2, 2, _function);
-	patchCell(arena, record, 3, 7, _type_arguments);
+	patchCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericFunction.Bound;
 }
@@ -5002,7 +5002,7 @@ export function buildGenericType(config: T.GenericType.Config): T.GenericType.Bo
 	handle?.verifyStored?.(TSKindId.GenericType as const, { _type, _type_arguments });
 	const record = arena.record(TSKindId.GenericType as const);
 	storeCell(arena, record, 2, 2, _type);
-	storeCell(arena, record, 3, 7, _type_arguments);
+	storeCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericType.Bound;
 }
@@ -5017,7 +5017,7 @@ function buildGenericType$patch(source: object, config: T.GenericType.Config): T
 	handle?.verifyStored?.(TSKindId.GenericType as const, { _type, _type_arguments });
 	const record = arena.copy(source, TSKindId.GenericType as const);
 	patchCell(arena, record, 2, 2, _type);
-	patchCell(arena, record, 3, 7, _type_arguments);
+	patchCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericType.Bound;
 }
@@ -5072,7 +5072,7 @@ export function buildGenericTypeWithTurbofish(
 	handle?.verifyStored?.(TSKindId.GenericTypeWithTurbofish as const, { _type, _type_arguments });
 	const record = arena.record(TSKindId.GenericTypeWithTurbofish as const);
 	storeCell(arena, record, 2, 2, _type);
-	storeCell(arena, record, 3, 7, _type_arguments);
+	storeCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericTypeWithTurbofish.Bound;
 }
@@ -5093,7 +5093,7 @@ function buildGenericTypeWithTurbofish$patch(
 	handle?.verifyStored?.(TSKindId.GenericTypeWithTurbofish as const, { _type, _type_arguments });
 	const record = arena.copy(source, TSKindId.GenericTypeWithTurbofish as const);
 	patchCell(arena, record, 2, 2, _type);
-	patchCell(arena, record, 3, 7, _type_arguments);
+	patchCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericTypeWithTurbofish.Bound;
 }
@@ -5146,7 +5146,7 @@ export function buildBoundedType(config: T.BoundedType.Config): T.BoundedType.Bo
 	handle?.verifyStored?.(TSKindId.BoundedType as const, { _left, _right });
 	const record = arena.record(TSKindId.BoundedType as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _right);
+	storeCell(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.BoundedType.Bound;
 }
@@ -5167,7 +5167,7 @@ function buildBoundedType$patch(source: object, config: T.BoundedType.Config): T
 	handle?.verifyStored?.(TSKindId.BoundedType as const, { _left, _right });
 	const record = arena.copy(source, TSKindId.BoundedType as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _right);
+	patchCell(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.BoundedType.Bound;
 }
@@ -5364,8 +5364,8 @@ export function buildTypeBinding(config: T.TypeBinding.Config): T.TypeBinding.Bo
 	handle?.verifyStored?.(TSKindId.TypeBinding as const, { _name, _type_arguments, _type });
 	const record = arena.record(TSKindId.TypeBinding as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 11, _type_arguments);
-	storeCell(arena, record, 4, 21, _type);
+	storeCell(arena, record, 3, 7, _type_arguments);
+	storeCell(arena, record, 4, 12, _type);
 	const node = arena.view(record);
 	return node as unknown as T.TypeBinding.Bound;
 }
@@ -5387,8 +5387,8 @@ function buildTypeBinding$patch(source: object, config: T.TypeBinding.Config): T
 	handle?.verifyStored?.(TSKindId.TypeBinding as const, { _name, _type_arguments, _type });
 	const record = arena.copy(source, TSKindId.TypeBinding as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 11, _type_arguments);
-	patchCell(arena, record, 4, 21, _type);
+	patchCell(arena, record, 3, 7, _type_arguments);
+	patchCell(arena, record, 4, 12, _type);
 	const node = arena.view(record);
 	return node as unknown as T.TypeBinding.Bound;
 }
@@ -5444,7 +5444,7 @@ export function buildReferenceType(config: T.ReferenceType.Config): T.ReferenceT
 	const record = arena.record(TSKindId.ReferenceType as const);
 	storeCell(arena, record, 3, 3, _lifetime);
 	if (_exclusive) storeFlag(record.data, record.base + 2, 1);
-	storeCell(arena, record, 4, 12, _type);
+	storeCell(arena, record, 4, 8, _type);
 	const node = arena.view(record);
 	return node as unknown as T.ReferenceType.Bound;
 }
@@ -5465,7 +5465,7 @@ function buildReferenceType$patch(source: object, config: T.ReferenceType.Config
 	const record = arena.copy(source, TSKindId.ReferenceType as const);
 	patchCell(arena, record, 3, 3, _lifetime);
 	patchFlag(record, 2, 1, _exclusive);
-	patchCell(arena, record, 4, 12, _type);
+	patchCell(arena, record, 4, 8, _type);
 	const node = arena.view(record);
 	return node as unknown as T.ReferenceType.Bound;
 }
@@ -5510,7 +5510,7 @@ export function buildAbstractType(config: T.AbstractType.Config): T.AbstractType
 	handle?.verifyStored?.(TSKindId.AbstractType as const, { _type_parameters, _trait });
 	const record = arena.record(TSKindId.AbstractType as const);
 	storeCell(arena, record, 2, 2, _type_parameters);
-	storeCell(arena, record, 3, 12, _trait);
+	storeCell(arena, record, 3, 7, _trait);
 	const node = arena.view(record);
 	return node as unknown as T.AbstractType.Bound;
 }
@@ -5527,7 +5527,7 @@ function buildAbstractType$patch(source: object, config: T.AbstractType.Config):
 	handle?.verifyStored?.(TSKindId.AbstractType as const, { _type_parameters, _trait });
 	const record = arena.copy(source, TSKindId.AbstractType as const);
 	patchCell(arena, record, 2, 2, _type_parameters);
-	patchCell(arena, record, 3, 12, _trait);
+	patchCell(arena, record, 3, 7, _trait);
 	const node = arena.view(record);
 	return node as unknown as T.AbstractType.Bound;
 }
@@ -5678,7 +5678,7 @@ export function buildMacroInvocation(config: T.MacroInvocation.Config): T.MacroI
 	handle?.verifyStored?.(TSKindId.MacroInvocation as const, { _function, _arguments });
 	const record = arena.record(TSKindId.MacroInvocation as const);
 	storeCell(arena, record, 2, 2, _function);
-	storeCell(arena, record, 3, 7, _arguments);
+	storeCell(arena, record, 3, 5, _arguments);
 	const node = arena.view(record);
 	return node as unknown as T.MacroInvocation.Bound;
 }
@@ -5693,7 +5693,7 @@ function buildMacroInvocation$patch(source: object, config: T.MacroInvocation.Co
 	handle?.verifyStored?.(TSKindId.MacroInvocation as const, { _function, _arguments });
 	const record = arena.copy(source, TSKindId.MacroInvocation as const);
 	patchCell(arena, record, 2, 2, _function);
-	patchCell(arena, record, 3, 7, _arguments);
+	patchCell(arena, record, 3, 5, _arguments);
 	const node = arena.view(record);
 	return node as unknown as T.MacroInvocation.Bound;
 }
@@ -5740,7 +5740,7 @@ export function buildScopedIdentifier(config: T.ScopedIdentifier.Config): T.Scop
 	handle?.verifyStored?.(TSKindId.ScopedIdentifier as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.ScopedIdentifier as const);
 	storeCell(arena, record, 2, 2, _qualifier);
-	storeCell(arena, record, 3, 7, _name);
+	storeCell(arena, record, 3, 6, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedIdentifier.Bound;
 }
@@ -5765,7 +5765,7 @@ function buildScopedIdentifier$patch(source: object, config: T.ScopedIdentifier.
 	handle?.verifyStored?.(TSKindId.ScopedIdentifier as const, { _qualifier, _name });
 	const record = arena.copy(source, TSKindId.ScopedIdentifier as const);
 	patchCell(arena, record, 2, 2, _qualifier);
-	patchCell(arena, record, 3, 7, _name);
+	patchCell(arena, record, 3, 6, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedIdentifier.Bound;
 }
@@ -5815,7 +5815,7 @@ export function buildScopedTypeIdentifierInExpressionPosition(
 	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.ScopedTypeIdentifierInExpressionPosition as const);
 	storeCell(arena, record, 2, 2, _qualifier);
-	storeCell(arena, record, 3, 7, _name);
+	storeCell(arena, record, 3, 6, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
 }
@@ -5841,7 +5841,7 @@ function buildScopedTypeIdentifierInExpressionPosition$patch(
 	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifierInExpressionPosition as const, { _qualifier, _name });
 	const record = arena.copy(source, TSKindId.ScopedTypeIdentifierInExpressionPosition as const);
 	patchCell(arena, record, 2, 2, _qualifier);
-	patchCell(arena, record, 3, 7, _name);
+	patchCell(arena, record, 3, 6, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedTypeIdentifierInExpressionPosition.Bound;
 }
@@ -5891,7 +5891,7 @@ export function buildScopedTypeIdentifier(config: T.ScopedTypeIdentifier.Config)
 	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifier as const, { _qualifier, _name });
 	const record = arena.record(TSKindId.ScopedTypeIdentifier as const);
 	storeCell(arena, record, 2, 2, _qualifier);
-	storeCell(arena, record, 3, 7, _name);
+	storeCell(arena, record, 3, 6, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedTypeIdentifier.Bound;
 }
@@ -5916,7 +5916,7 @@ function buildScopedTypeIdentifier$patch(
 	handle?.verifyStored?.(TSKindId.ScopedTypeIdentifier as const, { _qualifier, _name });
 	const record = arena.copy(source, TSKindId.ScopedTypeIdentifier as const);
 	patchCell(arena, record, 2, 2, _qualifier);
-	patchCell(arena, record, 3, 7, _name);
+	patchCell(arena, record, 3, 6, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ScopedTypeIdentifier.Bound;
 }
@@ -5950,7 +5950,7 @@ export function buildUnaryExpression(config: T.UnaryExpression.Config): T.UnaryE
 	handle?.verifyStored?.(TSKindId.UnaryExpression as const, { _operator, _argument });
 	const record = arena.record(TSKindId.UnaryExpression as const);
 	storeCell(arena, record, 2, 2, _operator);
-	storeCell(arena, record, 3, 7, _argument);
+	storeCell(arena, record, 3, 3, _argument);
 	const node = arena.view(record);
 	return node as unknown as T.UnaryExpression.Bound;
 }
@@ -5965,7 +5965,7 @@ function buildUnaryExpression$patch(source: object, config: T.UnaryExpression.Co
 	handle?.verifyStored?.(TSKindId.UnaryExpression as const, { _operator, _argument });
 	const record = arena.copy(source, TSKindId.UnaryExpression as const);
 	patchCell(arena, record, 2, 2, _operator);
-	patchCell(arena, record, 3, 7, _argument);
+	patchCell(arena, record, 3, 3, _argument);
 	const node = arena.view(record);
 	return node as unknown as T.UnaryExpression.Bound;
 }
@@ -6039,8 +6039,8 @@ export function buildBinaryExpression(config: T.BinaryExpression.Config): T.Bina
 	handle?.verifyStored?.(TSKindId.BinaryExpression as const, { _left, _operator, _right });
 	const record = arena.record(TSKindId.BinaryExpression as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _operator);
-	storeCell(arena, record, 4, 12, _right);
+	storeCell(arena, record, 3, 6, _operator);
+	storeCell(arena, record, 4, 7, _right);
 	const node = arena.view(record);
 	return node as unknown as T.BinaryExpression.Bound;
 }
@@ -6057,8 +6057,8 @@ function buildBinaryExpression$patch(source: object, config: T.BinaryExpression.
 	handle?.verifyStored?.(TSKindId.BinaryExpression as const, { _left, _operator, _right });
 	const record = arena.copy(source, TSKindId.BinaryExpression as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _operator);
-	patchCell(arena, record, 4, 12, _right);
+	patchCell(arena, record, 3, 6, _operator);
+	patchCell(arena, record, 4, 7, _right);
 	const node = arena.view(record);
 	return node as unknown as T.BinaryExpression.Bound;
 }
@@ -6099,7 +6099,7 @@ export function buildAssignmentExpression(config: T.AssignmentExpression.Config)
 	handle?.verifyStored?.(TSKindId.AssignmentExpression as const, { _left, _right });
 	const record = arena.record(TSKindId.AssignmentExpression as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _right);
+	storeCell(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.AssignmentExpression.Bound;
 }
@@ -6117,7 +6117,7 @@ function buildAssignmentExpression$patch(
 	handle?.verifyStored?.(TSKindId.AssignmentExpression as const, { _left, _right });
 	const record = arena.copy(source, TSKindId.AssignmentExpression as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _right);
+	patchCell(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.AssignmentExpression.Bound;
 }
@@ -6156,8 +6156,8 @@ export function buildCompoundAssignmentExpr(config: T.CompoundAssignmentExpr.Con
 	handle?.verifyStored?.(TSKindId.CompoundAssignmentExpr as const, { _left, _operator, _right });
 	const record = arena.record(TSKindId.CompoundAssignmentExpr as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _operator);
-	storeCell(arena, record, 4, 12, _right);
+	storeCell(arena, record, 3, 6, _operator);
+	storeCell(arena, record, 4, 7, _right);
 	const node = arena.view(record);
 	return node as unknown as T.CompoundAssignmentExpr.Bound;
 }
@@ -6177,8 +6177,8 @@ function buildCompoundAssignmentExpr$patch(
 	handle?.verifyStored?.(TSKindId.CompoundAssignmentExpr as const, { _left, _operator, _right });
 	const record = arena.copy(source, TSKindId.CompoundAssignmentExpr as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _operator);
-	patchCell(arena, record, 4, 12, _right);
+	patchCell(arena, record, 3, 6, _operator);
+	patchCell(arena, record, 4, 7, _right);
 	const node = arena.view(record);
 	return node as unknown as T.CompoundAssignmentExpr.Bound;
 }
@@ -6222,7 +6222,7 @@ export function buildTypeCastExpression(config: T.TypeCastExpression.Config): T.
 	handle?.verifyStored?.(TSKindId.TypeCastExpression as const, { _expression, _type });
 	const record = arena.record(TSKindId.TypeCastExpression as const);
 	storeCell(arena, record, 2, 2, _expression);
-	storeCell(arena, record, 3, 7, _type);
+	storeCell(arena, record, 3, 6, _type);
 	const node = arena.view(record);
 	return node as unknown as T.TypeCastExpression.Bound;
 }
@@ -6243,7 +6243,7 @@ function buildTypeCastExpression$patch(
 	handle?.verifyStored?.(TSKindId.TypeCastExpression as const, { _expression, _type });
 	const record = arena.copy(source, TSKindId.TypeCastExpression as const);
 	patchCell(arena, record, 2, 2, _expression);
-	patchCell(arena, record, 3, 7, _type);
+	patchCell(arena, record, 3, 6, _type);
 	const node = arena.view(record);
 	return node as unknown as T.TypeCastExpression.Bound;
 }
@@ -6359,7 +6359,7 @@ export function buildCallExpression(config: T.CallExpression.Config): T.CallExpr
 	handle?.verifyStored?.(TSKindId.CallExpression as const, { _function, _arguments });
 	const record = arena.record(TSKindId.CallExpression as const);
 	storeCell(arena, record, 2, 2, _function);
-	storeCell(arena, record, 3, 7, _arguments);
+	storeCell(arena, record, 3, 6, _arguments);
 	const node = arena.view(record);
 	return node as unknown as T.CallExpression.Bound;
 }
@@ -6379,7 +6379,7 @@ function buildCallExpression$patch(source: object, config: T.CallExpression.Conf
 	handle?.verifyStored?.(TSKindId.CallExpression as const, { _function, _arguments });
 	const record = arena.copy(source, TSKindId.CallExpression as const);
 	patchCell(arena, record, 2, 2, _function);
-	patchCell(arena, record, 3, 7, _arguments);
+	patchCell(arena, record, 3, 6, _arguments);
 	const node = arena.view(record);
 	return node as unknown as T.CallExpression.Bound;
 }
@@ -6542,7 +6542,7 @@ export function buildTupleExpression(config: T.TupleExpression.Config): T.TupleE
 	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _attributes, _elements });
 	const record = arena.record(TSKindId.TupleExpression as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _elements);
+	storeCell(arena, record, 3, 3, _elements);
 	const node = arena.view(record);
 	return node as unknown as T.TupleExpression.Bound;
 }
@@ -6557,7 +6557,7 @@ function buildTupleExpression$patch(source: object, config: T.TupleExpression.Co
 	handle?.verifyStored?.(TSKindId.TupleExpression as const, { _attributes, _elements });
 	const record = arena.copy(source, TSKindId.TupleExpression as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _elements);
+	patchCell(arena, record, 3, 3, _elements);
 	const node = arena.view(record);
 	return node as unknown as T.TupleExpression.Bound;
 }
@@ -6604,7 +6604,7 @@ export function buildStructExpression(config: T.StructExpression.Config): T.Stru
 	handle?.verifyStored?.(TSKindId.StructExpression as const, { _name, _body });
 	const record = arena.record(TSKindId.StructExpression as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _body);
+	storeCell(arena, record, 3, 5, _body);
 	const node = arena.view(record);
 	return node as unknown as T.StructExpression.Bound;
 }
@@ -6621,7 +6621,7 @@ function buildStructExpression$patch(source: object, config: T.StructExpression.
 	handle?.verifyStored?.(TSKindId.StructExpression as const, { _name, _body });
 	const record = arena.copy(source, TSKindId.StructExpression as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _body);
+	patchCell(arena, record, 3, 5, _body);
 	const node = arena.view(record);
 	return node as unknown as T.StructExpression.Bound;
 }
@@ -6756,7 +6756,7 @@ export function buildShorthandFieldInitializer(
 	handle?.verifyStored?.(TSKindId.ShorthandFieldInitializer as const, { _attributes, _field });
 	const record = arena.record(TSKindId.ShorthandFieldInitializer as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _field);
+	storeCell(arena, record, 3, 3, _field);
 	const node = arena.view(record);
 	return node as unknown as T.ShorthandFieldInitializer.Bound;
 }
@@ -6775,7 +6775,7 @@ function buildShorthandFieldInitializer$patch(
 	handle?.verifyStored?.(TSKindId.ShorthandFieldInitializer as const, { _attributes, _field });
 	const record = arena.copy(source, TSKindId.ShorthandFieldInitializer as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _field);
+	patchCell(arena, record, 3, 3, _field);
 	const node = arena.view(record);
 	return node as unknown as T.ShorthandFieldInitializer.Bound;
 }
@@ -6819,8 +6819,8 @@ export function buildFieldInitializer(config: T.FieldInitializer.Config): T.Fiel
 	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attributes, _field, _value });
 	const record = arena.record(TSKindId.FieldInitializer as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _field);
-	storeCell(arena, record, 4, 16, _value);
+	storeCell(arena, record, 3, 3, _field);
+	storeCell(arena, record, 4, 9, _value);
 	const node = arena.view(record);
 	return node as unknown as T.FieldInitializer.Bound;
 }
@@ -6839,8 +6839,8 @@ function buildFieldInitializer$patch(source: object, config: T.FieldInitializer.
 	handle?.verifyStored?.(TSKindId.FieldInitializer as const, { _attributes, _field, _value });
 	const record = arena.copy(source, TSKindId.FieldInitializer as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _field);
-	patchCell(arena, record, 4, 16, _value);
+	patchCell(arena, record, 3, 3, _field);
+	patchCell(arena, record, 4, 9, _value);
 	const node = arena.view(record);
 	return node as unknown as T.FieldInitializer.Bound;
 }
@@ -6930,8 +6930,8 @@ export function buildIfExpression(config: T.IfExpression.Config): T.IfExpression
 	handle?.verifyStored?.(TSKindId.IfExpression as const, { _condition, _consequence, _alternative });
 	const record = arena.record(TSKindId.IfExpression as const);
 	storeCell(arena, record, 2, 2, _condition);
-	storeCell(arena, record, 3, 7, _consequence);
-	storeCell(arena, record, 4, 12, _alternative);
+	storeCell(arena, record, 3, 6, _consequence);
+	storeCell(arena, record, 4, 9, _alternative);
 	const node = arena.view(record);
 	return node as unknown as T.IfExpression.Bound;
 }
@@ -6952,8 +6952,8 @@ function buildIfExpression$patch(source: object, config: T.IfExpression.Config):
 	handle?.verifyStored?.(TSKindId.IfExpression as const, { _condition, _consequence, _alternative });
 	const record = arena.copy(source, TSKindId.IfExpression as const);
 	patchCell(arena, record, 2, 2, _condition);
-	patchCell(arena, record, 3, 7, _consequence);
-	patchCell(arena, record, 4, 12, _alternative);
+	patchCell(arena, record, 3, 6, _consequence);
+	patchCell(arena, record, 4, 9, _alternative);
 	const node = arena.view(record);
 	return node as unknown as T.IfExpression.Bound;
 }
@@ -6992,7 +6992,7 @@ export function buildLetCondition(config: T.LetCondition.Config): T.LetCondition
 	handle?.verifyStored?.(TSKindId.LetCondition as const, { _pattern, _value });
 	const record = arena.record(TSKindId.LetCondition as const);
 	storeCell(arena, record, 2, 2, _pattern);
-	storeCell(arena, record, 3, 7, _value);
+	storeCell(arena, record, 3, 6, _value);
 	const node = arena.view(record);
 	return node as unknown as T.LetCondition.Bound;
 }
@@ -7007,7 +7007,7 @@ function buildLetCondition$patch(source: object, config: T.LetCondition.Config):
 	handle?.verifyStored?.(TSKindId.LetCondition as const, { _pattern, _value });
 	const record = arena.copy(source, TSKindId.LetCondition as const);
 	patchCell(arena, record, 2, 2, _pattern);
-	patchCell(arena, record, 3, 7, _value);
+	patchCell(arena, record, 3, 6, _value);
 	const node = arena.view(record);
 	return node as unknown as T.LetCondition.Bound;
 }
@@ -7042,7 +7042,7 @@ export function buildLetChain(config: T.LetChain.Config): T.LetChain.Bound {
 	handle?.verifyStored?.(TSKindId.LetChain as const, { _left, _right });
 	const record = arena.record(TSKindId.LetChain as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeList(arena, record, 3, 7, _right);
+	storeList(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.LetChain.Bound;
 }
@@ -7057,7 +7057,7 @@ function buildLetChain$patch(source: object, config: T.LetChain.Config): T.LetCh
 	handle?.verifyStored?.(TSKindId.LetChain as const, { _left, _right });
 	const record = arena.copy(source, TSKindId.LetChain as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchList(arena, record, 3, 7, _right);
+	patchList(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.LetChain.Bound;
 }
@@ -7129,7 +7129,7 @@ export function buildMatchExpression(config: T.MatchExpression.Config): T.MatchE
 	handle?.verifyStored?.(TSKindId.MatchExpression as const, { _subject, _body });
 	const record = arena.record(TSKindId.MatchExpression as const);
 	storeCell(arena, record, 2, 2, _subject);
-	storeCell(arena, record, 3, 7, _body);
+	storeCell(arena, record, 3, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MatchExpression.Bound;
 }
@@ -7144,7 +7144,7 @@ function buildMatchExpression$patch(source: object, config: T.MatchExpression.Co
 	handle?.verifyStored?.(TSKindId.MatchExpression as const, { _subject, _body });
 	const record = arena.copy(source, TSKindId.MatchExpression as const);
 	patchCell(arena, record, 2, 2, _subject);
-	patchCell(arena, record, 3, 7, _body);
+	patchCell(arena, record, 3, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MatchExpression.Bound;
 }
@@ -7277,9 +7277,9 @@ export function buildLastMatchArm(
 	handle?.verifyStored?.(TSKindId.LastMatchArm as const, { _attributes, _match, _body, _trailing_comma });
 	const record = arena.record(TSKindId.LastMatchArm as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _match);
-	storeCell(arena, record, 4, 9, _body);
-	storeCell(arena, record, 5, 14, _trailing_comma);
+	storeCell(arena, record, 3, 3, _match);
+	storeCell(arena, record, 4, 6, _body);
+	storeCell(arena, record, 5, 10, _trailing_comma);
 	const node = arena.view(record);
 	return node as unknown as T.LastMatchArm.Bound;
 }
@@ -7309,9 +7309,9 @@ function buildLastMatchArm$patch(
 	handle?.verifyStored?.(TSKindId.LastMatchArm as const, { _attributes, _match, _body, _trailing_comma });
 	const record = arena.copy(source, TSKindId.LastMatchArm as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _match);
-	patchCell(arena, record, 4, 9, _body);
-	patchCell(arena, record, 5, 14, _trailing_comma);
+	patchCell(arena, record, 3, 3, _match);
+	patchCell(arena, record, 4, 6, _body);
+	patchCell(arena, record, 5, 10, _trailing_comma);
 	const node = arena.view(record);
 	return node as unknown as T.LastMatchArm.Bound;
 }
@@ -7400,7 +7400,7 @@ export function buildMatchPattern(config: T.MatchPattern.Config): T.MatchPattern
 	handle?.verifyStored?.(TSKindId.MatchPattern as const, { _pattern, _condition });
 	const record = arena.record(TSKindId.MatchPattern as const);
 	storeCell(arena, record, 2, 2, _pattern);
-	storeCell(arena, record, 3, 7, _condition);
+	storeCell(arena, record, 3, 6, _condition);
 	const node = arena.view(record);
 	return node as unknown as T.MatchPattern.Bound;
 }
@@ -7415,7 +7415,7 @@ function buildMatchPattern$patch(source: object, config: T.MatchPattern.Config):
 	handle?.verifyStored?.(TSKindId.MatchPattern as const, { _pattern, _condition });
 	const record = arena.copy(source, TSKindId.MatchPattern as const);
 	patchCell(arena, record, 2, 2, _pattern);
-	patchCell(arena, record, 3, 7, _condition);
+	patchCell(arena, record, 3, 6, _condition);
 	const node = arena.view(record);
 	return node as unknown as T.MatchPattern.Bound;
 }
@@ -7455,8 +7455,8 @@ export function buildWhileExpression(config: T.WhileExpression.Config): T.WhileE
 	handle?.verifyStored?.(TSKindId.WhileExpression as const, { _label, _condition, _body });
 	const record = arena.record(TSKindId.WhileExpression as const);
 	storeCell(arena, record, 2, 2, _label);
-	storeCell(arena, record, 3, 11, _condition);
-	storeCell(arena, record, 4, 16, _body);
+	storeCell(arena, record, 3, 7, _condition);
+	storeCell(arena, record, 4, 11, _body);
 	const node = arena.view(record);
 	return node as unknown as T.WhileExpression.Bound;
 }
@@ -7473,8 +7473,8 @@ function buildWhileExpression$patch(source: object, config: T.WhileExpression.Co
 	handle?.verifyStored?.(TSKindId.WhileExpression as const, { _label, _condition, _body });
 	const record = arena.copy(source, TSKindId.WhileExpression as const);
 	patchCell(arena, record, 2, 2, _label);
-	patchCell(arena, record, 3, 11, _condition);
-	patchCell(arena, record, 4, 16, _body);
+	patchCell(arena, record, 3, 7, _condition);
+	patchCell(arena, record, 4, 11, _body);
 	const node = arena.view(record);
 	return node as unknown as T.WhileExpression.Bound;
 }
@@ -7515,7 +7515,7 @@ export function buildLoopExpression(config: Partial<T.LoopExpression.Config> = {
 	handle?.verifyStored?.(TSKindId.LoopExpression as const, { _label, _body });
 	const record = arena.record(TSKindId.LoopExpression as const);
 	storeCell(arena, record, 2, 2, _label);
-	storeCell(arena, record, 3, 11, _body);
+	storeCell(arena, record, 3, 7, _body);
 	const node = arena.view(record);
 	return node as unknown as T.LoopExpression.Bound;
 }
@@ -7533,7 +7533,7 @@ function buildLoopExpression$patch(
 	handle?.verifyStored?.(TSKindId.LoopExpression as const, { _label, _body });
 	const record = arena.copy(source, TSKindId.LoopExpression as const);
 	patchCell(arena, record, 2, 2, _label);
-	patchCell(arena, record, 3, 11, _body);
+	patchCell(arena, record, 3, 7, _body);
 	const node = arena.view(record);
 	return node as unknown as T.LoopExpression.Bound;
 }
@@ -7575,9 +7575,9 @@ export function buildForExpression(config: T.ForExpression.Config): T.ForExpress
 	handle?.verifyStored?.(TSKindId.ForExpression as const, { _label, _left, _right, _body });
 	const record = arena.record(TSKindId.ForExpression as const);
 	storeCell(arena, record, 2, 2, _label);
-	storeCell(arena, record, 3, 11, _left);
-	storeCell(arena, record, 4, 16, _right);
-	storeCell(arena, record, 5, 21, _body);
+	storeCell(arena, record, 3, 7, _left);
+	storeCell(arena, record, 4, 11, _right);
+	storeCell(arena, record, 5, 15, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ForExpression.Bound;
 }
@@ -7595,9 +7595,9 @@ function buildForExpression$patch(source: object, config: T.ForExpression.Config
 	handle?.verifyStored?.(TSKindId.ForExpression as const, { _label, _left, _right, _body });
 	const record = arena.copy(source, TSKindId.ForExpression as const);
 	patchCell(arena, record, 2, 2, _label);
-	patchCell(arena, record, 3, 11, _left);
-	patchCell(arena, record, 4, 16, _right);
-	patchCell(arena, record, 5, 21, _body);
+	patchCell(arena, record, 3, 7, _left);
+	patchCell(arena, record, 4, 11, _right);
+	patchCell(arena, record, 5, 15, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ForExpression.Bound;
 }
@@ -7801,7 +7801,7 @@ export function buildBreakExpression(config: Partial<T.BreakExpression.Config> =
 	handle?.verifyStored?.(TSKindId.BreakExpression as const, { _label, _expression });
 	const record = arena.record(TSKindId.BreakExpression as const);
 	storeCell(arena, record, 2, 2, _label);
-	storeCell(arena, record, 3, 11, _expression);
+	storeCell(arena, record, 3, 7, _expression);
 	const node = arena.view(record);
 	return node as unknown as T.BreakExpression.Bound;
 }
@@ -7819,7 +7819,7 @@ function buildBreakExpression$patch(
 	handle?.verifyStored?.(TSKindId.BreakExpression as const, { _label, _expression });
 	const record = arena.copy(source, TSKindId.BreakExpression as const);
 	patchCell(arena, record, 2, 2, _label);
-	patchCell(arena, record, 3, 11, _expression);
+	patchCell(arena, record, 3, 7, _expression);
 	const node = arena.view(record);
 	return node as unknown as T.BreakExpression.Bound;
 }
@@ -7891,7 +7891,7 @@ export function buildIndexExpression(config: T.IndexExpression.Config): T.IndexE
 	handle?.verifyStored?.(TSKindId.IndexExpression as const, { _object, _index });
 	const record = arena.record(TSKindId.IndexExpression as const);
 	storeCell(arena, record, 2, 2, _object);
-	storeCell(arena, record, 3, 7, _index);
+	storeCell(arena, record, 3, 6, _index);
 	const node = arena.view(record);
 	return node as unknown as T.IndexExpression.Bound;
 }
@@ -7906,7 +7906,7 @@ function buildIndexExpression$patch(source: object, config: T.IndexExpression.Co
 	handle?.verifyStored?.(TSKindId.IndexExpression as const, { _object, _index });
 	const record = arena.copy(source, TSKindId.IndexExpression as const);
 	patchCell(arena, record, 2, 2, _object);
-	patchCell(arena, record, 3, 7, _index);
+	patchCell(arena, record, 3, 6, _index);
 	const node = arena.view(record);
 	return node as unknown as T.IndexExpression.Bound;
 }
@@ -7982,7 +7982,7 @@ export function buildFieldExpression(config: T.FieldExpression.Config): T.FieldE
 	handle?.verifyStored?.(TSKindId.FieldExpression as const, { _object, _property });
 	const record = arena.record(TSKindId.FieldExpression as const);
 	storeCell(arena, record, 2, 2, _object);
-	storeCell(arena, record, 3, 7, _property);
+	storeCell(arena, record, 3, 6, _property);
 	const node = arena.view(record);
 	return node as unknown as T.FieldExpression.Bound;
 }
@@ -7999,7 +7999,7 @@ function buildFieldExpression$patch(source: object, config: T.FieldExpression.Co
 	handle?.verifyStored?.(TSKindId.FieldExpression as const, { _object, _property });
 	const record = arena.copy(source, TSKindId.FieldExpression as const);
 	patchCell(arena, record, 2, 2, _object);
-	patchCell(arena, record, 3, 7, _property);
+	patchCell(arena, record, 3, 6, _property);
 	const node = arena.view(record);
 	return node as unknown as T.FieldExpression.Bound;
 }
@@ -8273,8 +8273,8 @@ export function buildBlock(config: Partial<T.Block.Config> = {}): T.Block.Bound 
 	handle?.verifyStored?.(TSKindId.Block as const, { _label, _statements, _trailing_expression });
 	const record = arena.record(TSKindId.Block as const);
 	storeCell(arena, record, 2, 2, _label);
-	storeList(arena, record, 3, 11, _statements);
-	storeCell(arena, record, 4, 13, _trailing_expression);
+	storeList(arena, record, 3, 7, _statements);
+	storeCell(arena, record, 4, 8, _trailing_expression);
 	const node = arena.view(record);
 	return node as unknown as T.Block.Bound;
 }
@@ -8295,8 +8295,8 @@ function buildBlock$patch(source: object, config: Partial<T.Block.Config> = {}):
 	handle?.verifyStored?.(TSKindId.Block as const, { _label, _statements, _trailing_expression });
 	const record = arena.copy(source, TSKindId.Block as const);
 	patchCell(arena, record, 2, 2, _label);
-	patchList(arena, record, 3, 11, _statements);
-	patchCell(arena, record, 4, 13, _trailing_expression);
+	patchList(arena, record, 3, 7, _statements);
+	patchCell(arena, record, 4, 8, _trailing_expression);
 	const node = arena.view(record);
 	return node as unknown as T.Block.Bound;
 }
@@ -8337,7 +8337,7 @@ export function buildGenericPattern(config: T.GenericPattern.Config): T.GenericP
 	handle?.verifyStored?.(TSKindId.GenericPattern as const, { _name, _type_arguments });
 	const record = arena.record(TSKindId.GenericPattern as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _type_arguments);
+	storeCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericPattern.Bound;
 }
@@ -8352,7 +8352,7 @@ function buildGenericPattern$patch(source: object, config: T.GenericPattern.Conf
 	handle?.verifyStored?.(TSKindId.GenericPattern as const, { _name, _type_arguments });
 	const record = arena.copy(source, TSKindId.GenericPattern as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _type_arguments);
+	patchCell(arena, record, 3, 5, _type_arguments);
 	const node = arena.view(record);
 	return node as unknown as T.GenericPattern.Bound;
 }
@@ -8540,7 +8540,7 @@ export function buildTupleStructPattern(config: T.TupleStructPattern.Config): T.
 	handle?.verifyStored?.(TSKindId.TupleStructPattern as const, { _type, _fields });
 	const record = arena.record(TSKindId.TupleStructPattern as const);
 	storeCell(arena, record, 2, 2, _type);
-	storeCell(arena, record, 3, 7, _fields);
+	storeCell(arena, record, 3, 5, _fields);
 	const node = arena.view(record);
 	return node as unknown as T.TupleStructPattern.Bound;
 }
@@ -8558,7 +8558,7 @@ function buildTupleStructPattern$patch(
 	handle?.verifyStored?.(TSKindId.TupleStructPattern as const, { _type, _fields });
 	const record = arena.copy(source, TSKindId.TupleStructPattern as const);
 	patchCell(arena, record, 2, 2, _type);
-	patchCell(arena, record, 3, 7, _fields);
+	patchCell(arena, record, 3, 5, _fields);
 	const node = arena.view(record);
 	return node as unknown as T.TupleStructPattern.Bound;
 }
@@ -8601,7 +8601,7 @@ export function buildStructPattern(config: T.StructPattern.Config): T.StructPatt
 	handle?.verifyStored?.(TSKindId.StructPattern as const, { _type, _fields });
 	const record = arena.record(TSKindId.StructPattern as const);
 	storeCell(arena, record, 2, 2, _type);
-	storeCell(arena, record, 3, 7, _fields);
+	storeCell(arena, record, 3, 5, _fields);
 	const node = arena.view(record);
 	return node as unknown as T.StructPattern.Bound;
 }
@@ -8618,7 +8618,7 @@ function buildStructPattern$patch(source: object, config: T.StructPattern.Config
 	handle?.verifyStored?.(TSKindId.StructPattern as const, { _type, _fields });
 	const record = arena.copy(source, TSKindId.StructPattern as const);
 	patchCell(arena, record, 2, 2, _type);
-	patchCell(arena, record, 3, 7, _fields);
+	patchCell(arena, record, 3, 5, _fields);
 	const node = arena.view(record);
 	return node as unknown as T.StructPattern.Bound;
 }
@@ -8731,7 +8731,7 @@ export function buildCapturedPattern(config: T.CapturedPattern.Config): T.Captur
 	handle?.verifyStored?.(TSKindId.CapturedPattern as const, { _name, _pattern });
 	const record = arena.record(TSKindId.CapturedPattern as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _pattern);
+	storeCell(arena, record, 3, 5, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.CapturedPattern.Bound;
 }
@@ -8746,7 +8746,7 @@ function buildCapturedPattern$patch(source: object, config: T.CapturedPattern.Co
 	handle?.verifyStored?.(TSKindId.CapturedPattern as const, { _name, _pattern });
 	const record = arena.copy(source, TSKindId.CapturedPattern as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _pattern);
+	patchCell(arena, record, 3, 5, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.CapturedPattern.Bound;
 }
@@ -8872,7 +8872,7 @@ export function buildStringLiteral(config: T.StringLiteral.Config): T.StringLite
 	handle?.verifyStored?.(TSKindId.StringLiteral as const, { _string_open, _elements });
 	const record = arena.record(TSKindId.StringLiteral as const);
 	storeCell(arena, record, 2, 2, _string_open);
-	storeList(arena, record, 3, 7, _elements);
+	storeList(arena, record, 3, 5, _elements);
 	const node = arena.view(record);
 	return node as unknown as T.StringLiteral.Bound;
 }
@@ -8887,7 +8887,7 @@ function buildStringLiteral$patch(source: object, config: T.StringLiteral.Config
 	handle?.verifyStored?.(TSKindId.StringLiteral as const, { _string_open, _elements });
 	const record = arena.copy(source, TSKindId.StringLiteral as const);
 	patchCell(arena, record, 2, 2, _string_open);
-	patchList(arena, record, 3, 7, _elements);
+	patchList(arena, record, 3, 5, _elements);
 	const node = arena.view(record);
 	return node as unknown as T.StringLiteral.Bound;
 }
@@ -8944,8 +8944,8 @@ export function buildRawStringLiteral(config: T.RawStringLiteral.Config): T.RawS
 	});
 	const record = arena.record(TSKindId.RawStringLiteral as const);
 	storeCell(arena, record, 2, 2, _raw_string_literal_start);
-	storeCell(arena, record, 3, 7, _string_content);
-	storeCell(arena, record, 4, 12, _raw_string_literal_end);
+	storeCell(arena, record, 3, 5, _string_content);
+	storeCell(arena, record, 4, 8, _raw_string_literal_end);
 	const node = arena.view(record);
 	checkDelimited(
 		handle,
@@ -8978,8 +8978,8 @@ function buildRawStringLiteral$patch(source: object, config: T.RawStringLiteral.
 	});
 	const record = arena.copy(source, TSKindId.RawStringLiteral as const);
 	patchCell(arena, record, 2, 2, _raw_string_literal_start);
-	patchCell(arena, record, 3, 7, _string_content);
-	patchCell(arena, record, 4, 12, _raw_string_literal_end);
+	patchCell(arena, record, 3, 5, _string_content);
+	patchCell(arena, record, 4, 8, _raw_string_literal_end);
 	const node = arena.view(record);
 	checkDelimited(
 		handle,
@@ -11151,7 +11151,7 @@ export function buildIntegerLiteralDecimal(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralDecimal as const, { _content, _suffix });
 	const record = arena.record(TSKindId.IntegerLiteralDecimal as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 6, _suffix);
+	storeCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralDecimal.Bound;
 }
@@ -11177,7 +11177,7 @@ function buildIntegerLiteralDecimal$patch(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralDecimal as const, { _content, _suffix });
 	const record = arena.copy(source, TSKindId.IntegerLiteralDecimal as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 6, _suffix);
+	patchCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralDecimal.Bound;
 }
@@ -11249,7 +11249,7 @@ export function buildIntegerLiteralHex(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralHex as const, { _content, _suffix });
 	const record = arena.record(TSKindId.IntegerLiteralHex as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 6, _suffix);
+	storeCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralHex.Bound;
 }
@@ -11275,7 +11275,7 @@ function buildIntegerLiteralHex$patch(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralHex as const, { _content, _suffix });
 	const record = arena.copy(source, TSKindId.IntegerLiteralHex as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 6, _suffix);
+	patchCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralHex.Bound;
 }
@@ -11347,7 +11347,7 @@ export function buildIntegerLiteralBinary(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralBinary as const, { _content, _suffix });
 	const record = arena.record(TSKindId.IntegerLiteralBinary as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 6, _suffix);
+	storeCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralBinary.Bound;
 }
@@ -11373,7 +11373,7 @@ function buildIntegerLiteralBinary$patch(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralBinary as const, { _content, _suffix });
 	const record = arena.copy(source, TSKindId.IntegerLiteralBinary as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 6, _suffix);
+	patchCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralBinary.Bound;
 }
@@ -11445,7 +11445,7 @@ export function buildIntegerLiteralOctal(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralOctal as const, { _content, _suffix });
 	const record = arena.record(TSKindId.IntegerLiteralOctal as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 6, _suffix);
+	storeCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralOctal.Bound;
 }
@@ -11471,7 +11471,7 @@ function buildIntegerLiteralOctal$patch(
 	handle?.verifyStored?.(TSKindId.IntegerLiteralOctal as const, { _content, _suffix });
 	const record = arena.copy(source, TSKindId.IntegerLiteralOctal as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 6, _suffix);
+	patchCell(arena, record, 3, 4, _suffix);
 	const node = arena.view(record);
 	return node as unknown as T.IntegerLiteralOctal.Bound;
 }
@@ -12124,8 +12124,8 @@ export function buildArrayExpressionSemi(config: T.ArrayExpressionSemi.Config): 
 	handle?.verifyStored?.(TSKindId.ArrayExpressionSemi as const, { _attributes, _element, _length });
 	const record = arena.record(TSKindId.ArrayExpressionSemi as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _element);
-	storeCell(arena, record, 4, 9, _length);
+	storeCell(arena, record, 3, 3, _element);
+	storeCell(arena, record, 4, 7, _length);
 	const node = arena.view(record);
 	return node as unknown as T.ArrayExpressionSemi.Bound;
 }
@@ -12145,8 +12145,8 @@ function buildArrayExpressionSemi$patch(
 	handle?.verifyStored?.(TSKindId.ArrayExpressionSemi as const, { _attributes, _element, _length });
 	const record = arena.copy(source, TSKindId.ArrayExpressionSemi as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _element);
-	patchCell(arena, record, 4, 9, _length);
+	patchCell(arena, record, 3, 3, _element);
+	patchCell(arena, record, 4, 7, _length);
 	const node = arena.view(record);
 	return node as unknown as T.ArrayExpressionSemi.Bound;
 }
@@ -12193,7 +12193,7 @@ export function buildArrayExpressionList(
 	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _attributes, _elements });
 	const record = arena.record(TSKindId.ArrayExpressionList as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _elements);
+	storeCell(arena, record, 3, 3, _elements);
 	const node = arena.view(record);
 	return node as unknown as T.ArrayExpressionList.Bound;
 }
@@ -12212,7 +12212,7 @@ function buildArrayExpressionList$patch(
 	handle?.verifyStored?.(TSKindId.ArrayExpressionList as const, { _attributes, _elements });
 	const record = arena.copy(source, TSKindId.ArrayExpressionList as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _elements);
+	patchCell(arena, record, 3, 3, _elements);
 	const node = arena.view(record);
 	return node as unknown as T.ArrayExpressionList.Bound;
 }
@@ -12262,7 +12262,7 @@ export function buildAttributeInput(config: Partial<T.AttributeInput.Config> = {
 	handle?.verifyStored?.(TSKindId.AttributeInput as const, { _value, _arguments });
 	const record = arena.record(TSKindId.AttributeInput as const);
 	storeCell(arena, record, 2, 2, _value);
-	storeCell(arena, record, 3, 7, _arguments);
+	storeCell(arena, record, 3, 6, _arguments);
 	const node = arena.view(record);
 	return node as unknown as T.AttributeInput.Bound;
 }
@@ -12280,7 +12280,7 @@ function buildAttributeInput$patch(
 	handle?.verifyStored?.(TSKindId.AttributeInput as const, { _value, _arguments });
 	const record = arena.copy(source, TSKindId.AttributeInput as const);
 	patchCell(arena, record, 2, 2, _value);
-	patchCell(arena, record, 3, 7, _arguments);
+	patchCell(arena, record, 3, 6, _arguments);
 	const node = arena.view(record);
 	return node as unknown as T.AttributeInput.Bound;
 }
@@ -12348,8 +12348,8 @@ export function buildClosureExpressionBlock(
 	if (_async) storeFlag(record.data, record.base + 2, 2);
 	if (_move) storeFlag(record.data, record.base + 2, 4);
 	storeCell(arena, record, 3, 3, _parameters);
-	storeCell(arena, record, 4, 9, _return_type);
-	storeCell(arena, record, 5, 14, _body);
+	storeCell(arena, record, 4, 6, _return_type);
+	storeCell(arena, record, 5, 10, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ClosureExpressionBlock.Bound;
 }
@@ -12392,8 +12392,8 @@ function buildClosureExpressionBlock$patch(
 	patchFlag(record, 2, 2, _async);
 	patchFlag(record, 2, 4, _move);
 	patchCell(arena, record, 3, 3, _parameters);
-	patchCell(arena, record, 4, 9, _return_type);
-	patchCell(arena, record, 5, 14, _body);
+	patchCell(arena, record, 4, 6, _return_type);
+	patchCell(arena, record, 5, 10, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ClosureExpressionBlock.Bound;
 }
@@ -12459,7 +12459,7 @@ export function buildClosureExpressionExpr(config: T.ClosureExpressionExpr.Confi
 	if (_async) storeFlag(record.data, record.base + 2, 2);
 	if (_move) storeFlag(record.data, record.base + 2, 4);
 	storeCell(arena, record, 3, 3, _parameters);
-	storeCell(arena, record, 4, 9, _body);
+	storeCell(arena, record, 4, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ClosureExpressionExpr.Bound;
 }
@@ -12490,7 +12490,7 @@ function buildClosureExpressionExpr$patch(
 	patchFlag(record, 2, 2, _async);
 	patchFlag(record, 2, 4, _move);
 	patchCell(arena, record, 3, 3, _parameters);
-	patchCell(arena, record, 4, 9, _body);
+	patchCell(arena, record, 4, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ClosureExpressionExpr.Bound;
 }
@@ -12827,10 +12827,10 @@ export function buildImplItemBody(config: T.ImplItemBody.Config): T.ImplItemBody
 	const record = arena.record(TSKindId.ImplItemBody as const);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record, 3, 3, _type_parameters);
-	storeCell(arena, record, 4, 13, _trait_clause);
-	storeCell(arena, record, 5, 22, _type);
-	storeCell(arena, record, 6, 27, _where_clause);
-	storeCell(arena, record, 7, 37, _body);
+	storeCell(arena, record, 4, 8, _trait_clause);
+	storeCell(arena, record, 5, 13, _type);
+	storeCell(arena, record, 6, 17, _where_clause);
+	storeCell(arena, record, 7, 22, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ImplItemBody.Bound;
 }
@@ -12868,10 +12868,10 @@ function buildImplItemBody$patch(source: object, config: T.ImplItemBody.Config):
 	const record = arena.copy(source, TSKindId.ImplItemBody as const);
 	patchFlag(record, 2, 1, _unsafe);
 	patchCell(arena, record, 3, 3, _type_parameters);
-	patchCell(arena, record, 4, 13, _trait_clause);
-	patchCell(arena, record, 5, 22, _type);
-	patchCell(arena, record, 6, 27, _where_clause);
-	patchCell(arena, record, 7, 37, _body);
+	patchCell(arena, record, 4, 8, _trait_clause);
+	patchCell(arena, record, 5, 13, _type);
+	patchCell(arena, record, 6, 17, _where_clause);
+	patchCell(arena, record, 7, 22, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ImplItemBody.Bound;
 }
@@ -12966,9 +12966,9 @@ export function buildImplItemSemi(config: T.ImplItemSemi.Config): T.ImplItemSemi
 	const record = arena.record(TSKindId.ImplItemSemi as const);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record, 3, 3, _type_parameters);
-	storeCell(arena, record, 4, 13, _trait_clause);
-	storeCell(arena, record, 5, 22, _type);
-	storeCell(arena, record, 6, 27, _where_clause);
+	storeCell(arena, record, 4, 8, _trait_clause);
+	storeCell(arena, record, 5, 13, _type);
+	storeCell(arena, record, 6, 17, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.ImplItemSemi.Bound;
 }
@@ -13003,9 +13003,9 @@ function buildImplItemSemi$patch(source: object, config: T.ImplItemSemi.Config):
 	const record = arena.copy(source, TSKindId.ImplItemSemi as const);
 	patchFlag(record, 2, 1, _unsafe);
 	patchCell(arena, record, 3, 3, _type_parameters);
-	patchCell(arena, record, 4, 13, _trait_clause);
-	patchCell(arena, record, 5, 22, _type);
-	patchCell(arena, record, 6, 27, _where_clause);
+	patchCell(arena, record, 4, 8, _trait_clause);
+	patchCell(arena, record, 5, 13, _type);
+	patchCell(arena, record, 6, 17, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.ImplItemSemi.Bound;
 }
@@ -13360,7 +13360,7 @@ export function buildModItemExternal(config: T.ModItemExternal.Config): T.ModIte
 	handle?.verifyStored?.(TSKindId.ModItemExternal as const, { _visibility_modifier, _name });
 	const record = arena.record(TSKindId.ModItemExternal as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
+	storeCell(arena, record, 3, 16, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ModItemExternal.Bound;
 }
@@ -13376,7 +13376,7 @@ function buildModItemExternal$patch(source: object, config: T.ModItemExternal.Co
 	handle?.verifyStored?.(TSKindId.ModItemExternal as const, { _visibility_modifier, _name });
 	const record = arena.copy(source, TSKindId.ModItemExternal as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
+	patchCell(arena, record, 3, 16, _name);
 	const node = arena.view(record);
 	return node as unknown as T.ModItemExternal.Bound;
 }
@@ -13419,8 +13419,8 @@ export function buildModItemInline(config: T.ModItemInline.Config): T.ModItemInl
 	handle?.verifyStored?.(TSKindId.ModItemInline as const, { _visibility_modifier, _name, _body });
 	const record = arena.record(TSKindId.ModItemInline as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 28, _body);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 19, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ModItemInline.Bound;
 }
@@ -13437,8 +13437,8 @@ function buildModItemInline$patch(source: object, config: T.ModItemInline.Config
 	handle?.verifyStored?.(TSKindId.ModItemInline as const, { _visibility_modifier, _name, _body });
 	const record = arena.copy(source, TSKindId.ModItemInline as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 28, _body);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 19, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ModItemInline.Bound;
 }
@@ -13477,7 +13477,7 @@ export function buildOrPatternBinary(config: T.OrPatternBinary.Config): T.OrPatt
 	handle?.verifyStored?.(TSKindId.OrPatternBinary as const, { _left, _right });
 	const record = arena.record(TSKindId.OrPatternBinary as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _right);
+	storeCell(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.OrPatternBinary.Bound;
 }
@@ -13492,7 +13492,7 @@ function buildOrPatternBinary$patch(source: object, config: T.OrPatternBinary.Co
 	handle?.verifyStored?.(TSKindId.OrPatternBinary as const, { _left, _right });
 	const record = arena.copy(source, TSKindId.OrPatternBinary as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _right);
+	patchCell(arena, record, 3, 6, _right);
 	const node = arena.view(record);
 	return node as unknown as T.OrPatternBinary.Bound;
 }
@@ -13660,8 +13660,8 @@ export function buildRangeExpressionBinary(config: T.RangeExpressionBinary.Confi
 	handle?.verifyStored?.(TSKindId.RangeExpressionBinary as const, { _start, _operator, _end });
 	const record = arena.record(TSKindId.RangeExpressionBinary as const);
 	storeCell(arena, record, 2, 2, _start);
-	storeCell(arena, record, 3, 7, _operator);
-	storeCell(arena, record, 4, 12, _end);
+	storeCell(arena, record, 3, 6, _operator);
+	storeCell(arena, record, 4, 7, _end);
 	const node = arena.view(record);
 	return node as unknown as T.RangeExpressionBinary.Bound;
 }
@@ -13681,8 +13681,8 @@ function buildRangeExpressionBinary$patch(
 	handle?.verifyStored?.(TSKindId.RangeExpressionBinary as const, { _start, _operator, _end });
 	const record = arena.copy(source, TSKindId.RangeExpressionBinary as const);
 	patchCell(arena, record, 2, 2, _start);
-	patchCell(arena, record, 3, 7, _operator);
-	patchCell(arena, record, 4, 12, _end);
+	patchCell(arena, record, 3, 6, _operator);
+	patchCell(arena, record, 4, 7, _end);
 	const node = arena.view(record);
 	return node as unknown as T.RangeExpressionBinary.Bound;
 }
@@ -13937,7 +13937,7 @@ export function buildForeignModItemBody(config: Partial<T.ForeignModItemBody.Con
 	const record = arena.record(TSKindId.ForeignModItemBody as const);
 	if (_unsafe) storeFlag(record.data, record.base + 2, 1);
 	storeCell(arena, record, 3, 3, _extern_modifier);
-	storeCell(arena, record, 4, 18, _body);
+	storeCell(arena, record, 4, 11, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ForeignModItemBody.Bound;
 }
@@ -13958,7 +13958,7 @@ function buildForeignModItemBody$patch(
 	const record = arena.copy(source, TSKindId.ForeignModItemBody as const);
 	patchFlag(record, 2, 1, _unsafe);
 	patchCell(arena, record, 3, 3, _extern_modifier);
-	patchCell(arena, record, 4, 18, _body);
+	patchCell(arena, record, 4, 11, _body);
 	const node = arena.view(record);
 	return node as unknown as T.ForeignModItemBody.Bound;
 }
@@ -14002,8 +14002,8 @@ export function buildMatchArmWithComma(config: T.MatchArmWithComma.Config): T.Ma
 	handle?.verifyStored?.(TSKindId.MatchArmWithComma as const, { _attributes, _match, _body });
 	const record = arena.record(TSKindId.MatchArmWithComma as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _match);
-	storeCell(arena, record, 4, 9, _body);
+	storeCell(arena, record, 3, 3, _match);
+	storeCell(arena, record, 4, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MatchArmWithComma.Bound;
 }
@@ -14020,8 +14020,8 @@ function buildMatchArmWithComma$patch(source: object, config: T.MatchArmWithComm
 	handle?.verifyStored?.(TSKindId.MatchArmWithComma as const, { _attributes, _match, _body });
 	const record = arena.copy(source, TSKindId.MatchArmWithComma as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _match);
-	patchCell(arena, record, 4, 9, _body);
+	patchCell(arena, record, 3, 3, _match);
+	patchCell(arena, record, 4, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MatchArmWithComma.Bound;
 }
@@ -14108,8 +14108,8 @@ export function buildMatchArmBlockEnding(config: T.MatchArmBlockEnding.Config): 
 	handle?.verifyStored?.(TSKindId.MatchArmBlockEnding as const, { _attributes, _match, _body });
 	const record = arena.record(TSKindId.MatchArmBlockEnding as const);
 	storeList(arena, record, 2, 2, _attributes);
-	storeCell(arena, record, 3, 4, _match);
-	storeCell(arena, record, 4, 9, _body);
+	storeCell(arena, record, 3, 3, _match);
+	storeCell(arena, record, 4, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MatchArmBlockEnding.Bound;
 }
@@ -14129,8 +14129,8 @@ function buildMatchArmBlockEnding$patch(
 	handle?.verifyStored?.(TSKindId.MatchArmBlockEnding as const, { _attributes, _match, _body });
 	const record = arena.copy(source, TSKindId.MatchArmBlockEnding as const);
 	patchList(arena, record, 2, 2, _attributes);
-	patchCell(arena, record, 3, 4, _match);
-	patchCell(arena, record, 4, 9, _body);
+	patchCell(arena, record, 3, 3, _match);
+	patchCell(arena, record, 4, 6, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MatchArmBlockEnding.Bound;
 }
@@ -14976,7 +14976,7 @@ export function buildFieldPatternNamed(config: T.FieldPatternNamed.Config): T.Fi
 	if (_by_reference) storeFlag(record.data, record.base + 2, 1);
 	if (_mutable) storeFlag(record.data, record.base + 2, 2);
 	storeCell(arena, record, 3, 3, _name);
-	storeCell(arena, record, 4, 12, _pattern);
+	storeCell(arena, record, 4, 8, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.FieldPatternNamed.Bound;
 }
@@ -15003,7 +15003,7 @@ function buildFieldPatternNamed$patch(source: object, config: T.FieldPatternName
 	patchFlag(record, 2, 1, _by_reference);
 	patchFlag(record, 2, 2, _mutable);
 	patchCell(arena, record, 3, 3, _name);
-	patchCell(arena, record, 4, 12, _pattern);
+	patchCell(arena, record, 4, 8, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.FieldPatternNamed.Bound;
 }
@@ -15048,7 +15048,7 @@ export function buildMacroDefinitionParen(config: T.MacroDefinitionParen.Config)
 	handle?.verifyStored?.(TSKindId.MacroDefinitionParen as const, { _name, _macro_rules });
 	const record = arena.record(TSKindId.MacroDefinitionParen as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _macro_rules);
+	storeCell(arena, record, 3, 5, _macro_rules);
 	const node = arena.view(record);
 	return node as unknown as T.MacroDefinitionParen.Bound;
 }
@@ -15066,7 +15066,7 @@ function buildMacroDefinitionParen$patch(
 	handle?.verifyStored?.(TSKindId.MacroDefinitionParen as const, { _name, _macro_rules });
 	const record = arena.copy(source, TSKindId.MacroDefinitionParen as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _macro_rules);
+	patchCell(arena, record, 3, 5, _macro_rules);
 	const node = arena.view(record);
 	return node as unknown as T.MacroDefinitionParen.Bound;
 }
@@ -15110,7 +15110,7 @@ export function buildMacroDefinitionBracket(config: T.MacroDefinitionBracket.Con
 	handle?.verifyStored?.(TSKindId.MacroDefinitionBracket as const, { _name, _macro_rules });
 	const record = arena.record(TSKindId.MacroDefinitionBracket as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _macro_rules);
+	storeCell(arena, record, 3, 5, _macro_rules);
 	const node = arena.view(record);
 	return node as unknown as T.MacroDefinitionBracket.Bound;
 }
@@ -15129,7 +15129,7 @@ function buildMacroDefinitionBracket$patch(
 	handle?.verifyStored?.(TSKindId.MacroDefinitionBracket as const, { _name, _macro_rules });
 	const record = arena.copy(source, TSKindId.MacroDefinitionBracket as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _macro_rules);
+	patchCell(arena, record, 3, 5, _macro_rules);
 	const node = arena.view(record);
 	return node as unknown as T.MacroDefinitionBracket.Bound;
 }
@@ -15172,7 +15172,7 @@ export function buildMacroDefinitionBrace(config: T.MacroDefinitionBrace.Config)
 	handle?.verifyStored?.(TSKindId.MacroDefinitionBrace as const, { _name, _macro_rules });
 	const record = arena.record(TSKindId.MacroDefinitionBrace as const);
 	storeCell(arena, record, 2, 2, _name);
-	storeCell(arena, record, 3, 7, _macro_rules);
+	storeCell(arena, record, 3, 5, _macro_rules);
 	const node = arena.view(record);
 	return node as unknown as T.MacroDefinitionBrace.Bound;
 }
@@ -15190,7 +15190,7 @@ function buildMacroDefinitionBrace$patch(
 	handle?.verifyStored?.(TSKindId.MacroDefinitionBrace as const, { _name, _macro_rules });
 	const record = arena.copy(source, TSKindId.MacroDefinitionBrace as const);
 	patchCell(arena, record, 2, 2, _name);
-	patchCell(arena, record, 3, 7, _macro_rules);
+	patchCell(arena, record, 3, 5, _macro_rules);
 	const node = arena.view(record);
 	return node as unknown as T.MacroDefinitionBrace.Bound;
 }
@@ -15235,7 +15235,7 @@ export function buildRangePatternPrefix(config: T.RangePatternPrefix.Config): T.
 	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _content, _right });
 	const record = arena.record(TSKindId.RangePatternPrefix as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 7, _right);
+	storeCell(arena, record, 3, 3, _right);
 	const node = arena.view(record);
 	return node as unknown as T.RangePatternPrefix.Bound;
 }
@@ -15258,7 +15258,7 @@ function buildRangePatternPrefix$patch(
 	handle?.verifyStored?.(TSKindId.RangePatternPrefix as const, { _content, _right });
 	const record = arena.copy(source, TSKindId.RangePatternPrefix as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 7, _right);
+	patchCell(arena, record, 3, 3, _right);
 	const node = arena.view(record);
 	return node as unknown as T.RangePatternPrefix.Bound;
 }
@@ -15300,7 +15300,7 @@ export function buildRangePatternWithLeftWithRight(
 	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _content, _right });
 	const record = arena.record(TSKindId.RangePatternWithLeftWithRight as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 7, _right);
+	storeCell(arena, record, 3, 3, _right);
 	const node = arena.view(record);
 	return node as unknown as T.RangePatternWithLeftWithRight.Bound;
 }
@@ -15324,7 +15324,7 @@ function buildRangePatternWithLeftWithRight$patch(
 	handle?.verifyStored?.(TSKindId.RangePatternWithLeftWithRight as const, { _content, _right });
 	const record = arena.copy(source, TSKindId.RangePatternWithLeftWithRight as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 7, _right);
+	patchCell(arena, record, 3, 3, _right);
 	const node = arena.view(record);
 	return node as unknown as T.RangePatternWithLeftWithRight.Bound;
 }
@@ -15368,7 +15368,7 @@ export function buildRangePatternWithLeft(config: T.RangePatternWithLeft.Config)
 	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _left, _content });
 	const record = arena.record(TSKindId.RangePatternWithLeft as const);
 	storeCell(arena, record, 2, 2, _left);
-	storeCell(arena, record, 3, 7, _content);
+	storeCell(arena, record, 3, 6, _content);
 	const node = arena.view(record);
 	return node as unknown as T.RangePatternWithLeft.Bound;
 }
@@ -15391,7 +15391,7 @@ function buildRangePatternWithLeft$patch(
 	handle?.verifyStored?.(TSKindId.RangePatternWithLeft as const, { _left, _content });
 	const record = arena.copy(source, TSKindId.RangePatternWithLeft as const);
 	patchCell(arena, record, 2, 2, _left);
-	patchCell(arena, record, 3, 7, _content);
+	patchCell(arena, record, 3, 6, _content);
 	const node = arena.view(record);
 	return node as unknown as T.RangePatternWithLeft.Bound;
 }
@@ -15458,10 +15458,10 @@ export function buildStructItemBrace(config: T.StructItemBrace.Config): T.Struct
 	});
 	const record = arena.record(TSKindId.StructItemBrace as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type_parameters);
-	storeCell(arena, record, 5, 42, _where_clause);
-	storeCell(arena, record, 6, 52, _body);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type_parameters);
+	storeCell(arena, record, 5, 26, _where_clause);
+	storeCell(arena, record, 6, 31, _body);
 	const node = arena.view(record);
 	return node as unknown as T.StructItemBrace.Bound;
 }
@@ -15494,10 +15494,10 @@ function buildStructItemBrace$patch(source: object, config: T.StructItemBrace.Co
 	});
 	const record = arena.copy(source, TSKindId.StructItemBrace as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type_parameters);
-	patchCell(arena, record, 5, 42, _where_clause);
-	patchCell(arena, record, 6, 52, _body);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type_parameters);
+	patchCell(arena, record, 5, 26, _where_clause);
+	patchCell(arena, record, 6, 31, _body);
 	const node = arena.view(record);
 	return node as unknown as T.StructItemBrace.Bound;
 }
@@ -15604,10 +15604,10 @@ export function buildStructItemTuple(config: T.StructItemTuple.Config): T.Struct
 	});
 	const record = arena.record(TSKindId.StructItemTuple as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type_parameters);
-	storeCell(arena, record, 5, 42, _body);
-	storeCell(arena, record, 6, 52, _where_clause);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type_parameters);
+	storeCell(arena, record, 5, 26, _body);
+	storeCell(arena, record, 6, 31, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.StructItemTuple.Bound;
 }
@@ -15640,10 +15640,10 @@ function buildStructItemTuple$patch(source: object, config: T.StructItemTuple.Co
 	});
 	const record = arena.copy(source, TSKindId.StructItemTuple as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type_parameters);
-	patchCell(arena, record, 5, 42, _body);
-	patchCell(arena, record, 6, 52, _where_clause);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type_parameters);
+	patchCell(arena, record, 5, 26, _body);
+	patchCell(arena, record, 6, 31, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.StructItemTuple.Bound;
 }
@@ -15733,8 +15733,8 @@ export function buildStructItemUnit(config: T.StructItemUnit.Config): T.StructIt
 	handle?.verifyStored?.(TSKindId.StructItemUnit as const, { _visibility_modifier, _name, _type_parameters });
 	const record = arena.record(TSKindId.StructItemUnit as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _name);
-	storeCell(arena, record, 4, 32, _type_parameters);
+	storeCell(arena, record, 3, 16, _name);
+	storeCell(arena, record, 4, 21, _type_parameters);
 	const node = arena.view(record);
 	return node as unknown as T.StructItemUnit.Bound;
 }
@@ -15757,8 +15757,8 @@ function buildStructItemUnit$patch(source: object, config: T.StructItemUnit.Conf
 	handle?.verifyStored?.(TSKindId.StructItemUnit as const, { _visibility_modifier, _name, _type_parameters });
 	const record = arena.copy(source, TSKindId.StructItemUnit as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _name);
-	patchCell(arena, record, 4, 32, _type_parameters);
+	patchCell(arena, record, 3, 16, _name);
+	patchCell(arena, record, 4, 21, _type_parameters);
 	const node = arena.view(record);
 	return node as unknown as T.StructItemUnit.Bound;
 }
@@ -15823,7 +15823,7 @@ export function buildAttributedFieldDeclaration(
 	handle?.verifyStored?.(TSKindId.AttributedFieldDeclaration as const, { _attribute_item, _field_declaration });
 	const record = arena.record(TSKindId.AttributedFieldDeclaration as const);
 	storeList(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 4, _field_declaration);
+	storeCell(arena, record, 3, 3, _field_declaration);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedFieldDeclaration.Bound;
 }
@@ -15847,7 +15847,7 @@ function buildAttributedFieldDeclaration$patch(
 	handle?.verifyStored?.(TSKindId.AttributedFieldDeclaration as const, { _attribute_item, _field_declaration });
 	const record = arena.copy(source, TSKindId.AttributedFieldDeclaration as const);
 	patchList(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 4, _field_declaration);
+	patchCell(arena, record, 3, 3, _field_declaration);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedFieldDeclaration.Bound;
 }
@@ -15895,7 +15895,7 @@ export function buildAttributedEnumVariant(config: T.AttributedEnumVariant.Confi
 	handle?.verifyStored?.(TSKindId.AttributedEnumVariant as const, { _attribute_item, _enum_variant });
 	const record = arena.record(TSKindId.AttributedEnumVariant as const);
 	storeList(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 4, _enum_variant);
+	storeCell(arena, record, 3, 3, _enum_variant);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedEnumVariant.Bound;
 }
@@ -15916,7 +15916,7 @@ function buildAttributedEnumVariant$patch(
 	handle?.verifyStored?.(TSKindId.AttributedEnumVariant as const, { _attribute_item, _enum_variant });
 	const record = arena.copy(source, TSKindId.AttributedEnumVariant as const);
 	patchList(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 4, _enum_variant);
+	patchCell(arena, record, 3, 3, _enum_variant);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedEnumVariant.Bound;
 }
@@ -15959,7 +15959,7 @@ export function buildAttributedParameter(config: T.AttributedParameter.Config): 
 	handle?.verifyStored?.(TSKindId.AttributedParameter as const, { _attribute_item, _content });
 	const record = arena.record(TSKindId.AttributedParameter as const);
 	storeCell(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 7, _content);
+	storeCell(arena, record, 3, 5, _content);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedParameter.Bound;
 }
@@ -15981,7 +15981,7 @@ function buildAttributedParameter$patch(
 	handle?.verifyStored?.(TSKindId.AttributedParameter as const, { _attribute_item, _content });
 	const record = arena.copy(source, TSKindId.AttributedParameter as const);
 	patchCell(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 7, _content);
+	patchCell(arena, record, 3, 5, _content);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedParameter.Bound;
 }
@@ -16023,7 +16023,7 @@ export function buildAttributedTypeParameter(
 	handle?.verifyStored?.(TSKindId.AttributedTypeParameter as const, { _attribute_item, _content });
 	const record = arena.record(TSKindId.AttributedTypeParameter as const);
 	storeList(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 4, _content);
+	storeCell(arena, record, 3, 3, _content);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedTypeParameter.Bound;
 }
@@ -16044,7 +16044,7 @@ function buildAttributedTypeParameter$patch(
 	handle?.verifyStored?.(TSKindId.AttributedTypeParameter as const, { _attribute_item, _content });
 	const record = arena.copy(source, TSKindId.AttributedTypeParameter as const);
 	patchList(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 4, _content);
+	patchCell(arena, record, 3, 3, _content);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedTypeParameter.Bound;
 }
@@ -16091,7 +16091,7 @@ export function buildAttributedArgument(config: T.AttributedArgument.Config): T.
 	handle?.verifyStored?.(TSKindId.AttributedArgument as const, { _attribute_item, _expression });
 	const record = arena.record(TSKindId.AttributedArgument as const);
 	storeList(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 4, _expression);
+	storeCell(arena, record, 3, 3, _expression);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedArgument.Bound;
 }
@@ -16112,7 +16112,7 @@ function buildAttributedArgument$patch(
 	handle?.verifyStored?.(TSKindId.AttributedArgument as const, { _attribute_item, _expression });
 	const record = arena.copy(source, TSKindId.AttributedArgument as const);
 	patchList(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 4, _expression);
+	patchCell(arena, record, 3, 3, _expression);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedArgument.Bound;
 }
@@ -16166,8 +16166,8 @@ export function buildAttributedOrderedField(config: T.AttributedOrderedField.Con
 	handle?.verifyStored?.(TSKindId.AttributedOrderedField as const, { _attribute_item, _visibility_modifier, _type });
 	const record = arena.record(TSKindId.AttributedOrderedField as const);
 	storeList(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 4, _visibility_modifier);
-	storeCell(arena, record, 4, 25, _type);
+	storeCell(arena, record, 3, 3, _visibility_modifier);
+	storeCell(arena, record, 4, 17, _type);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedOrderedField.Bound;
 }
@@ -16196,8 +16196,8 @@ function buildAttributedOrderedField$patch(
 	handle?.verifyStored?.(TSKindId.AttributedOrderedField as const, { _attribute_item, _visibility_modifier, _type });
 	const record = arena.copy(source, TSKindId.AttributedOrderedField as const);
 	patchList(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 4, _visibility_modifier);
-	patchCell(arena, record, 4, 25, _type);
+	patchCell(arena, record, 3, 3, _visibility_modifier);
+	patchCell(arena, record, 4, 17, _type);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedOrderedField.Bound;
 }
@@ -16243,7 +16243,7 @@ export function buildTypeArgument(config: T.TypeArgument.Config): T.TypeArgument
 	handle?.verifyStored?.(TSKindId.TypeArgument as const, { _content, _trait_bounds });
 	const record = arena.record(TSKindId.TypeArgument as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 7, _trait_bounds);
+	storeCell(arena, record, 3, 6, _trait_bounds);
 	const node = arena.view(record);
 	return node as unknown as T.TypeArgument.Bound;
 }
@@ -16261,7 +16261,7 @@ function buildTypeArgument$patch(source: object, config: T.TypeArgument.Config):
 	handle?.verifyStored?.(TSKindId.TypeArgument as const, { _content, _trait_bounds });
 	const record = arena.copy(source, TSKindId.TypeArgument as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 7, _trait_bounds);
+	patchCell(arena, record, 3, 6, _trait_bounds);
 	const node = arena.view(record);
 	return node as unknown as T.TypeArgument.Bound;
 }
@@ -16296,7 +16296,7 @@ export function buildMatchBlockArms(config: T.MatchBlockArms.Config): T.MatchBlo
 	handle?.verifyStored?.(TSKindId.MatchBlockArms as const, { _arms, _last_arm });
 	const record = arena.record(TSKindId.MatchBlockArms as const);
 	storeList(arena, record, 2, 2, _arms);
-	storeCell(arena, record, 3, 4, _last_arm);
+	storeCell(arena, record, 3, 3, _last_arm);
 	const node = arena.view(record);
 	return node as unknown as T.MatchBlockArms.Bound;
 }
@@ -16311,7 +16311,7 @@ function buildMatchBlockArms$patch(source: object, config: T.MatchBlockArms.Conf
 	handle?.verifyStored?.(TSKindId.MatchBlockArms as const, { _arms, _last_arm });
 	const record = arena.copy(source, TSKindId.MatchBlockArms as const);
 	patchList(arena, record, 2, 2, _arms);
-	patchCell(arena, record, 3, 4, _last_arm);
+	patchCell(arena, record, 3, 3, _last_arm);
 	const node = arena.view(record);
 	return node as unknown as T.MatchBlockArms.Bound;
 }
@@ -16721,7 +16721,7 @@ export function buildAttributedParameterReceiver(
 	handle?.verifyStored?.(TSKindId.AttributedParameterReceiver as const, { _attribute_item, _content });
 	const record = arena.record(TSKindId.AttributedParameterReceiver as const);
 	storeCell(arena, record, 2, 2, _attribute_item);
-	storeCell(arena, record, 3, 7, _content);
+	storeCell(arena, record, 3, 5, _content);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedParameterReceiver.Bound;
 }
@@ -16740,7 +16740,7 @@ function buildAttributedParameterReceiver$patch(
 	handle?.verifyStored?.(TSKindId.AttributedParameterReceiver as const, { _attribute_item, _content });
 	const record = arena.copy(source, TSKindId.AttributedParameterReceiver as const);
 	patchCell(arena, record, 2, 2, _attribute_item);
-	patchCell(arena, record, 3, 7, _content);
+	patchCell(arena, record, 3, 5, _content);
 	const node = arena.view(record);
 	return node as unknown as T.AttributedParameterReceiver.Bound;
 }
@@ -16789,7 +16789,7 @@ export function buildParametersElementsReceiver(
 	});
 	const record = arena.record(TSKindId.ParametersElementsReceiver as const);
 	storeCell(arena, record, 2, 2, _receiver);
-	storeCell(arena, record, 3, 7, _parameters_elements_receiver_group);
+	storeCell(arena, record, 3, 5, _parameters_elements_receiver_group);
 	const node = arena.view(record);
 	return node as unknown as T.ParametersElementsReceiver.Bound;
 }
@@ -16814,7 +16814,7 @@ function buildParametersElementsReceiver$patch(
 	});
 	const record = arena.copy(source, TSKindId.ParametersElementsReceiver as const);
 	patchCell(arena, record, 2, 2, _receiver);
-	patchCell(arena, record, 3, 7, _parameters_elements_receiver_group);
+	patchCell(arena, record, 3, 5, _parameters_elements_receiver_group);
 	const node = arena.view(record);
 	return node as unknown as T.ParametersElementsReceiver.Bound;
 }
@@ -17252,13 +17252,13 @@ export function buildMethodDeclaration(config: T.MethodDeclaration.Config): T.Me
 	});
 	const record = arena.record(TSKindId.MethodDeclaration as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _function_modifiers);
-	storeCell(arena, record, 4, 29, _name);
-	storeCell(arena, record, 5, 37, _type_parameters);
-	storeCell(arena, record, 6, 47, _parameters);
-	storeCell(arena, record, 7, 52, _return_type);
-	storeCell(arena, record, 8, 57, _where_clause);
-	storeCell(arena, record, 9, 67, _body);
+	storeCell(arena, record, 3, 16, _function_modifiers);
+	storeCell(arena, record, 4, 19, _name);
+	storeCell(arena, record, 5, 24, _type_parameters);
+	storeCell(arena, record, 6, 29, _parameters);
+	storeCell(arena, record, 7, 32, _return_type);
+	storeCell(arena, record, 8, 36, _where_clause);
+	storeCell(arena, record, 9, 41, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MethodDeclaration.Bound;
 }
@@ -17301,13 +17301,13 @@ function buildMethodDeclaration$patch(source: object, config: T.MethodDeclaratio
 	});
 	const record = arena.copy(source, TSKindId.MethodDeclaration as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _function_modifiers);
-	patchCell(arena, record, 4, 29, _name);
-	patchCell(arena, record, 5, 37, _type_parameters);
-	patchCell(arena, record, 6, 47, _parameters);
-	patchCell(arena, record, 7, 52, _return_type);
-	patchCell(arena, record, 8, 57, _where_clause);
-	patchCell(arena, record, 9, 67, _body);
+	patchCell(arena, record, 3, 16, _function_modifiers);
+	patchCell(arena, record, 4, 19, _name);
+	patchCell(arena, record, 5, 24, _type_parameters);
+	patchCell(arena, record, 6, 29, _parameters);
+	patchCell(arena, record, 7, 32, _return_type);
+	patchCell(arena, record, 8, 36, _where_clause);
+	patchCell(arena, record, 9, 41, _body);
 	const node = arena.view(record);
 	return node as unknown as T.MethodDeclaration.Bound;
 }
@@ -17429,12 +17429,12 @@ export function buildSignatureMethodDeclaration(
 	});
 	const record = arena.record(TSKindId.SignatureMethodDeclaration as const);
 	storeCell(arena, record, 2, 2, _visibility_modifier);
-	storeCell(arena, record, 3, 23, _function_modifiers);
-	storeCell(arena, record, 4, 29, _name);
-	storeCell(arena, record, 5, 37, _type_parameters);
-	storeCell(arena, record, 6, 47, _parameters);
-	storeCell(arena, record, 7, 52, _return_type);
-	storeCell(arena, record, 8, 57, _where_clause);
+	storeCell(arena, record, 3, 16, _function_modifiers);
+	storeCell(arena, record, 4, 19, _name);
+	storeCell(arena, record, 5, 24, _type_parameters);
+	storeCell(arena, record, 6, 29, _parameters);
+	storeCell(arena, record, 7, 32, _return_type);
+	storeCell(arena, record, 8, 36, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.SignatureMethodDeclaration.Bound;
 }
@@ -17477,12 +17477,12 @@ function buildSignatureMethodDeclaration$patch(
 	});
 	const record = arena.copy(source, TSKindId.SignatureMethodDeclaration as const);
 	patchCell(arena, record, 2, 2, _visibility_modifier);
-	patchCell(arena, record, 3, 23, _function_modifiers);
-	patchCell(arena, record, 4, 29, _name);
-	patchCell(arena, record, 5, 37, _type_parameters);
-	patchCell(arena, record, 6, 47, _parameters);
-	patchCell(arena, record, 7, 52, _return_type);
-	patchCell(arena, record, 8, 57, _where_clause);
+	patchCell(arena, record, 3, 16, _function_modifiers);
+	patchCell(arena, record, 4, 19, _name);
+	patchCell(arena, record, 5, 24, _type_parameters);
+	patchCell(arena, record, 6, 29, _parameters);
+	patchCell(arena, record, 7, 32, _return_type);
+	patchCell(arena, record, 8, 36, _where_clause);
 	const node = arena.view(record);
 	return node as unknown as T.SignatureMethodDeclaration.Bound;
 }

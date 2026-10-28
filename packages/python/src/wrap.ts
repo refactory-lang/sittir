@@ -84,21 +84,23 @@ function viewSlot<T>(
 	view: RecordHandle,
 	word: number,
 	width: number,
+	forms: number,
 	inline: number,
 	built: number,
 	role?: Role
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, inline, built, _wrap, role) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, role) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
 	word: number,
 	width: number,
 	run: number | undefined,
+	forms: number,
 	inline: number,
 	built: number
 ): readonly ParsedOfData<T>[] {
-	return childItems(view, word, width, run, inline, built, _wrap) as readonly ParsedOfData<T>[];
+	return childItems(view, word, width, run, forms, inline, built, _wrap) as readonly ParsedOfData<T>[];
 }
 
 export function wrapModule(data: T.Module, tree: TreeHandle): T.Module.Parsed {
@@ -7125,7 +7127,7 @@ export function wrapMethodDeclaration(data: T.MethodDeclaration, tree: TreeHandl
 }
 
 function viewModule$statements(this: RecordHandle) {
-	return viewSlots<T.Statement>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Statement>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 	const node = {
@@ -7152,7 +7154,7 @@ function viewModule(data: RecordPosition, tree: TreeHandle): T.Module.Parsed {
 }
 
 function viewSimpleStatements$elements(this: RecordHandle) {
-	return viewSlot<T.SimpleStatementsElements>(this, 2, 6, 4, 2);
+	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
 }
 function viewSimpleStatements$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -7186,7 +7188,7 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -7194,7 +7196,7 @@ function viewSimpleStatements(data: RecordPosition, tree: TreeHandle): T.SimpleS
 }
 
 function viewImportStatement$names(this: RecordHandle) {
-	return viewSlot<T.Names>(this, 2, 6, 4, 2);
+	return viewSlot<T.Names>(this, 2, 3, 8, 3, 2);
 }
 function viewImportStatement$listRead(this: { readonly names: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.names(), 'names'), undefined);
@@ -7228,7 +7230,7 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 	};
 	node.$with = { node, names: $with$names };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_name', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -7236,10 +7238,10 @@ function viewImportStatement(data: RecordPosition, tree: TreeHandle): T.ImportSt
 }
 
 function viewRelativeImport$prefix(this: RecordHandle) {
-	return viewSlot<T.ImportPrefix>(this, 2, 5, 0, 2);
+	return viewSlot<T.ImportPrefix>(this, 2, 3, 1, 0, 2);
 }
 function viewRelativeImport$name(this: RecordHandle) {
-	return viewSlot<T.DottedName | undefined>(this, 7, 5, 0, 3);
+	return viewSlot<T.DottedName | undefined>(this, 5, 3, 1, 0, 3);
 }
 function viewRelativeImport(data: RecordPosition, tree: TreeHandle): T.RelativeImport.Parsed {
 	const node = {
@@ -7267,7 +7269,7 @@ function viewRelativeImport(data: RecordPosition, tree: TreeHandle): T.RelativeI
 }
 
 function viewFutureImportStatement$content(this: RecordHandle) {
-	return viewSlot<T.ImportList | T.ParenthesizedImportList>(this, 2, 10, 8, 2);
+	return viewSlot<T.ImportList | T.ParenthesizedImportList>(this, 2, 5, 8, 5, 2);
 }
 function viewFutureImportStatement(data: RecordPosition, tree: TreeHandle): T.FutureImportStatement.Parsed {
 	const node = {
@@ -7294,10 +7296,10 @@ function viewFutureImportStatement(data: RecordPosition, tree: TreeHandle): T.Fu
 }
 
 function viewImportFromStatement$moduleName(this: RecordHandle) {
-	return viewSlot<T.RelativeImport | T.DottedName>(this, 2, 5, 0, 2);
+	return viewSlot<T.RelativeImport | T.DottedName>(this, 2, 3, 1, 0, 2);
 }
 function viewImportFromStatement$content(this: RecordHandle) {
-	return viewSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, 7, 10, 8, 3);
+	return viewSlot<TSKindId.WildcardImport | T.ImportList | T.ParenthesizedImportList>(this, 5, 6, 10, 5, 3);
 }
 function viewImportFromStatement(data: RecordPosition, tree: TreeHandle): T.ImportFromStatement.Parsed {
 	const node = {
@@ -7325,7 +7327,7 @@ function viewImportFromStatement(data: RecordPosition, tree: TreeHandle): T.Impo
 }
 
 function viewImportList$names(this: RecordHandle) {
-	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewImportList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'names'), undefined);
@@ -7359,17 +7361,17 @@ function viewImportList(data: RecordPosition, tree: TreeHandle): T.ImportList.Pa
 	};
 	node.$with = { node, names: $with$names, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.ImportList.Parsed;
 }
 
 function viewAliasedImport$name(this: RecordHandle) {
-	return viewSlot<T.DottedName>(this, 2, 5, 0, 2);
+	return viewSlot<T.DottedName>(this, 2, 3, 1, 0, 2);
 }
 function viewAliasedImport$alias(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 7, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
 }
 function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImport.Parsed {
 	const node = {
@@ -7397,7 +7399,7 @@ function viewAliasedImport(data: RecordPosition, tree: TreeHandle): T.AliasedImp
 }
 
 function viewPrintStatement$content(this: RecordHandle) {
-	return viewSlot<T.PrintStatementChevron | T.PrintStatementPlain>(this, 2, 19, 17, 2);
+	return viewSlot<T.PrintStatementChevron | T.PrintStatementPlain>(this, 2, 12, 8, 12, 2);
 }
 function viewPrintStatement(data: RecordPosition, tree: TreeHandle): T.PrintStatement.Parsed {
 	const node = {
@@ -7424,7 +7426,7 @@ function viewPrintStatement(data: RecordPosition, tree: TreeHandle): T.PrintStat
 }
 
 function viewChevron$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewChevron(data: RecordPosition, tree: TreeHandle): T.Chevron.Parsed {
 	const node = {
@@ -7451,7 +7453,7 @@ function viewChevron(data: RecordPosition, tree: TreeHandle): T.Chevron.Parsed {
 }
 
 function viewAssertStatement$expressions(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewAssertStatement(data: RecordPosition, tree: TreeHandle): T.AssertStatement.Parsed {
 	const node = {
@@ -7481,7 +7483,8 @@ function viewExpressionStatement$content(this: RecordHandle) {
 	return viewSlot<T.Expression | T.ExpressionStatementTuple | T.Assignment | T.AugmentedAssignment | T.Yield>(
 		this,
 		2,
-		5,
+		4,
+		3,
 		0,
 		2
 	);
@@ -7511,10 +7514,10 @@ function viewExpressionStatement(data: RecordPosition, tree: TreeHandle): T.Expr
 }
 
 function viewNamedExpression$left(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewNamedExpression$right(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 0, 3);
 }
 function viewNamedExpression(data: RecordPosition, tree: TreeHandle): T.NamedExpression.Parsed {
 	const node = {
@@ -7542,7 +7545,7 @@ function viewNamedExpression(data: RecordPosition, tree: TreeHandle): T.NamedExp
 }
 
 function viewNamedExpressionLhs$identifier(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewNamedExpressionLhs(data: RecordPosition, tree: TreeHandle): T.NamedExpressionLhs.Parsed {
 	const node = {
@@ -7569,7 +7572,7 @@ function viewNamedExpressionLhs(data: RecordPosition, tree: TreeHandle): T.Named
 }
 
 function viewReturnStatement$expressions(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 0, 2);
 }
 function viewReturnStatement(data: RecordPosition, tree: TreeHandle): T.ReturnStatement.Parsed {
 	const node = {
@@ -7596,7 +7599,7 @@ function viewReturnStatement(data: RecordPosition, tree: TreeHandle): T.ReturnSt
 }
 
 function viewDeleteStatement$expressions(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression | T.ExpressionList>(this, 2, 4, 3, 0, 2);
 }
 function viewDeleteStatement(data: RecordPosition, tree: TreeHandle): T.DeleteStatement.Parsed {
 	const node = {
@@ -7623,10 +7626,10 @@ function viewDeleteStatement(data: RecordPosition, tree: TreeHandle): T.DeleteSt
 }
 
 function viewRaiseStatement$expressions(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 0, 2);
 }
 function viewRaiseStatement$cause(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 0, 3);
 }
 function viewRaiseStatement(data: RecordPosition, tree: TreeHandle): T.RaiseStatement.Parsed {
 	const node = {
@@ -7654,13 +7657,13 @@ function viewRaiseStatement(data: RecordPosition, tree: TreeHandle): T.RaiseStat
 }
 
 function viewIfStatement$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewIfStatement$consequence(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 7, 10, 8, 3);
+	return viewSlot<T.Suite>(this, 6, 5, 8, 5, 3);
 }
 function viewIfStatement$alternatives(this: RecordHandle) {
-	return viewSlots<T.ElifClause | T.ElseClause>(this, 17, 2, 5, 0, 4);
+	return viewSlots<T.ElifClause | T.ElseClause>(this, 11, 1, 3, 1, 0, 4);
 }
 function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.Parsed {
 	const node = {
@@ -7689,10 +7692,10 @@ function viewIfStatement(data: RecordPosition, tree: TreeHandle): T.IfStatement.
 }
 
 function viewElifClause$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewElifClause$consequence(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 7, 10, 8, 3);
+	return viewSlot<T.Suite>(this, 6, 5, 8, 5, 3);
 }
 function viewElifClause(data: RecordPosition, tree: TreeHandle): T.ElifClause.Parsed {
 	const node = {
@@ -7720,7 +7723,7 @@ function viewElifClause(data: RecordPosition, tree: TreeHandle): T.ElifClause.Pa
 }
 
 function viewElseClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 2, 10, 8, 2);
+	return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
 }
 function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Parsed {
 	const node = {
@@ -7747,10 +7750,10 @@ function viewElseClause(data: RecordPosition, tree: TreeHandle): T.ElseClause.Pa
 }
 
 function viewMatchStatement$subjects(this: RecordHandle) {
-	return viewSlot<T.Subjects>(this, 2, 6, 4, 2);
+	return viewSlot<T.Subjects>(this, 2, 3, 8, 3, 2);
 }
 function viewMatchStatement$body(this: RecordHandle) {
-	return viewSlot<T.MatchBlock>(this, 8, 9, 7, 3);
+	return viewSlot<T.MatchBlock>(this, 5, 3, 8, 3, 3);
 }
 function viewMatchStatement(data: RecordPosition, tree: TreeHandle): T.MatchStatement.Parsed {
 	const node = {
@@ -7778,13 +7781,13 @@ function viewMatchStatement(data: RecordPosition, tree: TreeHandle): T.MatchStat
 }
 
 function viewCaseClause$pattern(this: RecordHandle) {
-	return viewSlot<T.CasePattern | T.CasePatternList>(this, 2, 5, 0, 2);
+	return viewSlot<T.CasePattern | T.CasePatternList>(this, 2, 3, 1, 0, 2);
 }
 function viewCaseClause$guard(this: RecordHandle) {
-	return viewSlot<T.IfClause | undefined>(this, 7, 9, 7, 3);
+	return viewSlot<T.IfClause | undefined>(this, 5, 6, 8, 6, 3);
 }
 function viewCaseClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 16, 10, 8, 4);
+	return viewSlot<T.Suite>(this, 11, 5, 8, 5, 4);
 }
 function viewCaseClause(data: RecordPosition, tree: TreeHandle): T.CaseClause.Parsed {
 	const node = {
@@ -7816,16 +7819,16 @@ function viewForStatement$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewForStatement$left(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 3, 5, 0, 3);
+	return viewSlot<T.Pattern | T.PatternList>(this, 3, 3, 1, 0, 3);
 }
 function viewForStatement$right(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList>(this, 8, 5, 0, 4);
+	return viewSlot<T.Expression | T.ExpressionList>(this, 6, 4, 3, 0, 4);
 }
 function viewForStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 13, 10, 8, 5);
+	return viewSlot<T.Suite>(this, 10, 5, 8, 5, 5);
 }
 function viewForStatement$alternative(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 23, 14, 12, 6);
+	return viewSlot<T.ElseClause | undefined>(this, 15, 7, 8, 7, 6);
 }
 function viewForStatement(data: RecordPosition, tree: TreeHandle): T.ForStatement.Parsed {
 	const node = {
@@ -7863,13 +7866,13 @@ function viewForStatement(data: RecordPosition, tree: TreeHandle): T.ForStatemen
 }
 
 function viewWhileStatement$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewWhileStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 7, 10, 8, 3);
+	return viewSlot<T.Suite>(this, 6, 5, 8, 5, 3);
 }
 function viewWhileStatement$alternative(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 17, 14, 12, 4);
+	return viewSlot<T.ElseClause | undefined>(this, 11, 7, 8, 7, 4);
 }
 function viewWhileStatement(data: RecordPosition, tree: TreeHandle): T.WhileStatement.Parsed {
 	const node = {
@@ -7898,16 +7901,16 @@ function viewWhileStatement(data: RecordPosition, tree: TreeHandle): T.WhileStat
 }
 
 function viewTryStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 2, 10, 8, 2);
+	return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
 }
 function viewTryStatement$handlers(this: RecordHandle) {
-	return viewSlots<T.ExceptClause>(this, 12, 2, 5, 0, 3);
+	return viewSlots<T.ExceptClause>(this, 7, 1, 3, 1, 0, 3);
 }
 function viewTryStatement$alternative(this: RecordHandle) {
-	return viewSlot<T.ElseClause | undefined>(this, 14, 14, 12, 4);
+	return viewSlot<T.ElseClause | undefined>(this, 8, 7, 8, 7, 4);
 }
 function viewTryStatement$finalizer(this: RecordHandle) {
-	return viewSlot<T.FinallyClause | undefined>(this, 28, 14, 12, 5);
+	return viewSlot<T.FinallyClause | undefined>(this, 15, 7, 8, 7, 5);
 }
 function viewTryStatement(data: RecordPosition, tree: TreeHandle): T.TryStatement.Parsed {
 	const node = {
@@ -7946,10 +7949,10 @@ function viewExceptClause$group(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewExceptClause$exception(this: RecordHandle) {
-	return viewSlot<T.ExceptClauseException | undefined>(this, 3, 18, 16, 3);
+	return viewSlot<T.ExceptClauseException | undefined>(this, 3, 12, 8, 12, 3);
 }
 function viewExceptClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 21, 10, 8, 4);
+	return viewSlot<T.Suite>(this, 15, 5, 8, 5, 4);
 }
 function viewExceptClause(data: RecordPosition, tree: TreeHandle): T.ExceptClause.Parsed {
 	const node = {
@@ -7978,7 +7981,7 @@ function viewExceptClause(data: RecordPosition, tree: TreeHandle): T.ExceptClaus
 }
 
 function viewFinallyClause$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 2, 10, 8, 2);
+	return viewSlot<T.Suite>(this, 2, 5, 8, 5, 2);
 }
 function viewFinallyClause(data: RecordPosition, tree: TreeHandle): T.FinallyClause.Parsed {
 	const node = {
@@ -8008,10 +8011,10 @@ function viewWithStatement$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewWithStatement$withClause(this: RecordHandle) {
-	return viewSlot<T.WithClause>(this, 3, 10, 8, 3);
+	return viewSlot<T.WithClause>(this, 3, 5, 8, 5, 3);
 }
 function viewWithStatement$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 13, 10, 8, 4);
+	return viewSlot<T.Suite>(this, 8, 5, 8, 5, 4);
 }
 function viewWithStatement(data: RecordPosition, tree: TreeHandle): T.WithStatement.Parsed {
 	const node = {
@@ -8040,7 +8043,7 @@ function viewWithStatement(data: RecordPosition, tree: TreeHandle): T.WithStatem
 }
 
 function viewWithItem$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewWithItem(data: RecordPosition, tree: TreeHandle): T.WithItem.Parsed {
 	const node = {
@@ -8070,19 +8073,19 @@ function viewFunctionDefinition$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewFunctionDefinition$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 3, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewFunctionDefinition$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameter | undefined>(this, 8, 10, 8, 4);
+	return viewSlot<T.TypeParameter | undefined>(this, 6, 5, 8, 5, 4);
 }
 function viewFunctionDefinition$parameters(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 18, 10, 8, 5);
+	return viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5);
 }
 function viewFunctionDefinition$returnType(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 28, 5, 0, 6);
+	return viewSlot<T.Type | undefined>(this, 16, 3, 1, 0, 6);
 }
 function viewFunctionDefinition$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 33, 10, 8, 7);
+	return viewSlot<T.Suite>(this, 19, 5, 8, 5, 7);
 }
 function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.FunctionDefinition.Parsed {
 	const node = {
@@ -8122,7 +8125,7 @@ function viewFunctionDefinition(data: RecordPosition, tree: TreeHandle): T.Funct
 }
 
 function viewParameters$elements(this: RecordHandle) {
-	return viewSlot<T.ParametersElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.ParametersElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewParameters$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -8156,7 +8159,7 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -8164,7 +8167,7 @@ function viewParameters(data: RecordPosition, tree: TreeHandle): T.Parameters.Pa
 }
 
 function viewLambdaParameters$parametersElements(this: RecordHandle) {
-	return viewSlot<T.ParametersElements>(this, 2, 6, 4, 2);
+	return viewSlot<T.ParametersElements>(this, 2, 3, 8, 3, 2);
 }
 function viewLambdaParameters$listRead(this: { readonly parametersElements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.parametersElements(), 'items'), undefined);
@@ -8198,7 +8201,7 @@ function viewLambdaParameters(data: RecordPosition, tree: TreeHandle): T.LambdaP
 	};
 	node.$with = { node, parametersElements: $with$parametersElements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -8206,7 +8209,7 @@ function viewLambdaParameters(data: RecordPosition, tree: TreeHandle): T.LambdaP
 }
 
 function viewListSplat$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewListSplat(data: RecordPosition, tree: TreeHandle): T.ListSplat.Parsed {
 	const node = {
@@ -8233,7 +8236,7 @@ function viewListSplat(data: RecordPosition, tree: TreeHandle): T.ListSplat.Pars
 }
 
 function viewDictionarySplat$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewDictionarySplat(data: RecordPosition, tree: TreeHandle): T.DictionarySplat.Parsed {
 	const node = {
@@ -8260,7 +8263,7 @@ function viewDictionarySplat(data: RecordPosition, tree: TreeHandle): T.Dictiona
 }
 
 function viewGlobalStatement$names(this: RecordHandle) {
-	return viewSlots<T.Identifier>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Identifier>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewGlobalStatement(data: RecordPosition, tree: TreeHandle): T.GlobalStatement.Parsed {
 	const node = {
@@ -8287,7 +8290,7 @@ function viewGlobalStatement(data: RecordPosition, tree: TreeHandle): T.GlobalSt
 }
 
 function viewNonlocalStatement$names(this: RecordHandle) {
-	return viewSlots<T.Identifier>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Identifier>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewNonlocalStatement(data: RecordPosition, tree: TreeHandle): T.NonlocalStatement.Parsed {
 	const node = {
@@ -8314,10 +8317,10 @@ function viewNonlocalStatement(data: RecordPosition, tree: TreeHandle): T.Nonloc
 }
 
 function viewExecStatement$code(this: RecordHandle) {
-	return viewSlot<T.String | T.Identifier>(this, 2, 16, 14, 2);
+	return viewSlot<T.String | T.Identifier>(this, 2, 10, 9, 9, 2);
 }
 function viewExecStatement$inClauses(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 18, 2, 5, 0, 3);
+	return viewSlots<T.Expression>(this, 12, 1, 4, 3, 0, 3);
 }
 function viewExecStatement(data: RecordPosition, tree: TreeHandle): T.ExecStatement.Parsed {
 	const node = {
@@ -8345,10 +8348,10 @@ function viewExecStatement(data: RecordPosition, tree: TreeHandle): T.ExecStatem
 }
 
 function viewTypeAliasStatement$left(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 5, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
 }
 function viewTypeAliasStatement$right(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewTypeAliasStatement(data: RecordPosition, tree: TreeHandle): T.TypeAliasStatement.Parsed {
 	const node = {
@@ -8376,16 +8379,16 @@ function viewTypeAliasStatement(data: RecordPosition, tree: TreeHandle): T.TypeA
 }
 
 function viewClassDefinition$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewClassDefinition$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameter | undefined>(this, 7, 10, 8, 3);
+	return viewSlot<T.TypeParameter | undefined>(this, 5, 5, 8, 5, 3);
 }
 function viewClassDefinition$bases(this: RecordHandle) {
-	return viewSlot<T.ArgumentList | undefined>(this, 17, 10, 8, 4);
+	return viewSlot<T.ArgumentList | undefined>(this, 10, 5, 8, 5, 4);
 }
 function viewClassDefinition$body(this: RecordHandle) {
-	return viewSlot<T.SuiteClassDefinition>(this, 27, 10, 8, 5);
+	return viewSlot<T.SuiteClassDefinition>(this, 15, 5, 8, 5, 5);
 }
 function viewClassDefinition(data: RecordPosition, tree: TreeHandle): T.ClassDefinition.Parsed {
 	const node = {
@@ -8415,7 +8418,7 @@ function viewClassDefinition(data: RecordPosition, tree: TreeHandle): T.ClassDef
 }
 
 function viewTypeParameter$types(this: RecordHandle) {
-	return viewSlot<T.Types>(this, 2, 6, 4, 2);
+	return viewSlot<T.Types>(this, 2, 3, 8, 3, 2);
 }
 function viewTypeParameter$listRead(this: { readonly types: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.types(), 'items'), undefined);
@@ -8449,7 +8452,7 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 	};
 	node.$with = { node, types: $with$types };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -8457,7 +8460,7 @@ function viewTypeParameter(data: RecordPosition, tree: TreeHandle): T.TypeParame
 }
 
 function viewParenthesizedListSplat$content(this: RecordHandle) {
-	return viewSlot<T.ParenthesizedListSplat | T.ListSplat>(this, 2, 5, 0, 2);
+	return viewSlot<T.ParenthesizedListSplat | T.ListSplat>(this, 2, 3, 1, 0, 2);
 }
 function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.ParenthesizedListSplat.Parsed {
 	const node = {
@@ -8484,7 +8487,7 @@ function viewParenthesizedListSplat(data: RecordPosition, tree: TreeHandle): T.P
 }
 
 function viewArgumentList$arguments(this: RecordHandle) {
-	return viewSlot<T.ArgumentListElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.ArgumentListElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewArgumentList$listRead(this: { readonly arguments: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.arguments(), 'items'), undefined);
@@ -8518,7 +8521,7 @@ function viewArgumentList(data: RecordPosition, tree: TreeHandle): T.ArgumentLis
 	};
 	node.$with = { node, arguments: $with$arguments };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -8526,10 +8529,10 @@ function viewArgumentList(data: RecordPosition, tree: TreeHandle): T.ArgumentLis
 }
 
 function viewDecoratedDefinition$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewDecoratedDefinition$definition(this: RecordHandle) {
-	return viewSlot<T.ClassDefinition | T.FunctionDefinition>(this, 4, 45, 43, 3);
+	return viewSlot<T.ClassDefinition | T.FunctionDefinition>(this, 3, 24, 8, 24, 3);
 }
 function viewDecoratedDefinition(data: RecordPosition, tree: TreeHandle): T.DecoratedDefinition.Parsed {
 	const node = {
@@ -8557,7 +8560,7 @@ function viewDecoratedDefinition(data: RecordPosition, tree: TreeHandle): T.Deco
 }
 
 function viewDecorator$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Parsed {
 	const node = {
@@ -8584,7 +8587,7 @@ function viewDecorator(data: RecordPosition, tree: TreeHandle): T.Decorator.Pars
 }
 
 function viewBlock$statements(this: RecordHandle) {
-	return viewSlots<T.Statement>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Statement>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewBlock(data: RecordPosition, tree: TreeHandle): T.Block.Parsed {
 	const node = {
@@ -8611,7 +8614,7 @@ function viewBlock(data: RecordPosition, tree: TreeHandle): T.Block.Parsed {
 }
 
 function viewExpressionList$items(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewExpressionList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -8645,17 +8648,17 @@ function viewExpressionList(data: RecordPosition, tree: TreeHandle): T.Expressio
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.ExpressionList.Parsed;
 }
 
 function viewDottedName$qualifier(this: RecordHandle) {
-	return viewSlot<T.DottedName | undefined>(this, 2, 5, 0, 2);
+	return viewSlot<T.DottedName | undefined>(this, 2, 3, 1, 0, 2);
 }
 function viewDottedName$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 7, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
 }
 function viewDottedName(data: RecordPosition, tree: TreeHandle): T.DottedName.Parsed {
 	const node = {
@@ -8683,7 +8686,7 @@ function viewDottedName(data: RecordPosition, tree: TreeHandle): T.DottedName.Pa
 }
 
 function viewCasePattern$content(this: RecordHandle) {
-	return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 5, 0, 2);
+	return viewSlot<T.CaseAsPattern | T.KeywordPattern | T.SimplePattern>(this, 2, 3, 1, 0, 2);
 }
 function viewCasePattern(data: RecordPosition, tree: TreeHandle): T.CasePattern.Parsed {
 	const node = {
@@ -8728,7 +8731,7 @@ function viewSimplePattern$content(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 2, 5, 0, 2);
+	>(this, 2, 4, 3, 0, 2);
 }
 function viewSimplePattern(data: RecordPosition, tree: TreeHandle): T.SimplePattern.Parsed {
 	const node = {
@@ -8755,10 +8758,10 @@ function viewSimplePattern(data: RecordPosition, tree: TreeHandle): T.SimplePatt
 }
 
 function viewCaseAsPattern$casePattern(this: RecordHandle) {
-	return viewSlot<T.CasePattern>(this, 2, 5, 0, 2);
+	return viewSlot<T.CasePattern>(this, 2, 3, 1, 0, 2);
 }
 function viewCaseAsPattern$identifier(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 7, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
 }
 function viewCaseAsPattern(data: RecordPosition, tree: TreeHandle): T.CaseAsPattern.Parsed {
 	const node = {
@@ -8804,7 +8807,7 @@ function viewUnionPattern$left(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 2, 5, 0, 2);
+	>(this, 2, 4, 3, 0, 2);
 }
 function viewUnionPattern$right(this: RecordHandle) {
 	return viewSlot<
@@ -8825,7 +8828,7 @@ function viewUnionPattern$right(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 7, 5, 0, 3);
+	>(this, 6, 4, 3, 0, 3);
 }
 function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPattern.Parsed {
 	const node = {
@@ -8853,7 +8856,7 @@ function viewUnionPattern(data: RecordPosition, tree: TreeHandle): T.UnionPatter
 }
 
 function viewDictPattern$elements(this: RecordHandle) {
-	return viewSlot<T.DictPatternElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.DictPatternElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewDictPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -8887,7 +8890,7 @@ function viewDictPattern(data: RecordPosition, tree: TreeHandle): T.DictPattern.
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -8913,10 +8916,10 @@ function viewKeyValuePattern$key(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 2, 5, 0, 2);
+	>(this, 2, 4, 3, 0, 2);
 }
 function viewKeyValuePattern$value(this: RecordHandle) {
-	return viewSlot<T.CasePattern>(this, 7, 5, 0, 3);
+	return viewSlot<T.CasePattern>(this, 6, 3, 1, 0, 3);
 }
 function viewKeyValuePattern(data: RecordPosition, tree: TreeHandle): T.KeyValuePattern.Parsed {
 	const node = {
@@ -8944,7 +8947,7 @@ function viewKeyValuePattern(data: RecordPosition, tree: TreeHandle): T.KeyValue
 }
 
 function viewKeywordPattern$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewKeywordPattern$pattern(this: RecordHandle) {
 	return viewSlot<
@@ -8965,7 +8968,7 @@ function viewKeywordPattern$pattern(this: RecordHandle) {
 		| T.ComplexPattern
 		| T.DottedName
 		| TSKindId.WildcardPattern
-	>(this, 7, 5, 0, 3);
+	>(this, 5, 4, 3, 0, 3);
 }
 function viewKeywordPattern(data: RecordPosition, tree: TreeHandle): T.KeywordPattern.Parsed {
 	const node = {
@@ -8993,10 +8996,10 @@ function viewKeywordPattern(data: RecordPosition, tree: TreeHandle): T.KeywordPa
 }
 
 function viewClassPattern$type(this: RecordHandle) {
-	return viewSlot<T.DottedName>(this, 2, 5, 0, 2);
+	return viewSlot<T.DottedName>(this, 2, 3, 1, 0, 2);
 }
 function viewClassPattern$fields(this: RecordHandle) {
-	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 7, 6, 4, 3);
+	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 5, 3, 8, 3, 3);
 }
 function viewClassPattern(data: RecordPosition, tree: TreeHandle): T.ClassPattern.Parsed {
 	const node = {
@@ -9027,13 +9030,13 @@ function viewComplexPattern$sign(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewComplexPattern$real(this: RecordHandle) {
-	return viewSlot<T.Integer | T.Float>(this, 3, 28, 26, 3);
+	return viewSlot<T.Integer | T.Float>(this, 3, 15, 9, 14, 3);
 }
 function viewComplexPattern$operator(this: RecordHandle) {
-	return childSlot(this, 31, 5, 0, 4);
+	return childSlot(this, 18, 1, 2, 0, 4);
 }
 function viewComplexPattern$imaginary(this: RecordHandle) {
-	return viewSlot<T.Integer | T.Float>(this, 36, 28, 26, 5);
+	return viewSlot<T.Integer | T.Float>(this, 19, 15, 9, 14, 5);
 }
 function viewComplexPattern(data: RecordPosition, tree: TreeHandle): T.ComplexPattern.Parsed {
 	const node = {
@@ -9063,7 +9066,7 @@ function viewComplexPattern(data: RecordPosition, tree: TreeHandle): T.ComplexPa
 }
 
 function viewParametersElements$items(this: RecordHandle) {
-	return viewSlots<T.Parameter>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Parameter>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewParametersElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -9097,14 +9100,14 @@ function viewParametersElements(data: RecordPosition, tree: TreeHandle): T.Param
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.ParametersElements.Parsed;
 }
 
 function viewPatterns$items(this: RecordHandle) {
-	return viewSlots<T.Pattern>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewPatterns$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -9138,14 +9141,14 @@ function viewPatterns(data: RecordPosition, tree: TreeHandle): T.Patterns.Parsed
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.Patterns.Parsed;
 }
 
 function viewTuplePattern$elements(this: RecordHandle) {
-	return viewSlot<T.TuplePatternElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.TuplePatternElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -9179,7 +9182,7 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -9187,7 +9190,7 @@ function viewTuplePattern(data: RecordPosition, tree: TreeHandle): T.TuplePatter
 }
 
 function viewListPattern$elements(this: RecordHandle) {
-	return viewSlot<T.Patterns | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.Patterns | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -9221,7 +9224,7 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -9229,10 +9232,10 @@ function viewListPattern(data: RecordPosition, tree: TreeHandle): T.ListPattern.
 }
 
 function viewDefaultParameter$name(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.TuplePattern>(this, 2, 10, 8, 2);
+	return viewSlot<T.Identifier | T.TuplePattern>(this, 2, 6, 9, 5, 2);
 }
 function viewDefaultParameter$default(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 12, 5, 0, 3);
+	return viewSlot<T.Expression>(this, 8, 4, 3, 0, 3);
 }
 function viewDefaultParameter(data: RecordPosition, tree: TreeHandle): T.DefaultParameter.Parsed {
 	const node = {
@@ -9260,13 +9263,13 @@ function viewDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Default
 }
 
 function viewTypedDefaultParameter$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewTypedDefaultParameter$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewTypedDefaultParameter$default(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 12, 5, 0, 4);
+	return viewSlot<T.Expression>(this, 8, 4, 3, 0, 4);
 }
 function viewTypedDefaultParameter(data: RecordPosition, tree: TreeHandle): T.TypedDefaultParameter.Parsed {
 	const node = {
@@ -9295,7 +9298,7 @@ function viewTypedDefaultParameter(data: RecordPosition, tree: TreeHandle): T.Ty
 }
 
 function viewListSplatPattern$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 3, 1, 0, 2);
 }
 function viewListSplatPattern(data: RecordPosition, tree: TreeHandle): T.ListSplatPattern.Parsed {
 	const node = {
@@ -9322,7 +9325,7 @@ function viewListSplatPattern(data: RecordPosition, tree: TreeHandle): T.ListSpl
 }
 
 function viewDictionarySplatPattern$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier | T.Subscript | T.Attribute>(this, 2, 3, 1, 0, 2);
 }
 function viewDictionarySplatPattern(data: RecordPosition, tree: TreeHandle): T.DictionarySplatPattern.Parsed {
 	const node = {
@@ -9349,10 +9352,10 @@ function viewDictionarySplatPattern(data: RecordPosition, tree: TreeHandle): T.D
 }
 
 function viewAsPattern$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewAsPattern$alias(this: RecordHandle) {
-	return viewSlot<T.AsPatternTarget>(this, 7, 5, 0, 3);
+	return viewSlot<T.AsPatternTarget>(this, 6, 3, 1, 0, 3);
 }
 function viewAsPattern(data: RecordPosition, tree: TreeHandle): T.AsPattern.Parsed {
 	const node = {
@@ -9380,7 +9383,7 @@ function viewAsPattern(data: RecordPosition, tree: TreeHandle): T.AsPattern.Pars
 }
 
 function viewNotOperator$argument(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewNotOperator(data: RecordPosition, tree: TreeHandle): T.NotOperator.Parsed {
 	const node = {
@@ -9407,13 +9410,13 @@ function viewNotOperator(data: RecordPosition, tree: TreeHandle): T.NotOperator.
 }
 
 function viewBooleanOperator$left(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewBooleanOperator$operator(this: RecordHandle) {
-	return childSlot(this, 7, 5, 0, 3);
+	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewBooleanOperator$right(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 12, 5, 0, 4);
+	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 4);
 }
 function viewBooleanOperator(data: RecordPosition, tree: TreeHandle): T.BooleanOperator.Parsed {
 	const node = {
@@ -9442,13 +9445,13 @@ function viewBooleanOperator(data: RecordPosition, tree: TreeHandle): T.BooleanO
 }
 
 function viewBinaryOperator$left(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 5, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewBinaryOperator$operator(this: RecordHandle) {
-	return childSlot(this, 7, 5, 0, 3);
+	return childSlot(this, 6, 1, 2, 0, 3);
 }
 function viewBinaryOperator$right(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 12, 5, 0, 4);
+	return viewSlot<T.PrimaryExpression>(this, 7, 4, 3, 0, 4);
 }
 function viewBinaryOperator(data: RecordPosition, tree: TreeHandle): T.BinaryOperator.Parsed {
 	const node = {
@@ -9477,10 +9480,10 @@ function viewBinaryOperator(data: RecordPosition, tree: TreeHandle): T.BinaryOpe
 }
 
 function viewUnaryOperator$operator(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0, 2);
+	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewUnaryOperator$argument(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 7, 5, 0, 3);
+	return viewSlot<T.PrimaryExpression>(this, 3, 4, 3, 0, 3);
 }
 function viewUnaryOperator(data: RecordPosition, tree: TreeHandle): T.UnaryOperator.Parsed {
 	const node = {
@@ -9508,10 +9511,10 @@ function viewUnaryOperator(data: RecordPosition, tree: TreeHandle): T.UnaryOpera
 }
 
 function viewComparisonOperator$left(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 5, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewComparisonOperator$comparators(this: RecordHandle) {
-	return viewSlots<T.ComparisonOperatorComparator>(this, 7, 2, 5, 0, 3);
+	return viewSlots<T.ComparisonOperatorComparator>(this, 6, 1, 3, 1, 0, 3);
 }
 function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.ComparisonOperator.Parsed {
 	const node = {
@@ -9539,10 +9542,10 @@ function viewComparisonOperator(data: RecordPosition, tree: TreeHandle): T.Compa
 }
 
 function viewLambda$parameters(this: RecordHandle) {
-	return viewSlot<T.LambdaParameters | undefined>(this, 2, 10, 8, 2);
+	return viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2);
 }
 function viewLambda$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 12, 5, 0, 3);
+	return viewSlot<T.Expression>(this, 7, 4, 3, 0, 3);
 }
 function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 	const node = {
@@ -9570,10 +9573,10 @@ function viewLambda(data: RecordPosition, tree: TreeHandle): T.Lambda.Parsed {
 }
 
 function viewLambdaWithinForInClause$parameters(this: RecordHandle) {
-	return viewSlot<T.LambdaParameters | undefined>(this, 2, 10, 8, 2);
+	return viewSlot<T.LambdaParameters | undefined>(this, 2, 5, 8, 5, 2);
 }
 function viewLambdaWithinForInClause$body(this: RecordHandle) {
-	return viewSlot<T.Expression | T.LambdaWithinForInClause>(this, 12, 5, 0, 3);
+	return viewSlot<T.Expression | T.LambdaWithinForInClause>(this, 7, 4, 3, 0, 3);
 }
 function viewLambdaWithinForInClause(data: RecordPosition, tree: TreeHandle): T.LambdaWithinForInClause.Parsed {
 	const node = {
@@ -9601,16 +9604,17 @@ function viewLambdaWithinForInClause(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewAugmentedAssignment$left(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 5, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
 }
 function viewAugmentedAssignment$operator(this: RecordHandle) {
-	return childSlot(this, 7, 5, 0, 3);
+	return childSlot(this, 5, 1, 2, 0, 3);
 }
 function viewAugmentedAssignment$right(this: RecordHandle) {
 	return viewSlot<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
 		this,
-		12,
-		5,
+		6,
+		4,
+		3,
 		0,
 		4
 	);
@@ -9642,7 +9646,7 @@ function viewAugmentedAssignment(data: RecordPosition, tree: TreeHandle): T.Augm
 }
 
 function viewPatternList$items(this: RecordHandle) {
-	return viewSlots<T.Pattern>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewPatternList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -9676,14 +9680,14 @@ function viewPatternList(data: RecordPosition, tree: TreeHandle): T.PatternList.
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.PatternList.Parsed;
 }
 
 function viewYield$content(this: RecordHandle) {
-	return viewSlot<T.YieldFromClause | T.Expression | T.ExpressionList | undefined>(this, 2, 5, 0, 2);
+	return viewSlot<T.YieldFromClause | T.Expression | T.ExpressionList | undefined>(this, 2, 4, 3, 0, 2);
 }
 function viewYield(data: RecordPosition, tree: TreeHandle): T.Yield.Parsed {
 	const node = {
@@ -9710,10 +9714,10 @@ function viewYield(data: RecordPosition, tree: TreeHandle): T.Yield.Parsed {
 }
 
 function viewAttribute$object(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 5, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewAttribute$property(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 7, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 6, 3, 1, 0, 3);
 }
 function viewAttribute(data: RecordPosition, tree: TreeHandle): T.Attribute.Parsed {
 	const node = {
@@ -9741,10 +9745,10 @@ function viewAttribute(data: RecordPosition, tree: TreeHandle): T.Attribute.Pars
 }
 
 function viewSubscript$object(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 5, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewSubscript$subscripts(this: RecordHandle) {
-	return viewSlot<T.Subscripts>(this, 7, 6, 4, 3);
+	return viewSlot<T.Subscripts>(this, 6, 3, 8, 3, 3);
 }
 function viewSubscript(data: RecordPosition, tree: TreeHandle): T.Subscript.Parsed {
 	const node = {
@@ -9772,16 +9776,16 @@ function viewSubscript(data: RecordPosition, tree: TreeHandle): T.Subscript.Pars
 }
 
 function viewSlice$start(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 0, 2);
 }
 function viewSlice$stop(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 0, 3);
 }
 function viewSlice$step(this: RecordHandle) {
-	return viewSlot<T.SliceGroup | undefined>(this, 12, 9, 7, 4);
+	return viewSlot<T.SliceGroup | undefined>(this, 10, 6, 8, 6, 4);
 }
 function viewSlice$expression(this: RecordHandle) {
-	return groupField(viewSlot<T.SliceGroup | undefined>(this, 12, 9, 7, 4), 'expression');
+	return groupField(viewSlot<T.SliceGroup | undefined>(this, 10, 6, 8, 6, 4), 'expression');
 }
 function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 	const node = {
@@ -9807,15 +9811,15 @@ function viewSlice(data: RecordPosition, tree: TreeHandle): T.Slice.Parsed {
 	};
 	node.$with = { node, start: $with$start, stop: $with$stop, step: $with$step, expression: $with$expression };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.expression = recordPresent(node, 12, 9, 7, 4) ? viewSlice$expression : undefined;
+	node.expression = recordPresent(node, 10, 6, 8, 6, 4) ? viewSlice$expression : undefined;
 	return node as unknown as T.Slice.Parsed;
 }
 
 function viewCall$function(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 5, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewCall$arguments(this: RecordHandle) {
-	return viewSlot<T.GeneratorExpression | T.ArgumentList>(this, 7, 5, 0, 3);
+	return viewSlot<T.GeneratorExpression | T.ArgumentList>(this, 6, 3, 1, 0, 3);
 }
 function viewCall(data: RecordPosition, tree: TreeHandle): T.Call.Parsed {
 	const node = {
@@ -9843,10 +9847,10 @@ function viewCall(data: RecordPosition, tree: TreeHandle): T.Call.Parsed {
 }
 
 function viewTypedParameter$name(this: RecordHandle) {
-	return viewSlot<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier | T.ListSplatPattern | T.DictionarySplatPattern>(this, 2, 3, 1, 0, 2);
 }
 function viewTypedParameter$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewTypedParameter(data: RecordPosition, tree: TreeHandle): T.TypedParameter.Parsed {
 	const node = {
@@ -9877,7 +9881,8 @@ function viewType$content(this: RecordHandle) {
 	return viewSlot<T.Expression | T.SplatType | T.GenericType | T.UnionType | T.ConstrainedType | T.MemberType>(
 		this,
 		2,
-		5,
+		4,
+		3,
 		0,
 		2
 	);
@@ -9907,10 +9912,10 @@ function viewType(data: RecordPosition, tree: TreeHandle): T.Type.Parsed {
 }
 
 function viewSplatType$operator(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0, 2);
+	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewSplatType$type(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 7, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Parsed {
 	const node = {
@@ -9938,10 +9943,10 @@ function viewSplatType(data: RecordPosition, tree: TreeHandle): T.SplatType.Pars
 }
 
 function viewGenericType$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewGenericType$typeParameter(this: RecordHandle) {
-	return viewSlot<T.TypeParameter>(this, 7, 10, 8, 3);
+	return viewSlot<T.TypeParameter>(this, 5, 5, 8, 5, 3);
 }
 function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.Parsed {
 	const node = {
@@ -9969,10 +9974,10 @@ function viewGenericType(data: RecordPosition, tree: TreeHandle): T.GenericType.
 }
 
 function viewUnionType$left(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 5, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
 }
 function viewUnionType$right(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewUnionType(data: RecordPosition, tree: TreeHandle): T.UnionType.Parsed {
 	const node = {
@@ -10000,10 +10005,10 @@ function viewUnionType(data: RecordPosition, tree: TreeHandle): T.UnionType.Pars
 }
 
 function viewConstrainedType$baseType(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 5, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
 }
 function viewConstrainedType$constraint(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewConstrainedType(data: RecordPosition, tree: TreeHandle): T.ConstrainedType.Parsed {
 	const node = {
@@ -10031,10 +10036,10 @@ function viewConstrainedType(data: RecordPosition, tree: TreeHandle): T.Constrai
 }
 
 function viewMemberType$qualifier(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 2, 5, 0, 2);
+	return viewSlot<T.Type>(this, 2, 3, 1, 0, 2);
 }
 function viewMemberType$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 7, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 5, 3, 1, 0, 3);
 }
 function viewMemberType(data: RecordPosition, tree: TreeHandle): T.MemberType.Parsed {
 	const node = {
@@ -10062,10 +10067,10 @@ function viewMemberType(data: RecordPosition, tree: TreeHandle): T.MemberType.Pa
 }
 
 function viewKeywordArgument$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2);
 }
 function viewKeywordArgument$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression>(this, 5, 4, 3, 0, 3);
 }
 function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordArgument.Parsed {
 	const node = {
@@ -10093,7 +10098,7 @@ function viewKeywordArgument(data: RecordPosition, tree: TreeHandle): T.KeywordA
 }
 
 function viewList$elements(this: RecordHandle) {
-	return viewSlot<T.CollectionElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.CollectionElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewList$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -10127,7 +10132,7 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -10135,7 +10140,7 @@ function viewList(data: RecordPosition, tree: TreeHandle): T.List.Parsed {
 }
 
 function viewSet$elements(this: RecordHandle) {
-	return viewSlot<T.CollectionElements>(this, 2, 6, 4, 2);
+	return viewSlot<T.CollectionElements>(this, 2, 3, 8, 3, 2);
 }
 function viewSet$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -10169,7 +10174,7 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -10177,7 +10182,7 @@ function viewSet(data: RecordPosition, tree: TreeHandle): T.Set.Parsed {
 }
 
 function viewTuple$elements(this: RecordHandle) {
-	return viewSlot<T.TupleElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.TupleElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewTuple$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -10211,7 +10216,7 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -10219,7 +10224,7 @@ function viewTuple(data: RecordPosition, tree: TreeHandle): T.Tuple.Parsed {
 }
 
 function viewDictionary$elements(this: RecordHandle) {
-	return viewSlot<T.DictionaryElements | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.DictionaryElements | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewDictionary$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -10253,7 +10258,7 @@ function viewDictionary(data: RecordPosition, tree: TreeHandle): T.Dictionary.Pa
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -10261,10 +10266,10 @@ function viewDictionary(data: RecordPosition, tree: TreeHandle): T.Dictionary.Pa
 }
 
 function viewPair$key(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewPair$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression>(this, 6, 4, 3, 0, 3);
 }
 function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 	const node = {
@@ -10292,10 +10297,10 @@ function viewPair(data: RecordPosition, tree: TreeHandle): T.Pair.Parsed {
 }
 
 function viewListComprehension$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewListComprehension$clauses(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 7, 6, 4, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3);
 }
 function viewListComprehension(data: RecordPosition, tree: TreeHandle): T.ListComprehension.Parsed {
 	const node = {
@@ -10323,10 +10328,10 @@ function viewListComprehension(data: RecordPosition, tree: TreeHandle): T.ListCo
 }
 
 function viewDictionaryComprehension$body(this: RecordHandle) {
-	return viewSlot<T.Pair>(this, 2, 5, 0, 2);
+	return viewSlot<T.Pair>(this, 2, 3, 1, 0, 2);
 }
 function viewDictionaryComprehension$clauses(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 7, 6, 4, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 5, 3, 8, 3, 3);
 }
 function viewDictionaryComprehension(data: RecordPosition, tree: TreeHandle): T.DictionaryComprehension.Parsed {
 	const node = {
@@ -10354,10 +10359,10 @@ function viewDictionaryComprehension(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewSetComprehension$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewSetComprehension$clauses(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 7, 6, 4, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3);
 }
 function viewSetComprehension(data: RecordPosition, tree: TreeHandle): T.SetComprehension.Parsed {
 	const node = {
@@ -10385,10 +10390,10 @@ function viewSetComprehension(data: RecordPosition, tree: TreeHandle): T.SetComp
 }
 
 function viewGeneratorExpression$body(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewGeneratorExpression$clauses(this: RecordHandle) {
-	return viewSlot<T.ComprehensionClauses>(this, 7, 6, 4, 3);
+	return viewSlot<T.ComprehensionClauses>(this, 6, 3, 8, 3, 3);
 }
 function viewGeneratorExpression(data: RecordPosition, tree: TreeHandle): T.GeneratorExpression.Parsed {
 	const node = {
@@ -10416,7 +10421,7 @@ function viewGeneratorExpression(data: RecordPosition, tree: TreeHandle): T.Gene
 }
 
 function viewParenthesizedExpression$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | T.Yield>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression | T.Yield>(this, 2, 4, 3, 0, 2);
 }
 function viewParenthesizedExpression(data: RecordPosition, tree: TreeHandle): T.ParenthesizedExpression.Parsed {
 	const node = {
@@ -10443,7 +10448,7 @@ function viewParenthesizedExpression(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewCollectionElements$items(this: RecordHandle) {
-	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewCollectionElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -10477,7 +10482,7 @@ function viewCollectionElements(data: RecordPosition, tree: TreeHandle): T.Colle
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.CollectionElements.Parsed;
@@ -10487,13 +10492,13 @@ function viewForInClause$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewForInClause$left(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 3, 5, 0, 3);
+	return viewSlot<T.Pattern | T.PatternList>(this, 3, 3, 1, 0, 3);
 }
 function viewForInClause$rights(this: RecordHandle) {
-	return viewSlots<T.Expression | T.LambdaWithinForInClause>(this, 8, 2, 5, 0, 4);
+	return viewSlots<T.Expression | T.LambdaWithinForInClause>(this, 6, 1, 4, 3, 0, 4);
 }
 function viewForInClause$trailingComma(this: RecordHandle) {
-	return childSlot(this, 10, 5, 0, 5);
+	return childSlot(this, 7, 1, 18, 0, 5);
 }
 function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.Parsed {
 	const node = {
@@ -10523,7 +10528,7 @@ function viewForInClause(data: RecordPosition, tree: TreeHandle): T.ForInClause.
 }
 
 function viewIfClause$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewIfClause(data: RecordPosition, tree: TreeHandle): T.IfClause.Parsed {
 	const node = {
@@ -10550,13 +10555,13 @@ function viewIfClause(data: RecordPosition, tree: TreeHandle): T.IfClause.Parsed
 }
 
 function viewConditionalExpression$consequence(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewConditionalExpression$condition(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression>(this, 6, 4, 3, 0, 3);
 }
 function viewConditionalExpression$alternative(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 12, 5, 0, 4);
+	return viewSlot<T.Expression>(this, 10, 4, 3, 0, 4);
 }
 function viewConditionalExpression(data: RecordPosition, tree: TreeHandle): T.ConditionalExpression.Parsed {
 	const node = {
@@ -10585,7 +10590,7 @@ function viewConditionalExpression(data: RecordPosition, tree: TreeHandle): T.Co
 }
 
 function viewConcatenatedString$strings(this: RecordHandle) {
-	return viewSlots<T.String>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.String>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewConcatenatedString(data: RecordPosition, tree: TreeHandle): T.ConcatenatedString.Parsed {
 	const node = {
@@ -10612,13 +10617,13 @@ function viewConcatenatedString(data: RecordPosition, tree: TreeHandle): T.Conca
 }
 
 function viewString$stringStart(this: RecordHandle) {
-	return viewSlot<T.StringStart>(this, 2, 5, 0, 2);
+	return viewSlot<T.StringStart>(this, 2, 3, 1, 0, 2);
 }
 function viewString$contents(this: RecordHandle) {
-	return viewSlots<T.Interpolation | T.StringContent>(this, 7, 2, 5, 0, 3);
+	return viewSlots<T.Interpolation | T.StringContent>(this, 5, 1, 3, 1, 0, 3);
 }
 function viewString$stringEnd(this: RecordHandle) {
-	return viewSlot<T.StringEnd>(this, 9, 5, 0, 4);
+	return viewSlot<T.StringEnd>(this, 6, 3, 1, 0, 4);
 }
 function viewString(data: RecordPosition, tree: TreeHandle): T.String.Parsed {
 	const node = {
@@ -10650,8 +10655,9 @@ function viewStringContent$elements(this: RecordHandle) {
 	return viewSlots<T.EscapeInterpolation | T.EscapeSequence | TSKindId.NotEscapeSequence | T.StringFragment>(
 		this,
 		2,
-		2,
-		5,
+		1,
+		4,
+		3,
 		0,
 		2
 	);
@@ -10681,16 +10687,16 @@ function viewStringContent(data: RecordPosition, tree: TreeHandle): T.StringCont
 }
 
 function viewInterpolation$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 5, 0, 3);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 4, 3, 0, 3);
 }
 function viewInterpolation$debug(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewInterpolation$typeConversion(this: RecordHandle) {
-	return viewSlot<T.TypeConversion | undefined>(this, 8, 5, 0, 4);
+	return viewSlot<T.TypeConversion | undefined>(this, 7, 3, 1, 0, 4);
 }
 function viewInterpolation$formatSpecifier(this: RecordHandle) {
-	return viewSlot<T.FormatSpecifier | undefined>(this, 13, 6, 4, 5);
+	return viewSlot<T.FormatSpecifier | undefined>(this, 10, 3, 8, 3, 5);
 }
 function viewInterpolation(data: RecordPosition, tree: TreeHandle): T.Interpolation.Parsed {
 	const node = {
@@ -10726,7 +10732,7 @@ function viewInterpolation(data: RecordPosition, tree: TreeHandle): T.Interpolat
 }
 
 function viewFormatSpecifier$elements(this: RecordHandle) {
-	return viewSlots<T.FormatSpecifierText | T.FormatExpression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.FormatSpecifierText | T.FormatExpression>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewFormatSpecifier(data: RecordPosition, tree: TreeHandle): T.FormatSpecifier.Parsed {
 	const node = {
@@ -10753,7 +10759,7 @@ function viewFormatSpecifier(data: RecordPosition, tree: TreeHandle): T.FormatSp
 }
 
 function viewAwait$expression(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 2, 5, 0, 2);
+	return viewSlot<T.PrimaryExpression>(this, 2, 4, 3, 0, 2);
 }
 function viewAwait(data: RecordPosition, tree: TreeHandle): T.Await.Parsed {
 	const node = {
@@ -10780,7 +10786,7 @@ function viewAwait(data: RecordPosition, tree: TreeHandle): T.Await.Parsed {
 }
 
 function viewComment$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 	const node = {
@@ -10805,7 +10811,7 @@ function viewComment(data: RecordPosition, tree: TreeHandle): T.Comment.Parsed {
 }
 
 function viewSimpleStatementsElements$items(this: RecordHandle) {
-	return viewSlots<T.SimpleStatement>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.SimpleStatement>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewSimpleStatementsElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -10839,14 +10845,14 @@ function viewSimpleStatementsElements(data: RecordPosition, tree: TreeHandle): T
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.SimpleStatementsElements.Parsed;
 }
 
 function viewSubjects$subjects(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewSubjects$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'subjects'), undefined);
@@ -10880,14 +10886,14 @@ function viewSubjects(data: RecordPosition, tree: TreeHandle): T.Subjects.Parsed
 	};
 	node.$with = { node, subjects: $with$subjects, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.Subjects.Parsed;
 }
 
 function viewWithClauseWithItems$items(this: RecordHandle) {
-	return viewSlots<T.WithItem>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewWithClauseWithItems$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -10921,14 +10927,14 @@ function viewWithClauseWithItems(data: RecordPosition, tree: TreeHandle): T.With
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.WithClauseWithItems.Parsed;
 }
 
 function viewTypes$items(this: RecordHandle) {
-	return viewSlots<T.Type>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Type>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewTypes$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -10962,7 +10968,7 @@ function viewTypes(data: RecordPosition, tree: TreeHandle): T.Types.Parsed {
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.Types.Parsed;
@@ -10972,8 +10978,9 @@ function viewArgumentListElements$items(this: RecordHandle) {
 	return viewSlots<T.Expression | T.ListSplat | T.DictionarySplat | T.ParenthesizedListSplat | T.KeywordArgument>(
 		this,
 		2,
-		2,
-		5,
+		1,
+		4,
+		3,
 		0,
 		2
 	);
@@ -11010,14 +11017,14 @@ function viewArgumentListElements(data: RecordPosition, tree: TreeHandle): T.Arg
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.ArgumentListElements.Parsed;
 }
 
 function viewListPatternCasePatterns$items(this: RecordHandle) {
-	return viewSlots<T.CasePattern>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewListPatternCasePatterns$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11051,14 +11058,14 @@ function viewListPatternCasePatterns(data: RecordPosition, tree: TreeHandle): T.
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.ListPatternCasePatterns.Parsed;
 }
 
 function viewDictPatternElements$items(this: RecordHandle) {
-	return viewSlots<T.KeyValuePattern | T.SplatPattern>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.KeyValuePattern | T.SplatPattern>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewDictPatternElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11092,14 +11099,14 @@ function viewDictPatternElements(data: RecordPosition, tree: TreeHandle): T.Dict
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.DictPatternElements.Parsed;
 }
 
 function viewSubscripts$subscripts(this: RecordHandle) {
-	return viewSlots<T.Expression | T.Slice>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression | T.Slice>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewSubscripts$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'subscripts'), undefined);
@@ -11133,14 +11140,14 @@ function viewSubscripts(data: RecordPosition, tree: TreeHandle): T.Subscripts.Pa
 	};
 	node.$with = { node, subscripts: $with$subscripts, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.Subscripts.Parsed;
 }
 
 function viewDictionaryElements$items(this: RecordHandle) {
-	return viewSlots<T.Pair | T.DictionarySplat>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Pair | T.DictionarySplat>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewDictionaryElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11174,14 +11181,14 @@ function viewDictionaryElements(data: RecordPosition, tree: TreeHandle): T.Dicti
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.DictionaryElements.Parsed;
 }
 
 function viewSliceGroup$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression | undefined>(this, 2, 4, 3, 0, 2);
 }
 function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Parsed {
 	const node = {
@@ -11208,7 +11215,7 @@ function viewSliceGroup(data: RecordPosition, tree: TreeHandle): T.SliceGroup.Pa
 }
 
 function viewTuplePatternElements$items(this: RecordHandle) {
-	return viewSlots<T.Pattern>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Pattern>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewTuplePatternElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11242,14 +11249,14 @@ function viewTuplePatternElements(data: RecordPosition, tree: TreeHandle): T.Tup
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.TuplePatternElements.Parsed;
 }
 
 function viewCasePatternList$items(this: RecordHandle) {
-	return viewSlots<T.CasePattern>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.CasePattern>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewCasePatternList$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11283,14 +11290,14 @@ function viewCasePatternList(data: RecordPosition, tree: TreeHandle): T.CasePatt
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.CasePatternList.Parsed;
 }
 
 function viewTupleElements$items(this: RecordHandle) {
-	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression | T.Yield | T.ListSplat | T.ParenthesizedListSplat>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewTupleElements$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11324,17 +11331,17 @@ function viewTupleElements(data: RecordPosition, tree: TreeHandle): T.TupleEleme
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.TupleElements.Parsed;
 }
 
 function viewExceptClauseExceptionAs$value(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewExceptClauseExceptionAs$alias(this: RecordHandle) {
-	return viewSlot<T.Expression | undefined>(this, 7, 5, 0, 3);
+	return viewSlot<T.Expression | undefined>(this, 6, 4, 3, 0, 3);
 }
 function viewExceptClauseExceptionAs(data: RecordPosition, tree: TreeHandle): T.ExceptClauseExceptionAs.Parsed {
 	const node = {
@@ -11362,7 +11369,7 @@ function viewExceptClauseExceptionAs(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewCaseTuplePattern$elements(this: RecordHandle) {
-	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewCaseTuplePattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -11396,7 +11403,7 @@ function viewCaseTuplePattern(data: RecordPosition, tree: TreeHandle): T.CaseTup
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -11404,7 +11411,7 @@ function viewCaseTuplePattern(data: RecordPosition, tree: TreeHandle): T.CaseTup
 }
 
 function viewCaseListPattern$elements(this: RecordHandle) {
-	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 6, 4, 2);
+	return viewSlot<T.ListPatternCasePatterns | undefined>(this, 2, 3, 8, 3, 2);
 }
 function viewCaseListPattern$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -11438,7 +11445,7 @@ function viewCaseListPattern(data: RecordPosition, tree: TreeHandle): T.CaseList
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing, inner: $trivia$inner };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -11446,7 +11453,7 @@ function viewCaseListPattern(data: RecordPosition, tree: TreeHandle): T.CaseList
 }
 
 function viewPrintArguments$items(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewPrintArguments$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11480,14 +11487,14 @@ function viewPrintArguments(data: RecordPosition, tree: TreeHandle): T.PrintArgu
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.PrintArguments.Parsed;
 }
 
 function viewPrintChevronArguments$items(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewPrintChevronArguments$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -11521,17 +11528,17 @@ function viewPrintChevronArguments(data: RecordPosition, tree: TreeHandle): T.Pr
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.PrintChevronArguments.Parsed;
 }
 
 function viewPrintStatementChevron$chevron(this: RecordHandle) {
-	return viewSlot<T.Chevron>(this, 2, 9, 7, 2);
+	return viewSlot<T.Chevron>(this, 2, 6, 8, 6, 2);
 }
 function viewPrintStatementChevron$printChevronArguments(this: RecordHandle) {
-	return viewSlot<T.PrintChevronArguments | TSKindId.Comma | undefined>(this, 11, 6, 4, 3);
+	return viewSlot<T.PrintChevronArguments | TSKindId.Comma | undefined>(this, 8, 4, 10, 3, 3);
 }
 function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.PrintStatementChevron.Parsed {
 	const node = {
@@ -11559,7 +11566,7 @@ function viewPrintStatementChevron(data: RecordPosition, tree: TreeHandle): T.Pr
 }
 
 function viewPrintStatementPlain$printArguments(this: RecordHandle) {
-	return viewSlot<T.PrintArguments>(this, 2, 6, 4, 2);
+	return viewSlot<T.PrintArguments>(this, 2, 3, 8, 3, 2);
 }
 function viewPrintStatementPlain$listRead(this: { readonly printArguments: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.printArguments(), 'items'), undefined);
@@ -11593,7 +11600,7 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 	};
 	node.$with = { node, printArguments: $with$printArguments };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -11601,7 +11608,7 @@ function viewPrintStatementPlain(data: RecordPosition, tree: TreeHandle): T.Prin
 }
 
 function viewParenthesizedImportList$importList(this: RecordHandle) {
-	return viewSlot<T.ImportList>(this, 2, 6, 4, 2);
+	return viewSlot<T.ImportList>(this, 2, 3, 8, 3, 2);
 }
 function viewParenthesizedImportList$listRead(this: { readonly importList: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.importList(), 'names'), undefined);
@@ -11635,7 +11642,7 @@ function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.
 	};
 	node.$with = { node, importList: $with$importList };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_name', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_name', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -11643,7 +11650,7 @@ function viewParenthesizedImportList(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewComprehensionClauses$contents(this: RecordHandle) {
-	return viewSlots<T.ForInClause | T.IfClause>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.ForInClause | T.IfClause>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.ComprehensionClauses.Parsed {
 	const node = {
@@ -11670,10 +11677,10 @@ function viewComprehensionClauses(data: RecordPosition, tree: TreeHandle): T.Com
 }
 
 function viewIntegerHex$prefix(this: RecordHandle) {
-	return viewSlot<'0x' | '0X'>(this, 2, 4, 0, 2);
+	return viewSlot<'0x' | '0X'>(this, 2, 2, 4, 0, 2);
 }
 function viewIntegerHex$content(this: RecordHandle) {
-	return viewSlot<string>(this, 6, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
 function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Parsed {
 	const node = {
@@ -11701,10 +11708,10 @@ function viewIntegerHex(data: RecordPosition, tree: TreeHandle): T.IntegerHex.Pa
 }
 
 function viewIntegerOctal$prefix(this: RecordHandle) {
-	return viewSlot<'0o' | '0O'>(this, 2, 4, 0, 2);
+	return viewSlot<'0o' | '0O'>(this, 2, 2, 4, 0, 2);
 }
 function viewIntegerOctal$content(this: RecordHandle) {
-	return viewSlot<string>(this, 6, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
 function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOctal.Parsed {
 	const node = {
@@ -11732,10 +11739,10 @@ function viewIntegerOctal(data: RecordPosition, tree: TreeHandle): T.IntegerOcta
 }
 
 function viewIntegerBinary$prefix(this: RecordHandle) {
-	return viewSlot<'0b' | '0B'>(this, 2, 4, 0, 2);
+	return viewSlot<'0b' | '0B'>(this, 2, 2, 4, 0, 2);
 }
 function viewIntegerBinary$content(this: RecordHandle) {
-	return viewSlot<string>(this, 6, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
 function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBinary.Parsed {
 	const node = {
@@ -11763,22 +11770,22 @@ function viewIntegerBinary(data: RecordPosition, tree: TreeHandle): T.IntegerBin
 }
 
 function viewFloatPoint$integer(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewFloatPoint$fraction(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 6, 4, 0, 3);
+	return viewSlot<string | undefined>(this, 4, 2, 4, 0, 3);
 }
 function viewFloatPoint$marker(this: RecordHandle) {
-	return viewSlot<'e' | 'E' | undefined>(this, 10, 4, 0, 4);
+	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
 }
 function viewFloatPoint$sign(this: RecordHandle) {
-	return viewSlot<'-' | '+' | undefined>(this, 14, 4, 0, 5);
+	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
 }
 function viewFloatPoint$exponent(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 18, 4, 0, 6);
+	return viewSlot<string | undefined>(this, 10, 2, 4, 0, 6);
 }
 function viewFloatPoint$imaginary(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 22, 4, 0, 7);
+	return viewSlot<string | undefined>(this, 12, 2, 4, 0, 7);
 }
 function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Parsed {
 	const node = {
@@ -11818,22 +11825,22 @@ function viewFloatPoint(data: RecordPosition, tree: TreeHandle): T.FloatPoint.Pa
 }
 
 function viewFloatLeadingPoint$integer(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 2, 4, 0, 2);
+	return viewSlot<string | undefined>(this, 2, 2, 4, 0, 2);
 }
 function viewFloatLeadingPoint$fraction(this: RecordHandle) {
-	return viewSlot<string>(this, 6, 4, 0, 3);
+	return viewSlot<string>(this, 4, 2, 4, 0, 3);
 }
 function viewFloatLeadingPoint$marker(this: RecordHandle) {
-	return viewSlot<'e' | 'E' | undefined>(this, 10, 4, 0, 4);
+	return viewSlot<'e' | 'E' | undefined>(this, 6, 2, 4, 0, 4);
 }
 function viewFloatLeadingPoint$sign(this: RecordHandle) {
-	return viewSlot<'-' | '+' | undefined>(this, 14, 4, 0, 5);
+	return viewSlot<'-' | '+' | undefined>(this, 8, 2, 4, 0, 5);
 }
 function viewFloatLeadingPoint$exponent(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 18, 4, 0, 6);
+	return viewSlot<string | undefined>(this, 10, 2, 4, 0, 6);
 }
 function viewFloatLeadingPoint$imaginary(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 22, 4, 0, 7);
+	return viewSlot<string | undefined>(this, 12, 2, 4, 0, 7);
 }
 function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatLeadingPoint.Parsed {
 	const node = {
@@ -11873,19 +11880,19 @@ function viewFloatLeadingPoint(data: RecordPosition, tree: TreeHandle): T.FloatL
 }
 
 function viewFloatScientific$integer(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewFloatScientific$marker(this: RecordHandle) {
-	return viewSlot<'e' | 'E'>(this, 6, 4, 0, 3);
+	return viewSlot<'e' | 'E'>(this, 4, 2, 4, 0, 3);
 }
 function viewFloatScientific$sign(this: RecordHandle) {
-	return viewSlot<'-' | '+' | undefined>(this, 10, 4, 0, 4);
+	return viewSlot<'-' | '+' | undefined>(this, 6, 2, 4, 0, 4);
 }
 function viewFloatScientific$exponent(this: RecordHandle) {
-	return viewSlot<string>(this, 14, 4, 0, 5);
+	return viewSlot<string>(this, 8, 2, 4, 0, 5);
 }
 function viewFloatScientific$imaginary(this: RecordHandle) {
-	return viewSlot<string | undefined>(this, 18, 4, 0, 6);
+	return viewSlot<string | undefined>(this, 10, 2, 4, 0, 6);
 }
 function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatScientific.Parsed {
 	const node = {
@@ -11923,7 +11930,7 @@ function viewFloatScientific(data: RecordPosition, tree: TreeHandle): T.FloatSci
 }
 
 function viewEscapeSequenceUnicodeFixed$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceUnicodeFixed(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceUnicodeFixed.Parsed {
 	const node = {
@@ -11950,7 +11957,7 @@ function viewEscapeSequenceUnicodeFixed(data: RecordPosition, tree: TreeHandle):
 }
 
 function viewEscapeSequenceUnicodeWide$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceUnicodeWide(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceUnicodeWide.Parsed {
 	const node = {
@@ -11977,7 +11984,7 @@ function viewEscapeSequenceUnicodeWide(data: RecordPosition, tree: TreeHandle): 
 }
 
 function viewEscapeSequenceHex$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceHex(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceHex.Parsed {
 	const node = {
@@ -12004,7 +12011,7 @@ function viewEscapeSequenceHex(data: RecordPosition, tree: TreeHandle): T.Escape
 }
 
 function viewEscapeSequenceOctal$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceOctal(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceOctal.Parsed {
 	const node = {
@@ -12031,7 +12038,7 @@ function viewEscapeSequenceOctal(data: RecordPosition, tree: TreeHandle): T.Esca
 }
 
 function viewEscapeSequenceLineBreak$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceLineBreak(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceLineBreak.Parsed {
 	const node = {
@@ -12058,7 +12065,7 @@ function viewEscapeSequenceLineBreak(data: RecordPosition, tree: TreeHandle): T.
 }
 
 function viewEscapeSequenceSimple$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceSimple(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceSimple.Parsed {
 	const node = {
@@ -12085,7 +12092,7 @@ function viewEscapeSequenceSimple(data: RecordPosition, tree: TreeHandle): T.Esc
 }
 
 function viewEscapeSequenceNamed$content(this: RecordHandle) {
-	return viewSlot<string>(this, 2, 4, 0, 2);
+	return viewSlot<string>(this, 2, 2, 4, 0, 2);
 }
 function viewEscapeSequenceNamed(data: RecordPosition, tree: TreeHandle): T.EscapeSequenceNamed.Parsed {
 	const node = {
@@ -12112,7 +12119,7 @@ function viewEscapeSequenceNamed(data: RecordPosition, tree: TreeHandle): T.Esca
 }
 
 function viewSimplePatternNegative$value(this: RecordHandle) {
-	return viewSlot<T.Integer | T.Float>(this, 2, 28, 26, 2);
+	return viewSlot<T.Integer | T.Float>(this, 2, 15, 9, 14, 2);
 }
 function viewSimplePatternNegative(data: RecordPosition, tree: TreeHandle): T.SimplePatternNegative.Parsed {
 	const node = {
@@ -12139,7 +12146,7 @@ function viewSimplePatternNegative(data: RecordPosition, tree: TreeHandle): T.Si
 }
 
 function viewExceptClauseExceptionList$values(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewExceptClauseExceptionList(data: RecordPosition, tree: TreeHandle): T.ExceptClauseExceptionList.Parsed {
 	const node = {
@@ -12166,7 +12173,7 @@ function viewExceptClauseExceptionList(data: RecordPosition, tree: TreeHandle): 
 }
 
 function viewExceptClauseException$content(this: RecordHandle) {
-	return viewSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, 2, 14, 12, 2);
+	return viewSlot<T.ExceptClauseExceptionAs | T.ExceptClauseExceptionList>(this, 2, 10, 8, 10, 2);
 }
 function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.ExceptClauseException.Parsed {
 	const node = {
@@ -12193,7 +12200,7 @@ function viewExceptClauseException(data: RecordPosition, tree: TreeHandle): T.Ex
 }
 
 function viewSplatPatternList$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 4, 3, 0, 2);
 }
 function viewSplatPatternList(data: RecordPosition, tree: TreeHandle): T.SplatPatternList.Parsed {
 	const node = {
@@ -12220,7 +12227,7 @@ function viewSplatPatternList(data: RecordPosition, tree: TreeHandle): T.SplatPa
 }
 
 function viewSplatPatternDictionary$pattern(this: RecordHandle) {
-	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 5, 0, 2);
+	return viewSlot<T.Identifier | TSKindId.Underscore>(this, 2, 4, 3, 0, 2);
 }
 function viewSplatPatternDictionary(data: RecordPosition, tree: TreeHandle): T.SplatPatternDictionary.Parsed {
 	const node = {
@@ -12247,13 +12254,14 @@ function viewSplatPatternDictionary(data: RecordPosition, tree: TreeHandle): T.S
 }
 
 function viewAssignmentEq$name(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 5, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
 }
 function viewAssignmentEq$value(this: RecordHandle) {
 	return viewSlot<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
 		this,
-		7,
 		5,
+		4,
+		3,
 		0,
 		3
 	);
@@ -12284,10 +12292,10 @@ function viewAssignmentEq(data: RecordPosition, tree: TreeHandle): T.AssignmentE
 }
 
 function viewAssignmentType$name(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 5, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
 }
 function viewAssignmentType$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewAssignmentType(data: RecordPosition, tree: TreeHandle): T.AssignmentType.Parsed {
 	const node = {
@@ -12315,16 +12323,17 @@ function viewAssignmentType(data: RecordPosition, tree: TreeHandle): T.Assignmen
 }
 
 function viewAssignmentTyped$name(this: RecordHandle) {
-	return viewSlot<T.Pattern | T.PatternList>(this, 2, 5, 0, 2);
+	return viewSlot<T.Pattern | T.PatternList>(this, 2, 3, 1, 0, 2);
 }
 function viewAssignmentTyped$type(this: RecordHandle) {
-	return viewSlot<T.Type>(this, 7, 5, 0, 3);
+	return viewSlot<T.Type>(this, 5, 3, 1, 0, 3);
 }
 function viewAssignmentTyped$value(this: RecordHandle) {
 	return viewSlot<T.Expression | T.ExpressionList | T.Assignment | T.AugmentedAssignment | T.PatternList | T.Yield>(
 		this,
-		12,
-		5,
+		8,
+		4,
+		3,
 		0,
 		4
 	);
@@ -12356,7 +12365,7 @@ function viewAssignmentTyped(data: RecordPosition, tree: TreeHandle): T.Assignme
 }
 
 function viewExpressionStatementTuple$items(this: RecordHandle) {
-	return viewSlots<T.Expression>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Expression>(this, 2, 1, 4, 3, 0, 2);
 }
 function viewExpressionStatementTuple$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -12390,14 +12399,14 @@ function viewExpressionStatementTuple(data: RecordPosition, tree: TreeHandle): T
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 4, 3, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.ExpressionStatementTuple.Parsed;
 }
 
 function viewWithClauseBare$items(this: RecordHandle) {
-	return viewSlots<T.WithItem>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.WithItem>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewWithClauseBare$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'items'), undefined);
@@ -12431,14 +12440,14 @@ function viewWithClauseBare(data: RecordPosition, tree: TreeHandle): T.WithClaus
 	};
 	node.$with = { node, items: $with$items, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.WithClauseBare.Parsed;
 }
 
 function viewWithClauseParen$items(this: RecordHandle) {
-	return viewSlot<T.WithClauseWithItems>(this, 2, 6, 4, 2);
+	return viewSlot<T.WithClauseWithItems>(this, 2, 3, 8, 3, 2);
 }
 function viewWithClauseParen$listRead(this: { readonly items: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.items(), 'items'), undefined);
@@ -12472,7 +12481,7 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 	};
 	node.$with = { node, items: $with$items };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -12480,7 +12489,7 @@ function viewWithClauseParen(data: RecordPosition, tree: TreeHandle): T.WithClau
 }
 
 function viewMatchBlockBlock$alternatives(this: RecordHandle) {
-	return viewSlots<T.CaseClause>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.CaseClause>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewMatchBlockBlock(data: RecordPosition, tree: TreeHandle): T.MatchBlockBlock.Parsed {
 	const node = {
@@ -12507,7 +12516,7 @@ function viewMatchBlockBlock(data: RecordPosition, tree: TreeHandle): T.MatchBlo
 }
 
 function viewMatchBlockEmpty$newline(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0, 2);
+	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewMatchBlockEmpty(data: RecordPosition, tree: TreeHandle): T.MatchBlockEmpty.Parsed {
 	const node = {
@@ -12534,7 +12543,7 @@ function viewMatchBlockEmpty(data: RecordPosition, tree: TreeHandle): T.MatchBlo
 }
 
 function viewSuiteInline$elements(this: RecordHandle) {
-	return viewSlot<T.SimpleStatementsElements>(this, 2, 6, 4, 2);
+	return viewSlot<T.SimpleStatementsElements>(this, 2, 3, 8, 3, 2);
 }
 function viewSuiteInline$listRead(this: { readonly elements: () => unknown }): readonly unknown[] {
 	return listItems(ownerElements(this.elements(), 'items'), undefined);
@@ -12568,7 +12577,7 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 	};
 	node.$with = { node, elements: $with$elements };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	const listView = ownerView(childSlot(node, 2, 6, 4, 2, _wrap), '_item', (list) => hydrate(list, tree));
+	const listView = ownerView(childSlot(node, 2, 3, 8, 3, 2, _wrap), '_item', (list) => hydrate(list, tree));
 	node.length = listView.length ?? 0;
 	node.delimiter = listOption(listView.list, 'delimiter', undefined) ?? undefined;
 	defineListIndices(node, node.length);
@@ -12576,7 +12585,7 @@ function viewSuiteInline(data: RecordPosition, tree: TreeHandle): T.SuiteInline.
 }
 
 function viewSuiteBlock$block(this: RecordHandle) {
-	return viewSlot<T.Block>(this, 2, 6, 4, 2);
+	return viewSlot<T.Block>(this, 2, 3, 8, 3, 2);
 }
 function viewSuiteBlock(data: RecordPosition, tree: TreeHandle): T.SuiteBlock.Parsed {
 	const node = {
@@ -12603,7 +12612,7 @@ function viewSuiteBlock(data: RecordPosition, tree: TreeHandle): T.SuiteBlock.Pa
 }
 
 function viewSuiteEmpty$newline(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0, 2);
+	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewSuiteEmpty(data: RecordPosition, tree: TreeHandle): T.SuiteEmpty.Parsed {
 	const node = {
@@ -12630,10 +12639,10 @@ function viewSuiteEmpty(data: RecordPosition, tree: TreeHandle): T.SuiteEmpty.Pa
 }
 
 function viewComparisonOperatorComparator$operators(this: RecordHandle) {
-	return childSlot(this, 2, 5, 0, 2);
+	return childSlot(this, 2, 1, 2, 0, 2);
 }
 function viewComparisonOperatorComparator$primaryExpression(this: RecordHandle) {
-	return viewSlot<T.PrimaryExpression>(this, 7, 5, 0, 3);
+	return viewSlot<T.PrimaryExpression>(this, 3, 4, 3, 0, 3);
 }
 function viewComparisonOperatorComparator(
 	data: RecordPosition,
@@ -12664,7 +12673,7 @@ function viewComparisonOperatorComparator(
 }
 
 function viewYieldFromClause$expression(this: RecordHandle) {
-	return viewSlot<T.Expression>(this, 2, 5, 0, 2);
+	return viewSlot<T.Expression>(this, 2, 4, 3, 0, 2);
 }
 function viewYieldFromClause(data: RecordPosition, tree: TreeHandle): T.YieldFromClause.Parsed {
 	const node = {
@@ -12694,16 +12703,16 @@ function viewConstructorDeclaration$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewConstructorDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameter | undefined>(this, 3, 10, 8, 3);
+	return viewSlot<T.TypeParameter | undefined>(this, 3, 5, 8, 5, 3);
 }
 function viewConstructorDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 13, 10, 8, 4);
+	return viewSlot<T.Parameters>(this, 8, 5, 8, 5, 4);
 }
 function viewConstructorDeclaration$returnType(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 23, 5, 0, 5);
+	return viewSlot<T.Type | undefined>(this, 13, 3, 1, 0, 5);
 }
 function viewConstructorDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 28, 10, 8, 6);
+	return viewSlot<T.Suite>(this, 16, 5, 8, 5, 6);
 }
 function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.ConstructorDeclaration.Parsed {
 	const node = {
@@ -12741,7 +12750,7 @@ function viewConstructorDeclaration(data: RecordPosition, tree: TreeHandle): T.C
 }
 
 function viewBlockClassDeclaration$statements(this: RecordHandle) {
-	return viewSlots<T.StatementClassDefinition>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.StatementClassDefinition>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.BlockClassDeclaration.Parsed {
 	const node = {
@@ -12768,7 +12777,7 @@ function viewBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.Bl
 }
 
 function viewSuiteBlockClassDeclaration$blockClassDeclaration(this: RecordHandle) {
-	return viewSlot<T.BlockClassDeclaration>(this, 2, 6, 4, 2);
+	return viewSlot<T.BlockClassDeclaration>(this, 2, 3, 8, 3, 2);
 }
 function viewSuiteBlockClassDeclaration(data: RecordPosition, tree: TreeHandle): T.SuiteBlockClassDeclaration.Parsed {
 	const node = {
@@ -12795,10 +12804,10 @@ function viewSuiteBlockClassDeclaration(data: RecordPosition, tree: TreeHandle):
 }
 
 function viewDecoratedDefinitionClassDeclaration$decorators(this: RecordHandle) {
-	return viewSlots<T.Decorator>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.Decorator>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewDecoratedDefinitionClassDeclaration$definition(this: RecordHandle) {
-	return viewSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, 4, 45, 43, 3);
+	return viewSlot<T.ClassDefinition | T.MethodDeclaration | T.ConstructorDeclaration>(this, 3, 24, 8, 24, 3);
 }
 function viewDecoratedDefinitionClassDeclaration(
 	data: RecordPosition,
@@ -12829,7 +12838,7 @@ function viewDecoratedDefinitionClassDeclaration(
 }
 
 function viewNames$names(this: RecordHandle) {
-	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 2, 5, 0, 2);
+	return viewSlots<T.DottedName | T.AliasedImport>(this, 2, 1, 3, 1, 0, 2);
 }
 function viewNames$listRead(this: object): readonly unknown[] {
 	return listItems(ownerElements(this, 'names'), undefined);
@@ -12863,7 +12872,7 @@ function viewNames(data: RecordPosition, tree: TreeHandle): T.Names.Parsed {
 	};
 	node.$with = { node, names: $with$names, delimiter: $with$delimiter };
 	node.$trivia = { node, leading: $trivia$leading, trailing: $trivia$trailing };
-	node.length = recordLength(node, 2, 2, 5, 0, 2);
+	node.length = recordLength(node, 2, 1, 3, 1, 0, 2);
 	node.delimiter = recordDelimiter(node) ?? undefined;
 	defineListIndices(node, node.length);
 	return node as unknown as T.Names.Parsed;
@@ -12873,10 +12882,11 @@ function viewAsPatternTarget$content(this: RecordHandle) {
 	return viewSlot<T.Expression>(
 		this,
 		2,
-		5,
+		4,
+		3,
 		0,
 		2,
-		contentRole(this, () => recordSlot(this, 2, 5, 0, 2))
+		contentRole(this, () => recordSlot(this, 2, 4, 3, 0, 2))
 	);
 }
 function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatternTarget.Parsed {
@@ -12904,16 +12914,16 @@ function viewAsPatternTarget(data: RecordPosition, tree: TreeHandle): T.AsPatter
 }
 
 function viewFormatExpression$expression(this: RecordHandle) {
-	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 5, 0, 3);
+	return viewSlot<T.Expression | T.ExpressionList | T.PatternList | T.Yield>(this, 3, 4, 3, 0, 3);
 }
 function viewFormatExpression$debug(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewFormatExpression$typeConversion(this: RecordHandle) {
-	return viewSlot<T.TypeConversion | undefined>(this, 8, 5, 0, 4);
+	return viewSlot<T.TypeConversion | undefined>(this, 7, 3, 1, 0, 4);
 }
 function viewFormatExpression$formatSpecifier(this: RecordHandle) {
-	return viewSlot<T.FormatSpecifier | undefined>(this, 13, 6, 4, 5);
+	return viewSlot<T.FormatSpecifier | undefined>(this, 10, 3, 8, 3, 5);
 }
 function viewFormatExpression(data: RecordPosition, tree: TreeHandle): T.FormatExpression.Parsed {
 	const node = {
@@ -12952,19 +12962,19 @@ function viewMethodDeclaration$async(this: RecordHandle) {
 	return recordFlag(this, 2, 0);
 }
 function viewMethodDeclaration$name(this: RecordHandle) {
-	return viewSlot<T.Identifier>(this, 3, 5, 0, 3);
+	return viewSlot<T.Identifier>(this, 3, 3, 1, 0, 3);
 }
 function viewMethodDeclaration$typeParameters(this: RecordHandle) {
-	return viewSlot<T.TypeParameter | undefined>(this, 8, 10, 8, 4);
+	return viewSlot<T.TypeParameter | undefined>(this, 6, 5, 8, 5, 4);
 }
 function viewMethodDeclaration$parameters(this: RecordHandle) {
-	return viewSlot<T.Parameters>(this, 18, 10, 8, 5);
+	return viewSlot<T.Parameters>(this, 11, 5, 8, 5, 5);
 }
 function viewMethodDeclaration$returnType(this: RecordHandle) {
-	return viewSlot<T.Type | undefined>(this, 28, 5, 0, 6);
+	return viewSlot<T.Type | undefined>(this, 16, 3, 1, 0, 6);
 }
 function viewMethodDeclaration$body(this: RecordHandle) {
-	return viewSlot<T.Suite>(this, 33, 10, 8, 7);
+	return viewSlot<T.Suite>(this, 19, 5, 8, 5, 7);
 }
 function viewMethodDeclaration(data: RecordPosition, tree: TreeHandle): T.MethodDeclaration.Parsed {
 	const node = {

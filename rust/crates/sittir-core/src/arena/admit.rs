@@ -21,14 +21,17 @@ pub struct RecordShape {
 }
 
 /// One slot's cell in a record: in a parsed record, its first word and
-/// width, and for a list the width of each item's cell in its run; in a
-/// built record, its one word.
+/// width, the forms it holds (`record::form`), the words a bounded child's
+/// embedded record takes, and for a
+/// list (one word naming its run) the width of each item's cell in its run;
+/// in a built record, its one word.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CellShape {
     pub word: u32,
     pub width: u32,
     pub run: Option<u32>,
     pub inline: u32,
+    pub forms: u8,
     pub built: u32,
 }
 
@@ -56,34 +59,29 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
     ArenaError::Malformed { what, word }
 }
 
-/// Visits each cell of the parsed record at `at`, of shape `record`, with
-/// the capacity of an embedded child: a list slot's each item. Every record
-/// a cell names outside an embedded child lies below `floor`.
+/// Visits each cell of the parsed record at `at`, of shape `record`: a list
+/// slot's each item, and with an embedded record its capacity.
 pub(super) fn for_each_parsed_cell(
     arena: &dyn ArenaRead,
     at: Address,
     record: RecordShape,
-    floor: Address,
     mut visit: impl FnMut(Cell, u32) -> Result<(), ArenaError>,
 ) -> Result<(), ArenaError> {
     let words = arena.words(at, record.words.max(HEADER_WORDS))?;
+    let bits = arena.kind_bits();
     for cell in record.cells {
         let start = cell.word as usize;
         match cell.run {
             None => {
                 let words = words.get(start..start + cell.width as usize).ok_or(malformed("cell word", cell.word))?;
                 let slot = at.offset(cell.word).ok_or(malformed("cell word", cell.word))?;
-                let decoded = Cell::decode_slot(words, slot, cell.inline)?;
-                if words.first() == Some(&super::cell::tag::INLINE) {
-                    visit(decoded, cell.inline)?;
-                } else {
-                    visit(decoded.below(floor)?, 0)?;
-                }
+                let decoded = Cell::decode_parsed(words, slot, *cell, bits)?;
+                visit(decoded, if matches!(decoded, Cell::Child { .. }) { cell.inline } else { 0 })?;
             }
             Some(run) => {
-                let list = ListCell::decode(words.get(start..start + ListCell::WIDTH as usize).ok_or(malformed("cell word", cell.word))?)?;
-                for item in list.items(arena, run)? {
-                    visit(Cell::decode(item)?.below(floor)?, 0)?;
+                let word = *words.get(start).ok_or(malformed("cell word", cell.word))?;
+                for item in ListCell::of_word(CellWord(word), arena)?.items(arena, run)? {
+                    visit(Cell::decode_parsed(item, Address::NONE, *cell, bits)?, 0)?;
                 }
             }
         }
@@ -108,7 +106,7 @@ pub(super) fn for_each_built_cell(
             visit(Cell::decode_built(CellWord(word), arena)?.below(floor)?)?;
             continue;
         }
-        let list = ListCell::decode_built(CellWord(word), arena)?;
+        let list = ListCell::of_word(CellWord(word), arena)?;
         if list.len != 0 && list.run >= floor {
             return Err(malformed("list run address", list.run.0));
         }

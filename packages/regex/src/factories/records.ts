@@ -238,7 +238,7 @@ export function buildLookaheadAssertion(config: T.LookaheadAssertion.Config): T.
 	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
 	const record = arena.record(TSKindId.LookaheadAssertion as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 7, _pattern);
+	storeCell(arena, record, 3, 3, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.LookaheadAssertion.Bound;
 }
@@ -256,7 +256,7 @@ function buildLookaheadAssertion$patch(
 	handle?.verifyStored?.(TSKindId.LookaheadAssertion as const, { _content, _pattern });
 	const record = arena.copy(source, TSKindId.LookaheadAssertion as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 7, _pattern);
+	patchCell(arena, record, 3, 3, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.LookaheadAssertion.Bound;
 }
@@ -290,7 +290,7 @@ export function buildLookbehindAssertion(config: T.LookbehindAssertion.Config): 
 	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
 	const record = arena.record(TSKindId.LookbehindAssertion as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 7, _pattern);
+	storeCell(arena, record, 3, 3, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.LookbehindAssertion.Bound;
 }
@@ -308,7 +308,7 @@ function buildLookbehindAssertion$patch(
 	handle?.verifyStored?.(TSKindId.LookbehindAssertion as const, { _content, _pattern });
 	const record = arena.copy(source, TSKindId.LookbehindAssertion as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 7, _pattern);
+	patchCell(arena, record, 3, 3, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.LookbehindAssertion.Bound;
 }
@@ -527,7 +527,7 @@ export function buildClassRange(config: T.ClassRange.Config): T.ClassRange.Bound
 	handle?.verifyStored?.(TSKindId.ClassRange as const, { _start, _end });
 	const record = arena.record(TSKindId.ClassRange as const);
 	storeCell(arena, record, 2, 2, _start);
-	storeCell(arena, record, 3, 33, _end);
+	storeCell(arena, record, 3, 21, _end);
 	const node = arena.view(record);
 	return node as unknown as T.ClassRange.Bound;
 }
@@ -542,7 +542,7 @@ function buildClassRange$patch(source: object, config: T.ClassRange.Config): T.C
 	handle?.verifyStored?.(TSKindId.ClassRange as const, { _start, _end });
 	const record = arena.copy(source, TSKindId.ClassRange as const);
 	patchCell(arena, record, 2, 2, _start);
-	patchCell(arena, record, 3, 33, _end);
+	patchCell(arena, record, 3, 21, _end);
 	const node = arena.view(record);
 	return node as unknown as T.ClassRange.Bound;
 }
@@ -664,8 +664,8 @@ export function buildNamedCapturingGroup(config: T.NamedCapturingGroup.Config): 
 	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _content, _group_name, _pattern });
 	const record = arena.record(TSKindId.NamedCapturingGroup as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 7, _group_name);
-	storeCell(arena, record, 4, 12, _pattern);
+	storeCell(arena, record, 3, 3, _group_name);
+	storeCell(arena, record, 4, 6, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.NamedCapturingGroup.Bound;
 }
@@ -685,8 +685,8 @@ function buildNamedCapturingGroup$patch(
 	handle?.verifyStored?.(TSKindId.NamedCapturingGroup as const, { _content, _group_name, _pattern });
 	const record = arena.copy(source, TSKindId.NamedCapturingGroup as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 7, _group_name);
-	patchCell(arena, record, 4, 12, _pattern);
+	patchCell(arena, record, 3, 3, _group_name);
+	patchCell(arena, record, 4, 6, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.NamedCapturingGroup.Bound;
 }
@@ -1166,7 +1166,7 @@ export function buildUnicodePropertyValueExpression(
 	});
 	const record = arena.record(TSKindId.UnicodePropertyValueExpression as const);
 	storeCell(arena, record, 2, 2, _unicode_property_value_expression_group);
-	storeCell(arena, record, 3, 11, _unicode_property_value);
+	storeCell(arena, record, 3, 7, _unicode_property_value);
 	const node = arena.view(record);
 	return node as unknown as T.UnicodePropertyValueExpression.Bound;
 }
@@ -1191,7 +1191,7 @@ function buildUnicodePropertyValueExpression$patch(
 	});
 	const record = arena.copy(source, TSKindId.UnicodePropertyValueExpression as const);
 	patchCell(arena, record, 2, 2, _unicode_property_value_expression_group);
-	patchCell(arena, record, 3, 11, _unicode_property_value);
+	patchCell(arena, record, 3, 7, _unicode_property_value);
 	const node = arena.view(record);
 	return node as unknown as T.UnicodePropertyValueExpression.Bound;
 }
@@ -1431,7 +1431,7 @@ export function buildTermGroup(config: T.TermGroup.Config): T.TermGroup.Bound {
 	handle?.verifyStored?.(TSKindId.TermGroup as const, { _content, _quantifier });
 	const record = arena.record(TSKindId.TermGroup as const);
 	storeCell(arena, record, 2, 2, _content);
-	storeCell(arena, record, 3, 33, _quantifier);
+	storeCell(arena, record, 3, 21, _quantifier);
 	const node = arena.view(record);
 	return node as unknown as T.TermGroup.Bound;
 }
@@ -1446,7 +1446,7 @@ function buildTermGroup$patch(source: object, config: T.TermGroup.Config): T.Ter
 	handle?.verifyStored?.(TSKindId.TermGroup as const, { _content, _quantifier });
 	const record = arena.copy(source, TSKindId.TermGroup as const);
 	patchCell(arena, record, 2, 2, _content);
-	patchCell(arena, record, 3, 33, _quantifier);
+	patchCell(arena, record, 3, 21, _quantifier);
 	const node = arena.view(record);
 	return node as unknown as T.TermGroup.Bound;
 }
@@ -1527,7 +1527,7 @@ export function buildCountQuantifierArm(config: T.CountQuantifierArm.Config): T.
 	handle?.verifyStored?.(TSKindId.CountQuantifierArm as const, { _decimal_digits, _count_quantifier_group });
 	const record = arena.record(TSKindId.CountQuantifierArm as const);
 	storeCell(arena, record, 2, 2, _decimal_digits);
-	storeCell(arena, record, 3, 7, _count_quantifier_group);
+	storeCell(arena, record, 3, 5, _count_quantifier_group);
 	const node = arena.view(record);
 	return node as unknown as T.CountQuantifierArm.Bound;
 }
@@ -1549,7 +1549,7 @@ function buildCountQuantifierArm$patch(
 	handle?.verifyStored?.(TSKindId.CountQuantifierArm as const, { _decimal_digits, _count_quantifier_group });
 	const record = arena.copy(source, TSKindId.CountQuantifierArm as const);
 	patchCell(arena, record, 2, 2, _decimal_digits);
-	patchCell(arena, record, 3, 7, _count_quantifier_group);
+	patchCell(arena, record, 3, 5, _count_quantifier_group);
 	const node = arena.view(record);
 	return node as unknown as T.CountQuantifierArm.Bound;
 }
@@ -1601,7 +1601,7 @@ export function buildCharacterClassEscapeArm(
 	});
 	const record = arena.record(TSKindId.CharacterClassEscapeArm as const);
 	storeCell(arena, record, 2, 2, _character_class_escape_text2);
-	storeCell(arena, record, 3, 7, _unicode_property_value_expression);
+	storeCell(arena, record, 3, 5, _unicode_property_value_expression);
 	const node = arena.view(record);
 	return node as unknown as T.CharacterClassEscapeArm.Bound;
 }
@@ -1626,7 +1626,7 @@ function buildCharacterClassEscapeArm$patch(
 	});
 	const record = arena.copy(source, TSKindId.CharacterClassEscapeArm as const);
 	patchCell(arena, record, 2, 2, _character_class_escape_text2);
-	patchCell(arena, record, 3, 7, _unicode_property_value_expression);
+	patchCell(arena, record, 3, 5, _unicode_property_value_expression);
 	const node = arena.view(record);
 	return node as unknown as T.CharacterClassEscapeArm.Bound;
 }
@@ -1772,7 +1772,7 @@ export function buildInlineFlagsGroupEnable(config: T.InlineFlagsGroupEnable.Con
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupEnable as const, { _enabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupEnable as const);
 	storeCell(arena, record, 2, 2, _enabled);
-	storeCell(arena, record, 3, 7, _pattern);
+	storeCell(arena, record, 3, 5, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupEnable.Bound;
 }
@@ -1791,7 +1791,7 @@ function buildInlineFlagsGroupEnable$patch(
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupEnable as const, { _enabled, _pattern });
 	const record = arena.copy(source, TSKindId.InlineFlagsGroupEnable as const);
 	patchCell(arena, record, 2, 2, _enabled);
-	patchCell(arena, record, 3, 7, _pattern);
+	patchCell(arena, record, 3, 5, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupEnable.Bound;
 }
@@ -1834,8 +1834,8 @@ export function buildInlineFlagsGroupToggle(config: T.InlineFlagsGroupToggle.Con
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupToggle as const, { _enabled, _disabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupToggle as const);
 	storeCell(arena, record, 2, 2, _enabled);
-	storeCell(arena, record, 3, 7, _disabled);
-	storeCell(arena, record, 4, 12, _pattern);
+	storeCell(arena, record, 3, 5, _disabled);
+	storeCell(arena, record, 4, 8, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupToggle.Bound;
 }
@@ -1855,8 +1855,8 @@ function buildInlineFlagsGroupToggle$patch(
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupToggle as const, { _enabled, _disabled, _pattern });
 	const record = arena.copy(source, TSKindId.InlineFlagsGroupToggle as const);
 	patchCell(arena, record, 2, 2, _enabled);
-	patchCell(arena, record, 3, 7, _disabled);
-	patchCell(arena, record, 4, 12, _pattern);
+	patchCell(arena, record, 3, 5, _disabled);
+	patchCell(arena, record, 4, 8, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupToggle.Bound;
 }
@@ -1900,7 +1900,7 @@ export function buildInlineFlagsGroupDisable(
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupDisable as const, { _disabled, _pattern });
 	const record = arena.record(TSKindId.InlineFlagsGroupDisable as const);
 	storeCell(arena, record, 2, 2, _disabled);
-	storeCell(arena, record, 3, 7, _pattern);
+	storeCell(arena, record, 3, 5, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupDisable.Bound;
 }
@@ -1919,7 +1919,7 @@ function buildInlineFlagsGroupDisable$patch(
 	handle?.verifyStored?.(TSKindId.InlineFlagsGroupDisable as const, { _disabled, _pattern });
 	const record = arena.copy(source, TSKindId.InlineFlagsGroupDisable as const);
 	patchCell(arena, record, 2, 2, _disabled);
-	patchCell(arena, record, 3, 7, _pattern);
+	patchCell(arena, record, 3, 5, _pattern);
 	const node = arena.view(record);
 	return node as unknown as T.InlineFlagsGroupDisable.Bound;
 }

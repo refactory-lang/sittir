@@ -20,9 +20,9 @@ fn gated(items: &TokenStream) -> TokenStream {
     quote!(::sittir_core::records_codec! { #items })
 }
 
-/// The statement writing `field`'s cell, by its stamp. `capture` is the
-/// field's index among the node's captures, for a capture slot.
-fn slot_write(field: &Field<'_>, slot: &SlotAttrs, capture: Option<usize>, layout_of: &TokenStream) -> syn::Result<TokenStream> {
+/// The statement writing `field`'s cell, by its stamp. `capture` says the
+/// field is a capture slot.
+fn slot_write(field: &Field<'_>, slot: &SlotAttrs, capture: bool) -> syn::Result<TokenStream> {
     let name = field.ident;
     let word = slot.cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its record cell (`word = …`)")))?;
     let at = word as usize;
@@ -33,24 +33,20 @@ fn slot_write(field: &Field<'_>, slot: &SlotAttrs, capture: Option<usize>, layou
     let end = at + width as usize;
     let key = field.key.as_ref().ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its wire key")))?;
     if let Some(run) = slot.cell.run {
-        return Ok(quote!(::sittir_core::arena::write_list(__sink, #run, self.#name.iter(), #layout_of, #key)?.encode(&mut __words[#at..#end])?;));
+        return Ok(quote!(::sittir_core::arena::write_list(__sink, #run, self.#name.iter(), #key)?.encode(&mut __words[#at..#end])?;));
     }
-    let Some(capture) = capture else {
-          if slot.cell.inline.is_some() {
-              return Ok(quote!(::sittir_core::arena::write_inline_slot(__sink, &self.#name, #layout_of, #key, #word, &mut __words[#at..#end])?;));
-          }
-        return Ok(quote!(::sittir_core::arena::write_slot(__sink, &self.#name, #layout_of, #key)?.encode(&mut __words[#at..#end])?;));
-    };
-    let span = quote!(__spans.get(#capture).copied().flatten());
+    if !capture {
+        return Ok(quote!(::sittir_core::arena::write_slot(__sink, &self.#name, #key)?.encode(&mut __words[#at..#end])?;));
+    }
     let cell = if inner_of(field.ty, "Option").is_some() {
         quote! {
             match &self.#name {
-                ::core::option::Option::Some(text) => ::sittir_core::arena::captured_cell(__sink, text, #span)?,
+                ::core::option::Option::Some(text) => ::sittir_core::arena::captured_cell(__sink, text)?,
                 ::core::option::Option::None => ::sittir_core::arena::Cell::Absent,
             }
         }
     } else {
-        quote!(::sittir_core::arena::captured_cell(__sink, &self.#name, #span)?)
+        quote!(::sittir_core::arena::captured_cell(__sink, &self.#name)?)
     };
     Ok(quote!((#cell).encode(&mut __words[#at..#end])?;))
 }
@@ -64,13 +60,12 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
         .ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}` has a record, so it has a `#[layout]` field")))?;
     let (layout_name, layout_ty) = (layout.ident, layout.ty);
     let trivia = quote!(<#layout_ty as ::sittir_core::arena::LayoutField>::Trivia);
-    let writer = |body: TokenStream, hydrate: TokenStream| {
+    let writer = |body: TokenStream| {
         gated(&quote! {
             impl ::sittir_core::arena::WriteCell<#trivia> for #ident {
                 fn write_cell(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<::sittir_core::arena::Cell, ::sittir_core::arena::ArenaError> {
                     #body
                 }
-                #hydrate
             }
         })
     };
@@ -85,31 +80,17 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             .find(|field| matches!(field.role, Role::Text))
             .ok_or_else(|| syn::Error::new_spanned(ident, "a text leaf has a `#[text]` field"))?
             .ident;
-        return Ok(writer(
-            quote!(::sittir_core::arena::leaf_cell(__sink, #kind, &self.#text, #layout_of)),
-            TokenStream::new(),
-        ));
+        return Ok(writer(quote!(::sittir_core::arena::leaf_cell(__sink, #kind, &self.#text, #layout_of))));
     }
     let captures: Vec<&Ident> = if attrs.interior.is_some() { capture_fields(fields)?.into_iter().map(|(field, _)| field.ident).collect() } else { Vec::new() };
     let mut writes = Vec::new();
-    let mut hydrates = Vec::new();
     let mut settings = Vec::new();
     let mut slot_words = Vec::new();
     for field in fields {
         let name = field.ident;
         match &field.role {
             Role::Slot(slot) => {
-                let capture = captures.iter().position(|capture| *capture == name);
-                writes.push(slot_write(field, slot, capture, &layout_of)?);
-                if slot.cell.bit.is_none() && capture.is_none() {
-                    let hydrate = |value: TokenStream| quote!(::sittir_core::arena::WriteCell::hydrate_records(#value, __sink)?;);
-                    hydrates.push(if slot.cell.run.is_some() {
-                        let item = hydrate(quote!(__item));
-                        quote!(for __item in self.#name.iter() { #item })
-                    } else {
-                        hydrate(quote!(&self.#name))
-                    });
-                }
+                writes.push(slot_write(field, slot, captures.contains(&name))?);
                 if let (Some(key), Some(word)) = (&field.key, slot.cell.word) {
                     slot_words.push(quote!(#key => ::core::option::Option::Some(#word),));
                 }
@@ -127,16 +108,11 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
             Role::Layout | Role::Text | Role::Kind => {}
         }
     }
-    let spans = (!captures.is_empty()).then(|| {
-        let count = captures.len();
-        quote!(let __spans = ::sittir_core::arena::capture_spans(#layout_of, #count)?;)
-    });
     let bind = |used: bool, name: TokenStream| if used { name } else { quote!(_) };
     let sink = bind(!writes.is_empty(), quote!(__sink));
     let cells = bind(!writes.is_empty(), quote!(__words));
     let side = bind(!settings.is_empty(), quote!(__side));
     Ok(writer(quote! {
-            #spans
             ::sittir_core::arena::write_record(
                 __sink,
                 #kind,
@@ -152,13 +128,6 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
                     ::core::result::Result::Ok(())
                 },
             )
-    }, quote! {
-        fn hydrate_records(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, #trivia>) -> ::core::result::Result<(), ::sittir_core::arena::ArenaError> {
-            __sink.hydrate_record(#layout_of, |__sink| ::sittir_core::arena::WriteCell::write_cell(self, __sink), |__sink| {
-                #(#hydrates)*
-                ::core::result::Result::Ok(())
-            })
-        }
     }))
 }
 
@@ -167,25 +136,18 @@ pub fn structure(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn:
 /// first kind; a blank arm the blank kind.
 pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenStream> {
     let mut arms = Vec::new();
-    let mut hydrates = Vec::new();
     let mut bounds = Vec::new();
     for variant in variants {
         let name = variant.name;
         let unit = |kind: TokenStream| quote!(::core::result::Result::Ok(::sittir_core::arena::Cell::Unit { kind: #kind, row: ::core::option::Option::None }));
-        let (write, hydrate) = match (variant.payload, &variant.first) {
+        let write = match (variant.payload, &variant.first) {
             _ if variant.blank => {
                 let cell = unit(quote!(::sittir_core::types::KindId::BLANK));
-                (
-                    quote!(Self::#name => #cell,),
-                    quote!(Self::#name => ::core::result::Result::Ok(()),),
-                )
+                quote!(Self::#name => #cell,)
             }
             (Some(payload), _) => {
                 bounds.push(quote!(#payload: ::sittir_core::arena::WriteCell<__T>,));
-                (
-                    quote!(Self::#name(payload) => ::sittir_core::arena::WriteCell::<__T>::write_cell(payload, __sink),),
-                    quote!(Self::#name(payload) => ::sittir_core::arena::WriteCell::<__T>::hydrate_records(payload, __sink),),
-                )
+                quote!(Self::#name(payload) => ::sittir_core::arena::WriteCell::<__T>::write_cell(payload, __sink),)
             }
             (None, Some(first)) => {
                 let cell = unit(quote!(#first));
@@ -194,15 +156,11 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 } else {
                     quote!(Self::#name)
                 };
-                (
-                    quote!(#pattern => #cell,),
-                    quote!(#pattern => ::core::result::Result::Ok(()),),
-                )
+                quote!(#pattern => #cell,)
             }
             (None, None) => return Err(syn::Error::new_spanned(name, format!("`{name}` is a unit arm that names no kind to write: `#[kind(…)]`"))),
         };
         arms.push(write);
-        hydrates.push(hydrate);
     }
     Ok(gated(&quote! {
         impl<__T: ::core::clone::Clone> ::sittir_core::arena::WriteCell<__T> for #ident
@@ -213,9 +171,6 @@ pub fn choice(ident: &Ident, variants: &[WireVariant<'_>]) -> syn::Result<TokenS
                 match self {
                     #(#arms)*
                 }
-            }
-            fn hydrate_records(&self, __sink: &mut ::sittir_core::arena::RecordSink<'_, __T>) -> ::core::result::Result<(), ::sittir_core::arena::ArenaError> {
-                match self { #(#hydrates)* }
             }
         }
     }))

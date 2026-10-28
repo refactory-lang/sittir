@@ -166,7 +166,8 @@ function placeIn(places: RecordPlaces, storageKey: string): RecordPlace {
 
 function cellArgs(place: RecordPlace, list = false): string {
 	if ('bit' in place) throw new Error(`emitWrap: presence word ${place.word} bit ${place.bit} is not a cell`);
-	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ${place.inline ?? 0}` : (place.run ?? place.inline ?? 0)}, ${place.built}`;
+	if (!list && place.run !== undefined) throw new Error(`emitWrap: the list cell at word ${place.word} is read as one item`);
+	return `${place.word}, ${place.width}, ${list ? `${place.run ?? 'undefined'}, ` : ''}${place.forms}, ${place.inline ?? 0}, ${place.built}`;
 }
 
 interface SlotAccessorConfig {
@@ -307,9 +308,9 @@ function handleAccessorBody({ slot, config }: AccessorSlot, places: RecordPlaces
 	const one = config.required ? config.elemType : `${config.elemType} | undefined`;
 	const place = placeIn(places, slot.storageKey);
 	if ('bit' in place) return `return recordFlag(this, ${place.word}, ${place.bit})`;
-	const args = cellArgs(place);
-	if (!storesNodes(config.storageInfo)) return place.run === undefined ? `return childSlot(this, ${args})` : `return childItems(this, ${cellArgs(place, true)})`;
+	if (!storesNodes(config.storageInfo)) return place.run === undefined ? `return childSlot(this, ${cellArgs(place)})` : `return childItems(this, ${cellArgs(place, true)})`;
 	if (slot.arity === 'many') return `return viewSlots<${config.elemType}>(this, ${cellArgs(place, true)})`;
+	const args = cellArgs(place);
 	const role = config.aliasContent === true ? `, contentRole(this, () => recordSlot(this, ${args}))` : '';
 	return `return viewSlot<${one}>(this, ${args}${role})`;
 }
@@ -680,11 +681,11 @@ export class WrapEmitter implements CodegenEmitter<string> {
 			'function hydrateSlots<T>(node: object, key: string, tree: TreeHandle): readonly ParsedOfData<T>[] {',
 			'  return hydrateSlotsWith(node, key, tree, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
-			'function viewSlot<T>(view: RecordHandle, word: number, width: number, inline: number, built: number, role?: Role): ParsedOfData<T> {',
-			'  return childSlot(view, word, width, inline, built, _wrap, role) as ParsedOfData<T>;',
+			'function viewSlot<T>(view: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, role?: Role): ParsedOfData<T> {',
+			'  return childSlot(view, word, width, forms, inline, built, _wrap, role) as ParsedOfData<T>;',
 			'}',
-			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run: number | undefined, inline: number, built: number): readonly ParsedOfData<T>[] {',
-			'  return childItems(view, word, width, run, inline, built, _wrap) as readonly ParsedOfData<T>[];',
+			'function viewSlots<T>(view: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): readonly ParsedOfData<T>[] {',
+			'  return childItems(view, word, width, run, forms, inline, built, _wrap) as readonly ParsedOfData<T>[];',
 			'}',
 			''
 		];

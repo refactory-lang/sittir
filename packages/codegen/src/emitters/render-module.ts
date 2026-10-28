@@ -66,7 +66,7 @@ import { interiorOf } from './interior.ts';
 import { ENVELOPE_PINS, assertEnvelopeExtrasPinned, type EnvelopeClaims, type EnvelopePin } from './envelope-claims.ts';
 import { boxedPayloadsOf, PAYLOAD_CEILING_BYTES } from './boxed-payloads.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
-import { RECORD_HEADER_WORDS, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
+import { RECORD_HEADER_WORDS, STORED, recordArgs, recordLayoutOf, slotRecordForm, type RecordLayout, type RecordPlace } from './record-layout.ts';
 import {
 	RESERVED_SUPERTYPE_ENUM_NAMES,
 	RUST_KEYWORDS,
@@ -86,7 +86,8 @@ import {
 	fieldTypeComponents,
 	kindEnumAltIdPairs,
 	slotSeparatorTexts,
-	compareOrdinal
+	compareOrdinal,
+	isTextLeaf
 } from './shared.ts';
 import type { EmittedTemplates } from './templates.ts';
 import {
@@ -1335,7 +1336,7 @@ function recordsTs(lang: GrammarName, records: ReadonlyMap<string, RecordLayout>
 			const at =
 				'bit' in place
 					? `word: ${place.word}, bit: ${place.bit}`
-					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}${place.inline === undefined ? '' : `, inline: ${place.inline}`}, built: ${place.built}`;
+					: `word: ${place.word}, width: ${place.width}${place.run === undefined ? '' : `, run: ${place.run}`}${place.inline === undefined ? '' : `, inline: ${place.inline}`}, forms: ${place.forms}, built: ${place.built}`;
 			return ` ${place.field}: { ${at} },`;
 		});
 		return `\t${name}: {${[` words: ${layout.words}, builtWords: ${layout.builtWords},`, ...places].join('')} },`;
@@ -2126,6 +2127,35 @@ function slotVerbatimIsImmediate(slot: AssembledNonterminal, nodeMap: NodeMap): 
 	return sawScalarSource;
 }
 
+function choiceArmsOf(field: AssembledNonterminal, nodeMap: NodeMap): { kinds: string[]; literals: NodeLiteral[] } {
+	const kinds: string[] = [];
+	const literalSet = new Set<string>();
+	const literals: NodeLiteral[] = [];
+	for (const component of fieldTypeComponents(field, nodeMap)) {
+		if (component.kind === 'nodeKind') {
+			if (!kinds.includes(component.rawKind)) kinds.push(component.rawKind);
+			continue;
+		}
+		if (component.kind !== 'literal') continue;
+		if (component.enumKind !== undefined && nodeMap.nodes.get(component.enumKind)?.hidden === false) {
+			if (!kinds.includes(component.enumKind)) kinds.push(component.enumKind);
+			continue;
+		}
+		const literalKind = component.rawKind ?? component.value;
+		const key = `${literalKind}\0${component.value}`;
+		if (literalSet.has(key)) continue;
+		literalSet.add(key);
+		literals.push({
+			kind: literalKind,
+			text: component.value,
+			resolvedKindId: component.resolvedKindId,
+			immediate: component.immediate,
+			...(component.enumKind === undefined ? {} : { enumKind: component.enumKind })
+		});
+	}
+	return { kinds, literals };
+}
+
 function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: NodeMap): PerSlotChildEnum[] {
 	const entries: PerSlotChildEnum[] = [];
 	const seen = new Set<string>();
@@ -2136,31 +2166,7 @@ function collectPerSlotChildEnums(nodes: readonly AssembledNode[], nodeMap: Node
 
 	const consider = (typeName: string, ownerKind: string, field: AssembledNonterminal): void => {
 		if (nodeSlotShapeOf(field, nodeMap).tag !== 'union') return;
-		const slotKinds: string[] = [];
-		const literalSet = new Set<string>();
-		const literals: NodeLiteral[] = [];
-		for (const component of fieldTypeComponents(field, nodeMap)) {
-			if (component.kind === 'nodeKind') {
-				if (!slotKinds.includes(component.rawKind)) slotKinds.push(component.rawKind);
-				continue;
-			}
-			if (component.kind !== 'literal') continue;
-			if (component.enumKind !== undefined && nodeMap.nodes.get(component.enumKind)?.hidden === false) {
-				if (!slotKinds.includes(component.enumKind)) slotKinds.push(component.enumKind);
-				continue;
-			}
-			const literalKind = component.rawKind ?? component.value;
-			const key = `${literalKind}\0${component.value}`;
-			if (literalSet.has(key)) continue;
-			literalSet.add(key);
-			literals.push({
-				kind: literalKind,
-				text: component.value,
-				resolvedKindId: component.resolvedKindId,
-				immediate: component.immediate,
-				...(component.enumKind === undefined ? {} : { enumKind: component.enumKind })
-			});
-		}
+		const { kinds: slotKinds, literals } = choiceArmsOf(field, nodeMap);
 		const enumName = perSlotEnumName(typeName, field.name);
 		if (seen.has(enumName)) return;
 		if (reservedNodeNames.has(enumName)) return;
@@ -3517,11 +3523,67 @@ function recordLayoutOfSlots(
 	inline: (slot: AssembledNonterminal) => number
 ): RecordLayout {
 	return recordLayoutOf(
-		printedSlots.map(({ slot }) => ({
-			field: rustFieldIdent(slot.storageName),
-			form: slotRecordForm(nodeSlotShapeOf(slot, nodeMap), isMultiple(slot), isMultiple(slot) ? 0 : inline(slot))
-		}))
+		printedSlots.map(({ slot }) => {
+			const shape = nodeSlotShapeOf(slot, nodeMap);
+			return {
+				field: rustFieldIdent(slot.storageName),
+				form: slotRecordForm(shape.tag === 'presence', slotStoredOf(slot, shape, nodeMap), isMultiple(slot), isMultiple(slot) ? 0 : inline(slot))
+			};
+		})
 	);
+}
+
+const storedByNode = new WeakMap<NodeMap, Map<AssembledNode, number>>();
+
+function storedOfNode(node: AssembledNode, nodeMap: NodeMap): number {
+	let cache = storedByNode.get(nodeMap);
+	if (cache === undefined) {
+		cache = new Map();
+		storedByNode.set(nodeMap, cache);
+	}
+	const cached = cache.get(node);
+	if (cached !== undefined) return cached;
+	const stored =
+		isFixedTextLeaf(node) || node instanceof AssembledEnum
+			? STORED.unit
+			: node instanceof AssembledSupertype
+				? collectEffectiveSupertypeNodeShape(node, nodeMap).subtypes.reduce((all, { subNode }) => all | storedOfNode(subNode, nodeMap), 0)
+				: isTextLeaf(node)
+					? STORED.leaf
+					: STORED.record;
+	cache.set(node, stored);
+	return stored;
+}
+
+function storedOfKinds(kinds: readonly string[], nodeMap: NodeMap): number {
+	return expandConcreteNodeKinds(kinds, nodeMap).reduce((all, { node }) => all | storedOfNode(node, nodeMap), 0);
+}
+
+function slotStoredOf(slot: AssembledNonterminal, shape: NodeSlotShape, nodeMap: NodeMap): number {
+	switch (shape.tag) {
+		case 'presence':
+			return 0;
+		case 'text':
+			return STORED.text;
+		case 'kind':
+			return storedOfKinds([shape.kind], nodeMap);
+		case 'supertype': {
+			const kind = findSupertypeKindByTypeName(shape.supertypeName, nodeMap);
+			const node = kind === undefined ? undefined : nodeMap.nodes.get(kind);
+			if (node === undefined) throw new Error(`render-module: ${slot.name} is typed by the supertype ${shape.supertypeName}, which has no node`);
+			return storedOfNode(node, nodeMap);
+		}
+		case 'union': {
+			const { kinds, literals } = choiceArmsOf(slot, nodeMap);
+			return storedOfKinds(kinds, nodeMap) | (literals.length > 0 ? STORED.unit : 0) | (hasBlankArm(slot) ? STORED.blank : 0);
+		}
+		case 'any': {
+			const { nodes, literals } = getNodeProjection(nodeMap);
+			return nodes.reduce((all, node) => all | storedOfNode(node, nodeMap), literals.length > 0 ? STORED.unit : 0);
+		}
+		default:
+			return assertNever(shape);
+	}
 }
 
 const recordLayouts = new WeakMap<

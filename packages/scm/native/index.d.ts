@@ -412,6 +412,15 @@ export declare class SittirEngine {
    * r" buffers.
    */
   chunk(treeId: TreeId, n: number): Uint32Array
+  /**
+   * r" The live tree `treeId`'s row index: a `Uint32Array` over
+   * r" its native memory, one word per node, the address of the
+   * r" record a read wrote for the row, 0 for none. Reads write
+   * r" to it in place; disposing the tree detaches it. Refuses a
+   * r" tree that is not live and a runtime that does not allow
+   * r" external array buffers.
+   */
+  rows(treeId: TreeId): Uint32Array
 }
 
 /**
@@ -420,28 +429,35 @@ export declare class SittirEngine {
  */
 export declare const ARENA_CHUNK_SHIFT: number
 
-/** r" Words before an embedded child's own record header. */
-export declare const CELL_INLINE_HEADER_WORDS: number
+export declare const CELL_FORM_BLANK: number
 
-/** r" The tag word of an absent cell (`arena::cell::tag`). */
+export declare const CELL_FORM_INLINE: number
+
+/** r" The forms a slot's `forms` stamp names (`record::form`). */
+export declare const CELL_FORM_NODE: number
+
+export declare const CELL_FORM_TEXT: number
+
+export declare const CELL_FORM_UNIT: number
+
+/**
+ * r" The bit a node cell's span end carries for a leaf
+ * r" (`record::form::LEAF`).
+ */
+export declare const CELL_LEAF_BIT: number
+
+/**
+ * r" The tag words of a parsed cell whose slot holds more than one
+ * r" form (`arena::cell::parsed_tag`).
+ */
 export declare const CELL_TAG_ABSENT: number
 
-/** r" The tag word of a built leaf's cell, and of a built captured string's. */
-export declare const CELL_TAG_BUILT_LEAF: number
-
-/** r" The tag word of a cell naming a child's record. */
-export declare const CELL_TAG_CHILD: number
-
-/** r" The tag word of a coordinate cell. */
-export declare const CELL_TAG_COORDINATE: number
-
-/** r" The tag word of an embedded bounded child's record. */
 export declare const CELL_TAG_INLINE: number
 
-/** r" The tag word of a parsed leaf's cell, and of a parsed captured string's. */
-export declare const CELL_TAG_PARSED_LEAF: number
+export declare const CELL_TAG_NODE: number
 
-/** r" The tag word of a unit's cell. */
+export declare const CELL_TAG_TEXT: number
+
 export declare const CELL_TAG_UNIT: number
 
 /** A child's position under its parent as JavaScript holds it: a whole number. */

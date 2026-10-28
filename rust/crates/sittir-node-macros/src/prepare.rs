@@ -62,13 +62,8 @@ fn record_handle(field: &Field<'_>, trivia: &TokenStream) -> syn::Result<(TokenS
         Role::Layout => Ok((quote!(#arena::LayoutAt<'r, #trivia>), quote!(self.layout()))),
         Role::Slot(slot) => {
             let node = crate::views::held(field.ty).map(|(node, _)| node).ok_or_else(|| syn::Error::new_spanned(field.ty, "a prepared slot holds a `SlotValue<…>`"))?;
-            let (Some(word), Some(width), Some(built)) = (slot.cell.word, slot.cell.width, slot.cell.built) else {
-                let ident = field.ident;
-                return Err(syn::Error::new_spanned(ident, format!("`{ident}` is a prepared slot of a record, so it has its cell's word, width and built word")));
-            };
-            let run = slot.cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-            let inline = slot.cell.inline.map(|inline| quote!(.inlined(#inline)));
-            Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#word, #width, #run, #built)#inline)))
+            let shape = crate::views::cell_shape(field.ident, &slot.cell)?;
+            Ok((quote!(#arena::SlotAt<'r, #trivia, #node>), quote!(self.slot::<#node>(#shape))))
         }
         Role::Flank(_) => setting(quote!(Delimiter)),
         Role::SeparatorKind(_) => setting(quote!(SeparatorKind)),

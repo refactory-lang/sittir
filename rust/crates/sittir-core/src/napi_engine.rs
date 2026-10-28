@@ -603,24 +603,33 @@ macro_rules! napi_engine {
         }
 
         $crate::records_codec! {
-            /// The tag word of an absent cell (`arena::cell::tag`).
+            /// The tag words of a parsed cell whose slot holds more than one
+            /// form (`arena::cell::parsed_tag`).
             #[::napi_derive::napi]
-            pub const CELL_TAG_ABSENT: u32 = $crate::arena::cell::tag::ABSENT;
-            /// The tag word of a coordinate cell.
+            pub const CELL_TAG_ABSENT: u32 = $crate::arena::cell::parsed_tag::ABSENT;
             #[::napi_derive::napi]
-            pub const CELL_TAG_COORDINATE: u32 = $crate::arena::cell::tag::COORDINATE;
-            /// The tag word of a parsed leaf's cell, and of a parsed captured string's.
+            pub const CELL_TAG_NODE: u32 = $crate::arena::cell::parsed_tag::NODE;
             #[::napi_derive::napi]
-            pub const CELL_TAG_PARSED_LEAF: u32 = $crate::arena::cell::tag::PARSED_LEAF;
-            /// The tag word of a cell naming a child's record.
+            pub const CELL_TAG_UNIT: u32 = $crate::arena::cell::parsed_tag::UNIT;
             #[::napi_derive::napi]
-            pub const CELL_TAG_CHILD: u32 = $crate::arena::cell::tag::CHILD;
-            /// The tag word of a unit's cell.
+            pub const CELL_TAG_TEXT: u32 = $crate::arena::cell::parsed_tag::TEXT;
             #[::napi_derive::napi]
-            pub const CELL_TAG_UNIT: u32 = $crate::arena::cell::tag::UNIT;
-            /// The tag word of a built leaf's cell, and of a built captured string's.
+            pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::parsed_tag::INLINE;
+            /// The forms a slot's `forms` stamp names (`record::form`).
             #[::napi_derive::napi]
-            pub const CELL_TAG_BUILT_LEAF: u32 = $crate::arena::cell::tag::BUILT_LEAF;
+            pub const CELL_FORM_NODE: u32 = $crate::record::form::NODE as u32;
+            #[::napi_derive::napi]
+            pub const CELL_FORM_UNIT: u32 = $crate::record::form::UNIT as u32;
+            #[::napi_derive::napi]
+            pub const CELL_FORM_TEXT: u32 = $crate::record::form::TEXT as u32;
+            #[::napi_derive::napi]
+            pub const CELL_FORM_INLINE: u32 = $crate::record::form::INLINE as u32;
+            #[::napi_derive::napi]
+            pub const CELL_FORM_BLANK: u32 = $crate::record::form::BLANK as u32;
+            /// The bit a node cell's span end carries for a leaf
+            /// (`record::form::LEAF`).
+            #[::napi_derive::napi]
+            pub const CELL_LEAF_BIT: u32 = $crate::record::form::LEAF;
             /// The bits a record header's or a leaf entry's kind field takes
             /// in the built arena (`EngineGrammar::KIND_BITS`).
             #[::napi_derive::napi]
@@ -653,12 +662,6 @@ macro_rules! napi_engine {
             pub const HELD_SIDE: u32 = $crate::arena::count::held::SIDE;
             #[::napi_derive::napi]
             pub const HELD_TEXT: u32 = $crate::arena::count::held::TEXT;
-            /// The tag word of an embedded bounded child's record.
-            #[::napi_derive::napi]
-            pub const CELL_TAG_INLINE: u32 = $crate::arena::cell::tag::INLINE;
-            /// Words before an embedded child's own record header.
-            #[::napi_derive::napi]
-            pub const CELL_INLINE_HEADER_WORDS: u32 = $crate::arena::cell::INLINE_HEADER_WORDS;
             /// The bits of a packed record address or string offset below its
             /// chunk (`arena::CHUNK_SHIFT`).
             #[::napi_derive::napi]
@@ -1138,6 +1141,21 @@ macro_rules! napi_engine {
                         })
                     })
                 }
+
+                /// The live tree `treeId`'s row index: a `Uint32Array` over
+                /// its native memory, one word per node, the address of the
+                /// record a read wrote for the row, 0 for none. Reads write
+                /// to it in place; disposing the tree detaches it. Refuses a
+                /// tree that is not live and a runtime that does not allow
+                /// external array buffers.
+                #[::napi_derive::napi(ts_return_type = "Uint32Array")]
+                pub fn rows(&self, env: ::napi::Env, tree_id: $crate::types::TreeId) -> ::napi::Result<$crate::napi_engine::Made> {
+                    LIVE_TREES.with(|trees| {
+                        let trees = trees.borrow();
+                        let parsed = trees.get(&tree_id).ok_or_else(|| $crate::napi_engine::tree_not_live(tree_id))?;
+                        TREE_BUFFERS.with(|buffers| buffers.borrow_mut().entry(tree_id).or_default().rows(&env, || parsed.rows_memory()))
+                    })
+                }
             }
         }
     };
@@ -1377,6 +1395,7 @@ pub fn check_external_buffers(env: &napi::Env) -> napi::Result<()> {
 #[derive(Default)]
 pub struct Buffers {
     held: std::collections::HashMap<(bool, u32), WeakValue>,
+    rows: Option<WeakValue>,
     counts: std::collections::HashMap<u32, Vec<WeakValue>>,
     reported: i64,
     unreported: Vec<u32>,
@@ -1415,6 +1434,23 @@ impl Buffers {
             stale.delete(env)?;
         }
         Ok(Some(Made(array)))
+    }
+
+    /// The typed array JavaScript reads a parsed tree's row index through:
+    /// the one it was given while that lives, else a new one over `mem`.
+    ///
+    /// # Errors
+    ///
+    /// As `external_view`, and a reference napi refuses to make or read.
+    pub fn rows(&mut self, env: &napi::Env, mem: impl FnOnce() -> std::sync::Arc<crate::arena::ChunkMem<u32>>) -> napi::Result<Made> {
+        if let Some(array) = self.rows.as_ref().map(|weak| weak.get(env)).transpose()?.flatten() {
+            return Ok(Made(array));
+        }
+        let array = external_view(env, mem())?;
+        if let Some(stale) = self.rows.replace(WeakValue::new(env, array)?) {
+            stale.delete(env)?;
+        }
+        Ok(Made(array))
     }
 
     /// Reports `bytes`, the memory of the arena now, to V8, in place of what
@@ -1465,7 +1501,7 @@ impl Buffers {
     ///
     /// A status napi refuses with.
     pub fn detach(&mut self, env: &napi::Env) -> napi::Result<()> {
-        let held: Vec<WeakValue> = self.held.drain().map(|(_, weak)| weak).chain(self.counts.drain().flat_map(|(_, weak)| weak)).collect();
+        let held: Vec<WeakValue> = self.held.drain().map(|(_, weak)| weak).chain(self.counts.drain().flat_map(|(_, weak)| weak)).chain(self.rows.take()).collect();
         held.into_iter().try_for_each(|weak| detach_weak(env, weak))?;
         self.report(env, 0)
     }

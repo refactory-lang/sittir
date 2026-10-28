@@ -126,7 +126,7 @@ impl<'a, T> RecordCtx<'a, T> {
             return Cell::decode_built(CellWord(word), self.arena);
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-        Cell::decode_slot(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape.inline)
+        Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.arena.kind_bits())
     }
 
     /// The list of the slot of shape `shape` in `words`, and the words each
@@ -134,18 +134,19 @@ impl<'a, T> RecordCtx<'a, T> {
     pub(super) fn slot_list(self, words: &[u32], shape: CellShape) -> Result<(ListCell, u32), ArenaError> {
         if self.tree.is_none() {
             let word = *words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?;
-            return Ok((ListCell::decode_built(CellWord(word), self.arena)?, 1));
+            return Ok((ListCell::of_word(CellWord(word), self.arena)?, 1));
         }
-        let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-        Ok((ListCell::decode(cell)?, shape.run.ok_or(malformed("list run width", shape.word))?))
+        let word = *words.get(shape.word as usize).ok_or(malformed("cell word", shape.word))?;
+        Ok((ListCell::of_word(CellWord(word), self.arena)?, shape.run.ok_or(malformed("list run width", shape.word))?))
     }
 
-    /// The cell an item of a list holds: its run's `item` words.
-    pub(super) fn item_cell(self, item: &[u32]) -> Result<Cell, ArenaError> {
+    /// The cell an item of a list slot of shape `shape` holds: its run's
+    /// `item` words.
+    pub(super) fn item_cell(self, item: &[u32], shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
             return Cell::decode_built(CellWord(*item.first().ok_or(malformed("cell width", 0))?), self.arena);
         }
-        Cell::decode(item)
+        Cell::decode_parsed(item, Address::NONE, shape, self.arena.kind_bits())
     }
 
     #[must_use]
@@ -704,7 +705,7 @@ impl<T, V: KindOf, const ADJACENT: bool> KindTest for RecordSlot<'_, T, V, ADJAC
 pub struct RecordItems<'a, T, V, const ADJACENT: bool = false> {
     ctx: RecordCtx<'a, T>,
     holder: PrepPlace,
-    word: u32,
+    shape: CellShape,
     run: u32,
     list: ListCell,
     view: std::marker::PhantomData<fn() -> V>,
@@ -728,7 +729,7 @@ impl<'a, T, V, const ADJACENT: bool> RecordItems<'a, T, V, ADJACENT> {
     pub fn of_shape(ctx: RecordCtx<'a, T>, holder: PrepPlace, words: &[u32], shape: CellShape) -> Result<Self, ArenaError> {
         let (list, run) = ctx.slot_list(words, shape)?;
         let _run = list.items(ctx.arena, run)?;
-        Ok(Self { ctx, holder, word: shape.word, run, list, view: std::marker::PhantomData })
+        Ok(Self { ctx, holder, shape, run, list, view: std::marker::PhantomData })
     }
 }
 
@@ -741,9 +742,9 @@ impl<'a, T, V: RecordView<'a, T> + Render, const ADJACENT: bool> crate::view::Sl
 
     fn item(&self, index: usize) -> Option<Self::Item> {
         let item = u32::try_from(index).ok().filter(|&item| item < self.list.len)?;
-        let site = Site { holder: self.holder, word: self.word, item: ItemIndex(item) };
+        let site = Site { holder: self.holder, word: self.shape.word, item: ItemIndex(item) };
         Some(match self.list.items(self.ctx.arena, self.run) {
-            Ok(mut items) => RecordSlot::of_cell(self.ctx, site, self.ctx.item_cell(items.nth(index)?)),
+            Ok(mut items) => RecordSlot::of_cell(self.ctx, site, self.ctx.item_cell(items.nth(index)?, self.shape)),
             Err(refused) => RecordSlot { ctx: self.ctx, site, cell: SlotCell::Refused(refused) },
         })
     }

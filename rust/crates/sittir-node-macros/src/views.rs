@@ -57,10 +57,11 @@ pub(crate) fn held(ty: &Type) -> Option<(&Type, TokenStream)> {
 pub(crate) fn cell_shape(name: &Ident, cell: &crate::attrs::CellStamp) -> syn::Result<TokenStream> {
     let word = cell.word.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its record cell (`word = …`)")))?;
     let built = cell.built.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its built cell (`built = …`)")))?;
+    let forms = cell.forms.ok_or_else(|| syn::Error::new_spanned(name, format!("`{name}` is a record slot without its cell's forms (`forms = …`)")))?;
     let width = cell.width.unwrap_or(1);
     let inline = cell.inline.unwrap_or(0);
     let run = cell.run.map_or_else(|| quote!(::core::option::Option::None), |run| quote!(::core::option::Option::Some(#run)));
-    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, inline: #inline, built: #built }))
+    Ok(quote!(::sittir_core::arena::CellShape { word: #word, width: #width, run: #run, inline: #inline, forms: #forms, built: #built }))
 }
 
 fn view_of(node: &Type) -> TokenStream {

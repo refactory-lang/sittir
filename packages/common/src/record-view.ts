@@ -3,11 +3,11 @@ import { decodeIndex, encodeHandle, type ChunkWords, type RecordReader, type Rec
 import { builtRefOf } from './built-ref.ts';
 import { treeOf } from './tree-token.ts';
 import { treeBuiltArena, treeSlotTable, treeStructureTable } from './engine-scope.ts';
-import { decodeBuiltCell, decodeBuiltList } from './built-arena.ts';
+import { decodeBuiltCell } from './built-arena.ts';
 import { builderInputs, type BuilderInputs } from './builder-inputs.ts';
 import {
-	decodeCell,
 	decodeListCell,
+	decodeParsedCell,
 	decodeSideDelimiter,
 	decodeSideRow,
 	decodeSideSeparatorKind,
@@ -168,8 +168,10 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 	switch (cell.form) {
 		case 'absent':
 			return undefined;
-		case 'coordinate':
-			return coordinateAt(tree, cell.index, cell.span);
+		case 'coordinate': {
+			const at = tree.records?.row(cell.index);
+			return at === undefined ? coordinateAt(tree, cell.index, cell.span) : recordStub(tree, at);
+		}
 		case 'parsedLeaf':
 			return carryReadTree(holder, leafData(tree, cell.kind, cell.span, cell.row));
 		case 'parsedText':
@@ -193,53 +195,52 @@ function cellData(holder: RecordPosition, cell: RecordCell, word: number, item: 
 	}
 }
 
-/** The value of the one-cell slot whose parsed cell is at `word`, `width` words, and whose built cell is `built`, of the record `holder` is at, as read data. */
-export function recordSlot(holder: RecordPosition, word: number, width: number, inline: number, built: number): unknown {
-	return cellData(holder, slotCell(holder, word, width, inline, built), word, 0);
+/** The value of the one-cell slot whose parsed cell is at `word`, `width` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, as read data. */
+export function recordSlot(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): unknown {
+	return cellData(holder, slotCell(holder, word, width, forms, inline, built), word, 0);
 }
 
-export function recordPresent(holder: RecordPosition, word: number, width: number, inline: number, built: number): boolean {
-	return slotCell(holder, word, width, inline, built).form !== 'absent';
+export function recordPresent(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): boolean {
+	return slotCell(holder, word, width, forms, inline, built).form !== 'absent';
 }
 
-function slotCell(holder: RecordPosition, word: number, width: number, inline: number, built: number): RecordCell {
+function slotCell(holder: RecordPosition, word: number, width: number, forms: number, inline: number, built: number): RecordCell {
 	const arena = holder.$tree.built;
 	if (arena !== undefined) {
 		const { words, start } = holderWords(holder, built + 1);
 		return decodeBuiltCell(arena, words[start + built]!);
 	}
 	const { words, start, records } = holderWords(holder, word + width);
-	return decodeCell(words.subarray(start + word, start + word + width), 0, records.format, inline, holder.$at + word);
+	return decodeParsedCell(words.subarray(0, start + word + width), start + word, forms, records.format, inline, holder.$at + word);
 }
 
-/** The items of the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at, each as read data. */
-export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, inline: number, built: number): readonly unknown[] {
-	if (run === undefined) return [recordSlot(holder, word, width, inline, built)].filter((item) => item !== undefined);
+/** The list one word of a holder names: the built cell `built` of a built record, else the parsed cell at `word`. */
+function listOf(holder: RecordPosition, word: number, built: number): { readonly records: RecordWords; readonly run: number; readonly len: number } {
 	const arena = holder.$tree.built;
+	const at = arena === undefined ? word : built;
+	const { words, start, records } = holderWords(holder, at + 1);
+	const runs = arena ?? records;
+	return { records: runs, ...decodeListCell(runs, words[start + at]!) };
+}
+
+/** The items of the list slot whose parsed cell is at `word`, each item's cell `run` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, each as read data. */
+export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): readonly unknown[] {
+	if (run === undefined) return [recordSlot(holder, word, width, forms, inline, built)].filter((item) => item !== undefined);
+	const arena = holder.$tree.built;
+	const list = listOf(holder, word, built);
+	if (list.len === 0) return [];
 	if (arena !== undefined) {
-		const { words, start } = holderWords(holder, built + 1);
-		const list = decodeBuiltList(arena, words[start + built]!);
-		if (list.len === 0) return [];
 		const items = wordsAt(arena, list.run, list.len);
 		return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n));
 	}
-	const { words, start, records } = holderWords(holder, word + width);
-	const list = decodeListCell(words, start + word);
-	if (list.len === 0) return [];
-	const items = wordsAt(records, list.run, list.len * run);
-	return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeCell(items.words, items.start + n * run, records.format), word, n));
+	const items = wordsAt(list.records, list.run, list.len * run);
+	return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeParsedCell(items.words, items.start + n * run, forms, list.records.format), word, n));
 }
 
 /** The number of items the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at holds. */
-export function recordLength(holder: RecordPosition, word: number, width: number, run: number | undefined, inline: number, built: number): number {
-	if (run === undefined) return recordPresent(holder, word, width, inline, built) ? 1 : 0;
-	const arena = holder.$tree.built;
-	if (arena !== undefined) {
-		const { words, start } = holderWords(holder, built + 1);
-		return decodeBuiltList(arena, words[start + built]!).len;
-	}
-	const { words, start } = holderWords(holder, word + width);
-	return decodeListCell(words, start + word).len;
+export function recordLength(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): number {
+	if (run === undefined) return recordPresent(holder, word, width, forms, inline, built) ? 1 : 0;
+	return listOf(holder, word, built).len;
 }
 
 /** Whether the presence bit at the generated `word` offset of the record `holder` is at is set. */

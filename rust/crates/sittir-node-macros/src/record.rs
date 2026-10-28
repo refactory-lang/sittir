@@ -53,7 +53,7 @@ pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots
     }
     for &(ident, ty, stamp) in slots {
         let Some(word) = stamp.word else {
-            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.inline.is_some() {
+            if words.is_some() || stamp.width.is_some() || stamp.run.is_some() || stamp.bit.is_some() || stamp.inline.is_some() || stamp.forms.is_some() {
                 return Err(syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `word`")));
             }
             continue;
@@ -63,12 +63,8 @@ pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots
         };
         let message = format!("{owner}.{ident}: its record cell overlaps the header");
         asserts.push(quote!(const _: () = assert!(#word >= ::sittir_core::record::HEADER_WORDS, #message);));
-        if let Some(inline) = stamp.inline {
-            let Some(width) = stamp.width.filter(|_| stamp.bit.is_none() && stamp.run.is_none()) else {
-                return Err(syn::Error::new_spanned(ident, "only a scalar child has inline record capacity"));
-            };
-            let message = format!("{owner}.{ident}: its inline record capacity fits its cell");
-            asserts.push(quote!(::sittir_core::records_codec! { const _: () = assert!(#inline >= ::sittir_core::record::HEADER_WORDS && #inline <= #width.saturating_sub(::sittir_core::arena::cell::INLINE_HEADER_WORDS), #message); }));
+        if stamp.inline.is_some() && (stamp.bit.is_some() || stamp.run.is_some()) {
+            return Err(syn::Error::new_spanned(ident, "only a scalar child has inline record capacity"));
         }
         let place = match (stamp.bit, stamp.width) {
             (Some(bit), None) if bit < 32 => {
@@ -78,8 +74,10 @@ pub fn checks(owner: &Ident, words: Option<u32>, built_words: Option<u32>, slots
             }
             (None, Some(width)) => {
                 let run = stamp.run.unwrap_or(0);
-                let message = format!("{owner}.{ident}: its type needs more than its stamped record cell");
-                asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#width, #run), #message);));
+                let inline = stamp.inline.unwrap_or(0);
+                let forms = stamp.forms.ok_or_else(|| syn::Error::new_spanned(ident, format!("`{ident}`'s record cell states its `forms`")))?;
+                let message = format!("{owner}.{ident}: its type is not held as its stamped forms in its stamped cell");
+                asserts.push(quote!(const _: () = assert!(::sittir_core::record::fits_cell::<#ty>(#forms, #width, #run, #inline), #message);));
                 Place::Cell { start: word, end: end_word(ident, word, width)? }
             }
             _ => return Err(syn::Error::new_spanned(ident, format!("`{ident}` is stamped a `width` or a `bit` below 32, not both"))),
