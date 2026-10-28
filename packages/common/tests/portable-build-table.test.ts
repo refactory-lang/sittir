@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import type { PortableBuildArm, PortableBuildTable } from '@sittir/types';
+import { createEngine } from '../src/create-engine.ts';
+import { portableBuilder } from '../src/portable/build.ts';
 import python from '@sittir/python';
 import rust from '@sittir/rust';
 import typescript from '@sittir/typescript';
@@ -245,9 +247,33 @@ describe('the portable build table', () => {
 
 	it("tests a boolean arm by the value its binding declares, and names a config builder's numeric members", () => {
 		expect(armsOf('rust', 'literal.boolean').map((arm) => arm.when)).toEqual([[{ boolean: true }], [{ boolean: false }]]);
-		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toEqual(['content']);
-		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual(['integer', 'fraction', 'exponent']);
+		expect(armsOf('rust', 'literal.number.integer')[0]!.numeric).toBe('content');
+		expect(armsOf('python', 'literal.number.float')[0]!.numeric).toEqual({ integer: 'integer', fraction: 'fraction', exponent: 'exponent', marker: 'marker', sign: 'sign' });
 		expect(armsOf('python', 'literal.number.integer.hex')[0]!.numeric).toBeUndefined();
+	});
+
+	it("spells a number's decimal parts through the members its arm maps them to, whatever their names, and refuses a part it has no member for", async () => {
+		const engine = await createEngine(python, { api: 'strict' });
+		const withSign = (sign: string | undefined) => (arm: PortableBuildArm): PortableBuildArm => {
+			const parts = typeof arm.numeric === 'object' ? arm.numeric : undefined;
+			if (parts?.sign === undefined) return arm;
+			const { sign: old, ...rest } = parts;
+			return {
+				...arm,
+				members: arm.members.flatMap((member) => (member.name !== old ? [member] : sign === undefined ? [] : [{ ...member, name: sign }])),
+				numeric: sign === undefined ? rest : { ...rest, sign }
+			};
+		};
+		const builderWith = (sign: string | undefined) =>
+			portableBuilder({
+				language: 'python',
+				table: { ...tables.python.table, paths: Object.fromEntries(Object.entries(tables.python.table.paths).map(([path, at]) => [path, { ...at, arms: at.arms.map(withSign(sign)) }])) },
+				builders: engine.build,
+				kindName: () => undefined,
+				readsAs: () => true
+			});
+		expect(String(engine.render(builderWith('exponentSign')({ $path: 'literal.number.float', $value: 1e-7 }) as never))).toBe('1.0e-7');
+		expect(() => builderWith(undefined)({ $path: 'literal.number.float', $value: 1e-7 })).toThrow(/literal\.number\.float builds a kind \d+ in python, which cannot spell 1e-7/);
 	});
 
 	it('reaches a kind a flag presets only through the flag', () => {

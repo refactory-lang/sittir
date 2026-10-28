@@ -21756,7 +21756,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 157,
 					builder: 'numberFloatLeadingPoint',
-					numeric: ['fraction', 'exponent'],
+					numeric: {
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'fraction',
@@ -21834,7 +21839,13 @@ export const build: PortableBuildTable = {
 				{
 					kind: 156,
 					builder: 'numberFloatPoint',
-					numeric: ['integer', 'fraction', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -21929,7 +21940,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 158,
 					builder: 'numberFloatScientific',
-					numeric: ['integer', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -22143,7 +22159,13 @@ export const build: PortableBuildTable = {
 				{
 					kind: 156,
 					builder: 'numberFloatPoint',
-					numeric: ['integer', 'fraction', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -22238,7 +22260,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 157,
 					builder: 'numberFloatLeadingPoint',
-					numeric: ['fraction', 'exponent'],
+					numeric: {
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'fraction',
@@ -22317,7 +22344,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 158,
 					builder: 'numberFloatScientific',
-					numeric: ['integer', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',

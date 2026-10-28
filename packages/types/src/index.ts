@@ -31,6 +31,7 @@ export type {
 	PortableBuildArm,
 	PortableBuildPath,
 	PortableBuildTable,
+	PortableDecimalParts,
 	PortableValueBuild,
 	PortableContainer,
 	PortableCallShape,

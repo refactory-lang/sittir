@@ -141,12 +141,21 @@ export type PortablePickTest =
 	| { readonly boolean: boolean }
 	| { readonly variant: string; readonly value: number; readonly default?: true };
 
+/** The member a config builder takes each part of a number's decimal spelling through: its digits before and after the point, its exponent's digits, the exponent marker and the exponent's sign. */
+export interface PortableDecimalParts {
+	readonly integer?: string;
+	readonly fraction?: string;
+	readonly exponent?: string;
+	readonly marker?: string;
+	readonly sign?: string;
+}
+
 /**
  * One way a vocabulary path builds: the kind and its builder, the tests that pick it, the holder slots it is picked in, and what it builds from the
  * structure. A fixed literal has no builder and builds as its kind id; a kind its holder's builder builds has none either, and says by `seated`
  * whether the holder takes its config or its sole value. `scalar` marks the one arm at the path that builds a number of that type; it takes the
- * number as its builder's input, or, where its builder takes a config, through the `numeric` members: one takes the number whole, several take
- * its decimal spelling's parts by name (`integer`, `fraction`, `exponent`, with `marker` and `sign` beside an exponent). A `template`
+ * number as its builder's input, or, where its builder takes a config, through `numeric`: the member that takes the number whole, or the member
+ * that takes each part of its decimal spelling. A structure stating one of those members beside its `$value` refuses. A `template`
  * spells its member from the named holes. A `mounted` arm's builder is a mount that builds its holder with the
  * arm's kind seated in it. A text its claim fixes is a preset; its claim's other tests (a pattern its text matches, a kind it
  * holds) are the path's read tests, which a built node must pass.
@@ -157,7 +166,7 @@ export interface PortableBuildArm {
 	readonly mounted?: PortableMount;
 	readonly seated?: PortableCallShape;
 	readonly scalar?: 'integer' | 'float';
-	readonly numeric?: readonly string[];
+	readonly numeric?: string | PortableDecimalParts;
 	readonly when: readonly PortablePickTest[];
 	readonly holders?: readonly (readonly [holder: number, key: string])[];
 	readonly members: readonly PortableMemberStep[];

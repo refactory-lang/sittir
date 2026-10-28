@@ -7659,7 +7659,13 @@ export const build: PortableBuildTable = {
 				{
 					kind: 96,
 					builder: 'floatPoint',
-					numeric: ['integer', 'fraction', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -7770,7 +7776,13 @@ export const build: PortableBuildTable = {
 				{
 					kind: 97,
 					builder: 'floatLeadingPoint',
-					numeric: ['integer', 'fraction', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						fraction: 'fraction',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',
@@ -7881,7 +7893,12 @@ export const build: PortableBuildTable = {
 				{
 					kind: 98,
 					builder: 'floatScientific',
-					numeric: ['integer', 'exponent'],
+					numeric: {
+						integer: 'integer',
+						exponent: 'exponent',
+						marker: 'marker',
+						sign: 'sign'
+					},
 					members: [
 						{
 							name: 'integer',

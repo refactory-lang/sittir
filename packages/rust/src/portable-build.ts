@@ -28104,7 +28104,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 141,
 					builder: 'integerLiteralDecimal',
-					numeric: ['content'],
+					numeric: 'content',
 					members: [
 						{
 							name: 'content',
@@ -28151,7 +28151,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 143,
 					builder: 'integerLiteralBinary',
-					numeric: ['content'],
+					numeric: 'content',
 					members: [
 						{
 							name: 'content',
@@ -28198,7 +28198,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 142,
 					builder: 'integerLiteralHex',
-					numeric: ['content'],
+					numeric: 'content',
 					members: [
 						{
 							name: 'content',
@@ -28245,7 +28245,7 @@ export const build: PortableBuildTable = {
 				{
 					kind: 144,
 					builder: 'integerLiteralOctal',
-					numeric: ['content'],
+					numeric: 'content',
 					members: [
 						{
 							name: 'content',

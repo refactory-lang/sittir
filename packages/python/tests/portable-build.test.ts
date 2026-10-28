@@ -28,6 +28,12 @@ describe('the portable build through the strict table', () => {
 		expect(() => runtime.build({ $path: 'literal.number.float', $value: Number.NaN })).toThrow(/literal\.number\.float: no python literal spells NaN/);
 	});
 
+	it('refuses a member its $value spells, stated beside it', () => {
+		expect(() => runtime.build({ $path: 'literal.number.float', $value: 1.5, marker: 'e', exponent: '8' })).toThrow(
+			/literal\.number\.float: \$value 1\.5 spells exponent and marker; state the \$value or those members, not both/
+		);
+	});
+
 	it('takes text as given at a slot that holds text', () => {
 		expect(render(runtime.build({ $path: 'literal.number.float', integer: '1', fraction: '5' }))).toBe('1.5');
 	});

@@ -4,6 +4,7 @@ import type {
 	PortableBuildTable,
 	PortableCallShape,
 	PortableContainer,
+	PortableDecimalParts,
 	PortableMount,
 	PortableFlagStep,
 	PortableKeyedMount,
@@ -45,6 +46,8 @@ export type PickDiagnosticCode =
 	| 'portable-value-undecided';
 
 const FORM_PRODUCT_LIMIT = 8;
+
+const DECIMAL_PARTS = ['integer', 'fraction', 'exponent', 'marker', 'sign'] as const satisfies readonly (keyof PortableDecimalParts)[];
 
 export interface PickDiagnostic {
 	readonly code: PickDiagnosticCode;
@@ -531,9 +534,13 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 			const memberKinds = new Map<string, ReadonlySet<number>>();
 			for (const { member, seats } of completed) if (!memberKinds.has(member.name)) memberKinds.set(member.name, valueIds(seats));
 			const numericKeys = shape !== undefined && builder !== undefined && builders.get(builder) === 'config' ? numericSlotKeys(node) : [];
-			const numeric = [
-				...new Set(completed.flatMap(({ member }) => (member.steps.length === 1 && numericKeys.includes(member.steps[0]!.key) ? [member.name] : [])))
-			];
+			const memberAt = (key: string): string | undefined => completed.find(({ member }) => member.steps.length === 1 && member.steps[0]!.key === key)?.member.name;
+			const whole = numericKeys.length === 1 ? memberAt(numericKeys[0]!) : undefined;
+			if (numericKeys.length === 1 && whole === undefined) throw new Error(`portable build: ${kind} takes its number at ${numericKeys[0]}, which no member of ${entry.vocab} reaches`);
+			const partless = numericKeys.length > 1 ? numericKeys.filter((key) => !DECIMAL_PARTS.some((part) => part === key)) : [];
+			if (partless.length > 0) throw new Error(`portable build: ${kind}'s numeric slots ${partless.join(', ')} are no part of a decimal spelling`);
+			const parts: PortableDecimalParts = Object.fromEntries(DECIMAL_PARTS.flatMap((part) => (memberAt(part) === undefined ? [] : [[part, memberAt(part)!]])));
+			const numeric: PortableBuildArm['numeric'] = numericKeys.length === 0 ? undefined : (whole ?? parts);
 			return [
 				{
 					kind,
@@ -550,7 +557,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 						...(builder === undefined ? {} : { builder }),
 						...(mount === undefined ? {} : { mounted: mount.mounted }),
 						...(seated === undefined ? {} : { seated }),
-						...(numeric.length === 0 ? {} : { numeric }),
+						...(numeric === undefined ? {} : { numeric }),
 						members: completed.map(({ member }) => member),
 						presets: deepest,
 						flags: flagSteps,

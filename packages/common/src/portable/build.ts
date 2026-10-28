@@ -4,6 +4,7 @@ import type {
 	PortableBuildTable,
 	PortableCallShape,
 	PortableContainer,
+	PortableDecimalParts,
 	PortableKeyedMount,
 	PortableMemberStep,
 	PortableMount,
@@ -383,26 +384,23 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			if (placed.mount !== undefined) mountOn(owner, placed, path);
 			else set(owner, key, placed.value, path);
 		};
-		const decimalParts = (value: number, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
-			const has = (name: string): boolean => arm.numeric!.includes(name);
-			const member = (name: string): PortableMemberStep | undefined => arm.members.find((m) => m.name === name);
+		const decimalParts = (value: number, parts: PortableDecimalParts, arm: PortableBuildArm, path: string): ReadonlyMap<string, string> => {
 			const cannot = (): never => {
 				throw new Error(`portable build: ${path} builds a ${nameOf(arm.kind)} in ${language}, which cannot spell ${spelledValue(value)}`);
 			};
 			const [, integer, fraction, sign, exponent] = /^(\d+)(?:\.(\d+))?(?:e([+-])(\d+))?$/.exec(String(value)) ?? cannot();
-			const parts = new Map<string, string>();
-			if (has('integer')) parts.set('integer', integer!);
+			const out = new Map<string, string>();
+			if (parts.integer !== undefined) out.set(parts.integer, integer!);
 			else if (integer !== '0') cannot();
-			if (has('fraction')) parts.set('fraction', fraction ?? '0');
+			if (parts.fraction !== undefined) out.set(parts.fraction, fraction ?? '0');
 			else if (fraction !== undefined) cannot();
-			const required = member('exponent')?.steps.every((step) => step.optional !== true) === true;
-			const written = exponent ?? (has('exponent') && required ? '0' : undefined);
-			if (written === undefined) return parts;
-			if (!has('exponent')) cannot();
-			parts.set('exponent', written);
-			if (member('marker') !== undefined) parts.set('marker', 'e');
-			if (sign === '-' && member('sign') !== undefined) parts.set('sign', '-');
-			return parts;
+			const required = parts.exponent !== undefined && arm.members.find((m) => m.name === parts.exponent)?.steps.every((step) => step.optional !== true) === true;
+			const written = exponent ?? (required ? '0' : undefined);
+			if (written === undefined) return out;
+			out.set(parts.exponent ?? cannot(), written);
+			if (parts.marker !== undefined) out.set(parts.marker, 'e');
+			if (sign === '-') out.set(parts.sign ?? cannot(), '-');
+			return out;
 		};
 		const takesList = (route: PortableMemberStep): boolean => route.multiple || route.seats.some((seat) => seat.many === true);
 		const seats = (route: PortableMemberStep, item: unknown): boolean =>
@@ -463,9 +461,13 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 					throw new Error(
 						`portable build: ${structure.$path} takes ${arm.scalar === 'float' ? 'a float (a number)' : 'an integer (a safe integer or a bigint)'} in ${language}, not ${spelledValue(scalar)}`
 					);
+				const spelling = arm.numeric === undefined ? [] : typeof arm.numeric === 'string' ? [arm.numeric] : Object.values(arm.numeric);
+				const stated = spelling.filter((name) => values.has(name));
+				if (stated.length > 0)
+					throw new Error(`portable build: ${structure.$path}: $value ${spelledValue(scalar)} spells ${stated.join(' and ')}; state the $value or ${stated.length === 1 ? 'that member' : 'those members'}, not both`);
 				if (arm.numeric === undefined) frame.input = scalar;
-				else if (arm.numeric.length === 1) values.set(arm.numeric[0]!, scalar);
-				else for (const [name, part] of decimalParts(Number(scalar), arm, structure.$path)) values.set(name, part);
+				else if (typeof arm.numeric === 'string') values.set(arm.numeric, scalar);
+				else for (const [name, part] of decimalParts(Number(scalar), arm.numeric, arm, structure.$path)) values.set(name, part);
 			}
 			const routed = [...values.keys()].map((name) => {
 				const routes = routesOf(arm, name);
