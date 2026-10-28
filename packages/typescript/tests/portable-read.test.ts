@@ -26,4 +26,15 @@ describe('the portable read', () => {
 		expect(roundTrip('export function g() {}')).toBe('export function g() {}\n');
 		expect(roundTrip('try {} catch (e: unknown) {}')).toBe('try {} catch (e: unknown) {}\n');
 	});
+
+	it('carries a node whose flags its path cannot build, so a static readonly field keeps both', () => {
+		const field = (firstOf('class C { static readonly x = 1; }') as { readonly body: readonly unknown[] }).body[0];
+		expect(field).toMatchObject({ $type: typescript.kinds.PublicFieldDefinitionPlain });
+		expect(roundTrip('class C { static readonly x = 1; }')).toBe('class C {\n  static readonly x = 1;\n}\n');
+	});
+
+	it('leaves out a member whose route needs a member the node does not have', () => {
+		expect(firstOf('import x = require("y");')).not.toHaveProperty('source');
+		expect(roundTrip('import x = require("y");')).toBe('import x = require("y");\n');
+	});
 });

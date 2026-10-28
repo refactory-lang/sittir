@@ -56,4 +56,9 @@ describe('the portable read', () => {
 		expect(roundTrip('a.b(c);')).toBe('a.b(c);\n');
 		expect(roundTrip('enum O { A, B(T), C { x: u8 } }')).toBe('enum O {\n    A,\n    B(T),\n    C {\n        x: u8,\n    },\n}\n');
 	});
+
+	it('carries a node whose flags its path cannot build: a byte literal stays a byte', () => {
+		expect(readFirst("let c = b'a';").value).toMatchObject({ $type: rust.kinds.CharLiteralPlain });
+		expect(roundTrip("let c = b'a';")).toBe("let c = b'a';\n");
+	});
 });

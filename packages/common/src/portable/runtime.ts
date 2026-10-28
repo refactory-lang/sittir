@@ -46,6 +46,12 @@ export async function portableRuntime<API extends LanguageAPI>(engine: Engine<AP
 		kindName: (kind) => trivia.kindName(kind),
 		readsAs: (path, node) => builtReadsAs(rows, path, node)
 	});
-	const read = portableReader({ table, classify: classifierOf(rows), flagHolds: (value, flag) => flagHolds(rows, value, flag), textOf: (value) => portableTextOf(rows, value) });
+	const read = portableReader({
+		table,
+		classify: classifierOf(rows),
+		flagHolds: (value, flag) => flagHolds(rows, value, flag),
+		flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),
+		textOf: (value) => portableTextOf(rows, value)
+	});
 	return Object.freeze({ engine, is: portableRuntimeTree(language), build, read });
 }
