@@ -405,6 +405,7 @@ function buildFactoryUntypedNode(
 		rendered?: string;
 	}[],
 	accessorOf: SlotAccessorOf,
+	built: Set<object>,
 	kindNameFromId?: (id: number) => string | undefined,
 	tree?: TreeHandle
 ): AnyUntypedNode | null {
@@ -415,7 +416,7 @@ function buildFactoryUntypedNode(
 			referenceData,
 			renderedKind,
 			{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface },
-			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, accessorOf, tree, placeText: tree !== undefined }
+			{ cstNodeKindHint, firstNamedChildKindHint, namedChildKindHints, kindNameFromId, accessorOf, tree, placeText: tree !== undefined, built }
 		) as AnyUntypedNode | null;
 	} catch (e) {
 		errors.push({
@@ -426,6 +427,10 @@ function buildFactoryUntypedNode(
 		});
 		return null;
 	}
+}
+
+function release(node: unknown): void {
+	(node as Partial<Disposable> | null)?.[Symbol.dispose]?.();
 }
 
 export async function validateFactoryStorage(
@@ -552,6 +557,7 @@ export async function validateFactoryStorage(
 					skips.push({ entry: entry.name, kind, reason: 'no-factory-data', input: inputSource });
 					continue;
 				}
+				const built = new Set<object>();
 				const factoryData = buildFactoryUntypedNode(
 					referenceData,
 					kind,
@@ -568,6 +574,7 @@ export async function validateFactoryStorage(
 					inputSource,
 					errors,
 					accessorOf,
+					built,
 					kindNameFromId,
 					handle
 				);
@@ -587,7 +594,7 @@ export async function validateFactoryStorage(
 						node,
 						innerKind,
 						{ factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, surface: innerSurface },
-						{ kindNameFromId, accessorOf, tree: handle, placeText: true }
+						{ kindNameFromId, accessorOf, tree: handle, placeText: true, built }
 					);
 				};
 				const buildErrors: typeof errors = [];
@@ -622,6 +629,7 @@ export async function validateFactoryStorage(
 							inputSource,
 							buildErrors,
 							accessorOf,
+							built,
 							kindNameFromId,
 							handle
 						);
@@ -667,13 +675,17 @@ export async function validateFactoryStorage(
 					}
 				}
 
+				const diff =
+					factoryData === null
+						? undefined
+						: compareNodeStorage(
+								referenceData as unknown as Record<string, unknown>,
+								builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
+								'',
+								{ factoryShapes, kindNameFromId }
+							);
+				for (const node of built) release(node);
 				if (factoryData === null) continue;
-				const diff = compareNodeStorage(
-					referenceData as unknown as Record<string, unknown>,
-					builtStorageOf(factoryData, accessorOf) as Record<string, unknown>,
-					'',
-					{ factoryShapes, kindNameFromId }
-				);
 				if (diff) {
 					astMismatches.push({
 						kind,
