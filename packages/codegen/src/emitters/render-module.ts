@@ -2589,7 +2589,7 @@ function renderRecordFn(): string[] {
 		`    store: &::sittir_core::trivia_store::TriviaStore<${TRIVIA_NODE}>,`,
 		"    ctx: &::sittir_core::prepare::RenderContext<'_>,"
 	];
-	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources).map_err(::sittir_core::render::RenderError::Record)? {';
+	const sourceRoot = 'if let Some(coord) = ::sittir_core::arena::source_root(root, built, &*trees, store, ctx.sources, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)? {';
 	return [
 		'::sittir_core::records_codec! {',
 		'/// Render the record `root` names: a parsed root its source renders as',
@@ -2624,8 +2624,8 @@ function renderRecordFn(): string[] {
 		...params,
 		`    body: impl FnOnce(&${view}<'_>) -> Result<R, ::sittir_core::render::RenderError>,`,
 		') -> Result<R, ::sittir_core::render::RenderError> {',
-		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(trees, built, store, root, ctx)?;`,
-		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared).map_err(::sittir_core::render::RenderError::Record)?;',
+		`    let prepared = ::sittir_core::arena::prepare_root::<${TRIVIA_NODE}, AnyNode>(trees, built, store, root, ctx, kind::KIND_BITS)?;`,
+		'    let view = ::sittir_core::arena::RecordCtx::of(root.tree, built, &*trees, ctx.sources, store, &prepared, kind::KIND_BITS).map_err(::sittir_core::render::RenderError::Record)?;',
 		`    let node = <${view}<'_> as ::sittir_core::arena::RecordView<'_, ${TRIVIA_NODE}>>::from_cell(view, root.cell, None).map_err(::sittir_core::render::RenderError::Record)?;`,
 		'    body(&node)',
 		'}',

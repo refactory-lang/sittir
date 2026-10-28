@@ -18,7 +18,7 @@
 //! refused walk leaves nothing in the arena, and records published by the
 //! walks of its children stay as they are.
 
-use super::{Address, ArenaError, ArenaRead, Cell, CellShape, ListCell, Row, SideRecord, TreeArena};
+use super::{Address, ArenaError, Cell, CellShape, ListCell, Row, SideRecord, TreeArena};
 use crate::read::{Depth, Elided, ReadCtx, ReadError, ReadNode, ReadSlot, SlotSite};
 use crate::record::{form, stored, Stored};
 use crate::slot::SlotValue;

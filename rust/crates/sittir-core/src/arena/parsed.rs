@@ -181,7 +181,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
                     let record = N::shape(kind)
                         .ok_or_else(|| refused("candidate record shape", u32::from(kind.0)))?;
                     let first = pending.len();
-                    super::admit::for_each_parsed_cell(self.tree_arena().arena(), at, record, |child, _| {
+                    super::admit::for_each_parsed_cell(self.tree_arena().arena(), at, record, G::KIND_BITS, |child, _| {
                         pending.push(child);
                         Ok(())
                     })
@@ -298,7 +298,7 @@ impl<G: RecordGrammar> ParsedTree<G> {
     fn record_root(&self, at: Address, changed: ChangedEdges) -> Result<CellAt, RenderError> {
         let kind = {
             let arena = self.tree_arena();
-            let kind = arena.arena().header_kind(at).map_err(RenderError::Record)?;
+            let kind = arena.arena().header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
             if !arena.contains_record(at) {
                 return Err(RenderError::Record(super::ArenaError::Malformed { what: "record address", word: at.0 }));
             }

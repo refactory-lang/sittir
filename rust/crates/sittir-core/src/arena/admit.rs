@@ -65,10 +65,10 @@ pub(super) fn for_each_parsed_cell(
     arena: &dyn ArenaRead,
     at: Address,
     record: RecordShape,
+    bits: u32,
     mut visit: impl FnMut(Cell, u32) -> Result<(), ArenaError>,
 ) -> Result<(), ArenaError> {
     let words = arena.words(at, record.words.max(HEADER_WORDS))?;
-    let bits = arena.kind_bits();
     for cell in record.cells {
         let start = cell.word as usize;
         match cell.run {
@@ -97,13 +97,14 @@ pub(super) fn for_each_built_cell(
     at: Address,
     record: RecordShape,
     floor: Address,
+    bits: u32,
     mut visit: impl FnMut(Cell) -> Result<(), ArenaError>,
 ) -> Result<(), ArenaError> {
     let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
     for cell in record.cells {
         let word = *words.get(cell.built as usize).ok_or(malformed("cell word", cell.built))?;
         if cell.run.is_none() {
-            visit(Cell::decode_built(CellWord(word), arena)?.below(floor)?)?;
+            visit(Cell::decode_built(CellWord(word), arena, bits)?.below(floor)?)?;
             continue;
         }
         let list = ListCell::of_word(CellWord(word), arena)?;
@@ -111,7 +112,7 @@ pub(super) fn for_each_built_cell(
             return Err(malformed("list run address", list.run.0));
         }
         for item in list.items(arena, 1)? {
-            visit(Cell::decode_built(CellWord(item[0]), arena)?.below(floor)?)?;
+            visit(Cell::decode_built(CellWord(item[0]), arena, bits)?.below(floor)?)?;
         }
     }
     Ok(())
@@ -124,17 +125,17 @@ pub(super) fn for_each_built_cell(
 /// (`Cell::below`), so no chain of cells cycles. A cell linking a parsed
 /// node is left to its tree's arena, which only a native writer writes; the
 /// trees those cells link are answered, each once, in order: the parsed
-/// arenas a render of the root reaches.
+/// arenas a render of the root reaches. Kind fields take `bits` bits.
 ///
 /// # Errors
 ///
 /// The first word that breaks one of these: `ArenaError::OutOfBounds` for
 /// words the arena never wrote, `ArenaError::Malformed` for any other.
-pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>) -> Result<Vec<TreeId>, ArenaError> {
+pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<RecordShape>, bits: u32) -> Result<Vec<TreeId>, ArenaError> {
     let mut seen = SmallMap::<(Address, Address), Option<KindId>>::new();
     let mut pending = SmallStack::new();
     let mut linked = Vec::new();
-    pending.push((root, arena.header_kind(root)?));
+    pending.push((root, arena.header_kind(root, bits)?));
     while let Some((at, named)) = pending.pop() {
         let record = shape(named).ok_or(malformed("record kind", u32::from(named.0)))?;
         let verified = seen.entry((at, at)).or_default();
@@ -144,14 +145,14 @@ pub fn admit(arena: &dyn ArenaRead, root: Address, shape: fn(KindId) -> Option<R
             }
             continue;
         }
-        let kind = arena.header_kind(at)?;
+        let kind = arena.header_kind(at, bits)?;
         if kind != named {
             return Err(malformed("record kind", u32::from(kind.0)));
         }
         *verified = Some(kind);
         let words = arena.words(at, record.built_words.max(HEADER_WORDS))?;
         SideRecord::read(arena, Address(words[1]))?;
-        for_each_built_cell(arena, at, record, at, |cell| {
+        for_each_built_cell(arena, at, record, at, bits, |cell| {
             match cell {
                 Cell::Child { kind, at: child, link: None, .. } => pending.push((child, kind)),
                 Cell::Child { link: Some(tree), .. } | Cell::LinkedLeaf { tree, .. } => linked.push(tree),

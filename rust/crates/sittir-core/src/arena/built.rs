@@ -86,7 +86,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// What `ArenaRead::header_kind` refuses, and `ArenaError::Malformed` for
     /// a unit at a word the record's kind holds no slot at.
     pub fn built_unit_sides(&self, arena: &impl ArenaRead, at: Address) -> Result<Vec<crate::layout::UnitSides<G::Trivia>>, ArenaError> {
-        let kind = arena.header_kind(at)?;
+        let kind = arena.header_kind(at, G::KIND_BITS)?;
         let units = self.written().units(at);
         units
             .into_iter()
@@ -107,7 +107,7 @@ impl<G: RecordGrammar> Engine<G> {
     /// and `ArenaError::UnknownSlot` for a slot the record's kind has no
     /// cell for.
     pub fn write_built_unit_sides(&self, at: Address, units: Vec<crate::layout::UnitSides<G::Trivia>>) -> Result<(), ArenaError> {
-        let kind = self.written().built().readable()?.header_kind(at)?;
+        let kind = self.written().built().readable()?.header_kind(at, G::KIND_BITS)?;
         let units = units
             .into_iter()
             .map(|unit| {
@@ -174,7 +174,7 @@ impl<G: RecordGrammar> Engine<G> {
 fn admitted_leaf<G: RecordGrammar>(arena: &dyn ArenaRead, kind: KindId, entry: Address, changed: ChangedEdges) -> Result<Cell, ArenaError> {
     G::shape(kind).ok_or(ArenaError::Malformed { what: "built leaf kind", word: u32::from(kind.0) })?;
     let word = entry.0.checked_mul(4).filter(|_| entry.0 < 1 << 30).ok_or(ArenaError::Malformed { what: "leaf entry address", word: entry.0 })?;
-    match Cell::decode_built(CellWord(word), arena)? {
+    match Cell::decode_built(CellWord(word), arena, G::KIND_BITS)? {
         Cell::BuiltLeaf { kind: found, text, .. } if found == kind => {
             arena.text(text)?;
             Ok(Cell::BuiltLeaf { kind, text, changed })
@@ -201,7 +201,7 @@ pub fn render_record_entry<G: RecordGrammar, H: BuildHasher>(
     ctx: &RenderContext<'_>,
     w: &mut dyn RenderSink,
 ) -> RenderResult {
-    if arena.header_kind(record.at).map_err(RenderError::Record)? != record.kind {
+    if arena.header_kind(record.at, G::KIND_BITS).map_err(RenderError::Record)? != record.kind {
         return Err(RenderError::Record(ArenaError::Malformed { what: "trivia entry kind", word: u32::from(record.kind.0) }));
     }
     let (root, mut held) = admitted_root::<G, H>(arena, record.at, ChangedEdges::default(), trees)?;
@@ -214,8 +214,8 @@ fn admitted_root<'t, G: RecordGrammar, H: BuildHasher>(
     changed: ChangedEdges,
     trees: &'t HashMap<TreeId, ParsedTree<G>, H>,
 ) -> Result<(CellAt, HeldArenas<'t>), RenderError> {
-    let kind = arena.header_kind(at).map_err(RenderError::Record)?;
-    let linked = admit(arena, at, G::shape).map_err(RenderError::Record)?;
+    let kind = arena.header_kind(at, G::KIND_BITS).map_err(RenderError::Record)?;
+    let linked = admit(arena, at, G::shape, G::KIND_BITS).map_err(RenderError::Record)?;
     let held = linked
         .into_iter()
         .map(|tree| {

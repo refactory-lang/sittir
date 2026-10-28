@@ -311,7 +311,7 @@ impl Cell {
     /// `ArenaError::OutOfBounds` for an address in no chunk, or words or
     /// bytes past what the arena wrote; `ArenaError::Malformed` for any word
     /// no writer writes.
-    pub fn decode_built(CellWord(word): CellWord, arena: &dyn ArenaRead) -> Result<Cell, ArenaError> {
+    pub fn decode_built(CellWord(word): CellWord, arena: &dyn ArenaRead, bits: u32) -> Result<Cell, ArenaError> {
         if word == 0 {
             return Ok(Cell::Absent);
         }
@@ -324,7 +324,6 @@ impl Cell {
             }
             return Ok(Cell::Unit { kind: named_kind(at.word())?, row: None });
         }
-        let bits = arena.kind_bits();
         if arena.chunk(at.chunk()).is_some() {
             let header = arena.words(at, HEADER_WORDS)?;
             return match header_of(header[0], bits) {

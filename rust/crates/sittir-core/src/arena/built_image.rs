@@ -117,8 +117,4 @@ impl ArenaRead for BuiltImage {
             _ => None,
         }
     }
-
-    fn kind_bits(&self) -> u32 {
-        self.kind_bits
-    }
 }

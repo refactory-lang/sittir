@@ -124,18 +124,18 @@ fn routed(ident: &Ident, attrs: &KindAttrs, fields: &[Field<'_>]) -> syn::Result
         separators.push(quote!(__rt::Route::Separator { slot: #id, tagged } => <#ty as ::sittir_core::arena::HydrateSlot>::separator_held(&mut #acc, tagged),));
         finishes.push(quote!(<#ty as ::sittir_core::arena::HydrateSlot>::finish_held(#acc, #site, #shape, &mut __draft)?;));
     }
-    let delimiter = match fields.iter().find_map(|field| match &field.role {
+    let flank = fields.iter().find_map(|field| match &field.role {
         Role::Flank(flank) => Some(flank),
         _ => None,
-    }) {
-        Some(flank) => {
-            let item = attrs.item.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "a list's flank needs `#[node(item = …)]`"))?;
-            let position = slots.iter().find(|(_, field, _)| field.ident == item).map(|&(i, ..)| i).ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
-            let option = |value: Option<u16>| value.map_or_else(|| quote!(::core::option::Option::None), |value| quote!(::core::option::Option::Some(#value)));
-            let (leading, trailing) = (option(flank.leading), option(flank.trailing));
-            quote!(::core::option::Option::Some(__rt::delimiter(&__node, &children, &routes, ::sittir_core::types::SlotId(#position), #leading, #trailing)))
-        }
-        None => quote!(::core::option::Option::None),
+    });
+    let delimiter = if let Some(flank) = flank {
+        let item = attrs.item.as_ref().ok_or_else(|| syn::Error::new_spanned(ident, "a list's flank needs `#[node(item = …)]`"))?;
+        let position = slots.iter().find(|(_, field, _)| field.ident == item).map(|&(i, ..)| i).ok_or_else(|| syn::Error::new_spanned(item, "`item` names one of the list's slots"))?;
+        let option = |value: Option<u16>| value.map_or_else(|| quote!(::core::option::Option::None), |value| quote!(::core::option::Option::Some(#value)));
+        let (leading, trailing) = (option(flank.leading), option(flank.trailing));
+        quote!(::core::option::Option::Some(__rt::delimiter(&__node, &children, &routes, ::sittir_core::types::SlotId(#position), #leading, #trailing)))
+    } else {
+        quote!(::core::option::Option::None)
     };
     let start = record_start(words);
     let end = record_end(&delimiter);

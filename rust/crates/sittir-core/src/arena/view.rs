@@ -25,9 +25,9 @@ use crate::view::{KindOf, KindTest, Slot};
 ///
 /// `ArenaError::Malformed` for a root naming no arena of the render, or a
 /// parsed record whose side record names no row.
-pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable) -> Result<Option<NodeCoordinate>, ArenaError> {
+pub fn source_root<T>(root: super::CellAt, built: &dyn ArenaRead, arenas: &dyn RecordArenas, store: &TriviaStore<T>, sources: &dyn SourceTable, bits: u32) -> Result<Option<NodeCoordinate>, ArenaError> {
     let prepared = Prepared::new();
-    let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared)?;
+    let ctx = RecordCtx::of(root.tree, built, arenas, sources, store, &prepared, bits)?;
     let Some(row) = ctx.stamped_row(root.cell)? else { return Ok(None) };
     let coord = ctx.row_coordinate(row)?;
     Ok(sources.renders_as_source(&coord).then_some(coord))
@@ -49,6 +49,7 @@ pub struct RecordCtx<'a, T> {
     sources: &'a dyn SourceTable,
     store: &'a TriviaStore<T>,
     prepared: &'a Prepared<T>,
+    bits: u32,
 }
 
 impl<T> Clone for RecordCtx<'_, T> {
@@ -64,10 +65,11 @@ fn malformed(what: &'static str, word: u32) -> ArenaError {
 }
 
 impl<'a, T> RecordCtx<'a, T> {
-    /// The context of the built arena.
+    /// The context of the built arena, its kind fields `bits` bits: the
+    /// grammar's.
     #[must_use]
-    pub fn built(arena: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Self {
-        Self { arena, tree: None, arenas, sources, store, prepared }
+    pub fn built(arena: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Self {
+        Self { arena, tree: None, arenas, sources, store, prepared, bits }
     }
 
     /// The context of `tree`'s arena.
@@ -75,9 +77,9 @@ impl<'a, T> RecordCtx<'a, T> {
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
-    pub fn parsed(tree: TreeId, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Result<Self, ArenaError> {
+    pub fn parsed(tree: TreeId, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
         let arena = arenas.tree(tree).ok_or(malformed("record tree", tree.0))?.arena();
-        Ok(Self { arena, tree: Some(tree), arenas, sources, store, prepared })
+        Ok(Self { arena, tree: Some(tree), arenas, sources, store, prepared, bits })
     }
 
     /// The context of `tree`'s arena, the built arena `built` for none.
@@ -85,10 +87,10 @@ impl<'a, T> RecordCtx<'a, T> {
     /// # Errors
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
-    pub fn of(tree: Option<TreeId>, built: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>) -> Result<Self, ArenaError> {
+    pub fn of(tree: Option<TreeId>, built: &'a dyn ArenaRead, arenas: &'a dyn RecordArenas, sources: &'a dyn SourceTable, store: &'a TriviaStore<T>, prepared: &'a Prepared<T>, bits: u32) -> Result<Self, ArenaError> {
         match tree {
-            None => Ok(Self::built(built, arenas, sources, store, prepared)),
-            Some(tree) => Self::parsed(tree, arenas, sources, store, prepared),
+            None => Ok(Self::built(built, arenas, sources, store, prepared, bits)),
+            Some(tree) => Self::parsed(tree, arenas, sources, store, prepared, bits),
         }
     }
 
@@ -98,7 +100,7 @@ impl<'a, T> RecordCtx<'a, T> {
     ///
     /// `ArenaError::Malformed` when the render reaches no arena of `tree`.
     pub fn linked(self, tree: TreeId) -> Result<Self, ArenaError> {
-        Self::parsed(tree, self.arenas, self.sources, self.store, self.prepared)
+        Self::parsed(tree, self.arenas, self.sources, self.store, self.prepared, self.bits)
     }
 
     #[must_use]
@@ -123,10 +125,10 @@ impl<'a, T> RecordCtx<'a, T> {
     pub fn slot_cell(self, words: &[u32], at: Address, shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
             let word = *words.get(shape.built as usize).ok_or(malformed("cell word", shape.built))?;
-            return Cell::decode_built(CellWord(word), self.arena);
+            return Cell::decode_built(CellWord(word), self.arena, self.bits);
         }
         let cell = words.get(shape.word as usize..(shape.word + shape.width) as usize).ok_or(malformed("cell word", shape.word))?;
-        Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.arena.kind_bits())
+        Cell::decode_parsed(cell, at.offset(shape.word).unwrap_or(Address::NONE), shape, self.bits)
     }
 
     /// The list of the slot of shape `shape` in `words`, and the words each
@@ -144,9 +146,9 @@ impl<'a, T> RecordCtx<'a, T> {
     /// `item` words.
     pub(super) fn item_cell(self, item: &[u32], shape: CellShape) -> Result<Cell, ArenaError> {
         if self.tree.is_none() {
-            return Cell::decode_built(CellWord(*item.first().ok_or(malformed("cell width", 0))?), self.arena);
+            return Cell::decode_built(CellWord(*item.first().ok_or(malformed("cell width", 0))?), self.arena, self.bits);
         }
-        Cell::decode_parsed(item, Address::NONE, shape, self.arena.kind_bits())
+        Cell::decode_parsed(item, Address::NONE, shape, self.bits)
     }
 
     #[must_use]
@@ -457,7 +459,7 @@ pub trait RecordView<'a, T>: Sized {
 /// the native writer never allocated as a record.
 pub fn record_of<T>(ctx: RecordCtx<'_, T>, at: Address, len: u32, kind: KindId) -> Result<(&[u32], super::SideRecord), ArenaError> {
     let words = ctx.words(at, len)?;
-    if super::cell::header_of(words[0], ctx.arena.kind_bits()) != (kind, 0) {
+    if super::cell::header_of(words[0], ctx.bits) != (kind, 0) {
         return Err(malformed("record kind", words[0]));
     }
     #[cfg(debug_assertions)]
@@ -836,7 +838,7 @@ mod tests {
         }
 
         fn ctx(&self) -> RecordCtx<'_, TriviaText> {
-            RecordCtx::built(&self.arena, &NoTrees, &self.sources, &self.store, &self.prepared)
+            RecordCtx::built(&self.arena, &NoTrees, &self.sources, &self.store, &self.prepared, 9)
         }
     }
 

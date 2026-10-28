@@ -10,9 +10,6 @@ pub trait ArenaRead {
     /// The written UTF-8 bytes in string chunk `n`.
     fn string_chunk(&self, n: u32) -> Option<&[u8]>;
 
-    /// The bits a record header's or a leaf entry's kind field takes here.
-    fn kind_bits(&self) -> u32;
-
     /// Whether the entry at `at` holds no count: released, though its chunk
     /// lives. An arena that counts no entry releases none.
     fn released(&self, at: Address) -> bool {
@@ -40,12 +37,13 @@ pub trait ArenaRead {
         self.words(at, 1).map(|words| words[0])
     }
 
-    /// The kind the header of the record at `at` names. Refuses address 0,
-    /// which names no record, a header past the written words, and a header
-    /// with flags, a link record's, which names a node of another tree.
-    fn header_kind(&self, at: Address) -> Result<KindId, ArenaError> {
+    /// The kind the header of the record at `at` names, its kind field
+    /// `bits` bits: the grammar's. Refuses address 0, which names no record,
+    /// a header past the written words, and a header with flags, a link
+    /// record's, which names a node of another tree.
+    fn header_kind(&self, at: Address, bits: u32) -> Result<KindId, ArenaError> {
         let word = self.words(at.record()?, HEADER_WORDS)?[0];
-        match super::cell::header_of(word, self.kind_bits()) {
+        match super::cell::header_of(word, bits) {
             (kind, 0) => Ok(kind),
             _ => Err(ArenaError::Malformed { what: "record kind", word }),
         }
@@ -62,12 +60,13 @@ pub trait ArenaRead {
 }
 
 /// Record and string chunks borrowed for one synchronous call. The owner must
-/// exclude concurrent writes while these slices are borrowed.
+/// exclude concurrent writes while these slices are borrowed. Word and
+/// string chunks share one numbering, so each table holds an empty slice at
+/// the other's numbers: an empty slice is no chunk.
 #[derive(Debug, Clone, Copy)]
 pub struct BorrowedArena<'a> {
     chunks: &'a [&'a [u32]],
     strings: &'a [&'a [u8]],
-    kind_bits: u32,
 }
 
 impl<'a> BorrowedArena<'a> {
@@ -76,20 +75,16 @@ impl<'a> BorrowedArena<'a> {
         if chunks.len() > MAX_CHUNKS as usize || strings.len() > MAX_CHUNKS as usize {
             return Err(ArenaError::Full);
         }
-        Ok(Self { chunks, strings, kind_bits: super::PARSED_KIND_BITS })
+        Ok(Self { chunks, strings })
     }
 }
 
 impl ArenaRead for BorrowedArena<'_> {
     fn chunk(&self, n: u32) -> Option<&[u32]> {
-        self.chunks.get(n as usize).copied()
+        self.chunks.get(n as usize).copied().filter(|chunk| !chunk.is_empty())
     }
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
-        self.strings.get(n as usize).copied()
-    }
-
-    fn kind_bits(&self) -> u32 {
-        self.kind_bits
+        self.strings.get(n as usize).copied().filter(|chunk| !chunk.is_empty())
     }
 }

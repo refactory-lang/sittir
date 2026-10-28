@@ -315,6 +315,12 @@ impl Arena {
         Self { chunks: vec![first], open: 0, strings: Vec::new(), open_strings: None, interned: HashMap::new(), kind_bits }
     }
 
+    /// The bits the kind fields this arena writes take.
+    #[must_use]
+    pub fn kind_bits(&self) -> u32 {
+        self.kind_bits
+    }
+
     /// `words` zeroed words, contiguous in one chunk, and their address.
     pub fn alloc(&mut self, words: u32) -> Result<Address, ArenaError> {
         if words > MOST_CHUNK_UNITS {
@@ -426,10 +432,6 @@ impl Arena {
 impl ArenaRead for Arena {
     fn chunk(&self, n: u32) -> Option<&[u32]> {
         self.chunk(n)
-    }
-
-    fn kind_bits(&self) -> u32 {
-        self.kind_bits
     }
 
     fn string_chunk(&self, n: u32) -> Option<&[u8]> {
@@ -629,10 +631,6 @@ impl ArenaRead for BuiltChunks {
             Some(BuiltChunk::Bytes { mem, .. }) => Some(unsafe { mem.slice() }),
             _ => None,
         }
-    }
-
-    fn kind_bits(&self) -> u32 {
-        self.kind_bits
     }
 
     fn released(&self, at: Address) -> bool {

@@ -68,34 +68,35 @@ impl RecordTrees for HeldArenas<'_> {
 /// # Errors
 ///
 /// What the root's prepare refuses.
-pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>) -> Result<Prepared<T>, CoordinateError> {
+pub fn prepare_root<T, N: PrepareRecord<T>>(trees: &mut dyn RecordTrees, built: &dyn ArenaRead, store: &TriviaStore<T>, root: CellAt, ctx: &RenderContext<'_>, bits: u32) -> Result<Prepared<T>, CoordinateError> {
     let mut prepared = Prepared::new();
-    N::prepare_record(&mut RecordPrep::new(&mut prepared, trees, built, ctx.sources, store), root, ctx)?;
+    N::prepare_record(&mut RecordPrep::new(&mut prepared, trees, built, ctx.sources, store, bits), root, ctx)?;
     Ok(prepared)
 }
 
 /// What a record's prepare reads and writes besides the record: the overlay
 /// it fills and the parsed trees' arenas it may write a first read into,
 /// beside the built arena, the render's trees and the store of written
-/// sides, which it only reads.
+/// sides, which it only reads, and the bits the grammar's kind fields take.
 pub struct RecordPrep<'r, T> {
     prepared: &'r mut Prepared<T>,
     trees: &'r mut dyn RecordTrees,
     built: &'r dyn ArenaRead,
     sources: &'r dyn SourceTable,
     store: &'r TriviaStore<T>,
+    bits: u32,
 }
 
 impl<'r, T> RecordPrep<'r, T> {
     #[must_use]
-    pub fn new(prepared: &'r mut Prepared<T>, trees: &'r mut dyn RecordTrees, built: &'r dyn ArenaRead, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>) -> Self {
-        Self { prepared, trees, built, sources, store }
+    pub fn new(prepared: &'r mut Prepared<T>, trees: &'r mut dyn RecordTrees, built: &'r dyn ArenaRead, sources: &'r dyn SourceTable, store: &'r TriviaStore<T>, bits: u32) -> Self {
+        Self { prepared, trees, built, sources, store, bits }
     }
 
     /// The view context of `tree`'s arena, the built arena for none, over
     /// the overlay as prepare has filled it so far.
     fn view(&self, tree: Option<TreeId>) -> Result<RecordCtx<'_, T>, ArenaError> {
-        RecordCtx::of(tree, self.built, &*self.trees, self.sources, self.store, self.prepared)
+        RecordCtx::of(tree, self.built, &*self.trees, self.sources, self.store, self.prepared, self.bits)
     }
 
     /// The coordinate of the parsed node `row` names, read from the tree of
@@ -852,10 +853,6 @@ mod tests {
         fn string_chunk(&self, index: u32) -> Option<&[u8]> {
             self.arena.string_chunk(index)
         }
-
-        fn kind_bits(&self) -> u32 {
-            self.arena.kind_bits()
-        }
     }
 
     struct NoSources;
@@ -873,7 +870,7 @@ mod tests {
         let mut prepared = Prepared::<()>::new();
         let mut trees = HeldArenas::of([]);
         let store = TriviaStore::new();
-        let prep = RecordPrep::new(&mut prepared, &mut trees, &arena, &NoSources, &store);
+        let prep = RecordPrep::new(&mut prepared, &mut trees, &arena, &NoSources, &store, crate::record::PARSED_KIND_BITS);
         let key = RecordKey::of(&prep, CellAt {
             cell: Cell::Child { kind, at, link: None, changed: ChangedEdges::default() },
             tree: None,
