@@ -1224,7 +1224,7 @@ It reads rules through `realizesEmpty` (`types/runtime-shapes.ts`), the same emp
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::isPlainRepeatType`
+### `packages/codegen/src/types/runtime-shapes.ts::isPlainRepeatType`
 
 ```text
 /** plain repeat (not repeat1). Duplicates `isPlainRepeatType` in
@@ -1292,7 +1292,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
 `unwrapPrec`, used by the automatic stamp and relabel and by enrich's
 `annotateTokenFormArms`.
 
-### `packages/codegen/src/dsl/group-classify.ts::flattenSeqMembers`
+### `packages/codegen/src/dsl/rule-patterns.ts::flattenSeqMembers`
 
 ```text
 /**
@@ -1303,7 +1303,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::seqHasTopLevelRepeat`
+### `packages/codegen/src/dsl/rule-patterns.ts::seqHasTopLevelRepeat`
 
 ```text
 /**
@@ -1312,7 +1312,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::isNonterminalSeparatorType`
+### `packages/codegen/src/dsl/rule-patterns.ts::isNonterminalSeparatorType`
 
 ```text
 /**
@@ -1327,7 +1327,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::repeatHasNonterminalSeparator`
+### `packages/codegen/src/dsl/rule-patterns.ts::repeatHasNonterminalSeparator`
 
 ```text
 /**
@@ -1336,7 +1336,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::isOptionalSeparatorFlank`
+### `packages/codegen/src/dsl/rule-patterns.ts::isOptionalSeparatorFlank`
 
 ```text
 /**
@@ -1349,7 +1349,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::repeatMemberHasGenuineSeparatorVariability`
+### `packages/codegen/src/dsl/rule-patterns.ts::repeatMemberHasGenuineSeparatorVariability`
 
 ```text
 /**
@@ -1365,7 +1365,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::repeatHasGenuineSeparatorVariability`
+### `packages/codegen/src/dsl/rule-patterns.ts::repeatHasGenuineSeparatorVariability`
 
 ```text
 /**
@@ -1376,7 +1376,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::seqHasGenuineSeparatorVariability`
+### `packages/codegen/src/dsl/rule-patterns.ts::seqHasGenuineSeparatorVariability`
 
 ```text
 /**
@@ -1413,7 +1413,7 @@ a rewrite lands on the core, never on a wrapper. The counterpart of
  */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::isInlineSafe`
+### `packages/codegen/src/dsl/rule-patterns.ts::isInlineSafe`
 
 ```text
 /**
@@ -1566,7 +1566,7 @@ or a named ALIAS over a STRING or a symbol (`aliasesSymbol`).
 
 A choice's members with every nested CHOICE spread in place, each member read through its precedence wrappers (`unwrapPrec`). The automatic stamp (`automatic-variants.ts::isSupertypeOwner`) classifies the DSL rule, where a member keeps the precedence wrapper tree-sitter sees (rust's `_expression_except_range` holds an arm under `prec.left`), and link (`compiler/link.ts::classifyHiddenChoiceRule`) classifies sittir's evaluated rule, where the wrapper is gone; reading through it is what lets the two classify one rule alike.
 
-### `packages/codegen/src/dsl/group-classify.ts::isSupertypeLike`
+### `packages/codegen/src/dsl/rule-patterns.ts::isSupertypeLike`
 
 ```text
 /**
@@ -1608,7 +1608,7 @@ A choice's members with every nested CHOICE spread in place, each member read th
 	   `_expression_except_range`) is as dispatchable as a bare symbol ref. */
 ```
 
-### `packages/codegen/src/dsl/group-classify.ts::isPermutationChoice`
+### `packages/codegen/src/dsl/rule-patterns.ts::isPermutationChoice`
 
 A choice whose arms are permutations of one modifier-slot set — every arm is
 a seq of singular atoms (optional-or-required keyword literals, marker
@@ -1656,7 +1656,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
 /** Per-arm atom-key set for `isPermutationChoice`; null = arm ineligible. */
 ```
 
-### `packages/codegen/src/dsl/list-patterns.ts::separatorFactsEqual`
+### `packages/codegen/src/dsl/rule-patterns.ts::separatorFactsEqual`
 
 ```text
 /**
@@ -1680,7 +1680,7 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  */
 ```
 
-### `packages/codegen/src/dsl/list-patterns.ts::rulesEqual`
+### `packages/codegen/src/dsl/rule-patterns.ts::rulesEqual`
 
 ```text
 /**
@@ -1691,43 +1691,6 @@ literal text of a keyword-shaped rule body (STRING, TOKEN- or prec-wrapped).
  * so this stays correct regardless of case (both runtimes agree on
  * UPPERCASE today, but the lower-both-sides comparison needs no update if
  * that ever changes).
- */
-```
-
-### `packages/codegen/src/dsl/list-patterns.ts::firstStringOfChoice`
-
-```text
-/**
- * Extract the first string literal from a choice rule, if any.
- *
- * Handles the choice-of-separators pattern (e.g. tree-sitter-typescript's
- * `sepBy1(choice(',', $._semicolon), X)`): the separator position is a choice
- * of a literal and an external symbol. The first string member is the
- * canonical render-side separator; parse still accepts either form.
- */
-```
-
-### `packages/codegen/src/dsl/list-patterns.ts::detectRepeatSeparator`
-
-```text
-/**
- * Detect the `seq(SEP, X)` / `seq(X, SEP)` separated-list shape inside a
- * repeat/repeat1 content body, where `SEP` is a string literal or a choice
- * whose arms may include non-literal (symbol/external-scanner) members —
- * not just a choice-of-literals. Returns the non-separator content, the FULL
- * detected separator rule (a `StringRule` for the literal case, the whole
- * `ChoiceRule` for a choice-shaped one — never narrowed to its first arm,
- * and not required to contain a string arm at all), and whether
- * the separator was trailing (`seq(X, SEP)`); or `null` when no separator
- * shape is present.
- *
- * Callers that need a literal string out of a returned CHOICE separator
- * (e.g. `enrich.ts`'s `listSeparatorOfOptionalSeq`) must handle the
- * no-string-arm case themselves — `firstStringOfChoice` returns `null` for
- * an all-symbol choice, which is not the same as "no separator shape here".
- *
- * Pure: reports the shape; the caller decides whether to lift it onto a
- * `repeat` (link) or read it for group creation (enrich).
  */
 ```
 
@@ -2373,7 +2336,7 @@ The runtime's `token`, with `immediate`, typed for authoring (`AuthoringToken`);
 /** Rebuild the original seq-member rule around a freshly-built FIELD node. */
 ```
 
-### `packages/codegen/src/dsl/list-patterns.ts::SeparatorFact`
+### `packages/codegen/src/dsl/rule-patterns.ts::SeparatorFact`
 
 ```text
 /**
