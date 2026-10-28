@@ -630,6 +630,10 @@ macro_rules! napi_engine {
             /// (`record::form::LEAF`).
             #[::napi_derive::napi]
             pub const CELL_LEAF_BIT: u32 = $crate::record::form::LEAF;
+            /// The chunk-0 offset a built blank arm's cell names
+            /// (`arena::cell::BLANK_UNIT`).
+            #[::napi_derive::napi]
+            pub const CELL_BLANK_UNIT: u32 = $crate::arena::cell::BLANK_UNIT;
             /// The bits a record header's or a leaf entry's kind field takes
             /// in the built arena (`EngineGrammar::KIND_BITS`).
             #[::napi_derive::napi]

@@ -837,6 +837,7 @@ module.exports.__napiBindingTarget = __napiStampBindingTarget(nativeBinding, __n
 module.exports = nativeBinding
 module.exports.SittirEngine = nativeBinding.SittirEngine
 module.exports.ARENA_CHUNK_SHIFT = nativeBinding.ARENA_CHUNK_SHIFT
+module.exports.CELL_BLANK_UNIT = nativeBinding.CELL_BLANK_UNIT
 module.exports.CELL_FORM_BLANK = nativeBinding.CELL_FORM_BLANK
 module.exports.CELL_FORM_INLINE = nativeBinding.CELL_FORM_INLINE
 module.exports.CELL_FORM_NODE = nativeBinding.CELL_FORM_NODE

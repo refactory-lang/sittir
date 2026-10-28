@@ -5,6 +5,7 @@ import { changedEdges, coordinateOf, holdReadTree, isRead, isRebuilt, NO_EDGES, 
 import { decodeIndex, decodeTree, isCoordinate } from './read.ts';
 import { treeOf, treeTokenOf, type TreeToken } from './tree-token.ts';
 import type { ChunkWords, RecordReader, TreeHandle, TriviaSideName } from './read.ts';
+import { BLANK_KIND_ID } from './error-kind.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
@@ -841,9 +842,10 @@ export function builtCell(at: number, changed = 0): number {
 	return at * 4 + changed;
 }
 
-/** The built cell of a unit of `kind`: an address in chunk 0, whose word is the kind. */
+/** The built cell of a unit of `kind`: an address in chunk 0, whose word is the kind; the blank arm's is the reserved offset. */
 export function unitCell(kind: number, format: CellFormat): number {
-	if (kind >= 2 ** format.chunkShift) throw new Error(`a unit cell holds kinds below ${2 ** format.chunkShift}, not ${kind}`);
+	if (kind === BLANK_KIND_ID) return format.blankUnit * 4;
+	if (kind >= format.blankUnit) throw new Error(`a unit cell holds kinds below ${format.blankUnit}, not ${kind}`);
 	return kind * 4;
 }
 
@@ -862,7 +864,8 @@ export function decodeBuiltCell(arena: BuiltArena, word: number): RecordCell {
 	const chunk = chunkOf(at, arena.format);
 	if (chunk === 0) {
 		if (edges !== 0) throw new Error(`a unit cell ${word} marks changed edges`);
-		return { form: 'unit', kind: wordOf(at, arena.format), row: undefined };
+		const kind = wordOf(at, arena.format);
+		return { form: 'unit', kind: kind === arena.format.blankUnit ? BLANK_KIND_ID : kind, row: undefined };
 	}
 	const { kindBits, linkFlag, linkWords } = arena.format;
 	if (arena.holdsRecords(chunk)) {

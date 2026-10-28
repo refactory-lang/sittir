@@ -1,5 +1,5 @@
 import type { ByteSpan } from '@sittir/types';
-import { ERROR_KIND_ID } from './error-kind.ts';
+import { BLANK_KIND_ID, ERROR_KIND_ID } from './error-kind.ts';
 import type { RecordWords } from './read.ts';
 
 /** The record codec's constants as an addon built with the `arena` feature exports them. */
@@ -15,6 +15,7 @@ export interface RecordCodecConstants {
 	readonly CELL_FORM_INLINE: number;
 	readonly CELL_FORM_BLANK: number;
 	readonly CELL_LEAF_BIT: number;
+	readonly CELL_BLANK_UNIT: number;
 	readonly KIND_BITS: number;
 	readonly RECORD_FLAG_LINK: number;
 	readonly LINK_RECORD_WORDS: number;
@@ -65,6 +66,8 @@ export interface CellFormat {
 	readonly forms: CellForms;
 	/** The bit a node cell's span end carries for a leaf. */
 	readonly leafBit: number;
+	/** The chunk-0 offset a built blank arm's cell names: apart from word 0, an unset slot, and from every unit's kind. */
+	readonly blankUnit: number;
 	/** The bits a kind field takes, packed with its word's neighbours, in either arena. */
 	readonly kindBits: number;
 	/** The flag above a link record's kind field. */
@@ -145,6 +148,7 @@ const CODEC_KEYS = [
 	'CELL_FORM_INLINE',
 	'CELL_FORM_BLANK',
 	'CELL_LEAF_BIT',
+	'CELL_BLANK_UNIT',
 	'KIND_BITS',
 	'RECORD_FLAG_LINK',
 	'LINK_RECORD_WORDS',
@@ -181,6 +185,7 @@ export function cellFormatOf(native: object): CellFormat | undefined {
 		tag: { absent: codec.CELL_TAG_ABSENT, node: codec.CELL_TAG_NODE, unit: codec.CELL_TAG_UNIT, text: codec.CELL_TAG_TEXT, inline: codec.CELL_TAG_INLINE },
 		forms: { node: codec.CELL_FORM_NODE, unit: codec.CELL_FORM_UNIT, text: codec.CELL_FORM_TEXT, inline: codec.CELL_FORM_INLINE, blank: codec.CELL_FORM_BLANK },
 		leafBit: codec.CELL_LEAF_BIT,
+		blankUnit: codec.CELL_BLANK_UNIT,
 		kindBits: codec.KIND_BITS,
 		linkFlag: codec.RECORD_FLAG_LINK,
 		linkWords: codec.LINK_RECORD_WORDS,
@@ -287,7 +292,7 @@ export function decodeParsedCell(words: ArrayLike<number>, at: number, forms: nu
 		if (value === undefined) throw new Error(`a cell at word ${at} ends at word ${start + n}`);
 		return value;
 	};
-	if (form === format.forms.unit && (forms & format.forms.blank) !== 0 && word(0) === 0) return { form: 'unit', kind: 0, row: undefined };
+	if (form === format.forms.unit && (forms & format.forms.blank) !== 0 && word(0) === 0) return { form: 'unit', kind: BLANK_KIND_ID, row: undefined };
 	if (!tagged && first === 0) return { form: 'absent' };
 	switch (form) {
 		case format.forms.node: {

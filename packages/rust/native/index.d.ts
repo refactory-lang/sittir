@@ -429,6 +429,12 @@ export declare class SittirEngine {
  */
 export declare const ARENA_CHUNK_SHIFT: number
 
+/**
+ * r" The chunk-0 offset a built blank arm's cell names
+ * r" (`arena::cell::BLANK_UNIT`).
+ */
+export declare const CELL_BLANK_UNIT: number
+
 export declare const CELL_FORM_BLANK: number
 
 export declare const CELL_FORM_INLINE: number

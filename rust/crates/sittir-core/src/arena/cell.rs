@@ -23,6 +23,10 @@ pub mod flag {
 /// node's tree, row, subtree end, record (0 for none) and byte span.
 pub const LINK_WORDS: u32 = 8;
 
+/// The chunk-0 offset a built blank arm names: all ones, so the arm is apart
+/// from word 0, an unset slot, and from every unit's kind.
+pub const BLANK_UNIT: u32 = super::CHUNK_WORDS - 1;
+
 /// The kind a packed kind field of `bits` bits in `word` holds: all-ones is
 /// `ERROR`.
 #[must_use]
@@ -147,13 +151,17 @@ impl CellWord {
         Ok(CellWord(at.0 << 2 | changed_word(changed)))
     }
 
-    /// The built cell of a unit of `kind`: its kind as an address in chunk 0.
+    /// The built cell of a unit of `kind`: its kind as an address in chunk 0,
+    /// and the blank arm the reserved offset (`BLANK_UNIT`).
     ///
     /// # Errors
     ///
-    /// `ArenaError::Unwritable` for a kind past what a chunk-0 address holds.
+    /// `ArenaError::Unwritable` for a kind at or past the reserved offset.
     pub fn unit(kind: KindId) -> Result<CellWord, ArenaError> {
-        if u32::from(kind.0) >= super::CHUNK_WORDS {
+        if kind == KindId::BLANK {
+            return Ok(CellWord(BLANK_UNIT << 2));
+        }
+        if u32::from(kind.0) >= BLANK_UNIT {
             return Err(ArenaError::Unwritable("a unit kind past what a built cell holds"));
         }
         Ok(CellWord(u32::from(kind.0) << 2))
@@ -189,8 +197,8 @@ impl Cell {
     }
 
     /// The cell a built record's cell `word` names in `arena`: absent for
-    /// word 0; a unit for an address in chunk 0, whose word is the unit's
-    /// kind; a record in a word chunk, a link record naming a parsed node's
+    /// word 0, an unset slot; a unit for an address in chunk 0, whose word is
+    /// the unit's kind, the blank arm at `BLANK_UNIT`; a record in a word chunk, a link record naming a parsed node's
     /// record (`Child` with its tree) or, with none, the node itself
     /// (`LinkedLeaf`); a leaf entry in a string chunk, `[kind | length]` then
     /// its UTF-8 bytes, a blank kind for captured text.
@@ -210,6 +218,9 @@ impl Cell {
         if at.chunk() == 0 {
             if edges != 0 {
                 return Err(malformed("unit cell edges", word));
+            }
+            if at.word() == BLANK_UNIT {
+                return Ok(Cell::Unit { kind: KindId::BLANK, row: None });
             }
             return Ok(Cell::Unit { kind: named_kind(at.word())?, row: None });
         }
