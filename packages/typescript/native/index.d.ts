@@ -26,6 +26,12 @@ export interface BaselineRun {
 
 export declare class SittirEngine {
   constructor(options?: EngineOptions | undefined | null)
+  /**
+   * The handle the module's functions on this engine's state take:
+   * one call reaches the engine through it with no borrow of this
+   * object.
+   */
+  get handle(): object
   get renderModuleHash(): string
   get nativeRenderNodeAbi(): number
   /**
@@ -44,164 +50,6 @@ export declare class SittirEngine {
    */
   parse(source: string): string
   /**
-   * The node at `index` of tree `treeId` read into its native node,
-   * `depth` levels down (one when absent, `Infinity` for all); index 0
-   * is the root. An `ERROR` node reads as its text and coordinate.
-   * Refuses a tree that is not live, an index past its last node,
-   * and a node the model has no route for, naming the kind, the
-   * child and the index.
-   */
-  read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): object
-  /**
-   * The sides of the unit children of the node at `index` of the
-   * live tree `treeId`, which their slots store as bare kinds: each
-   * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
-   * key and its item in that slot. Refuses as `triviaSide` does.
-   */
-  unitSides(treeId: TreeId, index: NodeIndex): object[]
-  /**
-   * The stored layout of each list slot of the node at `index` of
-   * the live tree `treeId` that stores any: each `{ slot, before?,
-   * after?, separator? }`, by its slot's wire key. Refuses as
-   * `triviaSide` does.
-   */
-  slotLayouts(treeId: TreeId, index: NodeIndex): object[]
-  /**
-   * The separator the list at `index` of the live tree `treeId`
-   * writes between its items, as a grammar id: the one its source
-   * spells where the slot stores one, else the one the read-time
-   * options render. Null for a node that is no list. Refuses as
-   * `triviaSide` does.
-   */
-  slotSeparator(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
-  /**
-   * The separator before the node at `index` of the live tree
-   * `treeId` as an item of its parent's list slot, as a grammar id,
-   * where its source spells another than the one the slot renders.
-   * Refuses as `triviaSide` does.
-   */
-  separatorBefore(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
-  /**
-   * A snapshot of the node at `index` of the live tree `treeId`: the
-   * node read at every depth into plain data with no tree, each
-   * node with its span (`$_layout.span`) from the native node that
-   * holds it and each placed extra with its text, the node itself
-   * measured from the byte `holderByte`, or from its own start when
-   * absent. Refuses as `read` does.
-   */
-  snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
-  /**
-   * The entries of `side` (`leading`, `trailing` or `inner`) of the
-   * node at `index` of the live tree `treeId`: the ones a write gave
-   * it, else the ones the tree's trivia table assigns it. Refuses a
-   * tree that is not live, an index naming no node of it, and any
-   * other side.
-   */
-  triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
-  /**
-   * Replace `side` of the node at `index` of the live tree `treeId`
-   * with `entries`. A built record among them (`{ $type, $record }`)
-   * is a record of this engine's built arena, and renders from it
-   * wherever the side renders. Refuses as `triviaSide` does.
-   */
-  writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
-  /**
-   * Whether a write replaced a side of a node under the node at
-   * `index` of the live tree `treeId`, its own `inner` included, and
-   * its own leading and trailing too when `ownSides` is set. Refuses
-   * a tree that is not live and an index naming no node of it.
-   */
-  editedWithin(treeId: TreeId, index: NodeIndex, ownSides: boolean): boolean
-  /**
-   * The siblings that hold sides beside the node at `index` of the
-   * live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
-   * end }` span of each, taken at the outermost node spanning exactly
-   * the node's bytes, `null` when that node starts (ends) its parent.
-   * Refuses a tree that is not live and an index naming no node of it.
-   */
-  siblings(treeId: TreeId, index: NodeIndex): string
-  /**
-   * The text `span` covers in the source of the live tree `treeId`:
-   * one string of that span's characters, so the source itself
-   * never crosses. Refuses a tree that is not live and a span that
-   * is not one of its source's: past its end, reversed, or
-   * splitting a character.
-   */
-  text(treeId: number, span: { start: number; end: number }): string
-  /**
-   * Whether the node at `index` of the live tree `treeId` is empty:
-   * no child of it has width. Refuses a tree that is not live and an
-   * index naming no node of it.
-   */
-  isEmpty(treeId: TreeId, index: NodeIndex): boolean
-  /**
-   * Every run of whitespace a side of the live tree `treeId` takes
-   * (`TriviaTable::runs`), each with the line breaks the options in
-   * effect at read time write there (`ParsedTree::baseline_gap`),
-   * absent where nothing the record wrote is anchored: read from
-   * each run's region, or from the record of the whole tree when
-   * `whole`. A diagnostic: the assignment reads the same breaks.
-   * Refuses a tree that is not live and a record whose read or
-   * render refused.
-   */
-  layoutBaseline(treeId: TreeId, whole?: boolean | undefined | null): Array<BaselineRun>
-  /**
-   * How much of its layout the live tree `treeId` stores apart from
-   * its read-time options (`ParsedTree::stored_layout`): `{
-   * deviations, slots, separators }`. A diagnostic. Refuses a tree
-   * that is not live.
-   */
-  storedLayout(treeId: TreeId): { deviations: number; slots: number; separators: number }
-  /**
-   * The work the live tree `treeId`'s layout reads have done so far
-   * (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
-   * diagnostic. Refuses a tree that is not live.
-   */
-  layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
-  /**
-   * The bytes the node at `index` of the live tree `treeId` renders
-   * between as its source (`ParsedTree::framed_span_at`): `{ start,
-   * end }`. A diagnostic. Refuses as `read` does.
-   */
-  framedSpan(treeId: TreeId, index: NodeIndex): { start: number; end: number }
-  /**
-   * One batch of a pre-order walk of the named descendants under
-   * the node `from` names (JSON, see `query::Address`), filtered to
-   * `kinds` when given and to the `where` plan (JSON, see
-   * `query::PlanSpec`) when given, resuming after the path `resume`
-   * an earlier batch returned, `depth` levels down (every level
-   * when absent). As JSON `{ items, resume, origin }`. Refuses
-   * a tree that is not live and a plan whose pattern the native
-   * matcher cannot compile.
-   */
-  descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<ChildPosition> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
-  /**
-   * The byte offsets of the lines under the node at `index` of the
-   * live tree `treeId` (its root when absent) that begin inside a
-   * token (`engine::line_starts_inside_tokens`): what anything that
-   * re-indents the tree's text leaves where it is. Refuses a tree
-   * that is not live and an index naming no node of it.
-   */
-  lineStartsInsideTokens(treeId: TreeId, index?: NodeIndex | undefined | null): Array<number>
-  /**
-   * Whether each node `addresses` names (a JSON array of
-   * `query::Address`, all in one tree) satisfies the `where` plan
-   * (JSON, see `query::PlanSpec`), in order. Refuses a tree that is
-   * not live, an address naming no node of it, and a plan whose
-   * pattern the native matcher cannot compile.
-   */
-  planHolds(addresses: string, plan: string): Array<boolean>
-  /**
-   * Render a typed node object (napi-native, numeric `$type`).
-   *
-   * The options a render takes are the call's own over the layer
-   * of the tree `treeId` names (`ParsedTree::inferred`), over the
-   * engine's. `treeId` is the tree the node was read from; a built
-   * node belongs to no tree and renders by the engine's options.
-   */
-  render(node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
-  renderToFile(node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
-  /**
    * Release the engine: it frees its built arena's chunks and
    * detaches every buffer over them (`builtWords`, `builtBytes`),
    * so a record they hold no longer renders as a trivia entry. The
@@ -209,220 +57,6 @@ export declare class SittirEngine {
    * whoever still names them.
    */
   dispose(): void
-  /**
-   * r" The address of the record of the node at `index` of the live
-   * r" tree `treeId`: the one a read wrote, else the one its read
-   * r" `depth` levels down (one when absent, `Infinity` for all)
-   * r" writes now. Null for a node with no record: a parsed leaf, or
-   * r" an `ERROR` node. Refuses as `read` does.
-   */
-  readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
-  /**
-   * r" Materializes the node at `index` in the live tree `treeId`
-   * r" to `depth` (one when absent, `Infinity` for all), including
-   * r" children of records already present. Returns only the root
-   * r" address, or null for a leaf or `ERROR`; JavaScript reads the
-   * r" records through the tree's chunks (`chunk`).
-   */
-  hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
-  /**
-   * r" The address of the record the parsed cell at `word`, item
-   * r" `item` (0 for a slot of one value), of the record at
-   * r" `holder` names, in the live tree `treeId`: on the first read
-   * r" through the cell, its record written `depth` levels down
-   * r" (one when absent) and the cell rewritten to name it. Refuses
-   * r" a holder no read wrote, a word that is no slot's, an item
-   * r" past its list, and a cell that names no record.
-   */
-  readCell(treeId: TreeId, holder: number, word: number, item: number, depth?: number | undefined | null): number
-  /**
-   * r" The hydrated typed nodes below `index` in stored field
-   * r" order, as a JSON list of their rows' coordinates. Units and
-   * r" captured strings are omitted. Exports no node fields or
-   * r" words.
-   */
-  recordCandidates(treeId: TreeId, index: NodeIndex): string
-  /**
-   * r" The nodes at `indexes` of the live tree `treeId`, in order:
-   * r" each read as `read` reads it when `wire` is `object`, and,
-   * r" when it is `record`, each record's address as `readRecord`
-   * r" answers it, 0 for a node with no record, in one
-   * r" `Uint32Array`. Refuses as `read` does at the first index it
-   * r" refuses, and any other wire.
-   */
-  readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
-  /**
-   * r" The record at `address` of the live tree `treeId` rendered, as
-   * r" `render` renders a node read from the tree: a render root
-   * r" whose `leading` and `trailing` edges have no neighbour, as
-   * r" the node crossing as its coordinate marks them, under
-   * r" `options` over the tree's layer over the engine's, each
-   * r" trivia entry's built record from its store's arena. Refuses
-   * r" a tree that is not live, an address naming no record of its
-   * r" arena, and a record whose render refuses.
-   */
-  renderRecord(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
-  /**
-   * r" The built record at `address` of the built arena `owner`
-   * r" holds (`holdBuiltArena`) rendered as a render root whose
-   * r" `leading` and `trailing` edges have no neighbour, under
-   * r" `options` over the layer of the tree `treeId` names, the
-   * r" tree the root was rebuilt from, over this engine's, with
-   * r" the sides `owner` holds:
-   * r" the engine that built the arena, which its records' side
-   * r" writes went to. The arena's chunks are borrowed for this
-   * r" call; the records the root reaches are admitted, and the
-   * r" parsed trees they link held for the render
-   * r" (`Engine::render_built`). Refuses an arena `owner` no
-   * r" longer holds, an address naming no record its words admit,
-   * r" a linked tree that is not live, and a record whose render
-   * r" refuses.
-   */
-  renderBuilt(owner: SittirEngine, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null): string
-  /**
-   * r" The lone built leaf of `kind` whose leaf entry the built
-   * r" arena `owner` holds at `entry`, rendered as a render root whose
-   * r" `leading` and `trailing` edges have no neighbour, under
-   * r" `options` over this engine's, with `sides`, the sides the
-   * r" leaf holds (`{ leading?, trailing?, inner? }`): a root has
-   * r" no site in the store. Refuses a kind no node of the grammar
-   * r" is written as, an entry of another kind or outside the
-   * r" arena's strings, and a leaf whose render refuses.
-   */
-  renderBuiltLeaf(owner: SittirEngine, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
-  /**
-   * r" A new chunk of `length` words of the built arena this
-   * r" engine's builders write, zeroed: `{ chunk, data, meta,
-   * r" freed }`, its number, a `Uint32Array` over its native
-   * r" memory, which the builders write records into, a
-   * r" `Uint8Array` over its counts' meta (`count`), and the
-   * r" chunks freed since the last chunk was made. A trivia entry this
-   * r" engine's store answers renders from it. Refuses an empty
-   * r" chunk, an engine already disposed, and a runtime that does
-   * r" not allow external array buffers.
-   */
-  builtWords(length: number): { chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }
-  /**
-   * r" A new chunk of `length` bytes of the built arena's strings,
-   * r" as `builtWords` answers one of words, its `data` a
-   * r" `Uint8Array`.
-   */
-  builtBytes(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }
-  /**
-   * r" The `segment`th segment of the counts of the entries the
-   * r" built arena's word chunk `chunk` holds, which is the next
-   * r" one: a `Uint8Array` over native memory the builders write
-   * r" each entry's count into. Refuses a chunk that holds no
-   * r" records and a segment that is not the next.
-   */
-  builtCounts(chunk: number, segment: number): Uint8Array
-  /**
-   * r" Takes one more count of the built entry at `address`, whose
-   * r" count saturated. Refuses an address no entry starts at and
-   * r" a count that has not saturated.
-   */
-  builtBump(address: number): void
-  /**
-   * r" Releases a count of the built entry at `address`, a record
-   * r" (`held` 0), a run (1) or a side record (2): with `owned`,
-   * r" the count its builder's handle holds, a no-op when it holds
-   * r" none. An entry whose count reaches zero releases what it
-   * r" holds, and a chunk left holding nothing live is freed and
-   * r" its buffers detached. Answers the tree of each link record
-   * r" and side record released since the last call. Refuses a
-   * r" count below zero, an address no entry starts at, and an
-   * r" engine already disposed.
-   */
-  releaseBuilt(address: number, held: number, owned: boolean): Array<number>
-  /**
-   * r" The bytes the built arena's chunks take, and of them the
-   * r" bytes their counts take: `{ chunks, counts }`. A diagnostic.
-   */
-  builtMemory(): { chunks: number; counts: number }
-  /**
-   * r" Refuses, by name, a runtime that does not allow external
-   * r" array buffers, which arena node storage reads every chunk
-   * r" through.
-   */
-  externalBuffers(): void
-  /**
-   * r" The entries a write gave `side` (`leading`, `trailing` or
-   * r" `inner`) of the built record at `address`, or `null` when
-   * r" no write did. Refuses address 0 and any other side.
-   */
-  builtTriviaSide(address: number, side: string): object[] | null
-  /**
-   * r" The entries a write gave `side` (`leading`, `trailing` or
-   * r" `inner`) of the built leaf at the site `holder`, `word`,
-   * r" `item`, or `null` when no write did. Refuses holder 0 and
-   * r" any other side.
-   */
-  builtLeafSide(holder: number, word: number, item: number, side: string): object[] | null
-  /**
-   * r" Writes the sides of every unit and leaf site of the built
-   * r" record at `from` at the same site of the record at `to`,
-   * r" except a site at a word `skip` names. Refuses address 0
-   * r" as either record.
-   */
-  copyBuiltSites(from: number, to: number, skip: Array<number>): void
-  /**
-   * r" Replace `side` of the built leaf at each site `sites` names,
-   * r" `[holder, word, item]` after another, with `entries`, which
-   * r" `renderBuilt` then writes; a built record among them
-   * r" renders as `writeTriviaSide` says. Refuses a list whose
-   * r" length is not a multiple of three, holder 0 and any other
-   * r" side, before writing any site.
-   */
-  writeBuiltLeafSide(sites: number[], side: string, entries: object[]): void
-  /**
-   * r" The sides writes gave each unit the record at `address` in
-   * r" the arena this engine built holds: `{ slot, item, leading?,
-   * r" trailing?, inner? }`. Refuses an arena this engine no
-   * r" longer holds and an address naming no record in it.
-   */
-  builtUnitSides(address: number): object[]
-  /**
-   * r" The units the record at `address` in the arena this engine
-   * r" built holds have the sides `units` gives (`{ slot, item,
-   * r" leading?, trailing?, inner? }`), in place of every unit
-   * r" side it had; `renderBuilt` then writes them, and a built
-   * r" record among them renders as `writeTriviaSide` says.
-   * r" Refuses as `builtUnitSides` does, and a slot the record's
-   * r" kind has no cell for.
-   */
-  writeBuiltUnitSides(address: number, units: object[]): void
-  /**
-   * r" Replace `side` of the built record at `address` with
-   * r" `entries`, which `renderBuilt` then writes; a built record
-   * r" among them renders as `writeTriviaSide` says. Refuses as
-   * r" `builtTriviaSide` does.
-   */
-  writeBuiltTriviaSide(address: number, side: string, entries: object[]): void
-  /**
-   * r" Renders the parsed candidate at row `index` without exporting
-   * r" its data or its outer trivia: the row's record, or, for a
-   * r" recordless node, its native coordinate.
-   */
-  renderCandidate(treeId: number, index: number, options?: object | undefined | null): string
-  /**
-   * r" The coordinate a read of the live tree `treeId` names the node
-   * r" at `index` by, as `[kind, end]`: the kind the read stamps on
-   * r" it and the row after its subtree (`ParsedTree::row_coordinate`),
-   * r" the one derivation a record view's coordinate takes. Refuses a
-   * r" tree that is not live and an index past its last node.
-   */
-  coordinate(treeId: TreeId, index: NodeIndex): Array<number>
-  /**
-   * r" Chunk `n` of the live tree `treeId`'s arena: a `Uint32Array`
-   * r" over its native memory, every word of it, with no copy. A
-   * r" later read's records, and the cells it rewrites to name
-   * r" them, appear in the same array; disposing the tree detaches
-   * r" it.
-   * r" Refuses a tree that is not live, a chunk its arena does not
-   * r" hold, and a runtime that does not allow external array
-   * r" buffers.
-   */
-  chunk(treeId: TreeId, n: number): Uint32Array
 }
 
 /**
@@ -430,6 +64,62 @@ export declare class SittirEngine {
  * r" chunk (`arena::CHUNK_SHIFT`).
  */
 export declare const ARENA_CHUNK_SHIFT: number
+
+/**
+ * r" Takes one more count of the built entry at `address`, whose
+ * r" count saturated. Refuses an address no entry starts at and
+ * r" a count that has not saturated.
+ */
+export declare function builtBump(engine: object, address: number): void
+
+/**
+ * r" A new chunk of `length` bytes of the built arena's strings,
+ * r" as `builtWords` answers one of words, its `data` a
+ * r" `Uint8Array`.
+ */
+export declare function builtBytes(engine: object, length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] }
+
+/**
+ * r" The entries a write gave `side` (`leading`, `trailing` or
+ * r" `inner`) of the built leaf at the site `holder`, `word`,
+ * r" `item`, or `null` when no write did. Refuses holder 0 and
+ * r" any other side.
+ */
+export declare function builtLeafSide(engine: object, holder: number, word: number, item: number, side: string): object[] | null
+
+/**
+ * r" The bytes the built arena's chunks take, and of them the
+ * r" bytes their counts take: `{ chunks, counts }`. A diagnostic.
+ */
+export declare function builtMemory(engine: object): { chunks: number; counts: number }
+
+/**
+ * r" The entries a write gave `side` (`leading`, `trailing` or
+ * r" `inner`) of the built record at `address`, or `null` when
+ * r" no write did. Refuses address 0 and any other side.
+ */
+export declare function builtTriviaSide(engine: object, address: number, side: string): object[] | null
+
+/**
+ * r" The sides writes gave each unit the record at `address` in
+ * r" the arena this engine built holds: `{ slot, item, leading?,
+ * r" trailing?, inner? }`. Refuses an arena this engine no
+ * r" longer holds and an address naming no record in it.
+ */
+export declare function builtUnitSides(engine: object, address: number): object[]
+
+/**
+ * r" A new chunk of `length` words of the built arena this
+ * r" engine's builders write, zeroed: `{ chunk, data, meta,
+ * r" freed }`, its number, a `Uint32Array` over its native
+ * r" memory, which the builders write records into, a
+ * r" `Uint8Array` over its counts' meta (`count`), and the
+ * r" chunks freed since the last chunk was made. A trivia entry this
+ * r" engine's store answers renders from it. Refuses an empty
+ * r" chunk, an engine already disposed, and a runtime that does
+ * r" not allow external array buffers.
+ */
+export declare function builtWords(engine: object, length: number): { chunk: number; data: Uint32Array; meta: Uint8Array; freed: number[] }
 
 /**
  * r" The chunk-0 offset a built blank arm's cell names
@@ -472,6 +162,35 @@ export declare const CELL_TAG_UNIT: number
 export type ChildPosition = number
 
 /**
+ * r" Chunk `n` of the live tree `treeId`'s arena: a `Uint32Array`
+ * r" over its native memory, every word of it, with no copy. A
+ * r" later read's records, and the cells it rewrites to name
+ * r" them, appear in the same array; disposing the tree detaches
+ * r" it.
+ * r" Refuses a tree that is not live, a chunk its arena does not
+ * r" hold, and a runtime that does not allow external array
+ * r" buffers.
+ */
+export declare function chunk(treeId: TreeId, n: number): Uint32Array
+
+/**
+ * r" The coordinate a read of the live tree `treeId` names the node
+ * r" at `index` by, as `[kind, end]`: the kind the read stamps on
+ * r" it and the row after its subtree (`ParsedTree::row_coordinate`),
+ * r" the one derivation a record view's coordinate takes. Refuses a
+ * r" tree that is not live and an index past its last node.
+ */
+export declare function coordinate(treeId: TreeId, index: NodeIndex): Array<number>
+
+/**
+ * r" Writes the sides of every unit and leaf site of the built
+ * r" record at `from` at the same site of the record at `to`,
+ * r" except a site at a word `skip` names. Refuses address 0
+ * r" as either record.
+ */
+export declare function copyBuiltSites(engine: object, from: number, to: number, skip: Array<number>): void
+
+/**
  * r" The flag of a built entry's count byte the handle its
  * r" builder returned holds (`count::OWNED`).
  */
@@ -484,10 +203,16 @@ export declare const COUNT_OWNED: number
 export declare const COUNT_SATURATED: number
 
 /**
- * r" The counts one segment of a word chunk's counts holds
- * r" (`count::COUNT_SEGMENT`).
+ * One batch of a pre-order walk of the named descendants under
+ * the node `from` names (JSON, see `query::Address`), filtered to
+ * `kinds` when given and to the `where` plan (JSON, see
+ * `query::PlanSpec`) when given, resuming after the path `resume`
+ * an earlier batch returned, `depth` levels down (every level
+ * when absent). As JSON `{ items, resume, origin }`. Refuses
+ * a tree that is not live and a plan whose pattern the native
+ * matcher cannot compile.
  */
-export declare const COUNT_SEGMENT: number
+export declare function descendants(from: string, kinds: Array<import('../src/types.ts').TSKindId> | undefined | null, resume: Array<ChildPosition> | undefined | null, limit: number, plan?: string | undefined | null, depth?: number | undefined | null): string
 
 /**
  * Drop one tree, detaching every buffer over its arena's chunks.
@@ -498,6 +223,14 @@ export declare const COUNT_SEGMENT: number
  */
 export declare function disposeTree(treeId: number): void
 
+/**
+ * Whether a write replaced a side of a node under the node at
+ * `index` of the live tree `treeId`, its own `inner` included, and
+ * its own leading and trailing too when `ownSides` is set. Refuses
+ * a tree that is not live and an index naming no node of it.
+ */
+export declare function editedWithin(treeId: TreeId, index: NodeIndex, ownSides: boolean): boolean
+
 export interface EngineOptions {
   /**
    * Resolved once here against the grammar's site table at
@@ -507,6 +240,20 @@ export interface EngineOptions {
    */
   options?: object
 }
+
+/**
+ * r" Refuses, by name, a runtime that does not allow external
+ * r" array buffers, which arena node storage reads every chunk
+ * r" through.
+ */
+export declare function externalBuffers(): void
+
+/**
+ * The bytes the node at `index` of the live tree `treeId` renders
+ * between as its source (`ParsedTree::framed_span_at`): `{ start,
+ * end }`. A diagnostic. Refuses as `read` does.
+ */
+export declare function framedSpan(treeId: TreeId, index: NodeIndex): { start: number; end: number }
 
 /**
  * r" The tags `releaseBuilt` reads (`count::held`): a record, a
@@ -521,10 +268,54 @@ export declare const HELD_SIDE: number
 export declare const HELD_TEXT: number
 
 /**
+ * r" Materializes the node at `index` in the live tree `treeId`
+ * r" to `depth` (one when absent, `Infinity` for all), including
+ * r" children of records already present. Returns only the root
+ * r" address, or null for a leaf or `ERROR`; JavaScript reads the
+ * r" records through the tree's chunks (`chunk`).
+ */
+export declare function hydrateRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+
+/**
+ * Whether the node at `index` of the live tree `treeId` is empty:
+ * no child of it has width. Refuses a tree that is not live and an
+ * index naming no node of it.
+ */
+export declare function isEmpty(treeId: TreeId, index: NodeIndex): boolean
+
+/**
  * r" The bits a record header's or a leaf entry's kind field takes
  * r" in the built arena (`EngineGrammar::KIND_BITS`).
  */
 export declare const KIND_BITS: number
+
+/**
+ * Every run of whitespace a side of the live tree `treeId` takes
+ * (`TriviaTable::runs`), each with the line breaks the options in
+ * effect at read time write there (`ParsedTree::baseline_gap`),
+ * absent where nothing the record wrote is anchored: read from
+ * each run's region, or from the record of the whole tree when
+ * `whole`. A diagnostic: the assignment reads the same breaks.
+ * Refuses a tree that is not live and a record whose read or
+ * render refused.
+ */
+export declare function layoutBaseline(treeId: TreeId, whole?: boolean | undefined | null): Array<BaselineRun>
+
+/**
+ * The work the live tree `treeId`'s layout reads have done so far
+ * (`ParsedTree::layout_work`): `{ regionNodes, siblingItems }`. A
+ * diagnostic. Refuses a tree that is not live.
+ */
+export declare function layoutWork(treeId: TreeId): { regionNodes: number; siblingItems: number }
+
+/**
+ * The byte offsets of the lines under the node at `index` of the
+ * live tree `treeId` (its root when absent) that begin inside a
+ * token (`engine::line_starts_inside_tokens`): what anything that
+ * re-indents the tree's text leaves where it is. Refuses a tree
+ * that is not live and an index naming no node of it.
+ */
+export declare function lineStartsInsideTokens(treeId: TreeId, index?: NodeIndex | undefined | null): Array<number>
 
 /** r" The words of a link record (`arena::cell::LINK_WORDS`). */
 export declare const LINK_RECORD_WORDS: number
@@ -539,8 +330,159 @@ export declare function liveTreeCount(): number
 /** A node index as JavaScript holds it: a whole number. */
 export type NodeIndex = number
 
+/**
+ * Whether each node `addresses` names (a JSON array of
+ * `query::Address`, all in one tree) satisfies the `where` plan
+ * (JSON, see `query::PlanSpec`), in order. Refuses a tree that is
+ * not live, an address naming no node of it, and a plan whose
+ * pattern the native matcher cannot compile.
+ */
+export declare function planHolds(addresses: string, plan: string): Array<boolean>
+
+/**
+ * The node at `index` of tree `treeId` read into its native node,
+ * `depth` levels down (one when absent, `Infinity` for all); index 0
+ * is the root. An `ERROR` node reads as its text and coordinate.
+ * Refuses a tree that is not live, an index past its last node,
+ * and a node the model has no route for, naming the kind, the
+ * child and the index.
+ */
+export declare function read(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): object
+
+/**
+ * r" The address of the record the parsed cell at `word`, item
+ * r" `item` (0 for a slot of one value), of the record at
+ * r" `holder` names, in the live tree `treeId`: on the first read
+ * r" through the cell, its record written `depth` levels down
+ * r" (one when absent) and the cell rewritten to name it. Refuses
+ * r" a holder no read wrote, a word that is no slot's, an item
+ * r" past its list, and a cell that names no record.
+ */
+export declare function readCell(treeId: TreeId, holder: number, word: number, item: number, depth?: number | undefined | null): number
+
+/**
+ * r" The nodes at `indexes` of the live tree `treeId`, in order:
+ * r" each read as `read` reads it when `wire` is `object`, and,
+ * r" when it is `record`, each record's address as `readRecord`
+ * r" answers it, 0 for a node with no record, in one
+ * r" `Uint32Array`. Refuses as `read` does at the first index it
+ * r" refuses, and any other wire.
+ */
+export declare function readMany(treeId: TreeId, indexes: Array<NodeIndex>, depth: number | undefined | null, wire: string): Array<object> | Uint32Array
+
+/**
+ * r" The record wire: a node's record named by its tree and its
+ * r" address together, so an address reads nothing once its tree is
+ * r" gone.
+ * r" The address of the record of the node at `index` of the live
+ * r" tree `treeId`: the one a read wrote, else the one its read
+ * r" `depth` levels down (one when absent, `Infinity` for all)
+ * r" writes now. Null for a node with no record: a parsed leaf, or
+ * r" an `ERROR` node. Refuses as `read` does.
+ */
+export declare function readRecord(treeId: TreeId, index: NodeIndex, depth?: number | undefined | null): number | null
+
 /** r" The flag above a link record's kind field (`arena::cell::flag`). */
 export declare const RECORD_FLAG_LINK: number
+
+/**
+ * r" The hydrated typed nodes below `index` in stored field
+ * r" order, as a JSON list of their rows' coordinates. Units and
+ * r" captured strings are omitted. Exports no node fields or
+ * r" words.
+ */
+export declare function recordCandidates(treeId: TreeId, index: NodeIndex): string
+
+/**
+ * r" Releases a count of the built entry at `address`, a record
+ * r" (`held` 0), a run (1) or a side record (2): with `owned`,
+ * r" the count its builder's handle holds, a no-op when it holds
+ * r" none. An entry whose count reaches zero releases what it
+ * r" holds, and a chunk left holding nothing live is freed and
+ * r" its buffers detached. Answers the tree of each link record
+ * r" and side record released since the last call. Refuses a
+ * r" count below zero, an address no entry starts at, and an
+ * r" engine already disposed.
+ */
+export declare function releaseBuilt(engine: object, address: number, held: number, owned: boolean): Array<number>
+
+/**
+ * Render a typed node object (napi-native, numeric `$type`).
+ *
+ * The options a render takes are the call's own over the layer
+ * of the tree `treeId` names (`ParsedTree::inferred`), over the
+ * engine's. `treeId` is the tree the node was read from; a built
+ * node belongs to no tree and renders by the engine's options.
+ */
+export declare function render(engine: object, node: object, treeId?: number | undefined | null, options?: object | undefined | null): string
+
+/**
+ * r" The built record at `address` of the built arena `owner`
+ * r" holds (`holdBuiltArena`) rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, under
+ * r" `options` over the layer of the tree `treeId` names, the
+ * r" tree the root was rebuilt from, over this engine's, with
+ * r" the sides `owner` holds:
+ * r" the engine that built the arena, which its records' side
+ * r" writes went to. The arena's chunks are borrowed for this
+ * r" call; the records the root reaches are admitted, and the
+ * r" parsed trees they link held for the render
+ * r" (`Engine::render_built`). Refuses an arena `owner` no
+ * r" longer holds, an address naming no record its words admit,
+ * r" a linked tree that is not live, and a record whose render
+ * r" refuses.
+ */
+export declare function renderBuilt(engine: object, owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number | undefined | null, options?: object | undefined | null): string
+
+/**
+ * r" The lone built leaf of `kind` whose leaf entry the built
+ * r" arena `owner` holds at `entry`, rendered as a render root whose
+ * r" `leading` and `trailing` edges have no neighbour, under
+ * r" `options` over this engine's, with `sides`, the sides the
+ * r" leaf holds (`{ leading?, trailing?, inner? }`): a root has
+ * r" no site in the store. Refuses a kind no node of the grammar
+ * r" is written as, an entry of another kind or outside the
+ * r" arena's strings, and a leaf whose render refuses.
+ */
+export declare function renderBuiltLeaf(engine: object, owner: object, kind: number, entry: number, sides: object | undefined | null, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+
+/**
+ * r" Renders the parsed candidate at row `index` without exporting
+ * r" its data or its outer trivia: the row's record, or, for a
+ * r" recordless node, its native coordinate.
+ */
+export declare function renderCandidate(engine: object, treeId: number, index: number, options?: object | undefined | null): string
+
+/**
+ * r" The record at `address` of the live tree `treeId` rendered, as
+ * r" `render` renders a node read from the tree: a render root
+ * r" whose `leading` and `trailing` edges have no neighbour, as
+ * r" the node crossing as its coordinate marks them, under
+ * r" `options` over the tree's layer over the engine's, each
+ * r" trivia entry's built record from its store's arena. Refuses
+ * r" a tree that is not live, an address naming no record of its
+ * r" arena, and a record whose render refuses.
+ */
+export declare function renderRecord(engine: object, treeId: number, address: number, leading: boolean, trailing: boolean, options?: object | undefined | null): string
+
+export declare function renderToFile(engine: object, node: object, path: string, treeId?: number | undefined | null, options?: object | undefined | null): void
+
+/**
+ * The separator before the node at `index` of the live tree
+ * `treeId` as an item of its parent's list slot, as a grammar id,
+ * where its source spells another than the one the slot renders.
+ * Refuses as `triviaSide` does.
+ */
+export declare function separatorBefore(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
+
+/**
+ * The siblings that hold sides beside the node at `index` of the
+ * live tree `treeId`, as JSON `{ previous, next }`: the `{ start,
+ * end }` span of each, taken at the outermost node spanning exactly
+ * the node's bytes, `null` when that node starts (ends) its parent.
+ * Refuses a tree that is not live and an index naming no node of it.
+ */
+export declare function siblings(treeId: TreeId, index: NodeIndex): string
 
 /**
  * r" A side record's fields before a list's delimiters setting, each
@@ -574,5 +516,103 @@ export declare const SIDE_WORDS_SIDES: number
 
 export declare const SIDE_WORDS_SPAN: number
 
+/**
+ * The stored layout of each list slot of the node at `index` of
+ * the live tree `treeId` that stores any: each `{ slot, before?,
+ * after?, separator? }`, by its slot's wire key. Refuses as
+ * `triviaSide` does.
+ */
+export declare function slotLayouts(treeId: TreeId, index: NodeIndex): object[]
+
+/**
+ * The separator the list at `index` of the live tree `treeId`
+ * writes between its items, as a grammar id: the one its source
+ * spells where the slot stores one, else the one the read-time
+ * options render. Null for a node that is no list. Refuses as
+ * `triviaSide` does.
+ */
+export declare function slotSeparator(treeId: TreeId, index: NodeIndex): import('../src/types.ts').TSKindId | null
+
+/**
+ * A snapshot of the node at `index` of the live tree `treeId`: the
+ * node read at every depth into plain data with no tree, each
+ * node with its span (`$_layout.span`) from the native node that
+ * holds it and each placed extra with its text, the node itself
+ * measured from the byte `holderByte`, or from its own start when
+ * absent. Refuses as `read` does.
+ */
+export declare function snapshot(treeId: TreeId, index: NodeIndex, holderByte?: number | undefined | null): object
+
+/**
+ * How much of its layout the live tree `treeId` stores apart from
+ * its read-time options (`ParsedTree::stored_layout`): `{
+ * deviations, slots, separators }`. A diagnostic. Refuses a tree
+ * that is not live.
+ */
+export declare function storedLayout(treeId: TreeId): { deviations: number; slots: number; separators: number }
+
+/**
+ * The text `span` covers in the source of the live tree `treeId`:
+ * one string of that span's characters, so the source itself
+ * never crosses. Refuses a tree that is not live and a span that
+ * is not one of its source's: past its end, reversed, or
+ * splitting a character.
+ */
+export declare function text(treeId: number, span: { start: number; end: number }): string
+
 /** A tree id as JavaScript holds it: a whole number. */
 export type TreeId = number
+
+/**
+ * The entries of `side` (`leading`, `trailing` or `inner`) of the
+ * node at `index` of the live tree `treeId`: the ones a write gave
+ * it, else the ones the tree's trivia table assigns it. Refuses a
+ * tree that is not live, an index naming no node of it, and any
+ * other side.
+ */
+export declare function triviaSide(treeId: TreeId, index: NodeIndex, side: string): object[]
+
+/**
+ * The sides of the unit children of the node at `index` of the
+ * live tree `treeId`, which their slots store as bare kinds: each
+ * `{ slot, item, leading?, trailing?, inner? }`, by its slot's wire
+ * key and its item in that slot. Refuses as `triviaSide` does.
+ */
+export declare function unitSides(treeId: TreeId, index: NodeIndex): object[]
+
+/**
+ * r" Replace `side` of the built leaf at each site `sites` names,
+ * r" `[holder, word, item]` after another, with `entries`, which
+ * r" `renderBuilt` then writes; a built record among them
+ * r" renders as `writeTriviaSide` says. Refuses a list whose
+ * r" length is not a multiple of three, holder 0 and any other
+ * r" side, before writing any site.
+ */
+export declare function writeBuiltLeafSide(engine: object, sites: number[], side: string, entries: object[]): void
+
+/**
+ * r" Replace `side` of the built record at `address` with
+ * r" `entries`, which `renderBuilt` then writes; a built record
+ * r" among them renders as `writeTriviaSide` says. Refuses as
+ * r" `builtTriviaSide` does.
+ */
+export declare function writeBuiltTriviaSide(engine: object, address: number, side: string, entries: object[]): void
+
+/**
+ * r" The units the record at `address` in the arena this engine
+ * r" built holds have the sides `units` gives (`{ slot, item,
+ * r" leading?, trailing?, inner? }`), in place of every unit
+ * r" side it had; `renderBuilt` then writes them, and a built
+ * r" record among them renders as `writeTriviaSide` says.
+ * r" Refuses as `builtUnitSides` does, and a slot the record's
+ * r" kind has no cell for.
+ */
+export declare function writeBuiltUnitSides(engine: object, address: number, units: object[]): void
+
+/**
+ * Replace `side` of the node at `index` of the live tree `treeId`
+ * with `entries`. A built record among them (`{ $type, $record }`)
+ * is a record of this engine's built arena, and renders from it
+ * wherever the side renders. Refuses as `triviaSide` does.
+ */
+export declare function writeTriviaSide(treeId: number, index: number, side: string, entries: object[]): void
