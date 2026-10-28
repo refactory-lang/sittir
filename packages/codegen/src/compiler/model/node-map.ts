@@ -1798,13 +1798,8 @@ export abstract class AbstractAssembledCompound<R extends RenderRule = RenderRul
 	}
 
 	get configSlots(): readonly AssembledNonterminal[] {
-		// A registered site never collapses a node to zero remaining config
-		// slots — a node whose ONLY slot is registered (e.g. a polymorph's
-		// sole dispatch slot bound to a preference default) still needs
-		// something a caller can construct from, so registration is inert
-		// for that node: every slot stays a config slot.
 		const real = this._slots.filter((slot) => slot.registeredOption === undefined);
-		return real.length > 0 ? real : this._slots;
+		return real.length > 0 || this._slots.every((slot) => slot.values.every(isFixedTextValue)) ? real : this._slots;
 	}
 
 	get soleSlot(): AssembledNonterminal | undefined {
@@ -1920,11 +1915,14 @@ export function slotFilledWhenOmitted(slot: { values: readonly NodeOrTerminal[] 
 	return target.rawFactoryName !== undefined && target.argumentOptional(ctx);
 }
 
-export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {
-	const value = soleRequiredValue(slot);
-	if (value === undefined) return false;
+export function isFixedTextValue(value: NodeOrTerminal): boolean {
 	if (!isNodeRef(value)) return isTerminalValue(value);
 	return !isUnresolvedRef(value.node) && isFixedTextLeaf(value.node);
+}
+
+export function holdsFixedText(slot: { values: readonly NodeOrTerminal[] }): boolean {
+	const value = soleRequiredValue(slot);
+	return value !== undefined && isFixedTextValue(value);
 }
 
 function fillsItself(slot: AssembledNonterminal): boolean {

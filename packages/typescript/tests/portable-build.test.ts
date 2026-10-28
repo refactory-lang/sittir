@@ -35,7 +35,7 @@ describe('the portable build through the strict table', () => {
 	});
 
 	it('builds a default export of a value through the nested mount, and of a declaration through the default form', () => {
-		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x');
+		expect(render(runtime.build({ $path: 'statement.export.default', value: 'x' }))).toBe('export default x;');
 		const declaration = { $path: 'declaration.function', name: 'f', parameters: [], body: { $path: 'statement.block', statements: [] } };
 		expect(render(runtime.build({ $path: 'statement.export.default', declaration }))).toBe('export default function f() {}');
 	});

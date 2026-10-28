@@ -32,6 +32,7 @@ import { wordCharAsciiTable } from '../util/word-matcher.ts';
 import { getNodeProjection } from './node-projection-cache.ts';
 import {
 	flanksOf,
+	hasArmEdgeSeams,
 	isSeamChoice,
 	slotPunctuationTokenOfNode,
 	keywordKindOfLiteral,
@@ -600,8 +601,11 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
+					const leftRule = partRules[lastRealPartIdx]!;
+					const rightRule = partRules[rightPartIdx]!;
+					const armSeamed = hasArmEdgeSeams(leftRule, 'last') || hasArmEdgeSeams(rightRule, 'first');
 					const stamped = rule.members[partIndices[rightPartIdx]!]!.staticSeamBefore;
-					if (stamped !== undefined) {
+					if (stamped !== undefined && !armSeamed) {
 						const spaced = stamped === 'spaced';
 						recordSeam(
 							l,
@@ -614,9 +618,7 @@ export function emitRule(rule: RenderRule, ctx: EmitCtx): Body {
 						lastRealPartIdx = rightPartIdx;
 						continue;
 					}
-					const leftRule = partRules[lastRealPartIdx]!;
-					const rightRule = partRules[rightPartIdx]!;
-					const classification = classifySeqBoundary(l, r, leftRule, rightRule, ctx);
+					const classification = armSeamed ? RUNTIME_VARYING : classifySeqBoundary(l, r, leftRule, rightRule, ctx);
 					const governing = seamChoiceBetween(lastRealPartIdx, rightPartIdx);
 					if (classification.resolution === 'runtime-varying') {
 						recordSeam(l, r, 'runtime-varying', governing.origin);

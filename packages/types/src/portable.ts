@@ -222,6 +222,7 @@ export interface PortableValueBuild {
  */
 export interface PortableBuildTable {
 	readonly builders: Readonly<Record<string, PortableCallShape>>;
+	readonly options?: Readonly<Record<string, readonly string[]>>;
 	readonly paths: Readonly<Record<string, PortableBuildPath>>;
 	readonly values?: Readonly<Record<string, PortableValueBuild>>;
 }

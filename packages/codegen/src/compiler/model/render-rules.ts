@@ -716,6 +716,15 @@ function withArmEdgeSeams(
 	return changed ? ({ ...(choice as object), members } as unknown as RenderRule) : undefined;
 }
 
+export function hasArmEdgeSeams(rule: RenderRule, side: 'first' | 'last'): boolean {
+	const r = bag(rule);
+	if (r.type !== CHOICE || r.members === undefined || isAnyWhitespaceChoice(rule)) return false;
+	return r.members.some((arm) => {
+		const edge = edgeMember(arm, side);
+		return (edge !== undefined && isSeamChoice(edge)) || hasArmEdgeSeams(arm, side);
+	});
+}
+
 function withTokenSeams(rule: RenderRule, kind: string, config: RenderRulesConfig, resolver: DefaultResolver, seams: SeamArms): RenderRule {
 	const r = bag(rule);
 	if (r.type !== SEQ || r.members === undefined || r.members.length < 2 || flanksOf(rule) !== undefined) return rule;

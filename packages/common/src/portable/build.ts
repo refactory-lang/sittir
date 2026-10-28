@@ -139,7 +139,12 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		return builder as Builder;
 	};
 	const takesConfig = (key: string): boolean => table.builders[key] === 'config';
-	const call = (key: string, input: unknown): unknown => builderAt(key)(...argsOf(table.builders[key], input));
+	const call = (key: string, input: unknown, options?: Readonly<Record<string, unknown>>): unknown => {
+		const args = argsOf(table.builders[key], input);
+		if (options === undefined) return builderAt(key)(...args);
+		if (args.length > 1) throw new Error(`portable build: ${key} takes its input as a list, so it takes no options`);
+		return builderAt(key)(args[0], options);
+	};
 	const sole = (config: Readonly<Record<string, unknown>>): unknown => {
 		const values = Object.values(config);
 		return values.length === 0 ? undefined : values.length === 1 ? values[0] : config;
@@ -149,13 +154,18 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			Object.entries(frame.config).map(([key, value]) => [key, value instanceof Frame ? (value.listed ? [materialize(value)] : materialize(value)) : value])
 		);
 	const shapeOf = (frame: Frame): PortableCallShape | undefined => (frame.builder === undefined ? (frame.form?.seats ?? frame.seated) : table.builders[frame.builder]);
-	const inputOf = (frame: Frame): unknown => {
-		if (frame.input !== undefined) return frame.input;
+	const inputFrom = (frame: Frame, config: Readonly<Record<string, unknown>>): unknown => (shapeOf(frame) === 'config' ? config : sole(config));
+	const inputOf = (frame: Frame): unknown => (frame.input !== undefined ? frame.input : inputFrom(frame, configOf(frame)));
+	const builtFrom = (frame: Frame, builder: string): unknown => {
+		const keys = table.options?.[builder] ?? [];
+		if (frame.input !== undefined || keys.length === 0) return call(builder, inputOf(frame));
 		const config = configOf(frame);
-		return shapeOf(frame) === 'config' ? config : sole(config);
+		const options = Object.fromEntries(keys.flatMap((key) => (config[key] === undefined ? [] : [[key, config[key]]])));
+		const input = inputFrom(frame, Object.fromEntries(Object.entries(config).filter(([key]) => !keys.includes(key))));
+		return call(builder, input, Object.keys(options).length === 0 ? undefined : options);
 	};
 	const materialize = (frame: Frame): unknown => {
-		if (frame.builder !== undefined) return call(frame.builder, inputOf(frame));
+		if (frame.builder !== undefined) return builtFrom(frame, frame.builder);
 		if (frame.form === undefined) return frame.seated === undefined ? inputOf(frame) : argsOf(frame.seated, inputOf(frame));
 		const args = argsOf(frame.form.seats, inputOf(frame));
 		return frame.form.call === 'keyed' ? args[0] : args;

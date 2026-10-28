@@ -1356,9 +1356,9 @@ function registeredSlotSource(
 	return present.length === 0 ? value : `(${present.join(' || ')}) ? (${value}) : undefined`;
 }
 
-export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }): string {
+export function omitRegistered(type: string, node: { readonly slots: readonly AssembledNonterminal[] }, omitter: 'OmitEach' | 'OmitRegistered' = 'OmitEach'): string {
 	const keys = registeredSlots(node).map((slot) => JSON.stringify(slot.propertyName));
-	return keys.length === 0 ? type : `OmitEach<${type}, ${keys.join(' | ')}>`;
+	return keys.length === 0 ? type : `${omitter}<${type}, ${keys.join(' | ')}>`;
 }
 
 export function spellingTypeOf(node: { readonly slots: readonly AssembledNonterminal[] }, nodeMap: NodeMap, kindEntries: readonly KindEnumEntry[]): string | undefined {
@@ -1502,7 +1502,7 @@ function resolveConfigFactorySurface(
 		rest: false,
 		strictType,
 		looseType: `T.${node.typeName}.Loose`,
-		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node)),
+		rowStrictType: allOptional ? `Partial<${widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node, 'OmitRegistered'))}>` : widen(omitRegistered(`ConfigOf<T.${node.typeName}>`, node, 'OmitRegistered')),
 		...(allOptional ? { defaultValue: '{}' } : {})
 	};
 	const generic = refusingSlots(

@@ -42,6 +42,18 @@ describe('the portable read', () => {
 		expect(roundTrip('declare class C { foo(): void; }')).toBe('declare class C {\n  foo(): void\n}\n');
 	});
 
+	it('builds a debugger statement, whose only slot is a token choice its grammar defaults', () => {
+		expect(roundTrip('debugger;')).toBe('debugger;\n');
+		expect(String(runtime.engine.render(runtime.engine.build.debuggerStatement()))).toBe('debugger;');
+	});
+
+	it('builds a type parameter constraint through its grammar default keyword, `extends`', () => {
+		for (const source of ['function f<T extends U>() {}', 'type A<T extends string> = T;']) expect(roundTrip(source)).toBe(`${source}\n`);
+		const bound = typescript.kinds.StringKeyword;
+		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound)))).toBe('extends string');
+		expect(String(runtime.engine.render(runtime.engine.build.constraint(bound, { content: typescript.kinds.Colon })))).toBe(': string');
+	});
+
 	it('leaves out a member whose route needs a member the node does not have', () => {
 		expect(firstOf('import x = require("y");')).not.toHaveProperty('source');
 		expect(roundTrip('import x = require("y");')).toBe('import x = require("y");\n');

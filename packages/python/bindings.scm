@@ -115,7 +115,7 @@
 (comparison_operator (comparison_operator_comparator) . (comparison_operator_comparator)) @expression.binary.comparison.chain
 (comparison_operator . (_) . (comparison_operator_comparator operators: "==") .) @expression.binary.comparison.equal
 (comparison_operator . (_) . (comparison_operator_comparator operators: "!=") .) @expression.binary.comparison.not_equal
-(comparison_operator . (_) . (comparison_operator_comparator operators: "<>") .) @expression.binary.comparison.not_equal
+(comparison_operator . (_) . (comparison_operator_comparator operators: "<>") .) @expression.binary.comparison.not_equal.legacy
 (comparison_operator . (_) . (comparison_operator_comparator operators: "<") .) @expression.binary.comparison.less
 (comparison_operator . (_) . (comparison_operator_comparator operators: ">") .) @expression.binary.comparison.greater
 (comparison_operator . (_) . (comparison_operator_comparator operators: "<=") .) @expression.binary.comparison.less_equal
@@ -128,7 +128,7 @@
 (comparison_operator_comparator) @element.comparator
 (comparison_operator_comparator operators: "==") @element.comparator.comparison.equal
 (comparison_operator_comparator operators: "!=") @element.comparator.comparison.not_equal
-(comparison_operator_comparator operators: "<>") @element.comparator.comparison.not_equal
+(comparison_operator_comparator operators: "<>") @element.comparator.comparison.not_equal.legacy
 (comparison_operator_comparator operators: "<") @element.comparator.comparison.less
 (comparison_operator_comparator operators: ">") @element.comparator.comparison.greater
 (comparison_operator_comparator operators: "<=") @element.comparator.comparison.less_equal

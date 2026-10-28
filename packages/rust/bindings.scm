@@ -309,7 +309,7 @@
 (yield_expression) @expression.yield
 (range_expression) @expression.range
 (range_expression_binary operator: "..=") @expression.range.inclusive
-(range_expression_binary operator: "...") @expression.range.inclusive
+(range_expression_binary operator: "...") @expression.range.inclusive.legacy
 (range_expression_binary operator: "..") @expression.range.exclusive
 (range_expression_postfix) @expression.range.exclusive
 (range_expression_prefix) @expression.range.exclusive
@@ -343,7 +343,7 @@
 (range_pattern_prefix "..=") @pattern.range.inclusive
 (range_pattern_prefix "..") @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_with_right "..=")) @pattern.range.inclusive
-(range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive
+(range_pattern_with_left (range_pattern_with_left_with_right "...")) @pattern.range.inclusive.legacy
 (range_pattern_with_left (range_pattern_with_left_with_right "..")) @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_bare)) @pattern.range.exclusive
 (range_pattern_with_left (range_pattern_with_left_with_right right: (_) @right))

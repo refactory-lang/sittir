@@ -269,13 +269,13 @@ export const typeQueryMemberExpression$qmarkDot =
 		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
 
 export const constraint$extends =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
+	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { content: value }) as never);
 export const constraint$colon =
-	<PF extends (config: never) => unknown>(parent: PF, value: unknown) =>
-	(config: OmitEach<ArgsOf<PF>[0], 'content'>, options?: OptionsArg<PF>): ReturnType<PF> =>
-		_s<ReturnType<PF>>(parent)({ ...config, content: value } as never, options as never);
+	<PF extends (value: never) => unknown>(parent: PF, value: unknown) =>
+	(arg: ArgsOf<PF>[0], options?: OptionsArg<PF>): ReturnType<PF> =>
+		_s<ReturnType<PF>>(parent)(arg as never, _m(options, { content: value }) as never);
 
 export const classBodyMemberMethod$plain =
 	<PF extends (config: never) => unknown, CF extends (...args: never[]) => unknown>(parent: PF, child: CF) =>

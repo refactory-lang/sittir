@@ -20322,6 +20322,7 @@ impl ::sittir_core::prepare::Prepare for UsingDeclarationNode {
         self.variable_declarator_separator_space_before.get_or_insert(ctx.options.site_arm(options::SITE_USING_DECLARATION_VARIABLE_DECLARATOR_SEPARATOR_SPACE_BEFORE).arm);
         self.variable_declarator_separator_space_after.get_or_insert(ctx.options.site_arm(options::SITE_USING_DECLARATION_VARIABLE_DECLARATOR_SEPARATOR_SPACE_AFTER).arm);
         ::sittir_core::prepare::fill_seated_gaps(self.variable_declarator.iter_mut().map(Some), options::SEATS_USING_DECLARATION_VARIABLE_DECLARATOR, ctx);
+        if self.automatic_semicolon.is_none() { self.automatic_semicolon = UsingDeclarationAutomaticSemicolonNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_USING_DECLARATION_AUTOMATIC_SEMICOLON).arm).map(::sittir_core::SlotValue::Node); }
         self.kind.prepare(ctx)?;
         self.variable_declarator.prepare(ctx)?;
         self.automatic_semicolon.prepare(ctx)?;
@@ -28610,7 +28611,7 @@ pub struct ConstraintNode {
     pub layout: Option<Box<NodeLayout>>,
     #[wire(key = "_content")]
     #[slot(word = 2, width = 5)]
-    pub content: ::sittir_core::SlotValue<ConstraintContentNodeSlot>,
+    pub content: Option<::sittir_core::SlotValue<ConstraintContentNodeSlot>>,
     #[wire(key = "_bounds")]
     #[slot(field = field::BOUNDS, word = 7, width = 5)]
     pub bounds: ::sittir_core::SlotValue<TypeNode>,
@@ -28642,6 +28643,7 @@ impl ::sittir_core::prepare::Prepare for ConstraintNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.content.is_none() { self.content = ConstraintContentNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_CONSTRAINT_CONTENT).arm).map(::sittir_core::SlotValue::Node); }
         self.content.prepare(ctx)?;
         self.bounds.prepare(ctx)?;
         Ok(())
@@ -32525,6 +32527,7 @@ impl ::sittir_core::prepare::Prepare for ExportStatementDefaultDeclarationDefaul
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.automatic_semicolon.is_none() { self.automatic_semicolon = ExportStatementDefaultDeclarationDefaultKwValueAutomaticSemicolonNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_EXPORT_STATEMENT_DEFAULT_DECLARATION_DEFAULT_KW_VALUE_AUTOMATIC_SEMICOLON).arm).map(::sittir_core::SlotValue::Node); }
         self.value.prepare(ctx)?;
         self.automatic_semicolon.prepare(ctx)?;
         Ok(())
@@ -44273,7 +44276,7 @@ fn render_default_type(node: &DefaultTypeNode, w: &mut dyn ::sittir_core::render
 
 fn render_constraint(node: &ConstraintNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let bounds = &node.bounds;
-    let content = &node.content;
+    let content = View::new(&node.content, "{}");
     w.edge(::sittir_core::types::KindId(374), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_content", ::sittir_core::types::ItemIndex(0), w, |w| content.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_bounds", ::sittir_core::types::ItemIndex(0), w, |w| bounds.render(w))?;

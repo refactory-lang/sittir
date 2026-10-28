@@ -346,12 +346,12 @@ export interface Routes<Table extends AnyTable> {
 		readonly dot: Routes<Table>['typeQueryMemberExpression$dot'];
 		readonly qmarkDot: Routes<Table>['typeQueryMemberExpression$qmarkDot'];
 	};
-	readonly constraint$extends: <const V extends OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>,
+	readonly constraint$extends: <const V extends ArgsOf<Table['buildConstraint']>[0]>(
+		arg: V & RefuseUndeclared<V, ArgsOf<Table['buildConstraint']>[0]>,
 		options?: OptionsArg<Table['buildConstraint']>
 	) => ReturnType<Table['buildConstraint']>;
-	readonly constraint$colon: <const V extends OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>(
-		config: V & RefuseUndeclared<V, OmitEach<ArgsOf<Table['buildConstraint']>[0], 'content'>>,
+	readonly constraint$colon: <const V extends ArgsOf<Table['buildConstraint']>[0]>(
+		arg: V & RefuseUndeclared<V, ArgsOf<Table['buildConstraint']>[0]>,
 		options?: OptionsArg<Table['buildConstraint']>
 	) => ReturnType<Table['buildConstraint']>;
 	readonly constraint: Table['buildConstraint'] & {

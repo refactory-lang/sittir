@@ -1882,7 +1882,7 @@
           ]
         },
         {
-          "vocab": "expression.binary.comparison.not_equal",
+          "vocab": "expression.binary.comparison.not_equal.legacy",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -2265,7 +2265,7 @@
           ]
         },
         {
-          "vocab": "element.comparator.comparison.not_equal",
+          "vocab": "element.comparator.comparison.not_equal.legacy",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -7795,9 +7795,9 @@
       },
       {
         "depth": 5,
-        "paths": 2,
-        "kinds": 1,
-        "refinements": 2
+        "paths": 4,
+        "kinds": 3,
+        "refinements": 4
       }
     ]
   }

@@ -14,6 +14,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
 	GrammarTypeMap,
@@ -14358,7 +14359,10 @@ export namespace ForInClause {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ForInClause>, 'trailingComma'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ForInClause>, 'trailingComma'>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.ForInClause>, 'trailingComma'>, options?: T.ForInClause.Options];
+	export type BuildArgs = [
+		config: OmitRegistered<ConfigOf<T.ForInClause>, 'trailingComma'>,
+		options?: T.ForInClause.Options
+	];
 	export type LooseArgs = [config: T.ForInClause.Loose, options?: T.ForInClause.Options];
 	export type Kind = TSKindId.ForInClause;
 	type NonEmptySlots = Proven<
@@ -15770,7 +15774,7 @@ export namespace FloatPoint {
 	>;
 	export type BuildArgs = [
 		config: WidenSlots<
-			OmitEach<ConfigOf<T.FloatPoint>, 'marker'>,
+			OmitRegistered<ConfigOf<T.FloatPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.FloatPoint.Options
@@ -15814,7 +15818,7 @@ export namespace FloatLeadingPoint {
 	>;
 	export type BuildArgs = [
 		config: WidenSlots<
-			OmitEach<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
+			OmitRegistered<ConfigOf<T.FloatLeadingPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.FloatLeadingPoint.Options
@@ -15858,7 +15862,7 @@ export namespace FloatScientific {
 	>;
 	export type BuildArgs = [
 		config: WidenSlots<
-			OmitEach<ConfigOf<T.FloatScientific>, 'marker'>,
+			OmitRegistered<ConfigOf<T.FloatScientific>, 'marker'>,
 			{ integer: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.FloatScientific.Options

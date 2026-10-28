@@ -543,7 +543,7 @@ function emitBranchFrom(
 		}
 	} else {
 		emitBranchUntypedNodePassthrough(body, inputOptional, returnType, typeName);
-		body.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]);`);
+		body.push(`  return ${factory}(input as Parameters<typeof ${factory}>[0]${optionsArg});`);
 	}
 	lines.push(...declare(body));
 	return lines.join('\n');

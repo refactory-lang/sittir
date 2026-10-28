@@ -795,19 +795,14 @@ describe('continue_statement', () => {
 
 describe('debugger_statement', () => {
 	it('factory produces correct type', () => {
-		const node = ir.debuggerStatement(
-			stampBuilt({ $type: TSKindId.AutomaticSemicolon, $text: '\n', $named: true }) as any
-		);
+		const node = ir.debuggerStatement({}, { terminator: TSKindId.AutomaticSemicolon });
 		expect(node.$type).toBe(TSKindId.DebuggerStatement);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.debuggerStatement(
-			stampBuilt({ $type: TSKindId.AutomaticSemicolon, $text: '\n', $named: true }) as any
-		);
+		const node = ir.debuggerStatement({}, { terminator: TSKindId.AutomaticSemicolon });
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
-		expect(rendered).toContain('\n');
 	});
 });
 
@@ -4011,37 +4006,32 @@ describe('default_type', () => {
 
 describe('constraint', () => {
 	it('factory produces correct type', () => {
-		const node = ir.constraint({
-			content: 'extends',
-			bounds: stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any
+		const node = ir.constraint(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any, {
+			content: TSKindId.ExtendsKeyword
 		});
 		expect(node.$type).toBe(TSKindId.Constraint);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.constraint({
-			content: 'extends',
-			bounds: stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any
+		const node = ir.constraint(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any, {
+			content: TSKindId.ExtendsKeyword
 		});
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('this');
 	});
 });
 
 describe('constraint sub-factories', () => {
 	it('extends builds the parent', () => {
-		const node = ir.constraint.extends({
-			bounds: stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any
-		});
+		const node = ir.constraint.extends(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.Constraint);
 		const seated = (node as any).content();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.ExtendsKeyword);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('colon builds the parent', () => {
-		const node = ir.constraint.colon({
-			bounds: stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any
-		});
+		const node = ir.constraint.colon(stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any);
 		expect(node.$type).toBe(TSKindId.Constraint);
 		const seated = (node as any).content();
 		expect(seated?.$text?.() ?? seated).toBe(TSKindId.Colon);

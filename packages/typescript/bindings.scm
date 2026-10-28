@@ -392,6 +392,7 @@
 (tuple_type) @type.tuple
 (function_type) @type.function
 (constructor_type) @type.function.constructor
+(constructor_type "abstract" @abstract)
 (object_type) @type.object
 (literal_type) @type.literal
 (lookup_type) @type.lookup

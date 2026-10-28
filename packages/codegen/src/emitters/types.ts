@@ -478,6 +478,7 @@ const VOCABULARY_IMPORTS = [
 	'KindEnum',
 	'NodeOfNamespaces',
 	'OmitEach',
+	'OmitRegistered',
 	'NoneOf',
 	'WithoutGroup',
 	'RenameKeys',
