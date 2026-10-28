@@ -15306,3 +15306,99 @@ The body text.
 ### `packages/codegen/src/emitters/shared.ts::seatDeclaration`
 
 Prints a seat's const declaration. It is the one place a seat const is written.
+
+### `packages/codegen/src/emitters/interior.ts::NumberShape::complete`
+
+Whether a number shape has every part it needs to read a number.
+
+### `packages/codegen/src/emitters/interior.ts::numberShapes`
+
+The number shapes of a node map, by kind.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnosticCode`
+
+The codes a pick diagnostic can carry.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic`
+
+A diagnostic from choosing a build arm for a path.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::code`
+
+The diagnostic code.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::path`
+
+The path the diagnostic is about.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::kinds`
+
+The kinds the diagnostic names.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::holder`
+
+The holder the diagnostic names, when it has one.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::slot`
+
+The slot the diagnostic names, when it has one.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PickDiagnostic::arms`
+
+The number of arms the diagnostic counts, when it counts them.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput`
+
+What the portable build reads: routes, the slot model, the node map, the kind entries, and the flag plans.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::routes`
+
+The grammar's routes.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::model`
+
+The slot model.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::nodeMap`
+
+The node map.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::kindEntries`
+
+The kind-enum entries.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildInput::flagPlans`
+
+The query plans for each flag path, by holder kind.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput`
+
+The portable build table and the diagnostics raised while building it.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput::table`
+
+The build table.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::PortableBuildOutput::diagnostics`
+
+The diagnostics raised while building the table.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::portableBuildTable`
+
+Builds the portable build table and its diagnostics from the build input.
+
+### `packages/codegen/src/emitters/overlays/portable/build.ts::emitPortableBuild`
+
+Emits the portable build module source, with the diagnostics it raised.
+
+### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::build`
+
+The emitted portable build source.
+
+### `packages/codegen/src/emitters/overlays/portable/index.ts::PortableOutputs::pickDiagnostics`
+
+The pick diagnostics the build raised.
+
+### `packages/codegen/src/emitters/shared.ts::keywordPresenceStorage`
+
+The storage of a keyword-presence field, when it has one.
