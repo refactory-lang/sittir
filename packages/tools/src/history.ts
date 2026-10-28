@@ -58,6 +58,10 @@ export interface ValidationRun {
 	layoutStoredDeviations?: number;
 	layoutStoredSlots?: number;
 	layoutStoredSeparators?: number;
+	portableRoundTripPass?: number;
+	portableRoundTripTotal?: number;
+	portableRoundTripAstMatchPass?: number;
+	portableRoundTripCarried?: number;
 }
 
 /**

@@ -1,8 +1,9 @@
 import type { Engine, LanguageAPI, PortableStructure, TriviaFacts } from '@sittir/types';
 import { inLanguage } from '../language.ts';
 import { portableBuilder } from './build.ts';
-import { builtReadsAs, flagHolds, readsAs } from './classify.ts';
+import { builtReadsAs, classifierOf, flagHolds, portableTextOf, readsAs } from './classify.ts';
 import { languageGuardOf, type PortableLanguage } from './language-guard.ts';
+import { portableReader, type PortableCarried } from './read.ts';
 import { portableTrees, type LanguageGuard, type PortableGuardTree } from './tree.ts';
 import { vocabularyFlags, vocabularyPaths } from './vocabulary-paths.ts';
 
@@ -29,6 +30,7 @@ export interface PortableRuntime<API extends LanguageAPI> {
 	readonly engine: Engine<API, 'strict'>;
 	readonly is: PortableGuardTree<string, LanguageGuard>;
 	readonly build: (structure: PortableStructure) => unknown;
+	readonly read: (node: { readonly $type: number } | number, carried?: PortableCarried) => unknown;
 }
 
 export async function portableRuntime<API extends LanguageAPI>(engine: Engine<API, 'strict'>): Promise<PortableRuntime<API>> {
@@ -36,12 +38,20 @@ export async function portableRuntime<API extends LanguageAPI>(engine: Engine<AP
 	const trivia: TriviaFacts = engine.trivia;
 	const hooks = await language.load();
 	if (rows === undefined || hooks.portableBuild === undefined) throw new Error(`language "${language.name}" has no portable surface: its grammar has no bindings`);
+	const table = await hooks.portableBuild();
 	const build = portableBuilder({
 		language: language.name,
-		table: await hooks.portableBuild(),
+		table,
 		builders: engine.build,
 		kindName: (kind) => trivia.kindName(kind),
 		readsAs: (path, node) => builtReadsAs(rows, path, node)
 	});
-	return Object.freeze({ engine, is: portableRuntimeTree(language), build });
+	const read = portableReader({
+		table,
+		classify: classifierOf(rows),
+		flagHolds: (value, flag) => flagHolds(rows, value, flag),
+		flagsOf: (kind) => Object.keys(rows.flags[kind] ?? {}),
+		textOf: (value) => portableTextOf(rows, value)
+	});
+	return Object.freeze({ engine, is: portableRuntimeTree(language), build, read });
 }

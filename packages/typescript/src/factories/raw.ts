@@ -9312,17 +9312,19 @@ export function buildClassBodyMemberMethod(
 	return stampBuilt(node) as unknown as T.ClassBodyMemberMethod.Bound;
 }
 
-export function buildClassBodyMemberMethodSig<
-	MethodSignatureSlot extends T.ClassBodyMemberMethodSig.Config['methodSignature']
->(
-	config: RefusingConfig<T.ClassBodyMemberMethodSig.Config, { methodSignature: MethodSignatureSlot }>
+export function buildClassBodyMemberMethodSig<V extends Admit<T.MethodSignature>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound;
 export function buildClassBodyMemberMethodSig(
-	config: T.ClassBodyMemberMethodSig.Config
+	value: Admit<T.MethodSignature>,
+	options?: T.ClassBodyMemberMethodSig.Options
 ): T.ClassBodyMemberMethodSig.Bound {
-	currentHandle()?.admit(TSKindId.ClassBodyMemberMethodSig, [config]);
-	const _method_signature = config.methodSignature;
-	const _terminator = kindIdStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(config.terminator);
+	const _method_signature = value;
+	const _terminator = coerceKindEnumStorage<NonNullable<T.ClassBodyMemberMethodSig['_terminator']>>(
+		options?.terminator,
+		[['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const, [',', TSKindId.Comma] as const]
+	);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.ClassBodyMemberMethodSig as const,
@@ -9331,9 +9333,9 @@ export function buildClassBodyMemberMethodSig(
 		_terminator,
 		$with: {
 			methodSignature: (value: Admit<T.MethodSignature>) =>
-				rebuilt(node, handle, () => buildClassBodyMemberMethodSig({ ...config, methodSignature: value })),
-			terminator: (value: Admit<NonNullable<T.ClassBodyMemberMethodSig.Config>['terminator']>) =>
-				rebuilt(node, handle, () => buildClassBodyMemberMethodSig({ ...config, terminator: value }))
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, options)),
+			terminator: (spelling: TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma) =>
+				rebuilt(node, handle, () => buildClassBodyMemberMethodSig(value, { ...options, terminator: spelling }))
 		},
 		methodSignature: () => hydrateStoredSlot(node, '_method_signature'),
 		terminator: () => _terminator,

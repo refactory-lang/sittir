@@ -30991,7 +30991,7 @@ pub struct ClassBodyMemberMethodSigNode {
     pub method_signature: ::sittir_core::SlotValue<MethodSignatureNode>,
     #[wire(key = "_terminator")]
     #[slot(field = field::TERMINATOR, word = 7, width = 5)]
-    pub terminator: ::sittir_core::SlotValue<ClassBodyMemberMethodSigTerminatorNodeSlot>,
+    pub terminator: Option<::sittir_core::SlotValue<ClassBodyMemberMethodSigTerminatorNodeSlot>>,
 }
 
 impl ::sittir_core::view::KindOf for ClassBodyMemberMethodSigNode {
@@ -31016,6 +31016,7 @@ impl ::sittir_core::prepare::Prepare for ClassBodyMemberMethodSigNode {
     fn prepare(&mut self, ctx: &::sittir_core::prepare::RenderContext<'_>) -> Result<(), ::sittir_core::render::CoordinateError> {
         self.layout.prepare(ctx)?;
         ::sittir_core::prepare::prepare_edges(self, ctx);
+        if self.terminator.is_none() { self.terminator = ClassBodyMemberMethodSigTerminatorNodeSlot::from_kind_id(ctx.options.site_arm(options::SITE_CLASS_BODY_MEMBER_METHOD_SIG_TERMINATOR).arm).map(::sittir_core::SlotValue::Node); }
         self.method_signature.prepare(ctx)?;
         self.terminator.prepare(ctx)?;
         Ok(())
@@ -44840,7 +44841,7 @@ fn render_class_body_member_method(node: &ClassBodyMemberMethodNode, w: &mut dyn
 
 fn render_class_body_member_method_sig(node: &ClassBodyMemberMethodSigNode, w: &mut dyn ::sittir_core::render::RenderSink) -> ::sittir_core::render::RenderResult {
     let method_signature = &node.method_signature;
-    let terminator = &node.terminator;
+    let terminator = View::new(&node.terminator, "{}");
     w.edge(::sittir_core::types::KindId(409), ::sittir_core::options::Side::Before, node.layout.edges().before);
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_method_signature", ::sittir_core::types::ItemIndex(0), w, |w| method_signature.render(w))?;
     ::sittir_core::layout::render_unit(node.layout.as_deref(), "_terminator", ::sittir_core::types::ItemIndex(0), w, |w| terminator.render(w))?;

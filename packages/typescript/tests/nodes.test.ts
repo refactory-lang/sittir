@@ -4746,77 +4746,152 @@ describe('class_body_member_method sub-factories', () => {
 
 describe('class_body_member_method_sig', () => {
 	it('factory produces correct type', () => {
-		const node = ir.classBodyMemberMethodSig({
-			methodSignature: stampBuilt({
+		const node = ir.classBodyMemberMethodSig(
+			stampBuilt({
 				$type: TSKindId.MethodSignaturePlain,
 				$text: 'test',
 				$named: true,
+				_accessibility_modifier: TSKindId.PublicKeyword as never,
+				_static: true as never,
+				_override: true as never,
+				_readonly: true as never,
+				_async: true as never,
+				_generator: true as never,
 				_name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
-				_parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any
+				_optional: true as never,
+				_type_parameters: stampBuilt({
+					$type: TSKindId.TypeParameters,
+					$text: 'test',
+					$named: true,
+					_elements: stampBuilt({
+						$type: TSKindId.TypeParametersElements,
+						$text: 'test',
+						$named: true,
+						_item: [
+							stampBuilt({
+								$type: TSKindId.TypeParameter,
+								$text: 'test',
+								$named: true,
+								_name: stampBuilt({
+									$type: TSKindId.TypeIdentifier,
+									$text: 'test',
+									$named: true,
+									_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+								}) as any
+							}) as any
+						]
+					}) as any
+				}) as any,
+				_parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any,
+				_return_type: stampBuilt({
+					$type: TSKindId.TypeAnnotation,
+					$text: 'test',
+					$named: true,
+					_type: stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any
+				}) as any
 			}) as any,
-			terminator: '\n'
-		});
+			{ terminator: TSKindId.FunctionSignatureAutomaticSemicolon }
+		);
 		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 		expectBuiltNode(node);
 	});
 	it('render produces non-empty string', () => {
-		const node = ir.classBodyMemberMethodSig({
-			methodSignature: stampBuilt({
+		const node = ir.classBodyMemberMethodSig(
+			stampBuilt({
 				$type: TSKindId.MethodSignaturePlain,
 				$text: 'test',
 				$named: true,
+				_accessibility_modifier: TSKindId.PublicKeyword as never,
+				_static: true as never,
+				_override: true as never,
+				_readonly: true as never,
+				_async: true as never,
+				_generator: true as never,
 				_name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
-				_parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any
+				_optional: true as never,
+				_type_parameters: stampBuilt({
+					$type: TSKindId.TypeParameters,
+					$text: 'test',
+					$named: true,
+					_elements: stampBuilt({
+						$type: TSKindId.TypeParametersElements,
+						$text: 'test',
+						$named: true,
+						_item: [
+							stampBuilt({
+								$type: TSKindId.TypeParameter,
+								$text: 'test',
+								$named: true,
+								_name: stampBuilt({
+									$type: TSKindId.TypeIdentifier,
+									$text: 'test',
+									$named: true,
+									_content: stampBuilt({ $type: TSKindId.Identifier, $text: 'test', $named: true }) as any
+								}) as any
+							}) as any
+						]
+					}) as any
+				}) as any,
+				_parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any,
+				_return_type: stampBuilt({
+					$type: TSKindId.TypeAnnotation,
+					$text: 'test',
+					$named: true,
+					_type: stampBuilt({ $type: TSKindId.ThisType, $text: 'this', $named: true }) as any
+				}) as any
 			}) as any,
-			terminator: '\n'
-		});
+			{ terminator: TSKindId.FunctionSignatureAutomaticSemicolon }
+		);
 		const rendered = node.$render!();
 		expect(rendered.length).toBeGreaterThan(0);
+		expect(rendered).toContain('test');
+		expect(rendered).toContain('this');
 	});
 });
 
 describe('class_body_member_method_sig sub-factories', () => {
 	it('plain builds the parent', () => {
-		const node = ir.classBodyMemberMethodSig.plain({
-			terminator: '\n',
-			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
-			parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any
-		});
+		const node = ir.classBodyMemberMethodSig
+			.plain({
+				name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
+				parameters: stampBuilt({ $type: TSKindId.FormalParameters, $text: 'test', $named: true }) as any
+			})
+			.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 		expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignaturePlain);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('getter builds the parent', () => {
-		const node = ir.classBodyMemberMethodSig.getter({
-			terminator: '\n',
-			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any
-		});
+		const node = ir.classBodyMemberMethodSig
+			.getter({ name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any })
+			.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 		expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignatureGetter);
 		expect(node.$render!().length).toBeGreaterThan(0);
 	});
 	it('setter builds the parent', () => {
-		const node = ir.classBodyMemberMethodSig.setter({
-			terminator: '\n',
-			name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
-			parameters: stampBuilt({
-				$type: TSKindId.FormalParametersSetAccessorSignature,
-				$text: 'test',
-				$named: true,
-				_elements: stampBuilt({
-					$type: TSKindId.FormalParametersElementsSetAccessorSignature,
+		const node = ir.classBodyMemberMethodSig
+			.setter({
+				name: stampBuilt({ $type: TSKindId.NumberDecimal, $text: 'test', $named: true }) as any,
+				parameters: stampBuilt({
+					$type: TSKindId.FormalParametersSetAccessorSignature,
 					$text: 'test',
 					$named: true,
-					_item: stampBuilt({
-						$type: TSKindId.SetterParameter,
+					_elements: stampBuilt({
+						$type: TSKindId.FormalParametersElementsSetAccessorSignature,
 						$text: 'test',
 						$named: true,
-						_decorator: [],
-						_pattern: stampBuilt({ $type: TSKindId.This, $text: 'this', $named: true }) as any
+						_item: stampBuilt({
+							$type: TSKindId.SetterParameter,
+							$text: 'test',
+							$named: true,
+							_decorator: [],
+							_pattern: stampBuilt({ $type: TSKindId.This, $text: 'this', $named: true }) as any
+						}) as any
 					}) as any
 				}) as any
-			}) as any
-		});
+			})
+			.$with.terminator(TSKindId.FunctionSignatureAutomaticSemicolon);
 		expect(node.$type).toBe(TSKindId.ClassBodyMemberMethodSig);
 		expect((node as any).methodSignature()?.$type).toBe(TSKindId.MethodSignatureSetter);
 		expect(node.$render!().length).toBeGreaterThan(0);

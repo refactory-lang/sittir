@@ -12,6 +12,7 @@ import { join, resolve as resolvePath } from 'node:path';
 import { runFrom, runRt, runCoverage, runFactory, type Backend, type FactorySurface } from './run.ts';
 import { combineBuiltRender, type BuiltRenderResult } from './validate/built-render.ts';
 import { runLayoutRuns, type LayoutRunsResult } from './validate/layout-runs.ts';
+import { runPortableRoundTrip, type PortableRoundTripResult } from './validate/portable-round-trip.ts';
 import { isGrammar, stableGrammars, type GrammarName } from '@sittir/codegen/grammars';
 import { appendHistory, commitHistory, readHistory, type ValidationRun } from './history.ts';
 import { readTestHistory } from './test-history.ts';
@@ -78,6 +79,7 @@ export interface GrammarCounts {
 	readonly irStorage: Awaited<ReturnType<typeof runFactory>>;
 	readonly builtRenderParse: BuiltRenderResult;
 	readonly layoutRuns: LayoutRunsResult;
+	readonly portableRoundTrip: PortableRoundTripResult | undefined;
 }
 
 export async function collectGrammarCounts(grammar: GrammarName, backend: Backend): Promise<GrammarCounts> {
@@ -96,6 +98,7 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 	const readRenderParse = await runRt(grammar, backend, { recursive: true });
 	const readRenderParseShallow = await runRt(grammar, backend, { recursive: false });
 	const layoutRuns = await runLayoutRuns(grammar);
+	const portableRoundTrip = await runPortableRoundTrip(grammar);
 	return {
 		grammar,
 		backend,
@@ -106,12 +109,13 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 		factoryStorage,
 		irStorage,
 		builtRenderParse: combineBuiltRender({ factory: factoryStorage.render, ir: irStorage.render }),
-		layoutRuns
+		layoutRuns,
+		portableRoundTrip
 	};
 }
 
 export function formatGrammarCounts(counts: GrammarCounts): string {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip } =
 		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
@@ -123,7 +127,12 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		`  ir-storagePass=${irStorage.pass}    ir-storageTotal=${irStorage.total}    ir-storageAstMatchPass=${irStorage.astMatchPass}`,
 		`  built-render-parsePass=${builtRenderParse.pass}    built-render-parseTotal=${builtRenderParse.total}    built-render-parseAstMatchPass=${builtRenderParse.astMatchPass}    built-render-parseSeparatorTolerated=${builtRenderParse.separatorTolerated}`,
 		`  layout-runsTotal=${layoutRuns.total}    layout-runsUnreached=${layoutRuns.unreached.length}    layout-runsRefused=${layoutRuns.refused.length}`,
-		`  layout-storedDeviations=${layoutRuns.stored.deviations}    layout-storedSlots=${layoutRuns.stored.slots}    layout-storedSeparators=${layoutRuns.stored.separators}`
+		`  layout-storedDeviations=${layoutRuns.stored.deviations}    layout-storedSlots=${layoutRuns.stored.slots}    layout-storedSeparators=${layoutRuns.stored.separators}`,
+		...(portableRoundTrip === undefined
+			? []
+			: [
+					`  portable-round-tripPass=${portableRoundTrip.pass}    portable-round-tripTotal=${portableRoundTrip.total}    portable-round-tripAstMatchPass=${portableRoundTrip.astMatchPass}    portable-round-tripCarried=${portableRoundTrip.carried.length}`
+				])
 	];
 	const rtFails = formatFirstFailures(
 		'read-render-parse',
@@ -174,6 +183,11 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 		...layoutRuns.unreached.map((r) => ({ label: r.entry, message: `${r.side} of ${r.index} at ${r.start}..${r.end} ${JSON.stringify(r.context)}` }))
 	]);
 	if (layoutFails) lines.push(layoutFails);
+	const portableFails = formatFirstFailures(
+		'portable-round-trip',
+		[...(portableRoundTrip?.errors ?? []), ...(portableRoundTrip?.astMismatches ?? [])].map((e) => ({ label: `${e.entry} (${e.stage})`, message: e.message }))
+	);
+	if (portableFails) lines.push(portableFails);
 	return lines.join('\n');
 }
 
@@ -196,7 +210,7 @@ export function formatFirstFailures(
 }
 
 export function toValidationRun(counts: GrammarCounts): ValidationRun {
-	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns } =
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns, portableRoundTrip } =
 		counts;
 	return {
 		ts: new Date().toISOString(),
@@ -230,7 +244,15 @@ export function toValidationRun(counts: GrammarCounts): ValidationRun {
 		layoutRunsRefused: layoutRuns.refused.length,
 		layoutStoredDeviations: layoutRuns.stored.deviations,
 		layoutStoredSlots: layoutRuns.stored.slots,
-		layoutStoredSeparators: layoutRuns.stored.separators
+		layoutStoredSeparators: layoutRuns.stored.separators,
+		...(portableRoundTrip === undefined
+			? {}
+			: {
+					portableRoundTripPass: portableRoundTrip.pass,
+					portableRoundTripTotal: portableRoundTrip.total,
+					portableRoundTripAstMatchPass: portableRoundTrip.astMatchPass,
+					portableRoundTripCarried: portableRoundTrip.carried.length
+				})
 	};
 }
 

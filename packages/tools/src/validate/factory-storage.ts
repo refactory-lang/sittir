@@ -51,7 +51,7 @@ import {
 	tableSides,
 	type ReadNodeLike,
 	loadScopedFactoryMap,
-	loadNativeEngine,
+	loadNativeRender,
 	loadStorageKindNameFromId,
 	FAILED_RUN
 } from './common.ts';
@@ -456,7 +456,7 @@ export async function validateFactoryStorage(
 	const { factoryMap, factoryShapes, fieldAliasMap, factoryFields, factorySlots, kindNameFromId, readNode } = loaded;
 
 	const surface = options.surface === 'ir' ? await loadIrSurface(grammar) : undefined;
-	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeEngine(grammar));
+	const renderReparseContext = await loadRenderReparseContext(grammar, parser, await loadNativeRender(grammar));
 	const { listSeparators } = await loadNodeModel(grammar);
 	const accessorOf = await loadSlotAccessorOf(grammar);
 	const render = emptyBuiltRenderRun();

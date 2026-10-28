@@ -624,6 +624,7 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		420, 421, 422, 423, 424, 425, 426, 439, 440
 	]),
 	literal_type_negative_number: new Set([155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165]),
+	class_body_member_method_sig: new Set([455, 456, 457]),
 	class_body_member_declaration: new Set([411, 412, 455, 456, 457, 458, 459, 460, 461, 462]),
 	yield_expression_delegate: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
@@ -905,6 +906,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	export_statement_namespace_export: TSKindId.ExportStatementNamespaceExport,
 	export_statement_equals_export: TSKindId.ExportStatementEqualsExport,
 	literal_type_negative_number: TSKindId.LiteralTypeNegativeNumber,
+	class_body_member_method_sig: TSKindId.ClassBodyMemberMethodSig,
 	class_body_member_declaration: TSKindId.ClassBodyMemberDeclaration,
 	yield_expression_delegate: TSKindId.YieldExpressionDelegate,
 	parenthesized_expression_sequence: TSKindId.ParenthesizedExpressionSequence,
@@ -971,6 +973,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	export_statement_namespace_export: 'identifier',
 	export_statement_equals_export: 'expression',
 	literal_type_negative_number: 'number',
+	class_body_member_method_sig: 'method_signature',
 	yield_expression_delegate: 'expression',
 	parenthesized_expression_sequence: 'sequence_expression',
 	arrow_function_parameter: 'identifier',
@@ -1042,6 +1045,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'export_statement_namespace_export',
 	'export_statement_equals_export',
 	'literal_type_negative_number',
+	'class_body_member_method_sig',
 	'class_body_member_declaration',
 	'yield_expression_delegate',
 	'parenthesized_expression_sequence',
@@ -1238,6 +1242,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			);
 		case 'literal_type_negative_number':
 			return F.buildLiteralTypeNegativeNumber(children[0] as Parameters<typeof F.buildLiteralTypeNegativeNumber>[0]);
+		case 'class_body_member_method_sig':
+			return F.buildClassBodyMemberMethodSig(children[0] as Parameters<typeof F.buildClassBodyMemberMethodSig>[0]);
 		case 'class_body_member_declaration':
 			return F.buildClassBodyMemberDeclaration(children[0] as Parameters<typeof F.buildClassBodyMemberDeclaration>[0]);
 		case 'yield_expression_delegate':
@@ -8616,32 +8622,25 @@ export function resolveClassBodyMemberMethodSig_methodSignature(
 	return _resolveOne<T.MethodSignature>(value, _K2, _super_method_signature);
 }
 
-export function resolveClassBodyMemberMethodSig_terminator(
-	value: T.ClassBodyMemberMethodSig.LooseConfig['terminator']
-): Admit<T.ClassBodyMemberMethodSig['_terminator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<TSKindId.FunctionSignatureAutomaticSemicolon | TSKindId.Comma>(
-				value,
-				'_function_signature_automatic_semicolon'
-			)
+export function coerceToClassBodyMemberMethodSig<const I extends T.ClassBodyMemberMethodSig.Loose>(
+	input: I & RefuseUndeclared<I, T.ClassBodyMemberMethodSig.Loose>,
+	options?: T.ClassBodyMemberMethodSig.Options
+): ReturnType<typeof F.buildClassBodyMemberMethodSig>;
+export function coerceToClassBodyMemberMethodSig(
+	input: T.ClassBodyMemberMethodSig.Loose,
+	options?: T.ClassBodyMemberMethodSig.Options
+): ReturnType<typeof F.buildClassBodyMemberMethodSig> {
+	if (isNodeOfKind(input, TSKindId.ClassBodyMemberMethodSig))
+		return input as unknown as ReturnType<typeof F.buildClassBodyMemberMethodSig>;
+	return F.buildClassBodyMemberMethodSig(
+		_resolveOne<T.MethodSignature>(
+			configFieldOr(input, 'methodSignature', () => input),
+			_K2,
+			_super_method_signature
 		),
-		[['\n', TSKindId.FunctionSignatureAutomaticSemicolon] as const, [',', TSKindId.Comma] as const]
+		options
 	);
 }
-
-export const coerceToClassBodyMemberMethodSig: ConfigSeat<
-	T.ClassBodyMemberMethodSig.Loose,
-	ReturnType<typeof F.buildClassBodyMemberMethodSig>
-> = (input: T.ClassBodyMemberMethodSig.Loose): ReturnType<typeof F.buildClassBodyMemberMethodSig> => {
-	if (!_isLooseConfig<T.ClassBodyMemberMethodSig.LooseConfig>(input))
-		return input as unknown as ReturnType<typeof F.buildClassBodyMemberMethodSig>;
-	currentHandle()?.admit(TSKindId.ClassBodyMemberMethodSig, [input]);
-	return F.buildClassBodyMemberMethodSig({
-		methodSignature: resolveClassBodyMemberMethodSig_methodSignature(input.methodSignature),
-		terminator: resolveClassBodyMemberMethodSig_terminator(input.terminator)
-	});
-};
 
 export function resolveClassBodyMemberDeclaration_member(
 	value: T.ClassBodyMemberDeclaration.LooseConfig['member']
