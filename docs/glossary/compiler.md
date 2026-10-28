@@ -8201,3 +8201,11 @@ The fixed literals a simplified grammar's names take.
 ### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::tableFiles`
 
 The generated builder table files, by path, for the grammar.
+
+### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableBuild`
+
+The generated portable build module source, when the grammar emits one.
+
+### `packages/codegen/src/compiler/generate.ts::GeneratedFiles::portableDiagnostics`
+
+The diagnostics the portable build raised for the grammar.
