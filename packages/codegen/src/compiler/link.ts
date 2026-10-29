@@ -75,6 +75,7 @@ import {
 	nodelessExtrasRun,
 	isBlank,
 	isEnumChoiceRule,
+	isImmediateToken,
 	hiddenChoiceClass,
 	isKindChoice,
 	isNamedArmChoice,
@@ -111,6 +112,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 	readonly inline?: readonly string[];
 	readonly hiddenNamedArmChoices: ReadonlySet<string>;
 	readonly kindEntries: readonly GeneratedKindEntry[];
+	readonly renderAsStamps: RenderAsStamps;
 	readonly root: string | undefined;
 	readonly copyBase: CopyBase;
 
@@ -130,6 +132,7 @@ export class LinkCtx extends BaseCtx<'evaluate'> {
 		this.inline = init.inline;
 		this.hiddenNamedArmChoices = init.hiddenNamedArmChoices;
 		this.kindEntries = init.kindEntries;
+		this.renderAsStamps = renderAsStampsOf(init.grammar.renderAs ?? {});
 		this.root = rootRuleName(init.grammar.rules);
 	}
 
@@ -198,14 +201,11 @@ export function link(evaluated: RawGrammar, ctx: LinkOptions): LinkedGrammar {
 		});
 	}
 
-	const renderAs = (raw.renderAs ?? {}) as Record<string, Rule<'link'>>;
-	if (Object.keys(renderAs).length > 0) {
-		const stamped = stampStaticRenderAs(rules, renderAs, kindEntries);
-		for (const key of Object.keys(rules)) {
-			if (!(key in stamped)) delete rules[key];
-		}
-		Object.assign(rules, stamped);
+	const stamped = stampStaticRenderAs(rules, linkCtx.renderAsStamps, kindEntries);
+	for (const key of Object.keys(rules)) {
+		if (!(key in stamped)) delete rules[key];
 	}
+	Object.assign(rules, stamped);
 
 	structureTokenInterior(rules, linkCtx.diagnostics);
 
@@ -1763,10 +1763,10 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				typeof rule.value === 'string' &&
 				rule.value.length > 0 &&
 				!isParserHiddenKind(rule.value, ctx.kindEntries) &&
-				!/^[A-Za-z_]\w*$/.test(rule.value)
+				!(ctx.wordMatcher ? ctx.wordMatcher(rule.value) : matchesWordShape(rule.value, undefined))
 			) {
 				const literal: StringRule<'link'> = { type: STRING, value: rule.value };
-				return isImmediateToken(rule.content, ctx) ? { type: TOKEN, content: literal, immediate: true } : literal;
+				return aliasesImmediateToken(rule.content, ctx) ? { type: TOKEN, content: literal, immediate: true } : literal;
 			}
 			return resolveRule(rule.content, ctx, currentName);
 		}
@@ -1794,11 +1794,12 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 	};
 }
 
-function isImmediateToken(content: Rule<'link'>, ctx: LinkCtx): boolean {
-	if (content.type === TOKEN) return content.immediate === true;
-	if (content.type !== SYMBOL) return false;
-	const body = (ctx.grammar.renderAs?.[content.name] ?? ctx.grammar.rules[content.name]) as Rule<'link'> | undefined;
-	return body?.type === TOKEN && body.immediate === true;
+function aliasesImmediateToken(content: Rule<'link'>, ctx: LinkCtx): boolean {
+	if (content.type !== SYMBOL) return isImmediateToken(content);
+	const stamp = ctx.renderAsStamps.literals[content.name];
+	if (stamp !== undefined) return stamp.immediate;
+	const body = ctx.rules[content.name];
+	return body !== undefined && isImmediateToken(body);
 }
 
 function aliasedSymbolWithin(content: Rule<'link'>): SymbolRule<'link'> | undefined {
@@ -2382,19 +2383,28 @@ interface RenderAsLiteralStamp {
 	readonly immediate: boolean;
 }
 
+export interface RenderAsStamps {
+	readonly literals: Readonly<Record<string, RenderAsLiteralStamp>>;
+	readonly blanks: ReadonlySet<string>;
+}
+
+export function renderAsStampsOf(renderAs: Readonly<Record<string, Rule<'evaluate'>>>): RenderAsStamps {
+	const literals: Record<string, RenderAsLiteralStamp> = {};
+	const blanks = new Set<string>();
+	for (const [sym, body] of Object.entries(renderAs)) {
+		if (body.type === STRING) literals[sym] = { value: body.value, immediate: false };
+		else if (body.type === TOKEN && body.content.type === STRING) literals[sym] = { value: body.content.value, immediate: isImmediateToken(body) };
+		else if (isBlank(body)) blanks.add(sym);
+	}
+	return { literals, blanks };
+}
+
 export function stampStaticRenderAs(
 	rules: Record<string, Rule<'link'>>,
-	renderAs: Record<string, Rule<'link'>>,
+	stamps: RenderAsStamps,
 	kindEntries: readonly GeneratedKindEntry[]
 ): Record<string, Rule<'link'>> {
-	const renderStamps: Record<string, RenderAsLiteralStamp> = {};
-	const blankStamps = new Set<string>();
-	for (const [sym, body] of Object.entries(renderAs)) {
-		if (body.type === STRING) renderStamps[sym] = { value: body.value, immediate: false };
-		else if (body.type === TOKEN && body.content.type === STRING) {
-			renderStamps[sym] = { value: body.content.value, immediate: body.immediate };
-		} else if (isBlank(body)) blankStamps.add(sym);
-	}
+	const { literals: renderStamps, blanks: blankStamps } = stamps;
 	if (Object.keys(renderStamps).length === 0 && blankStamps.size === 0) return rules;
 
 	const symToLit: Record<string, RenderAsLiteralStamp> = { ...renderStamps };
