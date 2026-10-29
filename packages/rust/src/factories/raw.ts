@@ -11969,26 +11969,6 @@ function _buildParametersElementsReceiverGroup(
 	return stampBuilt(node) as unknown as T.ParametersElementsReceiverGroup.Bound;
 }
 
-export function buildStringClose(text: string): T.StringClose.Bound {
-	if (typeof text !== 'string') throw new Error(`string_close: text must be a string: ${describeValue(text)}`);
-	if (text.length === 0) throw new Error(`string_close: text must be non-empty`);
-	const handle = currentHandle();
-	const node = {
-		$type: TSKindId.StringClose as const,
-		$named: true as const,
-		$text: () => text,
-		$render: () => renderText(handle, node),
-		toString: () => node.$render(),
-		toJSON: () => nodeJSON(node, jsonFacts),
-		$trivia: {
-			leading: (...items: unknown[]) => triviaSide(node, handle, 'leading', items),
-			trailing: (...items: unknown[]) => triviaSide(node, handle, 'trailing', items)
-		},
-		$engine: handle && (() => handle.current)
-	};
-	return stampBuilt(node) as unknown as T.StringClose.Bound;
-}
-
 export function buildErrorSentinel(text: string): T.ErrorSentinel.Bound {
 	if (typeof text !== 'string') throw new Error(`_error_sentinel: text must be a string: ${describeValue(text)}`);
 	if (text.length === 0) throw new Error(`_error_sentinel: text must be non-empty`);
@@ -12586,7 +12566,6 @@ export type FluentKindMap = {
 	attributed_parameter_receiver: T.AttributedParameterReceiver.Bound;
 	parameters_elements_receiver: T.ParametersElementsReceiver.Bound;
 	parameters_elements_receiver_group: T.ParametersElementsReceiverGroup.Bound;
-	string_close: T.StringClose;
 	_error_sentinel: T.ErrorSentinel;
 	self_module: T.SelfModule;
 	type_identifier: T.TypeIdentifier.Bound;
@@ -12865,7 +12844,6 @@ export const _factoryMap = {
 	attributed_parameter_receiver: buildAttributedParameterReceiver,
 	parameters_elements_receiver: buildParametersElementsReceiver,
 	parameters_elements_receiver_group: buildParametersElementsReceiverGroup,
-	string_close: buildStringClose,
 	_error_sentinel: buildErrorSentinel,
 	self_module: buildSelfModule,
 	type_identifier: buildTypeIdentifier,

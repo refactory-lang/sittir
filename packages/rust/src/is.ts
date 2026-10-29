@@ -1582,9 +1582,6 @@ export interface IsGuards {
 	blockCommentContent<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.BlockCommentContent };
-	stringClose<T extends { readonly $type: number } | number>(
-		v: T
-	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.StringClose };
 	errorSentinel<T extends { readonly $type: number } | number>(
 		v: T
 	): v is Extract<T, { readonly $type: number }> & { readonly $type: TSKindId.ErrorSentinel };
@@ -2014,7 +2011,6 @@ export function guardsWith(test: KindTest): IsGuards {
 	const _kind_RawStringLiteralEnd_guard = _g(TSKindId.RawStringLiteralEnd);
 	const _kind_DocComment_guard = _g(TSKindId.DocComment);
 	const _kind_BlockCommentContent_guard = _g(TSKindId.BlockCommentContent);
-	const _kind_StringClose_guard = _g(TSKindId.StringClose);
 	const _kind_ErrorSentinel_guard = _g(TSKindId.ErrorSentinel);
 	const _form_RangePatternWithLeft_guard = _vg(_g(TSKindId.RangePatternWithLeft), {
 		withRight: _at(_kind_RangePatternWithLeft_guard, 'content', _kind_RangePatternWithLeftWithRight_guard),
@@ -2492,7 +2488,6 @@ export function guardsWith(test: KindTest): IsGuards {
 		rawStringLiteralEnd: _kind_RawStringLiteralEnd_guard,
 		docComment: _kind_DocComment_guard,
 		blockCommentContent: _kind_BlockCommentContent_guard,
-		stringClose: _kind_StringClose_guard,
 		errorSentinel: _kind_ErrorSentinel_guard,
 		selfModule: _kind_SelfModule_guard,
 		crateVisibilityModifier: _kind_CrateVisibilityModifier_guard

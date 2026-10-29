@@ -549,7 +549,6 @@ export const records = {
 		parameters_elements_receiver_group: { word: 7, width: 5 }
 	},
 	ParametersElementsReceiverGroupNode: { words: 7, elements: { word: 2, width: 5 } },
-	StringCloseNode: { words: 2 },
 	ErrorSentinelNode: { words: 2 },
 	TypeIdentifierNode: { words: 7, content: { word: 2, width: 5 } },
 	FieldIdentifierNode: { words: 7, content: { word: 2, width: 5 } },

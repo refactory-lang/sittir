@@ -1765,7 +1765,8 @@ function resolveRule(rule: Rule<'link'>, ctx: LinkCtx, currentName: string): Rul
 				!isParserHiddenKind(rule.value, ctx.kindEntries) &&
 				!/^[A-Za-z_]\w*$/.test(rule.value)
 			) {
-				return { type: STRING, value: rule.value };
+				const literal: StringRule<'link'> = { type: STRING, value: rule.value };
+				return isImmediateToken(rule.content, ctx) ? { type: TOKEN, content: literal, immediate: true } : literal;
 			}
 			return resolveRule(rule.content, ctx, currentName);
 		}
@@ -1791,6 +1792,13 @@ function resolveRepeat1PreservingNonEmpty(rule: Repeat1Rule, ctx: LinkCtx, curre
 		...rule,
 		content: resolveRule(rule.content, ctx, currentName)
 	};
+}
+
+function isImmediateToken(content: Rule<'link'>, ctx: LinkCtx): boolean {
+	if (content.type === TOKEN) return content.immediate === true;
+	if (content.type !== SYMBOL) return false;
+	const body = (ctx.grammar.renderAs?.[content.name] ?? ctx.grammar.rules[content.name]) as Rule<'link'> | undefined;
+	return body?.type === TOKEN && body.immediate === true;
 }
 
 function aliasedSymbolWithin(content: Rule<'link'>): SymbolRule<'link'> | undefined {

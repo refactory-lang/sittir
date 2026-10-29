@@ -527,7 +527,7 @@
 		{"kind":"static_keyword","modelType":"keyword","typeName":"StaticKeyword","unit":true,"text":"static","factoryShape":"text"},
 		{"kind":"stmt_keyword","modelType":"keyword","typeName":"StmtKeyword","unit":true,"text":"stmt","factoryShape":"text"},
 		{"kind":"str_keyword","modelType":"keyword","typeName":"StrKeyword","unit":true,"text":"str","factoryShape":"text"},
-		{"kind":"string_close","modelType":"pattern","typeName":"StringClose"},
+		{"kind":"string_close","modelType":"punctuation","typeName":"StringClose","unit":true,"text":"\""},
 		{"kind":"string_content","modelType":"pattern","typeName":"StringContent","irKey":"stringContent","builderPath":["stringContent"],"pattern":"[^\"\\\\]+","leafPattern":"/^(?:(?:[^\"\\\\]+))$/u","factoryShape":"text"},
 		{"kind":"string_literal","modelType":"branch","typeName":"StringLiteral","irKey":"stringLiteral","builderPath":["stringLiteral"],"builderPathAlternates":[["literal","string"],["literalPattern","string"]],"slots":[{"name":"string_open","required":true,"multiple":false,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"single","parseKind":"string_open"}]},{"name":"elements","required":false,"multiple":true,"nonEmpty":false,"storage":"verbatim","values":[{"kind":"node-ref","multiplicity":"array","parseKind":"escape_sequence"},{"kind":"node-ref","multiplicity":"array","parseKind":"string_content"}]}],"factoryShape":"config","factoryFields":["string_open","elements"]},
 		{"kind":"string_open","modelType":"pattern","typeName":"StringOpen","irKey":"stringOpen","builderPath":["stringOpen"],"pattern":"[bc]?\"","leafPattern":"/^(?:(?:[bc]?\"))$/u","factoryShape":"text"},
