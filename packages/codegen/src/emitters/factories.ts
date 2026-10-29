@@ -1990,6 +1990,7 @@ function fieldCarryingFactoryText(
 				setters: seated,
 				accessors: slotsToEmit.map((f) => storedAccessor(f.propertyName, f.storageKey, f, nodeMap)),
 				extra: [...(view?.members ?? []), ...groups.members],
+				tail: view?.tail,
 				trivia
 			})
 		);
@@ -2628,7 +2629,7 @@ export function seatedSetterImports(nodeMap: NodeMap, kindEntries: readonly Kind
 		if (plan.elements.length > 0) names.add('elementsWith');
 		if (plan.groups.length > 0) for (const name of ['seatWith', 'groupField']) names.add(name);
 		if (plan.viewPlan !== undefined) {
-			const names_ = plan.viewPlan.owner === undefined ? ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'storedElements', 'ownerElements', 'defineListIndices'] : ['LIST_ITEMS', 'LIST_READ', 'LIST_METHODS', 'listIterator', 'listItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateStored', 'defineListIndices'];
+			const names_ = plan.viewPlan.owner === undefined ? ['LIST_METHODS', 'listIterator', 'listItems', 'holdListItems', 'storedElements', 'ownerElements'] : ['LIST_METHODS', 'listIterator', 'listItems', 'holdListItems', 'ownerView', 'ownerElements', 'listOption', 'refuseReadStub', 'hydrateStored'];
 			for (const name of names_) names.add(name);
 		}
 	}
@@ -2872,6 +2873,7 @@ function emitSeparatedListFactory(
 					setters: seated,
 					accessors: [storedAccessor(contentAccessorName, contentStorageKey, buildSeparatedListContentSlot(node), nodeMap)],
 					extra: view.members,
+					tail: view.tail,
 					trivia
 				})
 			);

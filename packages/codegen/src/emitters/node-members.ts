@@ -1,3 +1,4 @@
+import { LIST_VIEW_MEMBERS } from '@sittir/common/utils';
 import { emptyForms } from '../compiler/model/trivia.ts';
 import type { NodeMap } from '../compiler/types.ts';
 import type { GroupSeatHint, ListViewPlan, SeatPlan } from './factories.ts';
@@ -23,6 +24,7 @@ export interface NodeMemberSpec {
 	readonly accessors: readonly StoredAccessor[];
 	readonly trivia: TriviaPositions | undefined;
 	readonly extra?: readonly string[];
+	readonly tail?: readonly string[];
 	readonly parsed?: true;
 	readonly text?: string;
 }
@@ -90,7 +92,8 @@ export function nodeMemberLines(spec: NodeMemberSpec): string[] {
 					'    $snapshot: handle && treeHandleOf(data) !== undefined ? () => snapshotOf(node) : undefined,'
 				]
 			: []),
-		'    $engine: handle && (() => handle.current)'
+		'    $engine: handle && (() => handle.current),',
+		...(spec.tail ?? [])
 	);
 	return lines;
 }
@@ -143,16 +146,14 @@ export function groupSeatParts(
 	return { prelude, members };
 }
 
-export const LIST_SURFACE_LINES: readonly string[] = [
-	'    ...LIST_METHODS,',
-	'    [Symbol.iterator]: listIterator,',
-	'    [Symbol.isConcatSpreadable]: true,',
-	'    [Symbol.unscopables]: Array.prototype[Symbol.unscopables],'
-];
+export const LIST_SURFACE_LINES: readonly string[] = LIST_VIEW_MEMBERS.filter((name) => name !== 'length' && name !== 'toString').map((name) => `    ${name}: LIST_METHODS.${name},`);
+
+export const LIST_SYMBOL_LINES: readonly string[] = ['    [Symbol.iterator]: listIterator,', '    [Symbol.isConcatSpreadable]: true,'];
 
 export interface ListViewParts {
 	readonly prelude: string[];
 	readonly members: string[];
+	readonly tail: readonly string[];
 	readonly postlude: string[];
 }
 
@@ -162,7 +163,6 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 		.filter((option) => !(environment !== 'factory' && option.key === 'separator'))
 		.map((option) => `    ${option.key}: listOption(listView.list, ${JSON.stringify(option.key)}, ${option.default}),`);
 	const separator = environment !== 'factory' && plan.options.some((option) => option.key === 'separator');
-	const shared = [...LIST_SURFACE_LINES, ...options];
 	return {
 		prelude:
 			environment === 'factory'
@@ -171,15 +171,12 @@ export function ownerViewParts(plan: ListViewPlan, storage: string, accessor: st
 						`  if (listView.length === undefined) refuseReadStub(${JSON.stringify(storage)});`
 					]
 				: [`  const listView = ownerView(${storage}, ${JSON.stringify(plan.count)}, (list) => hydrate(list, tree));`],
-		members: [
-			'    length: listView.length,',
-			'    [LIST_ITEMS]: undefined,',
-			`    [LIST_READ]: () => listItems(ownerElements(node.${accessor}(), ${JSON.stringify(plan.elements)}), ${wrapper}),`,
-			...shared
-		],
+		members: ['    length: listView.length,', ...LIST_SURFACE_LINES, ...options, ...(separator ? ['    separator: undefined as unknown,'] : [])],
+		tail: LIST_SYMBOL_LINES,
 		postlude: [
-			'  defineListIndices(node, listView.length ?? 0);',
-			...(separator ? [`  defineListSeparator(node, ${JSON.stringify(accessor)});`] : [])
+			`  const listed = node.${accessor}();`,
+			`  holdListItems(node, listItems(ownerElements(listed, ${JSON.stringify(plan.elements)}), ${wrapper}));`,
+			...(separator ? ['  node.separator = (listed as { readonly separator?: unknown } | null | undefined)?.separator;'] : [])
 		]
 	};
 }
@@ -201,15 +198,13 @@ export function listSelfViewParts(
 		.filter((option) => !(environment !== 'factory' && option.key === 'separator'))
 		.map((option) => `    ${option.key}: ${selfListOption(option.key, environment)} ?? ${option.default},`);
 	const separator = environment !== 'factory' && plan.options.some((option) => option.key === 'separator');
-	const shared = [...LIST_SURFACE_LINES, ...options];
 	return {
 		prelude: ['elements' in stored ? `  const listedLength = storedElements(${stored.elements}).length;` : `  const listedLength = ${stored.length};`],
-		members: [
-			'    length: listedLength,',
-			'    [LIST_ITEMS]: undefined,',
-			`    [LIST_READ]: () => listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}),`,
-			...shared
-		],
-		postlude: ['  defineListIndices(node, listedLength);', ...(separator ? ['  defineListSeparator(node);'] : [])]
+		members: ['    length: listedLength,', ...LIST_SURFACE_LINES, ...options, ...(separator ? ['    separator: undefined as unknown,'] : [])],
+		tail: LIST_SYMBOL_LINES,
+		postlude: [
+			`  holdListItems(node, listItems(ownerElements(node, ${JSON.stringify(elementsReader)}), ${wrapper}));`,
+			...(separator ? ['  node.separator = listSeparatorOf(node);'] : [])
+		]
 	};
 }

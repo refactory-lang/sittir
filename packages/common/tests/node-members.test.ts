@@ -4,9 +4,9 @@ import { inEngine } from '../src/engine-scope.ts';
 import { stampBuilt } from '../src/source-stamp.ts';
 import { liveHandle } from './support/fake-engine.ts';
 import {
-	LIST_ITEMS,
 	LIST_METHODS,
 	elementsWith,
+	holdListItems,
 	listItems,
 	listIterator,
 	listSlotWith,
@@ -93,7 +93,11 @@ describe('trivia positions', () => {
 });
 
 describe('list members', () => {
-	const node = (items: readonly unknown[]) => ({ length: items.length, [LIST_ITEMS]: items, ...LIST_METHODS, [Symbol.iterator]: listIterator });
+	const node = (items: readonly unknown[]) => {
+		const list = { length: items.length, ...LIST_METHODS, [Symbol.iterator]: listIterator };
+		holdListItems(list, items);
+		return list;
+	};
 
 	it('read the items the node holds', () => {
 		const list = node(['a', 'b', 'c']) as any;

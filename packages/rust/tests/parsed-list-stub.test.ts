@@ -13,7 +13,7 @@ const shallowList = (engine = rs) => {
 	const list = item.parameters().elements();
 	if (list === undefined) throw new Error('expected parameter list');
 	const stored = (list as unknown as { readonly _item: readonly unknown[] })._item;
-	if (!stored.every(isCoordinate)) throw new Error('expected item coordinates');
+	if (stored.length !== 2 || stored.some(isCoordinate)) throw new Error('expected the items the list read');
 	return list;
 };
 
@@ -35,7 +35,7 @@ const elementsOf = (owner: object): object => {
 
 const rendered = (node: object) => String(Reflect.apply(Reflect.get(node, '$render'), node, []));
 
-describe('builders consuming parsed list coordinates', () => {
+describe('builders consuming a parsed list and its items', () => {
 	it('strict construction retains both items and renders them', () => {
 		const built = buildParameters(shallowList());
 		expect(Reflect.get(elementsOf(built), 'length')).toBe(2);

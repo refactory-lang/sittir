@@ -479,29 +479,19 @@ export function listItems(elements: readonly unknown[], wrapper: ListViewWrapper
 	return Object.freeze(elements.map((element) => collapseWrapper(element, wrapper)));
 }
 
-/** The key a wrapped list node keeps its reader of the items under: it hydrates them on the first read. */
-export const LIST_READ: unique symbol = Symbol('sittir.listRead');
+/** The `ReadonlyArray` methods of a list node but `toString`: `Array.prototype`'s own, which read the node's own elements. */
+type ListMethod = (this: ArrayLike<unknown>, ...args: never[]) => unknown;
 
-type ListItemsHolder = { [LIST_ITEMS]?: readonly unknown[]; readonly [LIST_READ]?: () => readonly unknown[] };
-
-/** The items of a list node: the ones it holds, or, for a wrapped list, the ones its reader hydrates and keeps on the first read. */
-export function listItemsOf(node: ListItemsHolder): readonly unknown[] {
-	return (node[LIST_ITEMS] ??= node[LIST_READ]!());
-}
-
-/** The `ReadonlyArray` methods of a list node but `toString`, written once; each reads the items the node holds under `LIST_ITEMS`. */
 export const LIST_METHODS = Object.fromEntries(
-	READONLY_ARRAY_METHODS.filter((name) => name !== 'toString').map((name) => [
-		name,
-		function (this: ListItemsHolder, ...args: unknown[]): unknown {
-			return (listItemsOf(this) as unknown as Members)[name]!(...args);
-		}
-	])
-) as Readonly<Record<Exclude<(typeof READONLY_ARRAY_METHODS)[number], 'toString'>, (this: ListItemsHolder, ...args: unknown[]) => unknown>>;
+	READONLY_ARRAY_METHODS.filter((name) => name !== 'toString').map((name) => [name, Array.prototype[name] as ListMethod] as const)
+) as Readonly<Record<Exclude<(typeof READONLY_ARRAY_METHODS)[number], 'toString'>, ListMethod>>;
 
 /** The iterator member of a list node. */
-export function listIterator(this: ListItemsHolder): IterableIterator<unknown> {
-	return listItemsOf(this)[Symbol.iterator]();
+export const listIterator: (this: ArrayLike<unknown>) => ArrayIterator<unknown> = Array.prototype.values;
+
+export function holdListItems(node: object, items: readonly unknown[]): void {
+	const held = node as Record<number, unknown>;
+	for (let index = 0; index < items.length; index++) held[index] = items[index];
 }
 
 /** What an owner knows of the list it holds: the list itself, hydrated by `hydrate` when it is a read stub, and its stored elements (undefined while the stub cannot be read). */
@@ -540,43 +530,14 @@ export function listOption(list: unknown, key: string, fallback: unknown): unkno
 	return (recordOf(held) === undefined ? held?.[`_${key}`] : held?.[key]) ?? fallback;
 }
 
-const INDEX_GETTERS: ((this: ListItemsHolder) => unknown)[] = [];
-
-const SEPARATOR_GETTERS = new Map<string | undefined, () => unknown>();
-
 export function listSeparatorOf(node: object): unknown {
 	return chosenSeparatorOf(node) ?? slotSeparatorOf(node);
-}
-
-export function defineListSeparator(node: object, accessor?: string): void {
-	let getter = SEPARATOR_GETTERS.get(accessor);
-	if (getter === undefined) {
-		getter = function (this: Record<string, unknown>) {
-			if (accessor !== undefined) return ((this[accessor] as () => { readonly separator?: unknown } | null | undefined).call(this))?.separator;
-			return listSeparatorOf(this);
-		};
-		SEPARATOR_GETTERS.set(accessor, getter);
-	}
-	Object.defineProperty(node, 'separator', { get: getter, enumerable: false, configurable: true });
-}
-
-/** One getter per index position, shared by every wrapped list: an index reads the item the list hydrates on first use. */
-export function defineListIndices(node: object, count: number): void {
-	for (let index = 0; index < count; index++) {
-		INDEX_GETTERS[index] ??= function (this: ListItemsHolder) {
-			return listItemsOf(this)[index];
-		};
-		Object.defineProperty(node, index, { get: INDEX_GETTERS[index], enumerable: false, configurable: true });
-	}
 }
 
 /** The refusal of a list owner built over a read stub: a stub is a parsed list that cannot be counted without its tree, which a raw factory does not have, so the build names the stub as `engine.build` does. */
 export function refuseReadStub(storage: string): never {
 	throw new Error(`list view: ${storage} is a read stub, which a node built without its tree cannot hold; build it from its tree`);
 }
-
-/** The key a list node keeps its frozen items under. */
-export const LIST_ITEMS: unique symbol = Symbol('sittir.listItems');
 
 export const isGroupConfig = (value: unknown, keys: readonly string[]): boolean =>
 	typeof value === 'object' &&

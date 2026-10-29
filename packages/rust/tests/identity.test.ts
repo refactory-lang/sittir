@@ -289,7 +289,7 @@ describe('a built node over parsed storage', () => {
 		if (!objects.is.tupleType(tuple)) throw new Error('expected a tuple type');
 		const parsed = tuple.types();
 		const stored = storageOf(parsed)._item;
-		expect(stored.every(isCoordinate)).toBe(true);
+		expect(stored).toBe(parsed.items());
 		const [first, ...rest] = stored;
 		if (first === undefined) throw new Error('expected items');
 		const built = objects.build.types(first, ...rest);
