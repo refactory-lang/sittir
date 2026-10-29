@@ -1675,3 +1675,75 @@ Whether a kind is a leaf (has no child slots) in the model.
 ### `packages/tools/src/validate/display-families.ts::displayStorageKinds`
 
 The storage kinds a display covers, across the families.
+
+### `packages/tools/src/validate/common.ts::createStrictNativeEngine`
+
+Creates the strict native engine for a grammar.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripStage`
+
+The stage a round-trip failure reached: read, build, render, reparse or ast.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure`
+
+A round-trip failure: the entry, the stage it reached, and its message.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::entry`
+
+The corpus entry that failed.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::stage`
+
+The stage the failure reached.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::message`
+
+The failure message.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripFailure::rendered`
+
+The rendered text at the failure, when there is one.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarried`
+
+A corpus entry whose round trip carried something past the structure, with what it carried.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarried::entry`
+
+The corpus entry.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripCarried::carries`
+
+What the entry carried.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult`
+
+The round-trip result for a grammar: the totals, the carried entries, and the errors and AST mismatches.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::total`
+
+The number of entries.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::pass`
+
+The number of entries that round-tripped.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::astMatchPass`
+
+The number of entries whose syntax tree matched.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::carried`
+
+The entries that carried something past the structure.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::errors`
+
+The failures that stopped an entry.
+
+### `packages/tools/src/validate/portable-round-trip.ts::PortableRoundTripResult::astMismatches`
+
+The entries whose syntax tree did not match.
+
+### `packages/tools/src/validate/portable-round-trip.ts::runPortableRoundTrip`
+
+Runs the round trip over a grammar's corpus entries and returns the result.
