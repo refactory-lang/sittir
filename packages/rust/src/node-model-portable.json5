@@ -515,7 +515,23 @@
           "enum_variant"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItems",
+              "required": false,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "attributed_field_declaration": {
@@ -525,7 +541,23 @@
           "field_declaration"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItems",
+              "required": false,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "attributed_ordered_field": {
@@ -970,7 +1002,23 @@
           "const_parameter"
         ],
         "terminals": [],
-        "list": false
+        "list": false,
+        "members": [
+          {
+            "name": "attributes",
+            "slot": {
+              "name": "attribute_item",
+              "propertyName": "attributeItems",
+              "required": false,
+              "multiple": true,
+              "storage": "verbatim",
+              "kinds": [
+                "attribute_item"
+              ],
+              "terminals": []
+            }
+          }
+        ]
       }
     },
     "await_expression": {
@@ -14883,6 +14931,25 @@
       "vocab": "literal.string",
       "read": [
         {
+          "vocab": "literal.string",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "\"",
+                "slots": {
+                  "332": 0
+                }
+              }
+            }
+          ]
+        },
+        {
           "vocab": "literal.string.bytes",
           "toplevel": true,
           "within": [],
@@ -14892,9 +14959,30 @@
               "up": 0,
               "via": [],
               "plan": {
-                "op": "match",
-                "pattern": "^b\"",
-                "self": true
+                "op": "eq",
+                "text": "b\"",
+                "slots": {
+                  "332": 0
+                }
+              }
+            }
+          ]
+        },
+        {
+          "vocab": "literal.string.c",
+          "toplevel": true,
+          "within": [],
+          "pins": [],
+          "test": [
+            {
+              "up": 0,
+              "via": [],
+              "plan": {
+                "op": "eq",
+                "text": "c\"",
+                "slots": {
+                  "332": 0
+                }
               }
             }
           ]
@@ -20006,9 +20094,9 @@
       },
       {
         "depth": 3,
-        "paths": 108,
+        "paths": 109,
         "kinds": 122,
-        "refinements": 82
+        "refinements": 83
       },
       {
         "depth": 4,

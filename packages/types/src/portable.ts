@@ -92,7 +92,8 @@ export interface PortableSlotStep {
  * slot may be left out. A `mounted` container's builder is a mount on the holder of the member's slot, so that holder is built through it. A
  * `flatten` container's holder takes the container's element key in its own input, in place of the slot that holds the container. `through`
  * lists the element keys of the containers a mounted container stands in for, outermost first: a parsed tree passes through them, while the
- * build reaches the container through its mount.
+ * build reaches the container through its mount. `members` are the element's members whose slots are the container's own: the build fills them
+ * when it wraps the element, and the read takes them when it unwraps the container to the element.
  */
 export interface PortableContainer {
 	readonly builder?: string;
@@ -101,6 +102,7 @@ export interface PortableContainer {
 	readonly mounted?: PortableMount;
 	readonly flatten?: true;
 	readonly through?: readonly string[];
+	readonly members?: readonly PortableMemberStep[];
 }
 
 /**
@@ -133,7 +135,7 @@ export interface PortableMemberStep {
 	readonly reads?: readonly number[];
 }
 
-/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text, or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
+/** A value an arm or a flag sets at the end of its steps: a fixed literal's kind id, a token's text (with `builder`, the leaf builder that builds that text where the slot holds a leaf node), or the builder that builds the value there; a preset whose last step is mounted sets only that mount. A preset builder takes the member routed to those steps, or the members routed beneath them, as its input, and no input when no member reaches them. */
 export interface PortablePreset {
 	readonly steps: readonly PortableSlotStep[];
 	readonly kind?: number;

@@ -170,22 +170,26 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const args = argsOf(frame.form.seats, inputOf(frame));
 		return frame.form.call === 'keyed' ? args[0] : args;
 	};
-	const wrap = (value: unknown, containers: readonly PortableContainer[]): unknown =>
-		containers.reduceRight<unknown>(
-			(inner, container) =>
-				container.builder === undefined ? inner : call(container.builder, takesConfig(container.builder) ? { [container.key]: inner } : inner),
-			value
-		);
+	const wrap = (value: unknown, containers: readonly PortableContainer[], fill?: (container: PortableContainer) => Readonly<Record<string, unknown>>): unknown =>
+		containers.reduceRight<unknown>((inner, container) => {
+			const filled = fill?.(container) ?? {};
+			if (container.builder === undefined) return Object.keys(filled).length === 0 ? inner : { [container.key]: inner, ...filled };
+			if (!takesConfig(container.builder)) {
+				if (Object.keys(filled).length > 0) throw new Error(`portable build: ${container.builder} takes its element alone, so it holds none of ${Object.keys(filled).join(', ')}`);
+				return call(container.builder, inner);
+			}
+			return call(container.builder, { [container.key]: inner, ...filled });
+		}, value);
 	const wrapEmpty = (containers: readonly PortableContainer[]): unknown => {
 		const stop = containers.findIndex((container) => container.optional === true);
 		if (stop < 0) return wrap([], containers);
 		const left = containers[stop]!;
 		return wrap(left.builder === undefined ? undefined : call(left.builder, undefined), containers.slice(0, stop));
 	};
-	const seated = (value: unknown, all: readonly PortableContainer[], empty: boolean): Placed => {
+	const seated = (value: unknown, all: readonly PortableContainer[], empty: boolean, fill?: (container: PortableContainer) => Readonly<Record<string, unknown>>): Placed => {
 		const [head, ...after] = all;
 		const { key, containers } = flattened(head?.mounted === undefined ? all : after);
-		const placed = { value: empty ? (containers.length === 0 && head?.mounted !== undefined ? undefined : wrapEmpty(containers)) : wrap(value, containers) };
+		const placed = { value: empty ? (containers.length === 0 && head?.mounted !== undefined ? undefined : wrapEmpty(containers)) : wrap(value, containers, fill) };
 		const keyed = key === undefined ? placed : { ...placed, key };
 		return head?.mounted === undefined ? keyed : { ...keyed, mount: head };
 	};
@@ -230,12 +234,17 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			throw new Error(`portable build: ${structure.$path} is not a path ${language} builds`);
 		};
 		const slotsOf = (seats: readonly PortableSeat[]): string => [...new Set(seats.map(({ at: [holder, key] }) => `${nameOf(holder)}.${key}`))].sort().join(', ');
-		const seatOf = (arm: PortableBuildArm, seats: readonly PortableSeat[]): PortableSeat | undefined =>
-			seats.find(
+		const ownedBy = (seat: PortableSeat): ReadonlySet<string> => new Set(within(seat).flatMap((container) => (container.members ?? []).map((member) => member.name)));
+		const seatOf = (arm: PortableBuildArm, seats: readonly PortableSeat[], structure?: PortableStructure): PortableSeat | undefined => {
+			const fitting = seats.filter(
 				(seat) =>
 					(arm.holders === undefined || arm.holders.some(([holder, key]) => holder === seat.at[0] && key === seat.at[1])) &&
 					seat.kinds.includes(arm.kind)
 			);
+			if (structure === undefined || fitting.length < 2) return fitting[0];
+			const stated = memberKeys(structure).filter((name) => structure[name] !== undefined && fitting.some((seat) => ownedBy(seat).has(name)));
+			return fitting.find((seat) => stated.every((name) => ownedBy(seat).has(name))) ?? fitting[0];
+		};
 		const leafSeatOf = (value: string, seats: readonly PortableSeat[]): PortableSeat | undefined =>
 			seats.find((seat) => seat.leaf !== undefined && spells(seat, value)) ?? seats.find((seat) => seat.leaf !== undefined);
 		const textOf = (value: string, seats: readonly PortableSeat[]): unknown => {
@@ -258,12 +267,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const member = arm.members.find((m) => m.name === test.member);
 			return member !== undefined && listOf(value).every((item) => test.kinds.includes(kindOf(item, member) ?? -1));
 		};
+		const withoutOwned = (structure: PortableStructure, seat: PortableSeat | undefined): PortableStructure => {
+			const owned = seat === undefined ? undefined : ownedBy(seat);
+			return owned === undefined || owned.size === 0 ? structure : (Object.fromEntries(Object.entries(structure).filter(([key]) => !owned.has(key))) as PortableStructure);
+		};
 		const pick = (structure: PortableStructure, seats: readonly PortableSeat[] | undefined): Picked | undefined => {
 			const memo = picks.get(structure) ?? picks.set(structure, new Map()).get(structure)!;
 			if (memo.has(seats)) return memo.get(seats);
 			memo.set(seats, undefined);
 			const open = (pathOf(structure)?.arms ?? []).flatMap((arm): Picked[] => {
-				const seat = seats === undefined ? undefined : seatOf(arm, seats);
+				const seat = seats === undefined ? undefined : seatOf(arm, seats, structure);
 				return (seats === undefined ? arm.holders !== undefined : seat === undefined) ? [] : [{ arm, seat }];
 			});
 			const scalar = scalarOf(structure);
@@ -271,7 +284,7 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			const picked =
 				scalars.length > 0
 					? (scalars.find(({ arm }) => arm.scalar === (integral(scalar!) ? 'integer' : 'float')) ?? scalars[0])
-					: open.find(({ arm }) => arm.when.every((test) => passes(test, arm, structure)));
+					: open.find(({ arm, seat }) => arm.when.every((test) => passes(test, arm, withoutOwned(structure, seat))));
 			memo.set(seats, picked);
 			return picked;
 		};
@@ -379,8 +392,8 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 				return;
 			}
 			const owner = ownerOf(frame, step.steps.slice(0, -1), path);
-			if (step.builder === undefined) {
-				const fixed = step.kind ?? step.text;
+			if (step.builder === undefined || step.text !== undefined) {
+				const fixed = step.builder !== undefined && step.text !== undefined ? leafOf(step.builder, step.text) : (step.kind ?? step.text);
 				const held = owner.config[last.key];
 				owner.config[last.key] = held === undefined ? fixed : [...listOf(held), fixed];
 				owner.presets.add(last.key);
@@ -391,7 +404,16 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 		const element = (value: unknown, member: PortableMemberStep, seats: readonly PortableSeat[], depth: number): Placed => {
 			if (isStructure(value)) {
 				const built = build(value, seats);
-				return seated(built.value, within(built.seat ?? seats[0]!).slice(depth), false);
+				const fill = (container: PortableContainer): Readonly<Record<string, unknown>> =>
+					Object.fromEntries(
+						(container.members ?? []).flatMap((owned) => {
+							const held = value[owned.name];
+							if (held === undefined) return [];
+							if (owned.steps.length !== 1) throw new Error(`portable build: ${value.$path}'s ${owned.name} sits ${owned.steps.length} steps into ${container.builder}`);
+							return [[owned.steps[0]!.key, unmounted(valueOf(held, owned, value.$path), owned, value.$path)]];
+						})
+					);
+				return seated(built.value, within(built.seat ?? seats[0]!).slice(depth), false, fill);
 			}
 			if (typeof value === 'string') {
 				const seat = leafSeatOf(value, seats) ?? seats[0]!;
@@ -509,7 +531,10 @@ export function portableBuilder({ language, table, builders, kindName, readsAs }
 			for (const [flag, steps] of Object.entries(arm.flags))
 				if (!(structure.$flags ?? []).includes(flag)) for (const step of steps.unset ?? []) preset(frame, step, structure.$path);
 			const holes = new Set(arm.template?.holes ?? []);
-			const values = new Map<string, unknown>(memberKeys(structure).flatMap((name) => (holes.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const])));
+			const owned = seat === undefined ? new Set<string>() : ownedBy(seat);
+			const values = new Map<string, unknown>(
+				memberKeys(structure).flatMap((name) => (holes.has(name) || owned.has(name) || structure[name] === undefined ? [] : [[name, structure[name]] as const]))
+			);
 			const spelled = templated(arm, structure);
 			if (spelled !== undefined) values.set(arm.template!.member, spelled);
 			const scalar = scalarOf(structure);

@@ -77,4 +77,21 @@ describe('the portable read', () => {
 		expect(readFirst("let c = b'a';").value).toMatchObject({ $type: rust.kinds.CharLiteralPlain });
 		expect(roundTrip("let c = b'a';")).toBe("let c = b'a';\n");
 	});
+
+	it('reads the attributes of an enum variant and of a field onto the element, and builds them back on their own lines', () => {
+		const attributes = [{ $path: 'attribute', content: { $path: 'attribute.content', path: 'a' } }];
+		const sources = ['enum E {\n    #[a]\n    V,\n}\n', 'struct S {\n    #[a]\n    f: u8,\n}\n', 'struct S(#[a] u8);\n'];
+		expect(readFirst(sources[0]!)).toMatchObject({ body: [{ $path: 'declaration.enum_member', name: 'V', attributes }] });
+		expect(readFirst(sources[1]!)).toMatchObject({ body: [{ $path: 'declaration.field', name: 'f', attributes }] });
+		expect(readFirst(sources[2]!)).toMatchObject({ body: [{ $path: 'declaration.field', attributes }] });
+		for (const source of sources) expect(roundTrip(source)).toBe(source);
+	});
+
+	it('reads a string literal at the path its opening quote pins, and builds each one back', () => {
+		const valueOf = (source: string): unknown => readFirst(source).value;
+		expect(valueOf('let s = "x";')).toMatchObject({ $path: 'literal.string', elements: ['x'] });
+		expect(valueOf('let s = b"x";')).toMatchObject({ $path: 'literal.string.bytes' });
+		expect(valueOf('let s = c"x";')).toMatchObject({ $path: 'literal.string.c' });
+		for (const source of ['let s = "";', 'let s = "x\\n";', 'let s = b"x";', 'let s = c"x";']) expect(roundTrip(`fn f() {\n    ${source}\n}\n`)).toBe(`fn f() {\n    ${source}\n}\n`);
+	});
 });

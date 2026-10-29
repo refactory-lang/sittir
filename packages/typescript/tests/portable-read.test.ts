@@ -58,4 +58,22 @@ describe('the portable read', () => {
 		expect(firstOf('import x = require("y");')).not.toHaveProperty('source');
 		expect(roundTrip('import x = require("y");')).toBe('import x = require("y");\n');
 	});
+
+	it('reads a method decorator onto the method, and builds it back', () => {
+		const source = 'class C {\n  @d\n  m() {}\n}\n';
+		expect(firstOf(source)).toMatchObject({ body: [{ $path: 'declaration.method', name: 'm', decorators: [{ $path: 'attribute.decorator', content: 'd' }] }] });
+		expect(roundTrip(source)).toBe(source);
+	});
+
+	it('reads the implemented interfaces beside the extended class, and without one', () => {
+		expect(firstOf('class C extends B implements I {}')).toMatchObject({ extends: { $path: 'clause.extends' }, implements: ['I'] });
+		expect(firstOf('class C implements I, J {}')).toMatchObject({ implements: ['I', 'J'] });
+		for (const source of ['class C extends B implements I {}', 'class C implements I, J {}']) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
+	it('reads the type parameters of an arrow function', () => {
+		const source = 'const f = <T>(x: T) => x;';
+		expect(firstOf(source)).toMatchObject({ declarators: [{ value: { $path: 'expression.lambda', typeParameters: [{ $path: 'declaration.type_parameter', name: 'T' }] } }] });
+		expect(roundTrip(source)).toBe(`${source}\n`);
+	});
 });

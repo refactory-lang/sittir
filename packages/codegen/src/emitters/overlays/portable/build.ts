@@ -224,13 +224,15 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 					const builder = mount?.builder ?? builderOf(kind);
 					const outer = mount !== undefined && within.length > 0 ? within.at(-1) : undefined;
 					const mounted = mount === undefined ? undefined : within.length === 0 ? mount.mounted : outer?.mounted !== undefined ? mount.mounted : undefined;
+					const members = (unwrap?.members ?? []).flatMap(({ name, slot }) => memberOf({ route: 'slot', name, slot, path: [{ owner: kind, slot: slot.name }] })?.member ?? []);
 					const container: PortableContainer = {
 						...(builder === undefined ? {} : { builder }),
 						key: element.propertyName,
 						...optional(kind, element),
 						...(mounted === undefined ? {} : { mounted }),
 						...(builder === undefined && flattens(owner, slot.name, kind) ? { flatten: true as const } : {}),
-						...(outer === undefined ? {} : { through: [...(outer.through ?? []), outer.key] })
+						...(outer === undefined ? {} : { through: [...(outer.through ?? []), outer.key] }),
+						...(members.length === 0 ? {} : { members })
 					};
 					if (mount !== undefined && mounted === undefined && mount.mounted.call !== 'child')
 						throw new Error(`portable build: ${kind} in ${owner}'s ${slot.name} builds through ${mount.builder}, which takes ${mount.mounted.call} input inside another container`);
@@ -393,7 +395,9 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		const kind = tokenKind(path, text);
 		if (kind !== undefined) return placedValue(path, kind);
 		const steps = stepsOf(path);
-		return steps === undefined ? undefined : { preset: { steps, text }, path };
+		if (steps === undefined) return undefined;
+		const leaf = (seatsOfRoute(path) ?? []).flatMap((seat) => defaultLeaf(seat.slot, seat.kinds)?.leaf ?? [])[0];
+		return { preset: { steps, text, ...(leaf === undefined ? {} : { builder: leaf }) }, path };
 	};
 	const placedFlag = (route: MemberRoute): Placed | undefined => {
 		if (route.flag !== true || route.path === undefined) return undefined;
