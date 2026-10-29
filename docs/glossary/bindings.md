@@ -1981,3 +1981,11 @@ The slot a container unwraps through.
 ### `packages/codegen/src/bindings/vocabulary-paths.ts::vocabularyFlagPaths`
 
 The flag paths of a vocabulary: each path with its segment and flag.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot::flattens`
+
+The slot's flattened member names, when it flattens.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot::tuples`
+
+The slot's tuple member names, when it has tuples.

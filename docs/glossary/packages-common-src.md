@@ -1227,3 +1227,55 @@ Builds a node from a portable structure.
 ### `packages/common/src/portable/runtime.ts::portableRuntime`
 
 Creates the portable runtime for a language.
+
+### `packages/common/src/portable/classify.ts::portableTextOf`
+
+The text of a portable value, or undefined when the value has none.
+
+### `packages/common/src/portable/read.ts::PortableCarry`
+
+What a read carries past the structure: unclaimed, a scalar or text, or a set of flags.
+
+### `packages/common/src/portable/read.ts::PortableCarry::reason`
+
+Why the read carries the node.
+
+### `packages/common/src/portable/read.ts::PortableCarry::flags`
+
+The flags a flag carry names.
+
+### `packages/common/src/portable/read.ts::PortableCarried`
+
+The callback that receives each carried node and what it carries.
+
+### `packages/common/src/portable/read.ts::PortableReadContext`
+
+What the portable reader needs: the build table, the classifier, the flag and text readers, and the flags per kind.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::table`
+
+The build table.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::classify`
+
+The classifier.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::flagHolds`
+
+Whether a value holds a flag.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::flagsOf`
+
+The flags a kind carries.
+
+### `packages/common/src/portable/read.ts::PortableReadContext::textOf`
+
+The text of a value, or undefined.
+
+### `packages/common/src/portable/read.ts::portableReader`
+
+Returns the portable reader that turns a node into a structure, given the read context.
+
+### `packages/common/src/portable/runtime.ts::PortableRuntime::read`
+
+Reads a node into the structure that builds it back, with the carried callback for what the read leaves out.

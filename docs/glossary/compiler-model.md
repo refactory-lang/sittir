@@ -6114,3 +6114,15 @@ The nested arms of the seat, from the seat's direct hosts.
 ### `packages/codegen/src/compiler/model/sub-factories.ts::mountCallOf`
 
 The portable mount call a sub-factory makes.
+
+### `packages/codegen/src/compiler/model/leaf-pattern.ts::regexLiteral`
+
+Renders a regular expression as a source literal.
+
+### `packages/codegen/src/compiler/model/node-map.ts::isFixedTextValue`
+
+Whether a node or terminal value is fixed text.
+
+### `packages/codegen/src/compiler/model/render-rules.ts::hasArmEdgeSeams`
+
+Whether a render rule has a seam at the first or last edge of its arms.

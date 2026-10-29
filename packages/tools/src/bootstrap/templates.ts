@@ -39,13 +39,13 @@ export function grammarPackageFiles(v: GrammarTemplateVars): TemplateFile[] {
 					'./api': { types: './dist/api.d.ts', import: './dist/api.js' }
 				},
 				scripts: {
-					build: 'tsc -p tsconfig.build.json',
+					build: 'tsrs -p tsconfig.build.json',
 					clean: 'rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo',
-					dev: 'tsc -p tsconfig.build.json --watch',
+					dev: 'tsrs -p tsconfig.build.json --watch',
 					test: 'vitest run',
 					'test:coverage': 'vitest run --coverage',
-					'type-check': 'tsc --noEmit',
-					[GRAMMAR_TYPECHECK_SCRIPT]: `tsc -p ${GRAMMAR_TSCONFIG}`
+					'type-check': 'tsrs --noEmit',
+					[GRAMMAR_TYPECHECK_SCRIPT]: `tsrs -p ${GRAMMAR_TSCONFIG}`
 				},
 				dependencies: {
 					'@sittir/types': 'workspace:*',

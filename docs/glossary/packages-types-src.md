@@ -1357,3 +1357,43 @@ The static-storage keyword.
 ### `packages/types/src/vocabulary/identifier.ts::IdentifierSynonyms::qualified`
 
 The alternative spellings of a qualified identifier.
+
+### `packages/types/src/index.ts::OmitRegistered`
+
+Omits the keys of a type that are registered, leaving the rest.
+
+### `packages/types/src/portable.ts::PortableSlotStep::flatten`
+
+Whether the step flattens its slot.
+
+### `packages/types/src/portable.ts::PortableSlotStep::seated`
+
+The call shape of the step's seat.
+
+### `packages/types/src/portable.ts::PortableSlotStep::many`
+
+Whether the step takes many values.
+
+### `packages/types/src/portable.ts::PortableContainer::flatten`
+
+Whether the container flattens its slot.
+
+### `packages/types/src/portable.ts::PortableContainer::through`
+
+The keys the container passes through.
+
+### `packages/types/src/portable.ts::PortableSeat::texts`
+
+The text kinds the seat takes.
+
+### `packages/types/src/portable.ts::PortableSeat::pattern`
+
+The pattern the seat matches, as its source and flags.
+
+### `packages/types/src/portable.ts::PortableMemberStep::reads`
+
+The kinds the member reads.
+
+### `packages/types/src/portable.ts::PortableBuildTable::options`
+
+The options each builder takes, by name.
