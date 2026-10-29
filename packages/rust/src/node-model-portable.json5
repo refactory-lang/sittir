@@ -12497,7 +12497,7 @@
           ]
         },
         {
-          "vocab": "expression.range.inclusive",
+          "vocab": "expression.range.inclusive.legacy",
           "toplevel": true,
           "within": [],
           "pins": [
@@ -12789,7 +12789,7 @@
           ]
         },
         {
-          "vocab": "pattern.range.inclusive",
+          "vocab": "pattern.range.inclusive.legacy",
           "toplevel": true,
           "within": [],
           "pins": [],
@@ -20012,9 +20012,9 @@
       },
       {
         "depth": 4,
-        "paths": 91,
-        "kinds": 57,
-        "refinements": 65
+        "paths": 93,
+        "kinds": 59,
+        "refinements": 67
       },
       {
         "depth": 5,

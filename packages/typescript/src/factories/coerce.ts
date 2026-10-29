@@ -402,7 +402,6 @@ const _STRING_CAPABLE_BRANCHES: ReadonlySet<string> = new Set([
 	'namespace_import',
 	'break_statement',
 	'continue_statement',
-	'debugger_statement',
 	'export_statement_namespace_export',
 	'arrow_function_parameter',
 	'statement_identifier',
@@ -432,15 +431,14 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 		420, 421, 422, 423, 424, 425, 426, 439, 440
 	]),
 	else_clause: new Set([
-		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 174, 197, 205, 206, 207, 208, 210, 212, 213, 214,
-		215, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 236, 237, 241, 244, 245, 247, 248, 249, 250, 251, 256,
-		257, 258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 302, 304, 305, 306, 307, 312,
-		313, 314, 315, 317, 319, 321, 324, 398, 399, 402, 403, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 430, 431,
-		439, 440, 502
+		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 197, 205, 206, 207, 208, 210, 212, 213, 214, 215,
+		217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 236, 237, 241, 244, 245, 247, 248, 249, 250, 251, 256, 257,
+		258, 259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 302, 304, 305, 306, 307, 312, 313,
+		314, 315, 317, 319, 321, 324, 398, 399, 402, 403, 414, 418, 419, 420, 421, 422, 423, 424, 425, 426, 430, 431, 439,
+		440, 502
 	]),
 	break_statement: new Set([1, 502]),
 	continue_statement: new Set([1, 502]),
-	debugger_statement: new Set([174]),
 	return_statement: new Set([
 		1, 129, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 236, 237, 241, 244, 247, 249, 251, 256, 257, 258,
 		259, 261, 263, 267, 268, 269, 271, 273, 275, 278, 279, 280, 281, 282, 299, 304, 305, 306, 307, 315, 414, 418, 419,
@@ -567,6 +565,11 @@ const _BARE_ACCEPTS: Record<string, ReadonlySet<number> | undefined> = {
 	]),
 	type_parameters: new Set([1, 372, 391, 504]),
 	default_type: new Set([
+		1, 40, 41, 42, 43, 44, 46, 78, 129, 144, 145, 146, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 278, 280,
+		281, 282, 318, 334, 335, 339, 340, 341, 342, 344, 347, 348, 349, 350, 353, 354, 355, 356, 357, 358, 359, 361, 363,
+		364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 392, 404, 423, 424, 503, 504
+	]),
+	constraint: new Set([
 		1, 40, 41, 42, 43, 44, 46, 78, 129, 144, 145, 146, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 278, 280,
 		281, 282, 318, 334, 335, 339, 340, 341, 342, 344, 347, 348, 349, 350, 353, 354, 355, 356, 357, 358, 359, 361, 363,
 		364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 392, 404, 423, 424, 503, 504
@@ -838,7 +841,6 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	else_clause: TSKindId.ElseClause,
 	break_statement: TSKindId.BreakStatement,
 	continue_statement: TSKindId.ContinueStatement,
-	debugger_statement: TSKindId.DebuggerStatement,
 	return_statement: TSKindId.ReturnStatement,
 	throw_statement: TSKindId.ThrowStatement,
 	switch_body: TSKindId.SwitchBody,
@@ -889,6 +891,7 @@ const _wrapKindIds: { readonly [kind: string]: number } = {
 	type_arguments: TSKindId.TypeArguments,
 	type_parameters: TSKindId.TypeParameters,
 	default_type: TSKindId.DefaultType,
+	constraint: TSKindId.Constraint,
 	array_type: TSKindId.ArrayType,
 	tuple_type: TSKindId.TupleType,
 	readonly_type: TSKindId.ReadonlyType,
@@ -961,6 +964,7 @@ const _wrapElementKinds: { readonly [kind: string]: string } = {
 	type_arguments: 'types',
 	type_parameters: 'type_parameters_elements',
 	default_type: 'type',
+	constraint: 'type',
 	array_type: 'primary_type',
 	tuple_type: 'tuple_type_members',
 	readonly_type: 'type',
@@ -999,7 +1003,6 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'else_clause',
 	'break_statement',
 	'continue_statement',
-	'debugger_statement',
 	'return_statement',
 	'throw_statement',
 	'finally_clause',
@@ -1036,6 +1039,7 @@ const _wrapDirectKinds: ReadonlySet<string> = new Set([
 	'type_arguments',
 	'type_parameters',
 	'default_type',
+	'constraint',
 	'array_type',
 	'tuple_type',
 	'readonly_type',
@@ -1100,8 +1104,6 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildBreakStatement(children[0] as Parameters<typeof F.buildBreakStatement>[0]);
 		case 'continue_statement':
 			return F.buildContinueStatement(children[0] as Parameters<typeof F.buildContinueStatement>[0]);
-		case 'debugger_statement':
-			return F.buildDebuggerStatement(children[0] as Parameters<typeof F.buildDebuggerStatement>[0]);
 		case 'return_statement':
 			return F.buildReturnStatement(children[0] as Parameters<typeof F.buildReturnStatement>[0]);
 		case 'throw_statement':
@@ -1204,6 +1206,8 @@ function _wrapWithChildren(kind: string, children: readonly unknown[]): unknown 
 			return F.buildTypeParameters(children[0] as Parameters<typeof F.buildTypeParameters>[0]);
 		case 'default_type':
 			return F.buildDefaultType(children[0] as Parameters<typeof F.buildDefaultType>[0]);
+		case 'constraint':
+			return F.buildConstraint(children[0] as Parameters<typeof F.buildConstraint>[0]);
 		case 'array_type':
 			return F.buildArrayType(children[0] as Parameters<typeof F.buildArrayType>[0]);
 		case 'tuple_type':
@@ -3087,37 +3091,17 @@ export function coerceToContinueStatement(
 	);
 }
 
-export function resolveDebuggerStatement_terminator(
-	value: T.DebuggerStatement.LooseConfig['terminator']
-): Admit<T.DebuggerStatement['_terminator']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () =>
-			_resolveOneLeaf<TSKindId.AutomaticSemicolon | TSKindId.Semi>(value, '_automatic_semicolon')
-		),
-		[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-	);
-}
-
-export const coerceToDebuggerStatement: ConfigSeat<
-	T.DebuggerStatement.Loose,
-	ReturnType<typeof F.buildDebuggerStatement>
-> = (input: T.DebuggerStatement.Loose): ReturnType<typeof F.buildDebuggerStatement> => {
-	if (isNodeOfKind(input, TSKindId.DebuggerStatement))
+export function coerceToDebuggerStatement<const I extends T.DebuggerStatement.Loose>(
+	...input: [input?: I, options?: T.DebuggerStatement.Options] & RefuseUndeclared<I, T.DebuggerStatement.Loose>
+): ReturnType<typeof F.buildDebuggerStatement>;
+export function coerceToDebuggerStatement(
+	input?: T.DebuggerStatement.Loose,
+	options?: T.DebuggerStatement.Options
+): ReturnType<typeof F.buildDebuggerStatement> {
+	if (!_isLooseConfig<T.DebuggerStatement.LooseConfig | undefined>(input))
 		return input as unknown as ReturnType<typeof F.buildDebuggerStatement>;
-	return F.buildDebuggerStatement(
-		coerceKindEnumStorage(
-			_resolveKindEnumScalar(
-				configFieldOr(input, 'terminator', () => input),
-				() =>
-					_resolveOneLeaf<TSKindId.AutomaticSemicolon | TSKindId.Semi>(
-						configFieldOr(input, 'terminator', () => input),
-						'_automatic_semicolon'
-					)
-			),
-			[['\n', TSKindId.AutomaticSemicolon] as const, [';', TSKindId.Semi] as const]
-		)
-	);
-};
+	return F.buildDebuggerStatement(input as Parameters<typeof F.buildDebuggerStatement>[0], options);
+}
 
 export function resolveReturnStatement_expression(
 	value: T.ReturnStatement.LooseConfig['expression']
@@ -7295,13 +7279,6 @@ export const coerceToDefaultType: ConfigSeat<T.DefaultType.Loose, ReturnType<typ
 	);
 };
 
-export function resolveConstraint_content(value: T.Constraint.LooseConfig['content']): Admit<T.Constraint['_content']> {
-	return coerceKindEnumStorage(
-		_resolveKindEnumScalar(value, () => _resolveOne<'extends' | ':'>(value, _K2, _K2)),
-		[['extends', TSKindId.ExtendsKeyword] as const, [':', TSKindId.Colon] as const]
-	);
-}
-
 export function resolveConstraint_bounds(value: T.Constraint.LooseConfig['bounds']): Admit<T.Constraint['_bounds']> {
 	return coerceMixedEnumStorage(
 		_resolveKindEnum(value, [], () => _resolveOne<T.Type>(value, _K40, _K41)),
@@ -7309,16 +7286,32 @@ export function resolveConstraint_bounds(value: T.Constraint.LooseConfig['bounds
 	);
 }
 
-export const coerceToConstraint: ConfigSeat<T.Constraint.Loose, ReturnType<typeof F.buildConstraint>> = (
-	input: T.Constraint.Loose
-): ReturnType<typeof F.buildConstraint> => {
-	if (!_isLooseConfig<T.Constraint.LooseConfig>(input)) return input as unknown as ReturnType<typeof F.buildConstraint>;
-	currentHandle()?.admit(TSKindId.Constraint, [input]);
-	return F.buildConstraint({
-		content: resolveConstraint_content(input.content),
-		bounds: resolveConstraint_bounds(input.bounds)
-	});
-};
+export function coerceToConstraint<const I extends T.Constraint.Loose>(
+	input: I & RefuseUndeclared<I, T.Constraint.Loose>,
+	options?: T.Constraint.Options
+): ReturnType<typeof F.buildConstraint>;
+export function coerceToConstraint(
+	input: T.Constraint.Loose,
+	options?: T.Constraint.Options
+): ReturnType<typeof F.buildConstraint> {
+	if (isNodeOfKind(input, TSKindId.Constraint)) return input as unknown as ReturnType<typeof F.buildConstraint>;
+	return F.buildConstraint(
+		coerceMixedEnumStorage(
+			_resolveKindEnum(
+				configFieldOr(input, 'bounds', () => input),
+				[],
+				() =>
+					_resolveOne<T.Type>(
+						configFieldOr(input, 'bounds', () => input),
+						_K40,
+						_K41
+					)
+			),
+			[]
+		),
+		options
+	);
+}
 
 export function resolveConstructSignature_abstract(
 	value: T.ConstructSignature.LooseConfig['abstract']

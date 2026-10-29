@@ -275,6 +275,11 @@ export type ElementsOf<F> = F extends (...args: infer A extends readonly unknown
 		: never;
 
 export type OmitEach<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
+export type OmitRegistered<T, K extends PropertyKey> = T extends unknown
+	? [Exclude<keyof T, K>] extends [never]
+		? { readonly [key: string]: never }
+		: Omit<T, K>
+	: never;
 /** A config that names none of `T`'s keys. */
 export type NoneOf<T> = { [K in keyof T]?: never };
 /**

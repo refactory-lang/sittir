@@ -18,6 +18,11 @@ describe('the portable read', () => {
 		expect(roundTrip('with a: pass')).toBe('with a: pass\n');
 	});
 
+	it('reads the legacy not-equal under its meaning, so `<>` builds back as `<>` and `!=` as `!=`', () => {
+		expect(firstOf('a <> b')).toMatchObject({ content: { $path: 'expression.binary.comparison.not_equal.legacy' } });
+		for (const source of ['a <> b', 'a != b', 'a < b <> c']) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('reads one comparison operand as one value, though its route walks a list, and builds it back', () => {
 		expect(firstOf('a not in b')).toMatchObject({ content: { $path: 'expression.binary.membership.not_in', left: 'a', right: 'b' } });
 		expect(roundTrip('a not in b')).toBe('a not in b\n');

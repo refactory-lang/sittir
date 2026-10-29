@@ -197,6 +197,7 @@ export default grammar(enrich(base), wire({
 		for_header_let_const_kind: { 'terminator:': preference('blank') },
 		class_body_member_method: { 'terminator:': preference('blank') },
 		class_body_member_method_sig: { 'terminator:': preference('function_signature_automatic_semicolon') },
+		constraint: { 'content:': preference('extends') },
 		class_body:{ before: preference('space') },
 		switch_body: { before: preference('space') },
 		named_imports: { before: preference('space'), after: preference('space') },

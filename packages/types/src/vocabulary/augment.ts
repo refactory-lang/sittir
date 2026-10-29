@@ -1609,6 +1609,11 @@ declare module './element.ts' {
 	namespace Element {
 		namespace Comparator {
 			namespace Comparison {
+				namespace NotEqual {
+					type Any<G extends GrammarContext<G>> =
+						| V.Element.Comparator.Comparison.NotEqual<G>
+						| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Element.Comparator.Comparison<G>
 					| V.Element.Comparator.Comparison.Equal<G>
@@ -1616,7 +1621,8 @@ declare module './element.ts' {
 					| V.Element.Comparator.Comparison.GreaterEqual<G>
 					| V.Element.Comparator.Comparison.Less<G>
 					| V.Element.Comparator.Comparison.LessEqual<G>
-					| V.Element.Comparator.Comparison.NotEqual<G>;
+					| V.Element.Comparator.Comparison.NotEqual<G>
+					| V.Element.Comparator.Comparison.NotEqual.Legacy<G>;
 			}
 			namespace Identity {
 				type Any<G extends GrammarContext<G>> =
@@ -1639,6 +1645,7 @@ declare module './element.ts' {
 				| V.Element.Comparator.Comparison.Less<G>
 				| V.Element.Comparator.Comparison.LessEqual<G>
 				| V.Element.Comparator.Comparison.NotEqual<G>
+				| V.Element.Comparator.Comparison.NotEqual.Legacy<G>
 				| V.Element.Comparator.Identity<G>
 				| V.Element.Comparator.Identity.Is<G>
 				| V.Element.Comparator.Identity.IsNot<G>
@@ -1786,6 +1793,7 @@ declare module './element.ts' {
 			| V.Element.Comparator.Comparison.Less<G>
 			| V.Element.Comparator.Comparison.LessEqual<G>
 			| V.Element.Comparator.Comparison.NotEqual<G>
+			| V.Element.Comparator.Comparison.NotEqual.Legacy<G>
 			| V.Element.Comparator.Identity<G>
 			| V.Element.Comparator.Identity.Is<G>
 			| V.Element.Comparator.Identity.IsNot<G>
@@ -1903,6 +1911,11 @@ declare module './expression.ts' {
 					.LooseEqual<G> {}
 				interface LooseNotEqual<G extends GrammarContext<G>> extends coerciveEquality.Expression.Binary.Comparison
 					.LooseNotEqual<G> {}
+				namespace NotEqual {
+					type Any<G extends GrammarContext<G>> =
+						| V.Expression.Binary.Comparison.NotEqual<G>
+						| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
+				}
 				type Any<G extends GrammarContext<G>> =
 					| V.Expression.Binary.Comparison<G>
 					| V.Expression.Binary.Comparison.Chain<G>
@@ -1913,7 +1926,8 @@ declare module './expression.ts' {
 					| V.Expression.Binary.Comparison.LessEqual<G>
 					| V.Expression.Binary.Comparison.LooseEqual<G>
 					| V.Expression.Binary.Comparison.LooseNotEqual<G>
-					| V.Expression.Binary.Comparison.NotEqual<G>;
+					| V.Expression.Binary.Comparison.NotEqual<G>
+					| V.Expression.Binary.Comparison.NotEqual.Legacy<G>;
 			}
 			namespace Identity {
 				type Any<G extends GrammarContext<G>> =
@@ -1966,6 +1980,7 @@ declare module './expression.ts' {
 				| V.Expression.Binary.Comparison.LooseEqual<G>
 				| V.Expression.Binary.Comparison.LooseNotEqual<G>
 				| V.Expression.Binary.Comparison.NotEqual<G>
+				| V.Expression.Binary.Comparison.NotEqual.Legacy<G>
 				| V.Expression.Binary.Identity<G>
 				| V.Expression.Binary.Identity.Is<G>
 				| V.Expression.Binary.Identity.IsNot<G>
@@ -2151,10 +2166,17 @@ declare module './expression.ts' {
 		namespace Range {
 			interface Exclusive<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Exclusive<G> {}
 			interface Inclusive<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Inclusive<G> {}
+			namespace Inclusive {
+				interface Legacy<G extends GrammarContext<G>> extends rangeExpressions.Expression.Range.Inclusive.Legacy<G> {}
+				type Any<G extends GrammarContext<G>> =
+					| V.Expression.Range.Inclusive<G>
+					| V.Expression.Range.Inclusive.Legacy<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Expression.Range<G>
 				| V.Expression.Range.Exclusive<G>
-				| V.Expression.Range.Inclusive<G>;
+				| V.Expression.Range.Inclusive<G>
+				| V.Expression.Range.Inclusive.Legacy<G>;
 		}
 		interface Reference<G extends GrammarContext<G>> extends references.Expression.Reference<G> {}
 		interface Slice<G extends GrammarContext<G>> extends sliceExpressions.Expression.Slice<G> {}
@@ -2236,6 +2258,7 @@ declare module './expression.ts' {
 			| V.Expression.Binary.Comparison.LooseEqual<G>
 			| V.Expression.Binary.Comparison.LooseNotEqual<G>
 			| V.Expression.Binary.Comparison.NotEqual<G>
+			| V.Expression.Binary.Comparison.NotEqual.Legacy<G>
 			| V.Expression.Binary.Identity<G>
 			| V.Expression.Binary.Identity.Is<G>
 			| V.Expression.Binary.Identity.IsNot<G>
@@ -2299,6 +2322,7 @@ declare module './expression.ts' {
 			| V.Expression.Range<G>
 			| V.Expression.Range.Exclusive<G>
 			| V.Expression.Range.Inclusive<G>
+			| V.Expression.Range.Inclusive.Legacy<G>
 			| V.Expression.Reference<G>
 			| V.Expression.Sequence<G>
 			| V.Expression.Slice<G>
@@ -2609,10 +2633,15 @@ declare module './pattern.ts' {
 		namespace Range {
 			interface Exclusive<G extends GrammarContext<G>> extends rangeExpressions.Pattern.Range.Exclusive<G> {}
 			interface Inclusive<G extends GrammarContext<G>> extends rangeExpressions.Pattern.Range.Inclusive<G> {}
+			namespace Inclusive {
+				interface Legacy<G extends GrammarContext<G>> extends rangeExpressions.Pattern.Range.Inclusive.Legacy<G> {}
+				type Any<G extends GrammarContext<G>> = V.Pattern.Range.Inclusive<G> | V.Pattern.Range.Inclusive.Legacy<G>;
+			}
 			type Any<G extends GrammarContext<G>> =
 				| V.Pattern.Range<G>
 				| V.Pattern.Range.Exclusive<G>
-				| V.Pattern.Range.Inclusive<G>;
+				| V.Pattern.Range.Inclusive<G>
+				| V.Pattern.Range.Inclusive.Legacy<G>;
 		}
 		interface Reference<G extends GrammarContext<G>> extends references.Pattern.Reference<G> {}
 		namespace Reference {
@@ -2657,6 +2686,7 @@ declare module './pattern.ts' {
 			| V.Pattern.Range<G>
 			| V.Pattern.Range.Exclusive<G>
 			| V.Pattern.Range.Inclusive<G>
+			| V.Pattern.Range.Inclusive.Legacy<G>
 			| V.Pattern.Reference<G>
 			| V.Pattern.Reference.Value<G>
 			| V.Pattern.Rest<G>

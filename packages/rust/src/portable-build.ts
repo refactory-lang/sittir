@@ -233,6 +233,9 @@ export const build: PortableBuildTable = {
 		whileExpression: 'config',
 		yieldExpression: 'direct'
 	},
+	options: {
+		lastMatchArm: ['trailingComma']
+	},
 	paths: {
 		attribute: {
 			root: true,
@@ -29116,6 +29119,81 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'expression.range.inclusive.legacy': {
+			root: true,
+			arms: [
+				{
+					kind: 390,
+					builder: 'rangeExpressionBinary',
+					members: [
+						{
+							name: 'start',
+							steps: [
+								{
+									key: 'start'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [390, 'start'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'end',
+							steps: [
+								{
+									key: 'end'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [390, 'end'],
+									kinds: [
+										1, 116, 117, 124, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 245, 258, 259, 263,
+										266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 278, 279, 280, 281, 282, 287, 292, 297, 298,
+										299, 300, 301, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 328, 331, 332, 333, 334, 336, 365,
+										366, 367, 369, 370, 371, 372, 373, 374, 390, 391, 392, 393
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operator'
+								}
+							],
+							kind: 48
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
 		'expression.reference': {
 			root: true,
 			arms: [
@@ -31850,6 +31928,93 @@ export const build: PortableBuildTable = {
 							required: ['left', 'right']
 						}
 					]
+				}
+			]
+		},
+		'pattern.range.inclusive.legacy': {
+			root: true,
+			arms: [
+				{
+					kind: 422,
+					builder: 'rangePatternWithLeft',
+					members: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [422, 'left'],
+									kinds: [
+										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
+										331, 332, 333, 334, 336, 365, 478
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'content',
+									builder: 'rangePatternWithLeft.withRight',
+									mounted: {
+										call: 'merge',
+										key: 'content'
+									}
+								},
+								{
+									key: 'right'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [420, 'right'],
+									kinds: [
+										1, 116, 117, 125, 126, 127, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 162, 263, 329, 330,
+										331, 332, 333, 334, 336, 365, 478
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:(r#)?[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'content',
+									builder: 'rangePatternWithLeft.withRight',
+									mounted: {
+										call: 'merge',
+										key: 'content'
+									}
+								},
+								{
+									key: 'content'
+								}
+							],
+							kind: 48
+						}
+					],
+					flags: {},
+					when: []
 				}
 			]
 		},

@@ -62,6 +62,17 @@ describe('the portable read', () => {
 		for (const source of ["let c = 'a';", "let c = '\\'';", "let c = '\\n';", "let c = '\\x41';", "let c = '\\u{0}';"]) expect(roundTrip(source)).toBe(`${source}\n`);
 	});
 
+	it('reads the legacy inclusive range under its meaning, so `...` builds back as `...` and `..=` as `..=`', () => {
+		const range = statementsOf('let r = a...b;')[0];
+		if (range === undefined || !runtime.engine.is.letDeclaration(range)) throw new Error('expected a let declaration');
+		const node = range.value();
+		if (node === undefined) throw new Error('expected a let value');
+		expect((runtime.read(range) as Read).value).toMatchObject({ $path: 'expression.range.inclusive.legacy' });
+		expect(rust.is.portable.expression.range.inclusive(node)).toBe(true);
+		expect(rust.is.portable.expression.range.inclusive.legacy(node)).toBe(true);
+		for (const source of ['let r = a...b;', 'let r = a..=b;', 'match x { 1...2 => {} }', 'match x { 1..=2 => {} }']) expect(roundTrip(source)).toBe(`${source}\n`);
+	});
+
 	it('carries a node whose flags its path cannot build: a byte literal stays a byte', () => {
 		expect(readFirst("let c = b'a';").value).toMatchObject({ $type: rust.kinds.CharLiteralPlain });
 		expect(roundTrip("let c = b'a';")).toBe("let c = b'a';\n");

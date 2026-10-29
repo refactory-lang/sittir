@@ -46,12 +46,12 @@ export const build: PortableBuildTable = {
 		commentLine: 'direct',
 		computedPropertyName: 'direct',
 		conditionalType: 'config',
-		constraint: 'config',
+		constraint: 'direct',
 		constructSignature: 'config',
 		constructorDeclaration: 'config',
 		constructorType: 'config',
 		continueStatement: 'forwarded',
-		debuggerStatement: 'direct',
+		debuggerStatement: 'config',
 		decorator: 'direct',
 		decoratorCallExpression: 'config',
 		decoratorMemberExpression: 'config',
@@ -228,6 +228,40 @@ export const build: PortableBuildTable = {
 		withStatement: 'config',
 		yieldExpression: 'direct',
 		'yieldExpression.delegate': 'direct'
+	},
+	options: {
+		ambientDeclarationModule: ['terminator'],
+		breakStatement: ['terminator'],
+		classBodyMemberDeclaration: ['terminator'],
+		classBodyMemberMethod: ['terminator'],
+		classBodyMemberMethodSig: ['terminator'],
+		classDeclaration: ['terminator'],
+		classStaticBlock: ['terminator'],
+		constraint: ['content'],
+		continueStatement: ['terminator'],
+		debuggerStatement: ['terminator'],
+		doStatement: ['terminator'],
+		exportStatementDefaultFrom: ['terminator'],
+		exportStatementEqualsExport: ['terminator'],
+		exportStatementNamespaceExport: ['terminator'],
+		expressionStatement: ['terminator'],
+		functionDeclaration: ['terminator'],
+		functionSignature: ['terminator'],
+		generatorFunctionDeclaration: ['terminator'],
+		importAlias: ['terminator'],
+		importStatement: ['terminator'],
+		lexicalDeclaration: ['terminator'],
+		numberBinary: ['prefix'],
+		numberFloatLeadingPoint: ['marker'],
+		numberFloatPoint: ['marker'],
+		numberFloatScientific: ['marker'],
+		numberHex: ['prefix'],
+		numberOctal: ['prefix'],
+		returnStatement: ['terminator'],
+		statementBlock: ['terminator'],
+		throwStatement: ['terminator'],
+		typeAliasDeclaration: ['terminator'],
+		variableDeclaration: ['terminator']
 	},
 	paths: {
 		'attribute.content.call': {
@@ -477,8 +511,43 @@ export const build: PortableBuildTable = {
 			]
 		},
 		'clause.bounds': {
-			root: false,
-			arms: []
+			root: true,
+			arms: [
+				{
+					kind: 374,
+					builder: 'constraint',
+					members: [
+						{
+							name: 'bounds',
+							steps: [
+								{
+									key: 'bounds'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [374, 'bounds'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [],
+					flags: {},
+					when: []
+				}
+			]
 		},
 		'clause.case.default': {
 			root: true,
@@ -16635,6 +16704,36 @@ export const build: PortableBuildTable = {
 									kinds: [373]
 								}
 							]
+						},
+						{
+							name: 'bounds',
+							steps: [
+								{
+									key: 'constraint',
+									builder: 'constraint',
+									optional: true
+								},
+								{
+									key: 'bounds'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [374, 'bounds'],
+									kinds: [
+										40, 41, 42, 43, 44, 46, 78, 144, 145, 146, 318, 334, 335, 338, 344, 345, 347, 348, 349, 350, 357,
+										358, 359, 361, 363, 364, 365, 366, 368, 377, 378, 379, 380, 381, 382, 503, 504
+									],
+									leaf: 'identifier',
+									texts: [1, 504],
+									pattern: {
+										source:
+											'^(?:(?:[^\\x00-\\x1F\\s\\p{Zs}0-9:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\})(?:(?:[^\\x00-\\x1F\\s\\p{Zs}:;`"\'@#.,|^&<=>+\\-*/\\\\%?!~()[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}))*)$',
+										flags: 'u'
+									}
+								}
+							]
 						}
 					],
 					presets: [],
@@ -28508,7 +28607,21 @@ export const build: PortableBuildTable = {
 						}
 					],
 					presets: [],
-					flags: {},
+					flags: {
+						abstract: {
+							presets: [
+								{
+									steps: [
+										{
+											key: 'abstract',
+											optional: true
+										}
+									],
+									kind: 149
+								}
+							]
+						}
+					},
 					when: []
 				}
 			]

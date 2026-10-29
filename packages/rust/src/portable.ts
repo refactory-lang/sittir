@@ -492,6 +492,7 @@ export interface PortableIds {
 		| TSKindId.RangeExpressionPostfix
 		| TSKindId.RangeExpressionPrefix;
 	'expression.range.inclusive': TSKindId.RangeExpressionBinary;
+	'expression.range.inclusive.legacy': TSKindId.RangeExpressionBinary;
 	'expression.reference':
 		| TSKindId.ReferenceExpression
 		| TSKindId.ReferenceExpressionBare
@@ -639,6 +640,7 @@ export interface PortableIds {
 	'pattern.range': TSKindId.RangePattern | TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 	'pattern.range.exclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
 	'pattern.range.inclusive': TSKindId.RangePatternPrefix | TSKindId.RangePatternWithLeft;
+	'pattern.range.inclusive.legacy': TSKindId.RangePatternWithLeft;
 	'pattern.reference': TSKindId.RefPattern | TSKindId.ReferencePattern;
 	'pattern.reference.value': TSKindId.ReferencePattern;
 	'pattern.struct':
@@ -1373,7 +1375,11 @@ export interface PortableKindsAt {
 		readonly inclusive: PortableKindsAt['expression.range.inclusive'];
 	};
 	'expression.range.exclusive': { readonly $path: 'expression.range.exclusive' };
-	'expression.range.inclusive': { readonly $path: 'expression.range.inclusive' };
+	'expression.range.inclusive': {
+		readonly $path: 'expression.range.inclusive';
+		readonly legacy: PortableKindsAt['expression.range.inclusive.legacy'];
+	};
+	'expression.range.inclusive.legacy': { readonly $path: 'expression.range.inclusive.legacy' };
 	'expression.reference': { readonly $path: 'expression.reference' };
 	'expression.subscript': { readonly $path: 'expression.subscript' };
 	'expression.unary': {
@@ -1487,7 +1493,11 @@ export interface PortableKindsAt {
 		readonly inclusive: PortableKindsAt['pattern.range.inclusive'];
 	};
 	'pattern.range.exclusive': { readonly $path: 'pattern.range.exclusive' };
-	'pattern.range.inclusive': { readonly $path: 'pattern.range.inclusive' };
+	'pattern.range.inclusive': {
+		readonly $path: 'pattern.range.inclusive';
+		readonly legacy: PortableKindsAt['pattern.range.inclusive.legacy'];
+	};
+	'pattern.range.inclusive.legacy': { readonly $path: 'pattern.range.inclusive.legacy' };
 	'pattern.reference': {
 		readonly $path: 'pattern.reference';
 		readonly value: PortableKindsAt['pattern.reference.value'];
@@ -2510,7 +2520,14 @@ export interface PortableIsAt {
 		readonly inclusive: PortableIsAt['expression.range.inclusive'];
 	};
 	'expression.range.exclusive': PortableGuard<PortableIds['expression.range.exclusive'], RustNode, TSKindId> & {};
-	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive'], RustNode, TSKindId> & {};
+	'expression.range.inclusive': PortableGuard<PortableIds['expression.range.inclusive'], RustNode, TSKindId> & {
+		readonly legacy: PortableIsAt['expression.range.inclusive.legacy'];
+	};
+	'expression.range.inclusive.legacy': PortableGuard<
+		PortableIds['expression.range.inclusive.legacy'],
+		RustNode,
+		TSKindId
+	> & {};
 	'expression.reference': PortableGuard<PortableIds['expression.reference'], RustNode, TSKindId> & {};
 	'expression.subscript': PortableGuard<PortableIds['expression.subscript'], RustNode, TSKindId> & {};
 	'expression.unary': PortableGuard<PortableIds['expression.unary'], RustNode, TSKindId> & {
@@ -2620,7 +2637,14 @@ export interface PortableIsAt {
 		readonly inclusive: PortableIsAt['pattern.range.inclusive'];
 	};
 	'pattern.range.exclusive': PortableGuard<PortableIds['pattern.range.exclusive'], RustNode, TSKindId> & {};
-	'pattern.range.inclusive': PortableGuard<PortableIds['pattern.range.inclusive'], RustNode, TSKindId> & {};
+	'pattern.range.inclusive': PortableGuard<PortableIds['pattern.range.inclusive'], RustNode, TSKindId> & {
+		readonly legacy: PortableIsAt['pattern.range.inclusive.legacy'];
+	};
+	'pattern.range.inclusive.legacy': PortableGuard<
+		PortableIds['pattern.range.inclusive.legacy'],
+		RustNode,
+		TSKindId
+	> & {};
 	'pattern.reference': PortableGuard<PortableIds['pattern.reference'], RustNode, TSKindId> & {
 		readonly value: PortableIsAt['pattern.reference.value'];
 	};
@@ -3425,6 +3449,7 @@ const table: PortableTable = {
 			exact: false
 		},
 		'expression.range.inclusive': { ids: [TSKindId.RangeExpressionBinary], exact: false },
+		'expression.range.inclusive.legacy': { ids: [TSKindId.RangeExpressionBinary], exact: false },
 		'expression.reference': {
 			ids: [
 				TSKindId.ReferenceExpression,
@@ -3624,6 +3649,7 @@ const table: PortableTable = {
 		},
 		'pattern.range.exclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
 		'pattern.range.inclusive': { ids: [TSKindId.RangePatternPrefix, TSKindId.RangePatternWithLeft], exact: false },
+		'pattern.range.inclusive.legacy': { ids: [TSKindId.RangePatternWithLeft], exact: false },
 		'pattern.reference': { ids: [TSKindId.RefPattern, TSKindId.ReferencePattern], exact: true },
 		'pattern.reference.value': { ids: [TSKindId.ReferencePattern], exact: true },
 		'pattern.struct': {
@@ -5118,7 +5144,7 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '..=', slots: { '390': 1 } } }]
 			},
 			{
-				path: 'expression.range.inclusive',
+				path: 'expression.range.inclusive.legacy',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '...', slots: { '390': 1 } } }]
 			},
@@ -5161,7 +5187,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'pattern.range.inclusive',
+				path: 'pattern.range.inclusive.legacy',
 				within: [],
 				test: [
 					{ up: 0, via: [], plan: { op: 'is', types: [420], slots: { '422': 1 } } },

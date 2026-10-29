@@ -88,6 +88,7 @@ export interface PortableIds {
 	'element.comparator.comparison.less': TSKindId.ComparisonOperatorComparator;
 	'element.comparator.comparison.less_equal': TSKindId.ComparisonOperatorComparator;
 	'element.comparator.comparison.not_equal': TSKindId.ComparisonOperatorComparator;
+	'element.comparator.comparison.not_equal.legacy': TSKindId.ComparisonOperatorComparator;
 	'element.comparator.identity': TSKindId.ComparisonOperatorComparator;
 	'element.comparator.identity.is': TSKindId.ComparisonOperatorComparator;
 	'element.comparator.identity.is_not': TSKindId.ComparisonOperatorComparator;
@@ -166,6 +167,7 @@ export interface PortableIds {
 	'expression.binary.comparison.less': TSKindId.ComparisonOperator;
 	'expression.binary.comparison.less_equal': TSKindId.ComparisonOperator;
 	'expression.binary.comparison.not_equal': TSKindId.ComparisonOperator;
+	'expression.binary.comparison.not_equal.legacy': TSKindId.ComparisonOperator;
 	'expression.binary.identity': TSKindId.ComparisonOperator;
 	'expression.binary.identity.is': TSKindId.ComparisonOperator;
 	'expression.binary.identity.is_not': TSKindId.ComparisonOperator;
@@ -515,7 +517,13 @@ export interface PortableKindsAt {
 	'element.comparator.comparison.greater_equal': { readonly $path: 'element.comparator.comparison.greater_equal' };
 	'element.comparator.comparison.less': { readonly $path: 'element.comparator.comparison.less' };
 	'element.comparator.comparison.less_equal': { readonly $path: 'element.comparator.comparison.less_equal' };
-	'element.comparator.comparison.not_equal': { readonly $path: 'element.comparator.comparison.not_equal' };
+	'element.comparator.comparison.not_equal': {
+		readonly $path: 'element.comparator.comparison.not_equal';
+		readonly legacy: PortableKindsAt['element.comparator.comparison.not_equal.legacy'];
+	};
+	'element.comparator.comparison.not_equal.legacy': {
+		readonly $path: 'element.comparator.comparison.not_equal.legacy';
+	};
 	'element.comparator.identity': {
 		readonly $path: 'element.comparator.identity';
 		readonly is: PortableKindsAt['element.comparator.identity.is'];
@@ -645,7 +653,11 @@ export interface PortableKindsAt {
 	'expression.binary.comparison.greater_equal': { readonly $path: 'expression.binary.comparison.greater_equal' };
 	'expression.binary.comparison.less': { readonly $path: 'expression.binary.comparison.less' };
 	'expression.binary.comparison.less_equal': { readonly $path: 'expression.binary.comparison.less_equal' };
-	'expression.binary.comparison.not_equal': { readonly $path: 'expression.binary.comparison.not_equal' };
+	'expression.binary.comparison.not_equal': {
+		readonly $path: 'expression.binary.comparison.not_equal';
+		readonly legacy: PortableKindsAt['expression.binary.comparison.not_equal.legacy'];
+	};
+	'expression.binary.comparison.not_equal.legacy': { readonly $path: 'expression.binary.comparison.not_equal.legacy' };
 	'expression.binary.identity': {
 		readonly $path: 'expression.binary.identity';
 		readonly is: PortableKindsAt['expression.binary.identity.is'];
@@ -1065,6 +1077,11 @@ export interface PortableIsAt {
 		PortableIds['element.comparator.comparison.not_equal'],
 		PythonNode,
 		TSKindId
+	> & { readonly legacy: PortableIsAt['element.comparator.comparison.not_equal.legacy'] };
+	'element.comparator.comparison.not_equal.legacy': PortableGuard<
+		PortableIds['element.comparator.comparison.not_equal.legacy'],
+		PythonNode,
+		TSKindId
 	> & {};
 	'element.comparator.identity': PortableGuard<PortableIds['element.comparator.identity'], PythonNode, TSKindId> & {
 		readonly is: PortableIsAt['element.comparator.identity.is'];
@@ -1317,6 +1334,11 @@ export interface PortableIsAt {
 	> & {};
 	'expression.binary.comparison.not_equal': PortableGuard<
 		PortableIds['expression.binary.comparison.not_equal'],
+		PythonNode,
+		TSKindId
+	> & { readonly legacy: PortableIsAt['expression.binary.comparison.not_equal.legacy'] };
+	'expression.binary.comparison.not_equal.legacy': PortableGuard<
+		PortableIds['expression.binary.comparison.not_equal.legacy'],
 		PythonNode,
 		TSKindId
 	> & {};
@@ -1805,6 +1827,7 @@ const table: PortableTable = {
 		'element.comparator.comparison.less': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
 		'element.comparator.comparison.less_equal': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
 		'element.comparator.comparison.not_equal': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
+		'element.comparator.comparison.not_equal.legacy': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
 		'element.comparator.identity': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
 		'element.comparator.identity.is': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
 		'element.comparator.identity.is_not': { ids: [TSKindId.ComparisonOperatorComparator], exact: false },
@@ -1893,6 +1916,7 @@ const table: PortableTable = {
 		'expression.binary.comparison.less': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.comparison.less_equal': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.comparison.not_equal': { ids: [TSKindId.ComparisonOperator], exact: false },
+		'expression.binary.comparison.not_equal.legacy': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.identity': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.identity.is': { ids: [TSKindId.ComparisonOperator], exact: false },
 		'expression.binary.identity.is_not': { ids: [TSKindId.ComparisonOperator], exact: false },
@@ -2409,7 +2433,7 @@ const table: PortableTable = {
 				]
 			},
 			{
-				path: 'expression.binary.comparison.not_equal',
+				path: 'expression.binary.comparison.not_equal.legacy',
 				within: [],
 				test: [
 					{ up: 0, via: [{ slots: { '213': 1 }, anchor: 'only' }], plan: { op: 'eq', text: '<>', slots: { '300': 0 } } }
@@ -2504,7 +2528,7 @@ const table: PortableTable = {
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '!=', slots: { '300': 0 } } }]
 			},
 			{
-				path: 'element.comparator.comparison.not_equal',
+				path: 'element.comparator.comparison.not_equal.legacy',
 				within: [],
 				test: [{ up: 0, via: [], plan: { op: 'eq', text: '<>', slots: { '300': 0 } } }]
 			},

@@ -3201,8 +3201,9 @@ function seatLoops(plan: RenderPlan, node: AssembledNode, nodeMap: NodeMap): str
 }
 function optionDefaultFills(plan: RenderPlan, node: AssembledNode, choices: ChoiceNames): string[] {
 	const kind = node.kind;
-	return renderSlotModelOf(node)
-		.named.filter(isPrepareFilled)
+	const slotModel = renderSlotModelOf(node);
+	return [...slotModel.named, ...slotModel.unnamed]
+		.filter(isPrepareFilled)
 		.map((slot) => {
 			const site = plan.spacingSites.find(
 				(candidate) =>

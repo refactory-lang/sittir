@@ -178,6 +178,15 @@ export const build: PortableBuildTable = {
 		yield: 'direct',
 		'yield.fromClause': 'direct'
 	},
+	options: {
+		floatLeadingPoint: ['marker'],
+		floatPoint: ['marker'],
+		floatScientific: ['marker'],
+		forInClause: ['trailingComma'],
+		integerBinary: ['prefix'],
+		integerHex: ['prefix'],
+		integerOctal: ['prefix']
+	},
 	paths: {
 		'argument.named': {
 			root: true,
@@ -3602,6 +3611,53 @@ export const build: PortableBuildTable = {
 				}
 			]
 		},
+		'element.comparator.comparison.not_equal.legacy': {
+			root: true,
+			arms: [
+				{
+					kind: 300,
+					seated: 'config',
+					members: [
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'primaryExpression'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [300, 'primaryExpression'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
+										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'operators'
+								}
+							],
+							kind: 114
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
 		'element.comparator.identity.is': {
 			root: true,
 			arms: [
@@ -6195,6 +6251,85 @@ export const build: PortableBuildTable = {
 								}
 							],
 							kind: 111
+						}
+					],
+					flags: {},
+					when: []
+				}
+			]
+		},
+		'expression.binary.comparison.not_equal.legacy': {
+			root: true,
+			arms: [
+				{
+					kind: 213,
+					builder: 'comparisonOperator',
+					members: [
+						{
+							name: 'left',
+							steps: [
+								{
+									key: 'left'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [213, 'left'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
+										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						},
+						{
+							name: 'right',
+							steps: [
+								{
+									key: 'comparators',
+									many: true
+								},
+								{
+									key: 'primaryExpression'
+								}
+							],
+							multiple: false,
+							seats: [
+								{
+									at: [300, 'primaryExpression'],
+									kinds: [
+										1, 63, 69, 70, 71, 90, 91, 92, 93, 94, 95, 96, 97, 98, 201, 206, 209, 210, 221, 222, 224, 233, 234,
+										235, 236, 238, 239, 240, 241, 242, 247, 248, 255, 256, 257, 283
+									],
+									leaf: 'identifier',
+									texts: [1],
+									pattern: {
+										source: '^(?:(?:[_\\p{XID_Start}][_\\p{XID_Continue}]*))$',
+										flags: 'u'
+									}
+								}
+							]
+						}
+					],
+					presets: [
+						{
+							steps: [
+								{
+									key: 'comparators',
+									many: true
+								},
+								{
+									key: 'operators'
+								}
+							],
+							kind: 114
 						}
 					],
 					flags: {},

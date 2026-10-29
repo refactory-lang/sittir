@@ -957,6 +957,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		218: ['terminator'],
 		221: ['terminator'],
 		222: ['terminator'],
+		223: ['terminator'],
 		224: ['terminator'],
 		225: ['terminator'],
 		245: ['terminator'],
@@ -966,6 +967,7 @@ export const jsonFacts: NodeJSONFacts = Object.freeze({
 		302: ['terminator'],
 		317: ['terminator'],
 		324: ['terminator'],
+		374: ['content'],
 		399: ['terminator'],
 		402: ['terminator'],
 		403: ['terminator'],
@@ -1371,8 +1373,8 @@ export const structure: StructureTable = Object.freeze({
 	},
 	223: {
 		kind: 'debugger_statement',
-		required: [['_terminator', 'terminator']],
-		kindIds: [['_terminator', 'DebuggerStatement.terminator', [22, 174]]]
+		kindIds: [['_terminator', 'DebuggerStatement.terminator', [22, 174]]],
+		config: ['terminator']
 	},
 	224: {
 		kind: 'return_statement',
@@ -2871,14 +2873,10 @@ export const structure: StructureTable = Object.freeze({
 	},
 	374: {
 		kind: 'constraint',
-		required: [
-			['_content', 'content'],
-			['_bounds', 'bounds']
-		],
+		required: [['_bounds', 'bounds']],
 		single: [['_bounds', 'Constraint.bounds']],
 		nodeOnly: [['_bounds', 'Constraint.bounds', 'a built Type', [338]]],
-		kindIds: [['_content', 'Constraint.content', [55, 70]]],
-		config: ['content', 'bounds']
+		kindIds: [['_content', 'Constraint.content', [55, 70]]]
 	},
 	375: {
 		kind: 'construct_signature',

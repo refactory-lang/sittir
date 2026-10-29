@@ -1334,21 +1334,23 @@ function _buildContinueStatement(
 	return stampBuilt(node) as unknown as T.ContinueStatement.Bound;
 }
 
-export function buildDebuggerStatement<V extends Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>>(
-	value: V & RefuseUndeclared<V>
-): T.DebuggerStatement.Bound;
 export function buildDebuggerStatement(
-	value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>
+	config: Partial<T.DebuggerStatement.Config> = {},
+	options?: T.DebuggerStatement.Options
 ): T.DebuggerStatement.Bound {
-	const _terminator = kindIdStorage<NonNullable<T.DebuggerStatement['_terminator']>>(value);
+	currentHandle()?.admit(TSKindId.DebuggerStatement, [config]);
+	const _terminator = coerceKindEnumStorage<NonNullable<T.DebuggerStatement['_terminator']>>(options?.terminator, [
+		['\n', TSKindId.AutomaticSemicolon] as const,
+		[';', TSKindId.Semi] as const
+	]);
 	const handle = currentHandle();
 	const node = {
 		$type: TSKindId.DebuggerStatement as const,
 		$named: true as const,
 		_terminator,
 		$with: {
-			terminator: (value: Admit<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>) =>
-				rebuilt(node, handle, () => buildDebuggerStatement(value))
+			terminator: (spelling: TSKindId.AutomaticSemicolon | TSKindId.Semi) =>
+				rebuilt(node, handle, () => buildDebuggerStatement(config, { ...options, terminator: spelling }))
 		},
 		terminator: () => _terminator,
 		$render: () => renderText(handle, node),
@@ -7164,15 +7166,21 @@ export function buildDefaultType(value: Admit<T.Type | T.TypeIdentifier.Types>):
 	return stampBuilt(node) as unknown as T.DefaultType.Bound;
 }
 
-export function buildConstraint<BoundsSlot extends T.Constraint.Config['bounds']>(
-	config: RefusingConfig<T.Constraint.Config, { bounds: BoundsSlot }>
+export function buildConstraint<V extends Admit<T.Type | T.TypeIdentifier.Types>>(
+	value: V & RefuseUndeclared<V>,
+	options?: T.Constraint.Options
 ): T.Constraint.Bound;
-export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound {
-	currentHandle()?.admit(TSKindId.Constraint, [config]);
-	const _content = kindIdStorage<NonNullable<T.Constraint['_content']>>(config.content);
+export function buildConstraint(
+	value: Admit<T.Type | T.TypeIdentifier.Types>,
+	options?: T.Constraint.Options
+): T.Constraint.Bound {
+	const _content = coerceKindEnumStorage<NonNullable<T.Constraint['_content']>>(options?.content, [
+		['extends', TSKindId.ExtendsKeyword] as const,
+		[':', TSKindId.Colon] as const
+	]);
 	const _bounds = admitAliasContent<NonNullable<T.Constraint['_bounds']>>(
 		rejectReservedText(
-			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(config.bounds),
+			kindIdStorage<NonNullable<T.Constraint['_bounds']>>(value),
 			'Constraint.bounds',
 			TSKindId.Identifier,
 			_reservedWords_buildIdentifier
@@ -7186,10 +7194,10 @@ export function buildConstraint(config: T.Constraint.Config): T.Constraint.Bound
 		_content,
 		_bounds,
 		$with: {
-			content: (value: Admit<NonNullable<T.Constraint.Config>['content']>) =>
-				rebuilt(node, handle, () => buildConstraint({ ...config, content: value })),
-			bounds: (value: Admit<NonNullable<T.Constraint.Config>['bounds']>) =>
-				rebuilt(node, handle, () => buildConstraint({ ...config, bounds: value }))
+			bounds: (value: Admit<NonNullable<T.Type | T.TypeIdentifier.Types>>) =>
+				rebuilt(node, handle, () => buildConstraint(value, options)),
+			content: (spelling: TSKindId.ExtendsKeyword | TSKindId.Colon) =>
+				rebuilt(node, handle, () => buildConstraint(value, { ...options, content: spelling }))
 		},
 		content: () => _content,
 		bounds: () => hydrateStoredSlot(node, '_bounds'),

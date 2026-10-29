@@ -13,6 +13,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
 	GrammarTypeMap,
@@ -3497,7 +3498,7 @@ export interface DebuggerStatement {
 		readonly terminator: KindEnum<'\n' | ';', TSKindId.AutomaticSemicolon | TSKindId.Semi>;
 	};
 	readonly __slotHints__?: {
-		readonly terminator: SlotHint<NonNullable<TSKindId.AutomaticSemicolon | TSKindId.Semi>>;
+		readonly terminator: SlotHint<NonNullable<T.DebuggerStatement.Options>['terminator']>;
 	};
 	readonly terminator: () => number;
 }
@@ -7529,6 +7530,7 @@ export interface TypeParameter {
 	};
 	readonly __looseHints__?: {
 		readonly name: readonly Identifier[];
+		readonly constraint?: readonly ('extends' | ':')[];
 		readonly default?: readonly Type[];
 	};
 	readonly __slotHints__?: {
@@ -7625,8 +7627,8 @@ export interface Constraint {
 			| Type;
 	};
 	readonly __slotHints__?: {
-		readonly content: SlotHint<NonNullable<T.Constraint.Config>['content']>;
-		readonly bounds: SlotHint<NonNullable<T.Constraint.Config>['bounds']>;
+		readonly bounds: SlotHint<NonNullable<T.Type | T.TypeIdentifier.Types>>;
+		readonly content: SlotHint<NonNullable<T.Constraint.Options>['content']>;
 	};
 	readonly content: () => number;
 	readonly bounds: () => Type;
@@ -13049,6 +13051,7 @@ export namespace Constraint {
 			readonly after?: LayoutKindId;
 			readonly before?: LayoutKindId;
 			readonly colon?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
+			readonly content?: TSKindId.ExtendsKeyword | TSKindId.Colon;
 			readonly extendsKeyword?: { readonly after?: LayoutKindId; readonly before?: LayoutKindId };
 		};
 	}
@@ -14457,7 +14460,7 @@ export interface DebuggerStatementNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	DebuggerStatement.Bound,
-	'terminator',
+	never,
 	TSKindId.DebuggerStatement,
 	DebuggerStatement.Parsed,
 	never
@@ -16081,7 +16084,7 @@ export interface ConstraintNs extends NodeNs<
 	LeafStringMap,
 	NamespaceMap,
 	Constraint.Bound,
-	never,
+	'bounds',
 	TSKindId.Constraint,
 	Constraint.Parsed,
 	never
@@ -18897,7 +18900,7 @@ export namespace ImportStatement {
 	export type Loose = OmitEach<LooseFor<TSKindId.ImportStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ImportStatement>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ImportStatement>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.ImportStatement>, 'terminator'>,
 		options?: T.ImportStatement.Options
 	];
 	export type LooseArgs = [config: T.ImportStatement.Loose, options?: T.ImportStatement.Options];
@@ -19107,7 +19110,7 @@ export namespace LexicalDeclaration {
 	export type Loose = OmitEach<LooseFor<TSKindId.LexicalDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.LexicalDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.LexicalDeclaration>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.LexicalDeclaration>, 'terminator'>,
 		options?: T.LexicalDeclaration.Options
 	];
 	export type LooseArgs = [config: T.LexicalDeclaration.Loose, options?: T.LexicalDeclaration.Options];
@@ -19142,7 +19145,7 @@ export namespace UsingDeclaration {
 	export type Loose = OmitEach<LooseFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.UsingDeclaration>, 'automaticSemicolon'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
+		config: OmitRegistered<ConfigOf<T.UsingDeclaration>, 'automaticSemicolon'>,
 		options?: T.UsingDeclaration.Options
 	];
 	export type LooseArgs = [config: T.UsingDeclaration.Loose, options?: T.UsingDeclaration.Options];
@@ -19365,7 +19368,10 @@ export namespace DoStatement {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.DoStatement>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.DoStatement>, 'terminator'>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.DoStatement>, 'terminator'>, options?: T.DoStatement.Options];
+	export type BuildArgs = [
+		config: OmitRegistered<ConfigOf<T.DoStatement>, 'terminator'>,
+		options?: T.DoStatement.Options
+	];
 	export type LooseArgs = [config: T.DoStatement.Loose, options?: T.DoStatement.Options];
 	export type Kind = TSKindId.DoStatement;
 }
@@ -19472,7 +19478,8 @@ export namespace ContinueStatement {
 	export type Kind = TSKindId.ContinueStatement;
 }
 export namespace DebuggerStatement {
-	export type Config = ConfigFor<TSKindId.DebuggerStatement>;
+	export type Config = OmitEach<ConfigFor<TSKindId.DebuggerStatement>, 'terminator'>;
+	export type Options = { readonly terminator?: TSKindId.AutomaticSemicolon | TSKindId.Semi };
 	export interface Bound extends BoundOf<T.DebuggerStatement, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.DebuggerStatement['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -19489,10 +19496,13 @@ export namespace DebuggerStatement {
 		>;
 		readonly $snapshot: () => Snapshot<T.DebuggerStatement['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.DebuggerStatement>;
-	export type LooseConfig = LooseConfigFor<TSKindId.DebuggerStatement>;
-	export type BuildArgs = [value: Admit<TSKindId.AutomaticSemicolon | TSKindId.Semi>];
-	export type LooseArgs = [value: T.DebuggerStatement.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.DebuggerStatement>, 'terminator'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.DebuggerStatement>, 'terminator'>;
+	export type BuildArgs = [
+		config?: Partial<OmitRegistered<ConfigOf<T.DebuggerStatement>, 'terminator'>>,
+		options?: T.DebuggerStatement.Options
+	];
+	export type LooseArgs = [config?: T.DebuggerStatement.Loose, options?: T.DebuggerStatement.Options];
 	export type Kind = TSKindId.DebuggerStatement;
 }
 export namespace ReturnStatement {
@@ -20036,7 +20046,7 @@ export namespace ClassDeclaration {
 	export type Loose = OmitEach<LooseFor<TSKindId.ClassDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ClassDeclaration>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.ClassDeclaration>, 'terminator'>,
 		options?: T.ClassDeclaration.Options
 	];
 	export type LooseArgs = [config: T.ClassDeclaration.Loose, options?: T.ClassDeclaration.Options];
@@ -20114,7 +20124,7 @@ export namespace FunctionDeclaration {
 	export type Loose = OmitEach<LooseFor<TSKindId.FunctionDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.FunctionDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.FunctionDeclaration>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.FunctionDeclaration>, 'terminator'>,
 		options?: T.FunctionDeclaration.Options
 	];
 	export type LooseArgs = [config: T.FunctionDeclaration.Loose, options?: T.FunctionDeclaration.Options];
@@ -20167,7 +20177,7 @@ export namespace GeneratorFunctionDeclaration {
 	export type Loose = OmitEach<LooseFor<TSKindId.GeneratorFunctionDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.GeneratorFunctionDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.GeneratorFunctionDeclaration>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.GeneratorFunctionDeclaration>, 'terminator'>,
 		options?: T.GeneratorFunctionDeclaration.Options
 	];
 	export type LooseArgs = [
@@ -21012,7 +21022,7 @@ export namespace FunctionSignature {
 	export type Loose = OmitEach<LooseFor<TSKindId.FunctionSignature>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.FunctionSignature>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.FunctionSignature>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.FunctionSignature>, 'terminator'>,
 		options?: T.FunctionSignature.Options
 	];
 	export type LooseArgs = [config: T.FunctionSignature.Loose, options?: T.FunctionSignature.Options];
@@ -21381,7 +21391,10 @@ export namespace ImportAlias {
 	}
 	export type Loose = OmitEach<LooseFor<TSKindId.ImportAlias>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ImportAlias>, 'terminator'>;
-	export type BuildArgs = [config: OmitEach<ConfigOf<T.ImportAlias>, 'terminator'>, options?: T.ImportAlias.Options];
+	export type BuildArgs = [
+		config: OmitRegistered<ConfigOf<T.ImportAlias>, 'terminator'>,
+		options?: T.ImportAlias.Options
+	];
 	export type LooseArgs = [config: T.ImportAlias.Loose, options?: T.ImportAlias.Options];
 	export type Kind = TSKindId.ImportAlias;
 }
@@ -21584,7 +21597,7 @@ export namespace TypeAliasDeclaration {
 	export type Loose = OmitEach<LooseFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.TypeAliasDeclaration>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.TypeAliasDeclaration>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.TypeAliasDeclaration>, 'terminator'>,
 		options?: T.TypeAliasDeclaration.Options
 	];
 	export type LooseArgs = [config: T.TypeAliasDeclaration.Loose, options?: T.TypeAliasDeclaration.Options];
@@ -22643,7 +22656,8 @@ export namespace DefaultType {
 	export type Kind = TSKindId.DefaultType;
 }
 export namespace Constraint {
-	export type Config = ConfigFor<TSKindId.Constraint>;
+	export type Config = OmitEach<ConfigFor<TSKindId.Constraint>, 'content'>;
+	export type Options = { readonly content?: TSKindId.ExtendsKeyword | TSKindId.Colon };
 	export interface Bound extends BoundOf<T.Constraint, BoundByKindId>, NodeMethodsOf, HoldsSource {
 		readonly $type: T.Constraint['$type'];
 		readonly $with: BoundWithNode<this, BoundByKindId>;
@@ -22660,10 +22674,10 @@ export namespace Constraint {
 		>;
 		readonly $snapshot: () => Snapshot<T.Constraint['$type']>;
 	}
-	export type Loose = LooseFor<TSKindId.Constraint>;
-	export type LooseConfig = LooseConfigFor<TSKindId.Constraint>;
-	export type BuildArgs = [config: ConfigOf<T.Constraint>];
-	export type LooseArgs = [config: T.Constraint.Loose];
+	export type Loose = OmitEach<LooseFor<TSKindId.Constraint>, 'content'>;
+	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.Constraint>, 'content'>;
+	export type BuildArgs = [value: Admit<T.Type | T.TypeIdentifier.Types>, options?: T.Constraint.Options];
+	export type LooseArgs = [value: T.Constraint.Loose, options?: T.Constraint.Options];
 	export type Kind = TSKindId.Constraint;
 }
 export namespace ConstructSignature {
@@ -23416,7 +23430,7 @@ export namespace AmbientDeclarationModule {
 	export type Loose = OmitEach<LooseFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.AmbientDeclarationModule>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.AmbientDeclarationModule>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.AmbientDeclarationModule>, 'terminator'>,
 		options?: T.AmbientDeclarationModule.Options
 	];
 	export type LooseArgs = [config: T.AmbientDeclarationModule.Loose, options?: T.AmbientDeclarationModule.Options];
@@ -23751,7 +23765,7 @@ export namespace NumberFloatPoint {
 	>;
 	export type BuildArgs = [
 		config: WidenSlots<
-			OmitEach<ConfigOf<T.NumberFloatPoint>, 'marker'>,
+			OmitRegistered<ConfigOf<T.NumberFloatPoint>, 'marker'>,
 			{ integer: number | bigint; fraction: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.NumberFloatPoint.Options
@@ -23796,7 +23810,7 @@ export namespace NumberFloatLeadingPoint {
 	>;
 	export type BuildArgs = [
 		config: WidenSlots<
-			OmitEach<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
+			OmitRegistered<ConfigOf<T.NumberFloatLeadingPoint>, 'marker'>,
 			{ fraction: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.NumberFloatLeadingPoint.Options
@@ -23841,7 +23855,7 @@ export namespace NumberFloatScientific {
 	>;
 	export type BuildArgs = [
 		config: WidenSlots<
-			OmitEach<ConfigOf<T.NumberFloatScientific>, 'marker'>,
+			OmitRegistered<ConfigOf<T.NumberFloatScientific>, 'marker'>,
 			{ integer: number | bigint; exponent: number | bigint }
 		>,
 		options?: T.NumberFloatScientific.Options
@@ -24075,7 +24089,7 @@ export namespace ClassBodyMemberMethod {
 	export type Loose = OmitEach<LooseFor<TSKindId.ClassBodyMemberMethod>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ClassBodyMemberMethod>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ClassBodyMemberMethod>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.ClassBodyMemberMethod>, 'terminator'>,
 		options?: T.ClassBodyMemberMethod.Options
 	];
 	export type LooseArgs = [config: T.ClassBodyMemberMethod.Loose, options?: T.ClassBodyMemberMethod.Options];
@@ -24648,7 +24662,7 @@ export namespace ExportStatementDefaultFrom {
 	export type Loose = OmitEach<LooseFor<TSKindId.ExportStatementDefaultFrom>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ExportStatementDefaultFrom>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ExportStatementDefaultFrom>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.ExportStatementDefaultFrom>, 'terminator'>,
 		options?: T.ExportStatementDefaultFrom.Options
 	];
 	export type LooseArgs = [config: T.ExportStatementDefaultFrom.Loose, options?: T.ExportStatementDefaultFrom.Options];
@@ -24955,7 +24969,7 @@ export namespace ForHeaderLetConstKind {
 	export type Loose = OmitEach<LooseFor<TSKindId.ForHeaderLetConstKind>, 'terminator'>;
 	export type LooseConfig = OmitEach<LooseConfigFor<TSKindId.ForHeaderLetConstKind>, 'terminator'>;
 	export type BuildArgs = [
-		config: OmitEach<ConfigOf<T.ForHeaderLetConstKind>, 'terminator'>,
+		config: OmitRegistered<ConfigOf<T.ForHeaderLetConstKind>, 'terminator'>,
 		options?: T.ForHeaderLetConstKind.Options
 	];
 	export type LooseArgs = [config: T.ForHeaderLetConstKind.Loose, options?: T.ForHeaderLetConstKind.Options];

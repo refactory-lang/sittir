@@ -4152,6 +4152,19 @@
               "slot": "receiver"
             }
           ]
+        },
+        {
+          "name": "abstract",
+          "route": "presence",
+          "via": [],
+          "token": "abstract",
+          "path": [
+            {
+              "owner": "constructor_type",
+              "slot": "abstract"
+            }
+          ],
+          "flag": true
         }
       ]
     },

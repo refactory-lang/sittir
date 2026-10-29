@@ -298,3 +298,32 @@ describe('the portable build table', () => {
 		expect(arms.indexOf(defaults[0]!)).toBeLessThan(arms.findIndex((arm) => arm.when.some((test) => 'variant' in test && !('default' in test))));
 	});
 });
+
+describe('the portable build of a registered option', () => {
+	const textSeat = (key: string) => ({ name: key, steps: [{ key }], multiple: false, seats: [{ at: [1, key] as const, kinds: [] }] });
+	const table = (options?: PortableBuildTable['options']): PortableBuildTable => ({
+		builders: { holder: 'direct' },
+		...(options === undefined ? {} : { options }),
+		paths: { 'statement.held': { root: true, arms: [{ kind: 1, builder: 'holder', members: [textSeat('value'), textSeat('spelling')], presets: [], flags: {}, when: [] }] } }
+	});
+	const build = (options: PortableBuildTable['options'], structure: Readonly<Record<string, string>>) => {
+		const calls: unknown[][] = [];
+		const builder = portableBuilder({
+			language: 'test',
+			table: table(options),
+			builders: { holder: (...args: unknown[]) => (calls.push(args), { $type: 1 }) },
+			kindName: () => undefined,
+			readsAs: () => true
+		});
+		builder({ $path: 'statement.held', ...structure });
+		return calls;
+	};
+
+	it('passes a member its builder takes as an option in the trailing options, and the rest as its input', () => {
+		expect(build({ holder: ['spelling'] }, { value: 'v', spelling: 's' })).toEqual([['v', { spelling: 's' }]]);
+	});
+
+	it('passes no options when the structure states none of them', () => {
+		expect(build({ holder: ['spelling'] }, { value: 'v' })).toEqual([['v']]);
+	});
+});

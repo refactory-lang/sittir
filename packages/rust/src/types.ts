@@ -13,6 +13,7 @@ import type {
 	KindEnum,
 	NodeOfNamespaces,
 	OmitEach,
+	OmitRegistered,
 	NoneOf,
 	WithoutGroup,
 	GrammarTypeMap,
@@ -21971,10 +21972,10 @@ export namespace LastMatchArm {
 	export type BuildArgs = [
 		config:
 			| WithoutGroup<
-					OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
+					OmitRegistered<ConfigOf<T.LastMatchArm>, 'trailingComma'>,
 					OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>
 			  >
-			| (OmitEach<NonNullable<OmitEach<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'match'> &
+			| (OmitEach<NonNullable<OmitRegistered<ConfigOf<T.LastMatchArm>, 'trailingComma'>>, 'match'> &
 					(T.MatchPattern.BuildArgs[0] | NoneOf<OmitEach<NonNullable<T.MatchPattern.Config>, '$type'>>)),
 		options?: T.LastMatchArm.Options
 	];

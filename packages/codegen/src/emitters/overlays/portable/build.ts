@@ -40,6 +40,7 @@ import { interiorSlotGuards, numberShapes, numericSlotKeys } from '../../interio
 import { leafReDeclaration } from '../../factories.ts';
 import { findKindEntry, fixedTextKinds, type KindEnumEntry } from '../../kind-discriminant.ts';
 import { membershipKindsOf } from '../../membership.ts';
+import { registeredSlots } from '../../shared.ts';
 
 export type PickDiagnosticCode =
 	| 'portable-pick-undecided'
@@ -96,6 +97,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	const fixedText = new Map(fixedTextKinds(nodeMap, kindEntries));
 	const numeric = numberShapes(nodeMap);
 	const builders = new Map<string, PortableCallShape>();
+	const optionKeys = new Map<string, readonly string[]>();
 	const nodeOf = (kind: string): AssembledNode | undefined => nodeMap.nodes.get(modelNode(model, kind)?.kind ?? kind);
 	const slotOf = (owner: string, slot: string): AssembledNonterminal | undefined => nodeOf(owner)?.slots.find((s) => s.name === slot);
 	const storageName = (kind: string): string => modelNode(model, kind)?.kind ?? kind;
@@ -117,7 +119,10 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 		if (node === undefined || path === undefined || fixedText.has(node.kind)) return undefined;
 		const shape = shapes[node.kind];
 		if (shape === undefined) throw new Error(`portable build: ${kind} has a builder path but no call shape`);
-		return register(path.join('.'), shape);
+		const key = register(path.join('.'), shape);
+		const options = registeredSlots(node).map((slot) => slot.propertyName);
+		if (options.length > 0) optionKeys.set(key, options);
+		return key;
 	};
 	const builderOf = (kind: string): string | undefined => {
 		const up = mountHolders.get(storageName(kind));
@@ -834,6 +839,7 @@ export function portableBuildTable({ routes, model, nodeMap, kindEntries, flagPl
 	return {
 		table: {
 			builders: Object.fromEntries([...builders].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))),
+			...(optionKeys.size === 0 ? {} : { options: Object.fromEntries([...optionKeys].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))) }),
 			paths,
 			...(Object.keys(values).length === 0 ? {} : { values })
 		},
