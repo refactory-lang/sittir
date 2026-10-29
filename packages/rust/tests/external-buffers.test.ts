@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createEngine } from '@sittir/common';
 
-const REFUSED =
-	"arena node storage needs external array buffers, which this runtime does not allow; use nodeStorage: 'object'";
+const REFUSED = "arena node storage needs external array buffers, which this runtime does not allow; use nodeStorage: 'object'";
 
 describe('a runtime that does not allow external array buffers', () => {
 	afterEach(() => {

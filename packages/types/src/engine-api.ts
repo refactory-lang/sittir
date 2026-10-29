@@ -1,11 +1,4 @@
-import type {
-	AnyUntypedNode,
-	ErrorNode,
-	ErrorRegion,
-	GrammarTriviaEntry,
-	TriviaItem,
-	TriviaSetter
-} from './core-types.ts';
+import type { AnyUntypedNode, ErrorNode, ErrorRegion, GrammarTriviaEntry, TriviaItem, TriviaSetter } from './core-types.ts';
 import type { IndentOption } from './options.ts';
 import type { Admit, HoldsSource, HoldsTree, Snapshot } from './node-surface.ts';
 import type { IsExactly } from './type-utils.ts';
@@ -161,11 +154,7 @@ export interface LanguageAPI {
 export type LanguageIdentity<API extends LanguageAPI> = Omit<Language<API>, 'createEngine'>;
 
 /** The options `createEngine` takes: the engine options, with the `render` block checked against the language's render options. */
-export type CreateEngineOptions<
-	API extends LanguageAPI,
-	R = API['options'],
-	M extends BuilderMode = 'default'
-> = EngineOptions<API, M> & {
+export type CreateEngineOptions<API extends LanguageAPI, R = API['options'], M extends BuilderMode = 'default'> = EngineOptions<API, M> & {
 	readonly render?: R & RenderOptionsCheck<API, R>;
 };
 
@@ -229,9 +218,7 @@ export type NodeStorageOptions =
 	| (NodeStorageKeys & { readonly nodeStorage?: 'arena'; readonly nodeConstruction?: 'record' })
 	| (NodeStorageKeys & { readonly nodeStorage: 'object'; readonly nodeConstruction?: 'object' });
 
-export type NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> = {
-	readonly options?: O;
-} & NodeStorageOptions;
+export type NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> = { readonly options?: O } & NodeStorageOptions;
 
 /** The structure facts the generated types prove for one kind's built nodes, by slot storage key. An engine constructed with `verifyStructure: 'runtime'` checks them when a node is built or rebuilt. */
 export interface StructureRow {
@@ -241,12 +228,7 @@ export interface StructureRow {
 	/** `[storageKey, label]`: the list holds at least one item. */
 	readonly nonEmpty?: readonly (readonly [storageKey: string, label: string])[];
 	/** `[storageKey, label, expected, kinds]`: the slot holds a built node, a coordinate or a kind id, never bare text or any other value; when `kinds` is given, a built node of one of those kinds (membership, so a supertype admits its members). */
-	readonly nodeOnly?: readonly (readonly [
-		storageKey: string,
-		label: string,
-		expected: string,
-		kinds?: readonly number[]
-	])[];
+	readonly nodeOnly?: readonly (readonly [storageKey: string, label: string, expected: string, kinds?: readonly number[]])[];
 	/** `[storageKey, label]`: the slot holds a boolean, or nothing. */
 	readonly booleans?: readonly (readonly [storageKey: string, label: string])[];
 	/** `[storageKey, label, kinds]`: the slot holds the kind id of one of `kinds`, or nothing. */
@@ -337,9 +319,7 @@ export type ApiSurface = 'default' | 'strict' | 'portable';
 export type BuilderMode = Exclude<ApiSurface, 'portable'>;
 
 /** The builder table an engine of mode `M` builds with; a portable engine has none. */
-export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M extends BuilderMode
-	? API['build'][M]
-	: never;
+export type BuildSurface<API extends LanguageAPI, M extends ApiSurface> = M extends BuilderMode ? API['build'][M] : never;
 
 /** The facet `engine.query` returns: the node's own `$query` result, or a leaf's empty facet. */
 export type FacetOf<N> = N extends { readonly $query: () => infer F } ? F : QueryFacet<N, {}>;
@@ -418,8 +398,7 @@ export interface Engine<API extends LanguageAPI, in out M extends ApiSurface = '
 	 */
 	readonly query: <N extends API['node']>(node: N) => FacetOf<N>;
 	readonly read: (path: string, options?: ParseOptions) => Promise<API['root']>;
-	readonly render: RenderCall<API, Draft<API>> &
-		RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
+	readonly render: RenderCall<API, Draft<API>> & RenderCall<API, StoredInput<API> | RenderBuilder<API, M> | SnapshotInput<API>>;
 	readonly create: (path: string, fn: (build: BuildSurface<API, M>) => API['root']) => Pending;
 	readonly write: (path: string, node: API['root']) => Pending;
 	/**
@@ -455,31 +434,22 @@ type Draft<API extends LanguageAPI> = Renderable<Extract<API['node']['$type'], n
 
 type StoredInput<API extends LanguageAPI> = API['node'] | API['fixedTextKindId'];
 
-type RenderBuilder<API extends LanguageAPI, M extends ApiSurface = 'default'> = (
-	build: BuildSurface<API, M>
-) => API['node'];
+type RenderBuilder<API extends LanguageAPI, M extends ApiSurface = 'default'> = (build: BuildSurface<API, M>) => API['node'];
 
 type SnapshotInput<API extends LanguageAPI> = Snapshot<Extract<API['node']['$type'], number>>;
 
 type RenderInput<API extends LanguageAPI> = StoredInput<API> | Draft<API> | SnapshotInput<API>;
 
-export type RenderArgument<API extends LanguageAPI, M extends ApiSurface = 'default'> =
-	| RenderInput<API>
-	| RenderBuilder<API, M>;
+export type RenderArgument<API extends LanguageAPI, M extends ApiSurface = 'default'> = RenderInput<API> | RenderBuilder<API, M>;
 
 export type RenderOptionsCheck<API extends LanguageAPI, R, Extra extends PropertyKey = never> =
 	IsExactly<R, API['options']> extends true
 		? unknown
-		: IndentOption<
-				R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string,
-				API['indentChar']
-			> & {
+		: IndentOption<R extends { readonly layout?: { readonly indent?: infer I extends string } } ? I : string, API['indentChar']> & {
 				readonly [K in Exclude<keyof R, keyof API['options'] | Extra>]: never;
 			} & LayoutKeysCheck<API, R>;
 
-type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G }
-	? NonNullable<G>
-	: object;
+type DeclaredLayout<API extends LanguageAPI> = API['options'] extends { readonly layout?: infer G } ? NonNullable<G> : object;
 
 type LayoutKeysCheck<API extends LanguageAPI, R> = R extends { readonly layout?: infer L extends object }
 	? { readonly layout?: { readonly [K in Exclude<keyof L, keyof DeclaredLayout<API>>]: never } }
@@ -509,14 +479,10 @@ export interface PortableEngine<API extends PortableLanguageAPI> extends EngineI
 }
 
 /** How options name an engine's mode: the default engine may leave `api` out, and every other mode names itself. */
-export type ApiSelection<M extends ApiSurface> = { readonly api?: M | undefined } & (M extends 'default'
-	? unknown
-	: { readonly api: NoInfer<M> });
+export type ApiSelection<M extends ApiSurface> = { readonly api?: M | undefined } & (M extends 'default' ? unknown : { readonly api: NoInfer<M> });
 
 /** An engine's options. `api` picks the engine's mode, and options of a mode other than the default carry it. */
-export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> &
-	EngineSettings<API> &
-	NodeStorageOptions;
+export type EngineOptions<API extends LanguageAPI, M extends ApiSurface = 'default'> = ApiSelection<M> & EngineSettings<API> & NodeStorageOptions;
 
 /** The options every engine mode takes alike. */
 export interface EngineSettings<API extends LanguageAPI> {
@@ -532,13 +498,13 @@ export interface EngineSettings<API extends LanguageAPI> {
 }
 
 export interface Interceptor<API extends LanguageAPI> {
-	build?(
-		call: { readonly path: readonly string[]; readonly args: readonly unknown[] },
-		next: () => API['node']
-	): API['node'];
+	build?(call: { readonly path: readonly string[]; readonly args: readonly unknown[] }, next: () => API['node']): API['node'];
 	render?(call: { readonly node: RenderInput<API>; readonly options: API['options'] }, next: () => string): string;
 	parse?(call: { readonly source: string }, next: () => API['root']): API['root'];
-	file?(change: FileChange & { readonly verb: 'create' | 'write' }, next: () => Promise<void>): Promise<void>;
+	file?(
+		change: FileChange & { readonly verb: 'create' | 'write' },
+		next: () => Promise<void>
+	): Promise<void>;
 }
 
 export interface Project extends AsyncDisposable {
@@ -562,11 +528,7 @@ export type KindTypes<Keys extends object, NsMap extends object> = {
 export type NodeOfNamespaces<NsMap extends object> = Extract<
 	{
 		[Id in keyof NsMap]: NsMap[Id] extends { readonly Node: infer N; readonly Bound: infer B }
-			? NsMap[Id] extends { readonly Parsed: infer P }
-				? [P] extends [never]
-					? N | B
-					: B | P
-				: N | B
+			? NsMap[Id] extends { readonly Parsed: infer P } ? ([P] extends [never] ? N | B : B | P) : N | B
 			: never;
 	}[keyof NsMap],
 	object

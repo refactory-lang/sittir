@@ -85,15 +85,7 @@ export async function sampleValidationStorage(options: ValidationStorageOptions)
 		peakRssBytes: process.resourceUsage().maxRSS * 1024,
 		...(built === undefined ? {} : { built: { chunks: built.chunks, counts: built.counts } })
 	};
-	return {
-		grammar: options.grammar,
-		storage: options.storage,
-		construction: storage.nodeConstruction,
-		pid: process.pid,
-		corpus,
-		buckets,
-		memory
-	};
+	return { grammar: options.grammar, storage: options.storage, construction: storage.nodeConstruction, pid: process.pid, corpus, buckets, memory };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

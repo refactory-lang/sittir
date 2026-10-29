@@ -13,15 +13,7 @@ import type {
 	ParseOptions,
 	Rendered
 } from '@sittir/types';
-import {
-	decodeTree,
-	readObject,
-	type ChunkWords,
-	type RecordReader,
-	type Siblings,
-	type TreeHandle,
-	type TriviaSideName
-} from './read.ts';
+import { decodeTree, readObject, type ChunkWords, type RecordReader, type Siblings, type TreeHandle, type TriviaSideName } from './read.ts';
 import { holdReadTree, rootEdges, sourceHandleOf, toNodeData, type KindView } from './node-data.ts';
 import { mintTreeToken, registerTree } from './tree-token.ts';
 import type { RecordPosition } from './handle.ts';
@@ -212,13 +204,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	/** The address of the record the parsed cell at `word`, item `item`, of the record at `holder` names: on the first read through it, written `depth` levels down and the cell rewritten to name it. Present when the addon carries the record codec. */
 	readCell?(treeId: number, holder: number, word: number, item: number, depth?: number): number;
 	/** A new zeroed chunk of `length` words of the engine's built arena, over its native memory, its number, and its meta, where its entries' counts are kept, with the chunk it sealed and that chunk's meta, now sized for its entries. Present when the addon carries the record codec. */
-	builtWords?(length: number): {
-		chunk: number;
-		data: WritableWords;
-		meta: Uint8Array;
-		freed: number[];
-		sealed?: { chunk: number; meta: Uint8Array };
-	};
+	builtWords?(length: number): { chunk: number; data: WritableWords; meta: Uint8Array; freed: number[]; sealed?: { chunk: number; meta: Uint8Array } };
 	/** A new zeroed chunk of `length` bytes of the engine's built arena's strings, over its native memory, its number, and its meta, its cell count. Present when the addon carries the record codec. */
 	builtBytes?(length: number): { chunk: number; data: Uint8Array; meta: Uint8Array; freed: number[] };
 	/** One more count of the built entry at `address`, whose count saturated. Present when the addon carries the record codec. */
@@ -233,14 +219,7 @@ export interface NativeEngineLike<TNode = unknown> {
 	coordinate?(treeId: number, index: number): number[];
 	/** The record at `address` rendered as a render root whose `leading` and `trailing` edges have no neighbour. Present when the addon carries the record codec. */
 	renderRecord?(treeId: number, address: number, leading: boolean, trailing: boolean, options?: object): string;
-	renderBuilt?(
-		owner: object,
-		address: number,
-		leading: boolean,
-		trailing: boolean,
-		treeId?: number,
-		options?: object
-	): string;
+	renderBuilt?(owner: object, address: number, leading: boolean, trailing: boolean, treeId?: number, options?: object): string;
 	renderBuiltLeaf?(
 		owner: object,
 		kind: number,
@@ -366,9 +345,7 @@ const ENGINE_FUNCTIONS = [
 
 type TreeFunction = (typeof TREE_FUNCTIONS)[number];
 type EngineFunction = (typeof ENGINE_FUNCTIONS)[number];
-type OnHandle<F> = F extends (...args: infer A) => infer R
-	? { call(handle: EngineHandle, ...args: A): R }['call']
-	: never;
+type OnHandle<F> = F extends (...args: infer A) => infer R ? { call(handle: EngineHandle, ...args: A): R }['call'] : never;
 
 export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstance = NativeEngineInstance> = {
 	SittirEngine: new (options?: { options?: object }) => TEngine;
@@ -376,18 +353,13 @@ export type NativeModuleLike<TNode = unknown, TEngine extends NativeEngineInstan
 	disposeTree(treeId: number): void;
 	/** Trees of this language still held on this thread. Diagnostics only. */
 	liveTreeCount(): number;
-} & Pick<NativeEngineLike<TNode>, TreeFunction> & {
-		readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>>;
-	};
+} & Pick<NativeEngineLike<TNode>, TreeFunction> & { readonly [F in EngineFunction]?: OnHandle<NonNullable<NativeEngineLike<TNode>[F]>> };
 
 /**
  * A new engine of `native`, as {@link NativeEngineLike}: its module's tree functions as they are, and its engine
  * functions bound to the engine's handle.
  */
-export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(
-	native: NativeModuleLike<TNode, TEngine>,
-	options?: { options?: object }
-): NativeEngineLike<TNode> {
+export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(native: NativeModuleLike<TNode, TEngine>, options?: { options?: object }): NativeEngineLike<TNode> {
 	const instance = new native.SittirEngine(options);
 	const { handle } = instance;
 	const engine: Record<string, unknown> = {
@@ -397,8 +369,7 @@ export function nativeEngineOf<TNode, TEngine extends NativeEngineInstance>(
 		dispose: () => instance.dispose()
 	};
 	for (const name of TREE_FUNCTIONS) engine[name] = native[name];
-	for (const name of ENGINE_FUNCTIONS)
-		engine[name] = (native[name] as ((...args: unknown[]) => unknown) | undefined)?.bind(undefined, handle);
+	for (const name of ENGINE_FUNCTIONS) engine[name] = (native[name] as ((...args: unknown[]) => unknown) | undefined)?.bind(undefined, handle);
 	return engine as unknown as NativeEngineLike<TNode>;
 }
 
@@ -444,10 +415,8 @@ export type { ParseOptions };
  * `ParseEngine.parse`, which wraps what these produce. Reach for these only
  * from inside the wrap layer or from validator/diagnostic tooling.
  */
-export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode> extends EngineDiagnostics<
-	TRoot & ParsedRoot,
-	TreeHandle
-> {}
+export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntypedNode>
+	extends EngineDiagnostics<TRoot & ParsedRoot, TreeHandle> {}
 
 /**
  * The render half of the public surface: turning node DATA back into source,
@@ -458,10 +427,7 @@ export interface NativeEngineDiagnostics<TRoot extends AnyUntypedNode = AnyUntyp
  * rendering from dragging in the parse surface, and the module graph acyclic.
  */
 export interface RenderEngine<O extends object = RenderOptionValues, IndentChar extends string = never> {
-	render<const I extends string = string>(
-		node: AnyUntypedNode | number,
-		options?: RenderOptions<O & IndentOption<I, IndentChar>>
-	): Rendered;
+	render<const I extends string = string>(node: AnyUntypedNode | number, options?: RenderOptions<O & IndentOption<I, IndentChar>>): Rendered;
 	/**
 	 * Releases `node`, as its `[Symbol.dispose]` does: the record of a node this engine's builders returned and has not
 	 * been placed since, and with it each record only it held. Any other node is left as it is.
@@ -499,10 +465,7 @@ export interface SittirEngine<
 
 export type { ParsedRoot };
 
-export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = ParsedRead<
-	TRoot & ParsedRoot,
-	TreeHandle
->;
+export type ParseAndReadResult<TRoot extends AnyUntypedNode = AnyUntypedNode> = ParsedRead<TRoot & ParsedRoot, TreeHandle>;
 
 /**
  * Frees a native tree once JavaScript can no longer read from it.
@@ -534,20 +497,9 @@ const diagnosticRoot = {
 	}
 };
 
-function recordReader<TNode>(
-	engine: NativeEngineLike<TNode>,
-	treeId: number,
-	format: CellFormat,
-	readObjectAt: (index: number, depth: number) => TNode
-): RecordReader {
+function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
 	const { readRecord, readCell, chunk, renderRecord, coordinate } = engine;
-	if (
-		readRecord === undefined ||
-		readCell === undefined ||
-		chunk === undefined ||
-		renderRecord === undefined ||
-		coordinate === undefined
-	) {
+	if (readRecord === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
 		throw new Error('arena node storage needs an addon built with the `arena` feature');
 	}
 	const chunks: ChunkWords[] = [];
@@ -578,18 +530,14 @@ function recordReader<TNode>(
 			const end = wordOf(address, format) + length;
 			let words = chunks[n];
 			if (words === undefined || words.length < end) words = chunks[n] = chunk.call(engine, treeId, n);
-			if (words.length < end)
-				throw new Error(
-					`tree ${treeId}'s chunk ${n} holds ${words.length} words, short of a record that ends at word ${end}`
-				);
+			if (words.length < end) throw new Error(`tree ${treeId}'s chunk ${n} holds ${words.length} words, short of a record that ends at word ${end}`);
 			return words;
 		},
 		coordinate(index) {
 			let at = coordinates.get(index);
 			if (at === undefined) {
 				const [kind, end] = coordinate.call(engine, treeId, index);
-				if (kind === undefined || end === undefined)
-					throw new Error(`tree ${treeId}'s coordinate of node ${index} is not a kind and an end`);
+				if (kind === undefined || end === undefined) throw new Error(`tree ${treeId}'s coordinate of node ${index} is not a kind and an end`);
 				at = { kind, end };
 				coordinates.set(index, at);
 			}
@@ -634,13 +582,9 @@ export function createNativeEngine<
 	}
 
 	try {
-		const engine = nativeEngineOf(
-			status.native,
-			options?.options === undefined ? undefined : { options: options.options }
-		);
+		const engine = nativeEngineOf(status.native, options?.options === undefined ? undefined : { options: options.options });
 		if (nodeStorage === 'arena') {
-			if (engine.externalBuffers === undefined)
-				throw new Error('arena node storage needs an addon built with the `arena` feature');
+			if (engine.externalBuffers === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
 			engine.externalBuffers();
 		}
 		const kindView: KindView = {
@@ -654,33 +598,10 @@ export function createNativeEngine<
 			if (built !== undefined) {
 				const changed = rootEdges(node as object);
 				const { renderBuilt, renderBuiltLeaf } = engine;
-				if (renderBuilt === undefined || renderBuiltLeaf === undefined)
-					throw new Error('arena node storage needs an addon built with the `arena` feature');
-				if (built.at !== undefined)
-					return createRenderHandle(() =>
-						renderBuilt.call(
-							engine,
-							built.arena.owner,
-							built.at,
-							changed.leading,
-							changed.trailing,
-							renderTreeOf(node as object),
-							perCall
-						)
-					);
+				if (renderBuilt === undefined || renderBuiltLeaf === undefined) throw new Error('arena node storage needs an addon built with the `arena` feature');
+				if (built.at !== undefined) return createRenderHandle(() => renderBuilt.call(engine, built.arena.owner, built.at, changed.leading, changed.trailing, renderTreeOf(node as object), perCall));
 				const kind = (node as AnyUntypedNode).$type as number;
-				return createRenderHandle(() =>
-					renderBuiltLeaf.call(
-						engine,
-						built.arena.owner,
-						kind,
-						built.arena.placeEntry(node as object, kind, built.text).at,
-						leafWireSides(node as object) ?? null,
-						changed.leading,
-						changed.trailing,
-						perCall
-					)
-				);
+				return createRenderHandle(() => renderBuiltLeaf.call(engine, built.arena.owner, kind, built.arena.placeEntry(node as object, kind, built.text).at, leafWireSides(node as object) ?? null, changed.leading, changed.trailing, perCall));
 			}
 			const record = typeof node === 'number' ? undefined : recordOf(node);
 			if (record !== undefined) {
@@ -725,8 +646,7 @@ export function createNativeEngine<
 				release(node) {
 					const arena = handleArenaOf(node);
 					if (arena === undefined) return;
-					if (arena.owner !== engine.handle)
-						throw new Error('an engine releases only the nodes its own builders returned');
+					if (arena.owner !== engine.handle) throw new Error('an engine releases only the nodes its own builders returned');
 					arena.releaseHandle(node);
 				},
 
@@ -749,8 +669,7 @@ export function createNativeEngine<
 							holdReadTree(node, liveToken);
 							return node;
 						};
-						const records =
-							cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
+						const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
 						const readAt =
 							records === undefined
 								? readObjectAt
@@ -827,19 +746,7 @@ export function nativeBuiltRecords(native: object): BuiltRecords | undefined {
 }
 
 function builtRecordsOf(engine: NativeEngineLike, format: CellFormat, kinds: KindView): BuiltRecords {
-	const {
-		builtTriviaSide,
-		writeBuiltTriviaSide,
-		builtUnitSides,
-		writeBuiltUnitSides,
-		writeBuiltLeafSide,
-		builtLeafSide,
-		copyBuiltSites,
-		builtWords,
-		builtBytes,
-		builtBump,
-		releaseBuilt
-	} = engine;
+	const { builtTriviaSide, writeBuiltTriviaSide, builtUnitSides, writeBuiltUnitSides, writeBuiltLeafSide, builtLeafSide, copyBuiltSites, builtWords, builtBytes, builtBump, releaseBuilt } = engine;
 	if (
 		builtBump === undefined ||
 		releaseBuilt === undefined ||
@@ -879,9 +786,7 @@ export function nativeLanguageEngine<API extends LanguageAPI, IndentChar extends
 ): NativeLanguageEngine<API> {
 	const language: NativeLanguageEngine<API> = {
 		render(node, options) {
-			return options === undefined || Object.keys(options).length === 0
-				? engine.render(node)
-				: engine.render(node, { options });
+			return options === undefined || Object.keys(options).length === 0 ? engine.render(node) : engine.render(node, { options });
 		},
 		parseAndRead(source, options) {
 			return engine.diagnostics.parseAndRead(source, options);

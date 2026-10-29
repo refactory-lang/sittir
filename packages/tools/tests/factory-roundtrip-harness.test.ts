@@ -10,9 +10,7 @@ describe('factory-roundtrip harness', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/common.ts'), 'utf-8');
 		// Argument spelling is not the contract — routing through
 		// `getChildFactoryArgs` instead of hand-filtering the wire is.
-		expect(content).toMatch(
-			/const elements = getChildFactoryArgs\(kind, base, opts\.factorySlots, opts\.factoryFields\);/
-		);
+		expect(content).toMatch(/const elements = getChildFactoryArgs\(kind, base, opts\.factorySlots, opts\.factoryFields\);/);
 		expect(content).toMatch(/directFactoryValue\(kind, base, opts\.factorySlots, opts\.factoryFields\)/);
 		// A direct factory's value is the sole slot resolved from the model's
 		// slot record, falling back to the first child arg.
@@ -26,7 +24,7 @@ describe('factory-roundtrip harness', () => {
 	it('uses metadata-driven child args for spread child-backed factories', () => {
 		const content = readFileSync(resolve(import.meta.dirname, '../src/validate/common.ts'), 'utf-8');
 		expect(content).toMatch(
-			/const elements = getChildFactoryArgs\(kind, base, opts\.factorySlots, opts\.factoryFields\);\s*const options =\s*shape === 'elements'\s*\?\s*separatedListFactoryOptions\(\s*referenceData,\s*opts\.accessorOf,\s*opts\.factorySlots\?\.\[kind\],\s*opts\.omitOptionDefaults === true\s*\)\s*:\s*registered;/
+			/const elements = getChildFactoryArgs\(kind, base, opts\.factorySlots, opts\.factoryFields\);\s*const options = shape === 'elements' \? separatedListFactoryOptions\(referenceData, opts\.accessorOf, opts\.factorySlots\?\.\[kind\], opts\.omitOptionDefaults === true\) : registered;/
 		);
 		expect(content).toMatch(/return options !== undefined \? \[options, \.\.\.elements\] : elements;\s*}/);
 		expect(content).not.toMatch(/const namedChildren = \(readData\.\$children \?\? \[\]\)\.filter/);

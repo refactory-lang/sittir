@@ -18,12 +18,7 @@ import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { NodeConstruction, NodeStorage } from '@sittir/types';
 import { nodeStorageOf } from '@sittir/common/engine';
-import {
-	cachedNativeEngineProfile,
-	useValidationNodeStorage,
-	validationStorage,
-	type ValidatorSkip
-} from './validate/common.ts';
+import { cachedNativeEngineProfile, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from './validate/report-diff.ts';
@@ -118,18 +113,8 @@ export async function collectGrammarCounts(grammar: GrammarName, backend: Backen
 }
 
 export function formatGrammarCounts(counts: GrammarCounts): string {
-	const {
-		grammar,
-		backend,
-		from,
-		coverage,
-		readRenderParse,
-		readRenderParseShallow,
-		factoryStorage,
-		irStorage,
-		builtRenderParse,
-		layoutRuns
-	} = counts;
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns } =
+		counts;
 	const lines = [
 		`${grammar}/${formatBackendLabel(backend)}:`,
 		`  fromPass=${from.pass}    fromTotal=${from.total}    fromTrivia=${from.trivia.length}`,
@@ -188,10 +173,7 @@ export function formatGrammarCounts(counts: GrammarCounts): string {
 	if (fromFails) lines.push(fromFails);
 	const layoutFails = formatFirstFailures('layout-runs', [
 		...layoutRuns.refused.map((r) => ({ label: r.entry, message: r.message })),
-		...layoutRuns.unreached.map((r) => ({
-			label: r.entry,
-			message: `${r.side} of ${r.index} at ${r.start}..${r.end} ${JSON.stringify(r.context)}`
-		}))
+		...layoutRuns.unreached.map((r) => ({ label: r.entry, message: `${r.side} of ${r.index} at ${r.start}..${r.end} ${JSON.stringify(r.context)}` }))
 	]);
 	if (layoutFails) lines.push(layoutFails);
 	return lines.join('\n');
@@ -216,18 +198,8 @@ export function formatFirstFailures(
 }
 
 export function toValidationRun(counts: GrammarCounts): ValidationRun {
-	const {
-		grammar,
-		backend,
-		from,
-		coverage,
-		readRenderParse,
-		readRenderParseShallow,
-		factoryStorage,
-		irStorage,
-		builtRenderParse,
-		layoutRuns
-	} = counts;
+	const { grammar, backend, from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns } =
+		counts;
 	return {
 		ts: new Date().toISOString(),
 		grammar,
@@ -358,17 +330,7 @@ export async function spawnIsolatedGrammarWorker(
 	const { tsxBin, cliPath } = resolveCliEntryArgs();
 	// Build child argv: validate counts <grammar> --_isolate-worker (native-only;
 	// the `validate` CLI no longer accepts --backend).
-	const childArgs = [
-		cliPath,
-		'validate',
-		'counts',
-		grammar,
-		'--_isolate-worker',
-		'--node-storage',
-		storage.nodeStorage,
-		'--construction',
-		storage.nodeConstruction
-	];
+	const childArgs = [cliPath, 'validate', 'counts', grammar, '--_isolate-worker', '--node-storage', storage.nodeStorage, '--construction', storage.nodeConstruction];
 
 	return new Promise((resolve) => {
 		const childEnv: NodeJS.ProcessEnv = {
@@ -424,16 +386,7 @@ export async function spawnIsolatedGrammarWorker(
  * collector entirely.
  */
 export function collectValidatorFailuresForGrammar(counts: GrammarCounts): ValidatorDiagnostic[] {
-	const {
-		from,
-		coverage,
-		readRenderParse,
-		readRenderParseShallow,
-		factoryStorage,
-		irStorage,
-		builtRenderParse,
-		layoutRuns
-	} = counts;
+	const { from, coverage, readRenderParse, readRenderParseShallow, factoryStorage, irStorage, builtRenderParse, layoutRuns } = counts;
 	// Every push spreads the original validator-result object first — each
 	// source (read-render-parse errors/mismatches/accessor-throws, factory
 	// errors, coverage issues, …) carries its own extra fields (`input`,
@@ -461,14 +414,7 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 				label: entryKindLabel(t)
 			});
 		for (const s of result.skips ?? [])
-			failures.push({
-				...s,
-				stage: `${stage}-skip`,
-				code: `${stage}-skip`,
-				severity: 'info',
-				message: s.reason,
-				label: entryKindLabel(s)
-			});
+			failures.push({ ...s, stage: `${stage}-skip`, code: `${stage}-skip`, severity: 'info', message: s.reason, label: entryKindLabel(s) });
 		const excludedByKind = new Map<string, { kind?: string; reason: string; entries: Set<string>; count: number }>();
 		for (const s of result.excluded) {
 			const key = `${s.reason}\0${s.kind ?? ''}`;
@@ -529,13 +475,7 @@ export function collectValidatorFailuresForGrammar(counts: GrammarCounts): Valid
 	}
 
 	for (const e of builtRenderParse.errors)
-		failures.push({
-			...e,
-			stage: 'built-render-parse',
-			code: 'built-render-parse-error',
-			severity: 'error',
-			label: entryKindLabel(e)
-		});
+		failures.push({ ...e, stage: 'built-render-parse', code: 'built-render-parse-error', severity: 'error', label: entryKindLabel(e) });
 	for (const m of builtRenderParse.astMismatches)
 		failures.push({
 			...m,
@@ -632,10 +572,7 @@ export function writeMergedValidationReport(
 	const existing = existsSync(outPath) ? readValidationReport(outPath) : { grammars: {}, rows: [] };
 	writeValidationReport(
 		{
-			grammars: {
-				...Object.fromEntries(Object.entries(existing.grammars).filter(([grammar]) => !replaced.has(grammar))),
-				...fresh.grammars
-			},
+			grammars: { ...Object.fromEntries(Object.entries(existing.grammars).filter(([grammar]) => !replaced.has(grammar))), ...fresh.grammars },
 			rows: [...existing.rows.filter((row) => !replaced.has(row.grammar)), ...fresh.rows]
 		},
 		outPath
@@ -664,9 +601,7 @@ export function enforceCodeCeilings(grammars: readonly GrammarName[], report: Va
 		);
 	}
 	for (const i of improvements) {
-		console.log(
-			`  diagnostic ratchet: ${i.grammar} ${i.code} is at ${i.count} (ceiling ${i.ceiling}) — ${ceilingAdvice(i)} in ${ceilingsPath} in this commit`
-		);
+		console.log(`  diagnostic ratchet: ${i.grammar} ${i.code} is at ${i.count} (ceiling ${i.ceiling}) — ${ceilingAdvice(i)} in ${ceilingsPath} in this commit`);
 	}
 	return violations.length === 0;
 }
@@ -675,13 +610,7 @@ export function enforceCodeCeilings(grammars: readonly GrammarName[], report: Va
 export async function runCountsCli(
 	args: string[],
 	backendMode: CliBackend = 'native',
-	options: {
-		recursive?: boolean;
-		isolate?: boolean;
-		isolateWorker?: boolean;
-		nodeStorage?: NodeStorage;
-		construction?: NodeConstruction;
-	} = {}
+	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean; nodeStorage?: NodeStorage; construction?: NodeConstruction } = {}
 ): Promise<void> {
 	const { isolate = false, isolateWorker = false, nodeStorage = 'object' } = options;
 	const storage = nodeStorageOf({ nodeStorage, nodeConstruction: options.construction });
@@ -780,9 +709,7 @@ export async function runCountsCli(
 				if (profile === 'debug') {
 					console.log(`  ⚠ native engine for ${grammar} is a DEBUG build — skipping validation-history record.`);
 				} else if (validationStorage() !== 'object') {
-					console.log(
-						`  ${grammar} read trees as '${validationStorage()}' storage — skipping validation-history record.`
-					);
+					console.log(`  ${grammar} read trees as '${validationStorage()}' storage — skipping validation-history record.`);
 				} else {
 					appendHistory(toValidationRun(counts));
 					recorded.push(`${grammar}/${formatBackendLabel(backend)}`);
