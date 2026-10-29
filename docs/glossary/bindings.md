@@ -1945,3 +1945,39 @@ Whether the node model entry is a unit.
 ### `packages/codegen/src/bindings/input.ts::NodeModelNode::shownAs`
 
 The names the node is shown under, when they differ from its kind.
+
+### `packages/codegen/src/bindings/facts.ts::ClaimFact::value`
+
+The claim's boolean value, when the claim states one.
+
+### `packages/codegen/src/bindings/facts.ts::ModelSlot::mounts`
+
+The mounts a slot carries, by name.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount`
+
+A mount a slot carries: the mount name, its call, and any nested calls.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount::mount`
+
+The mount name.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount::call`
+
+The portable call the mount makes.
+
+### `packages/codegen/src/bindings/facts.ts::ModelMount::nested`
+
+The nested calls of the mount, by name.
+
+### `packages/codegen/src/bindings/input.ts::NodeModelValue::seat`
+
+The seat of a node-model value: the call shape its builder takes.
+
+### `packages/codegen/src/bindings/routes.ts::ContainerUnwrap::slot`
+
+The slot a container unwraps through.
+
+### `packages/codegen/src/bindings/vocabulary-paths.ts::vocabularyFlagPaths`
+
+The flag paths of a vocabulary: each path with its segment and flag.

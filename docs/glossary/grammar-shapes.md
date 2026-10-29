@@ -475,7 +475,7 @@ grammar hands `wire()`.
  */
 ```
 
-### `packages/codegen/src/grammar-shapes/grammar-shape.<grammar>.ts::module`
+### `packages/codegen/src/grammar-shapes/emit-grammar-shape.ts::module`
 
 Generated, one per registered grammar: the upstream `src/grammar.json` reduced
 to `{ name, rules, supertypes }` and emitted `as const satisfies
