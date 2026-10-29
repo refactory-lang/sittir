@@ -55,10 +55,10 @@
 		}
 	},
 	"scripts": {
-		"build": "tsc -p tsconfig.build.json",
+		"build": "tsrs -p tsconfig.build.json",
 		"clean": "rm -rf dist tsconfig.build.tsbuildinfo tsconfig.tsbuildinfo",
-		"dev": "tsc -p tsconfig.build.json --watch",
-		"type-check": "tsc --noEmit",
+		"dev": "tsrs -p tsconfig.build.json --watch",
+		"type-check": "tsrs --noEmit",
 		"test": "vitest run"
 	},
 	"dependencies": {

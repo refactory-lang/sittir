@@ -11,7 +11,7 @@ export function typeCheckErrorLines(pnpmArgs: readonly string[], cwd: string): s
 	} catch (e) {
 		const failure = e as { status?: number | null; stdout?: string };
 		out = String(failure.stdout ?? '');
-		if (failure.status !== 1 || !out.includes('error TS')) throw e;
+		if (!out.includes('error TS')) throw e;
 	}
 	return out.split('\n').filter((line) => line.includes('error TS'));
 }
