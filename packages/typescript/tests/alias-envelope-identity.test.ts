@@ -82,8 +82,8 @@ describe('edits on a flat alias display', () => {
 		}
 	});
 
-	it.each(['objects', 'arena objects', 'records'] as const)('%s: a built display keeps the sides written on its unit', async (construction) => {
-		const engine = await createEngine(typescript, construction === 'objects' ? { nodeStorage: 'object' } : construction === 'arena objects' ? { nodeConstruction: 'object' } : {});
+	it.each(['objects', 'records'] as const)('%s: a built display keeps the sides written on its unit', async (construction) => {
+		const engine = await createEngine(typescript, construction === 'objects' ? { nodeStorage: 'object' } : { nodeStorage: 'arena' });
 		try {
 			const declaration = engine.parse('interface A { x: number }\n').statements()[0];
 			if (declaration === undefined || !engine.is.interfaceDeclaration(declaration))

@@ -1,0 +1,213 @@
+{
+	"recordedAt": "2026-10-29T14:01:30.100663+00:00",
+	"source": "Saved byte captures on the fully tested runtime tree; analysis only, no new rendering run.",
+	"reports": [
+		{
+			"grammar": "python",
+			"differentCandidates": 956,
+			"nonWhitespace": 0,
+			"objectEqualsInput": 1,
+			"arenaEqualsInput": 786,
+			"onlyOuterWhitespace": 893,
+			"topKinds": [
+				["_simple_statements", 435],
+				["suite_block", 139],
+				["block", 139],
+				["case_clause", 56],
+				["function_definition", 35],
+				["match_statement", 19],
+				["match_block_block", 19],
+				["if_statement", 16]
+			],
+			"examples": [
+				{
+					"entry": "Identifiers with Greek letters",
+					"kind": "_simple_statements",
+					"input": "\u03c81 = \u03b2_\u03b3 + \u03a8_5\n",
+					"object": "\u03c81 = \u03b2_\u03b3 + \u03a8_5\n",
+					"arena": "\u03c81 = \u03b2_\u03b3 + \u03a8_5"
+				},
+				{
+					"entry": "Subscript expressions",
+					"kind": "_simple_statements",
+					"input": "a[1]",
+					"object": "a[1]\n",
+					"arena": "a[1]"
+				},
+				{
+					"entry": "Subscript expressions",
+					"kind": "_simple_statements",
+					"input": "b[2, 3]",
+					"object": "b[2, 3]\n",
+					"arena": "b[2, 3]"
+				}
+			]
+		},
+		{
+			"grammar": "rust",
+			"differentCandidates": 49,
+			"nonWhitespace": 0,
+			"objectEqualsInput": 0,
+			"arenaEqualsInput": 38,
+			"onlyOuterWhitespace": 0,
+			"topKinds": [
+				["source_file", 8],
+				["block", 5],
+				["expression_statement", 3],
+				["function_item", 2],
+				["impl_item_body", 2],
+				["match_expression", 2],
+				["match_block", 2],
+				["match_block_arms", 2]
+			],
+			"examples": [
+				{
+					"entry": "Inner attributes",
+					"kind": "source_file",
+					"input": "\nmod macos_only {\n  #![cfg(target_os = \"macos\")]\n}\n\nmatch ty {\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}\n",
+					"object": "\nmod macos_only {\n    #![cfg(target_os = \"macos\")]\n}\n\nmatch ty {\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}",
+					"arena": "\nmod macos_only {\n  #![cfg(target_os = \"macos\")]\n}\n\nmatch ty {\n    #![cfg_attr(all(test, exhaustive), deny(non_exhaustive_omitted_patterns))]\n    syn::Type::Array(ty) => self.visit_type(&ty.elem),\n}\n"
+				},
+				{
+					"entry": "Inner attributes",
+					"kind": "mod_item_inline",
+					"input": "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}",
+					"object": "mod macos_only {\n    #![cfg(target_os = \"macos\")]\n}",
+					"arena": "mod macos_only {\n  #![cfg(target_os = \"macos\")]\n}"
+				},
+				{
+					"entry": "Inner attributes",
+					"kind": "declaration_list",
+					"input": "{\n  #![cfg(target_os = \"macos\")]\n}",
+					"object": "{\n    #![cfg(target_os = \"macos\")]\n}",
+					"arena": "{\n  #![cfg(target_os = \"macos\")]\n}"
+				}
+			]
+		},
+		{
+			"grammar": "typescript",
+			"differentCandidates": 325,
+			"nonWhitespace": 4,
+			"objectEqualsInput": 0,
+			"arenaEqualsInput": 279,
+			"onlyOuterWhitespace": 266,
+			"topKinds": [
+				["statement_block", 59],
+				["type_alias_declaration", 37],
+				["class_declaration", 35],
+				["expression_statement", 21],
+				["export_statement_default_declaration", 16],
+				["function_declaration", 16],
+				["ambient_declaration", 15],
+				["lexical_declaration", 12]
+			],
+			"examples": [
+				{
+					"entry": "Interface declarations",
+					"kind": "program",
+					"input": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X ",
+					"object": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n  name: string;\n  favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n  x: T;\n  y: U;\n}\n\ninterface X {\n  hook",
+					"arena": "\ninterface A { a: string; }\n\ninterface B extends A { b: string; }\n\ninterface Friend {\n    name: string;\n    favoriteColor?: string;\n}\n\ninterface G<T, U extends B> {\n    x: T;\n    y: U;\n}\n\ninterface X "
+				},
+				{
+					"entry": "Interface declarations",
+					"kind": "interface_declaration",
+					"input": "interface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}",
+					"object": "interface X {\n  hook: {}\n  get(key: Key): Promise<T>\n}",
+					"arena": "interface X {\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}"
+				},
+				{
+					"entry": "Interface declarations",
+					"kind": "interface_body",
+					"input": "{\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}",
+					"object": "{\n  hook: {}\n  get(key: Key): Promise<T>\n}",
+					"arena": "{\n  hook: {\n  }\n  get(key: Key): Promise<T>;\n}"
+				},
+				{
+					"entry": "Interface declarations",
+					"kind": "object_type_content",
+					"input": "hook: {\n  }\n  get(key: Key): Promise<T>;",
+					"object": "hook: {}\nget(key: Key): Promise<T>\n",
+					"arena": "hook: {\n}\nget(key: Key): Promise<T>;"
+				}
+			]
+		},
+		{
+			"grammar": "regex",
+			"differentCandidates": 15,
+			"nonWhitespace": 0,
+			"objectEqualsInput": 0,
+			"arenaEqualsInput": 15,
+			"onlyOuterWhitespace": 3,
+			"topKinds": [
+				["pattern", 5],
+				["term_group", 4],
+				["term", 2],
+				["anonymous_capturing_group", 1],
+				["inline_flags_group_enable", 1],
+				["inline_flags_group_toggle", 1],
+				["inline_flags_group_disable", 1]
+			],
+			"examples": [
+				{
+					"entry": "a multiline url regex",
+					"kind": "pattern",
+					"input": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+					"object": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+					"arena": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+				},
+				{
+					"entry": "a multiline url regex",
+					"kind": "term",
+					"input": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+					"object": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+					"arena": "[-a-zA-Z0-9@:%._\\+~#=]{2,256}\n\\.[a-z]{2,6}\\b(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+				},
+				{
+					"entry": "a multiline url regex",
+					"kind": "term_group",
+					"input": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+					"object": "([-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)",
+					"arena": "(\n[-a-zA-Z0-9@:%_\\+.~#?&//=]*\n)"
+				}
+			]
+		},
+		{
+			"grammar": "scm",
+			"differentCandidates": 3,
+			"nonWhitespace": 0,
+			"objectEqualsInput": 0,
+			"arenaEqualsInput": 3,
+			"onlyOuterWhitespace": 0,
+			"topKinds": [
+				["program", 1],
+				["predicate", 1],
+				["named_node_plain", 1]
+			],
+			"examples": [
+				{
+					"entry": "Comments",
+					"kind": "program",
+					"input": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n",
+					"object": "\n(#match?\n@foo\n; bar\n\"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n)\n",
+					"arena": "\n(#match?\n @foo\n ; bar\n \"foo\")\n\n(node\n  ; Capture the name\n  name: (string))\n\n(string\n  ; wild comment!\n  )\n"
+				},
+				{
+					"entry": "Comments",
+					"kind": "predicate",
+					"input": "(#match?\n @foo\n ; bar\n \"foo\")",
+					"object": "(#match?\n@foo\n; bar\n\"foo\")",
+					"arena": "(#match?\n @foo\n ; bar\n \"foo\")"
+				},
+				{
+					"entry": "Comments",
+					"kind": "named_node_plain",
+					"input": "(string\n  ; wild comment!\n  )",
+					"object": "(string\n  ; wild comment!\n)",
+					"arena": "(string\n  ; wild comment!\n  )"
+				}
+			]
+		}
+	],
+	"caveat": "Whitespace stripping classifies bytes, not semantic equivalence."
+}

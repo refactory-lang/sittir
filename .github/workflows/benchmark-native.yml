@@ -36,9 +36,7 @@ jobs:
         with:
           shared-key: arena-benchmarks-linux
           key: ${{ inputs.grammar }}
-          workspaces: |
-            . -> target
-            docs/superpowers/probes/2026-10-12-record-wire/eager/native -> target
+          workspaces: . -> target
       - uses: actions/download-artifact@v4
         if: steps.binary.outputs.cache-hit != 'true'
         with:
@@ -53,15 +51,9 @@ jobs:
           GRAMMAR: ${{ inputs.grammar }}
         run: |
           bundle="$RUNNER_TEMP/arena-runtime-native-$GRAMMAR"
-          if [[ "$GRAMMAR" == eager ]]; then
-            pnpm exec tsx docs/superpowers/probes/2026-10-12-record-wire/eager/build.mts
-            paths=(docs/superpowers/probes/2026-10-12-record-wire/eager/native/eager-builder-probe.node)
-          else
-            pnpm exec tsx scripts/build-native.mts "$GRAMMAR" --release
-            paths=("packages/$GRAMMAR/native" node_modules/.cache/sittir/native-build)
-          fi
-          git diff --exit-code -- packages rust docs/superpowers/probes/2026-10-12-record-wire/eager
-          node scripts/ci/arena-benchmark-runtime.mjs pack "$bundle" "native-$GRAMMAR" "${paths[@]}"
+          pnpm exec tsx scripts/build-native.mts "$GRAMMAR" --release
+          git diff --exit-code -- packages rust
+          node scripts/ci/arena-benchmark-runtime.mjs pack "$bundle" "native-$GRAMMAR" "packages/$GRAMMAR/native" node_modules/.cache/sittir/native-build
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ inputs.prefix }}-native-${{ inputs.grammar }}

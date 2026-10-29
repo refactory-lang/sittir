@@ -227,17 +227,21 @@ function listOf(holder: RecordPosition, word: number, built: number): { readonly
 }
 
 /** The items of the list slot whose parsed cell is at `word`, each item's cell `run` words holding `forms`, and whose built cell is `built`, of the record `holder` is at, each as read data. */
-export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number): readonly unknown[] {
-	if (run === undefined) return [recordSlot(holder, word, width, forms, inline, built)].filter((item) => item !== undefined);
+export function recordSlots(holder: RecordPosition, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, hydrate?: (value: unknown) => unknown): readonly unknown[] {
+	const mapped = (value: unknown): unknown => hydrate === undefined ? value : hydrate(value);
+	if (run === undefined) {
+		const value = recordSlot(holder, word, width, forms, inline, built);
+		return value === undefined ? [] : [mapped(value)];
+	}
 	const arena = holder.$tree.built;
 	const list = listOf(holder, word, built);
 	if (list.len === 0) return [];
 	if (arena !== undefined) {
 		const items = wordsAt(arena, list.run, list.len);
-		return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n));
+		return Array.from({ length: list.len }, (_, n) => mapped(cellData(holder, decodeBuiltCell(arena, items.words[items.start + n]!), word, n)));
 	}
 	const items = wordsAt(list.records, list.run, list.len * run);
-	return Array.from({ length: list.len }, (_, n) => cellData(holder, decodeParsedCell(items.words, items.start + n * run, forms, list.records.format), word, n));
+	return Array.from({ length: list.len }, (_, n) => mapped(cellData(holder, decodeParsedCell(items.words, items.start + n * run, forms, list.records.format), word, n)));
 }
 
 /** The number of items the list slot whose parsed cell is at `word` and whose built cell is `built` of the record `holder` is at holds. */

@@ -9,7 +9,7 @@ import { BLANK_KIND_ID } from './error-kind.ts';
 import { addressOf, chunkOf, headerKind, kindField, withKind, wordOf, type CellFormat, type RecordCell } from './record-cell.ts';
 import { builtRefOf, handleArenaOf, leafSitesOf, moveLeafSite, packSite, placeLeaf, type BuiltRecordRef, type BuiltRef } from './built-ref.ts';
 import { freedRecord, leafData, recordDelimiter, recordOf, recordSeparator, recordStub } from './record-view.ts';
-import type { LeafHandle, LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
+import type { LeafMaker, RecordHandle, RecordPosition } from './handle.ts';
 import { forEachTriviaList, mapTriviaEntries, type TriviaSides } from './trivia.ts';
 
 /** A leaf entry of a built arena: its packed address in a string chunk, 0 before its leaf is first placed, its kind once placed, its text, and the chunk it lies in. */
@@ -240,6 +240,7 @@ export class BuiltArena {
 	readonly #trivia: BuiltRecords['trivia'];
 	readonly #writeLeafSites: WriteLeafSites;
 	readonly #parkedBy = new WeakMap<object, object>();
+	readonly #siteAlive = (holder: number): boolean => this.#words.has(chunkOf(holder, this.format)) && this.#linkHeld(holder);
 	#placedLast: { readonly node: object; readonly placed: readonly unknown[] } | undefined;
 
 	constructor({ format, owner, kinds, words, bytes, bump, release, trivia }: BuiltRecords, wrap: Wrap, handle: TreeEngineHandle, views: BuiltViews, writeLeafSites: WriteLeafSites) {
@@ -438,9 +439,10 @@ export class BuiltArena {
 		return (node as Partial<RecordHandle>).$words === this.#words.chunks[chunkOf(at, this.format)];
 	}
 
-	repark(leaf: object, own: NodeTrivia | undefined, written: NodeTrivia): NodeTrivia {
+	repark(leaf: object, own: NodeTrivia | undefined, written: NodeTrivia, placed: boolean): NodeTrivia {
 		const next = { ...own, ...written };
-		if (leafSitesOf(leaf) !== undefined || (leaf as Partial<LeafHandle>).$site !== undefined) return next;
+		if (placed) return next;
+		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.refuseReleased(at)));
 		forEachTriviaList(next as TriviaSides<unknown>, (entries) => this.#eachParked(entries, (at) => this.hold(at)));
 		this.#unpark(this.#parkedOf(leaf));
 		this.#parkedBy.set(next, leaf);
@@ -678,9 +680,13 @@ export class BuiltArena {
 
 	#site(leaf: object, holder: number, word: number, item: number): void {
 		const parked = this.#parkedOf(leaf);
-		placeLeaf(leaf, holder, word, item);
+		placeLeaf(leaf, holder, word, item, this.#siteAlive);
 		this.#writeLeafSites(leaf, [holder, word, item]);
 		this.#unpark(parked);
+	}
+
+	leafSites(leaf: object): readonly number[] | undefined {
+		return leafSitesOf(leaf, this.#siteAlive);
 	}
 
 	/** Replaces `side` of the built leaf at each site `sites` names, `[holder, word, item]` after another, with `entries`. */

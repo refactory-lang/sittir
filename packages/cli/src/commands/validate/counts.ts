@@ -14,27 +14,25 @@ export const counts: CommandModule = {
 				).default(false)
 			)
 			.addOption(
-				new Option('--node-storage <storage>', 'How the engine reads a parsed tree: as object nodes (object), or as record views (arena)').default(
+				new Option('--node-storage <storage>', 'Node backend: parsed/built objects (object), or arena views with record builders (arena)').default(
 					'object'
 				)
 			)
 			.addOption(
-				new Option('--construction <construction>', 'How builders construct nodes: as objects (object), or as records (record, with --node-storage arena)').default(
-					'object'
-				)
+				new Option('--construction <construction>', 'Deprecated: assert object construction for object storage, or record construction for arena storage')
 			)
 			.addOption(
 				new Option('--_isolate-worker', 'Internal: run as an isolation worker for a single grammar')
 					.hideHelp()
 					.default(false)
 			)
-			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean; nodeStorage: string; construction: string }) => {
+			.action(async (grammars: string[], opts: { isolate: boolean; _isolateWorker: boolean; nodeStorage: string; construction?: string }) => {
 				const { runCountsCli, parseConstruction, parseNodeStorage } = await import('@sittir/tools');
 				await runCountsCli(grammars, 'native', {
 					isolate: opts.isolate,
 					isolateWorker: opts._isolateWorker,
 					nodeStorage: parseNodeStorage(opts.nodeStorage),
-					construction: parseConstruction(opts.construction)
+					construction: opts.construction === undefined ? undefined : parseConstruction(opts.construction)
 				});
 			});
 	}

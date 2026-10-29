@@ -42,6 +42,33 @@ const ITEM_RADIX = 2 ** 14;
 const WORD_RADIX = 2 ** 7;
 const HOLDER_RADIX = ITEM_RADIX * WORD_RADIX;
 
+interface SiteList {
+	readonly data: number[];
+	readonly length: number;
+	readonly pruneAt: number;
+}
+
+type PlacedSites = LeafSite | SiteList;
+type PlacedLeaf = { [LEAF_SITES]?: PlacedSites };
+type LiveSite = (holder: number) => boolean;
+
+function flatSites(sites: PlacedSites): readonly number[] {
+	return typeof sites === 'number' ? siteOf(sites) : 'data' in sites ? sites.data.slice(0, sites.length) : sites;
+}
+
+function liveSites(sites: PlacedSites, live: LiveSite): number[] {
+	const list = typeof sites !== 'number' && 'data' in sites ? sites : undefined;
+	const flat = list?.data ?? flatSites(sites);
+	const length = list?.length ?? flat.length;
+	const kept: number[] = [];
+	for (let n = 0; n < length; n += 3) if (live(flat[n]!)) kept.push(flat[n]!, flat[n + 1]!, flat[n + 2]!);
+	return kept;
+}
+
+function keepSites(leaf: PlacedLeaf, data: number[], pruneAt = Math.max(6, data.length * 2)): void {
+	leaf[LEAF_SITES] = data.length === 0 ? undefined : data.length === 3 ? packSite(data[0]!, data[1]!, data[2]!) : { data, length: data.length, pruneAt };
+}
+
 export function packSite(holder: number, word: number, item: number): LeafSite {
 	return word < WORD_RADIX && item < ITEM_RADIX ? holder * HOLDER_RADIX + word * ITEM_RADIX + item : [holder, word, item];
 }
@@ -50,22 +77,42 @@ export function siteOf(site: LeafSite): readonly number[] {
 	return typeof site === 'number' ? [Math.floor(site / HOLDER_RADIX), Math.floor(site / ITEM_RADIX) % WORD_RADIX, site % ITEM_RADIX] : site;
 }
 
-export function placeLeaf(leaf: object, holder: number, word: number, item: number): void {
-	const held = leaf as { [LEAF_SITES]?: LeafSite };
+export function placeLeaf(leaf: object, holder: number, word: number, item: number, live?: LiveSite): void {
+	const held = leaf as PlacedLeaf;
 	const sites = held[LEAF_SITES];
-	held[LEAF_SITES] = sites === undefined ? packSite(holder, word, item) : [...siteOf(sites), holder, word, item];
+	if (sites === undefined) {
+		held[LEAF_SITES] = packSite(holder, word, item);
+		return;
+	}
+	const list = typeof sites !== 'number' && 'data' in sites ? sites : undefined;
+	const length = list?.length ?? 3;
+	const pruneAt = list?.pruneAt ?? 6;
+	if (live !== undefined && length + 3 >= pruneAt) {
+		const data = liveSites(sites, live);
+		data.push(holder, word, item);
+		keepSites(held, data);
+		return;
+	}
+	const data = list === undefined ? [...flatSites(sites)] : list.length === list.data.length ? list.data : list.data.slice(0, list.length);
+	data.push(holder, word, item);
+	keepSites(held, data, pruneAt);
 }
 
 export function moveLeafSite(leaf: object, from: number, to: number, word: number, item: number): void {
-	const held = leaf as { [LEAF_SITES]?: LeafSite };
+	const held = leaf as PlacedLeaf;
 	const sites = held[LEAF_SITES];
 	if (sites === undefined) return;
-	const flat = [...siteOf(sites)];
+	const flat = [...flatSites(sites)];
 	for (let n = 0; n < flat.length; n += 3) if (flat[n] === from && flat[n + 1] === word && flat[n + 2] === item) flat[n] = to;
-	held[LEAF_SITES] = flat.length === 3 ? packSite(flat[0]!, flat[1]!, flat[2]!) : flat;
+	keepSites(held, flat);
 }
 
-export function leafSitesOf(leaf: object): readonly number[] | undefined {
-	const sites = (leaf as { readonly [LEAF_SITES]?: LeafSite })[LEAF_SITES];
-	return sites === undefined ? undefined : siteOf(sites);
+export function leafSitesOf(leaf: object, live?: LiveSite): readonly number[] | undefined {
+	const held = leaf as PlacedLeaf;
+	const sites = held[LEAF_SITES];
+	if (sites === undefined) return undefined;
+	if (live === undefined) return flatSites(sites);
+	const kept = liveSites(sites, live);
+	keepSites(held, kept);
+	return kept.length === 0 ? undefined : kept;
 }

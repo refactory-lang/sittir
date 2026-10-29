@@ -66,9 +66,9 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	role?: Role
+	aliasContent = false
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, role) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,

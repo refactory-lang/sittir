@@ -2,7 +2,7 @@ import { type CommandModule, defineCommand } from '../../framework/command-modul
 
 export const benchStorage: CommandModule = {
 	name: 'bench-storage',
-	describe: 'Measure native workflows or object/arena validation buckets',
+	describe: 'Measure native workflows or paired backend validation buckets',
 	register: (program) => {
 		defineCommand(program, benchStorage)
 			.argument('[grammars...]', 'Defaults to all stable grammars')
@@ -11,11 +11,10 @@ export const benchStorage: CommandModule = {
 			.option('--iterations <n>', 'Measured corpus batches per phase and round', '3')
 			.option('--limit <n>', 'Use only the first n corpus entries (smoke runs)')
 			.option('--native-depth <depth>', 'Native hydration depth: a positive integer or all', 'all')
-			.option('--validation', 'Profile deep read, factory and IR render/parse validators with object and arena storage')
+			.option('--validation', 'Profile deep read, factory and IR render/parse validators under both paired backends')
 			.option(
 				'--construction <construction>',
-				"How the arena arm's builders construct nodes in validation profiles: as objects (object), or as records (record)",
-				'object'
+				'Deprecated: validation profiles pair object storage/builders with arena storage/record builders; only record is accepted'
 			)
 			.option('--idle-gate <path>', 'Run a shell idle gate before each worker, passing the current directory')
 			.option('--output <path>', 'Write the complete JSON report to this file')
@@ -29,7 +28,7 @@ export const benchStorage: CommandModule = {
 						limit?: string;
 						nativeDepth: string;
 						validation?: boolean;
-						construction: string;
+						construction?: string;
 						idleGate?: string;
 						output?: string;
 					}
@@ -43,7 +42,7 @@ export const benchStorage: CommandModule = {
 						limit: opts.limit === undefined ? undefined : Number(opts.limit),
 						nativeDepth: opts.nativeDepth === 'all' ? 'all' : Number(opts.nativeDepth),
 						validation: opts.validation,
-						construction: parseConstruction(opts.construction),
+						construction: opts.construction === undefined ? undefined : parseConstruction(opts.construction),
 						idleGate: opts.idleGate,
 						output: opts.output
 					});

@@ -488,6 +488,15 @@ const treeDisposalRegistry = new FinalizationRegistry<{
 	readonly treeId: number;
 }>(({ release, treeId }) => release(treeId));
 
+const diagnosticRootDepths = new WeakMap<TreeHandle, number>();
+const diagnosticRoot = {
+	enumerable: true,
+	configurable: true,
+	get(this: { readonly tree: TreeHandle }): unknown {
+		return this.tree.read!(0, diagnosticRootDepths.get(this.tree) ?? 1);
+	}
+};
+
 function recordReader<TNode>(engine: NativeEngineLike<TNode>, treeId: number, format: CellFormat, readObjectAt: (index: number, depth: number) => TNode): RecordReader {
 	const { readRecord, readCell, chunk, renderRecord, coordinate } = engine;
 	if (readRecord === undefined || readCell === undefined || chunk === undefined || renderRecord === undefined || coordinate === undefined) {
@@ -661,13 +670,16 @@ export function createNativeEngine<
 							return node;
 						};
 						const records = cellFormat === undefined ? undefined : recordReader(engine, parsed.treeId, cellFormat, readObjectAt);
-						const readAt = (index: number, depth: number): TNode => {
-							const at = records?.record(index, depth);
-							if (at === undefined) return readObjectAt(index, depth);
-							const stub = recordStub(tree, at);
-							holdReadTree(stub, liveToken);
-							return stub as TNode;
-						};
+						const readAt =
+							records === undefined
+								? readObjectAt
+								: (index: number, depth: number): TNode => {
+										const at = records.record(index, depth);
+										if (at === undefined) return readObjectAt(index, depth);
+										const stub = recordStub(tree, at);
+										holdReadTree(stub, liveToken);
+										return stub as TNode;
+									};
 						const roots = new Map<number, unknown>();
 						const tree: TreeHandle = {
 							id: parsed.treeId,
@@ -712,11 +724,11 @@ export function createNativeEngine<
 							}
 						};
 						registerTree(liveToken, tree);
-						return {
-							get root() {
-								return tree.read!(0, depthOf(parseOptions)) as TRoot & ParsedRoot;
-							},
-							tree
+						const depth = depthOf(parseOptions);
+						if (depth !== 1) diagnosticRootDepths.set(tree, depth);
+						return Object.defineProperty({ tree }, 'root', diagnosticRoot) as {
+							readonly root: TRoot & ParsedRoot;
+							readonly tree: TreeHandle;
 						};
 					}
 				}

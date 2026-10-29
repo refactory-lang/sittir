@@ -195,18 +195,18 @@ export function parseNodeStorage(value: string): NodeStorage {
 	return storage;
 }
 
-let validationNodeStorage: NodeStorage = 'object';
+let validationNodeStorage = nodeStorageOf({ nodeStorage: 'object' });
 
 export function useValidationNodeStorage(storage: NodeStorage): void {
-	if (storage === validationNodeStorage) return;
+	if (storage === validationNodeStorage.nodeStorage) return;
 	if (cachedNativeEngines.size > 0) {
-		throw new Error(`validation reads trees as '${validationNodeStorage}' storage already; choose '${storage}' before the first engine loads`);
+		throw new Error(`validation reads trees as '${validationNodeStorage.nodeStorage}' storage already; choose '${storage}' before the first engine loads`);
 	}
-	validationNodeStorage = storage;
+	validationNodeStorage = nodeStorageOf({ nodeStorage: storage });
 }
 
 export function validationStorage(): NodeStorage {
-	return validationNodeStorage;
+	return validationNodeStorage.nodeStorage;
 }
 
 const CONSTRUCTIONS: readonly NodeConstruction[] = ['object', 'record'];
@@ -217,19 +217,12 @@ export function parseConstruction(value: string): NodeConstruction {
 	return construction;
 }
 
-let validationConstruction: NodeConstruction = 'object';
-
 export function useValidationConstruction(construction: NodeConstruction): void {
-	if (construction === validationConstruction) return;
-	if (cachedNativeEngines.size > 0) {
-		throw new Error(`validation builds nodes as '${validationConstruction}' already; choose '${construction}' before the first engine loads`);
-	}
-	nodeStorageOf({ nodeStorage: validationNodeStorage, nodeConstruction: construction });
-	validationConstruction = construction;
+	nodeStorageOf({ nodeStorage: validationNodeStorage.nodeStorage, nodeConstruction: construction });
 }
 
 async function createNativeEngine(grammar: string): Promise<NativeEngine> {
-	const storage = nodeStorageOf({ nodeStorage: validationNodeStorage, nodeConstruction: validationConstruction });
+	const storage = validationNodeStorage;
 	const engine = await createEngine(await languageByName(grammar), { verifyStructure: 'runtime', ...storage });
 	const profile = engine.diagnostics.buildProfile;
 	if (profile === 'debug' && process.env.SITTIR_ALLOW_DEBUG_VALIDATE !== '1') {
@@ -817,11 +810,11 @@ export function materializeBuildInput(
 	onAccessorThrow?: (rec: AccessorThrowRecord) => void
 ): AnyUntypedNode {
 	const data = materialize(root, accessorOf, onAccessorThrow);
-	return validationConstruction === 'record' ? holdingTreeOf(root, data) : data;
+	return validationNodeStorage.nodeConstruction === 'record' ? holdingTreeOf(root, data) : data;
 }
 
 export function builtStorageOf(node: unknown, accessorOf: SlotAccessorOf): unknown {
-	return validationConstruction === 'record' ? materialize(node, accessorOf) : node;
+	return validationNodeStorage.nodeConstruction === 'record' ? materialize(node, accessorOf) : node;
 }
 
 export function materializeDetached(

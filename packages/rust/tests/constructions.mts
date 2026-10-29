@@ -10,7 +10,6 @@ export type Engine = typeof objects;
 export const records = await createEngine(rust);
 export const constructions: readonly [string, Engine][] = [
 	['objects', objects],
-	['arena objects', await createEngine(rust, { nodeConstruction: 'object' })],
 	['records', records]
 ];
 

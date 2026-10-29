@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import typescript from '../src/index.ts';
 
-const objects = await typescript.createEngine({ nodeConstruction: 'object' });
+const objects = await typescript.createEngine({ nodeStorage: 'object' });
 const records = await typescript.createEngine();
 
 type List = Iterable<unknown> & { readonly separator?: number; readonly $with: { items(...items: unknown[]): List } };

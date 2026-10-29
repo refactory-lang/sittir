@@ -1,9 +1,11 @@
-import { describe, expect, it } from 'vitest';
+import { createRequire } from 'node:module';
+import { describe, expect, it, vi } from 'vitest';
+import type { NativeModuleLike } from '@sittir/common/engine';
 import { recordOf } from '@sittir/common/utils';
 import rust from '../src/index.ts';
 import { expectGiven } from './constructions.mts';
 
-const objects = await rust.createEngine({ nodeConstruction: 'object' });
+const objects = await rust.createEngine({ nodeStorage: 'object' });
 const records = await rust.createEngine();
 
 type Built = Record<string, unknown> & { readonly $type: number };
@@ -40,6 +42,29 @@ function readBack(value: unknown, depth = 0): unknown {
 }
 
 describe('record construction', () => {
+	it('allocates record cells only under the arena backend', async () => {
+		const native = createRequire(import.meta.url)('../native/index.cjs') as Required<NativeModuleLike>;
+		const allocate = vi.spyOn(native, 'builtWords');
+		const engines: (typeof objects)[] = [];
+		try {
+			const objectEngine = await rust.createEngine({ nodeStorage: 'object' });
+			engines.push(objectEngine);
+			const object = build(objectEngine);
+			expect(recordOf(object)).toBeUndefined();
+			expect(String(object)).toContain('fn process(input: u32)');
+			expect(allocate).not.toHaveBeenCalled();
+			const recordEngine = await rust.createEngine({ nodeStorage: 'arena' });
+			engines.push(recordEngine);
+			const record = build(recordEngine);
+			expect(recordOf(record)).toBeTypeOf('number');
+			expect(allocate).toHaveBeenCalled();
+			expect(String(record)).toBe(String(object));
+		} finally {
+			for (const engine of engines) engine.dispose();
+			allocate.mockRestore();
+		}
+	});
+
 	it('builds a view of a record, and reads back the tree the object builders build', () => {
 		const object = build(objects);
 		const record = build(records);
@@ -242,14 +267,18 @@ describe('record construction', () => {
 		});
 	});
 
-	it('refuses a child of an engine that stores its nodes differently', async () => {
-		const plain = await rust.createEngine({ nodeStorage: 'object' });
-		expect(() => objects.build.expressionStatement(plain.build.identifier('x') as never)).toThrow(/storing nodes as object .* stores them as arena/);
-		expect(() => plain.build.expressionStatement(objects.build.identifier('x') as never)).toThrow(/storing nodes as arena .* stores them as object/);
+	it('refuses a child of an engine that stores its nodes differently', () => {
+		expect(() => records.build.expressionStatement(objects.build.identifier('x') as never)).toThrow(/storing nodes as object .* stores them as arena/);
+		expect(() => objects.build.expressionStatement(records.build.identifier('x') as never)).toThrow(/storing nodes as arena .* stores them as object/);
 	});
 
-	it('refuses a child another engine built', () => {
-		const foreign = objects.build.identifier('x');
-		expect(() => records.build.expressionStatement(foreign as never)).toThrow(/its own engine built/);
+	it('refuses a child another engine built', async () => {
+		const other = await rust.createEngine({ nodeStorage: 'arena' });
+		try {
+			const foreign = other.build.identifier('x');
+			expect(() => records.build.expressionStatement(foreign as never)).toThrow(/its own engine built/);
+		} finally {
+			other.dispose();
+		}
 	});
 });

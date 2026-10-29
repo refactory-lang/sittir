@@ -252,17 +252,17 @@ describe('a built arena', () => {
 		expect(leafSitesOf(leaf)).toEqual([first, 2, 0, second, 11, 1]);
 	});
 
-	it('holds a leaf placed once as one number in its field, and makes the field a list at a second site or one too wide to pack', () => {
+	it('packs one leaf site and preserves multiple sites and sites too wide to pack', () => {
 		const once: { [LEAF_SITES]?: unknown } = {};
 		placeLeaf(once, 0xffffffff, 127, 16383);
 		expect(typeof once[LEAF_SITES]).toBe('number');
 		expect(leafSitesOf(once)).toEqual([0xffffffff, 127, 16383]);
 		placeLeaf(once, 5, 2, 0);
-		expect(once[LEAF_SITES]).toEqual([0xffffffff, 127, 16383, 5, 2, 0]);
+		expect(leafSitesOf(once)).toEqual([0xffffffff, 127, 16383, 5, 2, 0]);
 		const wide: { [LEAF_SITES]?: unknown } = {};
 		placeLeaf(wide, 5, 128, 0);
 		placeLeaf(wide, 6, 2, 16384);
-		expect(wide[LEAF_SITES]).toEqual([5, 128, 0, 6, 2, 16384]);
+		expect(leafSitesOf(wide)).toEqual([5, 128, 0, 6, 2, 16384]);
 	});
 
 	it('writes the sides of a leaf it places only when the leaf holds some', () => {

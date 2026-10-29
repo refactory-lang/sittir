@@ -56,12 +56,15 @@ export function foreignEngine(value: unknown, identity: EngineIdentity): EngineH
 const engineStorages = new WeakMap<object, NodeStorage>();
 
 export type ResolvedNodeStorage =
-	| { readonly nodeStorage: 'arena'; readonly nodeConstruction: NodeConstruction }
+	| { readonly nodeStorage: 'arena'; readonly nodeConstruction: 'record' }
 	| { readonly nodeStorage: 'object'; readonly nodeConstruction: 'object' };
 
 export function nodeStorageOf(options: { readonly nodeStorage?: NodeStorage; readonly nodeConstruction?: NodeConstruction } | undefined): ResolvedNodeStorage {
 	const nodeStorage = options?.nodeStorage ?? 'arena';
-	if (nodeStorage === 'arena') return { nodeStorage, nodeConstruction: options?.nodeConstruction ?? 'record' };
+	if (nodeStorage === 'arena') {
+		if (options?.nodeConstruction === 'object') throw new Error("nodeConstruction 'object' needs nodeStorage 'object'; arena storage builds records");
+		return { nodeStorage, nodeConstruction: 'record' };
+	}
 	if (options?.nodeConstruction === 'record') throw new Error("nodeConstruction 'record' needs nodeStorage 'arena', since records live in the arena");
 	return { nodeStorage, nodeConstruction: 'object' };
 }

@@ -13,7 +13,7 @@ import { spelledForm } from './interior.ts';
 import { snapshotOf } from './snapshot.ts';
 import { chosenSeparatorOf, liveWords, recordOf, recordSlot, recordSlots, rowTrivia, storedSlotValues } from './record-view.ts';
 import type { LeafHandle, RecordHandle, RecordPosition } from './handle.ts';
-import { builtLeafOf, builtRefOf, handleArenaOf, leafSitesOf, siteOf } from './built-ref.ts';
+import { builtLeafOf, builtRefOf, handleArenaOf, siteOf } from './built-ref.ts';
 import { holdSideEntries, isBuiltNode, refuseBuiltEntries, refuseForeignEntry, sideEntryOf, type BuiltArena } from './built-arena.ts';
 
 export { Delimiter } from './delimiter.ts';
@@ -162,11 +162,12 @@ export function writeTrivia(node: object, trivia: NodeTrivia): void {
 	if (leaf !== undefined) {
 		const wired = wireSides(node, trivia);
 		const sited = sitedLeaf(node);
-		const sites = sited === undefined ? leafSitesOf(node) : siteOf(sited.$site);
+		const sites = sited === undefined ? leaf.arena.leafSites(node) : siteOf(sited.$site);
+		if (sited !== undefined) leaf.arena.refuseReleased(sites![0]!);
 		if (sites !== undefined) writeSites(leaf.arena, sites, trivia, wired);
 		if (sited !== undefined) return;
 		const own = triviaOf(node);
-		setTriviaOf(node, leaf.arena.repark(node, own, trivia));
+		setTriviaOf(node, leaf.arena.repark(node, own, trivia, sites !== undefined));
 		return;
 	}
 	const at = tableAt(node);
@@ -820,17 +821,18 @@ function cacheOf(node: RecordHandle): Record<number, unknown> {
 	return (node.$cache ??= {});
 }
 
-export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, role: Role = 'node'): unknown {
+export function childSlot(node: RecordHandle, word: number, width: number, forms: number, inline: number, built: number, wrap?: WrapNode, aliasContent = false): unknown {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word];
 	const value = recordSlot(node, word, width, forms, inline, built);
+	const role = aliasContent ? contentRole(node, () => value) : 'node';
 	return (cache[word] = wrap === undefined ? value : hydrateWith(value, node.$tree, wrap, undefined, role));
 }
 
 export function childItems(node: RecordHandle, word: number, width: number, run: number | undefined, forms: number, inline: number, built: number, wrap?: WrapNode): readonly unknown[] {
 	const cache = cacheOf(node);
 	if (word in cache) return cache[word] as readonly unknown[];
-	const items = recordSlots(node, word, width, run, forms, inline, built).map((item) => (wrap === undefined ? item : hydrateWith(item, node.$tree, wrap)));
+	const items = recordSlots(node, word, width, run, forms, inline, built, wrap === undefined ? undefined : (item) => hydrateWith(item, node.$tree, wrap));
 	return (cache[word] = Object.freeze(items)) as readonly unknown[];
 }
 

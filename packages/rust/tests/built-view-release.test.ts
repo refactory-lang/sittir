@@ -32,7 +32,6 @@ const remade = {
 describe('a built view its arena makes anew once its builder is collected', () => {
 	it.each([
 		['objects', false],
-		['arena objects', false],
 		['records', true]
 	])('is the node its builder made, on %s', (construction, records) => {
 		expect(released(construction)).toEqual({ ...remade, editedBuilt: records });

@@ -5,7 +5,7 @@ import rust from '../src/index.ts';
 
 const source = 'struct A { a: u8, pub b: u8, #[x] c: u8 }\n\nfn f(x: u8) -> u8 {\n    g(x, "héllo")\n}\n';
 
-const engines = { object: await rust.createEngine({ nodeStorage: 'object' }), arena: await rust.createEngine({ nodeConstruction: 'object' }) };
+const engines = { object: await rust.createEngine({ nodeStorage: 'object' }), arena: await rust.createEngine({ nodeStorage: 'arena' }) };
 const wires = ['object', 'arena'] as const;
 type Wire = (typeof wires)[number];
 
@@ -92,11 +92,11 @@ describe('a tree read as records', () => {
 		expect(shape(engines.arena.parse(seats))).toEqual(shape(engines.object.parse(seats)));
 	});
 
-	it('renders untouched as its source, and writes through its row', () => {
+	it('renders untouched as its source, and rebuilds through its row as a record', () => {
 		expect(String(engines.arena.parse(source))).toBe(source);
 		const item = functionAt('arena');
 		const renamed = item.$with.name(engines.arena.build.identifier('h'));
-		expect(recordOf(renamed)).toBeUndefined();
+		expect(recordOf(renamed)).toBeDefined();
 		expect(String(renamed)).toContain('fn h(x: u8)');
 		expect(String(item)).toContain('fn f(x: u8)');
 	});

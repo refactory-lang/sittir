@@ -11,6 +11,7 @@ import { median } from './storage-common.ts';
 import { summarizeValidationStorage, type ValidationStorageRun } from './validation-storage.ts';
 import type { ValidationStorageOptions } from './validation-storage-worker.ts';
 import type { NodeConstruction } from '@sittir/types';
+import { nodeStorageOf } from '@sittir/common/engine';
 export { median } from './storage-common.ts';
 
 const execute = promisify(execFile);
@@ -106,9 +107,11 @@ export async function run(options: StorageBenchOptions): Promise<number> {
 	const iterations = integer('iterations', options.iterations ?? 3, 1);
 	if (options.limit !== undefined) integer('limit', options.limit, 1);
 	const nativeDepth = options.nativeDepth ?? 'all';
-	const construction = options.construction ?? 'object';
-	if (!options.validation && construction !== 'object')
-		throw new Error('--construction applies only to validation profiles, whose arena arm it builds with');
+	const construction = nodeStorageOf({ nodeStorage: options.validation ? 'arena' : 'object' }).nodeConstruction;
+	if (options.construction !== undefined) {
+		if (!options.validation) throw new Error('--construction applies only to validation profiles');
+		nodeStorageOf({ nodeStorage: 'arena', nodeConstruction: options.construction });
+	}
 	if (options.validation && (options.limit !== undefined || nativeDepth !== 'all'))
 		throw new Error(
 			'validation profiles use the complete deep corpus; --limit and finite --native-depth apply only to native hydration'

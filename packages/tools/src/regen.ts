@@ -105,8 +105,8 @@ function prefixed(grammar: string, input: Readable, output: (line: string) => vo
 
 const toStdout = (line: string): void => void process.stdout.write(line);
 
-export function printKept(label: string, output: Buffer, write: (line: string) => void = toStdout): void {
-	for (const line of output.toString().split('\n')) if (line !== '') write(`[${label}] ${line}\n`);
+function printKept(label: string, output: Buffer): void {
+	for (const line of output.toString().split('\n')) if (line !== '') toStdout(`[${label}] ${line}\n`);
 }
 
 async function runPrefixed(grammar: string, cwd: string, flags: readonly string[], verbose: boolean): Promise<number> {

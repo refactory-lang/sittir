@@ -30,6 +30,33 @@ it('defers the diagnostic root read and keeps its error stamp and cached identit
 	}
 });
 
+it('shares the diagnostic root reader while keeping each tree, depth, error stamp and cached identity', async () => {
+	const read = vi.spyOn(native, 'read');
+	const engine = await createEngine(await languageByName('scm'), { nodeStorage: 'object' });
+	try {
+		const first = engine.diagnostics.parseAndRead('(identifier)', { depth: 1 });
+		const second = engine.diagnostics.parseAndRead('(identifier) @name', { depth: Infinity });
+		expect(read).not.toHaveBeenCalled();
+		expect(Object.getOwnPropertyDescriptor(first, 'root')!.get).toBe(
+			Object.getOwnPropertyDescriptor(second, 'root')!.get
+		);
+		const firstTree = first.tree as TreeHandle;
+		const secondTree = second.tree as TreeHandle;
+		const firstRoot = first.root;
+		const secondRoot = second.root;
+		expect(firstTree.id).not.toBe(secondTree.id);
+		expect(read).toHaveBeenNthCalledWith(1, firstTree.id, 0, 1);
+		expect(read).toHaveBeenNthCalledWith(2, secondTree.id, 0, Infinity);
+		expect(firstRoot.$errors).toEqual([]);
+		expect(secondRoot.$errors).toEqual([]);
+		expect(first.root).toBe(firstRoot);
+		expect(second.root).toBe(secondRoot);
+		expect(read).toHaveBeenCalledTimes(2);
+	} finally {
+		engine.dispose();
+	}
+});
+
 function refuseExports() {
 	return ['read', 'readRecord', 'chunk', 'text'] as const;
 }

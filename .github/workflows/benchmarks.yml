@@ -1,5 +1,5 @@
 name: Arena benchmarks
-run-name: Arena benchmarks (${{ inputs.benchmark }}, ${{ inputs.construction }} construction)
+run-name: Arena benchmarks (${{ inputs.benchmark }}, paired node backends)
 
 on:
   workflow_dispatch:
@@ -8,12 +8,7 @@ on:
         description: Benchmark to run
         type: choice
         default: all
-        options: [all, eager, corpus]
-      construction:
-        description: How the corpus job's arena arm builds nodes
-        type: choice
-        default: object
-        options: [object, record]
+        options: [all, corpus]
 
 permissions:
   contents: read
@@ -31,19 +26,6 @@ jobs:
     with:
       grammar: ${{ matrix.grammar }}
       prefix: ${{ needs.prepare.outputs.prefix }}
-  eager-native:
-    needs: prepare
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
-    uses: ./.github/workflows/benchmark-native.yml
-    with:
-      grammar: eager
-      prefix: ${{ needs.prepare.outputs.prefix }}
-  eager:
-    needs: [prepare, native, eager-native]
-    if: inputs.benchmark == 'all' || inputs.benchmark == 'eager'
-    uses: ./.github/workflows/benchmark-eager.yml
-    with:
-      runtime-prefix: ${{ needs.prepare.outputs.prefix }}
   corpus:
     needs: [prepare, native]
     if: inputs.benchmark == 'all' || inputs.benchmark == 'corpus'
@@ -51,4 +33,3 @@ jobs:
     with:
       runtime-prefix: ${{ needs.prepare.outputs.prefix }}
       grammars: ${{ needs.prepare.outputs.grammars }}
-      construction: ${{ inputs.construction }}

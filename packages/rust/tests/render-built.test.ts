@@ -143,7 +143,7 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it.each([
-		['objects', async () => rust.createEngine({ nodeConstruction: 'object' })],
+		['objects', async () => rust.createEngine({ nodeStorage: 'object' })],
 		['records', recordEngine]
 	])('refuses at the render, as its trivia type names it, a node of a kind no side holds: %s', async (_, make) => {
 		const engine = await make();
@@ -157,7 +157,7 @@ describe('a built arena rendered natively', () => {
 	});
 
 	it.each([
-		['objects', async () => rust.createEngine({ nodeConstruction: 'object' })],
+		['objects', async () => rust.createEngine({ nodeStorage: 'object' })],
 		['records', recordEngine]
 	])('renders a node another engine of its language built with the sides that engine wrote, under its own options: %s', async (_, make) => {
 		const noted = (engine: Awaited<ReturnType<typeof make>>, name: string, note: string) => {
@@ -195,7 +195,7 @@ describe('a built arena rendered natively', () => {
 		};
 
 		it('renders where the side renders, on records as on objects', async () => {
-			const objects = await rendered(async () => rust.createEngine({ nodeConstruction: 'object' }));
+			const objects = await rendered(async () => rust.createEngine({ nodeStorage: 'object' }));
 			expect(objects).toEqual({ parsed: 'fn f() {\n    g(); /* c */\n}\n', built: 'x; /* c */' });
 			expect(await rendered(recordEngine)).toEqual(objects);
 		});
@@ -216,7 +216,7 @@ describe('a built arena rendered natively', () => {
 
 		it('refuses in a side of an object node, whose engine builds no records', async () => {
 			const comment = (await recordEngine()).build.blockComment(' c ');
-			const objects = await rust.createEngine({ nodeConstruction: 'object' });
+			const objects = await rust.createEngine({ nodeStorage: 'object' });
 			const statement = objects.build.expressionStatement(objects.build.identifier('x'));
 			expect(() => statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');
 			expect(() => statementOf(objects).statement.$trivia.trailing(comment)).toThrow('a side names a built record, and its engine builds no records');

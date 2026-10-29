@@ -42,11 +42,11 @@ describe('a coordinate names its tree across grammars', () => {
 		expect(() => writeTrivia(statement, { trailing: [foreign] })).toThrow('cannot write a typescript record into a side of a rust node');
 	});
 
-	it.each(['object', 'arena', 'records'] as const)('refuses a comment another grammar parsed in a side, naming both languages: %s', async (storage) => {
+	it.each(['object', 'arena'] as const)('refuses a comment another grammar parsed in a side, naming both languages: %s', async (storage) => {
 		type Sided = { readonly $trivia: { trailing(...items: unknown[]): readonly unknown[] } };
 		type Engine = { parse(source: string): { statements(): readonly unknown[] }; build: Record<string, (...args: unknown[]) => object> };
 		const engineOf = async (grammar: 'rust' | 'typescript'): Promise<Engine> => {
-			const engine = await createEngine(await languageByName(grammar), storage === 'object' ? { nodeStorage: 'object' } : storage === 'arena' ? { nodeConstruction: 'object' } : {});
+			const engine = await createEngine(await languageByName(grammar), { nodeStorage: storage });
 			return engine as unknown as Engine;
 		};
 		const [rust, typescript] = [await engineOf('rust'), await engineOf('typescript')];

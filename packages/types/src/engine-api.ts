@@ -190,7 +190,7 @@ export interface Language<API extends LanguageAPI> {
 	): Promise<Engine<API, M>>;
 }
 
-/** Where a parsed tree's nodes live: as records read in place in the tree's native arena, or as objects (`EngineOptions.nodeStorage`). */
+/** The paired node backend: arena views with record construction, or objects for both parsed and built nodes (`EngineOptions.nodeStorage`). */
 export type NodeStorage = 'arena' | 'object';
 
 /** How an engine's builders store a built node: as an immutable record in the engine's built arena, or as an object (`EngineOptions.nodeConstruction`). */
@@ -198,24 +198,24 @@ export type NodeConstruction = 'record' | 'object';
 
 interface NodeStorageKeys {
 	/**
-	 * Where a parsed tree's nodes live. `'arena'` (the default) reads each node as a view over its record in the tree's
-	 * native arena: its accessors read the record's cells, and a node's text is one native call when read. `'object'` reads
-	 * each node as an object. Both give the same nodes, kinds and text.
+	 * The parsed and built node backend. `'arena'` (the default) reads parsed nodes as record views and builds immutable
+	 * records in the engine's arena. `'object'` reads and builds object nodes. Accessors, kinds and text use the language's
+	 * same public surface in either mode.
 	 *
 	 * @throws When `'arena'` is asked of an addon built without the `arena` feature.
 	 */
 	readonly nodeStorage?: NodeStorage;
 	/**
-	 * How the engine's builders store a built node. `'record'`, the default under arena storage, writes an immutable record
-	 * into the engine's built arena; `'object'` keeps the node's fields on its object. `'record'` needs `nodeStorage: 'arena'`,
-	 * and the engine throws when it is given with `nodeStorage: 'object'`.
+	 * A legacy assertion of the selected backend's construction: `'record'` for arena storage and `'object'` for object
+	 * storage. A conflicting value is refused rather than selecting a hybrid backend.
+	 * @deprecated Select `nodeStorage` alone; it determines how both parsed and built nodes are represented.
 	 */
 	readonly nodeConstruction?: NodeConstruction;
 }
 
-/** An engine's node storage and construction. Records live in the arena, so object storage with record construction does not compile. */
+/** An engine's paired backend. Arena storage builds records; object storage builds objects. Conflicting construction assertions do not compile. */
 export type NodeStorageOptions =
-	| (NodeStorageKeys & { readonly nodeStorage?: 'arena' })
+	| (NodeStorageKeys & { readonly nodeStorage?: 'arena'; readonly nodeConstruction?: 'record' })
 	| (NodeStorageKeys & { readonly nodeStorage: 'object'; readonly nodeConstruction?: 'object' });
 
 export type NativeEngineOptions<O extends object = Readonly<Record<string, unknown>>> = { readonly options?: O } & NodeStorageOptions;

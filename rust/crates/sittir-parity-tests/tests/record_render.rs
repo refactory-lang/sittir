@@ -742,3 +742,53 @@ fn a_native_candidate_keeps_inner_trivia_and_leaves_the_tree_s_sides_unchanged()
         "arg"
     );
 }
+
+#[test]
+fn a_list_candidate_keeps_the_trailing_comment_of_its_child() {
+    let renders = python();
+    let mut engine = renders.engine();
+    let options = engine.options().clone();
+    for (source, expected) in [
+        ("print b # bye\n", "print b # bye\n"),
+        ("# outside\nprint b # bye\n", "print b # bye\n"),
+        ("... # omitted\n", "... # omitted\n"),
+        ("a; b # tail\n", "a; b # tail\n"),
+        ("type IntFunc[**P] = Callable[P, int] # ParamSpec\n", "type IntFunc[**P] = Callable[P, int] # ParamSpec\n"),
+    ] {
+        let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
+        Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::first_read(&tree, Depth::All).expect("a deep read");
+        let candidate = tree
+            .record_candidates::<sittir_python::render::AnyNode>(NodeIndex::ROOT)
+            .expect("the stored candidates")
+            .into_iter()
+            .find(|coord| coord.kind == Some(sittir_python::render::kind_ids::SIMPLE_STATEMENTS_ELEMENTS))
+            .expect("the statement list");
+        for depth in [Depth::ONE, Depth::All] {
+            let tree = Renders::<sittir_python::PythonGrammar, sittir_python::render::AnyNode>::parse(&mut engine, source);
+            tree.read_record::<sittir_python::render::AnyNode>(candidate.index, depth).expect("the candidate read");
+            for _ in 0..2 {
+                assert_eq!(
+                    tree.render_candidate::<sittir_python::render::AnyNode>(candidate.index, &options, &tree)
+                        .expect("the list candidate"),
+                    expected,
+                    "{source:?}, depth: {depth:?}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn a_candidate_keeps_line_breaks_between_unmodified_control_flow_children() {
+    let mut engine = Engine::new(sittir_typescript::TypeScriptGrammar, sittir_typescript::render::options::defaults()).expect("an engine");
+    let options = engine.options().clone();
+    let source = "try {}\ncatch (e: unknown) {}\nfinally {}";
+    let tree = Renders::<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>::parse(&mut engine, source);
+    Renders::<sittir_typescript::TypeScriptGrammar, sittir_typescript::render::AnyNode>::first_read(&tree, Depth::All).expect("a deep read");
+    let candidate = node_spanning(&tree, source, "try_statement", source);
+    assert_eq!(
+        tree.render_candidate::<sittir_typescript::render::AnyNode>(candidate, &options, &tree)
+            .expect("the control-flow candidate"),
+        source
+    );
+}

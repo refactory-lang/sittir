@@ -1,4 +1,4 @@
-// Run with `node --expose-gc --import tsx <objects|arena objects|records>`:
+// Run with `node --expose-gc --import tsx <objects|records>`:
 // prints one JSON line reporting a built block's statement once nothing but
 // the block names that statement, so the block's arena makes its views anew
 // from the records. Reports whether the block's snapshot is unchanged, whether
@@ -27,9 +27,8 @@ async function settle(): Promise<void> {
 
 async function engineOf(construction: string): Promise<Engine> {
 	if (construction === 'objects') return (await createEngine(rust, { nodeStorage: 'object' })) as unknown as Engine;
-	if (construction === 'arena objects') return rust.createEngine({ nodeConstruction: 'object' });
 	if (construction === 'records') return rust.createEngine();
-	throw new Error('name the construction: objects, arena objects or records');
+	throw new Error('name the construction: objects or records');
 }
 
 type Call = { function(): unknown; $with: { function(value: unknown): object }; $trivia: { trailing(...items: unknown[]): unknown } };

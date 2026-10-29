@@ -9,12 +9,11 @@ type Node = Record<string, unknown> & {
 };
 
 const object = await createEngine(rust, { nodeStorage: 'object' });
-const arenaObjects = await createEngine(rust, { nodeConstruction: 'object' });
 const arenaRecords = await createEngine(rust);
 type Engine = typeof object;
 
 const constructions: readonly (readonly [string, Engine])[] = [
-	['object construction', arenaObjects],
+	['object construction', object],
 	['record construction', arenaRecords]
 ];
 

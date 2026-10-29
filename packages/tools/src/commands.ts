@@ -17,7 +17,8 @@ import { appendHistory, commitHistory, readHistory, type ValidationRun } from '.
 import { readTestHistory } from './test-history.ts';
 import { warnIfNativeBinaryStale } from './native-staleness.ts';
 import type { NodeConstruction, NodeStorage } from '@sittir/types';
-import { cachedNativeEngineProfile, useValidationConstruction, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
+import { nodeStorageOf } from '@sittir/common/engine';
+import { cachedNativeEngineProfile, useValidationNodeStorage, validationStorage, type ValidatorSkip } from './validate/common.ts';
 import type { ReadRenderParseFailure } from './validate/read-render-parse.ts';
 import { readGrammarDiagnostics } from './validate/grammar-diagnostics-file.ts';
 import { diffValidationReports, formatReportDiff, readComparableReport, reportMoved } from './validate/report-diff.ts';
@@ -317,7 +318,7 @@ export function resolveCliEntryArgs(): { tsxBin: string; cliPath: string } {
 export async function spawnIsolatedGrammarWorker(
 	grammar: GrammarName,
 	nodeStorage: NodeStorage = 'object',
-	construction: NodeConstruction = 'object'
+	construction?: NodeConstruction
 ): Promise<{
 	status: 'ok' | 'crashed' | 'error';
 	stdout: string;
@@ -325,10 +326,11 @@ export async function spawnIsolatedGrammarWorker(
 	exitCode: number | null;
 	signal: NodeJS.Signals | null;
 }> {
+	const storage = nodeStorageOf({ nodeStorage, nodeConstruction: construction });
 	const { tsxBin, cliPath } = resolveCliEntryArgs();
 	// Build child argv: validate counts <grammar> --_isolate-worker (native-only;
 	// the `validate` CLI no longer accepts --backend).
-	const childArgs = [cliPath, 'validate', 'counts', grammar, '--_isolate-worker', '--node-storage', nodeStorage, '--construction', construction];
+	const childArgs = [cliPath, 'validate', 'counts', grammar, '--_isolate-worker', '--node-storage', storage.nodeStorage, '--construction', storage.nodeConstruction];
 
 	return new Promise((resolve) => {
 		const childEnv: NodeJS.ProcessEnv = {
@@ -610,9 +612,10 @@ export async function runCountsCli(
 	backendMode: CliBackend = 'native',
 	options: { recursive?: boolean; isolate?: boolean; isolateWorker?: boolean; nodeStorage?: NodeStorage; construction?: NodeConstruction } = {}
 ): Promise<void> {
-	const { isolate = false, isolateWorker = false, nodeStorage = 'object', construction = 'object' } = options;
-	useValidationNodeStorage(nodeStorage);
-	useValidationConstruction(construction);
+	const { isolate = false, isolateWorker = false, nodeStorage = 'object' } = options;
+	const storage = nodeStorageOf({ nodeStorage, nodeConstruction: options.construction });
+	const construction = storage.nodeConstruction;
+	useValidationNodeStorage(storage.nodeStorage);
 
 	// When running as an isolation worker, activate the progress breadcrumb
 	// env var so that read-render-parse.ts emits per-kind lines to stderr.

@@ -1,5 +1,7 @@
 # Public eager record builders
 
+This original slice plan is historical where the later [paired-backend design](../specs/2026-10-29-paired-node-backends-design.md) and signed handle/native-chunk amendments supersede it. The supported public modes are object reading/building together, or arena views with record building. The private eager probe stays frozen.
+
 The packed AST and arena-tables documents govern this work: the shared-arena
 design (§ Packed AST is definitive, § The wire, § Render, § Trivia) and the
 arena-tables plan's cutover outline ("Eager immutable built records are
@@ -153,16 +155,21 @@ Every slice is measured with the `Arena benchmarks` workflow, not local runs:
 the dispatcher is on master, and each run is dispatched at the slice's branch
 (`gh workflow run benchmarks.yml --ref <branch>`).
 
-- **Corpus job.** `sittir tool bench-storage --validation` pairs object and
-  arena engines over the complete validation buckets. Its factory and IR
-  buckets time construction (`build`) and render on each storage. From the
-  render bridge until the switch, `--construction records` gives the arena
-  arm's engines the record backend, so the same buckets compare the record
-  builders with the object builders. The report names the construction
-  backend.
-- **Eager job.** It measures the probe's private builders. It is the
-  baseline the public builders must match or beat: build, render, immutable
-  edit, and heap plus external memory over 10,000 builds.
+- **Corpus job.** `sittir tool bench-storage --validation` compares object/object
+  and arena/record engines over complete validator round trips: construction,
+  rendering, reparsing and comparison. New workflow runs have no independent
+  construction choice. Ratios compare the two backend paths, not storage alone.
+  Factory and IR totals are not isolated construction timings; settled memory
+  samples show leftovers, not retained ASTs.
+- **Construction job, planned.** Measure the engine's compiled runtime under
+  plain Node, separately reporting build, render and parse work. Report steady
+  construction, post-GC construction and the whole pass including deferred
+  release/GC, with retained roots and all-handles-held populations distinguished.
+  Do not force GC before the steady build window. Move corpus timing off the
+  TypeScript loader as part of this measurement work.
+- The private eager probe is frozen and removed from CI. Its private wrappers
+  do not measure engine construction or memory and are not an acceptance baseline
+  for public builders.
 - A slice that moves a measured phase reports the workflow's paired summary
   in its PR, with the run link.
 
@@ -170,14 +177,16 @@ the dispatcher is on master, and each run is dispatched at the slice's branch
 
 These must not be mistaken for completed builder integration:
 
-- Native parsed hydration still creates typed Rust nodes before arena encoding;
-  direct Tree-sitter-to-record writing is unfinished.
-- Reclamation of unreferenced built records and chunks, and complete native
-  retained-memory attribution, are unfinished; append-only allocation is not
-  reclamation.
-- The final cutover retires the transitional object codec, the object
-  projection and the compatibility options, once correctness and performance
-  are accepted.
+- Direct parsed hydration and counted release are implemented. Their presence
+  does not establish completion of the remaining safety, parity and lifecycle
+  acceptance gates.
+- Retained-memory evaluation must separate live records, open allocator reserve
+  and native/external memory; post-validation leftovers are not a retained AST
+  population.
+- Object reading/building and arena reading/record building remain the two
+  supported backends. Independent hybrid selection is deprecated and conflicting
+  legacy settings refuse. Selecting defaults requires its own correctness and
+  performance acceptance; object mode is compared directly with pinned master.
 - A built leaf written as a side entry (typescript's `html_comment`, the one
   stamped trivia kind assembled as a pattern) crosses as its text, not as kind
   and address: its record is a header, and its text is a span of the arena's

@@ -27,7 +27,7 @@ describe('a runtime that does not allow external array buffers', () => {
 		});
 		const rust = (await import('../src/index.ts')).default;
 		await expect(createEngine(rust)).rejects.toThrow(REFUSED);
-		await expect(createEngine(rust, { nodeConstruction: 'object' })).rejects.toThrow(REFUSED);
+		await expect(createEngine(rust, { nodeStorage: 'arena' })).rejects.toThrow(REFUSED);
 		const rs = await createEngine(rust, { nodeStorage: 'object' });
 		expect(rs.render(rs.parse('fn f() {}\n')).toString()).toBe('fn f() {}\n');
 		rs.dispose();

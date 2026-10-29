@@ -37,7 +37,6 @@ import {
 	textOf,
 	isRecordPosition,
 	positionWords,
-	recordSlot,
 	recordPresent,
 	recordFlag,
 	childSlot,
@@ -86,9 +85,9 @@ function viewSlot<T>(
 	forms: number,
 	inline: number,
 	built: number,
-	role?: Role
+	aliasContent = false
 ): ParsedOfData<T> {
-	return childSlot(view, word, width, forms, inline, built, _wrap, role) as ParsedOfData<T>;
+	return childSlot(view, word, width, forms, inline, built, _wrap, aliasContent) as ParsedOfData<T>;
 }
 function viewSlots<T>(
 	view: RecordHandle,
@@ -19511,15 +19510,7 @@ function viewParametersElementsReceiverGroup(
 }
 
 function viewTypeIdentifier$content(this: RecordHandle) {
-	return viewSlot<T.Identifier>(
-		this,
-		2,
-		3,
-		1,
-		0,
-		2,
-		contentRole(this, () => recordSlot(this, 2, 3, 1, 0, 2))
-	);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2, true);
 }
 function viewTypeIdentifier(data: RecordPosition, tree: TreeHandle): T.TypeIdentifier.Parsed {
 	const node = {
@@ -19546,15 +19537,7 @@ function viewTypeIdentifier(data: RecordPosition, tree: TreeHandle): T.TypeIdent
 }
 
 function viewFieldIdentifier$content(this: RecordHandle) {
-	return viewSlot<T.Identifier>(
-		this,
-		2,
-		3,
-		1,
-		0,
-		2,
-		contentRole(this, () => recordSlot(this, 2, 3, 1, 0, 2))
-	);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2, true);
 }
 function viewFieldIdentifier(data: RecordPosition, tree: TreeHandle): T.FieldIdentifier.Parsed {
 	const node = {
@@ -19581,15 +19564,7 @@ function viewFieldIdentifier(data: RecordPosition, tree: TreeHandle): T.FieldIde
 }
 
 function viewClosureParameter$content(this: RecordHandle) {
-	return viewSlot<T.Pattern>(
-		this,
-		2,
-		4,
-		3,
-		0,
-		2,
-		contentRole(this, () => recordSlot(this, 2, 4, 3, 0, 2))
-	);
+	return viewSlot<T.Pattern>(this, 2, 4, 3, 0, 2, true);
 }
 function viewClosureParameter(data: RecordPosition, tree: TreeHandle): T.ClosureParameter.Parsed {
 	const node = {
@@ -19616,15 +19591,7 @@ function viewClosureParameter(data: RecordPosition, tree: TreeHandle): T.Closure
 }
 
 function viewShorthandFieldIdentifier$content(this: RecordHandle) {
-	return viewSlot<T.Identifier>(
-		this,
-		2,
-		3,
-		1,
-		0,
-		2,
-		contentRole(this, () => recordSlot(this, 2, 3, 1, 0, 2))
-	);
+	return viewSlot<T.Identifier>(this, 2, 3, 1, 0, 2, true);
 }
 function viewShorthandFieldIdentifier(data: RecordPosition, tree: TreeHandle): T.ShorthandFieldIdentifier.Parsed {
 	const node = {

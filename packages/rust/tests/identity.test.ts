@@ -131,6 +131,28 @@ describe('a collected wrapper', () => {
 });
 
 describe('an alias envelope and its content', () => {
+	it('returns cached content without decoding its cell again', () => {
+		const root = engine.parse('fn f() { a.b; }\n', { depth: 1 });
+		const access = root.$query().$descendants.ofType(engine.kinds.FieldExpression).at(0);
+		if (access === undefined || !engine.is.fieldExpression(access)) throw new Error('expected a field expression');
+		const envelope = access.property();
+		if (!engine.is.fieldIdentifier(envelope)) throw new Error('expected a field identifier');
+		const content = envelope.content();
+		const words: unknown = Reflect.get(envelope, '$words');
+		if (!(words instanceof Uint32Array)) throw new Error('expected record words');
+		Reflect.set(envelope, '$words', new Proxy(words, {
+			get(target, key) {
+				if (key === 'subarray') return () => { throw new Error('cached content decoded again'); };
+				const value: unknown = Reflect.get(target, key, target);
+				return typeof value === 'function' ? value.bind(target) : value;
+			}
+		}));
+		try {
+			expect(envelope.content()).toBe(content);
+		} finally {
+			Reflect.set(envelope, '$words', words);
+		}
+	});
 	it('are two objects, each the same through every route', () => {
 		const root = engine.parse('fn f() { a.b; }\n', { depth: 1 });
 		const access = root.$query().$descendants.ofType(engine.kinds.FieldExpression).at(0);
